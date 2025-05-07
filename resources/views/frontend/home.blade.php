@@ -232,7 +232,7 @@
     <div class="container mx-auto px-4 py-8">
         <!-- Section Header -->
         <div class="mb-6">
-            <h2 class="text-3xl font-bold mb-2" style="font-family: 'Lato', sans-serif;">Quick and easy trip planner</h2>
+        <h2 class="text-2xl font-semibold text-gray-800 mb-2" style="font-family: 'Lato', sans-serif;">Browse by property type</h2>
             <p class="text-sm text-gray-600" style="font-family: 'Lato', sans-serif;">Pick a vibe and explore top destinations in Sri Lanka</p>
         </div>
 <!-- Category Buttons -->
@@ -436,8 +436,283 @@
 
 
 </section>
+<!-- Section 1: Deals for the weekend -->
+<section class="py-12 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 class="text-2xl font-semibold text-gray-800 mb-2" style="font-family: 'Lato', sans-serif;">Browse by property type</h2>
+    <p class="text-gray-600 mb-6" style="font-family: 'Lato', sans-serif;">Save on stays for May 2 - May 4</p>
+
+    <!-- Responsive container: scroll on small screens, grid on large screens -->
+    <div class="flex gap-4 overflow-x-auto lg:grid lg:grid-cols-4 lg:gap-6">
+      
+      <!-- Hotel Card 1 -->
+      <div class="min-w-[300px] max-w-[300px] bg-white rounded-lg overflow-hidden flex-shrink-0 lg:min-w-0"
+     style="box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7);">
+  <img src="{{ asset('images/property.png') }}" alt="Hotel Image" class="w-full h-[300px] object-cover">
+  <div class="p-4">
+    <span class="text-white px-2 py-1 rounded-full text-s" style="background-color: rgb(31, 143, 178); font-family: 'Lato', sans-serif;">Genius</span>
+    <h3 class="text-xl font-bold mt-2">Eagle Regency Hotel</h3>
+    <p class="text-gray-600">Kandy, Sri Lanka</p>
+    <div class="flex items-center mt-2">
+      <span class="bg-blue-500 text-white px-2 py-1 rounded-full text-xs">8</span>
+      <span class="ml-2">Very Good</span>
+      <span class="ml-2">337 Reviews</span>
+    </div>
+    <button class="bg-orange-500 text-white px-4 py-1 rounded mt-2">Getaway Deal</button>
+    <p class="text-gray-600 mt-2">2 nights | LKR 26,844</p>
+  </div>
+</div>
 
 
+
+      <!-- Hotel Card 2 -->
+      <div class="min-w-[250px] max-w-[250px] bg-white rounded-lg shadow-md overflow-hidden flex-shrink-0 lg:min-w-0">
+        <img src="{{ asset('images/property.png') }}" alt="Hotel Image" class="w-full h-[300px] object-cover">
+        <div class="p-4">
+          <span class="bg-green-500 text-white px-2 py-1 rounded-full text-xs">Genius</span>
+          <h3 class="text-xl font-bold mt-2">Royal Grand Resort</h3>
+          <p class="text-gray-600">Colombo, Sri Lanka</p>
+          <div class="flex items-center mt-2">
+            <span class="bg-blue-500 text-white px-2 py-1 rounded-full text-xs">9</span>
+            <span class="ml-2">Superb</span>
+            <span class="ml-2">514 Reviews</span>
+          </div>
+          <button class="bg-orange-500 text-white px-4 py-1 rounded mt-2">Getaway Deal</button>
+          <p class="text-gray-600 mt-2">2 nights | LKR 32,500</p>
+        </div>
+      </div>
+
+      <!-- Hotel Card 3 -->
+      <div class="min-w-[250px] max-w-[250px] bg-white rounded-lg shadow-md overflow-hidden flex-shrink-0 lg:min-w-0">
+        <img src="{{ asset('images/property.png') }}" alt="Hotel Image" class="w-full h-[300px] object-cover">
+        <div class="p-4">
+          <span class="bg-green-500 text-white px-2 py-1 rounded-full text-xs">Genius</span>
+          <h3 class="text-xl font-bold mt-2">Hill View Resort</h3>
+          <p class="text-gray-600">Nuwara Eliya, Sri Lanka</p>
+          <div class="flex items-center mt-2">
+            <span class="bg-blue-500 text-white px-2 py-1 rounded-full text-xs">7.5</span>
+            <span class="ml-2">Good</span>
+            <span class="ml-2">210 Reviews</span>
+          </div>
+          <button class="bg-orange-500 text-white px-4 py-1 rounded mt-2">Getaway Deal</button>
+          <p class="text-gray-600 mt-2">2 nights | LKR 21,000</p>
+        </div>
+      </div>
+
+      <!-- Hotel Card 4 -->
+      <div class="min-w-[250px] max-w-[250px] bg-white rounded-lg shadow-md overflow-hidden flex-shrink-0 lg:min-w-0">
+        <img src="{{ asset('images/property.png') }}" alt="Hotel Image" class="w-full h-[300px] object-cover">
+        <div class="p-4">
+          <span class="bg-green-500 text-white px-2 py-1 rounded-full text-xs">Genius</span>
+          <h3 class="text-xl font-bold mt-2">Sunset Bay Hotel</h3>
+          <p class="text-gray-600">Galle, Sri Lanka</p>
+          <div class="flex items-center mt-2">
+            <span class="bg-blue-500 text-white px-2 py-1 rounded-full text-xs">8.5</span>
+            <span class="ml-2">Very Good</span>
+            <span class="ml-2">450 Reviews</span>
+          </div>
+          <button class="bg-orange-500 text-white px-4 py-1 rounded mt-2">Getaway Deal</button>
+          <p class="text-gray-600 mt-2">2 nights | LKR 29,990</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+  <!-- Section 2: Stay at our top unique properties -->
+ <!-- Section 2: Stay at our top unique properties -->
+ <section class="py-12 bg-white">
+ <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 class="text-2xl font-semibold text-gray-800 mb-2" style="font-family: 'Lato', sans-serif;">Stay at our top unique properties</h2>
+    <p class="text-gray-600 mb-4">From castles and villas to boats and igloos, we have it all</p>
+
+    <div class="flex space-x-4 overflow-x-auto pb-2">
+        <!-- Card 1 -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <img src="{{ asset('images/property.png') }}" alt="Hotel Image" class="w-full h-48 object-cover">
+            <div class="p-4">
+                <span class="bg-green-500 text-white px-2 py-1 rounded-full text-xs">Genius</span>
+                <h3 class="text-xl font-bold mt-2">Eagle Regency Hotel</h3>
+                <p class="text-gray-600">Kandy, Sri Lanka</p>
+                <div class="flex items-center mt-2">
+                    <span class="bg-blue-500 text-white px-2 py-1 rounded-full text-xs">8</span>
+                    <span class="ml-2">Very Good</span>
+                    <span class="ml-2">337 Reviews</span>
+                </div>
+                <button class="bg-orange-500 text-white px-4 py-1 rounded mt-2">Book Now</button>
+            </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <img src="{{ asset('images/property.png') }}" alt="Hotel Image" class="w-full h-48 object-cover">
+            <div class="p-4">
+                <span class="bg-green-500 text-white px-2 py-1 rounded-full text-xs">Genius</span>
+                <h3 class="text-xl font-bold mt-2">Eagle Regency Hotel</h3>
+                <p class="text-gray-600">Kandy, Sri Lanka</p>
+                <div class="flex items-center mt-2">
+                    <span class="bg-blue-500 text-white px-2 py-1 rounded-full text-xs">8</span>
+                    <span class="ml-2">Very Good</span>
+                    <span class="ml-2">337 Reviews</span>
+                </div>
+                <button class="bg-orange-500 text-white px-4 py-1 rounded mt-2">Book Now</button>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md overflow-hidden relative">
+  <!-- Heart Button in the Top-Right Corner with Inline CSS -->
+  <button 
+    style="position: absolute; top: 12px; right: 12px; background-color: white; border-radius: 50%; padding: 8px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); transition: background-color 0.3s;"
+    onclick="this.classList.toggle('filled'); this.classList.contains('filled') ? this.innerHTML = '❤️' : this.innerHTML = '🤍';"
+  >
+    🤍
+  </button>
+
+  <img src="{{ asset('images/property.png') }}" alt="Hotel Image" class="w-full h-48 object-cover">
+  <div class="p-4">
+    <span class="bg-green-500 text-white px-2 py-1 rounded-full text-xs">Genius</span>
+    <h3 class="text-xl font-bold mt-2">Eagle Regency Hotel</h3>
+    <p class="text-gray-600">Kandy, Sri Lanka</p>
+    <div class="flex items-center mt-2">
+      <span class="bg-blue-500 text-white px-2 py-1 rounded-full text-xs">8</span>
+      <span class="ml-2">Very Good</span>
+      <span class="ml-2">337 Reviews</span>
+    </div>
+    <button class="bg-orange-500 text-white px-4 py-1 rounded mt-2">Book Now</button>
+  </div>
+</div>
+
+
+
+        <!-- Card 4 -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <img src="{{ asset('images/property.png') }}" alt="Hotel Image" class="w-full h-48 object-cover">
+            <div class="p-4">
+                <span class="bg-green-500 text-white px-2 py-1 rounded-full text-xs">Genius</span>
+                <h3 class="text-xl font-bold mt-2">Eagle Regency Hotel</h3>
+                <p class="text-gray-600">Kandy, Sri Lanka</p>
+                <div class="flex items-center mt-2">
+                    <span class="bg-blue-500 text-white px-2 py-1 rounded-full text-xs">8</span>
+                    <span class="ml-2">Very Good</span>
+                    <span class="ml-2">337 Reviews</span>
+                </div>
+                <button class="bg-orange-500 text-white px-4 py-1 rounded mt-2">Book Now</button>
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+
+<section class="py-12 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <h2 class="text-2xl font-semibold text-gray-800 mb-2" style="font-family: 'Lato', sans-serif;">Stay at our top unique properties</h2>
+    <div class="container mx-auto px-4 py-10" style="border: 2px solid black; border-radius: 8px;">
+      <!-- Travel More, Spend Less Section -->
+      <div class="mb-10">
+     
+        <p class="text-gray-600 mb-6">
+          Sign in, save money<br />
+          Save 10% or more at participating properties
+        </p>
+        <div class="flex space-x-4">
+          <a href="#" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+            Sign in
+          </a>
+          <a href="#" class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
+            Register
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<div class="container mx-auto px-4 py-10">
+    <!-- Title -->
+    <div>
+        <h2 class="text-2xl font-bold mb-4">Popular with travelers from Sri Lanka</h2>
+
+        <!-- Tabs -->
+        <div class="flex space-x-4 overflow-x-auto mb-4">
+            <button id="tab-domestic" class="tab-button active-tab" onclick="toggleTab('domestic')">Domestic cities</button>
+            <button id="tab-international" class="tab-button" onclick="toggleTab('international')">International cities</button>
+            <button id="tab-regions" class="tab-button" onclick="toggleTab('regions')">Regions</button>
+            <button id="tab-countries" class="tab-button" onclick="toggleTab('countries')">Countries</button>
+            <button id="tab-places" class="tab-button" onclick="toggleTab('places')">Places to stay</button>
+        </div>
+
+        <!-- Content Panels -->
+        <div id="tab-content" class="mt-4">
+            <!-- Domestic -->
+            <div id="content-domestic" class="grid grid-cols-5 gap-4">
+              
+            </div>
+
+            <!-- International -->
+            <div id="content-international" class="grid grid-cols-5 gap-4 hidden">
+             
+            </div>
+
+            <!-- Regions -->
+            <div id="content-regions" class="grid grid-cols-5 gap-4 hidden">
+               
+               
+            </div>
+
+            <!-- Countries -->
+            <div id="content-countries" class="grid grid-cols-5 gap-4 hidden">
+               
+                
+               
+               
+            </div>
+            <div id="content-international" class="grid grid-cols-5 gap-4 hidden">
+              
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Tailwind Styling for Tab Buttons -->
+<style>
+    .tab-button {
+        padding: 0.5rem 1rem;
+        border-radius: 0.375rem;
+        border: 2px solid transparent;
+        background-color: #E5E7EB; /* gray-200 */
+        color: #4B5563; /* gray-600 */
+        transition: all 0.2s;
+    }
+
+    .active-tab {
+        background-color: #3B82F6; /* blue-500 */
+        color: white;
+        border-color: #3B82F6;
+    }
+</style>
+
+<!-- JavaScript for Tab Switching -->
+<script>
+    function toggleTab(tabName) {
+        // Hide all panels
+        const panels = document.querySelectorAll('#tab-content > div');
+        panels.forEach(panel => panel.classList.add('hidden'));
+
+        // Show selected panel
+        const selectedPanel = document.getElementById(`content-${tabName}`);
+        if (selectedPanel) selectedPanel.classList.remove('hidden');
+
+        // Update tab button styles
+        const tabs = document.querySelectorAll('.tab-button');
+        tabs.forEach(tab => tab.classList.remove('active-tab'));
+
+        const selectedTab = document.getElementById(`tab-${tabName}`);
+        if (selectedTab) selectedTab.classList.add('active-tab');
+    }
+</script>
 
 
 
