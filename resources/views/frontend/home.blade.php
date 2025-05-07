@@ -111,40 +111,40 @@
             <!-- Resorts -->
             <div class="min-w-[250px]">
                 <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="{{ asset('images/ella.png') }}" alt="Resorts" class="w-full h-48 object-cover">
+                    <img src="{{ asset('images/resorts.jpg') }}" alt="Resorts" class="w-full h-48 object-cover">
                 </div>
                 <div class="mt-2">
-                    <h3 class="text-xl font-bold text-gray-800">Resorts</h3>
+                    <h6 class="text-base font-bold text-gray-800" style="font-family: 'Lato', sans-serif;">Resorts</h3>
                 </div>
             </div>
 
             <!-- Apartments -->
             <div class="min-w-[250px]">
                 <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="{{ asset('images/ella.png') }}" alt="Apartments" class="w-full h-48 object-cover">
+                    <img src="{{ asset('images/apartments.jpg') }}" alt="Apartments" class="w-full h-48 object-cover">
                 </div>
                 <div class="mt-2">
-                    <h3 class="text-xl font-bold text-gray-800">Apartments</h3>
+                    <h6 class="text-base font-bold text-gray-800" style="font-family: 'Lato', sans-serif;">Apartments</h3>
                 </div>
             </div>
 
             <!-- Hotels -->
             <div class="min-w-[250px]">
                 <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="{{ asset('images/ella.png') }}" alt="Hotels" class="w-full h-48 object-cover">
+                    <img src="{{ asset('images/hotels.jpg') }}" alt="Apartments" class="w-full h-48 object-cover">
                 </div>
                 <div class="mt-2">
-                    <h3 class="text-xl font-bold text-gray-800">Hotels</h3>
+                    <h6 class="text-base font-bold text-gray-800" style="font-family: 'Lato', sans-serif;">Hotels</h3>
                 </div>
             </div>
 
             <!-- Villas -->
             <div class="min-w-[250px]">
                 <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="{{ asset('images/ella.png') }}" alt="Villas" class="w-full h-48 object-cover">
+                    <img src="{{ asset('images/villas.jpg') }}" alt="Villas" class="w-full h-48 object-cover">
                 </div>
                 <div class="mt-2">
-                    <h3 class="text-xl font-bold text-gray-800">Villas</h3>
+                    <h6 class="text-base font-bold text-gray-800" style="font-family: 'Lato', sans-serif;">Villas</h3>
                 </div>
             </div>
         </div>
@@ -157,38 +157,38 @@
 <section class="py-12 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 class="text-2xl font-semibold text-gray-800 mb-2" style="font-family: 'Lato', sans-serif;">Browse by property type</h2>
-        <p class="mb-4 text-gray-600">These popular destinations have a lot to offer</p>
+        <p class="mb-4 text-gray-600" style="font-family: 'Lato', sans-serif;">These popular destinations have a lot to offer</p>
         <div class="flex space-x-4 overflow-x-auto pb-2">
             <!-- Kandy -->
             <div class="min-w-[220px]">
                 <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="{{ asset('images/ella.png') }}" alt="Kandy" class="w-full h-48 object-cover">
+                    <img src="{{ asset('images/kandy.jpg') }}" alt="Kandy" class="w-full h-48 object-cover">
                 </div>
                 <div class="mt-2">
-                    <h3 class="text-xl font-bold text-gray-800">Kandy</h3>
-                    <p class="text-gray-600">1,102 properties</p>
+                    <h3 class="text-base font-bold text-gray-800" style="font-family: 'Lato', sans-serif;">Kandy</h3>
+                    <p class="text-gray-600" style="font-family: 'Lato', sans-serif;">1,102 properties</p>
                 </div>
             </div>
 
             <!-- Colombo -->
             <div class="min-w-[220px]">
                 <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="{{ asset('images/ella.png') }}" alt="Colombo" class="w-full h-48 object-cover">
+                    <img src="{{ asset('images/colombo.jpg') }}" alt="Colombo" class="w-full h-48 object-cover">
                 </div>
                 <div class="mt-2">
-                    <h3 class="text-xl font-bold text-gray-800">Colombo</h3>
-                    <p class="text-gray-600">520 properties</p>
+                    <h3 class="text-base font-bold text-gray-800" style="font-family: 'Lato', sans-serif;">Colombo</h3>
+                    <p class="text-gray-600" style="font-family: 'Lato', sans-serif;">520 properties</p>
                 </div>
             </div>
 
             <!-- Nuwara Eliya -->
             <div class="min-w-[220px]">
                 <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="{{ asset('images/ella.png') }}" alt="Nuwara Eliya" class="w-full h-48 object-cover">
+                    <img src="{{ asset('images/nuwaraelliya.jpg') }}" alt="Nuwara Eliya" class="w-full h-48 object-cover">
                 </div>
                 <div class="mt-2">
-                    <h3 class="text-xl font-bold text-gray-800">Nuwara Eliya</h3>
-                    <p class="text-gray-600">900 properties</p>
+                    <h3 class="text-base font-bold text-gray-800" style="font-family: 'Lato', sans-serif;">Nuwara Eliya</h3>
+                    <p class="text-gray-600" style="font-family: 'Lato', sans-serif;">900 properties</p>
                 </div>
             </div>
 
@@ -198,30 +198,30 @@
                     <img src="{{ asset('images/ella.png') }}" alt="Ella" class="w-full h-48 object-cover">
                 </div>
                 <div class="mt-2">
-                    <h3 class="text-xl font-bold text-gray-800">Ella</h3>
-                    <p class="text-gray-600">841 properties</p>
+                    <h3 class="text-base font-bold text-gray-800" style="font-family: 'Lato', sans-serif;">Ella</h3>
+                    <p class="text-gray-600" style="font-family: 'Lato', sans-serif;">841 properties</p>
                 </div>
             </div>
 
             <!-- Galle -->
             <div class="min-w-[220px]">
                 <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="{{ asset('images/ella.png') }}" alt="Galle" class="w-full h-48 object-cover">
+                    <img src="{{ asset('images/galle.png') }}" alt="Galle" class="w-full h-48 object-cover">
                 </div>
                 <div class="mt-2">
-                    <h3 class="text-xl font-bold text-gray-800">Galle</h3>
-                    <p class="text-gray-600">1,200 properties</p>
+                    <h3 class="text-base font-bold text-gray-800" style="font-family: 'Lato', sans-serif;">Galle</h3>
+                    <p class="text-gray-600" style="font-family: 'Lato', sans-serif;">1,200 properties</p>
                 </div>
             </div>
 
             <!-- Negombo -->
             <div class="min-w-[220px]">
                 <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="{{ asset('images/ella.png') }}" alt="Negombo" class="w-full h-48 object-cover">
+                    <img src="{{ asset('images/negambo.png') }}" alt="Negombo" class="w-full h-48 object-cover">
                 </div>
                 <div class="mt-2">
-                    <h3 class="text-xl font-bold text-gray-800">Negombo</h3>
-                    <p class="text-gray-600">965 properties</p>
+                    <h3 class="text-base font-bold text-gray-800" style="font-family: 'Lato', sans-serif;">Negombo</h3>
+                    <p class="text-gray-600" style="font-family: 'Lato', sans-serif;">965 properties</p>
                 </div>
             </div>
         </div>
@@ -237,148 +237,127 @@
         </div>
 
         <!-- Category Buttons -->
-        <div class="flex space-x-4 mb-6">
+        <div class="flex flex-wrap gap-3 mb-6">
             <button id="beaches-btn" class="px-4 py-2 bg-blue-500 text-white rounded-full shadow-md flex items-center space-x-2" onclick="showCategory('beaches')">
-                <span class="text-lg">🌊</span>
-                <span>Beaches</span>
+                <span class="text-lg">🌊</span><span>Beaches</span>
             </button>
-            <button id="mountains-btn" class="px-4 py-2 bg-white rounded-full shadow-md flex items-center space-x-2" onclick="showCategory('mountains')">
-                <span class="text-lg">⛰️</span>
-                <span>Mountains</span>
+            <button id="mountains-btn" class="px-4 py-2 bg-white text-gray-800 rounded-full shadow-md flex items-center space-x-2" onclick="showCategory('mountains')">
+                <span class="text-lg">⛰️</span><span>Mountains</span>
             </button>
-            <button id="waterfalls-btn" class="px-4 py-2 bg-white rounded-full shadow-md flex items-center space-x-2" onclick="showCategory('waterfalls')">
-                <span class="text-lg">💦</span>
-                <span>Waterfalls</span>
+            <button id="waterfalls-btn" class="px-4 py-2 bg-white text-gray-800 rounded-full shadow-md flex items-center space-x-2" onclick="showCategory('waterfalls')">
+                <span class="text-lg">💦</span><span>Waterfalls</span>
             </button>
-            <button id="historical-btn" class="px-4 py-2 bg-white rounded-full shadow-md flex items-center space-x-2" onclick="showCategory('historical')">
-                <span class="text-lg">🏛️</span>
-                <span>Historical Sites</span>
+            <button id="historical-btn" class="px-4 py-2 bg-white text-gray-800 rounded-full shadow-md flex items-center space-x-2" onclick="showCategory('historical')">
+                <span class="text-lg">🏛️</span><span>Historical Sites</span>
             </button>
-            <button id="parks-btn" class="px-4 py-2 bg-white rounded-full shadow-md flex items-center space-x-2" onclick="showCategory('parks')">
-                <span class="text-lg">🌳</span>
-                <span>National Parks</span>
+            <button id="parks-btn" class="px-4 py-2 bg-white text-gray-800 rounded-full shadow-md flex items-center space-x-2" onclick="showCategory('parks')">
+                <span class="text-lg">🌳</span><span>National Parks</span>
             </button>
-            <button id="cultural-btn" class="px-4 py-2 bg-white rounded-full shadow-md flex items-center space-x-2" onclick="showCategory('cultural')">
-                <span class="text-lg">🎭</span>
-                <span>Cultural Places</span>
+            <button id="cultural-btn" class="px-4 py-2 bg-white text-gray-800 rounded-full shadow-md flex items-center space-x-2" onclick="showCategory('cultural')">
+                <span class="text-lg">🎭</span><span>Cultural Places</span>
             </button>
         </div>
 
-        <!-- Card Containers -->
-        <div id="beaches" class="grid grid-cols-6 gap-4 mb-8 card-container hidden">
-            <!-- Add 6 cards here for Beaches -->
-            <!-- Display all 6 cards in one row -->
-            <div class="flex space-x-4 overflow-x-auto pb-2">
-            <!-- Kandy -->
-            <div class="min-w-[220px]">
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="{{ asset('images/ella.png') }}" alt="Kandy" class="w-full h-48 object-cover">
+        <!-- Card Container Example for Beaches -->
+        <div id="beaches" class="card-container hidden">
+            <!-- Mobile: horizontal scroll; Large screen: grid -->
+            <div class="flex lg:grid lg:grid-cols-6 gap-4 overflow-x-auto pb-2">
+                <!-- Repeat this block for each card -->
+                <div class="min-w-[220px] flex-shrink-0">
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <img src="{{ asset('images/ella.png') }}" alt="Kandy" class="w-full h-48 object-cover">
+                    </div>
+                    <div class="mt-2">
+                        <h3 class="text-xl font-bold text-gray-800">Kandy</h3>
+                        <p class="text-gray-600">1,102 properties</p>
+                    </div>
                 </div>
-                <div class="mt-2">
-                    <h3 class="text-xl font-bold text-gray-800">Kandy</h3>
-                    <p class="text-gray-600">1,102 properties</p>
-                </div>
-            </div>
 
-            <!-- Colombo -->
-            <div class="min-w-[220px]">
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="{{ asset('images/ella.png') }}" alt="Colombo" class="w-full h-48 object-cover">
+                <!-- Repeat for other cities -->
+                <div class="min-w-[220px] flex-shrink-0">
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <img src="{{ asset('images/ella.png') }}" alt="Colombo" class="w-full h-48 object-cover">
+                    </div>
+                    <div class="mt-2">
+                        <h3 class="text-xl font-bold text-gray-800">Colombo</h3>
+                        <p class="text-gray-600">520 properties</p>
+                    </div>
                 </div>
-                <div class="mt-2">
-                    <h3 class="text-xl font-bold text-gray-800">Colombo</h3>
-                    <p class="text-gray-600">520 properties</p>
-                </div>
-            </div>
 
-            <!-- Nuwara Eliya -->
-            <div class="min-w-[220px]">
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="{{ asset('images/ella.png') }}" alt="Nuwara Eliya" class="w-full h-48 object-cover">
+                <div class="min-w-[220px] flex-shrink-0">
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <img src="{{ asset('images/ella.png') }}" alt="Nuwara Eliya" class="w-full h-48 object-cover">
+                    </div>
+                    <div class="mt-2">
+                        <h3 class="text-xl font-bold text-gray-800">Nuwara Eliya</h3>
+                        <p class="text-gray-600">900 properties</p>
+                    </div>
                 </div>
-                <div class="mt-2">
-                    <h3 class="text-xl font-bold text-gray-800">Nuwara Eliya</h3>
-                    <p class="text-gray-600">900 properties</p>
-                </div>
-            </div>
 
-            <!-- Ella -->
-            <div class="min-w-[220px]">
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="{{ asset('images/ella.png') }}" alt="Ella" class="w-full h-48 object-cover">
+                <div class="min-w-[220px] flex-shrink-0">
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <img src="{{ asset('images/ella.png') }}" alt="Ella" class="w-full h-48 object-cover">
+                    </div>
+                    <div class="mt-2">
+                        <h3 class="text-xl font-bold text-gray-800">Ella</h3>
+                        <p class="text-gray-600">841 properties</p>
+                    </div>
                 </div>
-                <div class="mt-2">
-                    <h3 class="text-xl font-bold text-gray-800">Ella</h3>
-                    <p class="text-gray-600">841 properties</p>
-                </div>
-            </div>
 
-            <!-- Galle -->
-            <div class="min-w-[220px]">
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="{{ asset('images/ella.png') }}" alt="Galle" class="w-full h-48 object-cover">
+                <div class="min-w-[220px] flex-shrink-0">
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <img src="{{ asset('images/ella.png') }}" alt="Galle" class="w-full h-48 object-cover">
+                    </div>
+                    <div class="mt-2">
+                        <h3 class="text-xl font-bold text-gray-800">Galle</h3>
+                        <p class="text-gray-600">1,200 properties</p>
+                    </div>
                 </div>
-                <div class="mt-2">
-                    <h3 class="text-xl font-bold text-gray-800">Galle</h3>
-                    <p class="text-gray-600">1,200 properties</p>
-                </div>
-            </div>
 
-            <!-- Negombo -->
-            <div class="min-w-[220px]">
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="{{ asset('images/ella.png') }}" alt="Negombo" class="w-full h-48 object-cover">
-                </div>
-                <div class="mt-2">
-                    <h3 class="text-xl font-bold text-gray-800">Negombo</h3>
-                    <p class="text-gray-600">965 properties</p>
+                <div class="min-w-[220px] flex-shrink-0">
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <img src="{{ asset('images/ella.png') }}" alt="Negombo" class="w-full h-48 object-cover">
+                    </div>
+                    <div class="mt-2">
+                        <h3 class="text-xl font-bold text-gray-800">Negombo</h3>
+                        <p class="text-gray-600">965 properties</p>
+                    </div>
                 </div>
             </div>
         </div>
-        <div id="mountains" class="grid grid-cols-6 gap-4 mb-8 card-container hidden">
-            <!-- Add 6 cards here for Mountains -->
-        </div>
 
-        <div id="waterfalls" class="grid grid-cols-6 gap-4 mb-8 card-container hidden">
-            <!-- Add 6 cards here for Waterfalls -->
-        </div>
-
-        <div id="historical" class="grid grid-cols-6 gap-4 mb-8 card-container hidden">
-            <!-- Add 6 cards here for Historical Sites -->
-        </div>
-
-        <div id="parks" class="grid grid-cols-6 gap-4 mb-8 card-container hidden">
-            <!-- Add 6 cards here for National Parks -->
-        </div>
-
-        <div id="cultural" class="grid grid-cols-6 gap-4 mb-8 card-container hidden">
-            <!-- Add 6 cards here for Cultural Places -->
-        </div>
+        <!-- Other category containers -->
+        <div id="mountains" class="card-container hidden"></div>
+        <div id="waterfalls" class="card-container hidden"></div>
+        <div id="historical" class="card-container hidden"></div>
+        <div id="parks" class="card-container hidden"></div>
+        <div id="cultural" class="card-container hidden"></div>
     </div>
 
     <script>
         function showCategory(id) {
-            // Hide all categories
+            // Hide all
             document.querySelectorAll('.card-container').forEach(container => {
                 container.classList.add('hidden');
             });
-            
-            // Remove active class from all buttons
+
+            // Deactivate all buttons
             document.querySelectorAll('button').forEach(btn => {
                 btn.classList.remove('bg-blue-500', 'text-white');
                 btn.classList.add('bg-white', 'text-gray-800');
             });
-            
-            // Show selected category
+
+            // Show selected
             document.getElementById(id).classList.remove('hidden');
-            
-            // Set active category button
+
+            // Activate selected button
             const activeButton = document.getElementById(`${id}-btn`);
             activeButton.classList.add('bg-blue-500', 'text-white');
             activeButton.classList.remove('bg-white', 'text-gray-800');
         }
     </script>
 </section>
+
 
 
 @endsection
