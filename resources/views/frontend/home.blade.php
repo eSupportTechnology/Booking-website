@@ -232,31 +232,42 @@
     <div class="container mx-auto px-4 py-8">
         <!-- Section Header -->
         <div class="mb-6">
-            <h2 class="text-3xl font-bold mb-2">Quick and easy trip planner</h2>
-            <p class="text-sm text-gray-600">Pick a vibe and explore top destinations in Sri Lanka</p>
+            <h2 class="text-3xl font-bold mb-2" style="font-family: 'Lato', sans-serif;">Quick and easy trip planner</h2>
+            <p class="text-sm text-gray-600" style="font-family: 'Lato', sans-serif;">Pick a vibe and explore top destinations in Sri Lanka</p>
         </div>
+<!-- Category Buttons -->
+<div class="flex flex-wrap gap-3 mb-6">
+    <button id="beaches-btn" class="px-4 py-2 bg-blue-500 text-white rounded-full shadow-md flex items-center space-x-3" onclick="showCategory('beaches')">
+        <img src="{{ asset('images/city.png') }}" alt="City" class="w-6 h-6" /> <!-- Add the small image here -->
+        <span style="font-family: 'Lato', sans-serif;">City</span>
+    </button>
 
-        <!-- Category Buttons -->
-        <div class="flex flex-wrap gap-3 mb-6">
-            <button id="beaches-btn" class="px-4 py-2 bg-blue-500 text-white rounded-full shadow-md flex items-center space-x-2" onclick="showCategory('beaches')">
-                <span class="text-lg">🌊</span><span>Beaches</span>
-            </button>
-            <button id="mountains-btn" class="px-4 py-2 bg-white text-gray-800 rounded-full shadow-md flex items-center space-x-2" onclick="showCategory('mountains')">
-                <span class="text-lg">⛰️</span><span>Mountains</span>
-            </button>
-            <button id="waterfalls-btn" class="px-4 py-2 bg-white text-gray-800 rounded-full shadow-md flex items-center space-x-2" onclick="showCategory('waterfalls')">
-                <span class="text-lg">💦</span><span>Waterfalls</span>
-            </button>
-            <button id="historical-btn" class="px-4 py-2 bg-white text-gray-800 rounded-full shadow-md flex items-center space-x-2" onclick="showCategory('historical')">
-                <span class="text-lg">🏛️</span><span>Historical Sites</span>
-            </button>
-            <button id="parks-btn" class="px-4 py-2 bg-white text-gray-800 rounded-full shadow-md flex items-center space-x-2" onclick="showCategory('parks')">
-                <span class="text-lg">🌳</span><span>National Parks</span>
-            </button>
-            <button id="cultural-btn" class="px-4 py-2 bg-white text-gray-800 rounded-full shadow-md flex items-center space-x-2" onclick="showCategory('cultural')">
-                <span class="text-lg">🎭</span><span>Cultural Places</span>
-            </button>
-        </div>
+    <button id="mountains-btn" class="px-4 py-2 bg-white text-gray-800 rounded-full shadow-md flex items-center space-x-3" onclick="showCategory('mountains')">
+        <img src="{{ asset('images/beach.png') }}" alt="Beach" class="w-6 h-6" />
+        <span style="font-family: 'Lato', sans-serif;">Beach</span>
+    </button>
+
+    <button id="waterfalls-btn" class="px-4 py-2 bg-white text-gray-800 rounded-full shadow-md flex items-center space-x-3" onclick="showCategory('waterfalls')">
+        <img src="{{ asset('images/outsides.png') }}" alt="Outdoors" class="w-6 h-6" />
+        <span style="font-family: 'Lato', sans-serif;">Outdoors</span>
+    </button>
+
+    <button id="historical-btn" class="px-4 py-2 bg-white text-gray-800 rounded-full shadow-md flex items-center space-x-3" onclick="showCategory('historical')">
+        <img src="{{ asset('images/relax.png') }}" alt="Relax" class="w-6 h-6" />
+        <span style="font-family: 'Lato', sans-serif;">Relax</span>
+    </button>
+
+    <button id="parks-btn" class="px-4 py-2 bg-white text-gray-800 rounded-full shadow-md flex items-center space-x-3" onclick="showCategory('parks')">
+        <img src="{{ asset('images/romance.png') }}" alt="Romance" class="w-6 h-6" />
+        <span style="font-family: 'Lato', sans-serif;">Romance</span>
+    </button>
+
+    <button id="cultural-btn" class="px-4 py-2 bg-white text-gray-800 rounded-full shadow-md flex items-center space-x-3" onclick="showCategory('cultural')">
+        <img src="{{ asset('images/food.png') }}" alt="Food" class="w-6 h-6" />
+        <span style="font-family: 'Lato', sans-serif;">Food</span>
+    </button>
+</div>
+
 
         <!-- Card Container Example for Beaches -->
         <div id="beaches" class="card-container hidden">
@@ -327,36 +338,106 @@
         </div>
 
         <!-- Other category containers -->
-        <div id="mountains" class="card-container hidden"></div>
+        <div id="mountains" class="card-container hidden"> <!-- Mobile: horizontal scroll; Large screen: grid -->
+            <div class="flex lg:grid lg:grid-cols-6 gap-4 overflow-x-auto pb-2">
+                <!-- Repeat this block for each card -->
+                <div class="min-w-[220px] flex-shrink-0">
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <img src="{{ asset('images/ella.png') }}" alt="Kandy" class="w-full h-48 object-cover">
+                    </div>
+                    <div class="mt-2">
+                        <h3 class="text-xl font-bold text-gray-800">Kandy</h3>
+                        <p class="text-gray-600">1,102 properties</p>
+                    </div>
+                </div>
+
+                <!-- Repeat for other cities -->
+                <div class="min-w-[220px] flex-shrink-0">
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <img src="{{ asset('images/ella.png') }}" alt="Colombo" class="w-full h-48 object-cover">
+                    </div>
+                    <div class="mt-2">
+                        <h3 class="text-xl font-bold text-gray-800">Colombo</h3>
+                        <p class="text-gray-600">520 properties</p>
+                    </div>
+                </div>
+
+                <div class="min-w-[220px] flex-shrink-0">
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <img src="{{ asset('images/ella.png') }}" alt="Nuwara Eliya" class="w-full h-48 object-cover">
+                    </div>
+                    <div class="mt-2">
+                        <h3 class="text-xl font-bold text-gray-800">Nuwara Eliya</h3>
+                        <p class="text-gray-600">900 properties</p>
+                    </div>
+                </div>
+
+                <div class="min-w-[220px] flex-shrink-0">
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <img src="{{ asset('images/ella.png') }}" alt="Ella" class="w-full h-48 object-cover">
+                    </div>
+                    <div class="mt-2">
+                        <h3 class="text-xl font-bold text-gray-800">Ella</h3>
+                        <p class="text-gray-600">841 properties</p>
+                    </div>
+                </div>
+
+                <div class="min-w-[220px] flex-shrink-0">
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <img src="{{ asset('images/ella.png') }}" alt="Galle" class="w-full h-48 object-cover">
+                    </div>
+                    <div class="mt-2">
+                        <h3 class="text-xl font-bold text-gray-800">Galle</h3>
+                        <p class="text-gray-600">1,200 properties</p>
+                    </div>
+                </div>
+
+                <div class="min-w-[220px] flex-shrink-0">
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <img src="{{ asset('images/ella.png') }}" alt="Negombo" class="w-full h-48 object-cover">
+                    </div>
+                    <div class="mt-2">
+                        <h3 class="text-xl font-bold text-gray-800">Negombo</h3>
+                        <p class="text-gray-600">965 properties</p>
+                    </div>
+                </div>
+            </div></div>
         <div id="waterfalls" class="card-container hidden"></div>
         <div id="historical" class="card-container hidden"></div>
         <div id="parks" class="card-container hidden"></div>
         <div id="cultural" class="card-container hidden"></div>
     </div>
 
-    <script>
-        function showCategory(id) {
-            // Hide all
-            document.querySelectorAll('.card-container').forEach(container => {
-                container.classList.add('hidden');
-            });
+   
+<script>
+    function showCategory(categoryId) {
+        // Hide all category containers
+        const categories = document.querySelectorAll('.card-container');
+        categories.forEach(container => container.classList.add('hidden'));
 
-            // Deactivate all buttons
-            document.querySelectorAll('button').forEach(btn => {
-                btn.classList.remove('bg-blue-500', 'text-white');
-                btn.classList.add('bg-white', 'text-gray-800');
-            });
-
-            // Show selected
-            document.getElementById(id).classList.remove('hidden');
-
-            // Activate selected button
-            const activeButton = document.getElementById(`${id}-btn`);
-            activeButton.classList.add('bg-blue-500', 'text-white');
-            activeButton.classList.remove('bg-white', 'text-gray-800');
+        // Show the selected category
+        const selected = document.getElementById(categoryId);
+        if (selected) {
+            selected.classList.remove('hidden');
         }
-    </script>
+
+        // Optional: Update button styles (active/inactive)
+        const buttons = document.querySelectorAll('button[id$="-btn"]');
+        buttons.forEach(btn => btn.classList.remove('bg-blue-500', 'text-white'));
+        buttons.forEach(btn => btn.classList.add('bg-white', 'text-gray-800'));
+
+        const activeButton = document.getElementById(categoryId + '-btn');
+        if (activeButton) {
+            activeButton.classList.remove('bg-white', 'text-gray-800');
+            activeButton.classList.add('bg-blue-500', 'text-blue');
+        }
+    }
+</script>
+
+
 </section>
+
+
 
 
 
