@@ -8,6 +8,13 @@ use Illuminate\Support\Facades\Route;
 
 
 
+
+Route::get('/login', function () {
+    return view('frontend.login');
+});
+Route::get('/', function () {
+    return view('frontend.home');
+});
 // routes/web.php
 Route::prefix('traveler')->group(function () {
 Route::get('/login', [TravelerLoginController::class, 'showLoginForm'])->name('traveler.login');
