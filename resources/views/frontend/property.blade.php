@@ -85,7 +85,8 @@
                     <p class="text-xs text-red-600 mt-1">Only 5 rooms left at this price</p>
                 </div>
                 <div class="flex flex-col justify-between text-right">
-                    <span class="text-sm text-gray-500 line-through">LKR 72,000</span>
+                <span class="text-sm text-gray-500 line-through">LKR 72,000</span>
+
                     <span class="text-xl font-bold text-red-600">LKR 46,500</span>
                     <span class="text-xs text-gray-500">+LKR 9,057 taxes and fees</span>
                     <button class="mt-2 bg-orange-500 hover:bg-orange-600 text-white px-4 py-1 rounded text-sm">See availability</button>
