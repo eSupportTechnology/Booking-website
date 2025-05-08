@@ -6,38 +6,69 @@
 
 <!-- Hero Section -->
 <div class="relative bg-cover bg-center" style="background-image: url('{{ asset('images/home.jpg') }}'); height: 700px;">
-    <!-- Overlay with 43% black -->
-    <div class="absolute inset-0" style="background-color: rgba(0, 72, 105, 0.43);"></div>
-    <!-- Content -->
-    <div class="relative z-10 flex flex-col items-center justify-center h-full text-white text-center">
-    <!-- Title Section -->
+  <div class="absolute inset-0" style="background-color: rgba(0, 72, 105, 0.43);"></div>
 
-    <h1 class="text-3xl md:text-4xl font-bold leading-snug" style="font-family: 'Lato', sans-serif; font-size:82px;margin-top:-200px;">
-    Find Your Perfect Stay <br>
-    <div class="mt-8 text-white">
-    <img src="{{ asset('images/1.png') }}" alt="Image" class="inline-block  mr-2" style="height:75px;width:75px;">Quick 
-        & <img src="{{ asset('images/2.png') }}" alt="Image" class="inline-block  ml-2" style="height:75px;width:75px;"> Easy!
-    </div>
-</h1>
+  <div class="relative z-10 flex flex-col items-center justify-center h-full text-white text-center">
 
+    <!-- Heading Section -->
+    <h1 class="text-3xl md:text-4xl font-bold leading-snug" style="font-family: 'Lato', sans-serif; font-size:82px; margin-top:-130px;">
+      Find Your Perfect Stay <br>
+      <div class="mt-8 text-white">
+        <img src="{{ asset('images/1.png') }}" alt="Image" class="inline-block mr-2" style="height:75px;width:75px;">Quick 
+        & 
+        <img src="{{ asset('images/2.png') }}" alt="Image" class="inline-block ml-2" style="height:75px;width:75px;"> Easy!
+      </div>
+    </h1>
 
+   <!-- Search Box Section -->
 
-    <!-- Search Box Section -->
-    <div class="mt-4 grid grid-cols-1 md:grid-cols-5 gap-2 bg-white p-4 rounded text-black shadow-lg w-95% md:w-4/5">
-        <input type="text" placeholder="Where are you going?" class="p-2 border rounded col-span-1 md:col-span-2">
-        <input type="text" placeholder="Check-in date — Check-out date" class="p-2 border rounded col-span-1 md:col-span-1">
-        <input type="text" placeholder="2 Adults . 0 Children . 1 Room" class="p-2 border rounded col-span-1 md:col-span-1">
-        <button class="bg-cyan-600 text-white px-4 py-2 rounded col-span-1">Search</button>
-    </div>
+<div class="mt-20 grid grid-cols-1 md:grid-cols-4 gap-4 bg-white p-4 rounded text-black shadow-lg w-9/12 md:w-4/5 mx-auto">
+
+  <!-- Location Button -->
+  <div class="flex">
+    <button class="flex items-center gap-2 p-2 rounded-md w-full" style="font-family: 'Lato', sans-serif; background-color: #D6ECFF;">
+      <img src="{{ asset('images/car.png') }}" alt="Search" class="h-7 w-7">
+      <span>Where are you going?</span>
+    </button>
+  </div>
+
+  <!-- Date Button -->
+  <div class="flex">
+    <button class="flex items-center gap-2 p-2 rounded-md w-full" style="font-family: 'Lato', sans-serif; background-color: #D6ECFF;">
+      <img src="{{ asset('images/calender.png') }}" alt="Search" class="h-6 w-6">
+      <span>Check-in date – Check-out date</span>
+    </button>
+  </div>
+
+  <!-- Guest Button -->
+  <div class="flex">
+    <button class="flex items-center gap-2 p-2 rounded-md w-full" style="font-family: 'Lato', sans-serif; background-color: #D6ECFF;">
+      <img src="{{ asset('images/user.png') }}" alt="Search" class="h-6 w-6">
+      <span>2 Adults · 0 Children · 1 Room</span>
+    </button>
+  </div>
+
+  <!-- Search Button -->
+  <div class="flex justify-end items-center">
+    <button class="bg-cyan-600 text-white px-6 py-2 rounded" style="width:60%;">
+      Search
+    </button>
+  </div>
+
 </div>
 
 
-   
 </div>
 
 
 
+  </div>
+
 </div>
+</div>
+</div>
+<!--End Hero Section-->
+
 
 <!-- Offers Section-->
 <section class="p-6 max-w-6xl mx-auto">

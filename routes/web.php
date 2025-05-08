@@ -15,6 +15,9 @@ Route::get('/login', function () {
 Route::get('/', function () {
     return view('frontend.home');
 });
+Route::get('/property', function () {
+    return view('frontend.property');
+});
 // routes/web.php
 Route::prefix('traveler')->group(function () {
 Route::get('/login', [TravelerLoginController::class, 'showLoginForm'])->name('traveler.login');

@@ -12,7 +12,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
 </head>
-<body class="font-sans bg-gray-100 text-gray-900">
+<body class="font-sans text-gray-900">
   <!-- Include Header -->
   @include('frontend.Header')
 
@@ -23,7 +23,7 @@
 
    
    
-
+@include('frontend.footer')
 </body>
 
 </html>
