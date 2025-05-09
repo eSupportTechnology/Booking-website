@@ -1,8 +1,9 @@
-@extends('frontend.master')
+@extends('frontend.user-master')
 
 @section('title', 'Home')
 
 @section('content')
+
 <div class="w-full bg-white py-6">
     
 
@@ -27,16 +28,7 @@
     </div>
 
     <!-- Search Summary -->
-    <div class="max-w-6xl mx-auto mt-6 px-4">
-        <h2 class="text-xl font-semibold">Nuwara Eliya: <span class="font-normal">430 properties found</span></h2>
-        <div class="mt-2 flex items-center justify-between text-sm">
-            <span class="text-gray-500">Sort by: <strong class="text-black">Our top picks</strong></span>
-            <div class="flex gap-2">
-                <button class="border px-2 py-1 rounded text-sm">List</button>
-                <button class="border px-2 py-1 rounded text-sm">Grid</button>
-            </div>
-        </div>
-    </div>
+   
 
     <!-- Main Content -->
     <div class="max-w-6xl mx-auto mt-6 px-4 grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -267,21 +259,45 @@
 
         <!-- Results Section -->
         <section class="md:col-span-3 space-y-4">
+ <div class="max-w-6xl mx-auto mt-6 px-4">
+        <h2 class="text-xl font-semibold">Nuwara Eliya: <span class="font-normal">430 properties found</span></h2>
+        <div class="mt-2 flex items-center justify-between text-sm">
+            <span class="text-gray-500">Sort by: <strong class="text-black">Our top picks</strong></span>
+            <div class="flex gap-2">
+                <button class="border px-2 py-1 rounded text-sm">List</button>
+                <button class="border px-2 py-1 rounded text-sm">Grid</button>
+            </div>
+        </div>
+    </div>
             <!-- Result Card -->
           <div class="border rounded-lg p-4 shadow-sm flex flex-col md:flex-row gap-4 bg-white">
-    <!-- Hotel Image -->
-    <img src="{{ asset('images/A.png') }}" alt="Hotel Image" class="w-full md:w-48 h-44 object-cover rounded-md">
+          <img src="{{ asset('images/A.png') }}" alt="Hotel Image" class="w-full md:w-52 h-54 object-cover rounded-md">
+          <div class="flex-1 flex flex-col justify-between">
+          <div class="flex justify-between items-start">
+<div>
+    <h3 class="font-semibold text-lg text-blue-700 flex items-center gap-1" style="color:#1F8FB2;">
+      Sandathenna by Secret Leisure
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M12 17.27L18.18 21l-1.63-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.45 4.73L5.82 21z"/>
+      </svg>
+    </h3>
+    <p class="text-sm text-gray-500">
+      Nuwara Eliya  
+      <a href="#" class="underline text-blue-500">Show on map</a>  
+      2.3 km from downtown
+    </p>
+  </div>
 
-    <!-- Info Section -->
-    <div class="flex-1 flex flex-col justify-between">
-        <!-- Title and Location -->
-        <div>
-            <h3 class="font-semibold text-lg text-blue-700 flex items-center gap-1">
-                Sandathenna by Secret Leisure
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-yellow-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.63-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.45 4.73L5.82 21z"/></svg>
-            </h3>
-            <p class="text-sm text-gray-500">Nuwara Eliya • <a href="#" class="underline text-blue-500">Show on map</a> • 2.3 km from downtown</p>
-        </div>
+  <!-- Rating block aligned to the right -->
+  <div class="flex items-center gap-2">
+    <div class="text-right">
+      <p class="text-black font-semibold leading-none">Excellent</p>
+      <p class="text-sm text-black leading-none">25 reviews</p>
+    </div>
+    <div class="bg-[#1F8FB2] text-white text-sm font-semibold px-2 py-1 rounded">8.6</div>
+  </div>
+</div>
+
 
         <!-- Deal Label -->
         <span class="inline-block bg-orange-500 text-white text-xs font-semibold px-2 py-0.5 rounded mt-2 w-max">
@@ -302,7 +318,7 @@
     </div>
 
     <!-- Price and Button Section -->
-    <div class="flex flex-col justify-between items-end text-right">
+    <div class="flex flex-col justify-between items-end text-right mt-16">
         <div>
             <span class="text-sm text-gray-400 line-through">LKR 71,880</span><br>
             <span class="text-xl font-bold text-red-600">LKR 46,500</span><br>

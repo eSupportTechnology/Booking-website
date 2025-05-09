@@ -18,6 +18,10 @@ Route::get('/', function () {
 Route::get('/property', function () {
     return view('frontend.property');
 });
+Route::get('/welcome', function () {
+    return view('frontend.welcomebox');
+});
+
 // routes/web.php
 Route::prefix('traveler')->group(function () {
 Route::get('/login', [TravelerLoginController::class, 'showLoginForm'])->name('traveler.login');
