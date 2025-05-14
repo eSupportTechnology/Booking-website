@@ -8,13 +8,13 @@
     
 
     <!-- Search Bar -->
-    <div class="max-w-6xl mx-auto bg-white shadow-md rounded-md px-4 py-4 grid grid-cols-1 md:grid-cols-5 gap-2">
+<div class="max-w-6xl mx-auto bg-white shadow-md rounded-md px-4 py-4 grid grid-cols-1 md:grid-cols-5 gap-2 border-4" style="border-color: #FFD000;">
         <div class="flex items-center bg-gray-100 rounded px-3 py-2 col-span-2">
             <img src="images/car.png" class="w-5 h-5 mr-2" alt="Location">
             <input type="text" placeholder="Nuwara Eliya" class="bg-transparent outline-none w-full text-sm" />
         </div>
 
-        <div class="flex items-center bg-gray-100 rounded px-3 py-2">
+        <div class="flex items-center bg-gray-100 rounded px-3 py-2" >
             <img src="images/calender.png" class="w-5 h-5 mr-2" alt="Calendar">
             <input type="text" placeholder="Tue, May 13 – Tue, May 15" class="bg-transparent outline-none w-full text-sm" />
         </div>
@@ -24,7 +24,7 @@
             <input type="text" placeholder="2 Adults · 0 Children · 1 Room" class="bg-transparent outline-none w-full text-sm" />
         </div>
 
-        <button class="bg-cyan-600 text-white px-4 py-2 rounded-md hover:bg-cyan-700 text-sm">Search</button>
+        <button class="bg-cyan-600 text-white px-4 py-1 rounded-md hover:bg-cyan-700 text-sm" style="height:40px;margin-top:7px;">Search</button>
     </div>
 
     <!-- Search Summary -->
@@ -330,6 +330,425 @@
     </div>
 </div>
 
+            <!-- Result Card -->
+          <div class="border rounded-lg p-4 shadow-sm flex flex-col md:flex-row gap-4 bg-white">
+          <img src="{{ asset('images/h3.png') }}" alt="Hotel Image" class="w-full md:w-52 h-54 object-cover rounded-md">
+          <div class="flex-1 flex flex-col justify-between">
+          <div class="flex justify-between items-start">
+<div>
+    <h3 class="font-semibold text-lg text-blue-700 flex items-center gap-1" style="color:#1F8FB2;">
+      Sandathenna by Secret Leisure
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M12 17.27L18.18 21l-1.63-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.45 4.73L5.82 21z"/>
+      </svg>
+    </h3>
+    <p class="text-sm text-gray-500">
+      Nuwara Eliya  
+      <a href="#" class="underline text-blue-500">Show on map</a>  
+      2.3 km from downtown
+    </p>
+  </div>
+
+  <!-- Rating block aligned to the right -->
+  <div class="flex items-center gap-2">
+    <div class="text-right">
+      <p class="text-black font-semibold leading-none">Excellent</p>
+      <p class="text-sm text-black leading-none">25 reviews</p>
+    </div>
+    <div class="bg-[#1F8FB2] text-white text-sm font-semibold px-2 py-1 rounded">8.6</div>
+  </div>
+</div>
+
+
+        <!-- Deal Label -->
+        <span class="inline-block bg-orange-500 text-white text-xs font-semibold px-2 py-0.5 rounded mt-2 w-max">
+            Limited-time Deal
+        </span>
+
+        <!-- Room Details -->
+        <div class="text-sm text-gray-700 mt-2">
+            <p class="font-semibold">Double Room with Lake View</p>
+            <p>2 beds (1 twin, 1 queen)</p>
+            <ul class="list-disc list-inside mt-1 text-[13px]">
+                <li class="text-red-600 font-medium">Breakfast Included</li>
+                <li class="text-red-600">Free cancellation</li>
+                <li><span class="text-red-600">No prepayment needed</span> - pay at the property</li>
+            </ul>
+            <p class="text-red-600 text-xs mt-1 font-semibold">Only 5 rooms left at this price on our site</p>
+        </div>
+    </div>
+
+    <!-- Price and Button Section -->
+    <div class="flex flex-col justify-between items-end text-right mt-16">
+        <div>
+            <span class="text-sm text-gray-400 line-through">LKR 71,880</span><br>
+            <span class="text-xl font-bold text-red-600">LKR 46,500</span><br>
+            <span class="text-xs text-gray-500">+LKR 9,057 taxes and fees</span>
+        </div>
+        <button class="bg-orange-500 hover:bg-orange-600 text-white text-sm px-4 py-1.5 rounded mt-2">
+            See availability
+        </button>
+    </div>
+</div>
+   <!-- Result Card -->
+          <div class="border rounded-lg p-4 shadow-sm flex flex-col md:flex-row gap-4 bg-white">
+          <img src="{{ asset('images/h.png') }}" alt="Hotel Image" class="w-full md:w-52 h-54 object-cover rounded-md">
+          <div class="flex-1 flex flex-col justify-between">
+          <div class="flex justify-between items-start">
+<div>
+    <h3 class="font-semibold text-lg text-blue-700 flex items-center gap-1" style="color:#1F8FB2;">
+      Sandathenna by Secret Leisure
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M12 17.27L18.18 21l-1.63-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.45 4.73L5.82 21z"/>
+      </svg>
+    </h3>
+    <p class="text-sm text-gray-500">
+      Nuwara Eliya  
+      <a href="#" class="underline text-blue-500">Show on map</a>  
+      2.3 km from downtown
+    </p>
+  </div>
+
+  <!-- Rating block aligned to the right -->
+  <div class="flex items-center gap-2">
+    <div class="text-right">
+      <p class="text-black font-semibold leading-none">Excellent</p>
+      <p class="text-sm text-black leading-none">25 reviews</p>
+    </div>
+    <div class="bg-[#1F8FB2] text-white text-sm font-semibold px-2 py-1 rounded">8.6</div>
+  </div>
+</div>
+
+
+        <!-- Deal Label -->
+        <span class="inline-block bg-orange-500 text-white text-xs font-semibold px-2 py-0.5 rounded mt-2 w-max">
+            Limited-time Deal
+        </span>
+
+        <!-- Room Details -->
+        <div class="text-sm text-gray-700 mt-2">
+            <p class="font-semibold">Double Room with Lake View</p>
+            <p>2 beds (1 twin, 1 queen)</p>
+            <ul class="list-disc list-inside mt-1 text-[13px]">
+                <li class="text-red-600 font-medium">Breakfast Included</li>
+                <li class="text-red-600">Free cancellation</li>
+                <li><span class="text-red-600">No prepayment needed</span> - pay at the property</li>
+            </ul>
+            <p class="text-red-600 text-xs mt-1 font-semibold">Only 5 rooms left at this price on our site</p>
+        </div>
+    </div>
+
+    <!-- Price and Button Section -->
+    <div class="flex flex-col justify-between items-end text-right mt-16">
+        <div>
+            <span class="text-sm text-gray-400 line-through">LKR 71,880</span><br>
+            <span class="text-xl font-bold text-red-600">LKR 46,500</span><br>
+            <span class="text-xs text-gray-500">+LKR 9,057 taxes and fees</span>
+        </div>
+        <button class="bg-orange-500 hover:bg-orange-600 text-white text-sm px-4 py-1.5 rounded mt-2">
+            See availability
+        </button>
+    </div>
+</div>
+   <!-- Result Card -->
+          <div class="border rounded-lg p-4 shadow-sm flex flex-col md:flex-row gap-4 bg-white">
+          <img src="{{ asset('images/h2.png') }}" alt="Hotel Image" class="w-full md:w-52 h-54 object-cover rounded-md">
+          <div class="flex-1 flex flex-col justify-between">
+          <div class="flex justify-between items-start">
+<div>
+    <h3 class="font-semibold text-lg text-blue-700 flex items-center gap-1" style="color:#1F8FB2;">
+      Sandathenna by Secret Leisure
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M12 17.27L18.18 21l-1.63-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.45 4.73L5.82 21z"/>
+      </svg>
+    </h3>
+    <p class="text-sm text-gray-500">
+      Nuwara Eliya  
+      <a href="#" class="underline text-blue-500">Show on map</a>  
+      2.3 km from downtown
+    </p>
+  </div>
+
+  <!-- Rating block aligned to the right -->
+  <div class="flex items-center gap-2">
+    <div class="text-right">
+      <p class="text-black font-semibold leading-none">Excellent</p>
+      <p class="text-sm text-black leading-none">25 reviews</p>
+    </div>
+    <div class="bg-[#1F8FB2] text-white text-sm font-semibold px-2 py-1 rounded">8.6</div>
+  </div>
+</div>
+
+
+        <!-- Deal Label -->
+        <span class="inline-block bg-orange-500 text-white text-xs font-semibold px-2 py-0.5 rounded mt-2 w-max">
+            Limited-time Deal
+        </span>
+
+        <!-- Room Details -->
+        <div class="text-sm text-gray-700 mt-2">
+            <p class="font-semibold">Double Room with Lake View</p>
+            <p>2 beds (1 twin, 1 queen)</p>
+            <ul class="list-disc list-inside mt-1 text-[13px]">
+                <li class="text-red-600 font-medium">Breakfast Included</li>
+                <li class="text-red-600">Free cancellation</li>
+                <li><span class="text-red-600">No prepayment needed</span> - pay at the property</li>
+            </ul>
+            <p class="text-red-600 text-xs mt-1 font-semibold">Only 5 rooms left at this price on our site</p>
+        </div>
+    </div>
+
+    <!-- Price and Button Section -->
+    <div class="flex flex-col justify-between items-end text-right mt-16">
+        <div>
+            <span class="text-sm text-gray-400 line-through">LKR 71,880</span><br>
+            <span class="text-xl font-bold text-red-600">LKR 46,500</span><br>
+            <span class="text-xs text-gray-500">+LKR 9,057 taxes and fees</span>
+        </div>
+        <button class="bg-orange-500 hover:bg-orange-600 text-white text-sm px-4 py-1.5 rounded mt-2">
+            See availability
+        </button>
+    </div>
+</div>
+   <!-- Result Card -->
+          <div class="border rounded-lg p-4 shadow-sm flex flex-col md:flex-row gap-4 bg-white">
+          <img src="{{ asset('images/h3.png') }}" alt="Hotel Image" class="w-full md:w-52 h-54 object-cover rounded-md">
+          <div class="flex-1 flex flex-col justify-between">
+          <div class="flex justify-between items-start">
+<div>
+    <h3 class="font-semibold text-lg text-blue-700 flex items-center gap-1" style="color:#1F8FB2;">
+      Sandathenna by Secret Leisure
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M12 17.27L18.18 21l-1.63-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.45 4.73L5.82 21z"/>
+      </svg>
+    </h3>
+    <p class="text-sm text-gray-500">
+      Nuwara Eliya  
+      <a href="#" class="underline text-blue-500">Show on map</a>  
+      2.3 km from downtown
+    </p>
+  </div>
+
+  <!-- Rating block aligned to the right -->
+  <div class="flex items-center gap-2">
+    <div class="text-right">
+      <p class="text-black font-semibold leading-none">Excellent</p>
+      <p class="text-sm text-black leading-none">25 reviews</p>
+    </div>
+    <div class="bg-[#1F8FB2] text-white text-sm font-semibold px-2 py-1 rounded">8.6</div>
+  </div>
+</div>
+
+
+        <!-- Deal Label -->
+        <span class="inline-block bg-orange-500 text-white text-xs font-semibold px-2 py-0.5 rounded mt-2 w-max">
+            Limited-time Deal
+        </span>
+
+        <!-- Room Details -->
+        <div class="text-sm text-gray-700 mt-2">
+            <p class="font-semibold">Double Room with Lake View</p>
+            <p>2 beds (1 twin, 1 queen)</p>
+            <ul class="list-disc list-inside mt-1 text-[13px]">
+                <li class="text-red-600 font-medium">Breakfast Included</li>
+                <li class="text-red-600">Free cancellation</li>
+                <li><span class="text-red-600">No prepayment needed</span> - pay at the property</li>
+            </ul>
+            <p class="text-red-600 text-xs mt-1 font-semibold">Only 5 rooms left at this price on our site</p>
+        </div>
+    </div>
+
+    <!-- Price and Button Section -->
+    <div class="flex flex-col justify-between items-end text-right mt-16">
+        <div>
+            <span class="text-sm text-gray-400 line-through">LKR 71,880</span><br>
+            <span class="text-xl font-bold text-red-600">LKR 46,500</span><br>
+            <span class="text-xs text-gray-500">+LKR 9,057 taxes and fees</span>
+        </div>
+        <button class="bg-orange-500 hover:bg-orange-600 text-white text-sm px-4 py-1.5 rounded mt-2">
+            See availability
+        </button>
+    </div>
+</div>   <!-- Result Card -->
+          <div class="border rounded-lg p-4 shadow-sm flex flex-col md:flex-row gap-4 bg-white">
+          <img src="{{ asset('images/A.png') }}" alt="Hotel Image" class="w-full md:w-52 h-54 object-cover rounded-md">
+          <div class="flex-1 flex flex-col justify-between">
+          <div class="flex justify-between items-start">
+<div>
+    <h3 class="font-semibold text-lg text-blue-700 flex items-center gap-1" style="color:#1F8FB2;">
+      Sandathenna by Secret Leisure
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M12 17.27L18.18 21l-1.63-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.45 4.73L5.82 21z"/>
+      </svg>
+    </h3>
+    <p class="text-sm text-gray-500">
+      Nuwara Eliya  
+      <a href="#" class="underline text-blue-500">Show on map</a>  
+      2.3 km from downtown
+    </p>
+  </div>
+
+  <!-- Rating block aligned to the right -->
+  <div class="flex items-center gap-2">
+    <div class="text-right">
+      <p class="text-black font-semibold leading-none">Excellent</p>
+      <p class="text-sm text-black leading-none">25 reviews</p>
+    </div>
+    <div class="bg-[#1F8FB2] text-white text-sm font-semibold px-2 py-1 rounded">8.6</div>
+  </div>
+</div>
+
+
+        <!-- Deal Label -->
+        <span class="inline-block bg-orange-500 text-white text-xs font-semibold px-2 py-0.5 rounded mt-2 w-max">
+            Limited-time Deal
+        </span>
+
+        <!-- Room Details -->
+        <div class="text-sm text-gray-700 mt-2">
+            <p class="font-semibold">Double Room with Lake View</p>
+            <p>2 beds (1 twin, 1 queen)</p>
+            <ul class="list-disc list-inside mt-1 text-[13px]">
+                <li class="text-red-600 font-medium">Breakfast Included</li>
+                <li class="text-red-600">Free cancellation</li>
+                <li><span class="text-red-600">No prepayment needed</span> - pay at the property</li>
+            </ul>
+            <p class="text-red-600 text-xs mt-1 font-semibold">Only 5 rooms left at this price on our site</p>
+        </div>
+    </div>
+
+    <!-- Price and Button Section -->
+    <div class="flex flex-col justify-between items-end text-right mt-16">
+        <div>
+            <span class="text-sm text-gray-400 line-through">LKR 71,880</span><br>
+            <span class="text-xl font-bold text-red-600">LKR 46,500</span><br>
+            <span class="text-xs text-gray-500">+LKR 9,057 taxes and fees</span>
+        </div>
+        <button class="bg-orange-500 hover:bg-orange-600 text-white text-sm px-4 py-1.5 rounded mt-2">
+            See availability
+        </button>
+    </div>
+</div>
+    <!-- Result Card -->
+          <div class="border rounded-lg p-4 shadow-sm flex flex-col md:flex-row gap-4 bg-white">
+          <img src="{{ asset('images/A.png') }}" alt="Hotel Image" class="w-full md:w-52 h-54 object-cover rounded-md">
+          <div class="flex-1 flex flex-col justify-between">
+          <div class="flex justify-between items-start">
+<div>
+    <h3 class="font-semibold text-lg text-blue-700 flex items-center gap-1" style="color:#1F8FB2;">
+      Sandathenna by Secret Leisure
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M12 17.27L18.18 21l-1.63-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.45 4.73L5.82 21z"/>
+      </svg>
+    </h3>
+    <p class="text-sm text-gray-500">
+      Nuwara Eliya  
+      <a href="#" class="underline text-blue-500">Show on map</a>  
+      2.3 km from downtown
+    </p>
+  </div>
+
+  <!-- Rating block aligned to the right -->
+  <div class="flex items-center gap-2">
+    <div class="text-right">
+      <p class="text-black font-semibold leading-none">Excellent</p>
+      <p class="text-sm text-black leading-none">25 reviews</p>
+    </div>
+    <div class="bg-[#1F8FB2] text-white text-sm font-semibold px-2 py-1 rounded">8.6</div>
+  </div>
+</div>
+
+
+        <!-- Deal Label -->
+        <span class="inline-block bg-orange-500 text-white text-xs font-semibold px-2 py-0.5 rounded mt-2 w-max">
+            Limited-time Deal
+        </span>
+
+        <!-- Room Details -->
+        <div class="text-sm text-gray-700 mt-2">
+            <p class="font-semibold">Double Room with Lake View</p>
+            <p>2 beds (1 twin, 1 queen)</p>
+            <ul class="list-disc list-inside mt-1 text-[13px]">
+                <li class="text-red-600 font-medium">Breakfast Included</li>
+                <li class="text-red-600">Free cancellation</li>
+                <li><span class="text-red-600">No prepayment needed</span> - pay at the property</li>
+            </ul>
+            <p class="text-red-600 text-xs mt-1 font-semibold">Only 5 rooms left at this price on our site</p>
+        </div>
+    </div>
+
+    <!-- Price and Button Section -->
+    <div class="flex flex-col justify-between items-end text-right mt-16">
+        <div>
+            <span class="text-sm text-gray-400 line-through">LKR 71,880</span><br>
+            <span class="text-xl font-bold text-red-600">LKR 46,500</span><br>
+            <span class="text-xs text-gray-500">+LKR 9,057 taxes and fees</span>
+        </div>
+        <button class="bg-orange-500 hover:bg-orange-600 text-white text-sm px-4 py-1.5 rounded mt-2">
+            See availability
+        </button>
+    </div>
+</div>
+    <!-- Result Card -->
+          <div class="border rounded-lg p-4 shadow-sm flex flex-col md:flex-row gap-4 bg-white">
+          <img src="{{ asset('images/A.png') }}" alt="Hotel Image" class="w-full md:w-52 h-54 object-cover rounded-md">
+          <div class="flex-1 flex flex-col justify-between">
+          <div class="flex justify-between items-start">
+<div>
+    <h3 class="font-semibold text-lg text-blue-700 flex items-center gap-1" style="color:#1F8FB2;">
+      Sandathenna by Secret Leisure
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M12 17.27L18.18 21l-1.63-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.45 4.73L5.82 21z"/>
+      </svg>
+    </h3>
+    <p class="text-sm text-gray-500">
+      Nuwara Eliya  
+      <a href="#" class="underline text-blue-500">Show on map</a>  
+      2.3 km from downtown
+    </p>
+  </div>
+
+  <!-- Rating block aligned to the right -->
+  <div class="flex items-center gap-2">
+    <div class="text-right">
+      <p class="text-black font-semibold leading-none">Excellent</p>
+      <p class="text-sm text-black leading-none">25 reviews</p>
+    </div>
+    <div class="bg-[#1F8FB2] text-white text-sm font-semibold px-2 py-1 rounded">8.6</div>
+  </div>
+</div>
+
+
+        <!-- Deal Label -->
+        <span class="inline-block bg-orange-500 text-white text-xs font-semibold px-2 py-0.5 rounded mt-2 w-max">
+            Limited-time Deal
+        </span>
+
+        <!-- Room Details -->
+        <div class="text-sm text-gray-700 mt-2">
+            <p class="font-semibold">Double Room with Lake View</p>
+            <p>2 beds (1 twin, 1 queen)</p>
+            <ul class="list-disc list-inside mt-1 text-[13px]">
+                <li class="text-red-600 font-medium">Breakfast Included</li>
+                <li class="text-red-600">Free cancellation</li>
+                <li><span class="text-red-600">No prepayment needed</span> - pay at the property</li>
+            </ul>
+            <p class="text-red-600 text-xs mt-1 font-semibold">Only 5 rooms left at this price on our site</p>
+        </div>
+    </div>
+
+    <!-- Price and Button Section -->
+    <div class="flex flex-col justify-between items-end text-right mt-16">
+        <div>
+            <span class="text-sm text-gray-400 line-through">LKR 71,880</span><br>
+            <span class="text-xl font-bold text-red-600">LKR 46,500</span><br>
+            <span class="text-xs text-gray-500">+LKR 9,057 taxes and fees</span>
+        </div>
+        <button class="bg-orange-500 hover:bg-orange-600 text-white text-sm px-4 py-1.5 rounded mt-2">
+            See availability
+        </button>
+    </div>
+</div>
         </section>
     </div>
 </div>

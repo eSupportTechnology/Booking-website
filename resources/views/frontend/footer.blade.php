@@ -50,15 +50,15 @@
                 </div>
 
                 <!-- Column 4: About -->
-                <div>
+                <div >
                     <h3 class="text-lg font-bold mb-2">About</h3>
                     <ul class="list-none">
-                        <li class="mb-1"><a href="#" class="text-gray-500 hover:text-gray-700">About HorizonStay</a></li>
-                        <li class="mb-1"><a href="#" class="text-gray-500 hover:text-gray-700">How we work</a></li>
-                        <li class="mb-1"><a href="#" class="text-gray-500 hover:text-gray-700">Sustainabilities</a></li>
-                        <li class="mb-1"><a href="#" class="text-gray-500 hover:text-gray-700">Careers</a></li>
-                        <li class="mb-1"><a href="#" class="text-gray-500 hover:text-gray-700">Investor relations</a></li>
-                        <li class="mb-1"><a href="#" class="text-gray-500 hover:text-gray-700">Corporate Contact</a></li>
+                        <li class="mb-1 "><a href="#" class="text-gray-500 hover:text-gray-700">About HorizonStay</a></li>
+                        <li class="mb-1 "><a href="#" class="text-gray-500 hover:text-gray-700">How we work</a></li>
+                        <li class="mb-1 "><a href="#" class="text-gray-500 hover:text-gray-700">Sustainabilities</a></li>
+                        <li class="mb-1 "><a href="#" class="text-gray-500 hover:text-gray-700">Careers</a></li>
+                        <li class="mb-1 "><a href="#" class="text-gray-500 hover:text-gray-700">Investor relations</a></li>
+                        <li class="mb-1 "><a href="#" class="text-gray-500 hover:text-gray-700">Corporate Contact</a></li>
                     </ul>
                 </div>
             </div>

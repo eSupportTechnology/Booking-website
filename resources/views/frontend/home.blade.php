@@ -1,5 +1,23 @@
 @extends('frontend.master')
+<style>
 
+
+    .tab-button {
+        padding: 0.5rem 1rem;
+        border-radius: 0.375rem;
+        border: 2px solid transparent;
+        background-color: white; /* gray-200 */
+        color: #4B5563; /* gray-600 */
+        transition: all 0.2s;
+    }
+
+    .active-tab {
+        background-color: white; /* blue-500 */
+        color: rgb(31, 143, 178);;
+        border-color: rgb(31, 143, 178);;
+    }
+
+</style>
 @section('title', 'Home')
 
 @section('content')
@@ -207,275 +225,247 @@
 
 
 <!-- Browse by Popular Destinations Section-->
-<section class="py-12 bg-white">
+<section class="py-12 bg-white relative">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 class="text-2xl font-semibold text-gray-800 mb-2" style="font-family: 'Lato', sans-serif;">Browse by property type</h2>
         <p class="mb-4 text-gray-600" style="font-family: 'Lato', sans-serif;">These popular destinations have a lot to offer</p>
-        <div class="flex space-x-4 overflow-x-auto pb-2">
-            <!-- Kandy -->
-            <div class="min-w-[220px]">
+        
+        <!-- Arrow buttons -->
+        <button id="scrollLeft" class="absolute left-4 top-1/2 transform -translate-y-1/2 z-10 bg-white p-2 shadow rounded-full hidden sm:block">
+            &#8592;
+        </button>
+        <button id="scrollRight" class="absolute right-4 top-1/2 transform -translate-y-1/2 z-10 bg-white p-2 shadow rounded-full hidden sm:block">
+            &#8594;
+        </button>
+
+        <!-- Scrollable container -->
+        <div id="scrollContainer" class="flex space-x-4 overflow-x-hidden pb-2 transition-all duration-300">
+            <!-- Example card: Kandy -->
+            <div class="min-w-[220px] shrink-0">
                 <div class="bg-white rounded-lg shadow-md overflow-hidden">
                     <img src="{{ asset('images/kandy.jpg') }}" alt="Kandy" class="w-full h-48 object-cover">
                 </div>
                 <div class="mt-2">
-                    <h3 class="text-base font-bold text-gray-800" style="font-family: 'Lato', sans-serif;">Kandy</h3>
-                    <p class="text-gray-600" style="font-family: 'Lato', sans-serif;">1,102 properties</p>
+                    <h3 class="text-base font-bold text-gray-800">Kandy</h3>
+                    <p class="text-gray-600">1,102 properties</p>
                 </div>
             </div>
-
-            <!-- Colombo -->
-            <div class="min-w-[220px]">
+             <div class="min-w-[220px] shrink-0">
                 <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="{{ asset('images/colombo.jpg') }}" alt="Colombo" class="w-full h-48 object-cover">
+                    <img src="{{ asset('images/kandy.jpg') }}" alt="Kandy" class="w-full h-48 object-cover">
                 </div>
                 <div class="mt-2">
-                    <h3 class="text-base font-bold text-gray-800" style="font-family: 'Lato', sans-serif;">Colombo</h3>
-                    <p class="text-gray-600" style="font-family: 'Lato', sans-serif;">520 properties</p>
+                    <h3 class="text-base font-bold text-gray-800">Kandy</h3>
+                    <p class="text-gray-600">1,102 properties</p>
                 </div>
-            </div>
-
-            <!-- Nuwara Eliya -->
-            <div class="min-w-[220px]">
+            </div> <div class="min-w-[220px] shrink-0">
                 <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="{{ asset('images/nuwaraelliya.jpg') }}" alt="Nuwara Eliya" class="w-full h-48 object-cover">
+                    <img src="{{ asset('images/kandy.jpg') }}" alt="Kandy" class="w-full h-48 object-cover">
                 </div>
                 <div class="mt-2">
-                    <h3 class="text-base font-bold text-gray-800" style="font-family: 'Lato', sans-serif;">Nuwara Eliya</h3>
-                    <p class="text-gray-600" style="font-family: 'Lato', sans-serif;">900 properties</p>
+                    <h3 class="text-base font-bold text-gray-800">Kandy</h3>
+                    <p class="text-gray-600">1,102 properties</p>
                 </div>
-            </div>
-
-            <!-- Ella -->
-            <div class="min-w-[220px]">
+            </div> <div class="min-w-[220px] shrink-0">
                 <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="{{ asset('images/ella.png') }}" alt="Ella" class="w-full h-48 object-cover">
+                    <img src="{{ asset('images/kandy.jpg') }}" alt="Kandy" class="w-full h-48 object-cover">
                 </div>
                 <div class="mt-2">
-                    <h3 class="text-base font-bold text-gray-800" style="font-family: 'Lato', sans-serif;">Ella</h3>
-                    <p class="text-gray-600" style="font-family: 'Lato', sans-serif;">841 properties</p>
+                    <h3 class="text-base font-bold text-gray-800">Kandy</h3>
+                    <p class="text-gray-600">1,102 properties</p>
                 </div>
-            </div>
-
-            <!-- Galle -->
-            <div class="min-w-[220px]">
+            </div> <div class="min-w-[220px] shrink-0">
                 <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="{{ asset('images/galle.png') }}" alt="Galle" class="w-full h-48 object-cover">
+                    <img src="{{ asset('images/kandy.jpg') }}" alt="Kandy" class="w-full h-48 object-cover">
                 </div>
                 <div class="mt-2">
-                    <h3 class="text-base font-bold text-gray-800" style="font-family: 'Lato', sans-serif;">Galle</h3>
-                    <p class="text-gray-600" style="font-family: 'Lato', sans-serif;">1,200 properties</p>
+                    <h3 class="text-base font-bold text-gray-800">Kandy</h3>
+                    <p class="text-gray-600">1,102 properties</p>
                 </div>
-            </div>
-
-            <!-- Negombo -->
-            <div class="min-w-[220px]">
+            </div> <div class="min-w-[220px] shrink-0">
                 <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="{{ asset('images/negambo.png') }}" alt="Negombo" class="w-full h-48 object-cover">
+                    <img src="{{ asset('images/kandy.jpg') }}" alt="Kandy" class="w-full h-48 object-cover">
                 </div>
                 <div class="mt-2">
-                    <h3 class="text-base font-bold text-gray-800" style="font-family: 'Lato', sans-serif;">Negombo</h3>
-                    <p class="text-gray-600" style="font-family: 'Lato', sans-serif;">965 properties</p>
+                    <h3 class="text-base font-bold text-gray-800">Kandy</h3>
+                    <p class="text-gray-600">1,102 properties</p>
                 </div>
             </div>
+            <!-- Repeat other cities (Colombo, Nuwara Eliya, etc.) here... -->
+            <!-- Just like your original HTML content -->
+            <!-- Make sure all cards have class: `min-w-[220px] shrink-0` -->
         </div>
     </div>
+
+    <!-- JavaScript for scrolling -->
+   <!-- <script>
+        const container = document.getElementById('scrollContainer');
+        const scrollLeftBtn = document.getElementById('scrollLeft');
+        const scrollRightBtn = document.getElementById('scrollRight');
+
+        scrollLeftBtn.addEventListener('click', () => {
+            container.scrollBy({ left: -250, behavior: 'smooth' });
+        });
+
+        scrollRightBtn.addEventListener('click', () => {
+            container.scrollBy({ left: 250, behavior: 'smooth' });
+        });
+    </script>-->
 </section>
+
 <!--End Popular Destination Section-->
 
 
 
 
-<!--Popular with Travellers-->
 <section class="py-12 bg-white">
     <div class="container mx-auto px-4 py-8">
-        <!-- Section Header -->
+
         <div class="mb-6">
-        <h2 class="text-2xl font-semibold text-gray-800 mb-2" style="font-family: 'Lato', sans-serif;">Browse by property type</h2>
-            <p class="text-sm text-gray-600" style="font-family: 'Lato', sans-serif;">Pick a vibe and explore top destinations in Sri Lanka</p>
+            <h2 class="text-2xl font-semibold text-gray-800 mb-2" style="font-family: 'Lato', sans-serif;">
+                Browse by property type
+            </h2>
+            <p class="text-sm text-gray-600" style="font-family: 'Lato', sans-serif;">
+                Pick a vibe and explore top destinations in Sri Lanka
+            </p>
         </div>
 
-        <!-- Tabs -->
-        <div class="flex space-x-4 overflow-x-auto mb-4">
-        <button id="tab-domestic"
-        class="rounded-full tab-button active-tab flex items-center gap-2 px-4 py-2"
-        style="font-family: 'Lato', sans-serif;"
-        onclick="toggleTab('domestic')">
-        <img src="{{ asset('images/beach.png') }}" alt="Beach" class="w-6 h-6" />
-        <span>Beach</span>
-        </button>
+        <!-- Tab Buttons -->
+        <div class="flex flex-wrap gap-2 mb-6">
+            <button id="ptype-tab-beach"
+                class="rounded-full ptype-tab-button active-ptype-tab flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-700"
+                onclick="togglePtypeTab('beach')">
+                <img src="{{ asset('images/beach.png') }}" alt="Beach" class="w-6 h-6" />
+                <span>Beach</span>
+            </button>
 
-        <button id="tab-international"
-        class="rounded-full tab-button active-tab flex items-center gap-2 px-4 py-2"
-        style="font-family: 'Lato', sans-serif;"
-        onclick="toggleTab('international')">
-        <img src="{{ asset('images/outsides.png') }}" alt="Beach" class="w-6 h-6" />
-        <span>Outdoors</span>
-        </button>
+            <button id="ptype-tab-outdoors"
+                class="rounded-full ptype-tab-button flex items-center gap-2 px-4 py-2"
+                onclick="togglePtypeTab('outdoors')">
+                <img src="{{ asset('images/outsides.png') }}" alt="Outdoors" class="w-6 h-6" />
+                <span>Outdoors</span>
+            </button>
 
-        <button id="tab-regions"
-        class="rounded-full tab-button active-tab flex items-center gap-2 px-4 py-2"
-        style="font-family: 'Lato', sans-serif;"
-        onclick="toggleTab('regions')">
-        <img src="{{ asset('images/relax.png') }}" alt="Beach" class="w-6 h-6" />
-        <span>Relax</span>
-        </button>
+            <button id="ptype-tab-relax"
+                class="rounded-full ptype-tab-button flex items-center gap-2 px-4 py-2"
+                onclick="togglePtypeTab('relax')">
+                <img src="{{ asset('images/relax.png') }}" alt="Relax" class="w-6 h-6" />
+                <span>Relax</span>
+            </button>
 
-        <button id="tab-countries"
-        class="rounded-full tab-button active-tab flex items-center gap-2 px-4 py-2"
-        style="font-family: 'Lato', sans-serif;"
-        onclick="toggleTab('countries')">
-        <img src="{{ asset('images/romance.png') }}" alt="Beach" class="w-6 h-6" />
-        <span>Romance</span>
-        </button>
+            <button id="ptype-tab-romance"
+                class="rounded-full ptype-tab-button flex items-center gap-2 px-4 py-2"
+                onclick="togglePtypeTab('romance')">
+                <img src="{{ asset('images/romance.png') }}" alt="Romance" class="w-6 h-6" />
+                <span>Romance</span>
+            </button>
 
-        <button id="tab-places"
-        class="rounded-full tab-button active-tab flex items-center gap-2 px-4 py-2"
-        style="font-family: 'Lato', sans-serif;"
-        onclick="toggleTab('places')">
-        <img src="{{ asset('images/food.png') }}" alt="Beach" class="w-6 h-6" />
-        <span>Food</span>
-        </button>
-           
-           
+            <button id="ptype-tab-food"
+                class="rounded-full ptype-tab-button flex items-center gap-2 px-4 py-2"
+                onclick="togglePtypeTab('food')">
+                <img src="{{ asset('images/food.png') }}" alt="Food" class="w-6 h-6" />
+                <span>Food</span>
+            </button>
         </div>
 
-        <!-- Content Panels -->
-        <div id="tab-content" class="mt-4">
-            <!-- Domestic -->
-     
-            <div  id="content-domestic"  style="font-family: 'Lato', sans-serif;">
-            <div class="flex lg:grid lg:grid-cols-6 gap-4 overflow-x-auto pb-2">
-                <!-- Repeat this block for each card -->
-                <div class="min-w-[220px] flex-shrink-0">
-                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                        <img src="{{ asset('images/ella.png') }}" alt="Kandy" class="w-full h-48 object-cover">
-                    </div>
-                    <div class="mt-2">
-                        <h3 class="text-xl font-bold text-gray-800">Kandy</h3>
-                        <p class="text-gray-600">1,102 properties</p>
-                    </div>
+        <!-- Tab Contents -->
+        <div id="ptype-tab-content">
+            <!-- Beach Tab -->
+            <div id="ptype-content-beach" class="relative px-2 py-6">
+                <!-- Left Arrow -->
+                <button id="scrollLeftBeach"
+                    class="absolute left-2 top-1/2 transform -translate-y-1/2 z-10 bg-white shadow-md rounded-full p-2 hidden lg:block">
+                    &#8592;
+                </button>
+
+                <!-- Scrollable Content -->
+                <div id="scrollBeach"
+                    class="flex overflow-x-auto scroll-smooth gap-4 pb-2 no-scrollbar">
+                    @foreach ([
+                        ['name' => 'Kandy', 'properties' => 1102],
+                        ['name' => 'Colombo', 'properties' => 520],
+                        ['name' => 'Nuwara Eliya', 'properties' => 900],
+                        ['name' => 'Ella', 'properties' => 841],
+                        ['name' => 'Galle', 'properties' => 1200],
+                    ] as $city)
+                        <div class="min-w-[220px] flex-shrink-0">
+                            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                                <img src="{{ asset('images/ella.png') }}"
+                                    alt="{{ $city['name'] }}"
+                                    class="w-full h-48 object-cover">
+                            </div>
+                            <div class="mt-2">
+                                <h3 class="text-xl font-bold text-gray-800">{{ $city['name'] }}</h3>
+                                <p class="text-gray-600">{{ number_format($city['properties']) }} properties</p>
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
 
-                <!-- Repeat for other cities -->
-                <div class="min-w-[220px] flex-shrink-0">
-                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                        <img src="{{ asset('images/ella.png') }}" alt="Colombo" class="w-full h-48 object-cover">
-                    </div>
-                    <div class="mt-2">
-                        <h3 class="text-xl font-bold text-gray-800">Colombo</h3>
-                        <p class="text-gray-600">520 properties</p>
-                    </div>
-                </div>
-
-                <div class="min-w-[220px] flex-shrink-0">
-                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                        <img src="{{ asset('images/ella.png') }}" alt="Nuwara Eliya" class="w-full h-48 object-cover">
-                    </div>
-                    <div class="mt-2">
-                        <h3 class="text-xl font-bold text-gray-800">Nuwara Eliya</h3>
-                        <p class="text-gray-600">900 properties</p>
-                    </div>
-                </div>
-
-                <div class="min-w-[220px] flex-shrink-0">
-                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                        <img src="{{ asset('images/ella.png') }}" alt="Ella" class="w-full h-48 object-cover">
-                    </div>
-                    <div class="mt-2">
-                        <h3 class="text-xl font-bold text-gray-800">Ella</h3>
-                        <p class="text-gray-600">841 properties</p>
-                    </div>
-                </div>
-
-                <div class="min-w-[220px] flex-shrink-0">
-                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                        <img src="{{ asset('images/ella.png') }}" alt="Galle" class="w-full h-48 object-cover">
-                    </div>
-                    <div class="mt-2">
-                        <h3 class="text-xl font-bold text-gray-800">Galle</h3>
-                        <p class="text-gray-600">1,200 properties</p>
-                    </div>
-                </div>
-
-                <div class="min-w-[220px] flex-shrink-0">
-                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                        <img src="{{ asset('images/ella.png') }}" alt="Negombo" class="w-full h-48 object-cover">
-                    </div>
-                    <div class="mt-2">
-                        <h3 class="text-xl font-bold text-gray-800">Negombo</h3>
-                        <p class="text-gray-600">965 properties</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-</div>
-
-    </div>
-           
-
-            <!-- International -->
-            <div id="content-international" class="grid grid-cols-5 gap-4 hidden">
-             
+                <!-- Right Arrow -->
+                <button id="scrollRightBeach"
+                    class="absolute right-2 top-1/2 transform -translate-y-1/2 z-10 bg-white shadow-md rounded-full p-2 hidden lg:block">
+                    &#8594;
+                </button>
             </div>
 
-            <!-- Regions -->
-            <div id="content-regions" class="grid grid-cols-5 gap-4 hidden">
-               
-               
-            </div>
-
-            <!-- Countries -->
-            <div id="content-countries" class="grid grid-cols-5 gap-4 hidden">
-               
-                
-               
-               
-            </div>
-            <div id="content-international" class="grid grid-cols-5 gap-4 hidden">
-              
-            </div>
-
+            <!-- Other Tabs -->
+            <div id="ptype-content-outdoors" class="hidden px-2 py-6">Outdoors content here...</div>
+            <div id="ptype-content-relax" class="hidden px-2 py-6">Relax content here...</div>
+            <div id="ptype-content-romance" class="hidden px-2 py-6">Romance content here...</div>
+            <div id="ptype-content-food" class="hidden px-2 py-6">Food content here...</div>
         </div>
     </div>
-</div>
 
-<!-- Tailwind Styling for Tab Buttons -->
-<style>
-    .tab-button {
-        padding: 0.5rem 1rem;
-        border-radius: 0.375rem;
-        border: 2px solid transparent;
-        background-color: white; /* gray-200 */
-        color: #4B5563; /* gray-600 */
-        transition: all 0.2s;
-    }
+    <!-- Tailwind utility to hide scrollbar -->
+    <style>
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
 
-    .active-tab {
-        background-color: white; /* blue-500 */
-        color: rgb(31, 143, 178);;
-        border-color: rgb(31, 143, 178);;
-    }
-</style>
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
 
-<!-- JavaScript for Tab Switching -->
-<!--<script>
-    function toggleTab(tabName) {
-        // Hide all panels
-        const panels = document.querySelectorAll('#tab-content > div');
-        panels.forEach(panel => panel.classList.add('hidden'));
+    <!-- JavaScript Scroll + Tab Switching -->
+    <!--<script>
+        // Scroll buttons
+        const scrollContainer = document.getElementById('scrollBeach');
+        const scrollLeftBtn = document.getElementById('scrollLeftBeach');
+        const scrollRightBtn = document.getElementById('scrollRightBeach');
 
-        // Show selected panel
-        const selectedPanel = document.getElementById(`content-${tabName}`);
-        if (selectedPanel) selectedPanel.classList.remove('hidden');
+        scrollRightBtn.addEventListener('click', () => {
+            scrollContainer.scrollBy({ left: 300, behavior: 'smooth' });
+        });
 
-        // Update tab button styles
-        const tabs = document.querySelectorAll('.tab-button');
-        tabs.forEach(tab => tab.classList.remove('active-tab'));
+        scrollLeftBtn.addEventListener('click', () => {
+            scrollContainer.scrollBy({ left: -300, behavior: 'smooth' });
+        });
 
-        const selectedTab = document.getElementById(`tab-${tabName}`);
-        if (selectedTab) selectedTab.classList.add('active-tab');
-    }
-</script>-->
+        // Tabs
+        function togglePtypeTab(tabName) {
+            const tabButtons = document.querySelectorAll('.ptype-tab-button');
+            const tabContents = document.querySelectorAll('#ptype-tab-content > div');
+
+            tabButtons.forEach(btn => {
+                btn.classList.remove('bg-blue-100', 'text-blue-700', 'active-ptype-tab');
+            });
+
+            tabContents.forEach(content => {
+                content.classList.add('hidden');
+            });
+
+            document.getElementById(`ptype-tab-${tabName}`).classList.add('bg-blue-100', 'text-blue-700', 'active-ptype-tab');
+            document.getElementById(`ptype-content-${tabName}`).classList.remove('hidden');
+        }
+
+        // Activate default tab
+        document.addEventListener('DOMContentLoaded', () => {
+            togglePtypeTab('beach');
+        });
+    </script>-->
 </section>
 
 
@@ -783,26 +773,10 @@
     </div>
 </div>
 
-<!-- Tailwind Styling for Tab Buttons -->
-<style>
-    .tab-button {
-        padding: 0.5rem 1rem;
-        border-radius: 0.375rem;
-        border: 2px solid transparent;
-        background-color: white; /* gray-200 */
-        color: #4B5563; /* gray-600 */
-        transition: all 0.2s;
-    }
 
-    .active-tab {
-        background-color: white; /* blue-500 */
-        color: rgb(31, 143, 178);;
-        border-color: rgb(31, 143, 178);;
-    }
-</style>
 
 <!-- JavaScript for Tab Switching -->
-<script>
+<!--<script>
     function toggleTab(tabName) {
         // Hide all panels
         const panels = document.querySelectorAll('#tab-content > div');
@@ -819,8 +793,79 @@
         const selectedTab = document.getElementById(`tab-${tabName}`);
         if (selectedTab) selectedTab.classList.add('active-tab');
     }
-</script>
+</script>-->
 </section>
 
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Scroll: Beach
+        const scrollBeachContainer = document.getElementById('scrollBeach');
+        const scrollLeftBeachBtn = document.getElementById('scrollLeftBeach');
+        const scrollRightBeachBtn = document.getElementById('scrollRightBeach');
+
+        if (scrollLeftBeachBtn && scrollRightBeachBtn && scrollBeachContainer) {
+            scrollRightBeachBtn.addEventListener('click', () => {
+                scrollBeachContainer.scrollBy({ left: 300, behavior: 'smooth' });
+            });
+
+            scrollLeftBeachBtn.addEventListener('click', () => {
+                scrollBeachContainer.scrollBy({ left: -300, behavior: 'smooth' });
+            });
+        }
+
+        // Scroll: General Container
+        const scrollContainer = document.getElementById('scrollContainer');
+        const scrollLeftBtn = document.getElementById('scrollLeft');
+        const scrollRightBtn = document.getElementById('scrollRight');
+
+        if (scrollLeftBtn && scrollRightBtn && scrollContainer) {
+            scrollLeftBtn.addEventListener('click', () => {
+                scrollContainer.scrollBy({ left: -250, behavior: 'smooth' });
+            });
+
+            scrollRightBtn.addEventListener('click', () => {
+                scrollContainer.scrollBy({ left: 250, behavior: 'smooth' });
+            });
+        }
+
+        // Tabs: Property Type
+        function togglePtypeTab(tabName) {
+            const tabButtons = document.querySelectorAll('.ptype-tab-button');
+            const tabContents = document.querySelectorAll('#ptype-tab-content > div');
+
+            tabButtons.forEach(btn => {
+                btn.classList.remove('bg-blue-100', 'text-blue-700', 'active-ptype-tab');
+            });
+
+            tabContents.forEach(content => {
+                content.classList.add('hidden');
+            });
+
+            document.getElementById(`ptype-tab-${tabName}`).classList.add('bg-blue-100', 'text-blue-700', 'active-ptype-tab');
+            document.getElementById(`ptype-content-${tabName}`).classList.remove('hidden');
+        }
+
+        // Activate default tab
+        togglePtypeTab('beach');
+
+        // Tabs: General Tabs
+        window.toggleTab = function (tabName) {
+            const panels = document.querySelectorAll('#tab-content > div');
+            panels.forEach(panel => panel.classList.add('hidden'));
+
+            const selectedPanel = document.getElementById(`content-${tabName}`);
+            if (selectedPanel) selectedPanel.classList.remove('hidden');
+
+            const tabs = document.querySelectorAll('.tab-button');
+            tabs.forEach(tab => tab.classList.remove('active-tab'));
+
+            const selectedTab = document.getElementById(`tab-${tabName}`);
+            if (selectedTab) selectedTab.classList.add('active-tab');
+        };
+
+        // Make togglePtypeTab globally available too (if used inline)
+        window.togglePtypeTab = togglePtypeTab;
+    });
+</script>
 
 @endsection
