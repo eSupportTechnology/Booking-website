@@ -42,13 +42,13 @@
 <form method="GET" class="bg-white rounded-xl px-2 py-1 shadow-lg flex flex-col md:flex-row items-center gap-1 md:gap-0 border-4 border-yellow-400 max-w-6xl mx-auto overflow-visible text-sm">
 
     <!-- Destination Selector (Styled Like Guests) -->
-    <div x-data="{ open: false, destination: '' }" class="relative px-2 py-1 flex-1 border-r md:border-r border-gray-300">
+    <div x-data="{ open: false, destination: '' }" class="relative px-2 py-1 flex-1 border-r md:border-r border-gray-500">
         <button @click="open = !open" type="button" class="flex items-center gap-2 w-full text-left text-sm">
            <img src="{{ asset('assets/stay.svg') }}" alt="Stay" class="w-6 h-6" style="filter: brightness(0) saturate(100%);" />
 
                 <path d="M10 2a6 6 0 00-6 6c0 4.25 6 10 6 10s6-5.75 6-10a6 6 0 00-6-6zm0 8a2 2 0 110-4 2 2 0 010 4z" />
             </svg>
-            <span x-text="destination || 'Where are you going?'" class="text-gray-800 truncate"></span>
+            <span x-text="destination || 'Where are you going?'" style="font-family: 'Noto Sans', sans-serif;" class="text-gray-800 truncate text-base"></span>
         </button>
 
         <!-- Dropdown Box -->
@@ -70,14 +70,14 @@
 <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
 <!-- Dropdown with two sections: Check-in/out & Flexible -->
-<div x-data="{ open: false, activeTab: 'check', checkIn: '', checkOut: '', flexibleOption: '' }" class="relative flex-1 border-t md:border-t-0 md:border-r border-gray-300 px-2 py-1">
+<div x-data="{ open: false, activeTab: 'check', checkIn: '', checkOut: '', flexibleOption: '' }" class="relative flex-1 border-t md:border-t-0 md:border-r border-gray-500 px-2 py-1">
   
   <!-- Dropdown Trigger Button -->
   <button @click="open = !open" type="button" class="flex items-center gap-2 w-full text-left text-sm">
     <img src="{{ asset('assets/calender.svg') }}" alt="Calendar" class="w-5 h-5" />
     <span class="text-gray-800 truncate">
       <template x-if="activeTab === 'check'">
-        <span><span x-text="checkIn ? checkIn : 'Check-in'"></span> — <span x-text="checkOut ? checkOut : 'Check-out'"></span></span>
+        <span><span x-text="checkIn ? checkIn : 'Check-in'" style="font-family: 'Noto Sans', sans-serif;" class="text-base"></span> — <span x-text="checkOut ? checkOut : 'Check-out'" style="font-family: 'Noto Sans', sans-serif;" class="text-base"></span></span>
       </template>
       <template x-if="activeTab === 'flexible'">
         <span x-text="flexibleOption ? flexibleOption : 'Flexible dates'"></span>
@@ -168,18 +168,18 @@
     <div x-data="{ open: false, adults: 2, children: 0, rooms: 1, pets: false }" class="relative px-2 py-1 flex-1 border-t md:border-t-0 md:border-r border-gray-500">
         <button @click="open = !open" type="button" class="flex items-center gap-2 w-full text-left text-sm">
                 <img src="{{ asset('assets/user.svg') }}" alt="Calendar" class="w-5 h-5" />
-            <span x-text="`${adults} adults · ${children} children · ${rooms} room${rooms > 1 ? 's' : ''}`" class="text-gray-800 truncate"></span>
+            <span x-text="`${adults} adults · ${children} children · ${rooms} room${rooms > 1 ? 's' : ''}`" class="text-gray-800 text-base truncate" style="font-family: 'Noto Sans', sans-serif;"></span>
         </button>
 
         <!-- Guest Dropdown -->
         <div x-show="open" @click.away="open = false" class="absolute z-20 bg-white shadow-xl rounded-xl p-4 mt-2 w-72 right-0 text-gray-800 space-y-4 text-sm">
             <!-- Adults -->
             <div class="flex items-center justify-between">
-                <span>Adults</span>
+                <span style="font-family: 'Noto Sans', sans-serif;">Adults</span>
                 <div class="flex items-center gap-2">
-                    <button type="button" @click="if(adults > 1) adults--" class="px-2 py-1 bg-gray-200 rounded">−</button>
+                    <button type="button" @click="if(adults > 1) adults--" class="px-2 py-1 bg-gray-200 rounded" style="font-family: 'Noto Sans', sans-serif;">−</button>
                     <span x-text="adults"></span>
-                    <button type="button" @click="adults++" class="px-2 py-1 bg-gray-200 rounded">+</button>
+                    <button type="button" @click="adults++" class="px-2 py-1 bg-gray-200 rounded" style="font-family: 'Noto Sans', sans-serif;">+</button>
                 </div>
             </div>
 
