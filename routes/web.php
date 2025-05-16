@@ -25,6 +25,22 @@ Route::get('/welcome', function () {
     return view('frontend.welcomebox');
 });
 
+Route::get('/stays', function () {
+    return view('frontend.home');
+})->name('stays');
+
+Route::get('/car-rentals', function () {
+    return view('frontend.home');
+})->name('car.rentals');
+
+Route::get('/airport-taxis', function () {
+    return view('frontend.home');
+})->name('airport.taxis');
+
+Route::get('/airport-tours', function () {
+    return view('frontend.home');
+})->name('airport.tours');
+
 // routes/web.php
 Route::prefix('traveler')->group(function () {
 Route::get('/login', [TravelerLoginController::class, 'showLoginForm'])->name('traveler.login');

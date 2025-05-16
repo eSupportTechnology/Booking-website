@@ -21,71 +21,227 @@
 @section('title', 'Home')
 
 @section('content')
-
 <!-- Hero Section -->
-<div class="relative bg-cover bg-center" style="background-image: url('{{ asset('images/home.jpg') }}'); height: 700px;">
-  <div class="absolute inset-0" style="background-color: rgba(0, 72, 105, 0.43);"></div>
+<section class="text-white py-12 bg-[#1F8FB2] relative z-0">
+    <div class="container mx-auto px-4 md:px-8">
+        <!-- Hero Text -->
+        <div class="text-left mb-10 mt-2">
+            <h1 class="text-4xl md:text-3xl font-bold mb-2" style="font-size:50px;">Find your next stay</h1>
+            <p class="text-base md:text-lg" style="font-family: 'Noto Sans', sans-serif;font-size:20px;margin-top:20px;">
+                Search low prices on hotels, homes and much more...
+            </p>
+        </div>
+    </div>
+</section>
 
-  <div class="relative z-10 flex flex-col items-center justify-center h-full text-white text-center">
+<!-- Search Box: Overlapping both sections -->
+<div class="relative z-10 -mt-8 px-4">
+  <!-- Alpine.js CDN (Required for Dropdowns) -->
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
-    <!-- Heading Section -->
-    <h1 class="text-3xl md:text-4xl font-bold leading-snug" style="font-family: 'Lato', sans-serif; font-size:82px; margin-top:-130px;">
-      Find Your Perfect Stay <br>
-      <div class="mt-8 text-white">
-        <img src="{{ asset('images/1.png') }}" alt="Image" class="inline-block mr-2" style="height:75px;width:75px;">Quick 
-        & 
-        <img src="{{ asset('images/2.png') }}" alt="Image" class="inline-block ml-2" style="height:75px;width:75px;"> Easy!
+<form method="GET" class="bg-white rounded-xl px-2 py-1 shadow-lg flex flex-col md:flex-row items-center gap-1 md:gap-0 border-4 border-yellow-400 max-w-6xl mx-auto overflow-visible text-sm">
+
+    <!-- Destination Selector (Styled Like Guests) -->
+    <div x-data="{ open: false, destination: '' }" class="relative px-2 py-1 flex-1 border-r md:border-r border-gray-300">
+        <button @click="open = !open" type="button" class="flex items-center gap-2 w-full text-left text-sm">
+           <img src="{{ asset('assets/stay.svg') }}" alt="Stay" class="w-6 h-6" style="filter: brightness(0) saturate(100%);" />
+
+                <path d="M10 2a6 6 0 00-6 6c0 4.25 6 10 6 10s6-5.75 6-10a6 6 0 00-6-6zm0 8a2 2 0 110-4 2 2 0 010 4z" />
+            </svg>
+            <span x-text="destination || 'Where are you going?'" class="text-gray-800 truncate"></span>
+        </button>
+
+        <!-- Dropdown Box -->
+        <div x-show="open" @click.away="open = false" class="absolute z-20 bg-white shadow-xl rounded-xl p-4 mt-2 w-72 right-0 text-gray-800 space-y-2 text-sm">
+            <template x-for="city in ['New York', 'Los Angeles', 'London', 'Paris', 'Tokyo']" :key="city">
+                <button type="button" @click="destination = city; open = false" class="block w-full text-left px-3 py-2 hover:bg-gray-100 rounded">
+                    <span x-text="city"></span>
+                </button>
+            </template>
+        </div>
+
+        <!-- Hidden field to submit the selected destination -->
+        <input type="hidden" name="destination" :value="destination">
+    </div>
+
+   <!-- Dates Selector -->
+<!-- Include Alpine.js if not already -->
+<!-- Include Alpine.js -->
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
+<!-- Dropdown with two sections: Check-in/out & Flexible -->
+<div x-data="{ open: false, activeTab: 'check', checkIn: '', checkOut: '', flexibleOption: '' }" class="relative flex-1 border-t md:border-t-0 md:border-r border-gray-300 px-2 py-1">
+  
+  <!-- Dropdown Trigger Button -->
+  <button @click="open = !open" type="button" class="flex items-center gap-2 w-full text-left text-sm">
+    <img src="{{ asset('assets/calender.svg') }}" alt="Calendar" class="w-5 h-5" />
+    <span class="text-gray-800 truncate">
+      <template x-if="activeTab === 'check'">
+        <span><span x-text="checkIn ? checkIn : 'Check-in'"></span> — <span x-text="checkOut ? checkOut : 'Check-out'"></span></span>
+      </template>
+      <template x-if="activeTab === 'flexible'">
+        <span x-text="flexibleOption ? flexibleOption : 'Flexible dates'"></span>
+      </template>
+    </span>
+  </button>
+
+  <!-- Dropdown Content -->
+  <div
+    x-show="open"
+    @click.away="open = false"
+    class="absolute z-30 bg-white shadow-xl rounded-xl p-4 mt-2 w-96 right-0 text-gray-800 text-sm"
+    x-transition
+  >
+    <!-- Tabs -->
+    <nav class="flex border-b border-gray-200 mb-4">
+      <button
+        @click.prevent="activeTab = 'check'"
+        :class="activeTab === 'check' ? 'border-blue-600 text-blue-600' : 'text-gray-500'"
+        class="px-4 py-2 border-b-2 font-semibold focus:outline-none"
+      >
+        Check-in / Check-out
+      </button>
+      <button
+        @click.prevent="activeTab = 'flexible'"
+        :class="activeTab === 'flexible' ? 'border-blue-600 text-blue-600' : 'text-gray-500'"
+        class="px-4 py-2 border-b-2 font-semibold focus:outline-none"
+      >
+        Flexible dates
+      </button>
+    </nav>
+
+    <!-- Check-in / Check-out Section -->
+    <div x-show="activeTab === 'check'" x-transition>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs text-gray-500 font-semibold mb-1">Check-in Date</label>
+          <input
+            type="date"
+            x-model="checkIn"
+            class="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none"
+            placeholder="Check-in"
+          />
+        </div>
+        <div>
+          <label class="block text-xs text-gray-500 font-semibold mb-1">Check-out Date</label>
+          <input
+            type="date"
+            x-model="checkOut"
+            class="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none"
+            placeholder="Check-out"
+          />
+        </div>
       </div>
-    </h1>
+    </div>
 
-   <!-- Search Box Section -->
+    <!-- Flexible Dates Section -->
+    <div x-show="activeTab === 'flexible'" x-transition>
+      <label class="block text-xs text-gray-500 font-semibold mb-1">Select Flexible Dates</label>
+      <select
+        x-model="flexibleOption"
+        class="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none"
+      >
+        <option value="" disabled>Select option</option>
+        <option value="Weekend Getaway">Weekend Getaway</option>
+        <option value="Next Month">Next Month</option>
+        <option value="Anytime">Anytime</option>
+        <option value="Custom Range">Custom Range</option>
+      </select>
+    </div>
 
-<div class="mt-20 grid grid-cols-1 md:grid-cols-4 gap-4 bg-white p-4 rounded text-black shadow-lg w-9/12 md:w-4/5 mx-auto">
-
-  <!-- Location Button -->
-  <div class="flex">
-    <button class="flex items-center gap-2 p-2 rounded-md w-full" style="font-family: 'Lato', sans-serif; background-color: #D6ECFF;">
-      <img src="{{ asset('images/car.png') }}" alt="Search" class="h-7 w-7">
-      <span>Where are you going?</span>
-    </button>
+    <!-- Done Button -->
+    <div class="mt-4 text-right">
+      <button
+        @click="open = false"
+        class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm"
+      >
+        Done
+      </button>
+    </div>
   </div>
-
-  <!-- Date Button -->
-  <div class="flex">
-    <button class="flex items-center gap-2 p-2 rounded-md w-full" style="font-family: 'Lato', sans-serif; background-color: #D6ECFF;">
-      <img src="{{ asset('images/calender.png') }}" alt="Search" class="h-6 w-6">
-      <span>Check-in date – Check-out date</span>
-    </button>
-  </div>
-
-  <!-- Guest Button -->
-  <div class="flex">
-    <button class="flex items-center gap-2 p-2 rounded-md w-full" style="font-family: 'Lato', sans-serif; background-color: #D6ECFF;">
-      <img src="{{ asset('images/user.png') }}" alt="Search" class="h-6 w-6">
-      <span>2 Adults · 0 Children · 1 Room</span>
-    </button>
-  </div>
-
-  <!-- Search Button -->
-  <div class="flex justify-end items-center">
-    <button class="bg-cyan-600 text-white px-6 py-2 rounded" style="width:60%;">
-      Search
-    </button>
-  </div>
-
-</div>
-
-
 </div>
 
 
 
-  </div>
+
+    <!-- Guests Selector -->
+    <div x-data="{ open: false, adults: 2, children: 0, rooms: 1, pets: false }" class="relative px-2 py-1 flex-1 border-t md:border-t-0 md:border-r border-gray-500">
+        <button @click="open = !open" type="button" class="flex items-center gap-2 w-full text-left text-sm">
+                <img src="{{ asset('assets/user.svg') }}" alt="Calendar" class="w-5 h-5" />
+            <span x-text="`${adults} adults · ${children} children · ${rooms} room${rooms > 1 ? 's' : ''}`" class="text-gray-800 truncate"></span>
+        </button>
+
+        <!-- Guest Dropdown -->
+        <div x-show="open" @click.away="open = false" class="absolute z-20 bg-white shadow-xl rounded-xl p-4 mt-2 w-72 right-0 text-gray-800 space-y-4 text-sm">
+            <!-- Adults -->
+            <div class="flex items-center justify-between">
+                <span>Adults</span>
+                <div class="flex items-center gap-2">
+                    <button type="button" @click="if(adults > 1) adults--" class="px-2 py-1 bg-gray-200 rounded">−</button>
+                    <span x-text="adults"></span>
+                    <button type="button" @click="adults++" class="px-2 py-1 bg-gray-200 rounded">+</button>
+                </div>
+            </div>
+
+            <!-- Children -->
+            <div class="flex items-center justify-between">
+                <span>Children</span>
+                <div class="flex items-center gap-2">
+                    <button type="button" @click="if(children > 0) children--" class="px-2 py-1 bg-gray-200 rounded">−</button>
+                    <span x-text="children"></span>
+                    <button type="button" @click="children++" class="px-2 py-1 bg-gray-200 rounded">+</button>
+                </div>
+            </div>
+
+            <!-- Rooms -->
+            <div class="flex items-center justify-between">
+                <span>Rooms</span>
+                <div class="flex items-center gap-2">
+                    <button type="button" @click="if(rooms > 1) rooms--" class="px-2 py-1 bg-gray-200 rounded">−</button>
+                    <span x-text="rooms"></span>
+                    <button type="button" @click="rooms++" class="px-2 py-1 bg-gray-200 rounded">+</button>
+                </div>
+            </div>
+
+            <!-- Pets Toggle -->
+            <div class="flex items-center justify-between">
+                <span>Travelling with pets?</span>
+                <label class="inline-flex items-center cursor-pointer">
+                    <input type="checkbox" x-model="pets" class="sr-only peer">
+                    <div class="w-10 h-6 bg-gray-300 rounded-full peer peer-checked:bg-blue-600 relative transition-all">
+                        <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-all peer-checked:translate-x-4"></div>
+                    </div>
+                </label>
+            </div>
+
+            <p class="text-xs text-gray-500">
+                Assistance animals aren’t considered pets.<br>
+                <a href="#" class="text-blue-600 underline">Read more about travelling with assistance animals</a>
+            </p>
+
+            <!-- Done Button -->
+            <button type="button" @click="open = false" class="block w-full text-center bg-white border border-blue-600 text-blue-600 font-semibold py-2 rounded hover:bg-blue-50">
+                Done
+            </button>
+        </div>
+    </div>
+
+    <!-- Search Button -->
+    <div class="px-2 py-1">
+        <button type="submit" class="w-full md:w-auto h-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg text-sm" style="background-color:#3CC0E9;">
+            Search
+        </button>
+    </div>
+</form>
+
 
 </div>
-</div>
-</div>
-<!--End Hero Section-->
+
+
+
+<!-- AlpineJS -->
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
 
 
 
@@ -125,8 +281,8 @@
      
       <div class="relative rounded-[10px] overflow-hidden">
         <img src="{{ asset('images/colombo.jpg') }}" alt="Colombo" class="w-full h-64 object-cover" style="border-radius: 10px;">
-        <div class="absolute bottom-0 left-0 w-full p-4 text-white bg-gradient-to-b from-black/60 to-transparent">
-          <h3 class="text-base font-semibold">Colombo</h3>
+        <div class="absolute bottom-0 left-0 w-full p-4 text-white">
+          <h3 class="text-lg font-semibold">Colombo</h3>
           <p class="text-sm">Sri Lanka</p>
         </div>
       </div>
@@ -134,8 +290,8 @@
      
       <div class="relative rounded-[10px] overflow-hidden">
         <img src="{{ asset('images/nuwara.jpg') }}" alt="Nuwara Eliya" class="w-full h-64 object-cover" style="border-radius: 10px;">
-        <div class="absolute bottom-0 left-0 w-full p-4 text-white bg-gradient-to-b from-black/60 to-transparent">
-          <h3 class="text-base font-semibold">Nuwara Eliya</h3>
+        <div class="absolute bottom-0 left-0 w-full p-4 text-white ">
+          <h3 class="text-lg font-semibold">Nuwara Eliya</h3>
           <p class="text-sm">Sri Lanka</p>
         </div>
       </div>
@@ -146,8 +302,8 @@
   
       <div class="relative rounded-[10px] overflow-hidden">
         <img src="{{ asset('images/sigiriya.jpg') }}" alt="Sigiriya" class="w-full h-64 object-cover" style="border-radius: 10px;">
-        <div class="absolute bottom-0 left-0 w-full p-4 text-white bg-gradient-to-b from-black/60 to-transparent">
-          <h3 class="text-base font-semibold">Sigiriya</h3>
+        <div class="absolute bottom-0 left-0 w-full p-4 text-white ">
+          <h3 class="text-lg font-semibold">Sigiriya</h3>
           <p class="text-sm">Sri Lanka</p>
         </div>
       </div>
@@ -155,8 +311,8 @@
    
       <div class="relative rounded-[10px] overflow-hidden">
         <img src="{{ asset('images/ella.png') }}" alt="Ella" class="w-full h-64 object-cover" style="border-radius: 10px;">
-        <div class="absolute bottom-0 left-0 w-full p-4 text-white bg-gradient-to-t from-black/60 to-transparent">
-          <h3 class="text-base font-semibold">Ella</h3>
+        <div class="absolute bottom-0 left-0 w-full p-4 text-white ">
+          <h3 class="text-lg font-semibold">Ella</h3>
           <p class="text-sm">Sri Lanka</p>
         </div>
       </div>
@@ -164,8 +320,8 @@
     
       <div class="relative rounded-[10px] overflow-hidden">
         <img src="{{ asset('images/dambulla.jpg') }}" alt="Dambulla" class="w-full h-64 object-cover" style="border-radius: 10px;">
-        <div class="absolute bottom-0 left-0 w-full p-4 text-white bg-gradient-to-t from-black/60 to-transparent">
-          <h3 class="text-base font-semibold">Dambulla</h3>
+        <div class="absolute bottom-0 left-0 w-full p-4 text-white ">
+          <h3 class="text-lg font-semibold">Dambulla</h3>
           <p class="text-sm">Sri Lanka</p>
         </div>
       </div>
@@ -319,7 +475,7 @@
 
 
 <section class="py-12 bg-white">
-    <div class="container mx-auto px-4 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         <div class="mb-6">
             <h2 class="text-2xl font-semibold text-gray-800 mb-2" style="font-family: 'Lato', sans-serif;">
@@ -373,41 +529,42 @@
             <!-- Beach Tab -->
             <div id="ptype-content-beach" class="relative px-2 py-6">
                 <!-- Left Arrow -->
-                <button id="scrollLeftBeach"
-                    class="absolute left-2 top-1/2 transform -translate-y-1/2 z-10 bg-white shadow-md rounded-full p-2 hidden lg:block">
-                    &#8592;
-                </button>
+              <!-- Left Arrow Button -->
+    <button id="scrollLeftBeach"
+        class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-md rounded-full p-2 hover:bg-gray-100 transition hidden lg:flex items-center justify-center w-10 h-10">
+        &#8592;
+    </button>
 
-                <!-- Scrollable Content -->
-                <div id="scrollBeach"
-                    class="flex overflow-x-auto scroll-smooth gap-4 pb-2 no-scrollbar">
-                    @foreach ([
-                        ['name' => 'Kandy', 'properties' => 1102],
-                        ['name' => 'Colombo', 'properties' => 520],
-                        ['name' => 'Nuwara Eliya', 'properties' => 900],
-                        ['name' => 'Ella', 'properties' => 841],
-                        ['name' => 'Galle', 'properties' => 1200],
-                    ] as $city)
-                        <div class="min-w-[220px] flex-shrink-0">
-                            <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                                <img src="{{ asset('images/ella.png') }}"
-                                    alt="{{ $city['name'] }}"
-                                    class="w-full h-48 object-cover">
-                            </div>
-                            <div class="mt-2">
-                                <h3 class="text-xl font-bold text-gray-800">{{ $city['name'] }}</h3>
-                                <p class="text-gray-600">{{ number_format($city['properties']) }} properties</p>
-                            </div>
-                        </div>
-                    @endforeach
+    <!-- Scrollable Content -->
+    <div id="scrollBeach"
+        class="flex overflow-x-auto scroll-smooth gap-4 px-12 pb-2 no-scrollbar">
+        @foreach ([
+            ['name' => 'Kandy', 'properties' => 1102],
+            ['name' => 'Colombo', 'properties' => 520],
+            ['name' => 'Nuwara Eliya', 'properties' => 900],
+            ['name' => 'Ella', 'properties' => 841],
+            ['name' => 'Galle', 'properties' => 1200],
+        ] as $city)
+            <div class="min-w-[220px] flex-shrink-0">
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <img src="{{ asset('images/ella.png') }}"
+                         alt="{{ $city['name'] }}"
+                         class="w-full h-48 object-cover" style="width:220px;">
                 </div>
-
-                <!-- Right Arrow -->
-                <button id="scrollRightBeach"
-                    class="absolute right-2 top-1/2 transform -translate-y-1/2 z-10 bg-white shadow-md rounded-full p-2 hidden lg:block">
-                    &#8594;
-                </button>
+                <div class="mt-2">
+                    <h3 class="text-xl font-bold text-gray-800">{{ $city['name'] }}</h3>
+                    <p class="text-gray-600">{{ number_format($city['properties']) }} properties</p>
+                </div>
             </div>
+        @endforeach
+    </div>
+
+    <!-- Right Arrow Button -->
+    <button id="scrollRightBeach"
+        class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-md rounded-full p-2 hover:bg-gray-100 transition hidden lg:flex items-center justify-center w-10 h-10">
+        &#8594;
+    </button>
+</div>
 
             <!-- Other Tabs -->
             <div id="ptype-content-outdoors" class="hidden px-2 py-6">Outdoors content here...</div>
@@ -480,7 +637,7 @@
       
       <!-- Hotel Card 1 -->
       <div class="min-w-[250px] max-w-[250px] bg-white rounded-lg shadow-md overflow-hidden flex-shrink-0 lg:min-w-0">
-  <img src="{{ asset('images/property.png') }}" alt="Hotel Image" class="w-full h-[300px] object-cover">
+  <img src="{{ asset('images/property.png') }}" alt="Hotel Image" class="w-full h-[300px] object-cover" >
   <div class="p-4">
     <span class="text-white px-2 py-1 rounded text-s" style="background-color: rgb(31, 143, 178); font-family: 'Lato', sans-serif;">Genius</span>
     <h3 class="text-xl font-bold mt-2" style="font-family: 'Lato', sans-serif;">Eagle Regency Hotel</h3>
@@ -795,6 +952,9 @@
     }
 </script>-->
 </section>
+
+
+
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {

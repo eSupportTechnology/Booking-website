@@ -13,6 +13,13 @@ export default {
         extend: {
             fontFamily: {
                 sans: ["Lato", "sans-serif"], // Add Lato font as the default sans-serif font
+                segoe: [
+                    '"Segoe UI"',
+                    "Tahoma",
+                    "Geneva",
+                    "Verdana",
+                    "sans-serif",
+                ],
             },
         },
     },

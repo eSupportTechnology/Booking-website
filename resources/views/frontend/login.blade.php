@@ -1,7 +1,13 @@
 
 
 
+
+
+
+
+
     
+        @vite(['resources/js/app.js'])
 
     <!-- Main content wrapper to center on screen -->
     <main class="min-h-screen flex items-center justify-center px-4 sm:px-6">
