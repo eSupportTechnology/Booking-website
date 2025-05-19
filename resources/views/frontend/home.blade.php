@@ -249,15 +249,16 @@
 <section class="py-12 bg-white">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <!-- Title -->
-    <h2 class="text-2xl font-semibold text-gray-800 mb-6" style="font-family: 'Lato', sans-serif;">Offers</h2>
+    <h2 class="text-2xl font-semibold text-gray-800 mb-2">Offers</h2>
+     <p class="mb-6 text-gray-600" style="font-family: 'Noto Sans', sans-serif;">Promotions, deals and special offers for you</p>
 
     <!-- Offer Card -->
     <div class="bg-white-50 p-2 rounded flex items-center justify-between border border-solid border-gray-300">
       <!-- Text Content -->
       <div class="ml-4">
-  <p class="font-medium font-semibold" style="font-family: 'Lato', sans-serif;">Quick escape, quality time</p>
-  <p class="text-sm text-gray-600" style="font-family: 'Lato', sans-serif;">Save up to 20% with a Gateway Deal!</p>
-  <button class="bg-cyan-600 text-white px-4 py-1 rounded mt-2 w-auto" style="font-family: 'Lato', sans-serif;">Save on stays</button>
+  <p class="font-medium font-semibold">Quick escape, quality time</p>
+  <p class="text-sm text-gray-600" style="font-family: 'Noto Sans', sans-serif;">Save up to 20% with a Gateway Deal!</p>
+  <button class=" text-white px-4 py-1 rounded mt-2 w-auto" style="font-family: 'Noto Sans', sans-serif;background-color:#3CC0E9;">Save on stays</button>
 </div>
 
 
@@ -270,70 +271,10 @@
 </section>
 <!--End Offers Section-->
 
-<!-- Trending Destinations Section -->
-<section class="py-12 bg-white">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <!-- Title -->
-    <h2 class="text-2xl font-semibold text-gray-800 mb-6" style="font-family: 'Lato', sans-serif;">Trending destinations</h2>
-
-    <!-- First Row: 2 Columns -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-     
-      <div class="relative rounded-[10px] overflow-hidden">
-        <img src="{{ asset('images/colombo.jpg') }}" alt="Colombo" class="w-full h-64 object-cover" style="border-radius: 10px;">
-        <div class="absolute bottom-0 left-0 w-full p-4 text-white">
-          <h3 class="text-lg font-semibold">Colombo</h3>
-          <p class="text-sm">Sri Lanka</p>
-        </div>
-      </div>
-
-     
-      <div class="relative rounded-[10px] overflow-hidden">
-        <img src="{{ asset('images/nuwara.jpg') }}" alt="Nuwara Eliya" class="w-full h-64 object-cover" style="border-radius: 10px;">
-        <div class="absolute bottom-0 left-0 w-full p-4 text-white ">
-          <h3 class="text-lg font-semibold">Nuwara Eliya</h3>
-          <p class="text-sm">Sri Lanka</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Second Row: 3 Columns -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-  
-      <div class="relative rounded-[10px] overflow-hidden">
-        <img src="{{ asset('images/sigiriya.jpg') }}" alt="Sigiriya" class="w-full h-64 object-cover" style="border-radius: 10px;">
-        <div class="absolute bottom-0 left-0 w-full p-4 text-white ">
-          <h3 class="text-lg font-semibold">Sigiriya</h3>
-          <p class="text-sm">Sri Lanka</p>
-        </div>
-      </div>
-
-   
-      <div class="relative rounded-[10px] overflow-hidden">
-        <img src="{{ asset('images/ella.png') }}" alt="Ella" class="w-full h-64 object-cover" style="border-radius: 10px;">
-        <div class="absolute bottom-0 left-0 w-full p-4 text-white ">
-          <h3 class="text-lg font-semibold">Ella</h3>
-          <p class="text-sm">Sri Lanka</p>
-        </div>
-      </div>
-
-    
-      <div class="relative rounded-[10px] overflow-hidden">
-        <img src="{{ asset('images/dambulla.jpg') }}" alt="Dambulla" class="w-full h-64 object-cover" style="border-radius: 10px;">
-        <div class="absolute bottom-0 left-0 w-full p-4 text-white ">
-          <h3 class="text-lg font-semibold">Dambulla</h3>
-          <p class="text-sm">Sri Lanka</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-<!-- End Trending Destination Section-->
-
 <!-- Browse by Property Type Section -->
 <section class="py-12 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 class="text-2xl font-semibold text-gray-800 mb-6" style="font-family: 'Lato', sans-serif;">Browse by property type</h2>
+        <h2 class="text-2xl font-semibold text-gray-800 mb-6">Browse by property type</h2>
         <div class="flex space-x-4 overflow-x-auto pb-2">
             <!-- Resorts -->
             <div class="min-w-[250px]">
@@ -341,7 +282,7 @@
                     <img src="{{ asset('images/resorts.jpg') }}" alt="Resorts" class="w-full h-48 object-cover">
                 </div>
                 <div class="mt-2">
-                    <h6 class="text-base font-bold text-gray-800" style="font-family: 'Lato', sans-serif;">Resorts</h3>
+                    <h6 class="text-base font-semibold text-gray-800" style="font-family: 'Noto Sans', sans-serif;">Resorts</h3>
                 </div>
             </div>
 
@@ -351,7 +292,7 @@
                     <img src="{{ asset('images/apartments.jpg') }}" alt="Apartments" class="w-full h-48 object-cover">
                 </div>
                 <div class="mt-2">
-                    <h6 class="text-base font-bold text-gray-800" style="font-family: 'Lato', sans-serif;">Apartments</h3>
+                    <h6 class="text-base font-semibold text-gray-800" style="font-family: 'Noto Sans', sans-serif;">Apartments</h3>
                 </div>
             </div>
 
@@ -361,7 +302,7 @@
                     <img src="{{ asset('images/hotels.jpg') }}" alt="Apartments" class="w-full h-48 object-cover">
                 </div>
                 <div class="mt-2">
-                    <h6 class="text-base font-bold text-gray-800" style="font-family: 'Lato', sans-serif;">Hotels</h3>
+                    <h6 class="text-base font-semibold text-gray-800" style="font-family: 'Noto Sans', sans-serif;">Hotels</h3>
                 </div>
             </div>
 
@@ -371,7 +312,7 @@
                     <img src="{{ asset('images/villas.jpg') }}" alt="Villas" class="w-full h-48 object-cover">
                 </div>
                 <div class="mt-2">
-                    <h6 class="text-base font-bold text-gray-800" style="font-family: 'Lato', sans-serif;">Villas</h3>
+                    <h6 class="text-base font-semibold text-gray-800" style="font-family: 'Noto Sans', sans-serif;">Villas</h3>
                 </div>
             </div>
         </div>
@@ -380,96 +321,73 @@
 <!--End Section-->
 
 
-<!-- Browse by Popular Destinations Section-->
-<section class="py-12 bg-white relative">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 class="text-2xl font-semibold text-gray-800 mb-2" style="font-family: 'Lato', sans-serif;">Browse by property type</h2>
-        <p class="mb-4 text-gray-600" style="font-family: 'Lato', sans-serif;">These popular destinations have a lot to offer</p>
-        
-        <!-- Arrow buttons -->
-        <button id="scrollLeft" class="absolute left-4 top-1/2 transform -translate-y-1/2 z-10 bg-white p-2 shadow rounded-full hidden sm:block">
-            &#8592;
-        </button>
-        <button id="scrollRight" class="absolute right-4 top-1/2 transform -translate-y-1/2 z-10 bg-white p-2 shadow rounded-full hidden sm:block">
-            &#8594;
-        </button>
 
-        <!-- Scrollable container -->
-        <div id="scrollContainer" class="flex space-x-4 overflow-x-hidden pb-2 transition-all duration-300">
-            <!-- Example card: Kandy -->
-            <div class="min-w-[220px] shrink-0">
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="{{ asset('images/kandy.jpg') }}" alt="Kandy" class="w-full h-48 object-cover">
-                </div>
-                <div class="mt-2">
-                    <h3 class="text-base font-bold text-gray-800">Kandy</h3>
-                    <p class="text-gray-600">1,102 properties</p>
-                </div>
-            </div>
-             <div class="min-w-[220px] shrink-0">
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="{{ asset('images/kandy.jpg') }}" alt="Kandy" class="w-full h-48 object-cover">
-                </div>
-                <div class="mt-2">
-                    <h3 class="text-base font-bold text-gray-800">Kandy</h3>
-                    <p class="text-gray-600">1,102 properties</p>
-                </div>
-            </div> <div class="min-w-[220px] shrink-0">
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="{{ asset('images/kandy.jpg') }}" alt="Kandy" class="w-full h-48 object-cover">
-                </div>
-                <div class="mt-2">
-                    <h3 class="text-base font-bold text-gray-800">Kandy</h3>
-                    <p class="text-gray-600">1,102 properties</p>
-                </div>
-            </div> <div class="min-w-[220px] shrink-0">
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="{{ asset('images/kandy.jpg') }}" alt="Kandy" class="w-full h-48 object-cover">
-                </div>
-                <div class="mt-2">
-                    <h3 class="text-base font-bold text-gray-800">Kandy</h3>
-                    <p class="text-gray-600">1,102 properties</p>
-                </div>
-            </div> <div class="min-w-[220px] shrink-0">
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="{{ asset('images/kandy.jpg') }}" alt="Kandy" class="w-full h-48 object-cover">
-                </div>
-                <div class="mt-2">
-                    <h3 class="text-base font-bold text-gray-800">Kandy</h3>
-                    <p class="text-gray-600">1,102 properties</p>
-                </div>
-            </div> <div class="min-w-[220px] shrink-0">
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="{{ asset('images/kandy.jpg') }}" alt="Kandy" class="w-full h-48 object-cover">
-                </div>
-                <div class="mt-2">
-                    <h3 class="text-base font-bold text-gray-800">Kandy</h3>
-                    <p class="text-gray-600">1,102 properties</p>
-                </div>
-            </div>
-            <!-- Repeat other cities (Colombo, Nuwara Eliya, etc.) here... -->
-            <!-- Just like your original HTML content -->
-            <!-- Make sure all cards have class: `min-w-[220px] shrink-0` -->
+<!-- Trending Destinations Section -->
+<section class="py-12 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Title -->
+    <h2 class="text-2xl font-semibold text-gray-800 mb-2">Trending destinations</h2>
+     <p class="mb-8 text-gray-600" style="font-family: 'Noto Sans', sans-serif;">Most popular choices travelers from Sri Lanka</p>
+
+
+    <!-- First Row: 2 Columns -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+     
+      <div class="relative rounded-[10px] overflow-hidden">
+        <img src="{{ asset('images/colombo.jpg') }}" alt="Colombo" class="w-full h-64 object-cover" style="border-radius: 10px;">
+        <div class="absolute top-0 left-0 w-full p-4 text-white">
+          <h3 class="text-lg font-semibold flex items-center gap-2">Colombo
+         <img src="{{ asset('images/srilanka.jpg') }}" alt="Sri Lanka Flag" class="h-4 w-6"/></h3>
         </div>
+      </div>
+
+     
+      <div class="relative rounded-[10px] overflow-hidden">
+        <img src="{{ asset('images/nuwara.jpg') }}" alt="Nuwara Eliya" class="w-full h-64 object-cover" style="border-radius: 10px;">
+        <div class="absolute top-0 left-0 w-full p-4 text-white ">
+          <h3 class="text-lg font-semibold flex items-center gap-2">Nuwara Eliya
+         <img src="{{ asset('images/srilanka.jpg') }}" alt="Sri Lanka Flag" class="h-4 w-6" /></h3>
+        </div>
+      </div>
     </div>
 
-    <!-- JavaScript for scrolling -->
-   <!-- <script>
-        const container = document.getElementById('scrollContainer');
-        const scrollLeftBtn = document.getElementById('scrollLeft');
-        const scrollRightBtn = document.getElementById('scrollRight');
+    <!-- Second Row: 3 Columns -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+  
+      <div class="relative rounded-[10px] overflow-hidden">
+        <img src="{{ asset('images/sigiriya.jpg') }}" alt="Sigiriya" class="w-full h-64 object-cover" style="border-radius: 10px;">
+        <div class="absolute top-0 left-0 w-full p-4 text-white ">
+          <h3 class="text-lg font-semibold flex items-center gap-2">Sigiriya
+       <img src="{{ asset('images/srilanka.jpg') }}" alt="Sri Lanka Flag"  class="h-4 w-6"  /></h3>
+        </div>
+      </div>
 
-        scrollLeftBtn.addEventListener('click', () => {
-            container.scrollBy({ left: -250, behavior: 'smooth' });
-        });
+   
+      <div class="relative rounded-[10px] overflow-hidden">
+        <img src="{{ asset('images/ella.png') }}" alt="Ella" class="w-full h-64 object-cover" style="border-radius: 10px;">
+        <div class="absolute top-0 left-0 w-full p-4 text-white ">
+          <h3 class="text-lg font-semibold flex items-center gap-2">Ella
+         <img src="{{ asset('images/srilanka.jpg') }}" alt="Sri Lanka Flag" class="h-4 w-6" /></h3>
+        </div>
+      </div>
 
-        scrollRightBtn.addEventListener('click', () => {
-            container.scrollBy({ left: 250, behavior: 'smooth' });
-        });
-    </script>-->
+    
+      <div class="relative rounded-[10px] overflow-hidden">
+        <img src="{{ asset('images/dambulla.jpg') }}" alt="Dambulla" class="w-full h-64 object-cover" style="border-radius: 10px;">
+  <div class="absolute top-0 left-0 w-full p-4 text-white">
+  <h3 class="text-lg font-semibold flex items-center gap-2">   Dambulla
+    <img src="{{ asset('images/srilanka.jpg') }}" alt="Sri Lanka Flag" class="h-4 w-6" />
+ 
+  </h3>
+</div>
+      </div>
+    </div>
+  </div>
 </section>
+<!-- End Trending Destination Section-->
 
-<!--End Popular Destination Section-->
+<
+
 
 
 
@@ -478,12 +396,10 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         <div class="mb-6">
-            <h2 class="text-2xl font-semibold text-gray-800 mb-2" style="font-family: 'Lato', sans-serif;">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-2">
                 Browse by property type
             </h2>
-            <p class="text-sm text-gray-600" style="font-family: 'Lato', sans-serif;">
-                Pick a vibe and explore top destinations in Sri Lanka
-            </p>
+          <p class="mb-8 text-gray-600" style="font-family: 'Noto Sans', sans-serif;">Most popular choices Pick a vibe and explore the top destination in Sri Lanka from Sri Lanka</p>
         </div>
 
         <!-- Tab Buttons -->
@@ -492,81 +408,44 @@
                 class="rounded-full ptype-tab-button active-ptype-tab flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-700"
                 onclick="togglePtypeTab('beach')">
                 <img src="{{ asset('images/beach.png') }}" alt="Beach" class="w-6 h-6" />
-                <span>Beach</span>
+                <span style="font-family: 'Noto Sans', sans-serif;">Beach</span>
             </button>
 
             <button id="ptype-tab-outdoors"
                 class="rounded-full ptype-tab-button flex items-center gap-2 px-4 py-2"
                 onclick="togglePtypeTab('outdoors')">
                 <img src="{{ asset('images/outsides.png') }}" alt="Outdoors" class="w-6 h-6" />
-                <span>Outdoors</span>
+                <span style="font-family: 'Noto Sans', sans-serif;">Outdoors</span>
             </button>
 
             <button id="ptype-tab-relax"
                 class="rounded-full ptype-tab-button flex items-center gap-2 px-4 py-2"
                 onclick="togglePtypeTab('relax')">
                 <img src="{{ asset('images/relax.png') }}" alt="Relax" class="w-6 h-6" />
-                <span>Relax</span>
+                <span style="font-family: 'Noto Sans', sans-serif;">Relax</span>
             </button>
 
             <button id="ptype-tab-romance"
                 class="rounded-full ptype-tab-button flex items-center gap-2 px-4 py-2"
                 onclick="togglePtypeTab('romance')">
                 <img src="{{ asset('images/romance.png') }}" alt="Romance" class="w-6 h-6" />
-                <span>Romance</span>
+                <span style="font-family: 'Noto Sans', sans-serif;">Romance</span>
             </button>
 
             <button id="ptype-tab-food"
                 class="rounded-full ptype-tab-button flex items-center gap-2 px-4 py-2"
                 onclick="togglePtypeTab('food')">
                 <img src="{{ asset('images/food.png') }}" alt="Food" class="w-6 h-6" />
-                <span>Food</span>
+                <span style="font-family: 'Noto Sans', sans-serif;">Food</span>
             </button>
         </div>
 
         <!-- Tab Contents -->
         <div id="ptype-tab-content">
-            <!-- Beach Tab -->
-            <div id="ptype-content-beach" class="relative px-2 py-6">
-                <!-- Left Arrow -->
-              <!-- Left Arrow Button -->
-    <button id="scrollLeftBeach"
-        class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-md rounded-full p-2 hover:bg-gray-100 transition hidden lg:flex items-center justify-center w-10 h-10">
-        &#8592;
-    </button>
-
-    <!-- Scrollable Content -->
-    <div id="scrollBeach"
-        class="flex overflow-x-auto scroll-smooth gap-4 px-12 pb-2 no-scrollbar">
-        @foreach ([
-            ['name' => 'Kandy', 'properties' => 1102],
-            ['name' => 'Colombo', 'properties' => 520],
-            ['name' => 'Nuwara Eliya', 'properties' => 900],
-            ['name' => 'Ella', 'properties' => 841],
-            ['name' => 'Galle', 'properties' => 1200],
-        ] as $city)
-            <div class="min-w-[220px] flex-shrink-0">
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="{{ asset('images/ella.png') }}"
-                         alt="{{ $city['name'] }}"
-                         class="w-full h-48 object-cover" style="width:220px;">
-                </div>
-                <div class="mt-2">
-                    <h3 class="text-xl font-bold text-gray-800">{{ $city['name'] }}</h3>
-                    <p class="text-gray-600">{{ number_format($city['properties']) }} properties</p>
-                </div>
-            </div>
-        @endforeach
-    </div>
-
-    <!-- Right Arrow Button -->
-    <button id="scrollRightBeach"
-        class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-md rounded-full p-2 hover:bg-gray-100 transition hidden lg:flex items-center justify-center w-10 h-10">
-        &#8594;
-    </button>
-</div>
+            
 
             <!-- Other Tabs -->
+             <div id="ptype-content-beach" class="hidden px-2 py-6">Outdoors content here...</div>
             <div id="ptype-content-outdoors" class="hidden px-2 py-6">Outdoors content here...</div>
             <div id="ptype-content-relax" class="hidden px-2 py-6">Relax content here...</div>
             <div id="ptype-content-romance" class="hidden px-2 py-6">Romance content here...</div>
@@ -586,45 +465,136 @@
         }
     </style>
 
-    <!-- JavaScript Scroll + Tab Switching -->
-    <!--<script>
-        // Scroll buttons
-        const scrollContainer = document.getElementById('scrollBeach');
-        const scrollLeftBtn = document.getElementById('scrollLeftBeach');
-        const scrollRightBtn = document.getElementById('scrollRightBeach');
-
-        scrollRightBtn.addEventListener('click', () => {
-            scrollContainer.scrollBy({ left: 300, behavior: 'smooth' });
-        });
-
-        scrollLeftBtn.addEventListener('click', () => {
-            scrollContainer.scrollBy({ left: -300, behavior: 'smooth' });
-        });
-
-        // Tabs
-        function togglePtypeTab(tabName) {
-            const tabButtons = document.querySelectorAll('.ptype-tab-button');
-            const tabContents = document.querySelectorAll('#ptype-tab-content > div');
-
-            tabButtons.forEach(btn => {
-                btn.classList.remove('bg-blue-100', 'text-blue-700', 'active-ptype-tab');
-            });
-
-            tabContents.forEach(content => {
-                content.classList.add('hidden');
-            });
-
-            document.getElementById(`ptype-tab-${tabName}`).classList.add('bg-blue-100', 'text-blue-700', 'active-ptype-tab');
-            document.getElementById(`ptype-content-${tabName}`).classList.remove('hidden');
-        }
-
-        // Activate default tab
-        document.addEventListener('DOMContentLoaded', () => {
-            togglePtypeTab('beach');
-        });
-    </script>-->
+    
 </section>
 
+
+<section class="scroll-section py-12 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-2xl font-semibold text-gray-800 mb-2">Explore Sri Lanka</h2>
+        <p class="mb-8 text-gray-600" style="font-family: 'Noto Sans', sans-serif;">These popular destinations have a lot to offer</p>
+    </div>
+
+    <div class="relative">
+        <!-- Wrapper for scroll and arrows -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+            <!-- Scrollable container -->
+            <div class="scroll-container flex overflow-x-auto scroll-smooth gap-4 no-scrollbar">
+                @php
+                    $destinations = [
+                        ['name' => 'Kandy', 'image' => 'kandy.jpg', 'properties' => '1,166'],
+                        ['name' => 'Colombo', 'image' => 'colombo.jpg', 'properties' => '622'],
+                        ['name' => 'Nuwara Eliya', 'image' => 'colombo.jpg', 'properties' => '843'],
+                        ['name' => 'Ella', 'image' => 'kandy.jpg', 'properties' => '876'],
+                        ['name' => 'Galle', 'image' => 'kandy.jpg', 'properties' => '1,118'],
+                        ['name' => 'Negombo', 'image' => 'colombo.jpg', 'properties' => '822'],
+                        ['name' => 'Anuradhapura', 'image' => 'colombo.jpg', 'properties' => '710'],
+                        ['name' => 'Trincomalee', 'image' => 'colombo.jpg', 'properties' => '588'],
+                    ];
+                @endphp
+
+                @foreach ($destinations as $destination)
+ <div class="min-w-[230px]">
+  <!-- Container with only image -->
+  <div class="bg-white rounded-lg shadow-md overflow-hidden">
+    <img src="{{ asset('images/' . $destination['image']) }}" alt="{{ $destination['name'] }}" class="w-full h-40 object-cover">
+  </div>
+
+  <!-- Text outside the image container, below it -->
+  <div class="mt-2 px-1">
+    <h3 class="text-sm font-semibold text-gray-800" style="font-family: 'Noto Sans', sans-serif;">
+      {{ $destination['name'] }}
+    </h3>
+    <p class="text-xs text-gray-500" style="font-family: 'Noto Sans', sans-serif;">
+      {{ $destination['properties'] }} Properties
+    </p>
+  </div>
+</div>
+
+
+                @endforeach
+            </div>
+            
+
+            <!-- Left Arrow -->
+            <button class="scroll-left hidden absolute  top-[42%]  left-0 -translate-y-1/2 bg-white border shadow p-2 rounded-full z-10 hover:bg-gray-100 ml-4 ">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+            </button>
+
+            <!-- Right Arrow -->
+            <button class="scroll-right absolute  top-[42%] right-0 -translate-y-1/2 bg-white border shadow p-2 rounded-full z-10 hover:bg-gray-100 mr-4 ">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- Tailwind scroll styling -->
+<style>
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+</style>
+
+<!-- Scroll button script -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const scrollSections = document.querySelectorAll('.scroll-section');
+        const scrollAmount = 648;
+
+        scrollSections.forEach(section => {
+            const scrollContainer = section.querySelector('.scroll-container');
+            const scrollLeftBtn = section.querySelector('.scroll-left');
+            const scrollRightBtn = section.querySelector('.scroll-right');
+
+            function toggleArrows() {
+                const maxScrollLeft = scrollContainer.scrollWidth - scrollContainer.clientWidth;
+                scrollLeftBtn.classList.toggle('hidden', scrollContainer.scrollLeft <= 0);
+                scrollRightBtn.classList.toggle('hidden', scrollContainer.scrollLeft >= maxScrollLeft - 10);
+            }
+
+            scrollLeftBtn.addEventListener('click', () => {
+                scrollContainer.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+                setTimeout(toggleArrows, 400);
+            });
+
+            scrollRightBtn.addEventListener('click', () => {
+                scrollContainer.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+                setTimeout(toggleArrows, 400);
+            });
+
+            scrollContainer.addEventListener('scroll', toggleArrows);
+
+            // Initial visibility check
+            toggleArrows();
+        });
+    });
+</script>
+
+
+
+
+
+<!-- Browse by Popular Destinations Section-->
+<section class="py-12 bg-white relative">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-2xl font-semibold text-gray-800 mb-2" style="font-family: 'Lato', sans-serif;">Browse by property type</h2>
+        <p class="mb-4 text-gray-600" style="font-family: 'Lato', sans-serif;">These popular destinations have a lot to offer</p>
+        
+        
+
+  
+</section>
+
+<!--End Popular Destination Section-->
 
 <!--  Deals for the weekend Section -->
 <section class="py-12 bg-white">
@@ -832,25 +802,135 @@
 
 <!--End Section-->
 
-<!--Travel More Section-->
+
+<!-- End Section-->
 <section class="py-12 bg-white">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-  
-    <h2 class="text-2xl font-semibold text-gray-800 mb-6" style="font-family: 'Lato', sans-serif;">Travel More, Spend Less</h2>
+    <div class="flex flex-col md:flex-row md:space-x-6 space-y-6 md:space-y-0">
+      
+      <!-- Card 1 -->
+      <div class="bg-white shadow-md rounded-lg flex flex-row items-center p-4 w-full md:w-1/3 border border-gray-300">
+        <img src="{{ asset('images/cal.png') }}" alt="Mountains" class="w-16 h-16 object-cover rounded-md mr-4">
+        <div class="flex flex-col justify-between">
+          <h2 class="text-sm font-semibold text-gray-800 mb-1" style="font-family: 'Noto Sans', sans-serif;">
+        Book now, pay at the property
+          </h2>
+          <p class="text-sm text-gray-600 mb-3" style="font-family: 'Noto Sans', sans-serif;">
+           FREE cancellation on most rooms
+          </p>
+        </div>
+      </div>
 
-    <!-- Offer Card -->
-    <div class="bg-white-50 p-3 rounded flex items-center justify-between border border-solid border-gray-300">
-  
-      <div class="ml-4">
-  <p class="font-medium font-semibold" style="font-family: 'Lato', sans-serif;">Sign in, save money</p>
-  <p class="text-sm text-gray-600" style="font-family: 'Lato', sans-serif;">Save 10% of more at particpating properties</p>
-  <button class="bg-cyan-600 text-white px-4 py-1 rounded mt-2 w-auto text-s" style="font-family: 'Lato', sans-serif;">Sign in</button>
-  <button class=" px-4 py-1 rounded mt-2 w-auto" style="font-family: 'Lato', sans-serif;background-color:white;color: rgb(31, 143, 178);">Register</button>
-</div>
-</div>
+      <!-- Card 2 -->
+      <div class="bg-white shadow-md rounded-lg flex flex-row items-center p-4 w-full md:w-1/3 border border-gray-300">
+        <img src="{{ asset('images/world.png') }}" alt="Beach" class="w-16 h-16 object-cover rounded-md mr-4">
+        <div class="flex flex-col justify-between">
+          <h2 class="text-sm font-semibold text-gray-800 mb-1" style="font-family: 'Noto Sans', sans-serif;">
+        2+ million properties
+worldwide
+          </h2>
+          <p class="text-sm text-gray-600 mb-3" style="font-family: 'Noto Sans', sans-serif;">
+      Hotels, guest houses, apartments, and 
+more...
+          </p>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="bg-white shadow-md rounded-lg flex flex-row items-center p-4 w-full md:w-1/3 border border-gray-300">
+        <img src="{{ asset('images/man.png') }}" alt="City" class="w-16 h-16 object-cover rounded-md mr-4">
+        <div class="flex flex-col justify-between">
+          <h2 class="text-sm font-semibold text-gray-800 mb-1" style="font-family: 'Noto Sans', sans-serif;">
+        Trusted customer service you
+can rely on, 24/7
+          </h2>
+          <p class="text-sm text-gray-600 mb-3" style="font-family: 'Noto Sans', sans-serif;">
+            We’re always here to help
+          </p>
+        </div>
+      </div>
+
+    </div>
   </div>
 </section>
-<!-- End Section-->
+
+<section class="py-12 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 class="text-2xl font-semibold text-gray-800 mb-6">
+      Get inspiration for your next trip
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+      <!-- Large Card -->
+      <div class="relative rounded-lg overflow-hidden h-96 md:col-span-6">
+        <img src="{{ asset('images/newyear.png') }}" alt="New Year's Eve" class="w-full h-full object-cover">
+        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent text-white p-4">
+          <h3 class="text-xl font-bold" style="font-family: 'Noto Sans', sans-serif;">New Year’s Eve in New York City</h3>
+          <p class="text-sm mt-1" style="font-family: 'Noto Sans', sans-serif;">Ring in the new year with iconic moments and unforgettable memories in New York City</p>
+        </div>
+      </div>
+
+      <!-- Small Card 1 -->
+    
+           <div class="min-w-[250px]  md:col-span-3 flex flex-col">
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <img src="{{ asset('images/apartments.jpg') }}" alt="Apartments" class="w-full h-60 object-cover">
+                </div>
+                <div class="mt-2">
+                    <h6 class="text-base font-semibold text-gray-800" style="font-family: 'Noto Sans', sans-serif;">6 best ryokans in Japan to
+rejuverate yourself</h3>
+                              <p class="text-sm mt-1" style="font-family: 'Noto Sans', sans-serif;">Discover unmissable ryokans to relax and 
+unwind in style</p>
+                </div>
+            </div>
+      
+
+      <!-- Small Card 2 -->
+       <div class="min-w-[250px]  md:col-span-3 flex flex-col">
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <img src="{{ asset('images/apartments.jpg') }}" alt="Apartments" class="w-full h-60 object-cover">
+                </div>
+                <div class="mt-2">
+                    <h6 class="text-base font-semibold text-gray-800" style="font-family: 'Noto Sans', sans-serif;">7 best places in Asia to celebrate 
+Christmas</h3>
+ <p class="text-sm mt-1" style="font-family: 'Noto Sans', sans-serif;">Discover the shimmering lights and festive 
+sights of Asia’s Holiday season.</p>
+                </div>
+            </div>
+    </div>
+  </div>
+</section>
+
+
+
+
+<!-- Offers Section -->
+<section class="py-12 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Title -->
+    <h2 class="text-2xl font-semibold text-gray-800 mb-2">Travel more, spend less</h2>
+
+
+    <!-- Offer Card -->
+    <div class="bg-white-50 p-2 rounded flex items-center justify-between border border-solid border-gray-300">
+      <!-- Text Content -->
+      <div class="ml-4">
+  <p class="font-medium font-semibold">Sign in, save money</p>
+  <p class="text-sm text-gray-600" style="font-family: 'Noto Sans', sans-serif;">Save 10% or more at participating properties -just look for the blue Genius label</p>
+  <button class=" text-white px-4 py-1 rounded mt-2 w-auto" style="font-family: 'Noto Sans', sans-serif;background-color:#3CC0E9;">Sign In</button>
+</div>
+
+
+      
+
+      <!-- Image -->
+      <img src="{{ asset('images/genius.png') }}" alt="Offer Image" class="w-32 h-32 rounded ml-4">
+    </div>
+  </div>
+</section>
+<!--End Offers Section-->
+
+
 
 
 <!--Popular with Travellers-->
@@ -1027,5 +1107,6 @@
         window.togglePtypeTab = togglePtypeTab;
     });
 </script>
+
 
 @endsection
