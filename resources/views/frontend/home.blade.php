@@ -404,38 +404,46 @@
 
         <!-- Tab Buttons -->
         <div class="flex flex-wrap gap-2 mb-6">
+
+           <button id="ptype-tab-city"
+                class="rounded-full ptype-tab-button active-ptype-tab flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-700"
+                onclick="togglePtypeTab('city')">
+                <img src="{{ asset('assets/city.svg') }}" alt="city" class="w-5 h-5" style="filter: brightness(0) saturate(100%);" />
+                <span style="font-family: 'Noto Sans', sans-serif;">City</span>
+            </button>
+
             <button id="ptype-tab-beach"
                 class="rounded-full ptype-tab-button active-ptype-tab flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-700"
                 onclick="togglePtypeTab('beach')">
-                <img src="{{ asset('images/beach.png') }}" alt="Beach" class="w-6 h-6" />
+                <img src="{{ asset('assets/beach.svg') }}" alt="Beach" class="w-5 h-5" />
                 <span style="font-family: 'Noto Sans', sans-serif;">Beach</span>
             </button>
 
             <button id="ptype-tab-outdoors"
                 class="rounded-full ptype-tab-button flex items-center gap-2 px-4 py-2"
                 onclick="togglePtypeTab('outdoors')">
-                <img src="{{ asset('images/outsides.png') }}" alt="Outdoors" class="w-6 h-6" />
+                <img src="{{ asset('assets/outdoors.svg') }}" alt="Outdoors" class="w-5 h-5" style="filter: brightness(0) saturate(100%);"  />
                 <span style="font-family: 'Noto Sans', sans-serif;">Outdoors</span>
             </button>
 
             <button id="ptype-tab-relax"
                 class="rounded-full ptype-tab-button flex items-center gap-2 px-4 py-2"
                 onclick="togglePtypeTab('relax')">
-                <img src="{{ asset('images/relax.png') }}" alt="Relax" class="w-6 h-6" />
+                <img src="{{ asset('assets/relax.svg') }}" alt="Relax" class="w-5 h-5" />
                 <span style="font-family: 'Noto Sans', sans-serif;">Relax</span>
             </button>
 
             <button id="ptype-tab-romance"
                 class="rounded-full ptype-tab-button flex items-center gap-2 px-4 py-2"
                 onclick="togglePtypeTab('romance')">
-                <img src="{{ asset('images/romance.png') }}" alt="Romance" class="w-6 h-6" />
+                <img src="{{ asset('assets/Romance.svg') }}" alt="Romance" class="w-5 h-5" />
                 <span style="font-family: 'Noto Sans', sans-serif;">Romance</span>
             </button>
 
             <button id="ptype-tab-food"
                 class="rounded-full ptype-tab-button flex items-center gap-2 px-4 py-2"
                 onclick="togglePtypeTab('food')">
-                <img src="{{ asset('images/food.png') }}" alt="Food" class="w-6 h-6" />
+                <img src="{{ asset('assets/food.svg') }}" alt="Food" class="w-5 h-5" />
                 <span style="font-family: 'Noto Sans', sans-serif;">Food</span>
             </button>
         </div>
@@ -445,7 +453,8 @@
             
 
             <!-- Other Tabs -->
-             <div id="ptype-content-beach" class="hidden px-2 py-6">Outdoors content here...</div>
+            <div id="ptype-content-city" class="hidden px-2 py-6">city content here...</div>
+             <div id="ptype-content-beach" class="hidden px-2 py-6">beach content here...</div>
             <div id="ptype-content-outdoors" class="hidden px-2 py-6">Outdoors content here...</div>
             <div id="ptype-content-relax" class="hidden px-2 py-6">Relax content here...</div>
             <div id="ptype-content-romance" class="hidden px-2 py-6">Romance content here...</div>
@@ -583,227 +592,163 @@
 
 
 
-<!-- Browse by Popular Destinations Section-->
-<section class="py-12 bg-white relative">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 class="text-2xl font-semibold text-gray-800 mb-2" style="font-family: 'Lato', sans-serif;">Browse by property type</h2>
-        <p class="mb-4 text-gray-600" style="font-family: 'Lato', sans-serif;">These popular destinations have a lot to offer</p>
-        
-        
-
-  
-</section>
-
-<!--End Popular Destination Section-->
 
 <!--  Deals for the weekend Section -->
-<section class="py-12 bg-white">
+<section class="scroll-section py-12 bg-white">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <h2 class="text-2xl font-semibold text-gray-800 mb-2" style="font-family: 'Lato', sans-serif;">Browse by property type</h2>
-    <p class="text-gray-600 mb-6" style="font-family: 'Lato', sans-serif;">Save on stays for May 2 - May 4</p>
+    <h2 class="text-2xl font-semibold text-gray-800 mb-2">
+      Deals for the weekend
+    </h2>
+    <p class="mb-8 text-gray-600" style="font-family: 'Noto Sans', sans-serif;">Save on stays for 16 May - 18 May</p>
+  </div>
 
+  <div class="relative">
+    <!-- Scroll wrapper with arrows -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+      <!-- Scrollable container -->
+      <div class="scroll-container flex gap-4 overflow-x-auto scroll-smooth no-scrollbar">
+        <!-- Hotel Card Template Start -->
+        @for ($i = 0; $i < 5; $i++)
+        <div class="min-w-[300px] max-w-[300px] bg-white rounded-lg shadow-md overflow-hidden flex-shrink-0 lg:min-w-0">
+          <img src="{{ asset('images/property.png') }}" alt="Hotel Image" class="w-full h-[230px] object-cover">
+          <div class="p-4">
+            <span class="text-white px-2 py-1 rounded text-xs" style="background-color: rgb(31, 143, 178); font-family: 'Noto Sans', sans-serif;">Genius</span>
+            <h3 class="text-sm font-bold mt-2" style="font-family: 'Noto Sans', sans-serif;">Eagle Regency Hotel</h3>
+            <p class="text-xs text-gray-600" style="font-family: 'Noto Sans', sans-serif;">Kandy, Sri Lanka</p>
+            <div class="flex items-center mt-2">
+              <span class="text-white px-2 py-1 rounded text-xs" style="background-color: rgb(31, 143, 178);">8</span>
+              <div class="ml-2" style="font-family: 'Noto Sans', sans-serif;">
+                <span class="text-xs block">Very Good</span>
+                <span class="text-xs block">337 Reviews</span>
+              </div>
+            </div>
+            <button class="text-xs text-white px-2 py-1 rounded mt-2" style="background-color:#1D9D39; font-family: 'Noto Sans', sans-serif;">Getaway Deal</button>
+            <p class="text-gray-600 mt-2 text-xs" style="font-family: 'Noto Sans', sans-serif;">
+              2 nights  
+              <span class="text-xs line-through" style="color:#FF0004;">LKR 72,000</span> 
+              <span style="color:black; font-weight:bold;"> LKR 26,844</span>
+            </p>
+          </div>
+        </div>
+        @endfor
+        <!-- Hotel Card Template End -->
+      </div>
+
+      <!-- Left Arrow -->
+      <button class="scroll-left hidden absolute top-[42%] left-0 -translate-y-1/2 bg-white border shadow p-2 rounded-full z-10 hover:bg-gray-100 ml-4">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <!-- Right Arrow -->
+      <button class="scroll-right absolute top-[42%] right-0 -translate-y-1/2 bg-white border shadow p-2 rounded-full z-10 hover:bg-gray-100 mr-4">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!--End Section-->
+
+<section class="scroll-section py-12 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 class="text-2xl font-semibold text-gray-800 mb-2">Stay at our top unique properties</h2>
+    <p class="text-gray-600 mb-4" style="font-family: 'Noto Sans', sans-serif;">
+      From castles and villas to boats and igloos, we’ve got it all
+    </p>
+
+    <div class="relative">
+      <div class="scroll-container flex space-x-4 overflow-x-auto pb-2 scroll-smooth no-scrollbar">
+        @for ($i = 0; $i < 5; $i++)
+        <div class="bg-white rounded-lg shadow-md overflow-hidden relative min-w-[250px]">
+          <button style="position: absolute; top: 12px; right: 12px; background-color: white; border-radius: 50%; padding: 8px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); transition: background-color 0.3s;" onclick="this.classList.toggle('filled'); this.classList.contains('filled') ? this.innerHTML = '❤️' : this.innerHTML = '🤍';">🤍</button>
+          <img src="{{ asset('images/A.jpg') }}" alt="Hotel Image" class="w-full h-64 object-cover">
+          <div class="p-4">
+            <span class="text-white px-2 py-1 rounded text-xs" style="background-color: rgb(31, 143, 178); font-family: 'Lato', sans-serif;">Genius</span>
+            <h3 class="text-sm font-bold mt-2" style="font-family: 'Noto Sans', sans-serif;">Eagle Regency Hotel</h3>
+            <p class="text-xs text-gray-600" style="font-family: 'Noto Sans', sans-serif;">Kandy, Sri Lanka</p>
+            <div class="flex items-center mt-2">
+              <span class="text-white px-2 py-1 rounded text-xs" style="background-color: rgb(31, 143, 178); font-family: 'Noto Sans', sans-serif;">8</span>
+              <div style="font-family: 'Noto Sans', sans-serif;">
+                <span class="text-xs ml-2 block">Very Good</span>
+                <span class="text-xs ml-2 block">337 Reviews</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        @endfor
+      </div>
+
+      <!-- Arrows -->
+      <button class="scroll-left hidden absolute top-1/2 left-0 -translate-y-1/2 bg-white border shadow p-2 rounded-full z-10 hover:bg-gray-100 ml-2"style="margin-left:-20px;">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+      <button class="scroll-right absolute top-1/2 right-0 -translate-y-1/2 bg-white border shadow p-2 rounded-full z-10 hover:bg-gray-100 mr-2" style="margin-right:-20px;">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+  </div>
+</section>
+
+<section class="scroll-section py-12 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+   <h2 class="text-2xl font-semibold text-gray-800 mb-4">Homes guests love</h2>
    
-    <div class="flex gap-4 overflow-x-auto lg:grid lg:grid-cols-4 lg:gap-6">
-      
-      <!-- Hotel Card 1 -->
-      <div class="min-w-[250px] max-w-[250px] bg-white rounded-lg shadow-md overflow-hidden flex-shrink-0 lg:min-w-0">
-  <img src="{{ asset('images/property.png') }}" alt="Hotel Image" class="w-full h-[300px] object-cover" >
-  <div class="p-4">
-    <span class="text-white px-2 py-1 rounded text-s" style="background-color: rgb(31, 143, 178); font-family: 'Lato', sans-serif;">Genius</span>
-    <h3 class="text-xl font-bold mt-2" style="font-family: 'Lato', sans-serif;">Eagle Regency Hotel</h3>
-    <p class="text-gray-600" style="font-family: 'Lato', sans-serif;">Kandy, Sri Lanka</p>
-    <div class="flex items-center mt-2">
-      <span class=" text-white px-2 py-1 rounded text-xs" style="background-color: rgb(31, 143, 178);">8</span>
-      <div style="font-family: 'Lato', sans-serif;">
-  <span class="text-xs ml-2 block">Very Good</span>
-  <span class="text-xs ml-2 block">337 Reviews</span>
-</div>
 
+    <div class="relative">
+      <div class="scroll-container flex space-x-4 overflow-x-auto pb-2 scroll-smooth no-scrollbar">
+        @for ($i = 0; $i < 5; $i++)
+        <div class="bg-white rounded-lg shadow-md overflow-hidden relative min-w-[250px]">
+          <button style="position: absolute; top: 12px; right: 12px; background-color: white; border-radius: 50%; padding: 8px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); transition: background-color 0.3s;" onclick="this.classList.toggle('filled'); this.classList.contains('filled') ? this.innerHTML = '❤️' : this.innerHTML = '🤍';">🤍</button>
+          <img src="{{ asset('images/AAAA.jpg') }}" alt="Hotel Image" class="w-full h-64 object-cover">
+          <div class="p-4">
+            <span class="text-white px-2 py-1 rounded text-xs" style="background-color: rgb(31, 143, 178); font-family: 'Lato', sans-serif;">Genius</span>
+            <h3 class="text-sm font-bold mt-2" style="font-family: 'Noto Sans', sans-serif;">Eagle Regency Hotel</h3>
+            <p class="text-xs text-gray-600" style="font-family: 'Noto Sans', sans-serif;">Kandy, Sri Lanka</p>
+            <div class="flex items-center mt-2">
+              <span class="text-white px-2 py-1 rounded text-xs" style="background-color: rgb(31, 143, 178); font-family: 'Noto Sans', sans-serif;">8</span>
+              <div style="font-family: 'Noto Sans', sans-serif;">
+                <span class="text-xs ml-2 block">Very Good</span>
+                <span class="text-xs ml-2 block">337 Reviews</span>
+              </div>
+            </div>
+              <div class="mt-1 text-right" style="font-family: 'Noto Sans', sans-serif;">
+              <span class="text-xs text-gray-700 font-semibold">Starting from</span>
+              <span class="text-sm text-black font-bold"> LKR 82,896</span>
+            </div>
+          </div>
+        </div>
+        @endfor
+      </div>
 
-    </div>
-    <button class="text-xs text-white px-2 py-1 rounded mt-2" style="background-color:#FF5206;font-family: 'Lato', sans-serif;">Getaway Deal</button>
-    <p class="text-gray-600 mt-2;font-family: 'Lato', sans-serif;">2 nights  <span class="text-sm text-gray-500 line-through" style="font-family: 'Lato', sans-serif;color:#FF0004;">LKR 72,000</span> <span style="color:black;font-weight:bold;"> LKR 26,844</span></p>
-  </div>
-</div>
-
-
-
-      <!-- Hotel Card 2 -->
-      <div class="min-w-[250px] max-w-[250px] bg-white rounded-lg shadow-md overflow-hidden flex-shrink-0 lg:min-w-0">
-  <img src="{{ asset('images/property.png') }}" alt="Hotel Image" class="w-full h-[300px] object-cover">
-  <div class="p-4">
-    <span class="text-white px-2 py-1 rounded text-s" style="background-color: rgb(31, 143, 178); font-family: 'Lato', sans-serif;">Genius</span>
-    <h3 class="text-xl font-bold mt-2" style="font-family: 'Lato', sans-serif;">Eagle Regency Hotel</h3>
-    <p class="text-gray-600" style="font-family: 'Lato', sans-serif;">Kandy, Sri Lanka</p>
-    <div class="flex items-center mt-2">
-      <span class=" text-white px-2 py-1 rounded text-xs" style="background-color: rgb(31, 143, 178);">8</span>
-      <div style="font-family: 'Lato', sans-serif;">
-  <span class="text-xs ml-2 block">Very Good</span>
-  <span class="text-xs ml-2 block">337 Reviews</span>
-</div>
-
-
-    </div>
-    <button class="text-xs text-white px-2 py-1 rounded mt-2" style="background-color:#FF5206;font-family: 'Lato', sans-serif;">Getaway Deal</button>
-    <p class="text-gray-600 mt-2;font-family: 'Lato', sans-serif;">2 nights  <span class="text-sm text-gray-500 line-through" style="font-family: 'Lato', sans-serif;color:#FF0004;">LKR 72,000</span> <span style="color:black;font-weight:bold;"> LKR 26,844</span></p>
-  </div>
-</div>
-
-      <!-- Hotel Card 3 -->
-      <div class="min-w-[250px] max-w-[250px] bg-white rounded-lg shadow-md overflow-hidden flex-shrink-0 lg:min-w-0">
-  <img src="{{ asset('images/property.png') }}" alt="Hotel Image" class="w-full h-[300px] object-cover">
-  <div class="p-4">
-    <span class="text-white px-2 py-1 rounded text-s" style="background-color: rgb(31, 143, 178); font-family: 'Lato', sans-serif;">Genius</span>
-    <h3 class="text-xl font-bold mt-2" style="font-family: 'Lato', sans-serif;">Eagle Regency Hotel</h3>
-    <p class="text-gray-600" style="font-family: 'Lato', sans-serif;">Kandy, Sri Lanka</p>
-    <div class="flex items-center mt-2">
-      <span class="text-white px-2 py-1 rounded text-xs" style="background-color: rgb(31, 143, 178);">8</span>
-      <div style="font-family: 'Lato', sans-serif;">
-  <span class="text-xs ml-2 block">Very Good</span>
-  <span class="text-xs ml-2 block">337 Reviews</span>
-</div>
-
-
-    </div>
-    <button class="text-xs text-white px-2 py-1 rounded mt-2" style="background-color:#FF5206;font-family: 'Lato', sans-serif;">Getaway Deal</button>
-    <p class="text-gray-600 mt-2;font-family: 'Lato', sans-serif;">2 nights  <span class="text-sm text-gray-500 line-through" style="font-family: 'Lato', sans-serif;color:#FF0004;">LKR 72,000</span> <span style="color:black;font-weight:bold;"> LKR 26,844</span></p>
-  </div>
-</div>
-
-      <!-- Hotel Card 4 -->
-      <div class="min-w-[250px] max-w-[250px] bg-white rounded-lg shadow-md overflow-hidden flex-shrink-0 lg:min-w-0">
-  <img src="{{ asset('images/property.png') }}" alt="Hotel Image" class="w-full h-[300px] object-cover">
-  <div class="p-4">
-    <span class="text-white px-2 py-1 rounded text-s" style="background-color: rgb(31, 143, 178); font-family: 'Lato', sans-serif;">Genius</span>
-    <h3 class="text-xl font-bold mt-2" style="font-family: 'Lato', sans-serif;">Eagle Regency Hotel</h3>
-    <p class="text-gray-600" style="font-family: 'Lato', sans-serif;">Kandy, Sri Lanka</p>
-    <div class="flex items-center mt-2">
-      <span class=" text-white px-2 py-1 rounded text-xs" style="background-color: rgb(31, 143, 178);">8</span>
-      <div style="font-family: 'Lato', sans-serif;">
-  <span class="text-xs ml-2 block">Very Good</span>
-  <span class="text-xs ml-2 block">337 Reviews</span>
-</div>
-
-
-    </div>
-    <button class="text-xs text-white px-2 py-1 rounded mt-2" style="background-color:#FF5206;font-family: 'Lato', sans-serif;">Getaway Deal</button>
-    <p class="text-gray-600 mt-2;font-family: 'Lato', sans-serif;">2 nights  <span class="text-sm text-gray-500 line-through" style="font-family: 'Lato', sans-serif;color:#FF0004;">LKR 72,000</span> <span style="color:black;font-weight:bold;"> LKR 26,844</span></p>
-  </div>
-</div>
-
+      <!-- Arrows -->
+      <button class="scroll-left hidden absolute top-1/2 left-0 -translate-y-1/2 bg-white border shadow p-2 rounded-full z-10 hover:bg-gray-100 ml-2"style="margin-left:-20px;">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+      <button class="scroll-right absolute top-1/2 right-0 -translate-y-1/2 bg-white border shadow p-2 rounded-full z-10 hover:bg-gray-100 mr-2" style="margin-right:-20px;">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
     </div>
   </div>
 </section>
-<!--End Section-->
-
- <!-- Section 2: Stay at our top unique properties -->
- <section class="py-12 bg-white">
- <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <h2 class="text-2xl font-semibold text-gray-800 mb-2" style="font-family: 'Lato', sans-serif;">Stay at our top unique properties</h2>
-    <p class="text-gray-600 mb-4">From castles and villas to boats and igloos, we have it all</p>
-
-    <div class="flex space-x-4 overflow-x-auto pb-2">
-        <!-- Card 1 -->
-        <div class="bg-white rounded-lg shadow-md overflow-hidden relative">
-  <button 
-    style="position: absolute; top: 12px; right: 12px; background-color: white; border-radius: 50%; padding: 8px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); transition: background-color 0.3s;"
-    onclick="this.classList.toggle('filled'); this.classList.contains('filled') ? this.innerHTML = '❤️' : this.innerHTML = '🤍';"
-  >
-    🤍
-  </button>
-  <img src="{{ asset('images/property.png') }}" alt="Hotel Image" class="w-full h-48 object-cover">
-  <div class="p-4">
-    <span class="text-white px-2 py-1 rounded text-s" style="background-color: rgb(31, 143, 178); font-family: 'Lato', sans-serif;">Genius</span>
-    <h3 class="text-xl font-bold mt-2" style="font-family: 'Lato', sans-serif;">Eagle Regency Hotel</h3>
-    <p class="text-gray-600" style="font-family: 'Lato', sans-serif;">Kandy, Sri Lanka</p>
-    <div class="flex items-center mt-2">
-      <span class="text-white px-2 py-1 rounded text-xs" style="background-color: rgb(31, 143, 178); font-family: 'Lato', sans-serif;">8</span>
-      <div style="font-family: 'Lato', sans-serif;">
-        <span class="text-xs ml-2 block">Very Good</span>
-        <span class="text-xs ml-2 block">337 Reviews</span>
-      </div>
-    </div>
-  </div>
-</div>
-
-        <!-- Card 2 -->
-        <div class="bg-white rounded-lg shadow-md overflow-hidden relative">
-  <button 
-    style="position: absolute; top: 12px; right: 12px; background-color: white; border-radius: 50%; padding: 8px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); transition: background-color 0.3s;"
-    onclick="this.classList.toggle('filled'); this.classList.contains('filled') ? this.innerHTML = '❤️' : this.innerHTML = '🤍';"
-  >
-    🤍
-  </button>
-  <img src="{{ asset('images/property.png') }}" alt="Hotel Image" class="w-full h-48 object-cover">
-  <div class="p-4">
-    <span class="text-white px-2 py-1 rounded text-s" style="background-color: rgb(31, 143, 178); font-family: 'Lato', sans-serif;">Genius</span>
-    <h3 class="text-xl font-bold mt-2" style="font-family: 'Lato', sans-serif;">Eagle Regency Hotel</h3>
-    <p class="text-gray-600" style="font-family: 'Lato', sans-serif;">Kandy, Sri Lanka</p>
-    <div class="flex items-center mt-2">
-      <span class="text-white px-2 py-1 rounded text-xs" style="background-color: rgb(31, 143, 178); font-family: 'Lato', sans-serif;">8</span>
-      <div style="font-family: 'Lato', sans-serif;">
-        <span class="text-xs ml-2 block">Very Good</span>
-        <span class="text-xs ml-2 block">337 Reviews</span>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="bg-white rounded-lg shadow-md overflow-hidden relative">
-  <button 
-    style="position: absolute; top: 12px; right: 12px; background-color: white; border-radius: 50%; padding: 8px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); transition: background-color 0.3s;"
-    onclick="this.classList.toggle('filled'); this.classList.contains('filled') ? this.innerHTML = '❤️' : this.innerHTML = '🤍';"
-  >
-    🤍
-  </button>
-  <img src="{{ asset('images/property.png') }}" alt="Hotel Image" class="w-full h-48 object-cover">
-  <div class="p-4">
-    <span class="text-white px-2 py-1 rounded text-s" style="background-color: rgb(31, 143, 178); font-family: 'Lato', sans-serif;">Genius</span>
-    <h3 class="text-xl font-bold mt-2" style="font-family: 'Lato', sans-serif;">Eagle Regency Hotel</h3>
-    <p class="text-gray-600" style="font-family: 'Lato', sans-serif;">Kandy, Sri Lanka</p>
-    <div class="flex items-center mt-2">
-      <span class="text-white px-2 py-1 rounded text-xs" style="background-color: rgb(31, 143, 178); font-family: 'Lato', sans-serif;">8</span>
-      <div style="font-family: 'Lato', sans-serif;">
-        <span class="text-xs ml-2 block">Very Good</span>
-        <span class="text-xs ml-2 block">337 Reviews</span>
-      </div>
-    </div>
-  </div>
-</div>
 
 
 
 
-        <!-- Card 4 -->
-        <div class="bg-white rounded-lg shadow-md overflow-hidden relative">
-  <button 
-    style="position: absolute; top: 12px; right: 12px; background-color: white; border-radius: 50%; padding: 8px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); transition: background-color 0.3s;"
-    onclick="this.classList.toggle('filled'); this.classList.contains('filled') ? this.innerHTML = '❤️' : this.innerHTML = '🤍';"
-  >
-    🤍
-  </button>
-  <img src="{{ asset('images/property.png') }}" alt="Hotel Image" class="w-full h-48 object-cover">
-  <div class="p-4">
-    <span class="text-white px-2 py-1 rounded text-s" style="background-color: rgb(31, 143, 178); font-family: 'Lato', sans-serif;">Genius</span>
-    <h3 class="text-xl font-bold mt-2" style="font-family: 'Lato', sans-serif;">Eagle Regency Hotel</h3>
-    <p class="text-gray-600" style="font-family: 'Lato', sans-serif;">Kandy, Sri Lanka</p>
-    <div class="flex items-center mt-2">
-      <span class="text-white px-2 py-1 rounded text-xs" style="background-color: rgb(31, 143, 178); font-family: 'Lato', sans-serif;">8</span>
-      <div style="font-family: 'Lato', sans-serif;">
-        <span class="text-xs ml-2 block">Very Good</span>
-        <span class="text-xs ml-2 block">337 Reviews</span>
-      </div>
-    </div>
-  </div>
-</div>
-
-</div>
-</section>
-
-<!--End Section-->
 
 
-<!-- End Section-->
+
 <section class="py-12 bg-white">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex flex-col md:flex-row md:space-x-6 space-y-6 md:space-y-0">
@@ -874,7 +819,7 @@ can rely on, 24/7
     
            <div class="min-w-[250px]  md:col-span-3 flex flex-col">
                 <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="{{ asset('images/apartments.jpg') }}" alt="Apartments" class="w-full h-60 object-cover">
+                    <img src="{{ asset('images/AA.png') }}" alt="Apartments" class="w-full h-60 object-cover">
                 </div>
                 <div class="mt-2">
                     <h6 class="text-base font-semibold text-gray-800" style="font-family: 'Noto Sans', sans-serif;">6 best ryokans in Japan to
@@ -888,7 +833,7 @@ unwind in style</p>
       <!-- Small Card 2 -->
        <div class="min-w-[250px]  md:col-span-3 flex flex-col">
                 <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="{{ asset('images/apartments.jpg') }}" alt="Apartments" class="w-full h-60 object-cover">
+                    <img src="{{ asset('images/AAA.png') }}" alt="Apartments" class="w-full h-60 object-cover">
                 </div>
                 <div class="mt-2">
                     <h6 class="text-base font-semibold text-gray-800" style="font-family: 'Noto Sans', sans-serif;">7 best places in Asia to celebrate 
@@ -936,7 +881,7 @@ sights of Asia’s Holiday season.</p>
 <!--Popular with Travellers-->
 <section class="py-12 bg-white" style="margin-bottom:60px;">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <h2 class="text-2xl font-semibold text-gray-800 mb-6" style="font-family: 'Lato', sans-serif;">Popular with travelers from Sri Lanka</h2>
+    <h2 class="text-2xl font-semibold text-gray-800 mb-6">Popular with travelers from Sri Lanka</h2>
 
         <!-- Tabs -->
         <div class="flex space-x-4 overflow-x-auto mb-4">
@@ -1086,7 +1031,7 @@ sights of Asia’s Holiday season.</p>
         }
 
         // Activate default tab
-        togglePtypeTab('beach');
+        togglePtypeTab('city');
 
         // Tabs: General Tabs
         window.toggleTab = function (tabName) {
