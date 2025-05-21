@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/login', function () {
     return view('frontend.login');
 });
+
+
 Route::get('/register', function () {
     return view('frontend.register');
 });
@@ -30,7 +32,7 @@ Route::get('/stays', function () {
 })->name('stays');
 
 Route::get('/car-rentals', function () {
-    return view('frontend.home');
+    return view('frontend.car-rentals');
 })->name('car.rentals');
 
 Route::get('/airport-taxis', function () {
