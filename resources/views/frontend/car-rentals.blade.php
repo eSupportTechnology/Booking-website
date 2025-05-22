@@ -133,56 +133,125 @@
         <!-- Heading and link -->
         <div class="flex items-center justify-between mb-6">
             <h2 class="text-2xl font-semibold text-gray-800">Travel more, spend less</h2>
-            <a href="#" class="text-sm text-blue-600 hover:underline">Learn more about your rewards</a>
+            <a href="#" class="text-sm text-[#1F8FB2] hover:underline">Learn more about your rewards</a>
         </div>
     </div>
 
-    <!-- Relative container for arrows and scrolling -->
-    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Scrollable container -->
-        <div class="scroll-container flex overflow-x-auto scroll-smooth gap-4 no-scrollbar">
-            @php
-                $destinations = [
-                    ['name' => 'Kandy', 'properties' => '1,166'],
-                    ['name' => 'Colombo', 'properties' => '622'],
-                    ['name' => 'Nuwara Eliya', 'properties' => '843'],
-                    ['name' => 'Ella', 'properties' => '876'],
-                    ['name' => 'Galle', 'properties' => '1,118'],
-                    ['name' => 'Negombo', 'properties' => '822'],
-                    ['name' => 'Anuradhapura', 'properties' => '710'],
-                    ['name' => 'Trincomalee', 'properties' => '588'],
-                ];
-            @endphp
-
-            @foreach ($destinations as $destination)
-                <div class="min-w-[230px]">
-                    <!-- Card box -->
-                    <div class="bg-white border border-gray-200 rounded-lg shadow-md p-4 h-40 flex flex-col justify-center items-center">
-                        <span class="text-lg font-bold text-gray-700" style="font-family: 'Noto Sans', sans-serif;">
-                            {{ $destination['name'] }}
-                        </span>
-                        <span class="text-sm text-gray-500 mt-1" style="font-family: 'Noto Sans', sans-serif;">
-                            {{ $destination['properties'] }} Properties
-                        </span>
-                    </div>
-                </div>
-            @endforeach
-        </div>
-
-        <!-- Left Arrow -->
-        <button class="scroll-left hidden absolute top-[42%] left-0 -translate-y-1/2 bg-white border shadow p-2 rounded-full z-10 hover:bg-gray-100 ml-4">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-            </svg>
-        </button>
-
-        <!-- Right Arrow -->
-        <button class="scroll-right absolute top-[42%] right-0 -translate-y-1/2 bg-white border shadow p-2 rounded-full z-10 hover:bg-gray-100 mr-4">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-            </svg>
-        </button>
+   <!-- Relative container for arrows and scrolling -->
+<div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Scrollable container -->
+    <div class="scroll-container flex overflow-x-auto scroll-smooth gap-4 no-scrollbar">
+        <!-- Card 1 -->
+      <div class="min-w-[260px]">
+    <div class="bg-[#1F8FB2] border border-gray-200 rounded-lg shadow-md p-4 h-[9rem] flex flex-col justify-start items-start">
+        <span class="text-lg font-bold text-white mb-2" style="font-family: 'Noto Sans', sans-serif;">Genius</span>
+        <span class="text-sm text-white mt-1" style="font-family: 'Noto Sans', sans-serif;">
+            Dinidu, you’re at <span class="font-bold text-white">Genius Level 1</span> in our loyalty programme
+        </span>
     </div>
+</div>
+
+      <div class="min-w-[260px]">
+    <div class="bg-white border border-[#1F8FB2] rounded-lg shadow-md p-4 h-[9rem] flex flex-col justify-start items-start">
+        <!-- Flex container for title and icon -->
+        <div class="w-full flex items-center justify-between mb-2">
+            <span class="text-base font-bold text-black" style="font-family: 'Noto Sans', sans-serif;">
+                10% discounts on stays
+            </span>
+            <!-- Example SVG icon (e.g., info icon) -->
+           <img src="{{ asset('assets/discount.svg') }}" alt="Car" class="w-4 h-4" />
+        </div>
+        <span class="text-sm text-black mt-1" style="font-family: 'Noto Sans', sans-serif;">
+            Enjoy discounts at participating properties worldwide
+        </span>
+    </div>
+</div>
+
+
+    <div class="min-w-[260px]">
+    <div class="bg-white border border-[#1F8FB2] rounded-lg shadow-md p-4 h-[9rem] flex flex-col justify-start items-start">
+        <!-- Flex container for title and icon -->
+        <div class="w-full flex items-start justify-between mb-2">
+            <span class="text-base font-bold text-black leading-snug" style="font-family: 'Noto Sans', sans-serif;">
+                10% discounts on rental <br /> cars
+            </span>
+            <!-- Make sure the SVG is inline or color is set in the SVG file -->
+            <img src="{{ asset('assets/car-blue.svg') }}" alt="Car" class="w-4 h-4 mt-1" />
+        </div>
+        <span class="text-sm text-black mt-1" style="font-family: 'Noto Sans', sans-serif;">
+    Enjoy discounts at participating 
+properties worldwide
+        </span>
+    </div>
+</div>
+
+   <div class="min-w-[260px]">
+    <div class="bg-white border border-[#1F8FB2] rounded-lg shadow-md p-4 h-[9rem] flex flex-col justify-start items-start">
+        <!-- Flex container for title and icon -->
+        <div class="w-full flex items-start justify-between mb-2">
+            <span class="text-base font-bold text-black leading-snug" style="font-family: 'Noto Sans', sans-serif;">
+       10% - 15% discounts on 
+<br /> stays
+            </span>
+            <!-- Make sure the SVG is inline or color is set in the SVG file -->
+            <img src="{{ asset('assets/lock.svg') }}" alt="Car" class="w-4 h-4 mt-1" />
+        </div>
+        <span class="text-sm text-black mt-1" style="font-family: 'Noto Sans', sans-serif;">
+Enjoy discounts at participating 
+properties worldwide
+        </span>
+    </div>
+</div>
+
+  <div class="min-w-[260px]">
+    <div class="bg-white border border-[#1F8FB2] rounded-lg shadow-md p-4 h-[9rem] flex flex-col justify-start items-start">
+        <!-- Flex container for title and icon -->
+        <div class="w-full flex items-start justify-between mb-2">
+            <span class="text-base font-bold text-black leading-snug" style="font-family: 'Noto Sans', sans-serif;">
+       10% - 15% discounts on 
+<br /> stays
+            </span>
+            <!-- Make sure the SVG is inline or color is set in the SVG file -->
+            <img src="{{ asset('assets/lock.svg') }}" alt="Car" class="w-4 h-4 mt-1" />
+        </div>
+        <span class="text-sm text-black mt-1" style="font-family: 'Noto Sans', sans-serif;">
+Enjoy discounts at participating 
+properties worldwide
+        </span>
+    </div>
+</div>
+
+    <div class="min-w-[260px]">
+    <div class="bg-white border border-[#1F8FB2] rounded-lg shadow-md p-4 h-[9rem] flex flex-col justify-start items-start">
+        <!-- Flex container for title and icon -->
+        <div class="w-full flex items-start justify-between mb-2">
+            <span class="text-base font-bold text-black leading-snug" style="font-family: 'Noto Sans', sans-serif;">
+       10% - 15% discounts on 
+<br /> stays
+            </span>
+            <!-- Make sure the SVG is inline or color is set in the SVG file -->
+            <img src="{{ asset('assets/lock.svg') }}" alt="Car" class="w-4 h-4 mt-1" />
+        </div>
+        <span class="text-sm text-black mt-1" style="font-family: 'Noto Sans', sans-serif;">
+Enjoy discounts at participating 
+properties worldwide
+        </span>
+    </div>
+</div>
+    <!-- Left Arrow -->
+    <button class="scroll-left hidden absolute top-[42%] left-0 -translate-y-1/2 bg-white border shadow p-2 rounded-full z-10 hover:bg-gray-100 ml-4">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+    </button>
+
+    <!-- Right Arrow -->
+    <button class="scroll-right absolute top-[42%] right-0 -translate-y-1/2 bg-white border shadow p-2 rounded-full z-10 hover:bg-gray-100 mr-4">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+    </button>
+</div>
 </section>
 
 <!-- Tailwind scroll styling -->
@@ -196,47 +265,49 @@
     }
 </style>
 
-<section class="scroll-section py-12 bg-white">
+<section class="bg-gray-100 py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Cards Container -->
-        <div class="flex flex-col md:flex-row justify-between gap-4 md:gap-8">
-            <!-- Card 1 -->
-            <div class="bg-gray-100 p-4 rounded-lg flex items-center gap-4">
-                <img src="/images/icon-customer-support.png" alt="Customer Support Icon" class="w-12 h-12">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center sm:text-left">
+            
+            <!-- Item 1 -->
+            <div class="flex flex-col sm:flex-row items-center sm:items-start gap-4">
+                <img src="{{ asset('images/profile.png') }}" alt="Support Icon" class="w-12 h-12">
                 <div>
-                    <h3 class="text-lg font-semibold">We're here for you</h3>
-                    <p class="text-sm text-gray-600">Customer support in over 30 languages</p>
+                    <h3 class="text-base font-semibold text-gray-900"  style="font-family: 'Noto Sans', sans-serif;">We’re here for you</h3>
+                    <p class="text-sm text-gray-600" style="font-family: 'Noto Sans', sans-serif;">Customer support in over 30 languages</p>
                 </div>
             </div>
 
-            <!-- Card 2 -->
-            <div class="bg-gray-100 p-4 rounded-lg flex items-center gap-4">
-                <img src="/images/icon-free-cancellation.png" alt="Free Cancellation Icon" class="w-12 h-12">
+            <!-- Item 2 -->
+            <div class="flex flex-col sm:flex-row items-center sm:items-start gap-4">
+                <img src="{{ asset('images/booking.png') }}" alt="Cancellation Icon" class="w-12 h-12">
                 <div>
-                    <h3 class="text-lg font-semibold">Free cancellation</h3>
-                    <p class="text-sm text-gray-600">Up to 48 hours before pick-up, on most bookings</p>
+                    <h3 class="text-base font-semibold text-gray-900"  style="font-family: 'Noto Sans', sans-serif;">Free cancellation</h3>
+                    <p class="text-sm text-gray-600" style="font-family: 'Noto Sans', sans-serif;">Up to 48 hours before pick-up, on most bookings</p>
                 </div>
             </div>
 
-            <!-- Card 3 -->
-            <div class="bg-gray-100 p-4 rounded-lg flex items-center gap-4">
-                <img src="/images/icon-reviews.png" alt="Reviews Icon" class="w-12 h-12">
+            <!-- Item 3 -->
+            <div class="flex flex-col sm:flex-row items-center sm:items-start gap-4">
+                <img src="{{ asset('images/hand.png') }}" alt="Reviews Icon" class="w-12 h-12">
                 <div>
-                    <h3 class="text-lg font-semibold">5 million+ reviews</h3>
-                    <p class="text-sm text-gray-600">By real, verified customers</p>
+                    <h3 class="text-base font-semibold text-gray-900"  style="font-family: 'Noto Sans', sans-serif;">5 million+ reviews</h3>
+                    <p class="text-sm text-gray-600" style="font-family: 'Noto Sans', sans-serif;">By real, verified customers</p>
                 </div>
             </div>
+
         </div>
-
     </div>
 </section>
 
+
 <section class="py-12 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Heading -->
-        <div class="mb-10 text-center">
-            <h2 class="text-2xl font-semibold text-gray-800">Frequently Asked Questions</h2>
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-semibold text-gray-800">Travel more, spend less</h2>
+          
         </div>
+    
 
         <!-- Two column layout -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -253,7 +324,77 @@
                         We offer a full refund within the first 14 days of your purchase.
                     </p>
                 </div>
-
+ <div class="border border-gray-200 rounded-lg p-4">
+                    <button class="w-full flex justify-between items-center text-left font-medium text-gray-800 toggle-answer focus:outline-none">
+                        What is your refund policy?
+                        <svg class="w-5 h-5 transform transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <p class="mt-2 text-gray-600 hidden answer">
+                        We offer a full refund within the first 14 days of your purchase.
+                    </p>
+                </div> <div class="border border-gray-200 rounded-lg p-4">
+                    <button class="w-full flex justify-between items-center text-left font-medium text-gray-800 toggle-answer focus:outline-none">
+                        What is your refund policy?
+                        <svg class="w-5 h-5 transform transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <p class="mt-2 text-gray-600 hidden answer">
+                        We offer a full refund within the first 14 days of your purchase.
+                    </p>
+                </div> <div class="border border-gray-200 rounded-lg p-4">
+                    <button class="w-full flex justify-between items-center text-left font-medium text-gray-800 toggle-answer focus:outline-none">
+                        What is your refund policy?
+                        <svg class="w-5 h-5 transform transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <p class="mt-2 text-gray-600 hidden answer">
+                        We offer a full refund within the first 14 days of your purchase.
+                    </p>
+                </div> <div class="border border-gray-200 rounded-lg p-4">
+                    <button class="w-full flex justify-between items-center text-left font-medium text-gray-800 toggle-answer focus:outline-none">
+                        What is your refund policy?
+                        <svg class="w-5 h-5 transform transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <p class="mt-2 text-gray-600 hidden answer">
+                        We offer a full refund within the first 14 days of your purchase.
+                    </p>
+                </div> <div class="border border-gray-200 rounded-lg p-4">
+                    <button class="w-full flex justify-between items-center text-left font-medium text-gray-800 toggle-answer focus:outline-none">
+                        What is your refund policy?
+                        <svg class="w-5 h-5 transform transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <p class="mt-2 text-gray-600 hidden answer">
+                        We offer a full refund within the first 14 days of your purchase.
+                    </p>
+                </div> <div class="border border-gray-200 rounded-lg p-4">
+                    <button class="w-full flex justify-between items-center text-left font-medium text-gray-800 toggle-answer focus:outline-none">
+                        What is your refund policy?
+                        <svg class="w-5 h-5 transform transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <p class="mt-2 text-gray-600 hidden answer">
+                        We offer a full refund within the first 14 days of your purchase.
+                    </p>
+                </div> <div class="border border-gray-200 rounded-lg p-4">
+                    <button class="w-full flex justify-between items-center text-left font-medium text-gray-800 toggle-answer focus:outline-none">
+                        What is your refund policy?
+                        <svg class="w-5 h-5 transform transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <p class="mt-2 text-gray-600 hidden answer">
+                        We offer a full refund within the first 14 days of your purchase.
+                    </p>
+                </div>
                 <div class="border border-gray-200 rounded-lg p-4">
                     <button class="w-full flex justify-between items-center text-left font-medium text-gray-800 toggle-answer focus:outline-none">
                         How can I contact support?
@@ -270,6 +411,37 @@
             <!-- Right Column -->
             <div class="space-y-4">
                 <div class="border border-gray-200 rounded-lg p-4">
+                    <button class="w-full flex justify-between items-center text-left font-medium text-gray-800 toggle-answer focus:outline-none">
+                        Is there a free trial available?
+                        <svg class="w-5 h-5 transform transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <p class="mt-2 text-gray-600 hidden answer">
+                        Yes, we offer a 7-day free trial with access to all features.
+                    </p>
+                </div>
+                  <div class="border border-gray-200 rounded-lg p-4">
+                    <button class="w-full flex justify-between items-center text-left font-medium text-gray-800 toggle-answer focus:outline-none">
+                        Is there a free trial available?
+                        <svg class="w-5 h-5 transform transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <p class="mt-2 text-gray-600 hidden answer">
+                        Yes, we offer a 7-day free trial with access to all features.
+                    </p>
+                </div>  <div class="border border-gray-200 rounded-lg p-4">
+                    <button class="w-full flex justify-between items-center text-left font-medium text-gray-800 toggle-answer focus:outline-none">
+                        Is there a free trial available?
+                        <svg class="w-5 h-5 transform transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <p class="mt-2 text-gray-600 hidden answer">
+                        Yes, we offer a 7-day free trial with access to all features.
+                    </p>
+                </div>  <div class="border border-gray-200 rounded-lg p-4">
                     <button class="w-full flex justify-between items-center text-left font-medium text-gray-800 toggle-answer focus:outline-none">
                         Is there a free trial available?
                         <svg class="w-5 h-5 transform transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">

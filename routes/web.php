@@ -39,6 +39,10 @@ Route::get('/airport-taxis', function () {
     return view('frontend.home');
 })->name('airport.taxis');
 
+Route::get('/email-verify', function () {
+    return view('frontend.verify-email');
+})->name('email.verify');
+
 Route::get('/airport-tours', function () {
     return view('frontend.home');
 })->name('airport.tours');
