@@ -8,6 +8,45 @@ use Illuminate\Support\Facades\Route;
 
 
 
+
+Route::get('/login', function () {
+    return view('frontend.login');
+});
+
+
+Route::get('/register', function () {
+    return view('frontend.register');
+});
+Route::get('/', function () {
+    return view('frontend.home');
+});
+Route::get('/property', function () {
+    return view('frontend.property');
+});
+Route::get('/welcome', function () {
+    return view('frontend.welcomebox');
+});
+
+Route::get('/stays', function () {
+    return view('frontend.home');
+})->name('stays');
+
+Route::get('/car-rentals', function () {
+    return view('frontend.car-rentals');
+})->name('car.rentals');
+
+Route::get('/airport-taxis', function () {
+    return view('frontend.home');
+})->name('airport.taxis');
+
+Route::get('/email-verify', function () {
+    return view('frontend.verify-email');
+})->name('email.verify');
+
+Route::get('/airport-tours', function () {
+    return view('frontend.home');
+})->name('airport.tours');
+
 // routes/web.php
 Route::prefix('traveler')->group(function () {
 Route::get('/login', [TravelerLoginController::class, 'showLoginForm'])->name('traveler.login');
