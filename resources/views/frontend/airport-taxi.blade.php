@@ -273,44 +273,50 @@ properties worldwide
 
 <section class="bg-white py-12">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 class="text-3xl font-bold text-center mb-12">Airport transfers made easy</h2>
+        <h2 class="text-2xl font-bold text-center mb-12">Airport transfers made easy</h2>
 
         <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-12">
-            <!-- Left Column: Steps -->
-            <div class="flex-1 space-y-10">
-                <!-- Step 1 -->
-                <div class="flex items-start space-x-4">
-                    <div class="w-25 h-25  flex items-center justify-center rounded-full">
-                        <img src="{{ asset('assets/blue-car.svg') }}" alt="Car Icon" class="w-25 h-25">
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-semibold" style="font-family: 'Noto Sans', sans-serif;">Booking your airport taxi</h3>
-                        <p class="text-gray-600" style="font-family: 'Noto Sans', sans-serif;">Confirmation is immediate. If your plans change, you can cancel for free up to 24 hours before your scheduled pick-up time.</p>
-                    </div>
-                </div>
+           <!-- Left Column: Steps -->
+<div class="flex-1 space-y-10">
+    <!-- Step 1 -->
+    <div class="flex items-center space-x-4">
+        <div class="flex-shrink-0 w-[64px] h-[64px] flex items-center justify-center rounded-full">
+            <img src="{{ asset('assets/blue-car.svg') }}" alt="Car Icon" class="w-[64px] h-[64px]">
+        </div>
+        <div class="flex flex-col justify-center">
+            <h3 class="text-base font-semibold" style="font-family: 'Noto Sans', sans-serif;">Booking your airport taxi</h3>
+            <p class="text-gray-600 text-sm" style="font-family: 'Noto Sans', sans-serif;">
+                Confirmation is immediate. If your plans change, you can cancel for free up to 24 hours before your scheduled pick-up time.
+            </p>
+        </div>
+    </div>
 
-                <!-- Step 2 -->
-                <div class="flex items-start space-x-4">
-                    <div class="w-25 h-25  flex items-center justify-center rounded-full">
-                        <img src="{{ asset('assets/yellow-user.svg') }}" alt="Driver Icon" class="w-25 h-25">
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-semibold" style="font-family: 'Noto Sans', sans-serif;">Meeting your driver</h3>
-                        <p class="text-gray-600" style="font-family: 'Noto Sans', sans-serif;">You'll be met on arrival and taken to your vehicle. Your driver will track your flight, so they'll wait for you even if it's delayed.</p>
-                    </div>
-                </div>
+    <!-- Step 2 -->
+    <div class="flex items-center space-x-4">
+        <div class="flex-shrink-0 w-[64px] h-[64px] flex items-center justify-center rounded-full">
+            <img src="{{ asset('assets/yellow-user.svg') }}" alt="Driver Icon" class="w-[64px] h-[64px]">
+        </div>
+        <div class="flex flex-col justify-center">
+            <h3 class="text-base font-semibold" style="font-family: 'Noto Sans', sans-serif;">Meeting your driver</h3>
+            <p class="text-gray-600 text-sm" style="font-family: 'Noto Sans', sans-serif;">
+                You'll be met on arrival and taken to your vehicle. Your driver will track your flight, so they'll wait for you even if it's delayed.
+            </p>
+        </div>
+    </div>
 
-                <!-- Step 3 -->
-                <div class="flex items-start space-x-4">
-                    <div class="w-18 h-18  flex items-center justify-center rounded-full">
-                        <img src="{{ asset('assets/net.svg') }}" alt="Destination Icon" class="w-18 h-18">
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-semibold" style="font-family: 'Noto Sans', sans-serif;">Arriving at your destination</h3>
-                        <p class="text-gray-600"style="font-family: 'Noto Sans', sans-serif;">Get to your destination quickly and safely – no waiting in line for a taxi, no figuring out public transport.</p>
-                    </div>
-                </div>
-            </div>
+    <!-- Step 3 -->
+    <div class="flex items-center space-x-4">
+        <div class="flex-shrink-0 w-[64px] h-[64px] flex items-center justify-center rounded-full">
+            <img src="{{ asset('assets/net.svg') }}" alt="Destination Icon" class="w-[64px] h-[64px]">
+        </div>
+        <div class="flex flex-col justify-center">
+            <h3 class="text-base font-semibold" style="font-family: 'Noto Sans', sans-serif;">Arriving at your destination</h3>
+            <p class="text-gray-600 text-sm" style="font-family: 'Noto Sans', sans-serif;">
+                Get to your destination quickly and safely – no waiting in line for a taxi, no figuring out public transport.
+            </p>
+        </div>
+    </div>
+</div>
 
             <!-- Right Column: Image Map -->
             <div class="flex-1">
@@ -335,114 +341,216 @@ properties worldwide
 </section>
 
 <!-- Popular with Travellers -->
-<section class="py-12 bg-white" style="margin-bottom: 60px;">
+<section class="py-12 bg-[#F5F5F5]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 class="text-2xl font-semibold text-gray-800 mb-6">Popular with travelers from Sri Lanka</h2>
+        <h1 class="text-2xl font-bold mb-6">Airport taxis for any kind of trip</h1>
+       
 
-        <!-- Tabs -->
-        <div class="flex space-x-4 overflow-x-auto mb-4">
-            <button id="tab-domestic" class="rounded-full tab-button active-tab px-4 py-2 bg-blue-600 text-white" onclick="toggleTab('domestic')">Domestic cities</button>
-            <button id="tab-international" class="rounded-full tab-button px-4 py-2 bg-gray-100 text-gray-800" onclick="toggleTab('international')">International cities</button>
-            <button id="tab-regions" class="rounded-full tab-button px-4 py-2 bg-gray-100 text-gray-800" onclick="toggleTab('regions')">Regions</button>
-            <button id="tab-countries" class="rounded-full tab-button px-4 py-2 bg-gray-100 text-gray-800" onclick="toggleTab('countries')">Countries</button>
-            <button id="tab-places" class="rounded-full tab-button px-4 py-2 bg-gray-100 text-gray-800" onclick="toggleTab('places')">Places to stay</button>
-        </div>
+    <!-- Tabs -->
+    <div class="inline-flex mb-6 border border-gray-700 rounded-full overflow-hidden">
+  <button id="tab-1-3"
+          class="tab-button active-tab px-4 py-2 text-base text-gray-800 bg-white border-r border-gray-300"
+          onclick="toggleTab('1-3')">
+    1 - 3 passengers
+  </button>
+  <button id="tab-4-7"
+          class="tab-button px-4 py-2 text-base text-gray-800 bg-gray-100 border-r border-gray-300"
+          onclick="toggleTab('4-7')">
+    4 - 7 passengers
+  </button>
+  <button id="tab-all"
+          class="tab-button px-4 py-2 text-base text-gray-800 bg-gray-100"
+          onclick="toggleTab('all')">
+    All taxis
+  </button>
+</div>
 
-        <!-- Tab Content -->
-        <div id="tab-content" class="mt-4 text-sm font-lato">
-            <!-- Domestic -->
-            <div id="content-domestic" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
-                @for ($i = 0; $i < 4; $i++)
-                    <span>Kandy hotels</span>
-                    <span>Nuwara Eliya hotels</span>
-                    <span>Colombo hotels</span>
-                    <span>Ella hotels</span>
-                    <span>Anuradhapura hotels</span>
-                @endfor
-                <div class="col-span-full text-left mt-2">
-                    <button class="text-blue-600">+ Show more</button>
-                </div>
-            </div>
 
-            <!-- International -->
-            <div id="content-international" class="hidden grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
-                <span>Singapore hotels</span>
-                <span>Bangkok hotels</span>
-                <span>London hotels</span>
-                <span>New York hotels</span>
-                <span>Dubai hotels</span>
-            </div>
+    <!-- Content -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- 1 - 3 passengers -->
+ <!-- Content -->
+<div id="content-1-3" class="w-full mt-6">
+  <div class="flex flex-col md:flex-row gap-6 w-full">
+    
+    <div class="flex-1 border rounded-lg p-6 shadow-sm bg-white">
+      <h3 class="text-lg font-bold mb-2">Standard</h3>
+      <p class="text-gray-600 mb-2">Skoda Octavia or similar</p>
+      <ul class="text-sm mb-4 space-y-1">
+  <li class="flex items-center gap-2">
+    <img src="{{ asset('assets/vector-user.svg') }}" alt="Passengers" class="w-4 h-4" />
+    3 passengers
+  </li>
+  <li class="flex items-center gap-2">
+    <img src="{{ asset('assets/bag.svg') }}"alt="Bags" class="w-4 h-4" />
+    2 standard bags
+  </li>
+  <li class="flex items-center gap-2 text-blue-600">
+    <img src="{{ asset('assets/border-tick.svg') }}" alt="Check" class="w-4 h-4" />
+    Meet &amp; Greet included
+  </li>
+  <li class="flex items-center gap-2 text-green-600">
+    <img src="{{ asset('assets/tick.svg') }}" alt="Check" class="w-4 h-4" />
+    Free cancellation
+  </li>
+</ul>
 
-            <!-- Regions -->
-            <div id="content-regions" class="hidden grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
-                <span>Southern Province</span>
-                <span>Central Province</span>
-                <span>Western Province</span>
-                <span>Eastern Province</span>
-                <span>Northern Province</span>
-            </div>
-
-            <!-- Countries -->
-            <div id="content-countries" class="hidden grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
-                <span>Japan</span>
-                <span>United Kingdom</span>
-                <span>India</span>
-                <span>France</span>
-                <span>Germany</span>
-            </div>
-
-            <!-- Places -->
-            <div id="content-places" class="hidden grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
-                <span>Luxury Villas</span>
-                <span>Hostels</span>
-                <span>Budget hotels</span>
-                <span>Resorts</span>
-                <span>Homestays</span>
-            </div>
-        </div>
+      <button class="px-4 py-2 bg-sky-500 text-white rounded">Search</button>
     </div>
+
+    <div class="flex-1 border rounded-lg p-6 shadow-sm bg-white">
+      <h3 class="text-lg font-bold mb-2">Executive</h3>
+      <p class="text-gray-600 mb-2">Mercedes-Benz E-Class or similar</p>
+        <ul class="text-sm mb-4 space-y-1">
+  <li class="flex items-center gap-2">
+    <img src="{{ asset('assets/vector-user.svg') }}" alt="Passengers" class="w-4 h-4" />
+    3 passengers
+  </li>
+  <li class="flex items-center gap-2">
+    <img src="{{ asset('assets/bag.svg') }}"alt="Bags" class="w-4 h-4" />
+    2 standard bags
+  </li>
+  <li class="flex items-center gap-2 text-blue-600">
+    <img src="{{ asset('assets/border-tick.svg') }}" alt="Check" class="w-4 h-4" />
+    Meet &amp; Greet included
+  </li>
+  <li class="flex items-center gap-2 text-green-600">
+    <img src="{{ asset('assets/tick.svg') }}" alt="Check" class="w-4 h-4" />
+    Free cancellation
+  </li>
+</ul>
+
+
+      <button class="px-4 py-2 bg-sky-500 text-white rounded">Search</button>
+    </div>
+
+  </div>
+</div>
+
+
+
+      <!-- 4 - 7 passengers -->
+      <div id="content-4-7" class="hidden">
+        <div class="border rounded-lg p-6 shadow-sm bg-white">
+          <h3 class="text-lg font-bold mb-2">Minivan</h3>
+          <p class="text-gray-600 mb-2">Toyota Hiace or similar</p>
+           <ul class="text-sm mb-4 space-y-1">
+  <li class="flex items-center gap-2">
+    <img src="{{ asset('assets/vector-user.svg') }}" alt="Passengers" class="w-4 h-4" />
+    3 passengers
+  </li>
+  <li class="flex items-center gap-2">
+    <img src="{{ asset('assets/bag.svg') }}"alt="Bags" class="w-4 h-4" />
+    2 standard bags
+  </li>
+  <li class="flex items-center gap-2 text-blue-600">
+    <img src="{{ asset('assets/border-tick.svg') }}" alt="Check" class="w-4 h-4" />
+    Meet &amp; Greet included
+  </li>
+  <li class="flex items-center gap-2 text-green-600">
+    <img src="{{ asset('assets/tick.svg') }}" alt="Check" class="w-4 h-4" />
+    Free cancellation
+  </li>
+</ul>
+
+
+          <button class="px-4 py-2 bg-sky-500 text-white rounded">Search</button>
+        </div>
+      </div>
+
+      <!-- All taxis -->
+<div id="content-all" class="hidden flex flex-row gap-6">
+  <div class="border rounded-lg p-6 shadow-sm bg-white flex-1">
+    <h3 class="text-lg font-bold mb-2">Standard</h3>
+    <p class="text-gray-600 mb-2">Skoda Octavia or similar</p>
+     <ul class="text-sm mb-4 space-y-1">
+  <li class="flex items-center gap-2">
+    <img src="{{ asset('assets/vector-user.svg') }}" alt="Passengers" class="w-4 h-4" />
+    3 passengers
+  </li>
+  <li class="flex items-center gap-2">
+    <img src="{{ asset('assets/bag.svg') }}"alt="Bags" class="w-4 h-4" />
+    2 standard bags
+  </li>
+  <li class="flex items-center gap-2 text-blue-600">
+    <img src="{{ asset('assets/border-tick.svg') }}" alt="Check" class="w-4 h-4" />
+    Meet &amp; Greet included
+  </li>
+  <li class="flex items-center gap-2 text-green-600">
+    <img src="{{ asset('assets/tick.svg') }}" alt="Check" class="w-4 h-4" />
+    Free cancellation
+  </li>
+</ul>
+
+
+    <button class="px-4 py-2 bg-sky-500 text-white rounded">Search</button>
+  </div>
+  <div class="border rounded-lg p-6 shadow-sm bg-white flex-1">
+    <h3 class="text-lg font-bold mb-2">Minivan</h3>
+    <p class="text-gray-600 mb-2">Toyota Hiace or similar</p>
+      <ul class="text-sm mb-4 space-y-1">
+  <li class="flex items-center gap-2">
+    <img src="{{ asset('assets/vector-user.svg') }}" alt="Passengers" class="w-4 h-4" />
+    3 passengers
+  </li>
+  <li class="flex items-center gap-2">
+    <img src="{{ asset('assets/bag.svg') }}"alt="Bags" class="w-4 h-4" />
+    2 standard bags
+  </li>
+  <li class="flex items-center gap-2 text-blue-600">
+    <img src="{{ asset('assets/border-tick.svg') }}" alt="Check" class="w-4 h-4" />
+    Meet &amp; Greet included
+  </li>
+  <li class="flex items-center gap-2 text-green-600">
+    <img src="{{ asset('assets/tick.svg') }}" alt="Check" class="w-4 h-4" />
+    Free cancellation
+  </li>
+</ul>
+
+
+    <button class="px-4 py-2 bg-sky-500 text-white rounded">Search</button>
+  </div>
+</div>
+
+    </div>
+  </div>
 </section>
-<style>
-    .tab-button {
-        transition: all 0.2s;
-    }
 
-    .active-tab {
-        background-color: rgb(37, 99, 235);
-        color: white;
-    }
-</style>
 <script>
-    function toggleTab(tabName) {
-        const panels = document.querySelectorAll('#tab-content > div');
-        panels.forEach(panel => panel.classList.add('hidden'));
+  function toggleTab(tabId) {
+    const tabs = ['1-3', '4-7', 'all'];
+    tabs.forEach(id => {
+      const tabButton = document.getElementById('tab-' + id);
+      const content = document.getElementById('content-' + id);
 
-        const selectedPanel = document.getElementById(`content-${tabName}`);
-        if (selectedPanel) selectedPanel.classList.remove('hidden');
-
-        const tabs = document.querySelectorAll('.tab-button');
-        tabs.forEach(tab => tab.classList.remove('active-tab', 'bg-blue-600', 'text-white'));
-        tabs.forEach(tab => tab.classList.add('bg-gray-100', 'text-gray-800'));
-
-        const selectedTab = document.getElementById(`tab-${tabName}`);
-        if (selectedTab) {
-            selectedTab.classList.remove('bg-gray-100', 'text-gray-800');
-            selectedTab.classList.add('active-tab', 'bg-blue-600', 'text-white');
-        }
-    }
-
-    // Set default tab
-    document.addEventListener('DOMContentLoaded', () => {
-        toggleTab('domestic');
+      if (tabId === id) {
+        tabButton.classList.add('bg-white', 'text-gray-800', 'border', 'border-gray-300', 'border-b-0');
+        tabButton.classList.remove('bg-gray-100', 'text-gray-800');
+        content.classList.remove('hidden');
+      } else {
+        tabButton.classList.remove('bg-white', 'border', 'border-gray-300', 'border-b-0');
+        tabButton.classList.add('bg-gray-100', 'text-gray-800');
+        content.classList.add('hidden');
+      }
     });
+  }
 </script>
+
+
+
 
 <section class="py-12 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between mb-6">
-            <h2 class="text-2xl font-semibold text-gray-800">Travel more, spend less</h2>
+        <div class="mb-6">
+<h2 class="text-2xl font-semibold text-gray-800 mb-2">Airport taxis for any kind of trip</h2>
+<p class="mb-6 text-gray-600" style="font-family: 'Noto Sans', sans-serif;">
+  See more FAQs on our 
+  <a href="/help" class="text-sky-500  hover:text-sky-600">help page</a>
+</p>
+</div>
+
           
-        </div>
+       
     
 
         <!-- Two column layout -->
@@ -450,156 +558,55 @@ properties worldwide
             <!-- Left Column -->
             <div class="space-y-4">
                 <div class="border border-gray-200 rounded-lg p-4">
-                    <button class="w-full flex justify-between items-center text-left font-medium text-gray-800 toggle-answer focus:outline-none">
+                    <button class="w-full flex justify-between items-center text-left font-medium text-gray-800 toggle-answer focus:outline-none" style="font-family: 'Noto Sans', sans-serif;">
                         What is your refund policy?
                         <svg class="w-5 h-5 transform transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
-                    <p class="mt-2 text-gray-600 hidden answer">
+                    <p class="mt-2 text-gray-600 hidden answer" style="font-family: 'Noto Sans', sans-serif;">
                         We offer a full refund within the first 14 days of your purchase.
                     </p>
                 </div>
  <div class="border border-gray-200 rounded-lg p-4">
-                    <button class="w-full flex justify-between items-center text-left font-medium text-gray-800 toggle-answer focus:outline-none">
+                    <button class="w-full flex justify-between items-center text-left font-medium text-gray-800 toggle-answer focus:outline-none" style="font-family: 'Noto Sans', sans-serif;">
                         What is your refund policy?
                         <svg class="w-5 h-5 transform transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
-                    <p class="mt-2 text-gray-600 hidden answer">
+                    <p class="mt-2 text-gray-600 hidden answer" style="font-family: 'Noto Sans', sans-serif;">
                         We offer a full refund within the first 14 days of your purchase.
                     </p>
-                </div> <div class="border border-gray-200 rounded-lg p-4">
-                    <button class="w-full flex justify-between items-center text-left font-medium text-gray-800 toggle-answer focus:outline-none">
-                        What is your refund policy?
-                        <svg class="w-5 h-5 transform transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
-                    <p class="mt-2 text-gray-600 hidden answer">
-                        We offer a full refund within the first 14 days of your purchase.
-                    </p>
-                </div> <div class="border border-gray-200 rounded-lg p-4">
-                    <button class="w-full flex justify-between items-center text-left font-medium text-gray-800 toggle-answer focus:outline-none">
-                        What is your refund policy?
-                        <svg class="w-5 h-5 transform transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
-                    <p class="mt-2 text-gray-600 hidden answer">
-                        We offer a full refund within the first 14 days of your purchase.
-                    </p>
-                </div> <div class="border border-gray-200 rounded-lg p-4">
-                    <button class="w-full flex justify-between items-center text-left font-medium text-gray-800 toggle-answer focus:outline-none">
-                        What is your refund policy?
-                        <svg class="w-5 h-5 transform transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
-                    <p class="mt-2 text-gray-600 hidden answer">
-                        We offer a full refund within the first 14 days of your purchase.
-                    </p>
-                </div> <div class="border border-gray-200 rounded-lg p-4">
-                    <button class="w-full flex justify-between items-center text-left font-medium text-gray-800 toggle-answer focus:outline-none">
-                        What is your refund policy?
-                        <svg class="w-5 h-5 transform transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
-                    <p class="mt-2 text-gray-600 hidden answer">
-                        We offer a full refund within the first 14 days of your purchase.
-                    </p>
-                </div> <div class="border border-gray-200 rounded-lg p-4">
-                    <button class="w-full flex justify-between items-center text-left font-medium text-gray-800 toggle-answer focus:outline-none">
-                        What is your refund policy?
-                        <svg class="w-5 h-5 transform transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
-                    <p class="mt-2 text-gray-600 hidden answer">
-                        We offer a full refund within the first 14 days of your purchase.
-                    </p>
-                </div> <div class="border border-gray-200 rounded-lg p-4">
-                    <button class="w-full flex justify-between items-center text-left font-medium text-gray-800 toggle-answer focus:outline-none">
-                        What is your refund policy?
-                        <svg class="w-5 h-5 transform transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
-                    <p class="mt-2 text-gray-600 hidden answer">
-                        We offer a full refund within the first 14 days of your purchase.
-                    </p>
-                </div>
-                <div class="border border-gray-200 rounded-lg p-4">
-                    <button class="w-full flex justify-between items-center text-left font-medium text-gray-800 toggle-answer focus:outline-none">
-                        How can I contact support?
-                        <svg class="w-5 h-5 transform transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
-                    <p class="mt-2 text-gray-600 hidden answer">
-                        You can contact our support team via email at support@example.com.
-                    </p>
-                </div>
+                </div> 
             </div>
 
             <!-- Right Column -->
             <div class="space-y-4">
                 <div class="border border-gray-200 rounded-lg p-4">
-                    <button class="w-full flex justify-between items-center text-left font-medium text-gray-800 toggle-answer focus:outline-none">
+                    <button class="w-full flex justify-between items-center text-left font-medium text-gray-800 toggle-answer focus:outline-none" style="font-family: 'Noto Sans', sans-serif;">
                         Is there a free trial available?
                         <svg class="w-5 h-5 transform transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
-                    <p class="mt-2 text-gray-600 hidden answer">
+                    <p class="mt-2 text-gray-600 hidden answer" style="font-family: 'Noto Sans', sans-serif;">
                         Yes, we offer a 7-day free trial with access to all features.
                     </p>
                 </div>
                   <div class="border border-gray-200 rounded-lg p-4">
-                    <button class="w-full flex justify-between items-center text-left font-medium text-gray-800 toggle-answer focus:outline-none">
+                    <button class="w-full text-base text-bold flex justify-between items-center text-left  text-gray-800 toggle-answer focus:outline-none" style="font-family: 'Noto Sans', sans-serif;">
                         Is there a free trial available?
                         <svg class="w-5 h-5 transform transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
-                    <p class="mt-2 text-gray-600 hidden answer">
+                    <p class="mt-2 text-gray-600 hidden answer" style="font-family: 'Noto Sans', sans-serif;">
                         Yes, we offer a 7-day free trial with access to all features.
                     </p>
-                </div>  <div class="border border-gray-200 rounded-lg p-4">
-                    <button class="w-full flex justify-between items-center text-left font-medium text-gray-800 toggle-answer focus:outline-none">
-                        Is there a free trial available?
-                        <svg class="w-5 h-5 transform transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
-                    <p class="mt-2 text-gray-600 hidden answer">
-                        Yes, we offer a 7-day free trial with access to all features.
-                    </p>
-                </div>  <div class="border border-gray-200 rounded-lg p-4">
-                    <button class="w-full flex justify-between items-center text-left font-medium text-gray-800 toggle-answer focus:outline-none">
-                        Is there a free trial available?
-                        <svg class="w-5 h-5 transform transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
-                    <p class="mt-2 text-gray-600 hidden answer">
-                        Yes, we offer a 7-day free trial with access to all features.
-                    </p>
-                </div>
+                </div>   
 
-                <div class="border border-gray-200 rounded-lg p-4">
-                    <button class="w-full flex justify-between items-center text-left font-medium text-gray-800 toggle-answer focus:outline-none">
-                        Can I upgrade my plan later?
-                        <svg class="w-5 h-5 transform transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
-                    <p class="mt-2 text-gray-600 hidden answer">
-                        Absolutely! You can upgrade your plan at any time from your dashboard.
-                    </p>
-                </div>
+               
             </div>
         </div>
     </div>
@@ -619,6 +626,15 @@ properties worldwide
         });
     });
 </script>
+
+<section class="py-12 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <p class="text-gray-700 text-left text-sm leading-relaxed">
+      Countries . Regions . Cities . Districts . Airports . Hotels . Places of interest . Holiday Homes . Apartments . Resorts . Villas . Hostels . B&Bs . Guest Houses . Unique places to stay . All destinations . All flight destinations . All car hire locations . All holiday destinations . Guides . Discover . Reviews . Discover monthly stays
+    </p>
+  </div>
+</section>
+
 
 
 @endsection
