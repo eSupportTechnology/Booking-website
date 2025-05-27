@@ -46,6 +46,9 @@ Route::get('/email-verify', function () {
 Route::get('/airport-tours', function () {
     return view('frontend.home');
 })->name('airport.tours');
+Route::get('/airport-taxis', function () {
+    return view('frontend.airport-taxi');
+})->name('airport.taxis');
 
 // routes/web.php
 Route::prefix('traveler')->group(function () {

@@ -69,10 +69,10 @@
             <!-- Copyright and Branding -->
             <div class="flex flex-col items-center justify-center space-y-2">
                 <p class="text-sm text-center">
-                    HorizonStay is part of HorizonStay Inc., the world leader in online travel and related services.<br>
-                    Copyright © 1996–2025 HorizonStay™. All rights reserved.
+                    Bookintour is part of Bookintour Inc., the world leader in online travel and related services.<br>
+                    Copyright © 1996–2025 Bookintour™. All rights reserved.
                 </p>
-                <a href="#" class="text-blue-500 font-bold hover:underline">HorizonStay.com</a>
+                <a href="#" class="text-blue-500 font-bold hover:underline">Bookintour.com</a>
             </div>
         </div>
     </footer>
