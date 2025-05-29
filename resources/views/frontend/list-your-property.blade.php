@@ -114,99 +114,149 @@
 </section>
 
 
-<section class="bg-white py-16">
-    <div class="container mx-auto px-4">
-        <h2 class="text-center text-3xl md:text-4xl font-bold mb-10">
-            Host worry-free. We’ve got your back
-        </h2>
+<section class="py-12 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+           <h2 class="text-3xl font-semibold text-gray-800 mb-8"  style="font-family: 'Poppins', sans-serif;">Host worry-free. We’ve got your back</h2>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <!-- Column 1: Your rental, your rules -->
             <div>
-                <h3 class="text-xl font-semibold mb-4">Your rental, your rules</h3>
-                <ul class="list-disc pl-5 text-gray-700">
-                    <li class="mb-2">
-                        Accept or decline bookings with 
-                        <a href="#" class="underline text-blue-500">Request to Book</a>.
-                    </li>
-                    <li class="mb-2">Manage your guests' expectations by setting up clear house rules.</li>
-                </ul>
-                <button class="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded mt-4">
+                <h3 class="text-xl font-semibold mb-4" style="font-family: 'Noto Sans', sans-serif;">Your rental, your rules</h3>
+  <ul class=" text-gray-700 space-y-3 " style="font-family: 'Noto Sans', sans-serif;">
+  <li class="flex items-start gap-2">
+    <img src="{{ asset('assets/black-tick.svg') }}" alt="Check" class="w-5 h-5 mt-1" />
+    <span class="text-base">
+      Accept or decline bookings with 
+      <a href="#" class="underline text-base text-blue-500">Request to Book</a>.
+    </span>
+  </li>
+
+  <li class="flex items-start gap-2">
+    <img src="{{ asset('assets/black-tick.svg') }}" alt="Check" class="w-5 h-5 mt-1" />
+    <span class="text-base">
+      Manage your guests' expectations by setting up clear house rules.
+    </span>
+  </li>
+</ul>
+
+
+                <button class="bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded mt-10" style="font-family: 'Noto Sans', sans-serif;">
                     Host with us today
                 </button>
-                <p class="text-sm text-gray-500 mt-2">*Currently available for guest bookings made via iOS.</p>
+                <p class="text-sm text-gray-500 mt-2" style="font-family: 'Noto Sans', sans-serif;">*Currently available for guest bookings made via iOS.</p>
             </div>
 
             <!-- Column 2: Get to know your guests -->
             <div>
-                <h3 class="text-xl font-semibold mb-4">Get to know your guests</h3>
-                <ul class="list-disc pl-5 text-gray-700">
-                    <li class="mb-2">Chat with your guests before accepting their stay with pre-booking messaging.</li>
-                    <li class="mb-2">Access guest travel history insights.</li>
-                </ul>
+                     <h3 class="text-xl font-semibold mb-4" style="font-family: 'Noto Sans', sans-serif;">Your rental, your rules</h3>
+            <ul class=" text-gray-700 space-y-2" style="font-family: 'Noto Sans', sans-serif;">
+  <li class="flex items-start gap-2">
+    <img src="{{ asset('assets/black-tick.svg') }}" alt="Check" class="w-5 h-5 mt-1" />
+    <span class="text-base">
+   Chat with your guests before accepting 
+their stay with pre-booking messaging.*
+    
+    </span>
+  </li>
+
+  <li class="flex items-start gap-2">
+    <img src="{{ asset('assets/black-tick.svg') }}" alt="Check" class="w-5 h-5 mt-1" />
+    <span class="text-base">
+ Access guest travel history insights.
+    </span>
+  </li>
+</ul>
             </div>
 
             <!-- Column 3: Stay protected -->
             <div>
-                <h3 class="text-xl font-semibold mb-4">Stay protected</h3>
-                <ul class="list-disc pl-5 text-gray-700">
-                    <li class="mb-2">Protection against liability claims from guests and neighbors up to €/3.</li>
-                    <li class="mb-2">Access guest travel history insights.</li>
-                </ul>
+                       <h3 class="text-xl font-semibold mb-4" style="font-family: 'Noto Sans', sans-serif;">Your rental, your rules</h3>
+            <ul class=" text-gray-700 space-y-2" style="font-family: 'Noto Sans', sans-serif;">
+  <li class="flex items-start gap-2">
+    <img src="{{ asset('assets/black-tick.svg') }}" alt="Check" class="w-5 h-5 mt-1" />
+    <span class="text-base">
+     Protection against liability claims from 
+guests and neighbours up to €/$/
+£1,000,000 for every reservation.
+    </span>
+  </li>
+
+  <li class="flex items-start gap-2">
+    <img src="{{ asset('assets/black-tick.svg') }}" alt="Check" class="w-5 h-5 mt-1" />
+    <span class="text-base">
+   Access guest travel history insights.
+    </span>
+  </li>
+</ul>
             </div>
         </div>
     </div>
 </section>
-<section class="bg-gray-100 py-16">
-    <div class="container mx-auto px-4">
-        <h2 class="text-center text-3xl md:text-4xl font-bold mb-10">
-            Take control of your finances with Payments by eSupport.com
-        </h2>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-gray-700">
-            <!-- Left Column -->
-            <div>
-                <ul class="list-disc pl-5">
-                    <li class="mb-4">
-                        <span class="font-bold">Payments made easy</span><br />
-                        We facilitate the payment process for you, freeing up your time to grow your business.
-                    </li>
-                    <li class="mb-4">
-                        <span class="font-bold">Greater revenue security</span><br />
-                        Whenever guests complete prepaid reservations at your property and pay online, you are guaranteed payment.
-                    </li>
-                    <li class="mb-4">
-                        <span class="font-bold">More control over your cash flow</span><br />
-                        Choose your payout method and timing based on regional availability.
-                    </li>
-                </ul>
-            </div>
+<section class="py-12 bg-[#F5F5F5]">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 class="text-3xl font-semibold text-gray-800 mb-8" style="font-family: 'Poppins', sans-serif;">
+      Take control of your finances with Payments by <br> eSupport.com
+    </h2>
 
-            <!-- Right Column -->
-            <div>
-                <ul class="list-disc pl-5">
-                    <li class="mb-4">
-                        <span class="font-bold">Daily payouts in select markets</span><br />
-                        Get payouts faster! We'll send your payouts 24 hours after guest checkout.
-                    </li>
-                    <li class="mb-4">
-                        <span class="font-bold">One-stop solution for multiple listings</span><br />
-                        Save time managing finances with group invoicing and reconciliation.
-                    </li>
-                    <li class="mb-4">
-                        <span class="font-bold">More control over your cash flow</span><br />
-                        We help you stay compliant with regulatory changes and reduce the risk of fraud and chargebacks.
-                    </li>
-                </ul>
-            </div>
-        </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-gray-700">
+      <!-- Left Column -->
+      <ul class="pl-0 space-y-4">
+        <li class="flex items-start space-x-2" style="font-family: 'Noto Sans', sans-serif;">
+        <img src="{{ asset('assets/black-tick.svg') }}" alt="Check" class="w-5 h-5 mt-1" />
+          <div>
+            <span class="font-bold font-base" style="font-family: 'Noto Sans', sans-serif;">Payments made easy</span><br />
+           <span class="font-sm"> We facilitate the payment process for you, freeing up your time to grow your business.</span>
+          </div>
+        </li>
+        <li class="flex items-start space-x-2" style="font-family: 'Noto Sans', sans-serif;">
+         <img src="{{ asset('assets/black-tick.svg') }}" alt="Check" class="w-5 h-5 mt-1" />
+          <div>
+            <span class="font-bold" style="font-family: 'Noto Sans', sans-serif;">Greater revenue security</span><br />
+            Whenever guests complete prepaid reservations at your property and pay online, you are guaranteed payment.
+          </div>
+        </li>
+        <li class="flex items-start space-x-2" style="font-family: 'Noto Sans', sans-serif;">
+        <img src="{{ asset('assets/black-tick.svg') }}" alt="Check" class="w-5 h-5 mt-1" />
+          <div>
+            <span class="font-bold" style="font-family: 'Noto Sans', sans-serif;">More control over your cash flow</span><br />
+            Choose your payout method and timing based on regional availability.
+          </div>
+        </li>
+      </ul>
 
-        <div class="text-center mt-10">
-            <button class="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded">
-                Start earning today
-            </button>
-        </div>
+      <!-- Right Column -->
+      <ul class="pl-0 space-y-4">
+        <li class="flex items-start space-x-2" style="font-family: 'Noto Sans', sans-serif;">
+        <img src="{{ asset('assets/black-tick.svg') }}" alt="Check" class="w-5 h-5 mt-1" />
+          <div>
+            <span class="font-bold" style="font-family: 'Noto Sans', sans-serif;">Daily payouts in select markets</span><br />
+            Get payouts faster! We'll send your payouts 24 hours after guest checkout.
+          </div>
+        </li>
+        <li class="flex items-start space-x-2" style="font-family: 'Noto Sans', sans-serif;">
+       <img src="{{ asset('assets/black-tick.svg') }}" alt="Check" class="w-5 h-5 mt-1" />
+          <div>
+            <span class="font-bold" style="font-family: 'Noto Sans', sans-serif;">One-stop solution for multiple listings</span><br />
+            Save time managing finances with group invoicing and reconciliation.
+          </div>
+        </li>
+        <li class="flex items-start space-x-2"style="font-family: 'Noto Sans', sans-serif;">
+        <img src="{{ asset('assets/black-tick.svg') }}" alt="Check" class="w-5 h-5 mt-1" />
+          <div>
+            <span class="font-bold"style="font-family: 'Noto Sans', sans-serif;">More control over your cash flow</span><br />
+            We help you stay compliant with regulatory changes and reduce the risk of fraud and chargebacks.
+          </div>
+        </li>
+      </ul>
     </div>
+
+    <div class="text-center mt-10">
+      <button class="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded" style="font-family: 'Noto Sans', sans-serif;">
+        Start earning today
+      </button>
+    </div>
+  </div>
 </section>
 
 
