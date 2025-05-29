@@ -224,6 +224,7 @@ guests and neighbours up to €/$/
           </div>
         </li>
       </ul>
+      
 
       <!-- Right Column -->
       <ul class="pl-0 space-y-4">
@@ -251,57 +252,80 @@ guests and neighbours up to €/$/
       </ul>
     </div>
 
-    <div class="text-center mt-10">
-      <button class="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded" style="font-family: 'Noto Sans', sans-serif;">
-        Start earning today
-      </button>
+    <div class="text-left mt-2">
+    <button class="bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded mt-10" style="font-family: 'Noto Sans', sans-serif;">
+              Start earning today
+                </button>
     </div>
   </div>
 </section>
 
 
-<section class="bg-gray-100 py-16">
-    <div class="container mx-auto px-4">
-        <h2 class="text-center text-3xl font-bold mb-8">Simple to begin and stay ahead</h2>
+<section class="py-12 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 class="text-3xl font-semibold text-gray-800 mb-8" style="font-family: 'Poppins', sans-serif;">
+    Simple to begin and stay ahead
+    </h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <!-- Card 1: Import your property details -->
-            <div class="flex flex-col items-center">
-                <img src="https://via.placeholder.com/100" alt="Import Icon" class="mb-4" />
-                <h3 class="text-xl font-bold mb-2">Import your property details</h3>
-                <p class="text-center">
-                    Seamlessly import your property information from other travel websites and avoid overbooking with calendar sync.
-                </p>
-            </div>
+      <!-- Card 1 -->
+<div class="flex flex-col items-center text-center">
+    <img src="{{ asset('images/post.png') }}" alt="Import Icon" class="w-[100px] h-[100px] mb-4" />
+    
+    <!-- Content container to align left -->
+    <div class="text-left">
+        <h3 class="text-lg font-bold mb-2" style="font-family: 'Noto Sans', sans-serif;">
+            Import your property details
+        </h3>
+        <p class="text-base" style="font-family: 'Noto Sans', sans-serif;">
+            Seamlessly import your property information from other travel websites and avoid overbooking with calendar sync.
+        </p>
+    </div>
+</div>
+
+<!-- Repeat the same structure for Card 2 and Card 3 -->
+
 
             <!-- Card 2: Start fast with review scores -->
-            <div class="flex flex-col items-center">
-                <img src="https://via.placeholder.com/100" alt="Review Icon" class="mb-4" />
-                <h3 class="text-xl font-bold mb-2">Start fast with review scores</h3>
-                <p class="text-center">
-                    Your review scores on other travel websites are converted and displayed on your property page before your first eSupport.com guests leave their reviews.
-                </p>
-            </div>
+         <div class="flex flex-col items-center text-center">
+    <img src="{{ asset('images/puzzels.png') }}" alt="Review Icon" class="w-[100px] h-[100px] mb-4" />
+    
+    <div class="text-left">
+        <h3 class="text-lg font-bold mb-2" style="font-family: 'Noto Sans', sans-serif;">
+            Start fast with review scores
+        </h3>
+        <p class="text-base" style="font-family: 'Noto Sans', sans-serif;">
+            Your review scores on other travel websites are converted and displayed on your property page before your first eSupport.com guests leave their reviews.
+        </p>
+    </div>
+</div>
+
 
             <!-- Card 3: Stand out in the market -->
-            <div class="flex flex-col items-center">
-                <img src="https://via.placeholder.com/100" alt="Stand Out Icon" class="mb-4" />
-                <h3 class="text-xl font-bold mb-2">Stand out in the market</h3>
-                <p class="text-center">
-                    The “New to HorizonStay.com” label helps you stand out in our search results.
-                </p>
-            </div>
-        </div>
-        <div class="text-center mt-8">
-            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                Get started today
-            </button>
+       <div class="flex flex-col items-center text-center">
+    <img src="{{ asset('images/search.png') }}" alt="Stand Out Icon" class="w-[90px] h-[100px] mb-4" />
+    
+    <div class="text-left">
+        <h3 class="text-lg font-bold mb-2" style="font-family: 'Noto Sans', sans-serif;">
+            Stand out in the market
+        </h3>
+        <p class="text-base" style="font-family: 'Noto Sans', sans-serif;">
+            The “New to HorizonStay.com” label helps you stand out in our search results.
+        </p>
+    </div>
+</div>
+
+        <div class="text-left mt-2">
+         <button class="bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded mt-2" style="font-family: 'Noto Sans', sans-serif;">
+     Get started today
+                </button>
         </div>
     </div>
 </section>
 <section class="py-12 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <!-- Background Image -->
-        <img src="https://via.placeholder.com/1920x300?text=World+Map " alt="World Map" class="absolute inset-0 w-full h-full object-cover opacity-20" />
+        <img src="{{ asset('images/map.png') }}" alt="World Map" class="absolute inset-0 w-full h-full object-cover opacity-20" />
 
         <div class="flex flex-col md:flex-row justify-between items-center">
             <!-- Left Column: Text and Button -->
