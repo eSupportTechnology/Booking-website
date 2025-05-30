@@ -322,46 +322,139 @@ guests and neighbours up to €/$/
         </div>
     </div>
 </section>
-<section class="py-12 bg-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-        <!-- Background Image -->
-        <img src="{{ asset('images/map.png') }}" alt="World Map" class="absolute inset-0 w-full h-full object-cover opacity-20" />
+<!-- Section: Reach a unique global customer base -->
+<section class="py-12 bg-white relative overflow-hidden">
+    <!-- Optional background map -->
+    <div class="absolute inset-0">
+        <img src="{{ asset('images/map.png') }}" alt="World Map" class="w-full h-full object-cover opacity-10" />
+    </div>
 
-        <div class="flex flex-col md:flex-row justify-between items-center">
-            <!-- Left Column: Text and Button -->
-            <div class="w-full md:w-1/2 mb-8 md:mb-0">
-                <h2 class="text-3xl font-bold mb-4">Reach a unique global customer base</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <!-- Statistic 1 -->
-                    <div>
-                        <p class="text-2xl font-bold mb-1">1.8+ billion</p>
-                        <p class="text-gray-600">holiday rental guests since 2010.</p>
-                    </div>
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-10 text-gray-900">
+                Reach a unique global customer base
+            </h2>
 
-                    <!-- Statistic 2 -->
-                    <div>
-                        <p class="text-2xl font-bold mb-1">1 in every 3</p>
-                        <p class="text-gray-600">room nights booked in 2024 was a holiday rental.</p>
-                    </div>
-
-                    <!-- Statistic 3 -->
-                    <div>
-                        <p class="text-2xl font-bold mb-1">48% of nights</p>
-                        <p class="text-gray-600">booked were for international stays at the end of 2023.</p>
-                    </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-center mb-8">
+                <div>
+                    <p class="text-2xl font-bold text-gray-900">1.8+ billion</p>
+                    <p class="text-gray-700 text-sm">holiday rental guests since 2010.</p>
                 </div>
-                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">
-                    Reach new guests today
-                </button>
+                <div>
+                    <p class="text-2xl font-bold text-gray-900">1 in every 3</p>
+                    <p class="text-gray-700 text-sm">room nights booked in 2024 was a holiday rental.</p>
+                </div>
+                <div>
+                    <p class="text-2xl font-bold text-gray-900">48% of nights</p>
+                    <p class="text-gray-700 text-sm">booked were for international stays at the end of 2023.</p>
+                </div>
             </div>
 
-            <!-- Right Column: Placeholder for additional content (if needed) -->
-            <div class="w-full md:w-1/2 hidden md:block">
-                <!-- Add any additional content here if needed -->
-            </div>
+            <a href="#" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded transition">
+                Reach new guests today
+            </a>
         </div>
     </div>
 </section>
+<!-- Section: What hosts like you say -->
+<section class="py-16 bg-gray-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Section Title -->
+        <h2 class="text-3xl font-bold text-center mb-12">What hosts like you say</h2>
+
+        <!-- Testimonials Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
+            <!-- Testimonial Card -->
+            <div class="border border-yellow-400 p-6 rounded-md bg-white shadow-sm">
+                <p class="text-sm italic mb-4">
+                    “I was able to list within 15 minutes, and no more than two hours later, I had my first booking!”
+                </p>
+                <div class="flex items-center gap-3 mt-4">
+                    <img src="{{ asset('images/parley.jpg') }}" alt="Parley Rose" class="w-10 h-10 rounded-full object-cover border-2 border-gray-300" />
+                    <div>
+                        <div class="text-sm font-semibold">Parley Rose</div>
+                        <div class="text-xs text-gray-500">UK-based host</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border border-yellow-400 p-6 rounded-md bg-white shadow-sm">
+                <p class="text-sm italic mb-4">
+                    “eSupport.com is the most straightforward [OTA] to work with. Everything is clear. It’s easy. And it frees us up to focus on the aspects that we can really add value to, like the guest experience.”
+                </p>
+                <div class="flex items-center gap-3 mt-4">
+                    <img src="{{ asset('images/martin.jpg') }}" alt="Martin Friedman" class="w-10 h-10 rounded-full object-cover border-2 border-gray-300" />
+                    <div>
+                        <div class="text-sm font-semibold">Martin Friedman</div>
+                        <div class="text-xs text-gray-500">Managing Director, Abodebed</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border border-yellow-400 p-6 rounded-md bg-white shadow-sm">
+                <p class="text-sm italic mb-4">
+                    “eSupport.com accounts for our largest share of guests and has helped get us where we are today.”
+                </p>
+                <div class="flex items-center gap-3 mt-4">
+                    <img src="{{ asset('images/aja.jpg') }}" alt="Michel and Aja" class="w-10 h-10 rounded-full object-cover border-2 border-gray-300" />
+                    <div>
+                        <div class="text-sm font-semibold">Michel and Aja</div>
+                        <div class="text-xs text-gray-500">Owners of La Maison de Souhey</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border border-yellow-400 p-6 rounded-md bg-white shadow-sm">
+                <p class="text-sm italic mb-4">
+                    “Travellers come to Charming Lofts from all over the world. eSupport.com really helps with that. Unlike some other platforms, it's multinational and caters to a much larger audience. For me, that was a real game-changer.”
+                </p>
+                <div class="flex items-center gap-3 mt-4">
+                    <img src="{{ asset('images/parley.jpg') }}" alt="Parley Rose" class="w-10 h-10 rounded-full object-cover border-2 border-gray-300" />
+                    <div>
+                        <div class="text-sm font-semibold">Parley Rose</div>
+                        <div class="text-xs text-gray-500">UK-based host</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border border-yellow-400 p-6 rounded-md bg-white shadow-sm">
+                <p class="text-sm italic mb-4">
+                    “After joining eSupport.com and setting up the listing, my occupancy went up significantly and bookings were coming in five to six months in advance.”
+                </p>
+                <div class="flex items-center gap-3 mt-4">
+                    <img src="{{ asset('images/martin.jpg') }}" alt="Martin Friedman" class="w-10 h-10 rounded-full object-cover border-2 border-gray-300" />
+                    <div>
+                        <div class="text-sm font-semibold">Martin Friedman</div>
+                        <div class="text-xs text-gray-500">Managing Director, Abodebed</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border border-yellow-400 p-6 rounded-md bg-white shadow-sm">
+                <p class="text-sm italic mb-4">
+                    “Getting started with eSupport.com was super simple and took no time at all.”
+                </p>
+                <div class="flex items-center gap-3 mt-4">
+                    <img src="{{ asset('images/aja.jpg') }}" alt="Michel and Aja" class="w-10 h-10 rounded-full object-cover border-2 border-gray-300" />
+                    <div>
+                        <div class="text-sm font-semibold">Michel and Aja</div>
+                        <div class="text-xs text-gray-500">Owners of La Maison de Souhey</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Join Button -->
+        <div class="text-center mt-10">
+            <a href="#" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg transition duration-300">
+                Join hosts like you
+            </a>
+        </div>
+    </div>
+</section>
+
+
+
 
 <script>
   document.addEventListener("DOMContentLoaded", () => {

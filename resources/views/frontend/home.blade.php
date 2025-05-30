@@ -428,7 +428,7 @@
       </button>
 
       <button id="ptype-tab-romance" class="rounded-full ptype-tab-button flex items-center gap-2 px-4 py-2" onclick="togglePtypeTab('romance')">
-        <img src="{{ asset('assets/Romance.svg') }}" alt="Romance" class="w-5 h-5" />
+        <img src="{{ asset('assets/romance.svg') }}" alt="Romance" class="w-5 h-5" />
         <span style="font-family: 'Noto Sans', sans-serif;">Romance</span>
       </button>
 
