@@ -1,16 +1,18 @@
 @extends('frontend.user-master')
 
 @section('content')
-<section class="text-white py-12 bg-[#1F8FB2] relative z-0">
-    <div class="container mx-auto px-4 md:px-8">
-        <!-- Hero Text -->
-        <div class="text-left mb-10 mt-2">
-            <h1 class="text-4xl md:text-3xl font-bold mb-2" style="font-size:50px;">Find your next stay</h1>
-            <p class="text-base md:text-lg" style="font-family: 'Noto Sans', sans-serif;font-size:20px;margin-top:20px;">
-                Search low prices on hotels, homes and much more...
-            </p>
-        </div>
+<section class="text-white py-8 bg-[#1F8FB2] relative z-0">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Hero Text -->
+    <div class="mb-10 mt-1">
+      <h1 class="text-[28px] md:text-[36px] lg:text-[46px] font-bold mb-2">
+     Car hire for any kind of trip
+      </h1>
+      <p class="text-[18px] md:text-[20px] mt-1 font-sans">
+      Great cars at great prices, from the biggest car rental companies
+      </p>
     </div>
+  </div>
 </section>
 <div class="relative z-10 -mt-8 px-4">
 
