@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'My Laravel App')</title>
       <script src="https://cdn.tailwindcss.com"></script>
-  
+
 
     {{-- Google Fonts: Lato --}}
    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
@@ -18,15 +18,15 @@
 </head>
 <body class=" text-gray-900" style="font-family: 'Poppins', sans-serif;">
   <!-- Include Header -->
-  @include('frontend.Header')
+  @include('frontend.header')
 
    <!-- Content Section -->
     <div id="content">
         @yield('content')
     </div>
 
-   
-   
+
+
 @include('frontend.footer')
 </body>
 
