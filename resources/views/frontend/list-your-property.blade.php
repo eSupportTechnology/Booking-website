@@ -323,122 +323,130 @@ guests and neighbours up to €/$/
     </div>
 </section>
 <!-- Section: Reach a unique global customer base -->
-<section class="py-12 bg-white relative overflow-hidden">
-    <!-- Optional background map -->
-    <div class="absolute inset-0">
-        <img src="{{ asset('images/map.png') }}" alt="World Map" class="w-full h-full object-cover opacity-10" />
+<section class="py-32 bg-white relative overflow-hidden">
+    <!-- Background map slightly enlarged and centered -->
+    <div class="absolute inset-0 flex items-center justify-center z-0">
+        <img 
+            src="{{ asset('images/map.png') }}" 
+            alt="World Map" 
+            class="w-[900px] h-auto object-contain opacity-30"
+        />
     </div>
 
-    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Foreground content -->
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center">
-            <h2 class="text-3xl md:text-4xl font-bold mb-10 text-gray-900">
-                Reach a unique global customer base
-            </h2>
+        <h2 class="text-4xl font-bold text-black mb-16 text-left -mt-12" style="font-family: 'Poppins', sans-serif;">
+    Reach a unique global customer base
+</h2>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-center mb-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-center mb-12">
                 <div>
-                    <p class="text-2xl font-bold text-gray-900">1.8+ billion</p>
-                    <p class="text-gray-700 text-sm">holiday rental guests since 2010.</p>
+                    <p class="text-4xl font-bold text-black" style="font-family: 'Poppins', sans-serif;">1.8+ billion</p>
+                    <p class="text-gray-700 text-xl" style="font-family: 'Noto Sans', sans-serif;">holiday rental guests since 2010.</p>
                 </div>
                 <div>
-                    <p class="text-2xl font-bold text-gray-900">1 in every 3</p>
-                    <p class="text-gray-700 text-sm">room nights booked in 2024 was a holiday rental.</p>
+                    <p class="text-4xl font-bold text-black" style="font-family: 'Poppins', sans-serif;">1 in every 3</p>
+                    <p class="text-gray-700 text-xl" style="font-family: 'Noto Sans', sans-serif;">room nights booked in 2024 was a holiday rental.</p>
                 </div>
                 <div>
-                    <p class="text-2xl font-bold text-gray-900">48% of nights</p>
-                    <p class="text-gray-700 text-sm">booked were for international stays at the end of 2023.</p>
+                    <p class="text-4xl font-bold text-black " style="font-family: 'Poppins', sans-serif;">48% of nights</p>
+                    <p class="text-gray-700 text-xl" style="font-family: 'Noto Sans', sans-serif;">booked were for international stays at the end of 2023.</p>
                 </div>
             </div>
 
-            <a href="#" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded transition">
-                Reach new guests today
-            </a>
+         
         </div>
+                <button class="bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded mt-2" style="font-family: 'Noto Sans', sans-serif;">
+     Reach new guests today
+                </button>
     </div>
 </section>
+
+
 <!-- Section: What hosts like you say -->
 <section class="py-16 bg-gray-100">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Section Title -->
-        <h2 class="text-3xl font-bold text-center mb-12">What hosts like you say</h2>
+       <!-- Title -->
+    <h2 class="text-4xl font-bold text-black  mb-8" style="font-family: 'Poppins', sans-serif;">What hosts like you say</h2>
 
         <!-- Testimonials Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
             <!-- Testimonial Card -->
             <div class="border border-yellow-400 p-6 rounded-md bg-white shadow-sm">
-                <p class="text-sm italic mb-4">
+                <p class="text-sm italic mb-4" style="font-family: 'Noto Sans', sans-serif;">
                     “I was able to list within 15 minutes, and no more than two hours later, I had my first booking!”
                 </p>
                 <div class="flex items-center gap-3 mt-4">
-                    <img src="{{ asset('images/parley.jpg') }}" alt="Parley Rose" class="w-10 h-10 rounded-full object-cover border-2 border-gray-300" />
+                    <img src="{{ asset('images/x.jpg') }}" alt="Parley Rose" class="w-12 h-12 rounded-full object-cover border-2 border-gray-300" />
                     <div>
-                        <div class="text-sm font-semibold">Parley Rose</div>
-                        <div class="text-xs text-gray-500">UK-based host</div>
+                        <div class="text-sm font-semibold" style="font-family: 'Noto Sans', sans-serif;">Parley Rose</div>
+                        <div class="text-xs text-gray-500" style="font-family: 'Noto Sans', sans-serif;">UK-based host</div>
                     </div>
                 </div>
             </div>
 
-            <div class="border border-yellow-400 p-6 rounded-md bg-white shadow-sm">
-                <p class="text-sm italic mb-4">
+            <div class="border border-blue-400 p-6 rounded-md bg-white shadow-sm">
+                <p class="text-sm italic mb-4" style="font-family: 'Noto Sans', sans-serif;">
                     “eSupport.com is the most straightforward [OTA] to work with. Everything is clear. It’s easy. And it frees us up to focus on the aspects that we can really add value to, like the guest experience.”
                 </p>
                 <div class="flex items-center gap-3 mt-4">
-                    <img src="{{ asset('images/martin.jpg') }}" alt="Martin Friedman" class="w-10 h-10 rounded-full object-cover border-2 border-gray-300" />
+                    <img src="{{ asset('images/y.jpg') }}" alt="Martin Friedman" class="w-12 h-12 rounded-full object-cover border-2 border-gray-300" />
                     <div>
-                        <div class="text-sm font-semibold">Martin Friedman</div>
-                        <div class="text-xs text-gray-500">Managing Director, Abodebed</div>
+                        <div class="text-sm font-semibold" style="font-family: 'Noto Sans', sans-serif;">Martin Friedman</div>
+                        <div class="text-xs text-gray-500"style="font-family: 'Noto Sans', sans-serif;">Managing Director, Abodebed</div>
                     </div>
                 </div>
             </div>
 
             <div class="border border-yellow-400 p-6 rounded-md bg-white shadow-sm">
-                <p class="text-sm italic mb-4">
+                <p class="text-sm italic mb-4" style="font-family: 'Noto Sans', sans-serif;">
                     “eSupport.com accounts for our largest share of guests and has helped get us where we are today.”
                 </p>
                 <div class="flex items-center gap-3 mt-4">
-                    <img src="{{ asset('images/aja.jpg') }}" alt="Michel and Aja" class="w-10 h-10 rounded-full object-cover border-2 border-gray-300" />
+                    <img src="{{ asset('images/z.jpg') }}" alt="Michel and Aja" class="w-12 h-12 rounded-full object-cover border-2 border-gray-300" />
                     <div>
-                        <div class="text-sm font-semibold">Michel and Aja</div>
-                        <div class="text-xs text-gray-500">Owners of La Maison de Souhey</div>
+                        <div class="text-sm font-semibold" style="font-family: 'Noto Sans', sans-serif;">Michel and Aja</div>
+                        <div class="text-xs text-gray-500" style="font-family: 'Noto Sans', sans-serif;">Owners of La Maison de Souhey</div>
                     </div>
                 </div>
             </div>
 
-            <div class="border border-yellow-400 p-6 rounded-md bg-white shadow-sm">
-                <p class="text-sm italic mb-4">
+            <div class="border border-blue-400 p-6 rounded-md bg-white shadow-sm">
+                <p class="text-sm italic mb-4" style="font-family: 'Noto Sans', sans-serif;">
                     “Travellers come to Charming Lofts from all over the world. eSupport.com really helps with that. Unlike some other platforms, it's multinational and caters to a much larger audience. For me, that was a real game-changer.”
                 </p>
                 <div class="flex items-center gap-3 mt-4">
-                    <img src="{{ asset('images/parley.jpg') }}" alt="Parley Rose" class="w-10 h-10 rounded-full object-cover border-2 border-gray-300" />
+                    <img src="{{ asset('images/t.jpg') }}" alt="Parley Rose" class="w-12 h-12 rounded-full object-cover border-2 border-gray-300" />
                     <div>
-                        <div class="text-sm font-semibold">Parley Rose</div>
-                        <div class="text-xs text-gray-500">UK-based host</div>
+                        <div class="text-sm font-semibold" style="font-family: 'Noto Sans', sans-serif;">Parley Rose</div>
+                        <div class="text-xs text-gray-500" style="font-family: 'Noto Sans', sans-serif;">UK-based host</div>
                     </div>
                 </div>
             </div>
 
             <div class="border border-yellow-400 p-6 rounded-md bg-white shadow-sm">
-                <p class="text-sm italic mb-4">
+                <p class="text-sm italic mb-4" style="font-family: 'Noto Sans', sans-serif;">
                     “After joining eSupport.com and setting up the listing, my occupancy went up significantly and bookings were coming in five to six months in advance.”
                 </p>
                 <div class="flex items-center gap-3 mt-4">
-                    <img src="{{ asset('images/martin.jpg') }}" alt="Martin Friedman" class="w-10 h-10 rounded-full object-cover border-2 border-gray-300" />
+                    <img src="{{ asset('images/t.jpg') }}" alt="Martin Friedman" class="w-12 h-12 rounded-full object-cover border-2 border-gray-300" />
                     <div>
-                        <div class="text-sm font-semibold">Martin Friedman</div>
-                        <div class="text-xs text-gray-500">Managing Director, Abodebed</div>
+                        <div class="text-sm font-semibold" style="font-family: 'Noto Sans', sans-serif;">Martin Friedman</div>
+                        <div class="text-xs text-gray-500" style="font-family: 'Noto Sans', sans-serif;">Managing Director, Abodebed</div>
                     </div>
                 </div>
             </div>
 
-            <div class="border border-yellow-400 p-6 rounded-md bg-white shadow-sm">
+            <div class="border border-blue-400 p-6 rounded-md bg-white shadow-sm">
                 <p class="text-sm italic mb-4">
                     “Getting started with eSupport.com was super simple and took no time at all.”
                 </p>
                 <div class="flex items-center gap-3 mt-4">
-                    <img src="{{ asset('images/aja.jpg') }}" alt="Michel and Aja" class="w-10 h-10 rounded-full object-cover border-2 border-gray-300" />
+                    <img src="{{ asset('images/v.jpg') }}" alt="Michel and Aja" class="w-12 h-12 rounded-full object-cover border-2 border-gray-300" />
                     <div>
-                        <div class="text-sm font-semibold">Michel and Aja</div>
-                        <div class="text-xs text-gray-500">Owners of La Maison de Souhey</div>
+                        <div class="text-sm font-semibold" style="font-family: 'Noto Sans', sans-serif;">Michel and Aja</div>
+                        <div class="text-xs text-gray-500"style="font-family: 'Noto Sans', sans-serif;">Owners of La Maison de Souhey</div>
                     </div>
                 </div>
             </div>
@@ -446,14 +454,106 @@ guests and neighbours up to €/$/
 
         <!-- Join Button -->
         <div class="text-center mt-10">
-            <a href="#" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg transition duration-300">
-                Join hosts like you
-            </a>
+         
         </div>
+              <button class="bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded mt-2" style="font-family: 'Noto Sans', sans-serif;">
+     Reach new guests today
+                </button>
     </div>
 </section>
 
 
+<section class="py-12 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="mb-6">
+<h2 class="text-2xl font-semibold text-gray-800 mb-2">Airport taxis for any kind of trip</h2>
+
+</div>
+
+          
+       
+    
+
+        <!-- Two column layout -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Left Column -->
+            <div class="space-y-4">
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <button class="w-full flex justify-between items-center text-left font-medium text-gray-800 toggle-answer focus:outline-none" style="font-family: 'Noto Sans', sans-serif;">
+                        What is your refund policy?
+                        <svg class="w-5 h-5 transform transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <p class="mt-2 text-gray-600 hidden answer" style="font-family: 'Noto Sans', sans-serif;">
+                        We offer a full refund within the first 14 days of your purchase.
+                    </p>
+                </div>
+ <div class="border border-gray-200 rounded-lg p-4">
+                    <button class="w-full flex justify-between items-center text-left font-medium text-gray-800 toggle-answer focus:outline-none" style="font-family: 'Noto Sans', sans-serif;">
+                        What is your refund policy?
+                        <svg class="w-5 h-5 transform transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <p class="mt-2 text-gray-600 hidden answer" style="font-family: 'Noto Sans', sans-serif;">
+                        We offer a full refund within the first 14 days of your purchase.
+                    </p>
+                </div> 
+            </div>
+
+            <!-- Right Column -->
+            <div class="space-y-4">
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <button class="w-full flex justify-between items-center text-left font-medium text-gray-800 toggle-answer focus:outline-none" style="font-family: 'Noto Sans', sans-serif;">
+                        Is there a free trial available?
+                        <svg class="w-5 h-5 transform transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <p class="mt-2 text-gray-600 hidden answer" style="font-family: 'Noto Sans', sans-serif;">
+                        Yes, we offer a 7-day free trial with access to all features.
+                    </p>
+                </div>
+                  <div class="border border-gray-200 rounded-lg p-4">
+                    <button class="w-full text-base text-bold flex justify-between items-center text-left  text-gray-800 toggle-answer focus:outline-none" style="font-family: 'Noto Sans', sans-serif;">
+                        Is there a free trial available?
+                        <svg class="w-5 h-5 transform transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <p class="mt-2 text-gray-600 hidden answer" style="font-family: 'Noto Sans', sans-serif;">
+                        Yes, we offer a 7-day free trial with access to all features.
+                    </p>
+                </div>   
+
+               
+            </div>
+        </div>
+        <p class="mt-4 text-gray-600" style="font-family: 'Noto Sans', sans-serif;">
+Still have questions? Find answers to all your questions on our
+  <a href="/help" class="text-sky-500  hover:text-sky-600"> FAQ</a>
+</p>
+    <button class="bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded mt-8" style="font-family: 'Noto Sans', sans-serif;">
+     Reach new guests today
+                </button>
+    </div>
+</section>
+
+<!-- Toggle Script -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggles = document.querySelectorAll('.toggle-answer');
+        toggles.forEach(toggle => {
+            toggle.addEventListener('click', () => {
+                const answer = toggle.nextElementSibling;
+                const icon = toggle.querySelector('svg');
+                answer.classList.toggle('hidden');
+                icon.classList.toggle('rotate-180');
+            });
+        });
+    });
+</script>
 
 
 <script>
@@ -483,3 +583,76 @@ guests and neighbours up to €/$/
     }
   });
 </script>
+<footer class="bg-[#1A93B6] text-white py-12 px-4">
+    <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+        
+        <!-- Left Text -->
+        <div class="md:col-span-2 flex flex-col justify-center">
+            <h2 class="text-4xl md:text-5xl font-bold mb-4" style="font-family: 'Poppins', sans-serif;">
+                Sign up and start <br class="hidden md:block" />
+                welcoming guests today!
+            </h2>
+        </div>
+
+        <!-- CTA Box -->
+        <div class="bg-white text-black p-6 rounded-lg border-4 border-yellow-400 shadow-md w-full max-w-sm mx-auto md:mx-0">
+            <h3 class="text-lg font-semibold mb-4"  style="font-family: 'Poppins', sans-serif;">Register for free</h3>
+            <ul class="space-y-2 mb-4 text-sm">
+                <li class="flex items-start">
+                    <span class="text-green-600 font-bold" style="font-family: 'Noto Sans', sans-serif;">✓</span>
+                    <span class="ml-2" style="font-family: 'Noto Sans', sans-serif;">45% of hosts get their first booking within a week</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="text-green-600 font-bold" style="font-family: 'Noto Sans', sans-serif;">✓</span>
+                    <span class="ml-2" style="font-family: 'Noto Sans', sans-serif;">Choose instant bookings or Request to Book</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="text-green-600 font-bold" style="font-family: 'Noto Sans', sans-serif;">✓</span>
+                    <span class="ml-2"style="font-family: 'Noto Sans', sans-serif;">We'll facilitate payments for you</span>
+                </li>
+            </ul>
+            <a href="#"
+               class="block bg-sky-400 hover:bg-sky-500 text-white text-center font-semibold py-2 rounded-md transition" style="font-family: 'Noto Sans', sans-serif;">
+                Get started now →
+            </a>
+        </div>
+    </div>
+
+    <!-- Links Section -->
+    <div class="max-w-7xl mx-auto px-4 mt-12 grid grid-cols-1 md:grid-cols-3 gap-2 text-sm">
+        <div>
+            <h4 class="font-semibold mb-2 text-2xl"  style="font-family: 'Poppins', sans-serif;">Discover</h4>
+            <ul>
+                <li><a href="#" class="underline text-base"  style="font-family: 'Poppins', sans-serif;">Trust and Safety</a></li>
+            </ul>
+        </div>
+        <div>
+            <h4 class="font-semibold mb-2 text-2xl" style="font-family: 'Poppins', sans-serif;">Useful links</h4>
+            <ul>
+                <li><a href="#" class="underline text-base"  style="font-family: 'Poppins', sans-serif;">Extranet</a></li>
+                <li><a href="#" class="underline text-base"  style="font-family: 'Poppins', sans-serif;">Pulse for Android</a></li>
+                <li><a href="#" class="underline text-base"  style="font-family: 'Poppins', sans-serif;">Pulse for iOS</a></li>
+            </ul>
+        </div>
+        <div>
+            <h4 class="font-semibold mb-2 text-2xl" style="font-family: 'Poppins', sans-serif;">Help and communities</h4>
+            <ul>
+                <li><a href="#" class="underline text-base"  style="font-family: 'Poppins', sans-serif;">Partner Help</a></li>
+                <li><a href="#" class="underline text-base" style="font-family: 'Poppins', sans-serif;">Partner Community</a></li>
+                <li><a href="#" class="underline text-base" style="font-family: 'Poppins', sans-serif;">How-to videos</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Bottom Line -->
+    <div class="max-w-7xl mx-auto px-4 mt-8 border-t border-white/30 pt-4 text-sm text-center text-white">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-2">
+            <div class="space-x-2">
+                <a href="#" class="underline"  style="font-family: 'Poppins', sans-serif;">About Us</a>
+                <span class="text-white">|</span>
+                <a href="#" class="underline" style="font-family: 'Poppins', sans-serif;">Privacy and Cookie Statement</a>
+            </div>
+            <p class="mt-2 md:mt-0"  style="font-family: 'Poppins', sans-serif;">© Copyright <a href="#" class="underline"  style="font-family: 'Poppins', sans-serif;">Bookintour.com</a> 2025</p>
+        </div>
+    </div>
+</footer>
