@@ -26,6 +26,9 @@ Route::get('/', function () {
 Route::get('/property', function () {
     return view('frontend.property');
 });
+Route::get('/single-hotel', function () {
+    return view('frontend.single-hotel');
+});
 Route::get('/welcome', function () {
     return view('frontend.welcomebox');
 });
