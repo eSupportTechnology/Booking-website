@@ -466,7 +466,7 @@ guests and neighbours up to €/$/
 <section class="py-12 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="mb-6">
-<h2 class="text-2xl font-semibold text-gray-800 mb-2">Airport taxis for any kind of trip</h2>
+<h2 class="text-2xl font-semibold text-gray-800 mb-2">Your questions answered</h2>
 
 </div>
 
@@ -535,7 +535,7 @@ Still have questions? Find answers to all your questions on our
   <a href="/help" class="text-sky-500  hover:text-sky-600"> FAQ</a>
 </p>
     <button class="bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded mt-8" style="font-family: 'Noto Sans', sans-serif;">
-     Reach new guests today
+   Start welcoming guests
                 </button>
     </div>
 </section>
