@@ -40,6 +40,9 @@ Route::get('/stays', function () {
 Route::get('/car-rentals', function () {
     return view('frontend.car-rentals');
 })->name('car.rentals');
+Route::get('/tour-pakages', function () {
+    return view('frontend.tour-packages');
+})->name('tour.packages');
 
 Route::get('/airport-taxis', function () {
     return view('frontend.home');
