@@ -158,7 +158,7 @@
     <!-- Footer Text -->
     <p class="text-xs text-gray-500 mt-6 text-center" >
       <span class="block" style="font-family: 'Noto Sans', sans-serif;">All rights reserved</span>
-      <span class="block" style="font-family: 'Noto Sans', sans-serif;">© 2006 – 2025 Bookingtour™</span>
+      <span class="block" style="font-family: 'Noto Sans', sans-serif;">© 2006 – 2025 Bookintour.com™</span>
     </p>
   </div>
 </main>

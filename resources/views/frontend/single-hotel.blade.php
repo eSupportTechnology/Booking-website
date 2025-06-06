@@ -230,6 +230,149 @@
 {{-- Page Sections --}}
 <section id="overview" class="min-h-screen p-6 bg-gray-50">
     <h2 class="text-xl font-bold mb-4">Overview</h2>
+    <section class="max-w-7xl mx-auto px-4 py-8">
+    <div class="flex flex-col lg:flex-row gap-6">
+        <!-- Left: Image and Info -->
+        <div class="lg:w-2/3 w-full space-y-4">
+            <h2 class="text-2xl md:text-3xl font-bold">La Grande Villa</h2>
+
+            <!-- Rating and icons -->
+            <div class="flex items-center gap-2 text-yellow-400">
+                <div class="flex">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star-half-alt"></i>
+                </div>
+                <span class="text-sm text-gray-600">3.5</span>
+                <i class="fas fa-lock text-gray-600"></i>
+            </div>
+
+            <!-- Address -->
+            <div class="flex items-center text-gray-600 text-sm">
+                <i class="fas fa-map-marker-alt mr-2 text-sky-500"></i>
+                No.24,, 22000 Nuwara Eliya, Sri Lanka
+            </div>
+
+            <!-- Main image -->
+            <div class="w-full rounded-lg overflow-hidden">
+                <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/420508951.jpg?k=..." alt="Main image" class="w-full h-auto object-cover">
+            </div>
+
+            <!-- Image gallery -->
+            <div class="grid grid-cols-3 gap-2">
+                <img src="image1.jpg" class="rounded-lg object-cover w-full h-28 md:h-40" alt="Gallery 1">
+                <img src="image2.jpg" class="rounded-lg object-cover w-full h-28 md:h-40" alt="Gallery 2">
+                <img src="image3.jpg" class="rounded-lg object-cover w-full h-28 md:h-40" alt="Gallery 3">
+                <img src="image4.jpg" class="rounded-lg object-cover w-full h-28 md:h-40" alt="Gallery 4">
+                <img src="image5.jpg" class="rounded-lg object-cover w-full h-28 md:h-40" alt="Gallery 5">
+                <img src="image6.jpg" class="rounded-lg object-cover w-full h-28 md:h-40" alt="Gallery 6">
+            </div>
+        </div>
+
+        <!-- Right: Review and Map -->
+        <div class="lg:w-1/3 w-full space-y-6">
+            <!-- Review -->
+            <div class="bg-gray-100 rounded-lg p-4 shadow">
+                <div class="flex justify-between items-center">
+                    <h3 class="font-semibold text-lg">Superb</h3>
+                    <span class="bg-blue-500 text-white px-2 py-1 rounded text-sm">8.6</span>
+                </div>
+                <p class="text-sm text-gray-700 mt-2 italic">
+                    “Really comfortable bed, and big spa bath. Enjoyed the pool table as was heavy rain outside, and the Sri Lankan breakfast was delicious!”
+                </p>
+                <div class="flex items-center mt-3 gap-2">
+                    <div class="bg-green-500 text-white w-8 h-8 flex items-center justify-center rounded-full font-semibold">L</div>
+                    <div>
+                        <p class="text-sm font-medium">Linton</p>
+                        <p class="text-xs text-gray-500 flex items-center gap-1">
+                            <span class="fi fi-gb"></span> United Kingdom
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Staff rating -->
+            <div class="flex items-center justify-between bg-white p-4 shadow rounded-lg">
+                <span class="text-gray-800 font-medium">Staff</span>
+                <span class="bg-gray-200 px-3 py-1 rounded text-sm font-semibold">8.6</span>
+            </div>
+
+            <!-- Map -->
+            <div class="rounded-lg overflow-hidden shadow">
+                <iframe class="w-full h-48 md:h-64" loading="lazy"
+                    src="https://www.google.com/maps?q=La+Grande+Villa+Nuwara+Eliya&output=embed">
+                </iframe>
+                <button class="w-full bg-blue-500 text-white py-2 font-semibold">Show on map</button>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="flex flex-wrap gap-4 mb-6">
+        @foreach ([
+            ['icon' => '🏠', 'label' => 'Houses'],
+            ['icon' => '🏔️', 'label' => 'Mountain view'],
+            ['icon' => '🌿', 'label' => 'Garden'],
+            ['icon' => '🔥', 'label' => 'BBQ facilities'],
+            ['icon' => '📶', 'label' => 'Free WiFi'],
+            ['icon' => '⛱️', 'label' => 'Terrace'],
+            ['icon' => '🅿️', 'label' => 'Free parking'],
+            ['icon' => '🛁', 'label' => 'Bath'],
+            ['icon' => '🧹', 'label' => 'Daily housekeeping'],
+            ['icon' => '🛋️', 'label' => 'Balcony'],
+        ] as $feature)
+            <div class="flex items-center px-3 py-2 bg-gray-100 rounded-md shadow-sm text-sm">
+                <span class="mr-2 text-xl">{{ $feature['icon'] }}</span>
+                <span>{{ $feature['label'] }}</span>
+            </div>
+        @endforeach
+    </div>
+
+    <!-- Main Description -->
+    <div class="grid md:grid-cols-3 gap-8">
+        <div class="md:col-span-2">
+            <h2 class="text-2xl font-semibold mb-4">Experience world-class service at La Grande Villa</h2>
+            <p class="text-green-600 font-semibold mb-4">Reliable info: <span class="font-normal text-gray-700">Guests say the description and photos for this property are very accurate.</span></p>
+
+            <div class="space-y-4 text-gray-700 text-justify">
+                <p><strong>Elegant Accommodation:</strong> La Grande Villa in Nuwara Eliya offers a 5-star villa experience with a beautiful garden, terrace, and outdoor seating area. Guests enjoy free WiFi, private check-in and check-out services, and a paid shuttle service.</p>
+
+                <p><strong>Comfortable Amenities:</strong> The property features a lounge, hot tub, concierge service, and family rooms. Additional amenities include a fitness centre, spa bath, and bicycle parking. Free on-site private parking is available for guests.</p>
+
+                <p><strong>Dining Experience:</strong> A family-friendly restaurant serves Indian, local, Asian, international, and European cuisines. Breakfast options include continental, vegetarian, halal, and gluten-free with pancakes and fruits. Lunch and dinner are also available.</p>
+
+                <p><strong>Prime Location:</strong> Located 48 km from Castlereigh Reservoir Seaplane Base and 3 km from Gregory Lake, La Grande Villa is near Hakgala Botanical Garden (9 km) and other attractions. Highly rated for its garden, hot tub, and attentive staff.</p>
+            </div>
+        </div>
+
+        <!-- Sidebar Highlights -->
+        <div class="bg-blue-50 p-6 rounded-lg shadow-md">
+            <h3 class="text-lg font-bold mb-2">Property highlights</h3>
+            <p class="mb-4"><strong>Top location:</strong> Highly rated by recent guests (9.1)</p>
+
+            <h4 class="font-semibold mb-1">Breakfast info</h4>
+            <p class="mb-2 text-sm">Continental, Vegetarian, Halal, Gluten-free, Breakfast to go</p>
+
+            <div class="flex items-center mb-4 text-sm">
+                <span class="mr-2 text-lg">🅿️</span> Free private parking available on-site
+            </div>
+
+            <h4 class="font-semibold mb-1">Activities:</h4>
+            <ul class="list-disc ml-5 text-sm text-gray-700">
+                <li>Golf course (within 3 km)</li>
+                <li>Fishing</li>
+                <li>Billiards</li>
+            </ul>
+
+            <button class="w-full bg-sky-500 hover:bg-sky-600 text-white font-semibold py-2 px-4 mt-6 rounded">
+                Reserve
+            </button>
+            <button class="w-full mt-2 py-2 px-4 text-sky-600 border border-sky-600 rounded hover:bg-sky-100">
+                ❤️ Save the property
+            </button>
+        </div>
+    </div>
+
 </section>
 <section id="info" class="min-h-screen p-6 bg-white">
     <h2 class="text-xl font-bold mb-4">Villa info & price</h2>
@@ -246,6 +389,8 @@
 <section id="reviews" class="min-h-screen p-6 bg-white">
     <h2 class="text-xl font-bold mb-4">Guest reviews</h2>
 </section>
+
+
 @endsection
 <script>
     document.addEventListener("DOMContentLoaded", () => {
