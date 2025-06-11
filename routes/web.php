@@ -40,9 +40,10 @@ Route::get('/stays', function () {
 Route::get('/car-rentals', function () {
     return view('frontend.car-rentals');
 })->name('car.rentals');
-Route::get('/tour-pakages', function () {
+
+Route::get('/airport-tours', function () {
     return view('frontend.tour-packages');
-})->name('tour.packages');
+})->name('airport.tours');
 
 Route::get('/airport-taxis', function () {
     return view('frontend.home');
@@ -52,9 +53,7 @@ Route::get('/email-verify', function () {
     return view('frontend.verify-email');
 })->name('email.verify');
 
-Route::get('/airport-tours', function () {
-    return view('frontend.home');
-})->name('airport.tours');
+
 Route::get('/airport-taxis', function () {
     return view('frontend.airport-taxi');
 })->name('airport.taxis');
