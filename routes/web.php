@@ -13,6 +13,9 @@ Route::get('/login', function () {
     return view('frontend.login');
 });
 
+Route::get('/list-your-property', function () {
+    return view('frontend.list-your-property');
+});
 
 Route::get('/register', function () {
     return view('frontend.register');
@@ -22,6 +25,9 @@ Route::get('/', function () {
 });
 Route::get('/property', function () {
     return view('frontend.property');
+});
+Route::get('/single-hotel', function () {
+    return view('frontend.single-hotel');
 });
 Route::get('/welcome', function () {
     return view('frontend.welcomebox');
@@ -34,6 +40,9 @@ Route::get('/stays', function () {
 Route::get('/car-rentals', function () {
     return view('frontend.car-rentals');
 })->name('car.rentals');
+Route::get('/tour-pakages', function () {
+    return view('frontend.tour-packages');
+})->name('tour.packages');
 
 Route::get('/airport-taxis', function () {
     return view('frontend.home');
@@ -46,6 +55,9 @@ Route::get('/email-verify', function () {
 Route::get('/airport-tours', function () {
     return view('frontend.home');
 })->name('airport.tours');
+Route::get('/airport-taxis', function () {
+    return view('frontend.airport-taxi');
+})->name('airport.taxis');
 
 // routes/web.php
 Route::prefix('traveler')->group(function () {

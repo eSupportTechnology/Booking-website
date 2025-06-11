@@ -1,101 +1,111 @@
 @extends('frontend.user-master')
 
 @section('content')
-<section class="text-white py-12 bg-[#1F8FB2] relative z-0">
-    <div class="container mx-auto px-4 md:px-8">
-        <!-- Hero Text -->
-        <div class="text-left mb-10 mt-2">
-            <h1 class="text-4xl md:text-3xl font-bold mb-2" style="font-size:50px;">Find your next stay</h1>
-            <p class="text-base md:text-lg" style="font-family: 'Noto Sans', sans-serif;font-size:20px;margin-top:20px;">
-                Search low prices on hotels, homes and much more...
-            </p>
-        </div>
+<section class="text-white py-8 bg-[#1F8FB2] relative z-0">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Hero Text -->
+    <div class="mb-10 mt-1">
+      <h1 class="text-[28px] md:text-[36px] lg:text-[46px] font-bold mb-2">
+     Car hire for any kind of trip
+      </h1>
+      <p class="text-[18px] md:text-[20px] mt-1 font-sans">
+      Great cars at great prices, from the biggest car rental companies
+      </p>
     </div>
+  </div>
 </section>
+<!-- Font Awesome (for icons) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
 <div class="relative z-10 -mt-8 px-4">
 
-        <!-- Main form -->
-      <form method="GET" class="bg-white rounded-xl px-2 py-1 shadow-lg flex flex-col md:flex-row items-center gap-1 md:gap-0 border-4 border-yellow-400 max-w-6xl mx-auto overflow-visible text-sm">
-            <!-- Pick-up Location -->
-            <div class="flex items-center gap-2 border-r pr-3">
-                <i class="fas fa-search text-lg"></i>
-                <input type="text" placeholder="Airport, city or station" class="border-none outline-none text-sm" />
-            </div>
+  <!-- Main form -->
+  <form method="GET"
+    class="bg-white rounded-xl px-2 py-1 shadow-lg flex flex-col md:flex-row items-center gap-1 md:gap-0 border-4 border-yellow-400 max-w-6xl mx-auto overflow-visible text-sm">
 
-            <!-- Pick-up Date -->
-            <div class="flex items-center gap-2 border-r pr-3">
-                <i class="fas fa-calendar-alt text-lg"></i>
-                <input type="date" class="border-none outline-none text-sm" />
-            </div>
-
-            <!-- Pick-up Time -->
-            <div class="flex items-center gap-2 border-r pr-3">
-                <i class="fas fa-clock text-lg"></i>
-                <input type="time" class="border-none outline-none text-sm" />
-            </div>
-
-            <!-- Drop-off Date -->
-            <div class="flex items-center gap-2 border-r pr-3">
-                <i class="fas fa-calendar-alt text-lg"></i>
-                <input type="date" class="border-none outline-none text-sm" />
-            </div>
-
-            <!-- Drop-off Time -->
-            <div class="flex items-center gap-2 border-r pr-3">
-                <i class="fas fa-clock text-lg"></i>
-                <input type="time" class="border-none outline-none text-sm" />
-            </div>
-
-            <!-- Drop-off location (space reserved, but hidden initially) -->
-            <div id="dropoffLocationWrapper" class="relative">
-                <div id="dropoffLocation" class="flex items-center gap-2 border-r pr-3 invisible absolute inset-0">
-                    <i class="fas fa-location-dot text-lg"></i>
-                    <input type="text" placeholder="Drop-off location" class="border-none outline-none text-sm" />
-                </div>
-            </div>
-
-            <!-- Search Button -->
-            <div class="ml-auto">
-                <button type="submit" class="bg-sky-500 text-white font-bold px-6 py-2 rounded hover:bg-sky-600 transition-all">
-                    Search
-                </button>
-            </div>
-        </form>
-
-        <!-- Options section -->
-        <div class="mt-3 space-y-2 text-sm">
-            <!-- Drop-off checkbox -->
-            <label class="flex items-center gap-2">
-                <input type="checkbox" id="toggleDropoff" onchange="toggleDropoffLocation()" />
-                Drop car off at different location
-            </label>
-
-            <!-- Driver Age checkbox -->
-            <label class="flex items-center gap-2">
-                <input type="checkbox" id="toggleAge" onchange="toggleDriverAge()" />
-                Driver aged between 30 - 65?
-            </label>
-
-            <!-- Driver's Age box (outside main form box) -->
-            <div id="driverAgeBox" class="hidden ml-6">
-                <label class="mr-2">Driver’s Age:</label>
-                <input type="number" class="border px-2 py-1 rounded text-sm w-24" placeholder="Age" />
-            </div>
-        </div>
+    <!-- Pick-up Location -->
+    <div class="flex items-center gap-2 border-r pr-3">
+      <i class="fas fa-search text-lg"></i>
+      <input type="text" placeholder="Airport, city or station" class="border-none outline-none text-sm" />
     </div>
 
+    <!-- Pick-up Date -->
+    <div class="flex items-center gap-2 border-r pr-3">
+      <i class="fas fa-calendar-alt text-lg"></i>
+      <input type="date" class="border-none outline-none text-sm" />
+    </div>
+
+    <!-- Pick-up Time -->
+    <div class="flex items-center gap-2 border-r pr-3">
+      <i class="fas fa-clock text-lg"></i>
+      <input type="time" class="border-none outline-none text-sm" />
+    </div>
+
+    <!-- Drop-off Date -->
+    <div class="flex items-center gap-2 border-r pr-3">
+      <i class="fas fa-calendar-alt text-lg"></i>
+      <input type="date" class="border-none outline-none text-sm" />
+    </div>
+
+    <!-- Drop-off Time -->
+    <div class="flex items-center gap-2 border-r pr-3">
+      <i class="fas fa-clock text-lg"></i>
+      <input type="time" class="border-none outline-none text-sm" />
+    </div>
+
+    <!-- Drop-off Location (Initially Hidden) -->
+    <div id="dropoffLocationWrapper" class="flex items-center gap-2 border-r pr-3 hidden">
+      <i class="fas fa-location-dot text-lg"></i>
+      <input type="text" placeholder="Drop-off location" class="border-none outline-none text-sm" />
+    </div>
+
+    <!-- Search Button -->
+    <div class="ml-auto">
+      <button type="submit"
+        class="bg-sky-500 text-white font-bold px-6 py-2 rounded hover:bg-sky-600 transition-all">
+        Search
+      </button>
+    </div>
+  </form>
+
+  <!-- Options section -->
+  <div class="mt-3 space-y-2 text-sm">
+    <!-- Drop-off checkbox -->
+    <label class="flex items-center gap-2">
+      <input type="checkbox" id="toggleDropoff" />
+      Drop car off at different location
+    </label>
+
+    <!-- Driver Age checkbox -->
+    <label class="flex items-center gap-2">
+      <input type="checkbox" id="toggleAge" />
+      Driver aged between 30 - 65?
+    </label>
+
+    <!-- Driver's Age box -->
+    <div id="driverAgeBox" class="hidden ml-6">
+      <label class="mr-2">Driver’s Age:</label>
+      <input type="number" class="border px-2 py-1 rounded text-sm w-24" placeholder="Age" />
+    </div>
+  </div>
 </div>
 
+<!-- Script -->
 <script>
-    function toggleDropoffLocation() {
-        const field = document.getElementById('dropoffLocation');
-        field.classList.toggle('invisible');
-    }
+  // Toggle driver age box
+  document.getElementById("toggleAge").addEventListener("change", function () {
+    const ageBox = document.getElementById("driverAgeBox");
+    ageBox.classList.toggle("hidden", !this.checked);
+  });
 
-    function toggleDriverAge() {
-        document.getElementById('driverAgeBox').classList.toggle('hidden');
-    }
+  // Toggle drop-off location field
+  document.getElementById("toggleDropoff").addEventListener("change", function () {
+    const dropoff = document.getElementById("dropoffLocationWrapper");
+    dropoff.classList.toggle("hidden", !this.checked);
+  });
 </script>
+
+
 
 
 

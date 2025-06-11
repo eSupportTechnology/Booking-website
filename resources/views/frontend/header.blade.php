@@ -8,7 +8,10 @@
         <div class="w-full md:w-auto">
           <div class="flex flex-col items-start">
             <!-- Logo -->
-            <h1 class="text-2xl font-bold">HorizonStay.com</h1>
+           <a href="/" class="text-2xl font-bold">
+  <h1>Bookintour.com</h1>
+</a>
+
  
 
 
@@ -209,9 +212,9 @@
   <img src="{{ asset('assets/question.svg') }}" alt="Taxi" class="w-5 h-5 cursor-pointer" />
 </a>
 
-          <a href="#" class="hover:underline"  style="font-family: 'Noto Sans', sans-serif;">List your property</a>
-          <a href="#" class="bg-white  font-base px-4 py-2 rounded hover:bg-blue-100" style="font-family: 'Noto Sans', sans-serif;color:#3CC0E9;">Register</a>
-          <a href="#" class="bg-white  font-base px-4 py-2 rounded hover:bg-blue-100" style="font-family: 'Noto Sans', sans-serif;color:#3CC0E9;">Sign in</a>
+          <a href="/list-your-property" class="hover:underline"  style="font-family: 'Noto Sans', sans-serif;">List your property</a>
+          <a href="/login" class="bg-white  font-base px-4 py-2 rounded hover:bg-blue-100" style="font-family: 'Noto Sans', sans-serif;color:#3CC0E9;">Register</a>
+          <a href="/login" class="bg-white  font-base px-4 py-2 rounded hover:bg-blue-100" style="font-family: 'Noto Sans', sans-serif;color:#3CC0E9;">Sign in</a>
         </div>
 
       </div>

@@ -22,17 +22,20 @@
 
 @section('content')
 <!-- Hero Section -->
-<section class="text-white py-12 bg-[#1F8FB2] relative z-0">
-    <div class="container mx-auto px-4 md:px-8">
-        <!-- Hero Text -->
-        <div class="text-left mb-10 mt-2">
-            <h1 class="text-4xl md:text-3xl font-bold mb-2" style="font-size:50px;">Find your next stay</h1>
-            <p class="text-base md:text-lg" style="font-family: 'Noto Sans', sans-serif;font-size:20px;margin-top:20px;">
-                Search low prices on hotels, homes and much more...
-            </p>
-        </div>
+<section class="text-white py-8 bg-[#1F8FB2] relative z-0">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Hero Text -->
+    <div class="mb-10 mt-1">
+      <h1 class="text-[32px] md:text-[40px] lg:text-[50px] font-bold mb-2">
+        Find your next stay
+      </h1>
+      <p class="text-[18px] md:text-[20px] mt-1 font-sans">
+        Search low prices on hotels, homes and much more...
+      </p>
     </div>
+  </div>
 </section>
+
 
 <!-- Search Box: Overlapping both sections -->
 <div class="relative z-10 -mt-8 px-4">
@@ -386,7 +389,7 @@
 </section>
 <!-- End Trending Destination Section-->
 
-<
+
 
 
 
@@ -395,87 +398,134 @@
 <section class="py-12 bg-white">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        <div class="mb-6">
-            <h2 class="text-2xl font-semibold text-gray-800 mb-2">
-                Browse by property type
-            </h2>
-          <p class="mb-8 text-gray-600" style="font-family: 'Noto Sans', sans-serif;">Most popular choices Pick a vibe and explore the top destination in Sri Lanka from Sri Lanka</p>
-        </div>
-
-        <!-- Tab Buttons -->
-        <div class="flex flex-wrap gap-2 mb-6">
-
-           <button id="ptype-tab-city"
-                class="rounded-full ptype-tab-button active-ptype-tab flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-700"
-                onclick="togglePtypeTab('city')">
-                <img src="{{ asset('assets/city.svg') }}" alt="city" class="w-5 h-5" style="filter: brightness(0) saturate(100%);" />
-                <span style="font-family: 'Noto Sans', sans-serif;">City</span>
-            </button>
-
-            <button id="ptype-tab-beach"
-                class="rounded-full ptype-tab-button active-ptype-tab flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-700"
-                onclick="togglePtypeTab('beach')">
-                <img src="{{ asset('assets/beach.svg') }}" alt="Beach" class="w-5 h-5" />
-                <span style="font-family: 'Noto Sans', sans-serif;">Beach</span>
-            </button>
-
-            <button id="ptype-tab-outdoors"
-                class="rounded-full ptype-tab-button flex items-center gap-2 px-4 py-2"
-                onclick="togglePtypeTab('outdoors')">
-                <img src="{{ asset('assets/outdoors.svg') }}" alt="Outdoors" class="w-5 h-5" style="filter: brightness(0) saturate(100%);"  />
-                <span style="font-family: 'Noto Sans', sans-serif;">Outdoors</span>
-            </button>
-
-            <button id="ptype-tab-relax"
-                class="rounded-full ptype-tab-button flex items-center gap-2 px-4 py-2"
-                onclick="togglePtypeTab('relax')">
-                <img src="{{ asset('assets/relax.svg') }}" alt="Relax" class="w-5 h-5" />
-                <span style="font-family: 'Noto Sans', sans-serif;">Relax</span>
-            </button>
-
-            <button id="ptype-tab-romance"
-                class="rounded-full ptype-tab-button flex items-center gap-2 px-4 py-2"
-                onclick="togglePtypeTab('romance')">
-                <img src="{{ asset('assets/Romance.svg') }}" alt="Romance" class="w-5 h-5" />
-                <span style="font-family: 'Noto Sans', sans-serif;">Romance</span>
-            </button>
-
-            <button id="ptype-tab-food"
-                class="rounded-full ptype-tab-button flex items-center gap-2 px-4 py-2"
-                onclick="togglePtypeTab('food')">
-                <img src="{{ asset('assets/food.svg') }}" alt="Food" class="w-5 h-5" />
-                <span style="font-family: 'Noto Sans', sans-serif;">Food</span>
-            </button>
-        </div>
-
-        <!-- Tab Contents -->
-        <div id="ptype-tab-content">
-            
-
-            <!-- Other Tabs -->
-            <div id="ptype-content-city" class="hidden px-2 py-6">city content here...</div>
-             <div id="ptype-content-beach" class="hidden px-2 py-6">beach content here...</div>
-            <div id="ptype-content-outdoors" class="hidden px-2 py-6">Outdoors content here...</div>
-            <div id="ptype-content-relax" class="hidden px-2 py-6">Relax content here...</div>
-            <div id="ptype-content-romance" class="hidden px-2 py-6">Romance content here...</div>
-            <div id="ptype-content-food" class="hidden px-2 py-6">Food content here...</div>
-        </div>
+    <div class="mb-6">
+      <h2 class="text-2xl font-semibold text-gray-800 mb-2">Browse by property type</h2>
+      <p class="mb-8 text-gray-600" style="font-family: 'Noto Sans', sans-serif;">
+        Most popular choices Pick a vibe and explore the top destination in Sri Lanka from Sri Lanka
+      </p>
     </div>
 
-    <!-- Tailwind utility to hide scrollbar -->
-    <style>
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
+    <!-- Tab Buttons -->
+    <div class="flex flex-wrap gap-2 mb-6">
+      <button id="ptype-tab-city" class="rounded-full ptype-tab-button active-ptype-tab flex items-center gap-2 px-4 py-2" onclick="togglePtypeTab('city')">
+        <img src="{{ asset('assets/city.svg') }}" alt="city" class="w-5 h-5" style="filter: brightness(0) saturate(100%);" />
+        <span style="font-family: 'Noto Sans', sans-serif;">City</span>
+      </button>
 
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-    </style>
+      <button id="ptype-tab-beach" class="rounded-full ptype-tab-button active-ptype-tab flex items-center gap-2 px-4 py-2" onclick="togglePtypeTab('beach')">
+        <img src="{{ asset('assets/beach.svg') }}" alt="Beach" class="w-5 h-5" />
+        <span style="font-family: 'Noto Sans', sans-serif;">Beach</span>
+      </button>
 
+      <button id="ptype-tab-outdoors" class="rounded-full ptype-tab-button flex items-center gap-2 px-4 py-2" onclick="togglePtypeTab('outdoors')">
+        <img src="{{ asset('assets/outdoors.svg') }}" alt="Outdoors" class="w-5 h-5" style="filter: brightness(0) saturate(100%);" />
+        <span style="font-family: 'Noto Sans', sans-serif;">Outdoors</span>
+      </button>
+
+      <button id="ptype-tab-relax" class="rounded-full ptype-tab-button flex items-center gap-2 px-4 py-2" onclick="togglePtypeTab('relax')">
+        <img src="{{ asset('assets/relax.svg') }}" alt="Relax" class="w-5 h-5" />
+        <span style="font-family: 'Noto Sans', sans-serif;">Relax</span>
+      </button>
+
+      <button id="ptype-tab-romance" class="rounded-full ptype-tab-button flex items-center gap-2 px-4 py-2" onclick="togglePtypeTab('romance')">
+        <img src="{{ asset('assets/romance.svg') }}" alt="Romance" class="w-5 h-5" />
+        <span style="font-family: 'Noto Sans', sans-serif;">Romance</span>
+      </button>
+
+      <button id="ptype-tab-food" class="rounded-full ptype-tab-button flex items-center gap-2 px-4 py-2" onclick="togglePtypeTab('food')">
+        <img src="{{ asset('assets/food.svg') }}" alt="Food" class="w-5 h-5" />
+        <span style="font-family: 'Noto Sans', sans-serif;">Food</span>
+      </button>
+    </div>
+
+    <!-- Tab Contents -->
+    <div id="ptype-tab-content">
+
+      <!-- City Tab -->
+      <div id="ptype-content-city" class="px-2 py-6 block">
+       
+
+
+    <div class="scroll-section">
+      
+ <div class="relative">
+          <div class="scroll-container flex overflow-x-auto scroll-smooth gap-3 no-scrollbar">
+                @php
+                    $destinations = [
+                        ['name' => 'Kandy', 'image' => 'kandy.jpg', 'properties' => '1,166'],
+                        ['name' => 'Colombo', 'image' => 'colombo.jpg', 'properties' => '622'],
+                        ['name' => 'Nuwara Eliya', 'image' => 'colombo.jpg', 'properties' => '843'],
+                        ['name' => 'Ella', 'image' => 'kandy.jpg', 'properties' => '876'],
+                        ['name' => 'Galle', 'image' => 'kandy.jpg', 'properties' => '1,118'],
+                        ['name' => 'Negombo', 'image' => 'colombo.jpg', 'properties' => '822'],
+                        ['name' => 'Anuradhapura', 'image' => 'colombo.jpg', 'properties' => '710'],
+                        ['name' => 'Trincomalee', 'image' => 'colombo.jpg', 'properties' => '588'],
+                    ];
+                @endphp
+
+                @foreach ($destinations as $destination)
+ <div class="min-w-[230px]">
+  <!-- Container with only image -->
+  <div class="bg-white rounded-lg shadow-md overflow-hidden">
+    <img src="{{ asset('images/' . $destination['image']) }}" alt="{{ $destination['name'] }}" class="w-full h-40 object-cover">
+  </div>
+
+  <!-- Text outside the image container, below it -->
+  <div class="mt-2 px-1">
+    <h3 class="text-sm font-semibold text-gray-800" style="font-family: 'Noto Sans', sans-serif;">
+      {{ $destination['name'] }}
+    </h3>
+    <p class="text-xs text-gray-500" style="font-family: 'Noto Sans', sans-serif;">
+      {{ $destination['properties'] }} Properties
+    </p>
+  </div>
+</div>
+
+
+                @endforeach
+            </div>
+            
+
+            <!-- Left Arrow -->
+            <button class="scroll-left hidden absolute  top-[42%]  left-0 -translate-y-1/2 bg-white border shadow p-2 rounded-full z-10 hover:bg-gray-100  "  style="margin-left:-16px;">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+            </button>
+
+            <!-- Right Arrow -->
+            <button class="scroll-right absolute  top-[42%] right-0 -translate-y-1/2 bg-white border shadow p-2 rounded-full z-10 hover:bg-gray-100 " style="margin-right:-16px;" >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </button>
+        </div>
     
+                  </div>
+      </div>
+
+      <!-- Other Tabs -->
+      <div id="ptype-content-beach" class="hidden px-2 py-6">Beach content here...</div>
+      <div id="ptype-content-outdoors" class="hidden px-2 py-6">Outdoors content here...</div>
+      <div id="ptype-content-relax" class="hidden px-2 py-6">Relax content here...</div>
+      <div id="ptype-content-romance" class="hidden px-2 py-6">Romance content here...</div>
+      <div id="ptype-content-food" class="hidden px-2 py-6">Food content here...</div>
+    </div>
+  </div>
+
+  <!-- Tailwind utility to hide scrollbar -->
+  <style>
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
 </section>
+
 
 
 <section class="scroll-section py-12 bg-white">
@@ -874,6 +924,60 @@ sights of Asia’s Holiday season.</p>
   </div>
 </section>
 <!--End Offers Section-->
+<section class="py-2 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="rounded-lg overflow-hidden shadow-md flex flex-col lg:flex-row items-center justify-between border border-gray-200">
+      
+      <!-- Left Side -->
+      <div class="relative w-full lg:w-1/2 bg-white flex items-center justify-center py-4 px-4">
+        
+        <!-- Decorative Half Circle -->
+        <img 
+          src="/images/small-ellipse.png" 
+          alt="Decorative Circle" 
+          class="absolute left-[-40px] top-1/2 transform -translate-y-1/2 w-20 h-20"
+        />
+
+        <!-- Container for Ellipse and Text -->
+        <div class="relative">
+          <!-- Ellipse Image -->
+          <img 
+            src="{{ asset('images/Ellipse 6.png') }}" 
+            alt="Find homes background" 
+            class="max-w-xs md:max-w-sm lg:max-w-md"
+            style="margin-top:-130px;"
+          />
+
+          <!-- Text Overlay -->
+          <div class="absolute inset-0 flex flex-col items-center justify-center text-center text-white font-semibold space-y-1">
+         <h2 class="text-2xl md:text-3xl lg:text-4xl " style="margin-top:-70px;">Find homes</h2>
+
+            <p class="text-xl md:text-2xl">For your next trip</p>
+            <a 
+              href="#" 
+              class="mt-2 text-[#35C1EA] bg-white px-4 py-2 rounded shadow hover:bg-gray-100 transition text-sm md:text-base"
+            >
+              Discover homes
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Side -->
+      <div class="w-full lg:w-1/2 px-4 py-4 flex justify-center">
+        <img 
+          src="{{ asset('assets/home.svg') }}"
+          alt="Travel Illustration" 
+          class="w-full max-w-md"
+        />
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+
 
 
 
@@ -1019,14 +1123,14 @@ sights of Asia’s Holiday season.</p>
             const tabContents = document.querySelectorAll('#ptype-tab-content > div');
 
             tabButtons.forEach(btn => {
-                btn.classList.remove('bg-blue-100', 'text-blue-700', 'active-ptype-tab');
+                btn.classList.remove('bg-blue-100', 'text-black', 'active-ptype-tab');
             });
 
             tabContents.forEach(content => {
                 content.classList.add('hidden');
             });
 
-            document.getElementById(`ptype-tab-${tabName}`).classList.add('bg-blue-100', 'text-blue-700', 'active-ptype-tab');
+            document.getElementById(`ptype-tab-${tabName}`).classList.add('bg-blue-100', 'text-black', 'active-ptype-tab');
             document.getElementById(`ptype-content-${tabName}`).classList.remove('hidden');
         }
 

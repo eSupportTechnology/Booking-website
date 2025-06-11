@@ -8,7 +8,9 @@
         <div class="w-full md:w-auto">
           <div class="flex flex-col items-start">
             <!-- Logo -->
-            <h1 class="text-2xl font-bold">HorizonStay.com</h1>
+                  <a href="/" class="text-2xl font-bold">
+  <h1>Bookintour.com</h1>
+</a>
  
 
 
