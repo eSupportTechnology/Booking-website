@@ -17,157 +17,141 @@
 <!-- Font Awesome (for icons) -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 <div class="relative z-10 -mt-8 px-4">
-
-  <!-- Main form -->
-    <!-- Booking form -->
-    <form method="GET" class="bg-white rounded-xl px-2 py-1 shadow-lg flex flex-col md:flex-row items-center gap-1 md:gap-0 border-4 border-yellow-400 max-w-6xl mx-auto overflow-visible text-sm">
+  <!-- Booking form -->
+  <form method="GET" class="bg-white rounded-xl px-2 py-1 shadow-lg flex flex-col md:flex-row items-center gap-1 md:gap-0 border-4 border-yellow-400 max-w-6xl mx-auto overflow-visible text-sm">
 
     <div class="flex flex-wrap md:flex-nowrap items-center w-full gap-x-4 gap-y-2">
-
-        <!-- Pickup -->
-        <div x-data="{ openPickup: false, pickupLocation: '' }" class="relative flex-1 min-w-0">
-            <button @click="openPickup = !openPickup" type="button"
-                class="flex items-center gap-2 w-full text-left text-sm border p-2 rounded">
-                <span x-text="pickupLocation ? pickupLocation : 'Enter pick-up location'"
-                    class="text-gray-800 truncate text-base"
-                    style="font-family: 'Noto Sans', sans-serif;"></span>
-            </button>
-            <div x-show="openPickup" @click.away="openPickup = false"
-                class="absolute z-10 bg-white shadow-lg rounded mt-1 w-full border">
-                <ul class="max-h-48 overflow-y-auto">
-                    <li @click="pickupLocation = 'Colombo'; openPickup = false"
-                        class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Colombo</li>
-                    <li @click="pickupLocation = 'Negombo'; openPickup = false"
-                        class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Negombo</li>
-                    <li @click="pickupLocation = 'Kandy'; openPickup = false"
-                        class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Kandy</li>
-                </ul>
-            </div>
-            <input type="hidden" name="pickup" :value="pickupLocation" />
+      <!-- Pickup -->
+      <div x-data="{ openPickup: false, pickupLocation: '' }" class="relative flex-1 min-w-0">
+        <button @click="openPickup = !openPickup" type="button"
+          class="flex items-center gap-2 w-full text-left text-sm border p-2 rounded">
+          <i class="fas fa-search text-lg"></i>
+          <span x-text="pickupLocation ? pickupLocation : 'Pick-up location'"
+            class="text-gray-800 truncate text-base" style="font-family: 'Noto Sans', sans-serif;"></span>
+        </button>
+        <div x-show="openPickup" @click.away="openPickup = false"
+          class="absolute z-10 bg-white shadow-lg rounded mt-1 w-full border">
+          <ul class="max-h-48 overflow-y-auto">
+            <li @click="pickupLocation = 'Colombo'; openPickup = false"
+              class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Colombo</li>
+            <li @click="pickupLocation = 'Negombo'; openPickup = false"
+              class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Negombo</li>
+            <li @click="pickupLocation = 'Kandy'; openPickup = false"
+              class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Kandy</li>
+          </ul>
         </div>
+        <input type="hidden" name="pickup" :value="pickupLocation" />
+      </div>
 
-       <!-- Vertical Divider -->
-        <div class="flex justify-center items-center">
-            <div class="border-r border-black h-8"></div>
+      <!-- Vertical Divider -->
+      <div class="flex justify-center items-center">
+        <div class="border-r border-black h-8"></div>
+      </div>
+
+      <!-- Drop-off -->
+      <div x-data="{ openDestination: false, destinationLocation: '' }" id="dropoffField" class="relative flex-1 min-w-0 opacity-50 pointer-events-none">
+        <button @click="openDestination = !openDestination" type="button"
+          class="flex items-center gap-2 w-full text-left text-sm border p-2 rounded bg-gray-100">
+          <i class="fas fa-search text-lg"></i>
+          <span x-text="destinationLocation ? destinationLocation : 'Drop-off location'"
+            class="text-gray-800 truncate text-base" style="font-family: 'Noto Sans', sans-serif;"></span>
+        </button>
+        <div x-show="openDestination" @click.away="openDestination = false"
+          class="absolute z-10 bg-white shadow-lg rounded mt-1 w-full border">
+          <ul class="max-h-48 overflow-y-auto">
+            <li @click="destinationLocation = 'Airport'; openDestination = false"
+              class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Airport</li>
+            <li @click="destinationLocation = 'Galle'; openDestination = false"
+              class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Galle</li>
+            <li @click="destinationLocation = 'Matara'; openDestination = false"
+              class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Matara</li>
+          </ul>
         </div>
+        <input type="hidden" name="destination" :value="destinationLocation" />
+      </div>
 
-        <!-- Destination -->
-        <div x-data="{ openDestination: false, destinationLocation: '' }" class="relative flex-1 min-w-0">
-            <button @click="openDestination = !openDestination" type="button"
-                class="flex items-center gap-2 w-full text-left text-sm border p-2 rounded">
-                <span x-text="destinationLocation ? destinationLocation : 'Enter destination'"
-                    class="text-gray-800 truncate text-base"
-                    style="font-family: 'Noto Sans', sans-serif;"></span>
-            </button>
-            <div x-show="openDestination" @click.away="openDestination = false"
-                class="absolute z-10 bg-white shadow-lg rounded mt-1 w-full border">
-                <ul class="max-h-48 overflow-y-auto">
-                    <li @click="destinationLocation = 'Airport'; openDestination = false"
-                        class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Airport</li>
-                    <li @click="destinationLocation = 'Galle'; openDestination = false"
-                        class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Galle</li>
-                    <li @click="destinationLocation = 'Matara'; openDestination = false"
-                        class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Matara</li>
-                </ul>
-            </div>
-            <input type="hidden" name="destination" :value="destinationLocation" />
+      <!-- Vertical Divider -->
+      <div class="flex justify-center items-center">
+        <div class="border-r border-black h-8"></div>
+      </div>
+
+      <!-- Pickup Date -->
+      <div x-data="{ open: false, checkin: null }" class="relative flex-1 min-w-0">
+        <button @click="open = !open" type="button"
+          class="flex items-center gap-2 w-full text-left text-sm border p-2 rounded">
+          <img src="{{ asset('assets/calender.svg') }}" alt="Calendar" class="w-5 h-5" />
+          <span x-text="checkin ? new Date(checkin).toLocaleString() : ' Pick-up Date & Time'"
+            class="text-gray-800 truncate text-base" style="font-family: 'Noto Sans', sans-serif;"></span>
+        </button>
+        <div x-show="open" @click.away="open = false"
+          class="absolute z-20 bg-white shadow-xl rounded-xl p-4 mt-2 w-72 right-0 text-gray-800 space-y-2 text-sm">
+          <label for="checkin-date" class="block text-sm font-medium text-gray-700 mb-1">Pick Date & Time</label>
+          <input type="datetime-local" id="checkin-date" x-model="checkin"
+            class="w-full border p-2 rounded outline-none border-white" />
         </div>
+        <input type="hidden" name="checkin" :value="checkin" />
+      </div>
 
-        <!-- Vertical Divider -->
-        <div class="flex justify-center items-center">
-            <div class="border-r border-black h-8"></div>
+      <!-- Vertical Divider -->
+      <div class="flex justify-center items-center">
+        <div class="border-r border-black h-8"></div>
+      </div>
+
+      <!-- Drop-off Date -->
+      <div x-data="{ open: false, checkin: null }" class="relative flex-1 min-w-0">
+        <button @click="open = !open" type="button"
+          class="flex items-center gap-2 w-full text-left text-sm border p-2 rounded">
+          <img src="{{ asset('assets/calender.svg') }}" alt="Calendar" class="w-5 h-5" />
+          <span x-text="checkin ? new Date(checkin).toLocaleString() : ' Drop-off Date & Time'"
+            class="text-gray-800 truncate text-base" style="font-family: 'Noto Sans', sans-serif;"></span>
+        </button>
+        <div x-show="open" @click.away="open = false"
+          class="absolute z-20 bg-white shadow-xl rounded-xl p-4 mt-2 w-72 right-0 text-gray-800 space-y-2 text-sm">
+          <label for="checkin-date" class="block text-sm font-medium text-gray-700 mb-1">Pick Date & Time</label>
+          <input type="datetime-local" id="checkin-date" x-model="checkin"
+            class="w-full border p-2 rounded outline-none border-white" />
         </div>
+        <input type="hidden" name="checkin" :value="checkin" />
+      </div>
+      <!-- Vertical Divider -->
+      <div class="flex justify-center items-center">
+        <div class="border-r border-black h-8"></div>
+      </div>
 
-       <div x-data="{ open: false, checkin: null }" class="relative flex-1 min-w-0">
-  <button @click="open = !open" type="button"
-      class="flex items-center gap-2 w-full text-left text-sm border p-2 rounded">
-      <img src="{{ asset('assets/calender.svg') }}" alt="Calendar" class="w-5 h-5" />
-      <span x-text="checkin ? new Date(checkin).toLocaleString() : ' Date & Time'"
-          class="text-gray-800 truncate text-base"
-          style="font-family: 'Noto Sans', sans-serif;"></span>
-  </button>
-  <div x-show="open" @click.away="open = false"
-      class="absolute z-20 bg-white shadow-xl rounded-xl p-4 mt-2 w-72 right-0 text-gray-800 space-y-2 text-sm">
-      <label for="checkin-date" class="block text-sm font-medium text-gray-700 mb-1">Pick Date & Time</label>
-      <input type="datetime-local" id="checkin-date" x-model="checkin"
-          class="w-full border p-2 rounded outline-none border-white" />
-  </div>
-  <input type="hidden" name="checkin" :value="checkin" />
-</div>
-
-
-        <!-- Vertical Divider -->
-        <div class="flex justify-center items-center">
-            <div class="border-r border-black h-8"></div>
-        </div>
-
-       
-       <div x-data="{ open: false, checkin: null }" class="relative flex-1 min-w-0">
-  <button @click="open = !open" type="button"
-      class="flex items-center gap-2 w-full text-left text-sm border p-2 rounded">
-      <img src="{{ asset('assets/calender.svg') }}" alt="Calendar" class="w-5 h-5" />
-      <span x-text="checkin ? new Date(checkin).toLocaleString() : ' Date & Time'"
-          class="text-gray-800 truncate text-base"
-          style="font-family: 'Noto Sans', sans-serif;"></span>
-  </button>
-  <div x-show="open" @click.away="open = false"
-      class="absolute z-20 bg-white shadow-xl rounded-xl p-4 mt-2 w-72 right-0 text-gray-800 space-y-2 text-sm">
-      <label for="checkin-date" class="block text-sm font-medium text-gray-700 mb-1">Pick Date & Time</label>
-      <input type="datetime-local" id="checkin-date" x-model="checkin"
-          class="w-full border p-2 rounded outline-none border-white" />
-  </div>
-  <input type="hidden" name="checkin" :value="checkin" />
-</div>
-
-        <!-- Vertical Divider -->
-        <div class="flex justify-center items-center">
-            <div class="border-r border-gray-500 h-8"></div>
-        </div>
-
-      
-
-    <input type="hidden" name="users" :value="destination">
-</div>
-
- <div class="flex justify-center items-center">
-            <div class="border-r border-gray-500 h-8"></div>
-        </div>
-        <!-- Submit Button -->
-        <div class="flex-shrink-0">
-            <button type="submit"
-                class="w-full md:w-auto h-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg text-sm"
-                style="background-color:#3CC0E9;">
-                Search
-            </button>
-        </div>
+      <!-- Submit Button -->
+      <div class="flex-shrink-0">
+        <button type="submit"
+          class="w-full md:w-auto h-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg text-sm"
+          style="background-color:#3CC0E9;">
+          Search
+        </button>
+      </div>
     </div>
-</form>
+  </form>
 
-  <!-- Options section -->
-<div class="mt-3 text-sm">
+ <div class="relative z-10 mt-4 px-4 max-w-6xl mx-auto text-sm">
   <div class="flex flex-wrap items-center gap-x-6 gap-y-2">
-    
-    <!-- Drop-off checkbox -->
-    <label class="flex items-center gap-2">
-      <input type="checkbox" id="toggleDropoff" />
-      Drop car off at different location
-    </label>
 
-    <!-- Driver Age checkbox -->
-    <label class="flex items-center gap-2">
-      <input type="checkbox" id="toggleAge" />
-      Driver aged between 30 - 65?
-    </label>
+      <!-- Drop-off checkbox -->
+      <label class="flex items-center gap-2">
+        <input type="checkbox" id="toggleDropoff" />
+        Drop car off at different location
+      </label>
 
-    <!-- Driver's Age box -->
-    <div id="driverAgeBox" class="hidden flex items-center gap-2">
-      <label for="driverAge">Driver’s Age:</label>
-      <input type="number" id="driverAge" class="border px-2 py-1 rounded text-sm w-24" placeholder="Age" />
+      <!-- Driver Age checkbox -->
+      <label class="flex items-center gap-2">
+        <input type="checkbox" id="toggleAge" />
+        Driver aged between 30 - 65?
+      </label>
+
+      <!-- Driver's Age box -->
+      <div id="driverAgeBox" class="hidden flex items-center gap-2">
+        <label for="driverAge">Driver’s Age:</label>
+        <input type="number" id="driverAge" class="border px-2 py-1 rounded text-sm w-24" placeholder="Age" />
+      </div>
     </div>
-
   </div>
 </div>
-
 
 <!-- Script -->
 <script>
@@ -177,15 +161,18 @@
     ageBox.classList.toggle("hidden", !this.checked);
   });
 
-  // Toggle drop-off location field
+  // Enable/disable drop-off field
   document.getElementById("toggleDropoff").addEventListener("change", function () {
-    const dropoff = document.getElementById("dropoffLocationWrapper");
-    dropoff.classList.toggle("hidden", !this.checked);
+    const dropoffField = document.getElementById("dropoffField");
+    if (this.checked) {
+      dropoffField.classList.remove("opacity-50", "pointer-events-none");
+      dropoffField.querySelector("button").classList.remove("bg-gray-100");
+    } else {
+      dropoffField.classList.add("opacity-50", "pointer-events-none");
+      dropoffField.querySelector("button").classList.add("bg-gray-100");
+    }
   });
 </script>
-
-
-
 
 
 

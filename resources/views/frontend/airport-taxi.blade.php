@@ -104,25 +104,33 @@
             <div class="border-r border-black h-8"></div>
         </div>
 
-        <!-- Return -->
-        <div x-data="{ open: false }"
-            class="relative flex-1 min-w-0"
-            :class="{ 'opacity-50 pointer-events-none': !isReturnTrip }">
-            <button @click="if (isReturnTrip) open = !open" type="button"
-                class="flex items-center gap-2 w-full text-left text-sm border p-2 rounded">
-                <img src="{{ asset('assets/calender.svg') }}" alt="Calendar" class="w-5 h-5" />
-                <span x-text="returnDate ? new Date(returnDate).toLocaleString() : 'Return Date and Time'"
-                    class="text-gray-800 truncate text-base"
-                    style="font-family: 'Noto Sans', sans-serif;"></span>
-            </button>
-            <div x-show="open && isReturnTrip" @click.away="open = false"
-                class="absolute z-20 bg-white shadow-xl rounded-xl p-4 mt-2 w-72 right-0 text-gray-800 space-y-2 text-sm">
-                <label for="return-date" class="block text-sm font-medium text-gray-700 mb-1">Pick Date & Time</label>
-                <input type="datetime-local" id="return-date" x-model="$parent.returnDate"
-                    class="w-full border p-2 rounded outline-none border-gray-300" />
-            </div>
-            <input type="hidden" name="return_date" :value="returnDate" />
-        </div>
+       <!-- Return -->
+<div x-data="{ open: false }"
+    class="relative flex-1 min-w-0"
+    :class="{ 'opacity-50 pointer-events-none': !isReturnTrip }">
+    
+    <!-- Main display button -->
+    <button @click="if (isReturnTrip) open = !open" type="button"
+        class="flex items-center gap-2 w-full text-left text-sm border p-2 rounded">
+        <img src="{{ asset('assets/calender.svg') }}" alt="Calendar" class="w-5 h-5" />
+        <span x-text="returnDate ? new Date(returnDate).toLocaleString() : 'Return Date and Time'"
+            class="text-gray-800 truncate text-base"
+            style="font-family: 'Noto Sans', sans-serif;"></span>
+    </button>
+
+    <!-- Dropdown with datetime input -->
+    <div x-show="open && isReturnTrip" @click.away="open = false"
+        class="absolute z-20 bg-white shadow-xl rounded-xl p-4 mt-2 w-72 right-0 text-gray-800 space-y-2 text-sm">
+        <label for="return-date" class="block text-sm font-medium text-gray-700 mb-1">Pick Date & Time</label>
+        <input type="datetime-local" id="return-date"
+            x-model="returnDate"
+            class="w-full border p-2 rounded outline-none border-gray-300" />
+    </div>
+
+    <!-- Hidden input to submit date -->
+    <input type="hidden" name="return_date" :value="returnDate" />
+</div>
+
 
         <!-- Vertical Divider -->
         <div class="flex justify-center items-center">
