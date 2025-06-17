@@ -461,9 +461,9 @@
  
 </section>
 
-<section id="facilities" class="min-h-screen p-4 bg-gray-50">
-   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-     <!-- Facilities -->
+<section id="facilities" class="p-4 bg-gray-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Facilities -->
     <div>
       <h3 class="text-lg font-semibold text-black mt-6 mb-4">Most popular facilities</h3>
       <div class="flex flex-wrap gap-4">
@@ -474,7 +474,7 @@
           ['icon' => 'Vector(31).svg', 'label' => 'Restaurant'],
           ['icon' => 'Vector(32).svg', 'label' => 'Non-smoking rooms'],
           ['icon' => 'Vector(33).svg', 'label' => 'Airport shuttle'],
-          ['icon' => 'Group(12).svg', 'label' => 'room service'],
+          ['icon' => 'Group(12).svg', 'label' => 'Room service'],
           ['icon' => 'Vector(34).svg', 'label' => 'Facilities for disabled guests'],
           ['icon' => 'Group(13).svg', 'label' => 'Heating'],
           ['icon' => 'Vector(35).svg', 'label' => 'Good breakfast'],
@@ -486,40 +486,225 @@
         @endforeach
       </div>
     </div>
-        </div>
+  </div>
 </section>
 
-<section class="bg-white p-6 lg:p-10 space-y-8">
-  <!-- Host Information -->
-  <div>
-    <h2 class="text-xl font-semibold mb-2">Host Information</h2>
-    <div class="flex items-center gap-4">
-      <img src="https://placehold.co/80x80" alt="Host" class="w-20 h-20 rounded-lg object-cover" />
-      <div>
-        <p class="font-semibold">This is a Villa Type</p>
-        <p class="text-sm text-gray-600">Extra activities are available</p>
-        <p class="text-sm text-gray-600">Gregory Lake</p>
-        <p class="text-sm text-gray-600">Languages spoken: Arabic, English</p>
-      </div>
-      <div class="ml-auto">
-        <span class="text-sm text-gray-500">Host review score</span>
-        <div class="text-center bg-blue-100 text-blue-600 font-semibold text-sm rounded px-2 py-1 mt-1">8.6</div>
+<section id="info" class="min-h-screen py-8 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between mb-4">
+  <!-- Title -->
+  <h2 class="text-xl font-bold">Availability</h2>
+
+  <!-- We Price Match -->
+  <div class="flex items-center text-blue-500 text-sm font-medium">
+    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2"
+      viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round"
+        d="M16 7a4 4 0 010 8m-4-4h4m0 0h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a4 4 0 00-4-4m0 0H8a4 4 0 000 8m0 0H6a2 2 0 00-2 2v4a2 2 0 002 2h2a4 4 0 004 4" />
+    </svg>
+    We Price Match
+  </div>
+</div>
+
+
+    <!-- Alert Message -->
+    <div class="flex items-start gap-2 mb-6">
+      <svg class="w-5 h-5 text-red-600 mt-1" fill="none" stroke="currentColor" stroke-width="2"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M12 9v2m0 4h.01M12 5a7 7 0 100 14 7 7 0 000-14z" />
+      </svg>
+      <p class="text-red-600 text-base">
+        Select dates to see this property's availability and prices (may include Genius rates)
+      </p>
+    </div>
+
+    
+
+    <!-- Search Box: Overlapping both sections -->
+<div class="relative z-10 -mt-8 px-4">
+  <!-- Alpine.js CDN (Required for Dropdowns) -->
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
+<form method="GET" class="w-full max-w-3xl bg-white rounded-xl px-2 py-1 shadow-lg flex flex-col md:flex-row items-center gap-1 md:gap-0 border-4 border-yellow-400 ml-0 pl-4 text-sm">
+
+
+<!-- Include Alpine.js -->
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
+<!-- Dropdown with two sections: Check-in/out & Flexible -->
+<div x-data="{ open: false, activeTab: 'check', checkIn: '', checkOut: '', flexibleOption: '' }" class="relative flex-1 border-t md:border-t-0 md:border-r border-gray-500 px-2 py-1">
+  
+  <!-- Dropdown Trigger Button -->
+  <button @click="open = !open" type="button" class="flex items-center gap-2 w-full text-left text-sm">
+    <img src="{{ asset('assets/calender.svg') }}" alt="Calendar" class="w-5 h-5" />
+    <span class="text-gray-800 truncate">
+      <template x-if="activeTab === 'check'">
+        <span><span x-text="checkIn ? checkIn : 'Check-in'" style="font-family: 'Noto Sans', sans-serif;" class="text-base"></span> — <span x-text="checkOut ? checkOut : 'Check-out'" style="font-family: 'Noto Sans', sans-serif;" class="text-base"></span></span>
+      </template>
+      <template x-if="activeTab === 'flexible'">
+        <span x-text="flexibleOption ? flexibleOption : 'Flexible dates'"></span>
+      </template>
+    </span>
+  </button>
+
+  <!-- Dropdown Content -->
+  <div
+    x-show="open"
+    @click.away="open = false"
+    class="absolute z-30 bg-white shadow-xl rounded-xl p-4 mt-2 w-96 right-0 text-gray-800 text-sm"
+    x-transition
+  >
+    <!-- Tabs -->
+    <nav class="flex border-b border-gray-200 mb-4">
+      <button
+        @click.prevent="activeTab = 'check'"
+        :class="activeTab === 'check' ? 'border-blue-600 text-blue-600' : 'text-gray-500'"
+        class="px-4 py-2 border-b-2 font-semibold focus:outline-none"
+      >
+        Check-in / Check-out
+      </button>
+      <button
+        @click.prevent="activeTab = 'flexible'"
+        :class="activeTab === 'flexible' ? 'border-blue-600 text-blue-600' : 'text-gray-500'"
+        class="px-4 py-2 border-b-2 font-semibold focus:outline-none"
+      >
+        Flexible dates
+      </button>
+    </nav>
+
+    <!-- Check-in / Check-out Section -->
+    <div x-show="activeTab === 'check'" x-transition>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs text-gray-500 font-semibold mb-1">Check-in Date</label>
+          <input
+            type="date"
+            x-model="checkIn"
+            class="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none"
+            placeholder="Check-in"
+          />
+        </div>
+        <div>
+          <label class="block text-xs text-gray-500 font-semibold mb-1">Check-out Date</label>
+          <input
+            type="date"
+            x-model="checkOut"
+            class="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none"
+            placeholder="Check-out"
+          />
+        </div>
       </div>
     </div>
+
+    <!-- Flexible Dates Section -->
+    <div x-show="activeTab === 'flexible'" x-transition>
+      <label class="block text-xs text-gray-500 font-semibold mb-1">Select Flexible Dates</label>
+      <select
+        x-model="flexibleOption"
+        class="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none"
+      >
+        <option value="" disabled>Select option</option>
+        <option value="Weekend Getaway">Weekend Getaway</option>
+        <option value="Next Month">Next Month</option>
+        <option value="Anytime">Anytime</option>
+        <option value="Custom Range">Custom Range</option>
+      </select>
+    </div>
+
+    <!-- Done Button -->
+    <div class="mt-4 text-right">
+      <button
+        @click="open = false"
+        class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm"
+      >
+        Done
+      </button>
+    </div>
   </div>
-
- 
-
-  
-</section>
-
-  </div>
-</section>
+</div>
 
 
 
-<section id="info" class="min-h-screen p-8 bg-white">
-    <h2 class="text-xl font-bold mb-4">Villa info & price</h2>
+
+    <!-- Guests Selector -->
+    <div x-data="{ open: false, adults: 2, children: 0, rooms: 1, pets: false }" class="relative px-2 py-1 flex-1 border-t md:border-t-0 md:border-r border-gray-500">
+        <button @click="open = !open" type="button" class="flex items-center gap-2 w-full text-left text-sm">
+                <img src="{{ asset('assets/user.svg') }}" alt="Calendar" class="w-5 h-5" />
+            <span x-text="`${adults} adults · ${children} children · ${rooms} room${rooms > 1 ? 's' : ''}`" class="text-gray-800 text-base truncate" style="font-family: 'Noto Sans', sans-serif;"></span>
+        </button>
+
+        <!-- Guest Dropdown -->
+        <div x-show="open" @click.away="open = false" class="absolute z-20 bg-white shadow-xl rounded-xl p-4 mt-2 w-72 right-0 text-gray-800 space-y-4 text-sm">
+            <!-- Adults -->
+            <div class="flex items-center justify-between">
+                <span style="font-family: 'Noto Sans', sans-serif;">Adults</span>
+                <div class="flex items-center gap-2">
+                    <button type="button" @click="if(adults > 1) adults--" class="px-2 py-1 bg-gray-200 rounded" style="font-family: 'Noto Sans', sans-serif;">−</button>
+                    <span x-text="adults"></span>
+                    <button type="button" @click="adults++" class="px-2 py-1 bg-gray-200 rounded" style="font-family: 'Noto Sans', sans-serif;">+</button>
+                </div>
+            </div>
+
+            <!-- Children -->
+            <div class="flex items-center justify-between">
+                <span>Children</span>
+                <div class="flex items-center gap-2">
+                    <button type="button" @click="if(children > 0) children--" class="px-2 py-1 bg-gray-200 rounded">−</button>
+                    <span x-text="children"></span>
+                    <button type="button" @click="children++" class="px-2 py-1 bg-gray-200 rounded">+</button>
+                </div>
+            </div>
+
+            <!-- Rooms -->
+            <div class="flex items-center justify-between">
+                <span>Rooms</span>
+                <div class="flex items-center gap-2">
+                    <button type="button" @click="if(rooms > 1) rooms--" class="px-2 py-1 bg-gray-200 rounded">−</button>
+                    <span x-text="rooms"></span>
+                    <button type="button" @click="rooms++" class="px-2 py-1 bg-gray-200 rounded">+</button>
+                </div>
+            </div>
+
+            <!-- Pets Toggle -->
+            <div class="flex items-center justify-between">
+                <span>Travelling with pets?</span>
+                <label class="inline-flex items-center cursor-pointer">
+                    <input type="checkbox" x-model="pets" class="sr-only peer">
+                    <div class="w-10 h-6 bg-gray-300 rounded-full peer peer-checked:bg-blue-600 relative transition-all">
+                        <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-all peer-checked:translate-x-4"></div>
+                    </div>
+                </label>
+            </div>
+
+            <p class="text-xs text-gray-500">
+                Assistance animals aren’t considered pets.<br>
+                <a href="#" class="text-blue-600 underline">Read more about travelling with assistance animals</a>
+            </p>
+
+            <!-- Done Button -->
+            <button type="button" @click="open = false" class="block w-full text-center bg-white border border-blue-600 text-blue-600 font-semibold py-2 rounded hover:bg-blue-50">
+                Done
+            </button>
+        </div>
+    </div>
+
+    <!-- Search Button -->
+    <div class="px-2 py-1">
+        <button type="submit" class="w-full md:w-auto h-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg text-sm" style="background-color:#3CC0E9;">
+            Search
+        </button>
+    </div>
+</form>
+
+
+</div>
+
+
+
+<!-- AlpineJS -->
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
     <section class="p-4 sm:p-6 lg:p-10 bg-white">
   <h2 class="text-xl sm:text-2xl font-bold mb-6">All available villas</h2>
   <div class="overflow-x-auto">
@@ -531,6 +716,7 @@
           <th class="p-3 text-left font-semibold">Today's Price</th>
           <th class="p-3 text-left font-semibold">Your choices</th>
           <th class="p-3 text-left font-semibold">Select amount</th>
+            <th class="p-3 text-left font-semibold">Select amount</th>
         </tr>
       </thead>
       <tbody class="divide-y">
@@ -574,11 +760,15 @@
 
           <!-- Select Amount -->
           <td class="p-3 align-top text-center">
-            <select class="border p-1 w-full rounded">
+             <select class="border p-1 w-full rounded">
               <option>0</option>
               <option>1</option>
               <option>2</option>
             </select>
+          </td>
+          <!-- Select Amount -->
+          <td class="p-3 align-top text-center">
+           
             <button class="mt-2 w-full bg-blue-600 text-white text-sm py-1.5 rounded hover:bg-blue-700">
               I'll reserve
             </button>
@@ -595,72 +785,6 @@
     </table>
   </div>
 </section>
-</section>
-
-<section id="rules" class="min-h-screen p-6 bg-white">
-    <h2 class="text-xl font-bold mb-4">House rules</h2>
-     <!-- House Rules -->
-  <div>
-    <div class="flex items-center justify-between mb-3">
-      <h2 class="text-xl font-semibold">House rules</h2>
-      <button class="bg-sky-500 hover:bg-sky-600 text-white text-sm px-4 py-2 rounded">See availability</button>
-    </div>
-    <p class="text-sm text-gray-600 mb-4">La Grande Villa takes special requests - add in the next step!</p>
-
-    <div class="space-y-4 border rounded-lg p-4 text-sm text-gray-700">
-      <!-- Row 1 -->
-      <div class="grid md:grid-cols-2 gap-4">
-        <div><strong>Check in</strong><br>From 14:00 to 23:30</div>
-        <div><strong>Check out</strong><br>From 05:00 to 11:00</div>
-      </div>
-      <!-- Row 2 -->
-      <div>
-        <strong>Cancellation / prepayment</strong><br>
-        Cancellation and prepayment policies vary according to accommodation type. Please check what may apply to each option when making your selection.
-      </div>
-      <!-- Row 3 -->
-      <div>
-        <strong>Children and beds</strong><br>
-        <strong>Child policies</strong><br>
-        To see correct prices and occupancy information, please add the number of children in your group and their ages to your search.<br><br>
-        <strong>Cot and extra bed policies</strong><br>
-        The number of cots allowed is dependent on the option you choose. Please check your selected option for more information.
-      </div>
-      <!-- Row 4 -->
-      <div><strong>No age restriction</strong><br>There is no age requirement for check-in</div>
-      <!-- Row 5 -->
-      <div class="flex items-center gap-2">
-        <strong>Accepted payment methods:</strong>
-        <img src="https://img.icons8.com/color/48/visa.png" class="w-8 h-5" alt="Visa">
-        <img src="https://img.icons8.com/color/48/mastercard-logo.png" class="w-8 h-5" alt="MasterCard">
-      </div>
-      <!-- Row 6 -->
-      <div><strong>Smoking</strong><br>Smoking is not allowed.</div>
-      <!-- Row 7 -->
-      <div><strong>Quiet hours</strong><br>Guests must be quiet between 22:00 and 06:00.</div>
-      <!-- Row 8 -->
-      <div><strong>Pets</strong><br>Pets are not allowed.</div>
-    </div>
-  </div>
-</section>
-<section id="fineprint" class="min-h-screen p-6 bg-gray-50">
-    <h2 class="text-xl font-bold mb-4">The fine print</h2>
-    <!-- Fine Print -->
-  <div>
-    <div class="flex items-center justify-between mb-3">
-      <h2 class="text-xl font-semibold">The fine print</h2>
-      <button class="bg-sky-500 hover:bg-sky-600 text-white text-sm px-4 py-2 rounded">See availability</button>
-    </div>
-    <div class="bg-gray-50 border rounded-lg p-4 text-sm text-gray-700">
-      Please inform La Grande Villa in advance of your expected arrival time. You can use the Special Requests box when booking, or contact the property directly with the contact details provided in your confirmation. Quiet hours are between 22:00 and 06:00.
-    </div>
-  </div>
-
-  <!-- FAQ Placeholder -->
-  <div>
-    <h2 class="text-lg font-semibold">FAQs about La Grande Villa</h2>
-    <p class="text-sm text-gray-600 mt-1">How much does it cost to rent a car in Sri Lanka for a week? • Which pickup locations in Sri Lanka are the most popular?</p>
-  </div>
 </section>
 <section id="reviews" class="min-h-screen p-6 bg-white">
    <!-- Guest Reviews Header -->
@@ -792,6 +916,103 @@
     <a href="#" class="inline-block border border-blue-600 text-blue-600 px-4 py-2 rounded hover:bg-blue-50 text-sm">
       Read all reviews
     </a>
+  </div>
+</section>
+
+<section class="bg-white p-6 lg:p-10 space-y-8">
+  <!-- Host Information -->
+  <div>
+    <h2 class="text-xl font-semibold mb-2">Host Information</h2>
+    <div class="flex items-center gap-4">
+      <img src="https://placehold.co/80x80" alt="Host" class="w-20 h-20 rounded-lg object-cover" />
+      <div>
+        <p class="font-semibold">This is a Villa Type</p>
+        <p class="text-sm text-gray-600">Extra activities are available</p>
+        <p class="text-sm text-gray-600">Gregory Lake</p>
+        <p class="text-sm text-gray-600">Languages spoken: Arabic, English</p>
+      </div>
+      <div class="ml-auto">
+        <span class="text-sm text-gray-500">Host review score</span>
+        <div class="text-center bg-blue-100 text-blue-600 font-semibold text-sm rounded px-2 py-1 mt-1">8.6</div>
+      </div>
+    </div>
+  </div>
+
+ 
+
+  
+</section>
+
+  </div>
+</section>
+
+
+
+
+
+<section id="rules" class="min-h-screen p-6 bg-white">
+    <h2 class="text-xl font-bold mb-4">House rules</h2>
+     <!-- House Rules -->
+  <div>
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="text-xl font-semibold">House rules</h2>
+      <button class="bg-sky-500 hover:bg-sky-600 text-white text-sm px-4 py-2 rounded">See availability</button>
+    </div>
+    <p class="text-sm text-gray-600 mb-4">La Grande Villa takes special requests - add in the next step!</p>
+
+    <div class="space-y-4 border rounded-lg p-4 text-sm text-gray-700">
+      <!-- Row 1 -->
+      <div class="grid md:grid-cols-2 gap-4">
+        <div><strong>Check in</strong><br>From 14:00 to 23:30</div>
+        <div><strong>Check out</strong><br>From 05:00 to 11:00</div>
+      </div>
+      <!-- Row 2 -->
+      <div>
+        <strong>Cancellation / prepayment</strong><br>
+        Cancellation and prepayment policies vary according to accommodation type. Please check what may apply to each option when making your selection.
+      </div>
+      <!-- Row 3 -->
+      <div>
+        <strong>Children and beds</strong><br>
+        <strong>Child policies</strong><br>
+        To see correct prices and occupancy information, please add the number of children in your group and their ages to your search.<br><br>
+        <strong>Cot and extra bed policies</strong><br>
+        The number of cots allowed is dependent on the option you choose. Please check your selected option for more information.
+      </div>
+      <!-- Row 4 -->
+      <div><strong>No age restriction</strong><br>There is no age requirement for check-in</div>
+      <!-- Row 5 -->
+      <div class="flex items-center gap-2">
+        <strong>Accepted payment methods:</strong>
+        <img src="https://img.icons8.com/color/48/visa.png" class="w-8 h-5" alt="Visa">
+        <img src="https://img.icons8.com/color/48/mastercard-logo.png" class="w-8 h-5" alt="MasterCard">
+      </div>
+      <!-- Row 6 -->
+      <div><strong>Smoking</strong><br>Smoking is not allowed.</div>
+      <!-- Row 7 -->
+      <div><strong>Quiet hours</strong><br>Guests must be quiet between 22:00 and 06:00.</div>
+      <!-- Row 8 -->
+      <div><strong>Pets</strong><br>Pets are not allowed.</div>
+    </div>
+  </div>
+</section>
+<section id="fineprint" class="min-h-screen p-6 bg-gray-50">
+    <h2 class="text-xl font-bold mb-4">The fine print</h2>
+    <!-- Fine Print -->
+  <div>
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="text-xl font-semibold">The fine print</h2>
+      <button class="bg-sky-500 hover:bg-sky-600 text-white text-sm px-4 py-2 rounded">See availability</button>
+    </div>
+    <div class="bg-gray-50 border rounded-lg p-4 text-sm text-gray-700">
+      Please inform La Grande Villa in advance of your expected arrival time. You can use the Special Requests box when booking, or contact the property directly with the contact details provided in your confirmation. Quiet hours are between 22:00 and 06:00.
+    </div>
+  </div>
+
+  <!-- FAQ Placeholder -->
+  <div>
+    <h2 class="text-lg font-semibold">FAQs about La Grande Villa</h2>
+    <p class="text-sm text-gray-600 mt-1">How much does it cost to rent a car in Sri Lanka for a week? • Which pickup locations in Sri Lanka are the most popular?</p>
   </div>
 </section>
 
