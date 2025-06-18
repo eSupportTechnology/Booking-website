@@ -58,9 +58,7 @@ Route::get('/partner-contact-details', function () {
 })->name('partner.contact.details');
 
 
-Route::get('/partner-verify-email', function () {
-    return view('frontend.partner-verify-email');
-})->name('partner.verify.email');
+
 
 
 
