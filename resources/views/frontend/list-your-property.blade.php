@@ -102,9 +102,12 @@
           <p>We'll facilitate payments for you</p>
         </li>
       </ul>
-      <button class="w-full bg-[#3CC0E9] text-white font-semibold py-2 rounded hover:bg-[#2bb3db] transition duration-200">
-        Get started now →
-      </button>
+<a href="{{ route('partner.register') }}">
+  <button class="w-full bg-[#3CC0E9] text-white font-semibold py-2 rounded hover:bg-[#2bb3db] transition duration-200">
+    Get started now →
+  </button>
+</a>
+
       <p class="mt-4 text-sm">
         <span class="font-bold text-black">Already started a registration?</span><br>
         <a href="#" class="text-[#3CC0E9] hover:underline">Continue your registration</a>
