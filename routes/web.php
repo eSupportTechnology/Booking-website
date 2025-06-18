@@ -45,6 +45,28 @@ Route::get('/airport-tours', function () {
     return view('frontend.tour-packages');
 })->name('airport.tours');
 
+Route::get('/partner-register', function () {
+    return view('frontend.partner-account-create');
+})->name('partner.register');
+
+Route::get('/partner-create-password', function () {
+    return view('frontend.partner-create-password');
+})->name('partner.create.password');
+
+Route::get('/partner-contact-details', function () {
+    return view('frontend.partner-contact-details');
+})->name('partner.contact.details');
+
+
+Route::get('/partner-verify-email', function () {
+    return view('frontend.partner-verify-email');
+})->name('partner.verify.email');
+
+Route::get('/partner-captcha', function () {
+    return view('frontend.partner-captcha');
+})->name('partner.captcha');
+
+
 Route::get('/airport-taxis', function () {
     return view('frontend.home');
 })->name('airport.taxis');
