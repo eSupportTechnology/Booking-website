@@ -62,9 +62,6 @@ Route::get('/partner-verify-email', function () {
     return view('frontend.partner-verify-email');
 })->name('partner.verify.email');
 
-Route::get('/partner-captcha', function () {
-    return view('frontend.partner-captcha');
-})->name('partner.captcha');
 
 
 Route::get('/airport-taxis', function () {
