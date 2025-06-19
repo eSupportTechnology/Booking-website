@@ -65,6 +65,15 @@ Route::get('/partner-signin', function () {
     return view('frontend.partner-signin');
 })->name('partner.signin');
 
+Route::get('/partner-recovery-account', function () {
+    return view('frontend.partner-recovery-account');
+})->name('partner.recovery.account');
+
+Route::get('/partner-enter-password', function () {
+    return view('frontend.partner-enter-password');
+})->name('partner.enter.password');
+
+
 
 Route::get('/airport-taxis', function () {
     return view('frontend.home');
