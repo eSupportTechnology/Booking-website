@@ -1,4 +1,4 @@
-@extends('frontend.user-master')
+@extends('frontend.master')
 
 @section('content')
 <!-- resources/views/components/airport-taxi-booking.blade.php -->

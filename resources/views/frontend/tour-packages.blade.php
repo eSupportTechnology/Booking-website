@@ -1,4 +1,4 @@
-@extends('frontend.user-master')
+@extends('frontend.master')
 
 @section('content')
 <!--Hero Section-->

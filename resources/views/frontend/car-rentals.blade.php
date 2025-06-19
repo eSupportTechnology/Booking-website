@@ -1,4 +1,4 @@
-@extends('frontend.user-master')
+@extends('frontend.master')
 
 @section('content')
 <section class="text-white py-8 bg-[#1F8FB2] relative z-0">
