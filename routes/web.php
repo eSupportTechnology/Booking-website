@@ -61,7 +61,9 @@ Route::get('/partner-verification', function () {
     return view('frontend.partner-verify-message');
 })->name('partner.verify.message');
 
-
+Route::get('/partner-signin', function () {
+    return view('frontend.partner-signin');
+})->name('partner.signin');
 
 
 Route::get('/airport-taxis', function () {

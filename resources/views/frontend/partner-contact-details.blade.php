@@ -5,8 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Contact Details</title>
   <script src="https://cdn.tailwindcss.com"></script>
+   <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+
+   <style>
+    body {
+      font-family: 'Noto Sans', sans-serif;
+    }
+  </style>
 </head>
-<body class="bg-white font-sans">
+<body class="bg-white ">
 
   <!-- Header -->
   <header class="text-white px-4 py-2" style="background-color:#1F8FB2;">
@@ -78,8 +87,8 @@
 
   <!-- Form Section -->
   <main class="container mx-auto mt-16 px-4 sm:px-6 lg:px-8 max-w-md bg-white border border-gray-200 shadow-md rounded-md p-6">
-    <h2 class="text-2xl font-semibold mb-2">Contact details</h2>
-    <p class="text-sm text-gray-600 mb-6">
+    <h2 class="text-xl font-semibold mb-2"  style="font-family: 'Noto Sans', sans-serif;">Contact details</h2>
+    <p class="text-sm text-gray-600 mb-6"  style="font-family: 'Noto Sans', sans-serif;">
       Your full name and phone number are needed to ensure the security of your Bookintour.com account.
     </p>
 
