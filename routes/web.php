@@ -73,6 +73,9 @@ Route::get('/partner-enter-password', function () {
     return view('frontend.partner-enter-password');
 })->name('partner.enter.password');
 
+Route::get('/partner-forgot-password', function () {
+    return view('frontend.partner-forgot-password');
+})->name('partner.forgot.password');
 
 
 Route::get('/airport-taxis', function () {
