@@ -156,6 +156,8 @@ Route::prefix('partner')->group(function () {
     // Handle the reset password POST
     Route::post('/reset-password', [\App\Http\Controllers\Partner\NewPasswordController::class, 'store'])
         ->name('partner.password.update');
+
+    Route::get('/register/verify/{token}', [PartnerRegistrationController::class, 'verify'])->name('partner.register.verify.token');
 });
 
 Route::get('/partner/sign-in', [\App\Http\Controllers\Partner\LoginController::class, 'showEmailForm'])->name('partner.login.email');

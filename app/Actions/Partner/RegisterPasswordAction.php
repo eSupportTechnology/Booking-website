@@ -24,7 +24,7 @@ class RegisterPasswordAction
         ]);
 
         // Generate link
-        $verificationUrl = url("/api/register/verify/{$token}");
+        $verificationUrl = url("/partner/register/verify/{$token}");
 
         // Send email
         Mail::to($registration->email)->send(new PartnerVerificationMail($verificationUrl));
