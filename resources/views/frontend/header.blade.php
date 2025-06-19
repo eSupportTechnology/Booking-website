@@ -3,7 +3,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <!-- Container flex with items-start for vertical alignment -->
       <div class="flex flex-col md:flex-row justify-between items-start space-y-4 md:space-y-0">
-        
+
         <!-- Left Section -->
         <div class="w-full md:w-auto">
           <div class="flex flex-col items-start">
@@ -12,7 +12,7 @@
   <h1>Bookintour.com</h1>
 </a>
 
- 
+
 
 
             <!-- Push nav a bit down to separate from logo -->
@@ -23,7 +23,7 @@
 <nav class="flex flex-wrap gap-4 text-sm md:text-base mt-6 ">
   <!-- Stays Link -->
 <a href="{{ route('stays') }}"
-   class="flex items-center space-x-1 px-3 py-1 rounded-full border 
+   class="flex items-center space-x-1 px-3 py-1 rounded-full border
           text-white transition
           {{ $currentRoute == 'stays' ? 'border-white bg-[#1F8FB2]' : 'border-transparent hover:border-white' }}"
 >
@@ -34,7 +34,7 @@
 
   <!-- Car Rentals Link -->
  <a href="{{ route('car.rentals') }}"
-   class="flex items-center space-x-1 px-3 py-1 rounded-full border 
+   class="flex items-center space-x-1 px-3 py-1 rounded-full border
           text-white transition
           {{ $currentRoute == 'car.rentals' ? 'border-white bg-[#1F8FB2]' : 'border-transparent hover:border-white' }}"
 >
@@ -213,8 +213,8 @@
 </a>
 
           <a href="/list-your-property" class="hover:underline"  style="font-family: 'Noto Sans', sans-serif;">List your property</a>
-          <a href="/login" class="bg-white  font-base px-4 py-2 rounded hover:bg-blue-100" style="font-family: 'Noto Sans', sans-serif;color:#3CC0E9;">Register</a>
-          <a href="/login" class="bg-white  font-base px-4 py-2 rounded hover:bg-blue-100" style="font-family: 'Noto Sans', sans-serif;color:#3CC0E9;">Sign in</a>
+          <a href="{{ route('customer.login') }}" class="bg-white  font-base px-4 py-2 rounded hover:bg-blue-100" style="font-family: 'Noto Sans', sans-serif;color:#3CC0E9;">Register</a>
+          <a href="{{ route('customer.login') }}" class="bg-white  font-base px-4 py-2 rounded hover:bg-blue-100" style="font-family: 'Noto Sans', sans-serif;color:#3CC0E9;">Sign in</a>
         </div>
 
       </div>

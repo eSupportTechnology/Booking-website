@@ -10,19 +10,11 @@ class RolesAndPermissionsSeeder extends Seeder
 {
     public function run(): void
     {
-        // Clear cached permissions
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // Create permissions
-        // $editArticles = Permission::updateOrCreate(['name' => 'edit articles']);
-        // $deleteArticles = Permission::updateOrCreate(['name' => 'delete articles']);
-
         // Create roles
-        $vendor = Role::updateOrCreate(['name' => 'vendor']);
+        $customer = Role::updateOrCreate(['name' => 'customer']);
         $partner = Role::updateOrCreate(['name' => 'partner']);
 
-         // Assign permissions to roles
-        // $vendor->givePermissionTo($editArticles);
-        // $partner->givePermissionTo([$editArticles, $deleteArticles]);
     }
 }

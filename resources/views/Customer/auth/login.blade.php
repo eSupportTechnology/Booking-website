@@ -109,23 +109,38 @@
 
 
   <div class="bg-white w-full max-w-md p-6 sm:p-8 mb-12 sm:mt-8 text-left shadow-md rounded-md mx-auto">
+    @if(session('success'))
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if($errors->any())
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            @foreach($errors->all() as $error)
+                <p>{{ $error }}</p>
+            @endforeach
+        </div>
+    @endif
     <h2 class="text-2xl font-semibold mb-2" style="font-family: 'Noto Sans', sans-serif;">Sign in or create an account</h2>
     <p class="text-gray-600 text-sm mb-6" style="font-family: 'Noto Sans', sans-serif;">
       You can sign in using your Booking.com account to access our services.
     </p>
 
+<form method="POST" action="{{ route('customer.request.otp') }}" class="space-y-4">
+    @csrf
     <!-- Email Input -->
     <div class="mb-4">
       <label for="email" class="block text-sm font-medium text-gray-700 mb-1" style="font-family: 'Noto Sans', sans-serif;">Email address</label>
-      <input id="email" type="email" placeholder="Enter your email address"
+      <input id="email" type="email" name="email" placeholder="Enter your email address"
              class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
     </div>
 
     <!-- Continue Button -->
-    <button class="w-full text-white py-2 rounded hover:bg-blue-700 mb-4" style=" background-color:#3CC0E9;font-family: 'Noto Sans', sans-serif;">
+    <button type="submit" class="w-full text-white py-2 rounded hover:bg-blue-700 mb-4" style=" background-color:#3CC0E9;font-family: 'Noto Sans', sans-serif;">
       Continue with email
     </button>
-
+</form>
     <!-- Divider -->
     <div class="flex items-center my-4">
       <hr class="flex-grow border-gray-300">
@@ -135,16 +150,17 @@
 
     <!-- Social Login Buttons -->
     <div class="flex justify-center space-x-4 mb-4">
-      <button class="border border-gray-300 p-2 rounded hover:bg-gray-50">
+      <a href="{{ route('customer.google.auth') }}" class="border border-gray-300 p-2 rounded hover:bg-gray-50">
         <img src="{{ asset('images/google.png') }}" alt="Google" class="w-6 h-6">
-      </button>
-      <button class="border border-gray-300 p-2 rounded hover:bg-gray-50">
+      </a>
+      <a href="{{ route('auth.apple') }}" class="border border-gray-300 p-2 rounded hover:bg-gray-50">
         <img src="{{ asset('images/apple.png') }}" alt="Apple" class="w-6 h-6">
-      </button>
-      <button class="border border-gray-300 p-2 rounded hover:bg-gray-50">
+      </a>
+      <a href="{{ route('auth.facebook') }}" class="border border-gray-300 p-2 rounded hover:bg-gray-50">
         <img src="{{ asset('images/facebook.png') }}" alt="Facebook" class="w-6 h-6">
-      </button>
+      </a>
     </div>
+
     <hr class="flex-grow border-gray-300">
 
     <!-- Terms -->
@@ -163,3 +179,27 @@
 </main>
 
 <script src="https://cdn.tailwindcss.com"></script>
+
+<script>
+// Add loading state to Google auth button
+document.getElementById('google-auth-btn').addEventListener('click', function(e) {
+    const btn = e.currentTarget;
+    const originalText = btn.innerHTML;
+
+    btn.innerHTML = `
+        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-gray-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <span style="font-family: 'Noto Sans', sans-serif;">Connecting to Google...</span>
+    `;
+
+    btn.classList.add('pointer-events-none');
+
+    // Reset after 10 seconds in case of issues
+    setTimeout(() => {
+        btn.innerHTML = originalText;
+        btn.classList.remove('pointer-events-none');
+    }, 10000);
+});
+</script>

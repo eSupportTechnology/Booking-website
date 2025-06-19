@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@example.com',
         ]);
 
-        // Assign 'vendor' role to the user
-        $user->assignRole('vendor');
+        // Assign 'customer' role to the user
+        $user->assignRole('customer');
     }
 }
