@@ -19,7 +19,7 @@ class RolesAndPermissionsSeeder extends Seeder
 
         // Create roles
         $vendor = Role::updateOrCreate(['name' => 'vendor']);
-        $partner = Role::updateOrCreate(['name' => 'partner']);
+        $partner = Role::updateOrCreate(['name' => 'partner', 'guard_name' => 'web']);
 
          // Assign permissions to roles
         // $vendor->givePermissionTo($editArticles);

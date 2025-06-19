@@ -59,7 +59,13 @@
 
           <!-- Nav Links -->
           <a href="#" class="hover:underline font-sans" style="font-family: 'Noto Sans', sans-serif;">Already a partner?</a>
-          <a href="{{ url('partner/sign-in') }}" class="bg-[#1F8FB2] px-4 py-2 rounded hover:bg-[#29ACD5] text-white font-sans border border-white">Sign in</a>
+          @if(session('partner_name'))
+            <span class="bg-white text-[#1F8FB2] px-4 py-2 rounded font-bold" style="font-family: 'Noto Sans', sans-serif;">{{ session('partner_name') }}</span>
+          @elseif(Auth::check())
+            <span class="bg-white text-[#1F8FB2] px-4 py-2 rounded font-bold" style="font-family: 'Noto Sans', sans-serif;">{{ Auth::user()->name }}</span>
+          @else
+            <a href="#" class="bg-[#1F8FB2] px-4 py-2 rounded hover:bg-[#29ACD5] text-white font-sans border border-white">Sign in</a>
+          @endif
           <a href="#" class="bg-[#3CC0E9] px-4 py-2 rounded hover:bg-[#29ACD5] text-white font-sans">Help</a>
         </div>
       </div>
@@ -81,7 +87,9 @@
   List on one of the world's most downloaded travel apps to earn more, faster and expand into new markets.
 </p>
 
-
+@if(Auth::check())
+    <h2>Welcome, {{ Auth::user()->name }}!</h2>
+@endif
 
     </div>
 
@@ -103,11 +111,11 @@
         </li>
       </ul>
       <button class="w-full bg-[#3CC0E9] text-white font-semibold py-2 rounded hover:bg-[#2bb3db] transition duration-200">
-        <a href="{{ url('partner/register/email') }}" class="block w-full h-full text-white">Get started now →</a>
+        Get started now →
       </button>
       <p class="mt-4 text-sm">
         <span class="font-bold text-black">Already started a registration?</span><br>
-        <a href="{{ url('partner/register/email') }}" class="text-[#3CC0E9] hover:underline">Continue your registration</a>
+        <a href="#" class="text-[#3CC0E9] hover:underline">Continue your registration</a>
       </p>
     </div>
   </div>

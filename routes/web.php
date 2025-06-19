@@ -4,10 +4,20 @@ use App\Http\Controllers\Auth\TravelerLoginController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TravelerDetailsController;
 use App\Models\Traveler;
+use App\Http\Controllers\Partner\PartnerRegistrationController;
 use Illuminate\Support\Facades\Route;
+use App\Mail\PartnerVerificationMail;
+use App\Http\Controllers\Partner\LoginController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
+Route::get('/login/email', [LoginController::class, 'showEmailForm'])->name('login.email');
+Route::post('/login/email', [LoginController::class, 'storeEmail']);
 
+Route::get('/login/password', [LoginController::class, 'showPasswordForm'])->name('login.password');
+Route::post('/login/password', [LoginController::class, 'loginWithPassword']);
 
+Route::get('/login', [LoginController::class, 'show'])->name('login');
+Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 
 Route::get('/login', function () {
     return view('frontend.login');
@@ -80,5 +90,74 @@ Route::middleware(['auth:traveler'])->group(function () {
 });
 });
 
+// Partner Registration (Web)
+Route::prefix('partner')->group(function () {
+    // Show email registration form
+    Route::get('/register/email', function () {
+        return view('partner.partner-account-create');
+    })->name('partner.register.email.form');
+
+    // Handle email registration POST
+    Route::post('/register/email', [PartnerRegistrationController::class, 'registerEmail'])->name('partner.register.email');
+
+    // Show contact details form
+    Route::get('/register/contact', function () {
+        return view('partner.partner-contact-details');
+    })->name('partner.register.contact.form');
+
+    // Handle contact details POST
+    Route::post('/register/contact', [PartnerRegistrationController::class, 'registerContact'])->name('partner.register.contact');
+
+    // Show password creation form
+    Route::get('/register/password', function () {
+        return view('partner.partner-create-password');
+    })->name('partner.register.password');
+
+    // Handle password creation POST
+    Route::post('/register/password', [PartnerRegistrationController::class, 'registerPassword'])->name('partner.register.password.submit');
+
+    // Show email verification page
+    Route::get('/register/verify', function () {
+        return view('partner.partner-verify-message');
+    })->name('partner.register.verify');
+
+    // Resend verification email (placeholder)
+    Route::post('/register/resend', function () {
+        return response()->json(['status' => 'success', 'message' => 'Verification email resent (placeholder).']);
+    })->name('partner.register.resend');
+
+    Route::get('/list-your-property', function () {
+        return view('partner.list-your-property');
+    })->name('partner.list-your-property');
+
+    // Partner two-step login
+    Route::get('/sign-in', [LoginController::class, 'showEmailForm'])->name('partner.login.email');
+    Route::post('/sign-in', [LoginController::class, 'storeEmail']);
+    Route::get('/password', [LoginController::class, 'showPasswordForm'])->name('partner.login.password');
+    Route::post('/password', [LoginController::class, 'loginWithPassword']);
+
+    // Show the forgot password form
+    Route::get('/forgot-password', function () {
+        return view('partner.partner-forgot-password');
+    })->name('partner.password.request');
+
+    // Handle the form POST to send reset link
+    Route::post('/forgot-password', [\App\Http\Controllers\Auth\PasswordResetLinkController::class, 'store'])
+        ->name('partner.password.email');
+
+    // Show the reset password form (from email link)
+    Route::get('/reset-password/{token}', function ($token) {
+        return view('partner.partner-reset-password', [
+            'token' => $token,
+            'email' => request('email')
+        ]);
+    })->name('partner.password.reset');
+
+    // Handle the reset password POST
+    Route::post('/reset-password', [\App\Http\Controllers\Partner\NewPasswordController::class, 'store'])
+        ->name('partner.password.update');
+});
+
+Route::get('/partner/sign-in', [\App\Http\Controllers\Partner\LoginController::class, 'showEmailForm'])->name('partner.login.email');
 
 require __DIR__.'/auth.php';
