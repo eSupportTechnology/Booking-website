@@ -214,7 +214,7 @@
 
           <a href="/list-your-property" class="hover:underline"  style="font-family: 'Noto Sans', sans-serif;">List your property</a>
           @php
-  $isLoggedIn = true; // simulate login
+  $isLoggedIn = false; // simulate login
 @endphp
 
 @if ($isLoggedIn)
