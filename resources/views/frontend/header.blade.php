@@ -213,12 +213,76 @@
 </a>
 
           <a href="/list-your-property" class="hover:underline"  style="font-family: 'Noto Sans', sans-serif;">List your property</a>
-          <a href="{{ route('customer.login') }}" class="bg-white  font-base px-4 py-2 rounded hover:bg-blue-100" style="font-family: 'Noto Sans', sans-serif;color:#3CC0E9;">Register</a>
-          <a href="{{ route('customer.login') }}" class="bg-white  font-base px-4 py-2 rounded hover:bg-blue-100" style="font-family: 'Noto Sans', sans-serif;color:#3CC0E9;">Sign in</a>
+          @php
+  $isLoggedIn = false; // simulate login
+@endphp
+
+@if ($isLoggedIn)
+  <!-- Profile dropdown -->
+  <div class="relative group">
+<button class=" text-[#3CC0E9] font-base px-4 py-2 rounded  flex items-center space-x-2">
+  <!-- Profile Icon with Border -->
+  <div class="bg-white p-2 border border-[#3CC0E9] rounded-full">
+  <img src="{{ asset('assets/user.svg') }}" class="w-5 h-5" alt="Profile" />
+</div>
+
+
+  <!-- My Account Link -->
+  <a href="/my-account" class="text-white hover:underline" style="font-family: 'Noto Sans', sans-serif;">
+    Your Account
+  </a>
+</button>
+
+
+
+    <!-- Dropdown -->
+    <div class="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-md shadow-lg opacity-0 group-hover:opacity-100 group-hover:visible transition-all duration-200 invisible z-50">
+<a href="/profile" class="block px-4 text-base py-2 text-gray-700 hover:bg-gray-100 flex items-center gap-2">
+  <img src="{{ asset('assets/mynaui_user.svg') }}" alt="My Account Icon" class="w-5 h-5" />
+  <span style="font-family: 'Noto Sans', sans-serif;">My Account</span>
+</a>
+<a href="/profile" class="block px-4 py-2 text-gray-700  text-base hover:bg-gray-100 flex items-center gap-2">
+  <img src="{{ asset('assets/streamline_baggage.svg') }}" alt="My Account Icon" class="w-4 h-4" />
+  <span style="font-family: 'Noto Sans', sans-serif;">Bookings & Trips</span>
+</a>
+<a href="/profile" class="block px-4 py-2 text-gray-700  text-base hover:bg-gray-100 flex items-center gap-2">
+  <img src="{{ asset('assets/mynaui_letter-g-circle.svg') }}" alt="My Account Icon" class="w-5 h-5" />
+  <span style="font-family: 'Noto Sans', sans-serif;">Genius loyalty programme</span>
+</a>
+    <a href="/profile" class="block px-4 py-2 text-gray-700  text-base  hover:bg-gray-100 flex items-center gap-2">
+  <img src="{{ asset('assets/lets-icons_wallet-light.svg') }}" alt="My Account Icon" class="w-5 h-5" />
+  <span style="font-family: 'Noto Sans', sans-serif;">Rewards & Wallet</span>
+</a>
+      <a href="/profile" class="block px-4 py-2 text-gray-700  text-base  hover:bg-gray-100 flex items-center gap-2">
+  <img src="{{ asset('assets/fluent_person-feedback-20-regular.svg') }}" alt="My Account Icon" class="w-5 h-5" />
+  <span style="font-family: 'Noto Sans', sans-serif;">Reviews</span>
+</a>
+        <a href="/profile" class="block px-4 py-2 text-gray-700  text-base hover:bg-gray-100 flex items-center gap-2">
+  <img src="{{ asset('assets/mdi-light_heart.svg') }}" alt="My Account Icon" class="w-5 h-5" />
+  <span style="font-family: 'Noto Sans', sans-serif;">Saved</span>
+</a>
+
+      <form method="POST" action="/logout">
+        @csrf
+      <button type="submit" class="w-full text-left px-4 py-2 text-gray-700   text-base hover:bg-gray-100 flex items-center gap-2">
+  <img src="{{ asset('assets/simple-line-icons_logout.svg') }}" alt="Logout Icon" class="w-4 h-4" />
+  <span style="font-family: 'Noto Sans', sans-serif;">Logout</span>
+</button>
+
+      </form>
+    </div>
+  </div>
+@else
+  <!-- Guest buttons -->
+  <a href="/register" class="bg-white font-base px-4 py-2 rounded hover:bg-blue-100" style="font-family: 'Noto Sans', sans-serif; color:#3CC0E9;">Register</a>
+  <a href="/login" class="bg-white font-base px-4 py-2 rounded hover:bg-blue-100" style="font-family: 'Noto Sans', sans-serif; color:#3CC0E9;">Sign in</a>
+@endif
+
         </div>
 
       </div>
     </div>
+
   </section>
 </header>
 <script>

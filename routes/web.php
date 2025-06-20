@@ -70,6 +70,43 @@ Route::get('/airport-tours', function () {
     return view('frontend.tour-packages');
 })->name('airport.tours');
 
+Route::get('/partner-register', function () {
+    return view('frontend.partner-account-create');
+})->name('partner.register');
+
+Route::get('/partner-create-password', function () {
+    return view('frontend.partner-create-password');
+})->name('partner.create.password');
+
+Route::get('/partner-contact-details', function () {
+    return view('frontend.partner-contact-details');
+})->name('partner.contact.details');
+
+Route::get('/partner-verification', function () {
+    return view('frontend.partner-verify-message');
+})->name('partner.verify.message');
+
+Route::get('/partner-signin', function () {
+    return view('frontend.partner-signin');
+})->name('partner.signin');
+
+Route::get('/partner-recovery-account', function () {
+    return view('frontend.partner-recovery-account');
+})->name('partner.recovery.account');
+
+Route::get('/partner-enter-password', function () {
+    return view('frontend.partner-enter-password');
+})->name('partner.enter.password');
+
+Route::get('/partner-forgot-password', function () {
+    return view('frontend.partner-forgot-password');
+})->name('partner.forgot.password');
+
+Route::get('/partner-password-recover', function () {
+    return view('frontend.partner-forgotpassword-success');
+})->name('partner.forgot.password');
+
+
 Route::get('/airport-taxis', function () {
     return view('frontend.home');
 })->name('airport.taxis');
