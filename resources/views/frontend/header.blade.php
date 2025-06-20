@@ -274,7 +274,7 @@
   </div>
 @else
   <!-- Guest buttons -->
-  <a href="/register" class="bg-white font-base px-4 py-2 rounded hover:bg-blue-100" style="font-family: 'Noto Sans', sans-serif; color:#3CC0E9;">Register</a>
+  <a href="/login" class="bg-white font-base px-4 py-2 rounded hover:bg-blue-100" style="font-family: 'Noto Sans', sans-serif; color:#3CC0E9;">Register</a>
   <a href="/login" class="bg-white font-base px-4 py-2 rounded hover:bg-blue-100" style="font-family: 'Noto Sans', sans-serif; color:#3CC0E9;">Sign in</a>
 @endif
 

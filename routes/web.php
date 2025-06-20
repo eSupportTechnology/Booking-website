@@ -17,9 +17,7 @@ Route::get('/list-your-property', function () {
     return view('frontend.list-your-property');
 });
 
-Route::get('/register', function () {
-    return view('frontend.register');
-});
+
 Route::get('/', function () {
     return view('frontend.home');
 });
