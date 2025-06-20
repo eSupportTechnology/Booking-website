@@ -6,7 +6,7 @@
   <section class="py-4">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex flex-col md:flex-row justify-between items-start space-y-4 md:space-y-0">
-
+        
         <!-- Left Section -->
         <div class="w-full md:w-auto">
           <div class="flex flex-col items-start space-y-2">
@@ -59,7 +59,13 @@
 
           <!-- Nav Links -->
           <a href="#" class="hover:underline font-sans" style="font-family: 'Noto Sans', sans-serif;">Already a partner?</a>
-          <a href="{{ url('partner/sign-in') }}" class="bg-[#1F8FB2] px-4 py-2 rounded hover:bg-[#29ACD5] text-white font-sans border border-white">Sign in</a>
+          @if(session('partner_name'))
+            <span class="bg-white text-[#1F8FB2] px-4 py-2 rounded font-bold" style="font-family: 'Noto Sans', sans-serif;">{{ session('partner_name') }}</span>
+          @elseif(Auth::check())
+            <span class="bg-white text-[#1F8FB2] px-4 py-2 rounded font-bold" style="font-family: 'Noto Sans', sans-serif;">{{ Auth::user()->name }}</span>
+          @else
+            <a href="#" class="bg-[#1F8FB2] px-4 py-2 rounded hover:bg-[#29ACD5] text-white font-sans border border-white">Sign in</a>
+          @endif
           <a href="#" class="bg-[#3CC0E9] px-4 py-2 rounded hover:bg-[#29ACD5] text-white font-sans">Help</a>
         </div>
       </div>
@@ -81,7 +87,9 @@
   List on one of the world's most downloaded travel apps to earn more, faster and expand into new markets.
 </p>
 
-
+@if(Auth::check())
+    <h2>Welcome, {{ Auth::user()->name }}!</h2>
+@endif
 
     </div>
 
@@ -103,11 +111,11 @@
         </li>
       </ul>
       <button class="w-full bg-[#3CC0E9] text-white font-semibold py-2 rounded hover:bg-[#2bb3db] transition duration-200">
-        <a href="{{ url('partner/register/email') }}" class="block w-full h-full text-white">Get started now →</a>
+        Get started now →
       </button>
       <p class="mt-4 text-sm">
         <span class="font-bold text-black">Already started a registration?</span><br>
-        <a href="{{ url('partner/register/email') }}" class="text-[#3CC0E9] hover:underline">Continue your registration</a>
+        <a href="#" class="text-[#3CC0E9] hover:underline">Continue your registration</a>
       </p>
     </div>
   </div>
@@ -126,7 +134,7 @@
   <li class="flex items-start gap-2">
     <img src="{{ asset('assets/black-tick.svg') }}" alt="Check" class="w-5 h-5 mt-1" />
     <span class="text-base">
-      Accept or decline bookings with
+      Accept or decline bookings with 
       <a href="#" class="underline text-base text-blue-500">Request to Book</a>.
     </span>
   </li>
@@ -153,9 +161,9 @@
   <li class="flex items-start gap-2">
     <img src="{{ asset('assets/black-tick.svg') }}" alt="Check" class="w-5 h-5 mt-1" />
     <span class="text-base">
-   Chat with your guests before accepting
+   Chat with your guests before accepting 
 their stay with pre-booking messaging.*
-
+    
     </span>
   </li>
 
@@ -175,7 +183,7 @@ their stay with pre-booking messaging.*
   <li class="flex items-start gap-2">
     <img src="{{ asset('assets/black-tick.svg') }}" alt="Check" class="w-5 h-5 mt-1" />
     <span class="text-base">
-     Protection against liability claims from
+     Protection against liability claims from 
 guests and neighbours up to €/$/
 £1,000,000 for every reservation.
     </span>
@@ -224,7 +232,7 @@ guests and neighbours up to €/$/
           </div>
         </li>
       </ul>
-
+      
 
       <!-- Right Column -->
       <ul class="pl-0 space-y-4">
@@ -271,7 +279,7 @@ guests and neighbours up to €/$/
       <!-- Card 1 -->
 <div class="flex flex-col items-center text-center">
     <img src="{{ asset('images/post.png') }}" alt="Import Icon" class="w-[100px] h-[100px] mb-4" />
-
+    
     <!-- Content container to align left -->
     <div class="text-left">
         <h3 class="text-lg font-bold mb-2" style="font-family: 'Noto Sans', sans-serif;">
@@ -289,7 +297,7 @@ guests and neighbours up to €/$/
             <!-- Card 2: Start fast with review scores -->
          <div class="flex flex-col items-center text-center">
     <img src="{{ asset('images/puzzels.png') }}" alt="Review Icon" class="w-[100px] h-[100px] mb-4" />
-
+    
     <div class="text-left">
         <h3 class="text-lg font-bold mb-2" style="font-family: 'Noto Sans', sans-serif;">
             Start fast with review scores
@@ -304,7 +312,7 @@ guests and neighbours up to €/$/
             <!-- Card 3: Stand out in the market -->
        <div class="flex flex-col items-center text-center">
     <img src="{{ asset('images/search.png') }}" alt="Stand Out Icon" class="w-[90px] h-[100px] mb-4" />
-
+    
     <div class="text-left">
         <h3 class="text-lg font-bold mb-2" style="font-family: 'Noto Sans', sans-serif;">
             Stand out in the market
@@ -326,9 +334,9 @@ guests and neighbours up to €/$/
 <section class="py-32 bg-white relative overflow-hidden">
     <!-- Background map slightly enlarged and centered -->
     <div class="absolute inset-0 flex items-center justify-center z-0">
-        <img
-            src="{{ asset('images/map.png') }}"
-            alt="World Map"
+        <img 
+            src="{{ asset('images/map.png') }}" 
+            alt="World Map" 
             class="w-[900px] h-auto object-contain opacity-30"
         />
     </div>
@@ -355,7 +363,7 @@ guests and neighbours up to €/$/
                 </div>
             </div>
 
-
+         
         </div>
                 <button class="bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded mt-2" style="font-family: 'Noto Sans', sans-serif;">
      Reach new guests today
@@ -454,7 +462,7 @@ guests and neighbours up to €/$/
 
         <!-- Join Button -->
         <div class="text-center mt-10">
-
+         
         </div>
               <button class="bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded mt-2" style="font-family: 'Noto Sans', sans-serif;">
      Reach new guests today
@@ -470,9 +478,9 @@ guests and neighbours up to €/$/
 
 </div>
 
-
-
-
+          
+       
+    
 
         <!-- Two column layout -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -499,7 +507,7 @@ guests and neighbours up to €/$/
                     <p class="mt-2 text-gray-600 hidden answer" style="font-family: 'Noto Sans', sans-serif;">
                         We offer a full refund within the first 14 days of your purchase.
                     </p>
-                </div>
+                </div> 
             </div>
 
             <!-- Right Column -->
@@ -525,9 +533,9 @@ guests and neighbours up to €/$/
                     <p class="mt-2 text-gray-600 hidden answer" style="font-family: 'Noto Sans', sans-serif;">
                         Yes, we offer a 7-day free trial with access to all features.
                     </p>
-                </div>
+                </div>   
 
-
+               
             </div>
         </div>
         <p class="mt-4 text-gray-600" style="font-family: 'Noto Sans', sans-serif;">
@@ -585,7 +593,7 @@ Still have questions? Find answers to all your questions on our
 </script>
 <footer class="bg-[#1A93B6] text-white py-12 px-4">
     <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 relative">
-
+        
         <!-- Left Text -->
         <div class="md:col-span-2 flex flex-col justify-center">
             <h2 class="text-4xl md:text-5xl font-bold mb-4" style="font-family: 'Poppins', sans-serif;">
