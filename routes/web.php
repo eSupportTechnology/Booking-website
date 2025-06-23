@@ -10,19 +10,6 @@ use App\Mail\PartnerVerificationMail;
 use App\Http\Controllers\Partner\LoginController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
-Route::get('/login/email', [LoginController::class, 'showEmailForm'])->name('login.email');
-Route::post('/login/email', [LoginController::class, 'storeEmail']);
-
-Route::get('/login/password', [LoginController::class, 'showPasswordForm'])->name('login.password');
-Route::post('/login/password', [LoginController::class, 'loginWithPassword']);
-
-Route::get('/login', [LoginController::class, 'show'])->name('login');
-Route::post('/login', [AuthenticatedSessionController::class, 'store']);
-
-Route::get('/login', function () {
-    return view('frontend.login');
-});
-
 Route::get('/list-your-property', function () {
     return view('frontend.list-your-property');
 });
@@ -142,7 +129,7 @@ Route::prefix('partner')->group(function () {
     })->name('partner.password.request');
 
     // Handle the form POST to send reset link
-    Route::post('/forgot-password', [\App\Http\Controllers\Auth\PasswordResetLinkController::class, 'store'])
+    Route::post('/forgot-password', [\App\Http\Controllers\Partner\PartnerPasswordResetLinkController::class, 'store'])
         ->name('partner.password.email');
 
     // Show the reset password form (from email link)

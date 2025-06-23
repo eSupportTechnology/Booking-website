@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Actions\Partner\LoginAction;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+
 class LoginController extends Controller
 
 {
@@ -19,6 +21,8 @@ class LoginController extends Controller
     {
         $request->validate([
             'email' => 'required|email|exists:users,email',
+        ], [
+            'email.exists' => 'No account found with this email. Please register first.',
         ]);
 
         session(['partner_login_email' => $request->email]);
@@ -42,7 +46,7 @@ class LoginController extends Controller
             ]);
         }
 
-        // Optionally, handle non-partner case or show error
+        // handle non-partner case or show error
         abort(403, 'Unauthorized');
     }
 
@@ -62,7 +66,7 @@ class LoginController extends Controller
 
         if ($loginAction->execute($email, $request->password)) {
             session()->forget('partner_login_email');
-            $user = \Auth::user();
+            $user = Auth::user();
             return redirect()->route('partner.list-your-property')->with('partner_name', $user ? $user->name : null);
         }
 
