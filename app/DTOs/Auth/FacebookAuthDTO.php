@@ -19,12 +19,17 @@ class FacebookAuthDTO extends ValidatedDTO
 
     protected function defaults(): array
     {
-        return [];
+        return [
+            'name' => 'Customer User',
+        ];
     }
 
     protected function casts(): array
     {
-        return [];
+        return [
+            // 'email' => 'string',
+            // 'name' => 'string',
+        ];
     }
 
     public static function fromSocialUser($facebookUser): self

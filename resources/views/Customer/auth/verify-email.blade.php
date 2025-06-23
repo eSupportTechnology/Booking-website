@@ -60,18 +60,25 @@
                                 <div class="mt-4">
                                     <p class="mb-4 text-base text-gray-500 dark:text-gray-400">Suggested for you</p>
                                     <div class="grid grid-cols-2 gap-4">
-                                        <button
-                                            class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
-                                            <img src="https://upload.wikimedia.org/wikipedia/en/a/ae/Flag_of_the_United_Kingdom_%281-2%29.svg"
-                                                alt="English (UK)" class="h-5 w-5" />
-                                            <span>English (UK)</span>
-                                        </button>
-                                        <button
-                                            class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
-                                            <img src="https://upload.wikimedia.org/wikipedia/commons/4/48/Flag_of_Germany.svg"
-                                                alt="Deutsch" class="h-5 w-5" />
-                                            <span>Deutsch</span>
-                                        </button>
+                                        <!-- English Button -->
+                                        <a href="{{ route('lang.change', ['lang' => 'en']) }}">
+                                            <button
+                                                class="flex items-center justify-between p-2 space-x-2 text-base font-normal text-gray-700 rounded-lg hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
+                                                <img src="https://upload.wikimedia.org/wikipedia/en/a/ae/Flag_of_the_United_Kingdom_%281-2%29.svg"
+                                                    alt="English (UK)" class="h-5 w-5" />
+                                                <span>English (UK)</span>
+                                            </button>
+                                        </a>
+
+                                        <!-- Sinhala Button -->
+                                        <a href="{{ route('lang.change', ['lang' => 'si']) }}">
+                                            <button
+                                                class="flex items-center justify-between p-2 space-x-2 text-base font-normal text-gray-700 rounded-lg hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
+                                                <img src="https://upload.wikimedia.org/wikipedia/commons/4/48/Flag_of_Sri_Lanka.svg"
+                                                    alt="සිංහල" class="h-5 w-5" />
+                                                <span>සිංහල (Sinhala)</span>
+                                            </button>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -103,13 +110,13 @@
                             @endforeach
                         </div>
                     @endif
-                    <h1 class="text-2xl font-semibold" style="font-family: 'Noto Sans', sans-serif;">Verify your email
-                        address</h1>
+                    <h1 class="text-2xl font-semibold" style="font-family: 'Noto Sans', sans-serif;">
+                        {{ __('messages.Verify your email address') }}</h1>
                     <p class="text-sm text-gray-700 mt-2" style="font-family: 'Noto Sans', sans-serif;">
-                        We've sent a verification code to<br>
+                        {{ __("messages.We've sent a verification code to") }}<br>
                         <span class="font-semibold" style="font-family: 'Noto Sans', sans-serif;">
                             {{ session('customer_email', 'your email') }}
-                        </span>. Please enter this code to continue.
+                        </span>. {{ __('messages.Please enter this code to continue.') }}
                     </p>
 
                     <!-- Hidden input to collect the full OTP -->
@@ -150,27 +157,27 @@
                     <button id="verify-btn" disabled
                         class="w-full bg-gray-300 text-white font-semibold py-2 rounded cursor-not-allowed"
                         style="font-family: 'Noto Sans', sans-serif;">
-                        Verify email
+                        {{ __('messages.Verify email') }}
                     </button>
                     <!-- Resend Timer -->
                     <p class="text-sm text-gray-600 mt-4" style="font-family: 'Noto Sans', sans-serif;">
-                        Didn't receive an email? Please check your spam folder or request another code in
-                        <strong id="countdown">60 seconds</strong>
+                        {{ __("messages.Didn't receive an email? Please check your spam folder or request another code in") }}
+                        <strong id="countdown">60 {{ __('messages.seconds') }}</strong>
                     </p>
                     <a href="{{ route('customer.login') }}" class="block mt-4 text-blue-600 hover:underline text-sm"
-                        style="font-family: 'Noto Sans', sans-serif;">Back to sign in</a>
+                        style="font-family: 'Noto Sans', sans-serif;">{{ __('messages.Back to sign in') }}</a>
 
                     <div class="mt-8 text-xs text-gray-500">
-                        <p style="font-family: 'Noto Sans', sans-serif;">By signing in or creating an account, you
-                            agree with
-                            our
+                        <p style="font-family: 'Noto Sans', sans-serif;">
+                            {{ __('messages.By signing in or creating an account, you agree with our') }}
                             <a href="#" class="text-blue-600 underline"
-                                style="font-family: 'Noto Sans', sans-serif;">Terms & Conditions</a> and
+                                style="font-family: 'Noto Sans', sans-serif;">{{ __('messages.Terms & Conditions') }}</a>
+                            {{ __('messages.and') }}
                             <a href="#"
-                                class="text-blue-600 underline"style="font-family: 'Noto Sans', sans-serif;">Privacy
-                                Statement</a>.
+                                class="text-blue-600 underline"style="font-family: 'Noto Sans', sans-serif;">{{ __('messages.Privacy Statement') }}</a>
                         </p>
-                        <p class="mt-2"style="font-family: 'Noto Sans', sans-serif;">All rights reserved<br>Copyright
+                        <p class="mt-4 justify-center text-center "style="font-family: 'Noto Sans', sans-serif;">All
+                            rights reserved<br>Copyright
                             (2025)
                             – Bookintour™</p>
                     </div>
@@ -247,6 +254,9 @@
         });
 
         // Countdown timer
+        // Replace the existing countdown and resend functionality with this updated version
+
+        // Countdown timer
         let countdown = 60;
         const countdownElement = document.getElementById('countdown');
 
@@ -256,9 +266,88 @@
                 countdown--;
                 setTimeout(updateCountdown, 1000);
             } else {
-                countdownElement.innerHTML =
-                    '<a href="{{ route('customer.login') }}" class="text-blue-500 hover:underline">Request new code</a>';
+                countdownElement.innerHTML = `
+            <button type="button" onclick="resendOtp()" class="text-blue-500 hover:underline focus:outline-none">
+                {{ __('messages.Request new code') }}
+            </button>
+        `;
             }
+        }
+
+        function resendOtp() {
+            // Disable the button to prevent multiple clicks
+            const resendButton = document.querySelector('button[onclick="resendOtp()"]');
+            resendButton.disabled = true;
+            resendButton.textContent = 'Sending...';
+
+            fetch("{{ route('customer.request.otp') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: '{{ session('customer_email') }}'
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success || data.message) {
+                        // Reset countdown
+                        countdown = 60;
+                        updateCountdown();
+
+                        // Show success message
+                        showMessage('New OTP sent to your email', 'success');
+
+                        // Clear existing OTP inputs
+                        document.querySelectorAll('.code-input').forEach(input => {
+                            input.value = '';
+                        });
+                        document.getElementById('full-otp').value = '';
+
+                        // Focus on first input
+                        document.querySelector('.code-input').focus();
+
+                        // Reset verify button
+                        const verifyBtn = document.getElementById('verify-btn');
+                        verifyBtn.disabled = true;
+                        verifyBtn.classList.add('bg-gray-300', 'cursor-not-allowed');
+                        verifyBtn.classList.remove('bg-blue-500', 'hover:bg-blue-600');
+                        verifyBtn.style.backgroundColor = '';
+                    } else {
+                        showMessage('Failed to send OTP. Please try again.', 'error');
+                        resendButton.disabled = false;
+                        resendButton.textContent = 'Request new code';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showMessage('Network error. Please try again.', 'error');
+                    resendButton.disabled = false;
+                    resendButton.textContent = 'Request new code';
+                });
+        }
+
+        function showMessage(message, type) {
+            // Remove existing messages
+            document.querySelectorAll('.flash-message').forEach(msg => msg.remove());
+
+            // Create new message element
+            const messageDiv = document.createElement('div');
+            messageDiv.className =
+                `flash-message px-4 py-3 rounded mb-4 ${type === 'success' ? 'bg-green-100 border border-green-400 text-green-700' : 'bg-red-100 border border-red-400 text-red-700'}`;
+            messageDiv.textContent = message;
+
+            // Insert message at the top of the form
+            const form = document.getElementById('otp-form');
+            form.insertBefore(messageDiv, form.firstChild);
+
+            // Auto-remove message after 5 seconds
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 5000);
         }
 
         // Start countdown when page loads
