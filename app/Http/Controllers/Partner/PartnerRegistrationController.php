@@ -19,23 +19,48 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Carbon;
 use App\Models\User;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Log;
 
 class PartnerRegistrationController extends Controller
 {
     public function registerEmail(Request $request, RegisterEmailAction $action)
     {
-        $request->validate([
-            'email' => 'required|email|unique:partner_registrations,email',
-        ]);
+        try {
+            $validator = Validator::make($request->all(), [
+                'email' => [
+                    'required',
+                    'email',
+                    'unique:partner_registrations,email',
+                    'unique:users,email',
+                ],
+            ], [
+                'email.unique' => 'This email is already registered. Please log in or use a different email.',
+            ]);
 
-        $dto = RegisterEmailDTO::fromRequest($request);
-        $registration = $action->execute($dto);
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => $validator->errors()->first('email')
+                ], 422);
+            }
 
-        return response()->json([
-            'message' => 'Email registered. Continue with contact details.',
-            'id' => $registration->id,
-        ]);
+            $dto = RegisterEmailDTO::fromRequest($request);
+            $registration = $action->execute($dto);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Email registered. Continue with contact details.',
+                'id' => $registration->id,
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Something went wrong. Please try again.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
+
 
     public function registerContact(Request $request, RegisterContactAction $action)
     {
@@ -86,7 +111,12 @@ class PartnerRegistrationController extends Controller
 
     public function verify($token)
     {
-        $registration = PartnerRegistration::where('verification_token', $token)->firstOrFail();
+        Log::info('Partner verification started', ['token' => $token]);
+        $registration = PartnerRegistration::where('verification_token', $token)->first();
+        if (!$registration) {
+            Log::error('Partner verification failed: registration not found', ['token' => $token]);
+            abort(404, 'Verification token not found.');
+        }
 
         DB::beginTransaction();
 
@@ -97,22 +127,26 @@ class PartnerRegistrationController extends Controller
                 'password' => $registration->password, // already hashed
                 'email_verified_at' => Carbon::now(),
             ]);
+            Log::info('User created in users table', ['user_id' => $user->id, 'email' => $user->email]);
 
             $user->assignRole('partner');
+            Log::info('Partner role assigned', ['user_id' => $user->id]);
 
             // Optional: delete registration
             $registration->delete();
+            Log::info('Partner registration deleted', ['registration_id' => $registration->id]);
 
             DB::commit();
 
             // Log in the user (optional, but recommended for a smooth UX)
             \Illuminate\Support\Facades\Auth::login($user);
+            Log::info('User logged in', ['user_id' => $user->id]);
 
             // Redirect to the partner home/list-your-property page
             return redirect()->route('partner.list-your-property');
         } catch (\Throwable $e) {
             DB::rollBack();
-
+            Log::error('Verification failed', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
             return redirect('/')->with('error', 'Verification failed: ' . $e->getMessage());
         }
     }

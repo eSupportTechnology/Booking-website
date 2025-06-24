@@ -204,7 +204,7 @@ Route::prefix('partner')->group(function () {
     })->name('partner.password.request');
 
     // Handle the form POST to send reset link
-    Route::post('/forgot-password', [\App\Http\Controllers\Auth\PasswordResetLinkController::class, 'store'])
+    Route::post('/forgot-password', [\App\Http\Controllers\Partner\PartnerPasswordResetLinkController::class, 'store'])
         ->name('partner.password.email');
 
     // Show the reset password form (from email link)

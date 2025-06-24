@@ -44,8 +44,4 @@ class User extends Authenticatable
     {
         return !empty($this->google_id);
     }
-    public function sendPasswordResetNotification($token)
-    {
-        Mail::to($this->email)->send(new PartnerResetPasswordMail($token, $this->email));
-    }
 }
