@@ -122,35 +122,20 @@
                     <!-- Hidden input to collect the full OTP -->
                     <input type="hidden" name="otp" id="full-otp">
 
-                    <!-- Code Input Boxes -->
-                    <div class="flex justify-between gap-2 mb-6" id="code-container">
-                        <input type="text" maxlength="1" name="otp_0"
-                            class="code-input w-10 h-12 text-center text-lg border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            oninput="handleInput(this, 0)">
-                        <input type="text" maxlength="1" name="otp_1"
-                            class="code-input w-10 h-12 text-center text-lg border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            oninput="handleInput(this, 1)">
-                        <input type="text" maxlength="1" name="otp_2"
-                            class="code-input w-10 h-12 text-center text-lg border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            oninput="handleInput(this, 2)">
-                        <input type="text" maxlength="1" name="otp_3"
-                            class="code-input w-10 h-12 text-center text-lg border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            oninput="handleInput(this, 3)">
-                        <input type="text" maxlength="1" name="otp_4"
-                            class="code-input w-10 h-12 text-center text-lg border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            oninput="handleInput(this, 4)">
-                        <input type="text" maxlength="1" name="otp_5"
-                            class="code-input w-10 h-12 text-center text-lg border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            oninput="handleInput(this, 5)">
+                    {{-- 6 OTP input boxes --}}
+                    <div class="flex justify-between gap-2 mb-2 mt-4" id="code-container">
+                        @for ($i = 0; $i < 6; $i++)
+                            <input type="text" maxlength="1" name="otp_{{ $i }}"
+                                value="{{ old('otp_' . $i) }}"
+                                class="code-input w-10 h-12 text-center text-lg border rounded focus:outline-none focus:ring-2
+                    {{ $errors->has('otp') ? 'border-red-500 ring-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500' }}"
+                                oninput="handleInput(this, {{ $i }})">
+                        @endfor
                     </div>
 
-                    <!-- Display errors -->
-                    @if ($errors->any())
-                        <div class="mb-4 text-red-600 text-sm">
-                            @foreach ($errors->all() as $error)
-                                <p>{{ $error }}</p>
-                            @endforeach
-                        </div>
+                    {{-- Single error under boxes (not per box) --}}
+                    @if ($errors->has('otp'))
+                        <p class="text-red-500 text-sm mt-1">{{ $errors->first('otp') }}</p>
                     @endif
 
                     <!-- Verify Button -->
@@ -189,6 +174,28 @@
 
     <!-- Language Modal Script -->
     <script>
+        // Example starter JavaScript for disabling form submissions if there are invalid fields
+        (function() {
+            'use strict'
+
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            var forms = document.querySelectorAll('.needs-validation')
+
+            // Loop over them and prevent submission
+            Array.prototype.slice.call(forms)
+                .forEach(function(form) {
+                    form.addEventListener('submit', function(event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault()
+                            event.stopPropagation()
+                        }
+
+                        form.classList.add('was-validated')
+                    }, false)
+                })
+        })()
+
+
         function handleInput(element, index) {
             const inputs = document.querySelectorAll('.code-input');
             const verifyBtn = document.getElementById('verify-btn');

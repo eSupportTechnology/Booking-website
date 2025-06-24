@@ -137,27 +137,37 @@
 
 
         <form method="POST" action="{{ route('customer.request.otp') }}" class="needs-validation" novalidate>
-    @csrf
+            @csrf
 
-    <div class="mb-4">
-        <label for="email" class="block text-sm font-medium text-gray-700 mb-1"
-            style="font-family: 'Noto Sans', sans-serif;">
-            {{ __('messages.Email address') }}
-        </label>
+            <div class="mb-4">
+                <label for="email" class="block text-sm font-medium text-gray-700 mb-1"
+                    style="font-family: 'Noto Sans', sans-serif;">
+                    {{ __('messages.Email address') }}
+                </label>
 
-        <input id="email" type="email" name="email" placeholder="Enter your email address" required
-            class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input id="email" type="email" name="email" value="{{ old('email') }}"
+                    placeholder="Enter your email address" required
+                    class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2
+               {{ $errors->has('email') ? 'border-red-500 ring-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500' }}">
 
-        <div class="mt-1 text-sm text-red-500 invalid-feedback hidden">
-            Please enter a valid email address.
-        </div>
-    </div>
+                {{-- Laravel Validation Error --}}
+                @if ($errors->has('email'))
+                    <div class="mt-1 text-sm text-red-500">
+                        {{ $errors->first('email') }}
+                    </div>
+                @else
+                    {{-- Client-side validation fallback --}}
+                    <div class="mt-1 text-sm text-red-500 invalid-feedback hidden">
+                        Please enter a valid email address.
+                    </div>
+                @endif
+            </div>
 
-    <button type="submit" class="w-full text-white py-2 rounded hover:bg-blue-700 mb-4"
-        style="background-color:#3CC0E9; font-family: 'Noto Sans', sans-serif;">
-        {{ __('messages.Continue with email') }}
-    </button>
-</form>
+            <button type="submit" class="w-full text-white py-2 rounded hover:bg-blue-700 mb-4"
+                style="background-color:#3CC0E9; font-family: 'Noto Sans', sans-serif;">
+                {{ __('messages.Continue with email') }}
+            </button>
+        </form>
 
         <!-- Divider -->
         <div class="flex items-center my-4">
@@ -227,28 +237,29 @@
 
     // Example starter JavaScript for disabling form submissions if there are invalid fields
     (() => {
-    'use strict'
+        'use strict'
 
-    const forms = document.querySelectorAll('.needs-validation')
+        const forms = document.querySelectorAll('.needs-validation')
 
-    Array.from(forms).forEach(form => {
-        form.addEventListener('submit', event => {
-            // Hide all feedback messages first
-            form.querySelectorAll('.invalid-feedback').forEach(el => el.classList.add('hidden'))
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                // Hide all feedback messages first
+                form.querySelectorAll('.invalid-feedback').forEach(el => el.classList.add('hidden'))
 
-            if (!form.checkValidity()) {
-                event.preventDefault()
-                event.stopPropagation()
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
 
-                // Show feedback messages
-                form.querySelectorAll(':invalid').forEach(input => {
-                    const feedback = input.parentElement.querySelector('.invalid-feedback')
-                    if (feedback) feedback.classList.remove('hidden')
-                })
-            }
+                    // Show feedback messages
+                    form.querySelectorAll(':invalid').forEach(input => {
+                        const feedback = input.parentElement.querySelector(
+                            '.invalid-feedback')
+                        if (feedback) feedback.classList.remove('hidden')
+                    })
+                }
 
-            form.classList.add('was-validated')
-        }, false)
-    })
-})()
+                form.classList.add('was-validated')
+            }, false)
+        })
+    })()
 </script>
