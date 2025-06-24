@@ -179,9 +179,12 @@
                         <p class="mt-4 justify-center text-center "style="font-family: 'Noto Sans', sans-serif;">All
                             rights reserved<br>Copyright
                             (2025)
-                            – Bookintour™</p>
+                            – Bookintour™
+                        </p>
                     </div>
+                </form>
             </div>
+        </div>
     </main>
 
     <!-- Language Modal Script -->

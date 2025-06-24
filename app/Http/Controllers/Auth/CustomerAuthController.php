@@ -106,11 +106,21 @@ class CustomerAuthController extends Controller
 
             // Execute the OTP check
             if ($action->execute($otp, $email)) {
+            // Extract name from email
+            $nameFromEmail = ucfirst(Str::before($email, '@'));
 
-                $user = User::where('email', $email)->first();
-                if ($user) {
-                    Auth::guard('customer')->login($user);
-                }
+            // Find or create user
+            $user = User::firstOrCreate(
+                ['email' => $email],
+                [
+                    'name' => $nameFromEmail,
+                    'password' => bcrypt(Str::random(12)),
+                    'email_verified_at' => now(),
+                ]
+            );
+
+            // Log in
+            Auth::guard('customer')->login($user);
                 return $request->expectsJson()
                     ? response()->json(['message' => 'Verification successful', 'redirect' => '/'])
                     : redirect('/')->with('success', 'Email verified successfully');
