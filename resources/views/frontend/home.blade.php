@@ -23,8 +23,6 @@
 @section('title', 'Home')
 
 @section('content')
-<p>Current Locale: {{ app()->getLocale() }}</p>
-
     <!-- Hero Section -->
     <section class="text-white py-8 bg-[#1F8FB2] relative z-0">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -39,7 +37,6 @@
             </div>
         </div>
     </section>
-
 
     <!-- Search Box: Overlapping both sections -->
     <div class="relative z-10 -mt-8 px-4">

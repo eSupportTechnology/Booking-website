@@ -145,7 +145,7 @@
                                 </p>
                                 <div class="grid grid-cols-2 gap-4">
                                     <!-- English Button -->
-                                    <a href="{{ route('lang.change', ['lang' => 'en']) }}" >
+                                    <a href="{{ route('lang.change', ['lang' => 'en']) }}">
                                         <button
                                             class="flex items-center justify-between p-2 space-x-2 text-base font-normal text-gray-700 rounded-lg hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
                                             <img src="https://upload.wikimedia.org/wikipedia/en/a/ae/Flag_of_the_United_Kingdom_%281-2%29.svg"
@@ -170,17 +170,14 @@
                     </div>
 
                     <a href="">
-                        <img src="{{ asset('assets/question.svg') }}" alt="Taxi"
-                            class="w-5 h-5 cursor-pointer" />
+                        <img src="{{ asset('assets/question.svg') }}" alt="Taxi" class="w-5 h-5 cursor-pointer" />
                     </a>
 
                     <a href="/list-your-property" class="hover:underline"
                         style="font-family: 'Noto Sans', sans-serif;">List your property</a>
-                    @php
-                        $isLoggedIn = false; // simulate login
-                    @endphp
 
-                    @if ($isLoggedIn)
+                    @auth('customer')
+                        <!-- Profile dropdown -->
                         <!-- Profile dropdown -->
                         <div class="relative group">
                             <button class=" text-[#3CC0E9] font-base px-4 py-2 rounded  flex items-center space-x-2">
@@ -189,15 +186,12 @@
                                     <img src="{{ asset('assets/user.svg') }}" class="w-5 h-5" alt="Profile" />
                                 </div>
 
-
                                 <!-- My Account Link -->
                                 <a href="/my-account" class="text-white hover:underline"
                                     style="font-family: 'Noto Sans', sans-serif;">
                                     Your Account
                                 </a>
                             </button>
-
-
 
                             <!-- Dropdown -->
                             <div
@@ -222,8 +216,8 @@
                                 </a>
                                 <a href="/profile"
                                     class="block px-4 py-2 text-gray-700  text-base  hover:bg-gray-100 flex items-center gap-2">
-                                    <img src="{{ asset('assets/lets-icons_wallet-light.svg') }}"
-                                        alt="My Account Icon" class="w-5 h-5" />
+                                    <img src="{{ asset('assets/lets-icons_wallet-light.svg') }}" alt="My Account Icon"
+                                        class="w-5 h-5" />
                                     <span style="font-family: 'Noto Sans', sans-serif;">Rewards & Wallet</span>
                                 </a>
                                 <a href="/profile"
@@ -239,15 +233,14 @@
                                     <span style="font-family: 'Noto Sans', sans-serif;">Saved</span>
                                 </a>
 
-                                <form method="POST" action="/logout">
+                                <form method="POST" action="{{ route('customer.logout') }}">
                                     @csrf
                                     <button type="submit"
-                                        class="w-full text-left px-4 py-2 text-gray-700   text-base hover:bg-gray-100 flex items-center gap-2">
-                                        <img src="{{ asset('assets/simple-line-icons_logout.svg') }}"
-                                            alt="Logout Icon" class="w-4 h-4" />
+                                        class="w-full text-left px-4 py-2 text-gray-700 text-base hover:bg-gray-100 flex items-center gap-2">
+                                        <img src="{{ asset('assets/simple-line-icons_logout.svg') }}" alt="Logout Icon"
+                                            class="w-4 h-4" />
                                         <span style="font-family: 'Noto Sans', sans-serif;">Logout</span>
                                     </button>
-
                                 </form>
                             </div>
                         </div>
@@ -259,71 +252,71 @@
                         <a href="{{ route('customer.login') }}"
                             class="bg-white font-base px-4 py-2 rounded hover:bg-blue-100"
                             style="font-family: 'Noto Sans', sans-serif; color:#3CC0E9;">Sign in</a>
-                    @endif
+                        @endif
+
+                    </div>
 
                 </div>
-
             </div>
-        </div>
-    </section>
-</header>
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        // Currency modal logic
-        const currentCurrency = document.getElementById("current-currency");
-        const currencyModal = document.getElementById("currency-modal");
-        const currencyCloseBtn = document.getElementById("currency-close-btn");
+        </section>
+    </header>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Currency modal logic
+            const currentCurrency = document.getElementById("current-currency");
+            const currencyModal = document.getElementById("currency-modal");
+            const currencyCloseBtn = document.getElementById("currency-close-btn");
 
-        if (currentCurrency && currencyModal && currencyCloseBtn) {
-            // Open currency modal on clicking the currency span
-            currentCurrency.addEventListener("click", () => {
-                currencyModal.classList.remove("hidden");
-            });
+            if (currentCurrency && currencyModal && currencyCloseBtn) {
+                // Open currency modal on clicking the currency span
+                currentCurrency.addEventListener("click", () => {
+                    currencyModal.classList.remove("hidden");
+                });
 
-            // Close currency modal on close button click
-            currencyCloseBtn.addEventListener("click", () => {
-                currencyModal.classList.add("hidden");
-            });
-
-            // Close currency modal on clicking outside the modal content
-            window.addEventListener("click", (e) => {
-                if (e.target === currencyModal) {
-                    currencyModal.classList.add("hidden");
-                }
-            });
-
-            // Change currency when a currency button is clicked
-            currencyModal.querySelectorAll("button[data-currency]").forEach((btn) => {
-                btn.addEventListener("click", () => {
-                    const selectedCurrency = btn.getAttribute("data-currency");
-                    currentCurrency.textContent = selectedCurrency;
+                // Close currency modal on close button click
+                currencyCloseBtn.addEventListener("click", () => {
                     currencyModal.classList.add("hidden");
                 });
-            });
-        }
 
-        // Language modal logic
-        const languageButton = document.getElementById("language-button");
-        const languageModal = document.getElementById("language-modal");
-        const closeBtn = languageModal ? languageModal.querySelector(".close-btn") : null;
+                // Close currency modal on clicking outside the modal content
+                window.addEventListener("click", (e) => {
+                    if (e.target === currencyModal) {
+                        currencyModal.classList.add("hidden");
+                    }
+                });
 
-        if (languageButton && languageModal && closeBtn) {
-            // Open the language modal
-            languageButton.addEventListener("click", () => {
-                languageModal.classList.remove("hidden");
-            });
+                // Change currency when a currency button is clicked
+                currencyModal.querySelectorAll("button[data-currency]").forEach((btn) => {
+                    btn.addEventListener("click", () => {
+                        const selectedCurrency = btn.getAttribute("data-currency");
+                        currentCurrency.textContent = selectedCurrency;
+                        currencyModal.classList.add("hidden");
+                    });
+                });
+            }
 
-            // Close language modal on close button click
-            closeBtn.addEventListener("click", () => {
-                languageModal.classList.add("hidden");
-            });
+            // Language modal logic
+            const languageButton = document.getElementById("language-button");
+            const languageModal = document.getElementById("language-modal");
+            const closeBtn = languageModal ? languageModal.querySelector(".close-btn") : null;
 
-            // Close language modal on clicking outside the modal content
-            window.addEventListener("click", (event) => {
-                if (event.target === languageModal) {
+            if (languageButton && languageModal && closeBtn) {
+                // Open the language modal
+                languageButton.addEventListener("click", () => {
+                    languageModal.classList.remove("hidden");
+                });
+
+                // Close language modal on close button click
+                closeBtn.addEventListener("click", () => {
                     languageModal.classList.add("hidden");
-                }
-            });
-        }
-    });
-</script>
+                });
+
+                // Close language modal on clicking outside the modal content
+                window.addEventListener("click", (event) => {
+                    if (event.target === languageModal) {
+                        languageModal.classList.add("hidden");
+                    }
+                });
+            }
+        });
+    </script>
