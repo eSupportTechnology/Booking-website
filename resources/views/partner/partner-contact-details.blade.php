@@ -184,59 +184,6 @@
         if (flagUrl) selectedFlag.src = flagUrl;
       });
     });
-
-    document.getElementById('contactForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const form = this;
-        const submitButton = form.querySelector('button[type="submit"]');
-        const formData = new FormData(form);
-        
-        // Get the stored email from session storage
-        const email = sessionStorage.getItem('partner_email');
-        if (!email) {
-            alert('Please start from the email registration page');
-            window.location.href = '{{ route("partner.register.email") }}';
-            return;
-        }
-        
-        formData.append('email', email);
-
-        // Disable submit button
-        submitButton.disabled = true;
-        submitButton.innerHTML = 'Processing...';
-
-        fetch(form.action, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-            },
-            body: formData
-        })
-        .then(response => {
-            // Debug: log response status
-            console.log('Response status:', response.status);
-            return response.json();
-        })
-        .then(data => {
-            // Debug: log response data
-            console.log('Response data:', data);
-            if (data.status === 'success') {
-                window.location.href = '{{ route("partner.register.password") }}';
-            } else {
-                alert(data.message || 'An error occurred');
-            }
-        })
-        .catch(error => {
-            // Debug: log error
-            console.error('Error:', error);
-            alert('An error occurred while processing your request');
-        })
-        .finally(() => {
-            submitButton.disabled = false;
-            submitButton.innerHTML = 'Next';
-        });
-    });
   </script>
 </body>
 </html>

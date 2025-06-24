@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
 Route::get('/login/email', [LoginController::class, 'showEmailForm'])->name('login.email');
 Route::post('/login/email', [LoginController::class, 'storeEmail']);
@@ -174,7 +175,7 @@ Route::prefix('partner')->group(function () {
     })->name('partner.register.email.form');
 
     // Handle email registration POST
-    Route::post('/register/email', [PartnerRegistrationController::class, 'registerEmail'])->name('partner.register.email');
+    Route::post('/register/email', [PartnerRegistrationController::class, 'storeEmail'])->name('partner.register.email');
 
     // Show contact details form
     Route::get('/register/contact', function () {
@@ -182,7 +183,7 @@ Route::prefix('partner')->group(function () {
     })->name('partner.register.contact.form');
 
     // Handle contact details POST
-    Route::post('/register/contact', [PartnerRegistrationController::class, 'registerContact'])->name('partner.register.contact');
+    Route::post('/register/contact', [PartnerRegistrationController::class, 'storeContact'])->name('partner.register.contact');
 
     // Show password creation form
     Route::get('/register/password', function () {
@@ -190,7 +191,7 @@ Route::prefix('partner')->group(function () {
     })->name('partner.register.password');
 
     // Handle password creation POST
-    Route::post('/register/password', [PartnerRegistrationController::class, 'registerPassword'])->name('partner.register.password.submit');
+    Route::post('/register/password', [PartnerRegistrationController::class, 'storePassword'])->name('partner.register.password');
 
     // Show email verification page
     Route::get('/register/verify', function () {
@@ -236,6 +237,34 @@ Route::prefix('partner')->group(function () {
     Route::get('/register/verify/{token}', [PartnerRegistrationController::class, 'verify'])->name('partner.register.verify.token');
 });
 
-Route::get('/partner/sign-in', [\App\Http\Controllers\Partner\LoginController::class, 'showEmailForm'])->name('partner.login.email');
+Route::get('/partner/login', [App\Http\Controllers\Partner\LoginController::class, 'show'])->name('partner.login');
+Route::post('/partner/login', [App\Http\Controllers\Partner\LoginController::class, 'login'])->name('partner.login.submit');
+
+// Partner Registration Flow
+Route::get('/partner/register', [PartnerRegistrationController::class, 'createEmail'])->name('partner.register.email-create');
+Route::post('/partner/register/email', [PartnerRegistrationController::class, 'storeEmail'])->name('partner.register.email');
+
+Route::get('/partner/register/contact', [PartnerRegistrationController::class, 'createContact'])->name('partner.register.contact-details');
+Route::post('/partner/register/contact', [PartnerRegistrationController::class, 'storeContact'])->name('partner.register.contact');
+
+Route::get('/partner/register/password', [PartnerRegistrationController::class, 'createPassword'])->name('partner.register.password-create');
+Route::post('/partner/register/password', [PartnerRegistrationController::class, 'register'])->name('partner.register.password');
+
+// Show the email verification notice
+Route::get('/email/verify', function () {
+    return view('auth.verify-email');
+})->middleware('auth')->name('verification.notice');
+
+// Handle the email verification link
+Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+    $request->fulfill();
+    return redirect()->route('partner.login')->with('success', 'Your email has been verified. Please log in.');
+})->middleware(['auth', 'signed'])->name('verification.verify');
+
+// Resend the verification email
+Route::post('/email/verification-notification', function (\Illuminate\Http\Request $request) {
+    $request->user()->sendEmailVerificationNotification();
+    return back()->with('message', 'Verification link sent!');
+})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
 require __DIR__ . '/auth.php';

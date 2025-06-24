@@ -109,6 +109,19 @@
       <p class="text-sm text-gray-700 mt-1">Use a minimum of 10 characters, including uppercase letters, lowercase letters and numbers.</p>
     </div>
 
+    <!-- Display Validation Errors -->
+    @if ($errors->any())
+      <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+          <strong class="font-bold">Oops!</strong>
+          <span class="block sm:inline">There were some problems with your input.</span>
+          <ul class="mt-3 list-disc list-inside text-sm">
+              @foreach ($errors->all() as $error)
+                  <li>{{ $error }}</li>
+              @endforeach
+          </ul>
+      </div>
+    @endif
+
     <!-- Form -->
     <form method="POST" action="{{ route('partner.register.password') }}" id="passwordForm">
       @csrf
@@ -189,75 +202,6 @@
       });
     }
   });
-</script>
-
-<!-- Add this before the closing body tag -->
-<script>
-document.getElementById('passwordForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const form = this;
-    const submitButton = form.querySelector('button[type="submit"]');
-    const formData = new FormData(form);
-    
-    // Get the stored email from session storage
-    const email = sessionStorage.getItem('partner_email');
-    if (!email) {
-        alert('Please start from the email registration page');
-        window.location.href = '{{ route("partner.register.email") }}';
-        return;
-    }
-    formData.append('email', email);
-
-    // Debug: Log form data
-    for (let [key, value] of formData.entries()) {
-        console.log('FormData:', key, value);
-    }
-
-    // Disable submit button
-    submitButton.disabled = true;
-    submitButton.innerHTML = 'Processing...';
-
-    fetch(form.action, {
-        method: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-        },
-        body: formData
-    })
-    .then(async response => {
-        // Debug: log response status
-        console.log('Response status:', response.status);
-        const text = await response.text();
-        console.log('Raw response text:', text);
-        let data;
-        try {
-            data = JSON.parse(text);
-        } catch (err) {
-            console.error('Failed to parse JSON:', err);
-            throw new Error('Invalid JSON response');
-        }
-        return data;
-    })
-    .then(data => {
-        // Debug: log response data
-        console.log('Response data:', data);
-        if (data.status === 'success') {
-            window.location.href = '{{ route("partner.register.verify") }}';
-        } else {
-            alert(data.message || 'An error occurred');
-        }
-    })
-    .catch(error => {
-        // Debug: log error
-        console.error('Error:', error);
-        alert('An error occurred while processing your request: ' + error.message);
-    })
-    .finally(() => {
-        submitButton.disabled = false;
-        submitButton.innerHTML = 'Set Password';
-    });
-});
 </script>
 
 </body>
