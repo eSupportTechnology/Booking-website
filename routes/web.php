@@ -194,8 +194,9 @@ Route::prefix('partner')->group(function () {
     Route::post('/register/password', [PartnerRegistrationController::class, 'storePassword'])->name('partner.register.password');
 
     // Show email verification page
-    Route::get('/register/verify', function () {
-        return view('partner.partner-verify-message');
+    Route::get('/register/verify', function (\Illuminate\Http\Request $request) {
+        $email = session('partner_registration.email');
+        return view('partner.partner-verify-message', compact('email'));
     })->name('partner.register.verify');
 
     // Resend verification email (placeholder)
@@ -237,8 +238,8 @@ Route::prefix('partner')->group(function () {
     Route::get('/register/verify/{token}', [PartnerRegistrationController::class, 'verify'])->name('partner.register.verify.token');
 });
 
-Route::get('/partner/login', [App\Http\Controllers\Partner\LoginController::class, 'show'])->name('partner.login');
-Route::post('/partner/login', [App\Http\Controllers\Partner\LoginController::class, 'login'])->name('partner.login.submit');
+Route::get('/partner/login', [LoginController::class, 'show'])->name('partner.login');
+Route::post('/partner/login', [LoginController::class, 'login'])->name('partner.login.submit');
 
 // Partner Registration Flow
 Route::get('/partner/register', [PartnerRegistrationController::class, 'createEmail'])->name('partner.register.email-create');

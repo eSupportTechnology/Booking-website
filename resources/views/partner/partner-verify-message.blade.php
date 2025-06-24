@@ -110,7 +110,11 @@
         <p class="text-gray-700 mb-2">
           We sent you an email with a verification link to
         </p>
-        <p class="font-semibold text-gray-900 break-words" id="userEmail"></p>
+        <p class="font-semibold text-gray-900 break-words" id="userEmail">
+          @if(isset($email) && $email)
+            {{ $email }}
+          @endif
+        </p>
         <p class="mt-4 text-gray-700">
           To confirm your account please follow the link in the email we just sent.
         </p>
@@ -148,10 +152,11 @@
         });
       }
 
-      // Display email from session storage
+      // Display email from session storage if not rendered by backend
       const userEmail = sessionStorage.getItem('partner_email');
-      if (userEmail) {
-        document.getElementById('userEmail').textContent = userEmail;
+      const userEmailElem = document.getElementById('userEmail');
+      if (userEmail && userEmailElem && !userEmailElem.textContent.trim()) {
+        userEmailElem.textContent = userEmail;
       }
 
       // Resend verification email functionality

@@ -89,7 +89,7 @@ class PartnerRegistrationController extends Controller
         $request->session()->forget('partner_registration');
 
         // Redirect to Laravel's built-in verification notice page
-        return redirect()->route('verification.notice');
+        return redirect()->route('partner.register.verify');
     }
 }
 // This controller handles the registration of partners by accepting a DTO and executing the registration action.
