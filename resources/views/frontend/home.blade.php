@@ -23,13 +23,15 @@
 @section('title', 'Home')
 
 @section('content')
+<p>Current Locale: {{ app()->getLocale() }}</p>
+
     <!-- Hero Section -->
     <section class="text-white py-8 bg-[#1F8FB2] relative z-0">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Hero Text -->
             <div class="mb-10 mt-1">
                 <h1 class="text-[32px] md:text-[40px] lg:text-[50px] font-bold mb-2">
-                    Find your next stay
+                    {{ __('messages.Find your next stay') }}
                 </h1>
                 <p class="text-[18px] md:text-[20px] mt-1 font-sans">
                     Search low prices on hotels, homes and much more...

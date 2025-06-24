@@ -6,10 +6,12 @@ use App\Actions\Auth\AppleAuthAction;
 use App\Actions\Auth\FacebookAuthAction;
 use App\Actions\Auth\GoogleAuthAction;
 use App\Actions\Auth\SendCustomerOtpAction;
+use App\Actions\Auth\VerifyOtpAction;
 use App\DTOs\Auth\AppleAuthDTO;
 use App\DTOs\Auth\CustomerEmailRequestDTO;
 use App\DTOs\Auth\FacebookAuthDTO;
 use App\DTOs\Auth\GoogleAuthDTO;
+use App\DTOs\Auth\VerifyOtpDTO;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -28,26 +30,45 @@ class CustomerAuthController extends Controller
     }
 
     public function requestOtp(Request $request)
-    {
-        Log::info('Received email input: ' . $request->email);
+{
+    Log::info('Received email input: ' . $request->email);
 
-        try {
-            $dto = CustomerEmailRequestDTO::fromRequest($request);
+    try {
+        $dto = CustomerEmailRequestDTO::fromRequest($request);
 
-            $action = new \App\Actions\Auth\SendCustomerOtpAction();
-            $action->execute($dto);
+        $action = new SendCustomerOtpAction();
+        $action->execute($dto);
 
-            Session::put('customer_email', $dto->email);
+        Session::put('customer_email', $dto->email);
 
-            return redirect()->route('customer.email.verify')->with('success', 'OTP sent to your email');
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            if ($request->expectsJson()) {
-                return response()->json(['errors' => $e->errors()], 422);
-            }
-
-            return back()->withErrors($e->errors());
+        // Handle AJAX requests
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'OTP sent to your email'
+            ]);
         }
+
+        return redirect()->route('customer.email.verify')->with('success', 'OTP sent to your email');
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        if ($request->expectsJson()) {
+            return response()->json(['errors' => $e->errors()], 422);
+        }
+
+        return back()->withErrors($e->errors());
+    } catch (\Throwable $e) {
+        Log::error('OTP request failed: ' . $e->getMessage());
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to send OTP. Please try again.'
+            ], 500);
+        }
+
+        return back()->with('error', 'Something went wrong, please try again.');
     }
+}
 
     public function showEmailVerifyForm()
     {
@@ -58,7 +79,7 @@ class CustomerAuthController extends Controller
         return view('Customer.auth.verify-email');
     }
 
-    public function verifyOtp(Request $request)
+    public function verifyOtp(Request $request, VerifyOtpAction $action)
     {
         try {
             $email = Session::get('customer_email');
@@ -69,33 +90,27 @@ class CustomerAuthController extends Controller
                     : redirect()->route('customer.login')->with('error', 'Session expired. Please start again.');
             }
 
-            $validated = $request->validate([
-                'otp' => ['required', 'string', 'size:6'],
-            ]);
+            // Validate input
+            $dto = VerifyOtpDTO::fromRequest($request);
 
+            // Allow multi-input fallback
             $otpInputs = [];
             for ($i = 0; $i < 6; $i++) {
                 $otpInputs[] = $request->input("otp_$i", '');
             }
-            $otp = implode('', $otpInputs);
 
+            $otp = implode('', $otpInputs);
             if (empty($otp)) {
-                $otp = $validated['otp'];
+                $otp = $dto->otp;
             }
 
-            $cachedOtp = Cache::get("customer_otp_{$email}");
+            // Execute the OTP check
+            if ($action->execute($otp, $email)) {
 
-            if ($cachedOtp && $cachedOtp == $otp) {
-                // Clear the OTP from cache
-                Cache::forget("customer_otp_{$email}");
-
-                // Clear the email from session
-                Session::forget('customer_email');
-
-                // Set a session flag to indicate successful verification
-                Session::put('customer_verified', true);
-                Session::put('customer_verified_email', $email);
-
+                $user = User::where('email', $email)->first();
+                if ($user) {
+                    Auth::guard('customer')->login($user);
+                }
                 return $request->expectsJson()
                     ? response()->json(['message' => 'Verification successful', 'redirect' => '/'])
                     : redirect('/')->with('success', 'Email verified successfully');
@@ -153,6 +168,15 @@ class CustomerAuthController extends Controller
             $result = $action->execute($dto);
 
             if ($result['success']) {
+
+                if (isset($result['user_data']) && $result['user_data'] instanceof User) {
+                    auth()->guard('customer')->login($result['user_data']);
+                } elseif (isset($result['user_data']['id'])) {
+                    $user = User::find($result['user_data']['id']);
+                    if ($user) {
+                        auth()->guard('customer')->login($user);
+                    }
+                }
                 if ($request->expectsJson()) {
                     return response()->json([
                         'message' => $result['message'],
@@ -198,9 +222,12 @@ class CustomerAuthController extends Controller
 
     public function handleFacebookCallback(Request $request)
     {
-        return $this->handleSocialCallback($request, 'facebook',
-        FacebookAuthDTO::class,
-        FacebookAuthAction::class);
+        return $this->handleSocialCallback(
+            $request,
+            'facebook',
+            FacebookAuthDTO::class,
+            FacebookAuthAction::class
+        );
     }
 
     // Apple authentication methods
@@ -219,9 +246,12 @@ class CustomerAuthController extends Controller
 
     public function handleAppleCallback(Request $request)
     {
-        return $this->handleSocialCallback($request, 'apple',
-        AppleAuthDTO::class,
-        AppleAuthAction::class);
+        return $this->handleSocialCallback(
+            $request,
+            'apple',
+            AppleAuthDTO::class,
+            AppleAuthAction::class
+        );
     }
 
     private function handleSocialCallback(Request $request, string $provider, string $dtoClass, string $actionClass)

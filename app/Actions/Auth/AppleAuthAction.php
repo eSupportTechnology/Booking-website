@@ -45,7 +45,7 @@ class AppleAuthAction
             }
 
             // Authenticate the user
-            Auth::login($user, true);
+            Auth::guard('customer')->login($user, true);
 
             // Queue welcome email job only for new users
             if ($isNewUser) {

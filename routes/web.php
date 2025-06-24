@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\TravelerLoginController;
 use App\Http\Controllers\Auth\CustomerAuthController;
+use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TravelerDetailsController;
 use App\Models\Traveler;
@@ -10,6 +11,11 @@ use Illuminate\Support\Facades\Route;
 use App\Mail\PartnerVerificationMail;
 use App\Http\Controllers\Partner\LoginController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Session;
 
 Route::get('/login/email', [LoginController::class, 'showEmailForm'])->name('login.email');
 Route::post('/login/email', [LoginController::class, 'storeEmail']);
@@ -23,6 +29,8 @@ Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 // Route::get('/login', function () {
 //     return view('frontend.login');
 // });
+
+Route::get('change', [LanguageController::class, 'change'])->name('lang.change');
 
 Route::prefix('customer')->group(function () {
     Route::get('/login', [CustomerAuthController::class, 'showLoginForm'])->name('customer.login');
@@ -46,6 +54,12 @@ Route::prefix('customer')->group(function () {
     //     Route::get('/dashboard', function () {
     //         return view('dashboard');
     //     })->name('traveler.dashboard');
+
+    Route::post('/customer/logout', function () {
+    Auth::guard('customer')->logout();
+    return redirect()->route('customer.login')->with('success', 'You have been logged out.');
+})->name('customer.logout');
+
 });
 
 Route::get('/list-your-property', function () {

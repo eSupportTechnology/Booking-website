@@ -144,25 +144,34 @@
                                     Suggested for you
                                 </p>
                                 <div class="grid grid-cols-2 gap-4">
-                                    <button
-                                        class="flex items-center justify-between p-2 space-x-2 text-base font-normal text-gray-700 rounded-lg hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
-                                        <img src="https://upload.wikimedia.org/wikipedia/en/a/ae/Flag_of_the_United_Kingdom_%281-2%29.svg"
-                                            alt="English (UK)" class="h-5 w-5" />
-                                        <span>English (UK)</span>
-                                    </button>
-                                    <button
-                                        class="flex items-center justify-between p-2 space-x-2 text-base font-normal text-gray-700 rounded-lg hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
-                                        <img src="https://upload.wikimedia.org/wikipedia/commons/4/48/Flag_of_Germany.svg"
-                                            alt="Deutsch" class="h-5 w-5" />
-                                        <span>Deutsch</span>
-                                    </button>
+                                    <!-- English Button -->
+                                    <a href="{{ route('lang.change', ['lang' => 'en']) }}" >
+                                        <button
+                                            class="flex items-center justify-between p-2 space-x-2 text-base font-normal text-gray-700 rounded-lg hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
+                                            <img src="https://upload.wikimedia.org/wikipedia/en/a/ae/Flag_of_the_United_Kingdom_%281-2%29.svg"
+                                                alt="English (UK)" class="h-5 w-5" />
+                                            <span>English (UK)</span>
+                                        </button>
+                                    </a>
+
+                                    <!-- Sinhala Button -->
+                                    <a href="{{ route('lang.change', ['lang' => 'si']) }}">
+                                        <button
+                                            class="flex items-center justify-between p-2 space-x-2 text-base font-normal text-gray-700 rounded-lg hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
+                                            <img src="https://upload.wikimedia.org/wikipedia/commons/4/48/Flag_of_Sri_Lanka.svg"
+                                                alt="සිංහල" class="h-5 w-5" />
+                                            <span>සිංහල (Sinhala)</span>
+                                        </button>
+                                    </a>
+
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <a href="">
-                        <img src="{{ asset('assets/question.svg') }}" alt="Taxi" class="w-5 h-5 cursor-pointer" />
+                        <img src="{{ asset('assets/question.svg') }}" alt="Taxi"
+                            class="w-5 h-5 cursor-pointer" />
                     </a>
 
                     <a href="/list-your-property" class="hover:underline"
@@ -256,7 +265,6 @@
 
             </div>
         </div>
-
     </section>
 </header>
 <script>
