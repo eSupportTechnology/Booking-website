@@ -188,7 +188,7 @@
                             <!-- Dropdown -->
                             <div
                                 class="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-md shadow-lg opacity-0 group-hover:opacity-100 group-hover:visible transition-all duration-200 invisible z-50">
-                                <a href="/profile"
+                                <a href="{{ route('customer.details.create') }}"
                                     class="block px-4 text-base py-2 text-gray-700 hover:bg-gray-100 flex items-center gap-2">
                                     <img src="{{ asset('assets/mynaui_user.svg') }}" alt="My Account Icon"
                                         class="w-5 h-5" />

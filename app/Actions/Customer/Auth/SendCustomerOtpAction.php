@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Actions\Auth;
+namespace App\Actions\Customer\Auth;
 
-use App\DTOs\Auth\CustomerEmailRequestDTO;
+use App\DTOs\Customer\Auth\CustomerEmailRequestDTO;
 use App\Jobs\SendCustomerOtpJob;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;

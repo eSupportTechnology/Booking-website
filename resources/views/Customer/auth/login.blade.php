@@ -25,11 +25,15 @@
                             class="w-6 h-6 md:w-7 md:h-7 cursor-pointer" />
                     </a>
 
-                    <!-- Language Button -->
+                    @php
+                        $locale = app()->getLocale();
+                        $language = config('languages.' . $locale);
+                        $flag = isset($language['flag']) ? asset($language['flag']) : asset('images/flags/uk.png');
+                    @endphp
+
                     <button id="language-button" type="button"
-                        class="flex items-center justify-center w-8 h-8 bg-white rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-hidden"
-                        title="Change Language">
-                        <img src="{{ asset('images/uk.png') }}" alt="UK Flag"
+                        class="flex items-center justify-center w-7 h-7 bg-white rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-hidden">
+                        <img src="{{ $flag }}" alt="{{ $language['name'] ?? 'Language' }}"
                             class="w-full h-full object-cover rounded-full" />
                     </button>
 
@@ -57,25 +61,16 @@
                             <div class="mt-4">
                                 <p class="mb-4 text-base text-gray-500 dark:text-gray-400">Suggested for you</p>
                                 <div class="grid grid-cols-2 gap-4">
-                                    <!-- English Button -->
-                                    <a href="{{ route('lang.change', ['lang' => 'en']) }}">
-                                        <button
-                                            class="flex items-center justify-between p-2 space-x-2 text-base font-normal text-gray-700 rounded-lg hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
-                                            <img src="https://upload.wikimedia.org/wikipedia/en/a/ae/Flag_of_the_United_Kingdom_%281-2%29.svg"
-                                                alt="English (UK)" class="h-5 w-5" />
-                                            <span>English (UK)</span>
-                                        </button>
-                                    </a>
-
-                                    <!-- Sinhala Button -->
-                                    <a href="{{ route('lang.change', ['lang' => 'si']) }}">
-                                        <button
-                                            class="flex items-center justify-between p-2 space-x-2 text-base font-normal text-gray-700 rounded-lg hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
-                                            <img src="https://upload.wikimedia.org/wikipedia/commons/4/48/Flag_of_Sri_Lanka.svg"
-                                                alt="සිංහල" class="h-5 w-5" />
-                                            <span>සිංහල (Sinhala)</span>
-                                        </button>
-                                    </a>
+                                    @foreach (config('languages') as $code => $lang)
+                                        <a href="{{ route('lang.change', ['lang' => $code]) }}">
+                                            <button
+                                                class="flex items-center justify-between p-2 space-x-2 text-base font-normal text-gray-700 rounded-lg hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
+                                                <img src="{{ $lang['flag'] }}" alt="{{ $lang['name'] }}"
+                                                    class="h-5 w-5" />
+                                                <span>{{ $lang['name'] }}</span>
+                                            </button>
+                                        </a>
+                                    @endforeach
                                 </div>
                             </div>
                         </div>

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Actions\Auth;
+namespace App\Actions\Customer\Auth;
 
-use App\DTOs\Auth\FacebookAuthDTO;
+use App\DTOs\Customer\Auth\FacebookAuthDTO;
 use App\Jobs\SendWelcomeEmailJob;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;

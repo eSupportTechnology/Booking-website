@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\Customer\Auth;
 
-use App\Actions\Auth\AppleAuthAction;
-use App\Actions\Auth\FacebookAuthAction;
-use App\Actions\Auth\GoogleAuthAction;
-use App\Actions\Auth\SendCustomerOtpAction;
-use App\Actions\Auth\VerifyOtpAction;
-use App\DTOs\Auth\AppleAuthDTO;
-use App\DTOs\Auth\CustomerEmailRequestDTO;
-use App\DTOs\Auth\FacebookAuthDTO;
-use App\DTOs\Auth\GoogleAuthDTO;
-use App\DTOs\Auth\VerifyOtpDTO;
+use App\Actions\Customer\Auth\AppleAuthAction;
+use App\Actions\Customer\Auth\FacebookAuthAction;
+use App\Actions\Customer\Auth\GoogleAuthAction;
+use App\Actions\Customer\Auth\SendCustomerOtpAction;
+use App\Actions\Customer\Auth\VerifyOtpAction;
+use App\DTOs\Customer\Auth\AppleAuthDTO;
+use App\DTOs\Customer\Auth\CustomerEmailRequestDTO;
+use App\DTOs\Customer\Auth\FacebookAuthDTO;
+use App\DTOs\Customer\Auth\GoogleAuthDTO;
+use App\DTOs\Customer\Auth\VerifyOtpDTO;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\User;
