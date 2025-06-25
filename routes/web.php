@@ -79,9 +79,13 @@ Route::get('/partner-password-recover', function () {
     return view('frontend.partner-forgotpassword-success');
 })->name('partner.forgot.password');
 
-Route::get('/partner-profile-create', function () {
-    return view('frontend.partner-profile-create');
-})->name('partner.profile.create');
+Route::get('/partner-property-types', function () {
+    return view('frontend.partner-property-types');
+})->name('partner.property.types');
+
+Route::get('/customer-profile-create', function () {
+    return view('frontend.customer-profile-create');
+})->name('customer.profile.create');
 
 
 Route::get('/airport-taxis', function () {
