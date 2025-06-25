@@ -79,7 +79,7 @@
   </header>
 
   <!-- Main Section -->
-  <main class="min-h-screen flex items-start justify-center pt-10 px-4 sm:px-6">
+  <main class="min-h-screen flex items-start justify-center pt-10 px-4 sm:px-6 mt-6">
     <div class="w-full max-w-md">
       <div class="bg-white border border-gray-200 shadow-md rounded-md p-6 text-center">
         <h2 class="text-xl font-semibold mb-2" style="font-family: 'Noto Sans', sans-serif;">Having trouble signing in?</h2>
@@ -87,43 +87,46 @@
           We're here to help. Below are some options to help get you back on track.
         </p>
 
-        <ul class="space-y-4 text-left">
-          <li class="flex items-center justify-between border-b pb-2">
-            <a href="#" class="flex items-center text-blue-600 hover:underline space-x-2 font-medium">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c1.38 0 2.5-1.12 2.5-2.5S13.38 6 12 6 9.5 7.12 9.5 8.5 10.62 11 12 11zM12 14.5c-1.5 0-4.5.75-4.5 2.25V18h9v-1.25c0-1.5-3-2.25-4.5-2.25z" />
-              </svg>
-              <span>Forgot your password?</span>
-            </a>
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L11.586 9 7.293 4.707a1 1 0 011.414-1.414l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-            </svg>
-          </li>
+       <ul class="space-y-4 text-left">
+  <li class="flex items-center justify-between border-b pb-2">
+    <a href="/partner-forgot-password" class="flex items-center text-blue-600 hover:underline space-x-2 font-medium">
+      <img src="{{ asset('assets/material-symbols-light_lock-outline.svg') }}" alt="Lock Icon" class="w-5 h-5 inline-block align-middle" />
+      <span class="align-middle">Forgot your password?</span>
+    </a>
+   <a href="/partner-forgot-password" class="text-blue-400 hover:text-blue-600">
+  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L11.586 9 7.293 4.707a1 1 0 011.414-1.414l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+  </svg>
+</a>
 
-          <li class="flex items-center justify-between border-b pb-2">
-            <a href="#" class="flex items-center text-blue-600 hover:underline space-x-2 font-medium">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zM12 14c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-              </svg>
-              <span>Forgot your username?</span>
-            </a>
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L11.586 9 7.293 4.707a1 1 0 011.414-1.414l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-            </svg>
-          </li>
+  </li>
 
-          <li class="flex items-center justify-between">
-            <a href="#" class="flex items-center text-blue-600 hover:underline space-x-2 font-medium">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m0 14v1m8-8h1M3 12H2m15.364-6.364l.707.707M6.343 17.657l-.707.707m0-13.657l.707.707M17.657 17.657l-.707.707M12 8v4l3 1" />
-              </svg>
-              <span>Go to sign-in</span>
-            </a>
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L11.586 9 7.293 4.707a1 1 0 011.414-1.414l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-            </svg>
-          </li>
-        </ul>
+  <li class="flex items-center justify-between border-b pb-2">
+    <a href="#" class="flex items-center text-blue-600 hover:underline space-x-2 font-medium">
+      <img src="{{ asset('assets/circum_user.svg') }}" alt="User Icon" class="w-5 h-5 inline-block align-middle" />
+      <span class="align-middle">Forgot your username?</span>
+    </a>
+    <a href="/login" class="text-blue-400 hover:text-blue-600">
+  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L11.586 9 7.293 4.707a1 1 0 011.414-1.414l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+  </svg>
+</a>
+
+  </li>
+
+  <li class="flex items-center justify-between">
+    <a href="/partner-signin" class="flex items-center text-blue-600 hover:underline space-x-2 font-medium">
+      <img src="{{ asset('assets/material-symbols-light_logout.svg') }}" alt="Logout Icon" class="w-5 h-5 inline-block align-middle" />
+      <span class="align-middle">Go to sign-in</span>
+    </a>
+    <a href="/partner-signin" class="text-blue-400 hover:text-blue-600">
+  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L11.586 9 7.293 4.707a1 1 0 011.414-1.414l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+  </svg>
+</a>
+
+  </li>
+</ul>
 
         <div class="border-t border-gray-200 my-6"></div>
 

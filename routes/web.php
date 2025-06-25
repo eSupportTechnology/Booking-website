@@ -67,9 +67,7 @@ Route::get('/list-your-property', function () {
     return view('frontend.list-your-property');
 });
 
-Route::get('/register', function () {
-    return view('frontend.register');
-});
+
 Route::get('/', function () {
     return view('frontend.home');
 });
@@ -130,6 +128,10 @@ Route::get('/partner-forgot-password', function () {
 Route::get('/partner-password-recover', function () {
     return view('frontend.partner-forgotpassword-success');
 })->name('partner.forgot.password');
+
+Route::get('/partner-profile-create', function () {
+    return view('frontend.partner-profile-create');
+})->name('partner.profile.create');
 
 
 Route::get('/airport-taxis', function () {
