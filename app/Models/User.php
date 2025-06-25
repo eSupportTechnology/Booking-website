@@ -8,8 +8,9 @@ use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 use App\Mail\PartnerResetPasswordMail;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     use HasFactory, Notifiable, HasRoles;
 
@@ -44,4 +45,11 @@ class User extends Authenticatable
     {
         return !empty($this->google_id);
     }
+
+    //partners relationship
+    public function partner()
+    {
+        return $this->hasOne(Partner::class);
+    }
+
 }

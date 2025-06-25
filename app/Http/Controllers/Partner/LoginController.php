@@ -74,4 +74,9 @@ class LoginController extends Controller
             'password' => 'Invalid password.',
         ])->withInput();
     }
+
+    public function show()
+    {
+        return view('partner.partner-sign-in'); // or your custom login view
+    }
 }
