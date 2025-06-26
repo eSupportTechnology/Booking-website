@@ -5,7 +5,7 @@
 @push('styles')
     <link rel="stylesheet" href="{{ asset('assets/Customer/css/home.css') }}">
 @endpush
-
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 @section('content')
     <!-- Hero Section -->
     <section class="text-white py-8 bg-[#1F8FB2] relative z-0">
@@ -16,7 +16,7 @@
                     {{ __('messages.Find your next stay') }}
                 </h1>
                 <p class="text-[18px] md:text-[20px] mt-1 font-sans">
-                    Search low prices on hotels, homes and much more...
+                    {{ __('messages.Search low prices on hotels, homes and much more...') }}
                 </p>
             </div>
         </div>
@@ -24,8 +24,6 @@
 
     <!-- Search Box: Overlapping both sections -->
     <div class="relative z-10 -mt-8 px-4">
-        <!-- Alpine.js CDN (Required for Dropdowns) -->
-        <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
         <form method="GET"
             class="bg-white rounded-xl px-2 py-1 shadow-lg flex flex-col md:flex-row items-center gap-1 md:gap-0 border-4 border-yellow-400 max-w-6xl mx-auto overflow-visible text-sm">
@@ -38,7 +36,7 @@
 
                     <path d="M10 2a6 6 0 00-6 6c0 4.25 6 10 6 10s6-5.75 6-10a6 6 0 00-6-6zm0 8a2 2 0 110-4 2 2 0 010 4z" />
                     </svg>
-                    <span x-text="destination || 'Where are you going?'" style="font-family: 'Noto Sans', sans-serif;"
+                    <span x-text="destination || '{{ __("messages.Where are you going?") }}'" style="font-family: 'Noto Sans', sans-serif;"
                         class="text-gray-800 truncate text-base"></span>
                 </button>
 
@@ -59,10 +57,6 @@
             </div>
 
             <!-- Dates Selector -->
-            <!-- Include Alpine.js if not already -->
-            <!-- Include Alpine.js -->
-            <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-
             <!-- Dropdown with two sections: Check-in/out & Flexible -->
             <div x-data="{ open: false, activeTab: 'check', checkIn: '', checkOut: '', flexibleOption: '' }"
                 class="relative flex-1 border-t md:border-t-0 md:border-r border-gray-500 px-2 py-1">
@@ -72,9 +66,9 @@
                     <img src="{{ asset('assets/calender.svg') }}" alt="Calendar" class="w-5 h-5" />
                     <span class="text-gray-800 truncate">
                         <template x-if="activeTab === 'check'">
-                            <span><span x-text="checkIn ? checkIn : 'Check-in'"
+                            <span><span x-text="checkIn ? checkIn : '{{ __("messages.Check-in") }}'"
                                     style="font-family: 'Noto Sans', sans-serif;" class="text-base"></span> — <span
-                                    x-text="checkOut ? checkOut : 'Check-out'" style="font-family: 'Noto Sans', sans-serif;"
+                                    x-text="checkOut ? checkOut : '{{ __("messages.Check-out") }}'" style="font-family: 'Noto Sans', sans-serif;"
                                     class="text-base"></span></span>
                         </template>
                         <template x-if="activeTab === 'flexible'">
@@ -92,12 +86,12 @@
                         <button @click.prevent="activeTab = 'check'"
                             :class="activeTab === 'check' ? 'border-blue-600 text-blue-600' : 'text-gray-500'"
                             class="px-4 py-2 border-b-2 font-semibold focus:outline-none">
-                            Check-in / Check-out
+                            {{ __('messages.Check-in / Check-out') }}
                         </button>
                         <button @click.prevent="activeTab = 'flexible'"
                             :class="activeTab === 'flexible' ? 'border-blue-600 text-blue-600' : 'text-gray-500'"
                             class="px-4 py-2 border-b-2 font-semibold focus:outline-none">
-                            Flexible dates
+                            {{ __('messages.Flexible dates') }}
                         </button>
                     </nav>
 
@@ -105,13 +99,13 @@
                     <div x-show="activeTab === 'check'" x-transition>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-xs text-gray-500 font-semibold mb-1">Check-in Date</label>
+                                <label class="block text-xs text-gray-500 font-semibold mb-1">{{ __('messages.Check-in Date') }}</label>
                                 <input type="date" x-model="checkIn"
                                     class="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none"
                                     placeholder="Check-in" />
                             </div>
                             <div>
-                                <label class="block text-xs text-gray-500 font-semibold mb-1">Check-out Date</label>
+                                <label class="block text-xs text-gray-500 font-semibold mb-1">{{ __('messages.Check-out Date') }}</label>
                                 <input type="date" x-model="checkOut"
                                     class="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none"
                                     placeholder="Check-out" />
@@ -121,10 +115,10 @@
 
                     <!-- Flexible Dates Section -->
                     <div x-show="activeTab === 'flexible'" x-transition>
-                        <label class="block text-xs text-gray-500 font-semibold mb-1">Select Flexible Dates</label>
+                        <label class="block text-xs text-gray-500 font-semibold mb-1">{{ __('messages.Select Flexible Dates') }}</label>
                         <select x-model="flexibleOption"
                             class="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none">
-                            <option value="" disabled>Select option</option>
+                            <option value="" disabled>{{ __('messages.Select option')}}</option>
                             <option value="Weekend Getaway">Weekend Getaway</option>
                             <option value="Next Month">Next Month</option>
                             <option value="Anytime">Anytime</option>
@@ -136,21 +130,18 @@
                     <div class="mt-4 text-right">
                         <button @click="open = false"
                             class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">
-                            Done
+                            {{ __('messages.Done') }}
                         </button>
                     </div>
                 </div>
             </div>
-
-
-
 
             <!-- Guests Selector -->
             <div x-data="{ open: false, adults: 2, children: 0, rooms: 1, pets: false }"
                 class="relative px-2 py-1 flex-1 border-t md:border-t-0 md:border-r border-gray-500">
                 <button @click="open = !open" type="button" class="flex items-center gap-2 w-full text-left text-sm">
                     <img src="{{ asset('assets/user.svg') }}" alt="Calendar" class="w-5 h-5" />
-                    <span x-text="`${adults} adults · ${children} children · ${rooms} room${rooms > 1 ? 's' : ''}`"
+                    <span x-text="`${adults} {{ __('messages.adults') }} · ${children} {{ __('messages.children') }} · ${rooms} {{ __('messages.room') }} ${rooms > 1 ? 's' : ''}`"
                         class="text-gray-800 text-base truncate" style="font-family: 'Noto Sans', sans-serif;"></span>
                 </button>
 
@@ -159,7 +150,7 @@
                     class="absolute z-20 bg-white shadow-xl rounded-xl p-4 mt-2 w-72 right-0 text-gray-800 space-y-4 text-sm">
                     <!-- Adults -->
                     <div class="flex items-center justify-between">
-                        <span style="font-family: 'Noto Sans', sans-serif;">Adults</span>
+                        <span style="font-family: 'Noto Sans', sans-serif;">{{ __('messages.adults') }}</span>
                         <div class="flex items-center gap-2">
                             <button type="button" @click="if(adults > 1) adults--" class="px-2 py-1 bg-gray-200 rounded"
                                 style="font-family: 'Noto Sans', sans-serif;">−</button>
@@ -171,7 +162,7 @@
 
                     <!-- Children -->
                     <div class="flex items-center justify-between">
-                        <span>Children</span>
+                        <span>{{ __('messages.children')}}</span>
                         <div class="flex items-center gap-2">
                             <button type="button" @click="if(children > 0) children--"
                                 class="px-2 py-1 bg-gray-200 rounded">−</button>
@@ -182,7 +173,7 @@
 
                     <!-- Rooms -->
                     <div class="flex items-center justify-between">
-                        <span>Rooms</span>
+                        <span>{{ __('messages.room')}}</span>
                         <div class="flex items-center gap-2">
                             <button type="button" @click="if(rooms > 1) rooms--"
                                 class="px-2 py-1 bg-gray-200 rounded">−</button>
@@ -193,7 +184,7 @@
 
                     <!-- Pets Toggle -->
                     <div class="flex items-center justify-between">
-                        <span>Travelling with pets?</span>
+                        <span>{{ __('messages.Travelling with pets?') }}</span>
                         <label class="inline-flex items-center cursor-pointer">
                             <input type="checkbox" x-model="pets" class="sr-only peer">
                             <div
@@ -206,15 +197,14 @@
                     </div>
 
                     <p class="text-xs text-gray-500">
-                        Assistance animals aren’t considered pets.<br>
-                        <a href="#" class="text-blue-600 underline">Read more about travelling with assistance
-                            animals</a>
+                        {{ __("messages.Assistance animals aren’t considered pets.") }}<br>
+                        <a href="#" class="text-blue-600 underline">{{ __('messages.Read more about travelling with assistance animals') }}</a>
                     </p>
 
                     <!-- Done Button -->
                     <button type="button" @click="open = false"
                         class="block w-full text-center bg-white border border-blue-600 text-blue-600 font-semibold py-2 rounded hover:bg-blue-50">
-                        Done
+                        {{ __('messages.Done')}}
                     </button>
                 </div>
             </div>
@@ -224,43 +214,28 @@
                 <button type="submit"
                     class="w-full md:w-auto h-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg text-sm"
                     style="background-color:#3CC0E9;">
-                    Search
+                    {{ __('messages.Search') }}
                 </button>
             </div>
         </form>
-
-
     </div>
-
-
-
-    <!-- AlpineJS -->
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-
-
-
 
     <!-- Offers Section -->
     <section class="py-12 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Title -->
-            <h2 class="text-2xl font-semibold text-gray-800 mb-2">Offers</h2>
-            <p class="mb-6 text-gray-600" style="font-family: 'Noto Sans', sans-serif;">Promotions, deals and special
-                offers for you</p>
+            <h2 class="text-2xl font-semibold text-gray-800 mb-2">{{ __('messages.Offers') }}</h2>
+            <p class="mb-6 text-gray-600" style="font-family: 'Noto Sans', sans-serif;">{{ __('messages.Promotions, deals and special offers for you') }}</p>
 
             <!-- Offer Card -->
             <div class="bg-white-50 p-2 rounded flex items-center justify-between border border-solid border-gray-300">
                 <!-- Text Content -->
                 <div class="ml-4">
-                    <p class="font-medium font-semibold">Quick escape, quality time</p>
-                    <p class="text-sm text-gray-600" style="font-family: 'Noto Sans', sans-serif;">Save up to 20% with a
-                        Gateway Deal!</p>
+                    <p class="font-medium font-semibold">{{ __('messages.Quick escape, quality time') }}</p>
+                    <p class="text-sm text-gray-600" style="font-family: 'Noto Sans', sans-serif;">{{ __('messages.Save up to 20% with a Gateway Deal!')}}</p>
                     <button class=" text-white px-4 py-1 rounded mt-2 w-auto"
-                        style="font-family: 'Noto Sans', sans-serif;background-color:#3CC0E9;">Save on stays</button>
+                        style="font-family: 'Noto Sans', sans-serif;background-color:#3CC0E9;">{{ __('messages.Save on stays') }}</button>
                 </div>
-
-
-
 
                 <!-- Image -->
                 <img src="{{ asset('images/offers.png') }}" alt="Offer Image" class="w-32 h-32 rounded ml-4">
@@ -272,7 +247,7 @@
     <!-- Browse by Property Type Section -->
     <section class="py-12 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-2xl font-semibold text-gray-800 mb-6">Browse by property type</h2>
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6">{{ __('messages.Browse by property type') }}</h2>
             <div class="flex space-x-4 overflow-x-auto pb-2">
                 <!-- Resorts -->
                 <div class="min-w-[250px]">
@@ -281,7 +256,7 @@
                     </div>
                     <div class="mt-2">
                         <h6 class="text-base font-semibold text-gray-800" style="font-family: 'Noto Sans', sans-serif;">
-                            Resorts</h3>
+                            {{ __('messages.Resorts')}}</h3>
                     </div>
                 </div>
 
@@ -293,7 +268,7 @@
                     </div>
                     <div class="mt-2">
                         <h6 class="text-base font-semibold text-gray-800" style="font-family: 'Noto Sans', sans-serif;">
-                            Apartments</h3>
+                            {{ __('messages.Apartments')}}</h3>
                     </div>
                 </div>
 
@@ -304,7 +279,7 @@
                     </div>
                     <div class="mt-2">
                         <h6 class="text-base font-semibold text-gray-800" style="font-family: 'Noto Sans', sans-serif;">
-                            Hotels</h3>
+                            {{ __('messages.Hotels')}}</h3>
                     </div>
                 </div>
 
@@ -315,7 +290,7 @@
                     </div>
                     <div class="mt-2">
                         <h6 class="text-base font-semibold text-gray-800" style="font-family: 'Noto Sans', sans-serif;">
-                            Villas</h3>
+                            {{ __('messages.Villas')}}</h3>
                     </div>
                 </div>
             </div>
@@ -323,20 +298,15 @@
     </section>
     <!--End Section-->
 
-
-
     <!-- Trending Destinations Section -->
     <section class="py-12 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Title -->
-            <h2 class="text-2xl font-semibold text-gray-800 mb-2">Trending destinations</h2>
-            <p class="mb-8 text-gray-600" style="font-family: 'Noto Sans', sans-serif;">Most popular choices travelers
-                from Sri Lanka</p>
-
+            <h2 class="text-2xl font-semibold text-gray-800 mb-2">{{ __('messages.Trending destinations')}}</h2>
+            <p class="mb-8 text-gray-600" style="font-family: 'Noto Sans', sans-serif;">{{ __('messages.Most popular choices travelers from Sri Lanka')}}</p>
 
             <!-- First Row: 2 Columns -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-
                 <div class="relative rounded-[10px] overflow-hidden">
                     <img src="{{ asset('images/colombo.jpg') }}" alt="Colombo" class="w-full h-64 object-cover"
                         style="border-radius: 10px;">
@@ -346,7 +316,6 @@
                         </h3>
                     </div>
                 </div>
-
 
                 <div class="relative rounded-[10px] overflow-hidden">
                     <img src="{{ asset('images/nuwara.jpg') }}" alt="Nuwara Eliya" class="w-full h-64 object-cover"
@@ -372,7 +341,6 @@
                     </div>
                 </div>
 
-
                 <div class="relative rounded-[10px] overflow-hidden">
                     <img src="{{ asset('images/ella.png') }}" alt="Ella" class="w-full h-64 object-cover"
                         style="border-radius: 10px;">
@@ -383,14 +351,12 @@
                     </div>
                 </div>
 
-
                 <div class="relative rounded-[10px] overflow-hidden">
                     <img src="{{ asset('images/dambulla.jpg') }}" alt="Dambulla" class="w-full h-64 object-cover"
                         style="border-radius: 10px;">
                     <div class="absolute top-0 left-0 w-full p-4 text-white">
                         <h3 class="text-lg font-semibold flex items-center gap-2"> Dambulla
                             <img src="{{ asset('images/srilanka.jpg') }}" alt="Sri Lanka Flag" class="h-4 w-6" />
-
                         </h3>
                     </div>
                 </div>
@@ -399,19 +365,13 @@
     </section>
     <!-- End Trending Destination Section-->
 
-
-
-
-
-
-
     <section class="py-12 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
             <div class="mb-6">
-                <h2 class="text-2xl font-semibold text-gray-800 mb-2">Browse by property type</h2>
+                <h2 class="text-2xl font-semibold text-gray-800 mb-2">{{ __('messages.Browse by property type')}}</h2>
                 <p class="mb-8 text-gray-600" style="font-family: 'Noto Sans', sans-serif;">
-                    Most popular choices Pick a vibe and explore the top destination in Sri Lanka from Sri Lanka
+                    {{ __('messages.Most popular choices Pick a vibe and explore the top destination in Sri Lanka from Sri Lanka') }}
                 </p>
             </div>
 
@@ -422,49 +382,46 @@
                     onclick="togglePtypeTab('city')">
                     <img src="{{ asset('assets/city.svg') }}" alt="city" class="w-5 h-5"
                         style="filter: brightness(0) saturate(100%);" />
-                    <span style="font-family: 'Noto Sans', sans-serif;">City</span>
+                    <span style="font-family: 'Noto Sans', sans-serif;">{{ __('messages.City')}}</span>
                 </button>
 
                 <button id="ptype-tab-beach"
                     class="rounded-full ptype-tab-button active-ptype-tab flex items-center gap-2 px-4 py-2"
                     onclick="togglePtypeTab('beach')">
                     <img src="{{ asset('assets/beach.svg') }}" alt="Beach" class="w-5 h-5" />
-                    <span style="font-family: 'Noto Sans', sans-serif;">Beach</span>
+                    <span style="font-family: 'Noto Sans', sans-serif;">{{ __('messages.Beach')}}</span>
                 </button>
 
                 <button id="ptype-tab-outdoors" class="rounded-full ptype-tab-button flex items-center gap-2 px-4 py-2"
                     onclick="togglePtypeTab('outdoors')">
                     <img src="{{ asset('assets/outdoors.svg') }}" alt="Outdoors" class="w-5 h-5"
                         style="filter: brightness(0) saturate(100%);" />
-                    <span style="font-family: 'Noto Sans', sans-serif;">Outdoors</span>
+                    <span style="font-family: 'Noto Sans', sans-serif;">{{ __('messages.Outdoors')}}</span>
                 </button>
 
                 <button id="ptype-tab-relax" class="rounded-full ptype-tab-button flex items-center gap-2 px-4 py-2"
                     onclick="togglePtypeTab('relax')">
                     <img src="{{ asset('assets/relax.svg') }}" alt="Relax" class="w-5 h-5" />
-                    <span style="font-family: 'Noto Sans', sans-serif;">Relax</span>
+                    <span style="font-family: 'Noto Sans', sans-serif;">{{ __('messages.Relax')}}</span>
                 </button>
 
                 <button id="ptype-tab-romance" class="rounded-full ptype-tab-button flex items-center gap-2 px-4 py-2"
                     onclick="togglePtypeTab('romance')">
                     <img src="{{ asset('assets/romance.svg') }}" alt="Romance" class="w-5 h-5" />
-                    <span style="font-family: 'Noto Sans', sans-serif;">Romance</span>
+                    <span style="font-family: 'Noto Sans', sans-serif;">{{ __('messages.Romance')}}</span>
                 </button>
 
                 <button id="ptype-tab-food" class="rounded-full ptype-tab-button flex items-center gap-2 px-4 py-2"
                     onclick="togglePtypeTab('food')">
                     <img src="{{ asset('assets/food.svg') }}" alt="Food" class="w-5 h-5" />
-                    <span style="font-family: 'Noto Sans', sans-serif;">Food</span>
+                    <span style="font-family: 'Noto Sans', sans-serif;">{{ __('messages.Food')}}</span>
                 </button>
             </div>
 
             <!-- Tab Contents -->
             <div id="ptype-tab-content">
-
                 <!-- City Tab -->
                 <div id="ptype-content-city" class="px-2 py-6 block">
-
-
 
                     <div class="scroll-section">
 
@@ -499,13 +456,12 @@
                                             </h3>
                                             <p class="text-xs text-gray-500"
                                                 style="font-family: 'Noto Sans', sans-serif;">
-                                                {{ $destination['properties'] }} Properties
+                                                {{ $destination['properties'] }} {{ __('messages.Properties')}}
                                             </p>
                                         </div>
                                     </div>
                                 @endforeach
                             </div>
-
 
                             <!-- Left Arrow -->
                             <button
@@ -532,7 +488,6 @@
 
                     </div>
                 </div>
-
                 <!-- Other Tabs -->
                 <div id="ptype-content-beach" class="hidden px-2 py-6">Beach content here...</div>
                 <div id="ptype-content-outdoors" class="hidden px-2 py-6">Outdoors content here...</div>
@@ -541,27 +496,12 @@
                 <div id="ptype-content-food" class="hidden px-2 py-6">Food content here...</div>
             </div>
         </div>
-
-        <!-- Tailwind utility to hide scrollbar -->
-        <style>
-            .no-scrollbar::-webkit-scrollbar {
-                display: none;
-            }
-
-            .no-scrollbar {
-                -ms-overflow-style: none;
-                scrollbar-width: none;
-            }
-        </style>
     </section>
-
-
 
     <section class="scroll-section py-12 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-2xl font-semibold text-gray-800 mb-2">Explore Sri Lanka</h2>
-            <p class="mb-8 text-gray-600" style="font-family: 'Noto Sans', sans-serif;">These popular destinations have a
-                lot to offer</p>
+            <h2 class="text-2xl font-semibold text-gray-800 mb-2">{{ __('messages.Explore Sri Lanka')}}</h2>
+            <p class="mb-8 text-gray-600" style="font-family: 'Noto Sans', sans-serif;">{{ __('messages.These popular destinations have a lot to offer')}}</p>
         </div>
 
         <div class="relative">
@@ -597,13 +537,12 @@
                                     {{ $destination['name'] }}
                                 </h3>
                                 <p class="text-xs text-gray-500" style="font-family: 'Noto Sans', sans-serif;">
-                                    {{ $destination['properties'] }} Properties
+                                    {{ $destination['properties'] }} {{ __('messages.Properties')}}
                                 </p>
                             </div>
                         </div>
                     @endforeach
                 </div>
-
 
                 <!-- Left Arrow -->
                 <button
@@ -626,70 +565,11 @@
         </div>
     </section>
 
-    <!-- Tailwind scroll styling -->
-    <style>
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-    </style>
-
-    <!-- Scroll button script -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const scrollSections = document.querySelectorAll('.scroll-section');
-            const scrollAmount = 648;
-
-            scrollSections.forEach(section => {
-                const scrollContainer = section.querySelector('.scroll-container');
-                const scrollLeftBtn = section.querySelector('.scroll-left');
-                const scrollRightBtn = section.querySelector('.scroll-right');
-
-                function toggleArrows() {
-                    const maxScrollLeft = scrollContainer.scrollWidth - scrollContainer.clientWidth;
-                    scrollLeftBtn.classList.toggle('hidden', scrollContainer.scrollLeft <= 0);
-                    scrollRightBtn.classList.toggle('hidden', scrollContainer.scrollLeft >= maxScrollLeft -
-                        10);
-                }
-
-                scrollLeftBtn.addEventListener('click', () => {
-                    scrollContainer.scrollBy({
-                        left: -scrollAmount,
-                        behavior: 'smooth'
-                    });
-                    setTimeout(toggleArrows, 400);
-                });
-
-                scrollRightBtn.addEventListener('click', () => {
-                    scrollContainer.scrollBy({
-                        left: scrollAmount,
-                        behavior: 'smooth'
-                    });
-                    setTimeout(toggleArrows, 400);
-                });
-
-                scrollContainer.addEventListener('scroll', toggleArrows);
-
-                // Initial visibility check
-                toggleArrows();
-            });
-        });
-    </script>
-
-
-
-
-
-
     <!--  Deals for the weekend Section -->
     <section class="scroll-section py-12 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 class="text-2xl font-semibold text-gray-800 mb-2">
-                Deals for the weekend
+                {{ __('messages.Deals for the weekend')}}
             </h2>
             <p class="mb-8 text-gray-600" style="font-family: 'Noto Sans', sans-serif;">Save on stays for 16 May - 18 May
             </p>
@@ -760,9 +640,9 @@
 
     <section class="scroll-section py-12 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-2xl font-semibold text-gray-800 mb-2">Stay at our top unique properties</h2>
+            <h2 class="text-2xl font-semibold text-gray-800 mb-2">{{ __('messages.Stay at our top unique properties')}}</h2>
             <p class="text-gray-600 mb-4" style="font-family: 'Noto Sans', sans-serif;">
-                From castles and villas to boats and igloos, we’ve got it all
+                {{ __("messages.From castles and villas to boats and igloos, we’ve got it all") }}
             </p>
 
             <div class="relative">
@@ -815,8 +695,7 @@
 
     <section class="scroll-section py-12 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Homes guests love</h2>
-
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">{{ __('messages.Homes guests love')}}</h2>
 
             <div class="relative">
                 <div class="scroll-container flex space-x-4 overflow-x-auto pb-2 scroll-smooth no-scrollbar">
@@ -871,12 +750,6 @@
         </div>
     </section>
 
-
-
-
-
-
-
     <section class="py-12 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col md:flex-row md:space-x-6 space-y-6 md:space-y-0">
@@ -889,10 +762,10 @@
                     <div class="flex flex-col justify-between">
                         <h2 class="text-sm font-semibold text-gray-800 mb-1"
                             style="font-family: 'Noto Sans', sans-serif;">
-                            Book now, pay at the property
+                            {{ __('messages.Book now, pay at the property')}}
                         </h2>
                         <p class="text-sm text-gray-600 mb-3" style="font-family: 'Noto Sans', sans-serif;">
-                            FREE cancellation on most rooms
+                            {{ __('messages.FREE cancellation on most rooms')}}
                         </p>
                     </div>
                 </div>
@@ -905,12 +778,10 @@
                     <div class="flex flex-col justify-between">
                         <h2 class="text-sm font-semibold text-gray-800 mb-1"
                             style="font-family: 'Noto Sans', sans-serif;">
-                            2+ million properties
-                            worldwide
+                            {{ __('messages.2+ million properties worldwide')}}
                         </h2>
                         <p class="text-sm text-gray-600 mb-3" style="font-family: 'Noto Sans', sans-serif;">
-                            Hotels, guest houses, apartments, and
-                            more...
+                            {{ __('messages.Hotels, guest houses, apartments, and more...')}}'
                         </p>
                     </div>
                 </div>
@@ -923,11 +794,10 @@
                     <div class="flex flex-col justify-between">
                         <h2 class="text-sm font-semibold text-gray-800 mb-1"
                             style="font-family: 'Noto Sans', sans-serif;">
-                            Trusted customer service you
-                            can rely on, 24/7
+                            {{ __('messages.Trusted customer service you can rely on, 24/7')}}
                         </h2>
                         <p class="text-sm text-gray-600 mb-3" style="font-family: 'Noto Sans', sans-serif;">
-                            We’re always here to help
+                            {{ __("messages.We’re always here to help")}}
                         </p>
                     </div>
                 </div>
@@ -939,7 +809,7 @@
     <section class="py-12 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 class="text-2xl font-semibold text-gray-800 mb-6">
-                Get inspiration for your next trip
+                {{ __('messages.Get inspiration for your next trip')}}
             </h2>
 
             <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
@@ -965,13 +835,14 @@
                     <div class="mt-2">
                         <h6 class="text-base font-semibold text-gray-800" style="font-family: 'Noto Sans', sans-serif;">6
                             best ryokans in Japan to
-                            rejuverate yourself</h3>
+                            rejuverate yourself
+                        </h3>
                             <p class="text-sm mt-1" style="font-family: 'Noto Sans', sans-serif;">Discover unmissable
                                 ryokans to relax and
-                                unwind in style</p>
+                                unwind in style
+                            </p>
                     </div>
                 </div>
-
 
                 <!-- Small Card 2 -->
                 <div class="min-w-[250px]  md:col-span-3 flex flex-col">
@@ -981,39 +852,33 @@
                     <div class="mt-2">
                         <h6 class="text-base font-semibold text-gray-800" style="font-family: 'Noto Sans', sans-serif;">7
                             best places in Asia to celebrate
-                            Christmas</h3>
-                            <p class="text-sm mt-1" style="font-family: 'Noto Sans', sans-serif;">Discover the shimmering
-                                lights and festive
-                                sights of Asia’s Holiday season.</p>
+                            Christmas
+                        </h6>
+                        <p class="text-sm mt-1" style="font-family: 'Noto Sans', sans-serif;">Discover the shimmering
+                            lights and festive
+                            sights of Asia’s Holiday season.
+                        </p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-
-
-
     <!-- Offers Section -->
     <section class="py-12 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Title -->
-            <h2 class="text-2xl font-semibold text-gray-800 mb-2">Travel more, spend less</h2>
-
+            <h2 class="text-2xl font-semibold text-gray-800 mb-2">{{ __('messages.Travel more, spend less')}}</h2>
 
             <!-- Offer Card -->
             <div class="bg-white-50 p-2 rounded flex items-center justify-between border border-solid border-gray-300">
                 <!-- Text Content -->
                 <div class="ml-4">
-                    <p class="font-medium font-semibold">Sign in, save money</p>
-                    <p class="text-sm text-gray-600" style="font-family: 'Noto Sans', sans-serif;">Save 10% or more at
-                        participating properties -just look for the blue Genius label</p>
+                    <p class="font-medium font-semibold">{{ __('messages.Sign in, save money')}}</p>
+                    <p class="text-sm text-gray-600" style="font-family: 'Noto Sans', sans-serif;">{{ __('messages.Save 10% or more at participating properties -just look for the blue Genius label')}}</p>
                     <button class=" text-white px-4 py-1 rounded mt-2 w-auto"
-                        style="font-family: 'Noto Sans', sans-serif;background-color:#3CC0E9;">Sign In</button>
+                        style="font-family: 'Noto Sans', sans-serif;background-color:#3CC0E9;">{{ __('messages.Sign In')}}</button>
                 </div>
-
-
-
 
                 <!-- Image -->
                 <img src="{{ asset('images/genius.png') }}" alt="Offer Image" class="w-32 h-32 rounded ml-4">
@@ -1042,12 +907,12 @@
                         <!-- Text Overlay -->
                         <div
                             class="absolute inset-0 flex flex-col items-center justify-center text-center text-white font-semibold space-y-1">
-                            <h2 class="text-2xl md:text-3xl lg:text-4xl " style="margin-top:-70px;">Find homes</h2>
+                            <h2 class="text-2xl md:text-3xl lg:text-4xl " style="margin-top:-70px;">{{ __('messages.Find homes')}}</h2>
 
-                            <p class="text-xl md:text-2xl">For your next trip</p>
+                            <p class="text-xl md:text-2xl">{{ __('messages.For your next trip')}}</p>
                             <a href="#"
                                 class="mt-2 text-[#35C1EA] bg-white px-4 py-2 rounded shadow hover:bg-gray-100 transition text-sm md:text-base">
-                                Discover homes
+                                {{ __('messages.Discover homes')}}
                             </a>
                         </div>
                     </div>
@@ -1061,35 +926,26 @@
         </div>
     </section>
 
-
-
-
-
-
-
-
     <!--Popular with Travellers-->
     <section class="py-12 bg-white" style="margin-bottom:60px;">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-2xl font-semibold text-gray-800 mb-6">Popular with travelers from Sri Lanka</h2>
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6">{{ __('messages.Popular with travelers from Sri Lanka')}}</h2>
 
             <!-- Tabs -->
             <div class="flex space-x-4 overflow-x-auto mb-4">
                 <button id="tab-domestic" class="rounded-full tab-button active-tab"
-                    onclick="toggleTab('domestic')">Domestic cities</button>
+                    onclick="toggleTab('domestic')">{{ __('messages.Domestic cities')}}</button>
                 <button id="tab-international" class="rounded-full tab-button"
-                    onclick="toggleTab('international')">International cities</button>
-                <button id="tab-regions" class="rounded-full tab-button" onclick="toggleTab('regions')">Regions</button>
+                    onclick="toggleTab('international')">{{ __('messages.International cities')}}</button>
+                <button id="tab-regions" class="rounded-full tab-button" onclick="toggleTab('regions')">{{ __('messages.Regions')}}</button>
                 <button id="tab-countries" class="rounded-full tab-button"
-                    onclick="toggleTab('countries')">Countries</button>
-                <button id="tab-places" class="rounded-full tab-button" onclick="toggleTab('places')">Places to
-                    stay</button>
+                    onclick="toggleTab('countries')">{{ __('messages.Countries')}}</button>
+                <button id="tab-places" class="rounded-full tab-button" onclick="toggleTab('places')">{{ __('messages.Places to stay')}}</button>
             </div>
 
             <!-- Content Panels -->
             <div id="tab-content" class="mt-4">
                 <!-- Domestic -->
-
                 <div id="content-domestic" class="grid grid-cols-5 gap-y-2 w-full text-sm"
                     style="font-family: 'Lato', sans-serif;">
                     <span>Kandy hotels</span>
@@ -1120,62 +976,24 @@
                     <div class="col-span-full w-full text-left mt-2" style="margin-bottom:60px;">
                         <button class="text-blue-600" style="color:rgb(31, 143, 178);">+ Show more</button>
                     </div>
-
                 </div>
-
 
                 <!-- International -->
-                <div id="content-international" class="grid grid-cols-5 gap-4 hidden">
-
-                </div>
+                <div id="content-international" class="grid grid-cols-5 gap-4 hidden"></div>
 
                 <!-- Regions -->
-                <div id="content-regions" class="grid grid-cols-5 gap-4 hidden">
-
-
-                </div>
+                <div id="content-regions" class="grid grid-cols-5 gap-4 hidden"></div>
 
                 <!-- Countries -->
-                <div id="content-countries" class="grid grid-cols-5 gap-4 hidden">
-
-
-
-
-                </div>
-                <div id="content-international" class="grid grid-cols-5 gap-4 hidden">
-
-                </div>
-
+                <div id="content-countries" class="grid grid-cols-5 gap-4 hidden"></div>
+                <div id="content-international" class="grid grid-cols-5 gap-4 hidden"></div>
             </div>
         </div>
         </div>
-
-
-
-        <!-- JavaScript for Tab Switching -->
-        <!--<script>
-            function toggleTab(tabName) {
-                // Hide all panels
-                const panels = document.querySelectorAll('#tab-content > div');
-                panels.forEach(panel => panel.classList.add('hidden'));
-
-                // Show selected panel
-                const selectedPanel = document.getElementById(`content-${tabName}`);
-                if (selectedPanel) selectedPanel.classList.remove('hidden');
-
-                // Update tab button styles
-                const tabs = document.querySelectorAll('.tab-button');
-                tabs.forEach(tab => tab.classList.remove('active-tab'));
-
-                const selectedTab = document.getElementById(`tab-${tabName}`);
-                if (selectedTab) selectedTab.classList.add('active-tab');
-            }
-        </script>-->
     </section>
 
-@push('scripts')
-    <script src="{{ asset('assets/Customer/js/home.js') }}"></script>
-@endpush
-
+    @push('scripts')
+        <script src="{{ asset('assets/Customer/js/home.js') }}"></script>
+    @endpush
 
 @endsection

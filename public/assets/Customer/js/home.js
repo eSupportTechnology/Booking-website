@@ -89,3 +89,48 @@ document.addEventListener("DOMContentLoaded", () => {
     // Make togglePtypeTab globally available too (if used inline)
     window.togglePtypeTab = togglePtypeTab;
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+    const scrollSections = document.querySelectorAll(".scroll-section");
+    const scrollAmount = 648;
+
+    scrollSections.forEach((section) => {
+        const scrollContainer = section.querySelector(".scroll-container");
+        const scrollLeftBtn = section.querySelector(".scroll-left");
+        const scrollRightBtn = section.querySelector(".scroll-right");
+
+        function toggleArrows() {
+            const maxScrollLeft =
+                scrollContainer.scrollWidth - scrollContainer.clientWidth;
+            scrollLeftBtn.classList.toggle(
+                "hidden",
+                scrollContainer.scrollLeft <= 0
+            );
+            scrollRightBtn.classList.toggle(
+                "hidden",
+                scrollContainer.scrollLeft >= maxScrollLeft - 10
+            );
+        }
+
+        scrollLeftBtn.addEventListener("click", () => {
+            scrollContainer.scrollBy({
+                left: -scrollAmount,
+                behavior: "smooth",
+            });
+            setTimeout(toggleArrows, 400);
+        });
+
+        scrollRightBtn.addEventListener("click", () => {
+            scrollContainer.scrollBy({
+                left: scrollAmount,
+                behavior: "smooth",
+            });
+            setTimeout(toggleArrows, 400);
+        });
+
+        scrollContainer.addEventListener("scroll", toggleArrows);
+
+        // Initial visibility check
+        toggleArrows();
+    });
+});
