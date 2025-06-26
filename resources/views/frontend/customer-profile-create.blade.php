@@ -8,7 +8,8 @@
   <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet" />
-  @vite('resources/css/app.css')
+ {{-- Tailwind CSS via Vite --}}
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
   <style>
     body {
       font-family: 'Noto Sans', sans-serif;
