@@ -41,41 +41,43 @@
       To get started, choose the type of property you want to list on Booking.com
     </p>
 
-    <!-- Property Cards -->
-    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-      <!-- Card 1 -->
-      <div class="bg-white p-6 rounded-lg shadow border text-center flex flex-col items-center space-y-4">
-        <span class="bg-green-700 text-white text-xs px-2 py-1 rounded-full font-semibold">🚀 Quick start</span>
-        <img src="https://img.icons8.com/ios-filled/50/000000/apartment.png" alt="Apartment" class="w-10 h-10" />
-        <h2 class="text-lg font-semibold">Apartment</h2>
-        <p class="text-sm text-gray-600">Furnished and self-catering accommodation, where guests rent the entire place.</p>
-        <button class="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm font-semibold">List your property</button>
-      </div>
+ <!-- Property Cards - Horizontal Row -->
+<div class="flex gap-6 overflow-x-auto py-4">
 
-      <!-- Card 2 -->
-      <div class="bg-white p-6 rounded-lg shadow border text-center flex flex-col items-center space-y-4">
-        <img src="https://img.icons8.com/ios-filled/50/000000/home.png" alt="Homes" class="w-10 h-10" />
-        <h2 class="text-lg font-semibold">Homes</h2>
-        <p class="text-sm text-gray-600">Properties like apartments, holiday homes, villas, etc.</p>
-        <button class="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm font-semibold">List your property</button>
-      </div>
+  <!-- Card 1 -->
+  <div class="min-w-[250px] bg-white p-6 rounded-lg shadow border text-center flex flex-col items-center space-y-4">
+    <span class="bg-green-700 text-white text-xs px-2 py-1 rounded-full font-semibold">🚀 Quick start</span>
+    <img src="https://img.icons8.com/ios-filled/50/000000/apartment.png" alt="Apartment" class="w-10 h-10" />
+    <h2 class="text-lg font-semibold">Apartment</h2>
+    <p class="text-sm text-gray-600">Furnished and self-catering accommodation, where guests rent the entire place.</p>
+    <button class="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm font-semibold">List your property</button>
+  </div>
 
-      <!-- Card 3 -->
-      <div class="bg-white p-6 rounded-lg shadow border text-center flex flex-col items-center space-y-4">
-        <img src="https://img.icons8.com/ios-filled/50/000000/hotel.png" alt="Hotel" class="w-10 h-10" />
-        <h2 class="text-lg font-semibold">Hotel, B&Bs, and more</h2>
-        <p class="text-sm text-gray-600">Properties like hotels, B&Bs, guest houses, hostels, aparthotels, etc.</p>
-        <button class="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm font-semibold">List your property</button>
-      </div>
+  <!-- Card 2 -->
+  <div class="min-w-[250px] bg-white p-6 rounded-lg shadow border text-center flex flex-col items-center space-y-4">
+    <img src="https://img.icons8.com/ios-filled/50/000000/home.png" alt="Homes" class="w-10 h-10" />
+    <h2 class="text-lg font-semibold">Homes</h2>
+    <p class="text-sm text-gray-600">Properties like apartments, holiday homes, villas, etc.</p>
+    <button class="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm font-semibold">List your property</button>
+  </div>
 
-      <!-- Card 4 -->
-      <div class="bg-white p-6 rounded-lg shadow border text-center flex flex-col items-center space-y-4">
-        <img src="https://img.icons8.com/ios-filled/50/000000/camping-tent.png" alt="Alternative" class="w-10 h-10" />
-        <h2 class="text-lg font-semibold">Alternative places</h2>
-        <p class="text-sm text-gray-600">Properties like boats, campsites, luxury tents, etc.</p>
-        <button class="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm font-semibold">List your property</button>
-      </div>
-    </div>
+  <!-- Card 3 -->
+  <div class="min-w-[250px] bg-white p-6 rounded-lg shadow border text-center flex flex-col items-center space-y-4">
+    <img src="https://img.icons8.com/ios-filled/50/000000/hotel.png" alt="Hotel" class="w-10 h-10" />
+    <h2 class="text-lg font-semibold">Hotel, B&Bs, and more</h2>
+    <p class="text-sm text-gray-600">Properties like hotels, B&Bs, guest houses, hostels, aparthotels, etc.</p>
+    <button class="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm font-semibold">List your property</button>
+  </div>
+
+  <!-- Card 4 -->
+  <div class="min-w-[250px] bg-white p-6 rounded-lg shadow border text-center flex flex-col items-center space-y-4">
+    <img src="https://img.icons8.com/ios-filled/50/000000/camping-tent.png" alt="Alternative" class="w-10 h-10" />
+    <h2 class="text-lg font-semibold">Alternative places</h2>
+    <p class="text-sm text-gray-600">Properties like boats, campsites, luxury tents, etc.</p>
+    <button class="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm font-semibold">List your property</button>
+  </div>
+
+</div>
   </main>
 
 </body>
