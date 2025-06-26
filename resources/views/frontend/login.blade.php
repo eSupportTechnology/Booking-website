@@ -145,13 +145,12 @@
         <img src="{{ asset('images/facebook.png') }}" alt="Facebook" class="w-6 h-6">
       </button>
     </div>
-
     <hr class="flex-grow border-gray-300">
 
     <!-- Terms -->
     <p class="text-xs text-gray-500 mt-6 text-center"style="font-family: 'Noto Sans', sans-serif;" >
-      By signing in or creating an account, you agree with our 
-      <a href="#" class="text-blue-600 underline" style="font-family: 'Noto Sans', sans-serif;">Terms & conditions</a> and 
+      By signing in or creating an account, you agree with our
+      <a href="#" class="text-blue-600 underline" style="font-family: 'Noto Sans', sans-serif;">Terms & conditions</a> and
       <a href="#" class="text-blue-600 underline" style="font-family: 'Noto Sans', sans-serif;">Privacy statement</a>.
     </p>
 

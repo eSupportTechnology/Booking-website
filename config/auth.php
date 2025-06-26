@@ -40,6 +40,10 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        'customer' => [
+        'driver' => 'session',
+        'provider' => 'users',
+    ],
         'traveler' => [
         'driver' => 'session',
         'provider' => 'travelers',
@@ -68,6 +72,7 @@ return [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', App\Models\User::class),
         ],
+
         'travelers' => [
         'driver' => 'eloquent',
         'model' => App\Models\Traveler::class,
