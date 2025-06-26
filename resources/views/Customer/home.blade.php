@@ -1,4 +1,4 @@
-@extends('frontend.master')
+@extends('Customer.master')
 <style>
     .tab-button {
         padding: 0.5rem 1rem;
@@ -29,7 +29,7 @@
             <!-- Hero Text -->
             <div class="mb-10 mt-1">
                 <h1 class="text-[32px] md:text-[40px] lg:text-[50px] font-bold mb-2">
-                    Find your next stay
+                    {{ __('messages.Find your next stay') }}
                 </h1>
                 <p class="text-[18px] md:text-[20px] mt-1 font-sans">
                     Search low prices on hotels, homes and much more...

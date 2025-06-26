@@ -107,10 +107,15 @@
                     </div>
 
                     <!-- Language Button -->
+                    @php
+                        $locale = app()->getLocale();
+                        $language = config('languages.' . $locale);
+                        $flag = isset($language['flag']) ? asset($language['flag']) : asset('images/flags/uk.png');
+                    @endphp
 
                     <button id="language-button" type="button"
                         class="flex items-center justify-center w-7 h-7 bg-white rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-hidden">
-                        <img src="" alt=""
+                        <img src="{{ $flag }}" alt="{{ $language['name'] ?? 'Language' }}"
                             class="w-full h-full object-cover rounded-full" />
                     </button>
 
@@ -141,13 +146,13 @@
                                     Suggested for you
                                 </p>
                                 <div class="grid grid-cols-2 gap-4">
-
-                                        <a href="/">
+                                    @foreach (config('languages') as $code => $lang)
+                                        <a href="{{ route('lang.change', ['lang' => $code]) }}">
                                             <button
                                                 class="flex items-center justify-between p-2 space-x-2 text-base font-normal text-gray-700 rounded-lg hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
-                                                <img src="" alt=""
+                                                <img src="{{ $lang['flag'] }}" alt="{{ $lang['name'] }}"
                                                     class="h-5 w-5" />
-                                                <span></span>
+                                                <span>{{ $lang['name'] }}</span>
                                             </button>
                                         </a>
                                     @endforeach
@@ -163,7 +168,8 @@
                     <a href="/list-your-property" class="hover:underline"
                         style="font-family: 'Noto Sans', sans-serif;">List your property</a>
 
-
+                    @auth('customer')
+                        <!-- Profile dropdown -->
                         <!-- Profile dropdown -->
                         <div class="relative group">
                             <button class=" text-[#3CC0E9] font-base px-4 py-2 rounded  flex items-center space-x-2">
@@ -182,7 +188,7 @@
                             <!-- Dropdown -->
                             <div
                                 class="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-md shadow-lg opacity-0 group-hover:opacity-100 group-hover:visible transition-all duration-200 invisible z-50">
-                                <a href="/profile"
+                                <a href="{{ route('customer.details.create') }}"
                                     class="block px-4 text-base py-2 text-gray-700 hover:bg-gray-100 flex items-center gap-2">
                                     <img src="{{ asset('assets/mynaui_user.svg') }}" alt="My Account Icon"
                                         class="w-5 h-5" />
@@ -219,21 +225,23 @@
                                     <span style="font-family: 'Noto Sans', sans-serif;">Saved</span>
                                 </a>
 
+                                <form method="POST" action="{{ route('customer.logout') }}">
+                                    @csrf
                                     <button type="submit"
                                         class="w-full text-left px-4 py-2 text-gray-700 text-base hover:bg-gray-100 flex items-center gap-2">
                                         <img src="{{ asset('assets/simple-line-icons_logout.svg') }}" alt="Logout Icon"
                                             class="w-4 h-4" />
                                         <span style="font-family: 'Noto Sans', sans-serif;">Logout</span>
                                     </button>
-
+                                </form>
                             </div>
                         </div>
                     @else
                         <!-- Guest buttons -->
-                        <a href=""
+                        <a href="{{ route('customer.login') }}"
                             class="bg-white font-base px-4 py-2 rounded hover:bg-blue-100"
                             style="font-family: 'Noto Sans', sans-serif; color:#3CC0E9;">Register</a>
-                        <a href=""
+                        <a href="{{ route('customer.login') }}"
                             class="bg-white font-base px-4 py-2 rounded hover:bg-blue-100"
                             style="font-family: 'Noto Sans', sans-serif; color:#3CC0E9;">Sign in</a>
                         @endif

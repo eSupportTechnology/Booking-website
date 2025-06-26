@@ -123,7 +123,7 @@ class CustomerAuthController extends Controller
             Auth::guard('customer')->login($user);
                 return $request->expectsJson()
                     ? response()->json(['message' => 'Verification successful', 'redirect' => '/'])
-                    : redirect('/')->with('success', 'Email verified successfully');
+                    : redirect()->route('customer.dashboard')->with('success', 'Email verified successfully');
             }
 
             $error = ['otp' => ['Invalid or expired OTP']];
@@ -191,10 +191,10 @@ class CustomerAuthController extends Controller
                     return response()->json([
                         'message' => $result['message'],
                         'user' => $result['user_data'],
-                        'redirect' => '/'
+                        'redirect' => 'customer.dashboard'
                     ]);
                 }
-                return redirect('/')->with('success', 'Successfully authenticated with Google!');
+                return redirect()->route('customer.dashboard')->with('success', 'Successfully authenticated with Google!');
             } else {
                 if ($request->expectsJson()) {
                     return response()->json(['message' => $result['message']], 500);
@@ -291,10 +291,10 @@ class CustomerAuthController extends Controller
                     return response()->json([
                         'message' => $result['message'],
                         'user' => $result['user_data'],
-                        'redirect' => '/'
+                        'redirect' => 'customer.dashboard'
                     ]);
                 }
-                return redirect('/')->with('success', 'Successfully authenticated with ' . ucfirst($provider) . '!');
+                return redirect()->route('customer.dashboard')->with('success', 'Successfully authenticated with ' . ucfirst($provider) . '!');
             } else {
                 if ($request->expectsJson()) {
                     return response()->json(['message' => $result['message']], 500);

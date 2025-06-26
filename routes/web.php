@@ -52,13 +52,15 @@ Route::prefix('customer')->group(function () {
     Route::get('/apple', [CustomerAuthController::class, 'redirectToApple'])->name('auth.apple');
     Route::get('/apple/callback', [CustomerAuthController::class, 'handleAppleCallback'])->name('customer.apple.callback');
 
+    // customer dashboard
+    Route::middleware(['auth:customer'])->group(function () {
+        Route::get('/', function () {
+            return view('Customer.home');
+        })->name('customer.dashboard');
+    });
     Route::get('/customer-details/create', [CustomerPersonalDetailsController::class, 'edit'])->name('customer.details.create');
     Route::post('/customer-details', [CustomerPersonalDetailsController::class, 'update'])->name('customer.details.store');
 
-    // Route::middleware(['auth:traveler'])->group(function () {
-    //     Route::get('/dashboard', function () {
-    //         return view('dashboard');
-    //     })->name('traveler.dashboard');
 
     Route::post('/customer/logout', function () {
         Auth::guard('customer')->logout();
