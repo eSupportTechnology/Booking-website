@@ -19,14 +19,14 @@
 <body class=" text-gray-900" style="font-family: 'Poppins', sans-serif;">
   <!-- Include Header -->
   @include('Customer.header')
-
+@stack('styles')
    <!-- Content Section -->
     <div id="content">
         @yield('content')
     </div>
 
 
-
+@stack('scripts')
 @include('Customer.footer')
 </body>
 
