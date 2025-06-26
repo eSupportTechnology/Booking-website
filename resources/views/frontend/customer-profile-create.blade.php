@@ -107,19 +107,20 @@
  <section 
   x-data="{
     editing: null,
+    phoneFlag: 'https://flagcdn.com/w40/lk.png',
     completed: {
-      name: false,
-      displayName: false,
-      emailAddress: false,
-      phone: false,
-      dob: false,
-      nationality: false,
-      gender: false,
-      address: false,
-      passport: false
+      name: '',
+      displayName: '',
+      emailAddress: '',
+      phone: '',
+      dob: '',
+      nationality: '',
+      gender: '',
+      address: '',
+      passport: ''
     }
-  }" 
-  x-show="tab === 'personal'" 
+  }"
+  x-show="tab === 'personal'"
   x-cloak
 >
   <div class="mb-6">
@@ -131,108 +132,91 @@
 
   <template x-for="(section, index) in Object.keys(completed)" :key="section">
     <div class="border-t pt-4 min-h-[100px] flex flex-col justify-center">
-      <!-- Section Header -->
       <div class="flex justify-between items-start md:items-center">
-      <div>
-  <h3 class="text-sm font-bold text-gray-700" x-text="{
-    name: 'Name',
-    displayName: 'Display Name',
-    emailAddress: 'Email Address',
-    phone: 'Phone Number',
-    dob: 'Date of Birth',
-    nationality: 'Nationality',
-    gender: 'Gender',
-    address: 'Address',
-    passport: 'Passport Details'
-  }[section]"></h3>
+        <div>
+          <h3 class="text-sm font-bold text-gray-700" x-text="{
+            name: 'Name',
+            displayName: 'Display Name',
+            emailAddress: 'Email Address',
+            phone: 'Phone Number',
+            dob: 'Date of Birth',
+            nationality: 'Nationality',
+            gender: 'Gender',
+            address: 'Address',
+            passport: 'Passport Details'
+          }[section]"></h3>
 
-  <!-- Sub-topic + email display for 'emailAddress' -->
-  <template x-if="section === 'emailAddress' && editing !== 'emailAddress'">
-    <div class="mt-1 space-y-1">
-       <div class="flex items-center space-x-2">
-       <span class="text-sm text-blue-600">someone@example.com</span>
-        <span class="bg-green-500 text-white text-xs px-2 py-0.5 rounded">Verified</span>
-      </div>
-      <p class="text-sm text-gray-500">This is the email address you use to sign in. It’s also where we send your booking confirmations.</p>
-     
-    </div>
-  </template>
+          <!-- EMAIL -->
+          <template x-if="section === 'emailAddress' && editing !== 'emailAddress'">
+            <div class="mt-1 space-y-1">
+              <div class="flex items-center space-x-2">
+                <span class="text-sm text-blue-600" x-text="completed.emailAddress || 'someone@example.com'"></span>
+                <span class="bg-green-500 text-white text-xs px-2 py-0.5 rounded">Verified</span>
+              </div>
+              <p class="text-sm text-gray-500">This is the email address you use to sign in. It’s also where we send your booking confirmations.</p>
+            </div>
+          </template>
 
-  <!-- Sub-topic + email display for 'emailAddress' -->
-  <template x-if="section === 'phone' && editing !== 'phone'">
-    <div class="mt-1 space-y-1">
-       <div class="flex items-center space-x-2">
-       <span class="text-sm text-blue-600">+947625792974</span>
-        <span class="bg-green-500 text-white text-xs px-2 py-0.5 rounded">Verified</span>
-      </div>
-     
-     
-    </div>
-  </template>
+          <!-- PHONE -->
+          <template x-if="section === 'phone' && editing !== 'phone'">
+            <div class="mt-1 space-y-1">
+              <div class="flex items-center space-x-2">
+                <span class="text-sm text-blue-600" x-text="completed.phone || '+94XXXXXXX'"></span>
+                <span class="bg-green-500 text-white text-xs px-2 py-0.5 rounded">Verified</span>
+              </div>
+            </div>
+          </template>
 
-  <!-- All other section sub-topics -->
-  <template x-if="section !== 'emailAddress' && editing !== section">
-  <p class="text-sm text-gray-500 mt-1" x-text="{
-    name: 'Enter your full legal name.',
-    displayName: 'This name is shown when you leave reviews or messages.',
-    phone: 'Properties or attractions you book will use this number if they need to contact you.',
-    dob: 'Enter your date of birth.',
-    nationality: 'Select the country/region you\'re from.',
-    gender: 'Select your gender.',
-    address: 'Add your address.',
-    passport: 'Add your passport details.'
-  }[section]"></p>
-</template>
+          <!-- GENERAL DISPLAY OR HINT TEXT -->
+          <template x-if="section !== 'emailAddress' && section !== 'phone' && editing !== section">
+            <p class="text-sm mt-1" :class="completed[section] ? 'text-gray-900 font-medium' : 'text-gray-500'" x-text="
+              completed[section] 
+                ? completed[section] 
+                : {
+                    name: 'Enter your full legal name.',
+                    displayName: 'This name is shown when you leave reviews or messages.',
+                    dob: 'Enter your date of birth.',
+                    nationality: 'Select the country/region you\'re from.',
+                    gender: 'Select your gender.',
+                    address: 'Add your address.',
+                    passport: 'Add your passport details.'
+                  }[section]
+            "></p>
+          </template>
+        </div>
 
-</div>
-
-        <button
-          :disabled="editing !== null || (index > 0 && !completed[Object.keys(completed)[index - 1]])"
-          :class="{
-            'text-blue-600 hover:underline text-sm': editing === null && (index === 0 || completed[Object.keys(completed)[index - 1]]),
-            'opacity-50 cursor-not-allowed text-sm': editing !== null || (index > 0 && !completed[Object.keys(completed)[index - 1]])
-          }"
-          @click="editing = section"
-        >Edit</button>
+        <button class="text-blue-600 hover:underline text-sm" @click="editing = section">Edit</button>
       </div>
 
-      <!-- Section Fields -->
+      <!-- Input Form Fields -->
       <div x-show="editing === section" class="mt-1 mb-4 space-y-2">
         <template x-if="section === 'name'">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input type="text" placeholder="First name(s)" class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm" />
-            <input type="text" placeholder="Last name(s)" class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm" />
+            <input type="text" placeholder="First name(s)" class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm" x-ref="input1" />
+            <input type="text" placeholder="Last name(s)" class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm" x-ref="input2" />
           </div>
         </template>
 
         <template x-if="section === 'displayName'">
-          <input type="text" placeholder="Choose a display name" class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm" />
+          <input type="text" placeholder="Choose a display name" class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm" x-ref="input1" />
         </template>
 
-       <template x-if="section === 'emailAddress'">
-  <div>
-    <input type="email" placeholder="Email address" class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm" />
-    <p class="text-xs text-gray-500 mt-1">
-      We'll send a verification link to your new email address. Please check your inbox.
-    </p>
-  </div>
-</template>
+        <template x-if="section === 'emailAddress'">
+          <input type="email" placeholder="Email address" class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm" x-ref="input1" />
+        </template>
 
-
-  <!-- Alpine Section for Phone -->
-<template x-if="section === 'phone'">
+    <template x-if="section === 'phone'">
   <div class="space-y-2">
-  
-
-    <!-- Phone Input with Flag and Country Code -->
     <div class="flex items-center border border-gray-300 rounded-md px-3 py-2 space-x-2">
-      
       <!-- Flag Image -->
-      <img id="selected-flag" src="https://flagcdn.com/w40/lk.png" alt="Flag" class="w-6 h-4 rounded" />
+      <img :src="phoneFlag" alt="Flag" class="w-6 h-4 rounded" />
 
       <!-- Country Code Dropdown -->
-      <select id="country-select"
-        class="bg-white border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm">
+      <select
+        x-ref="countryCode"
+        @change="phoneFlag = $event.target.options[$event.target.selectedIndex].dataset.flag"
+        class="bg-white border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm"
+      >
         <option value="+94" data-flag="https://flagcdn.com/w40/lk.png" selected>+94</option>
         <option value="+44" data-flag="https://flagcdn.com/w40/gb.png">+44</option>
         <option value="+49" data-flag="https://flagcdn.com/w40/de.png">+49</option>
@@ -240,11 +224,13 @@
       </select>
 
       <!-- Phone Input -->
-      <input type="tel" id="phone" name="phone" placeholder="Enter phone number"
-        class="flex-1 outline-none border-none focus:ring-0 text-gray-900 text-sm" />
+      <input
+        type="tel"
+        placeholder="Enter phone number"
+        class="flex-1 outline-none border-none focus:ring-0 text-gray-900 text-sm"
+        x-ref="phoneInput"
+      />
     </div>
-
-    
   </div>
 </template>
 
@@ -263,131 +249,163 @@
     }
   });
 </script>
+        <!-- DOB -->
+<template x-if="section === 'dob'">
+  <input type="date" class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm" x-ref="dobInput" />
+</template>
 
-
-
-
-        <template x-if="section === 'dob'">
-          <input type="date" class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm" />
-        </template>
-
-        <template x-if="section === 'nationality'">
-          <select class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm">
-            <option value="">Select your country/region</option>
-            <option value="LK">Sri Lanka</option>
-            <option value="US">United States</option>
-            <option value="GB">United Kingdom</option>
-          </select>
-        </template>
+<!-- Nationality -->
+<template x-if="section === 'nationality'">
+  <select class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm" x-ref="nationalityInput">
+    <option value="">Select your nationality</option>
+    <option value="Sri Lankan">Sri Lankan</option>
+    <option value="American">American</option>
+    <option value="British">British</option>
+  </select>
+</template>
 
         <template x-if="section === 'gender'">
-          <select class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm">
+          <select class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm" x-ref="input1">
             <option value="">Select your gender</option>
-            <option value="female">Female</option>
-            <option value="male">Male</option>
-            <option value="other">Other</option>
+            <option value="Female">Female</option>
+            <option value="Male">Male</option>
+            <option value="Other">Other</option>
           </select>
         </template>
 
         <template x-if="section === 'address'">
-  <div class="space-y-3">
-    <!-- Country / Region -->
-    <div>
-      <label for="country" class="block text-sm font-medium text-gray-700 mb-1">Country/region</label>
-      <select id="country" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm">
-        <option value="">Select the country/region you live in</option>
-        <option value="LK">Sri Lanka</option>
-        <option value="US">United States</option>
-        <option value="GB">United Kingdom</option>
-        <!-- Add more options as needed -->
-      </select>
-    </div>
+          <div class="space-y-3">
+            <!-- Country / Region -->
+            <div>
+              <label for="country" class="block text-sm font-medium text-gray-700 mb-1">Country/region</label>
+              <select id="country" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm" x-ref="country">
+                <option value="">Select the country/region you live in</option>
+                <option value="Sri Lanka">Sri Lanka</option>
+                <option value="United States">United States</option>
+                <option value="United Kingdom">United Kingdom</option>
+              </select>
+            </div>
 
-    <!-- Street Address -->
-    <div>
-      <label for="street" class="block text-sm font-medium text-gray-700 mb-1">Address</label>
-      <input id="street" type="text" placeholder="Your street name and house/apartment number" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm" />
-    </div>
+            <!-- Street -->
+            <div>
+              <label for="street" class="block text-sm font-medium text-gray-700 mb-1">Address</label>
+              <input id="street" type="text" placeholder="Street name" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm" x-ref="street" />
+            </div>
 
-    <!-- Town / City & Postcode -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div>
-        <label for="city" class="block text-sm font-medium text-gray-700 mb-1">Town/city</label>
-        <input id="city" type="text" placeholder="Town or city" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm" />
-      </div>
-      <div>
-        <label for="postcode" class="block text-sm font-medium text-gray-700 mb-1">Postcode</label>
-        <input id="postcode" type="text" placeholder="Postcode" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm" />
-      </div>
-    </div>
-  </div>
-</template>
+            <!-- City & Postcode -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label for="city" class="block text-sm font-medium text-gray-700 mb-1">Town/City</label>
+                <input id="city" type="text" placeholder="City" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm" x-ref="city" />
+              </div>
+              <div>
+                <label for="postcode" class="block text-sm font-medium text-gray-700 mb-1">Postcode</label>
+                <input id="postcode" type="text" placeholder="Postcode" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm" x-ref="postcode" />
+              </div>
+            </div>
+          </div>
+        </template>
 
-    <template x-if="section === 'passport'">
-  <div class="space-y-4">
-    <!-- Names -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">First name(s) <span class="text-red-500">*</span></label>
-        <input type="text" placeholder="First name(s)" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm" />
-      </div>
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Last name(s) <span class="text-red-500">*</span></label>
-        <input type="text" placeholder="Last name(s)" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm" />
-      </div>
-    </div>
-    <p class="text-xs text-gray-500">Please enter the name exactly as written on the passport or other official travel document.</p>
+        <template x-if="section === 'passport'">
+          <div class="space-y-4">
+            <!-- Names -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">First name(s) <span class="text-red-500">*</span></label>
+                <input type="text" placeholder="First name(s)" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm" x-ref="passportFirstName" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Last name(s) <span class="text-red-500">*</span></label>
+                <input type="text" placeholder="Last name(s)" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm" x-ref="passportLastName" />
+              </div>
+            </div>
+            <p class="text-xs text-gray-500">Please enter the name exactly as written on the passport or other official travel document.</p>
 
-    <!-- Issuing Country and Passport Number -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Issuing country <span class="text-red-500">*</span></label>
-        <select class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm">
-          <option value="">Select issuing country</option>
-          <option value="LK">Sri Lanka</option>
-          <option value="US">United States</option>
-          <option value="GB">United Kingdom</option>
-          <!-- Add more countries as needed -->
-        </select>
-      </div>
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Passport number <span class="text-red-500">*</span></label>
-        <input type="text" placeholder="Enter document number" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm" />
-      </div>
-    </div>
+            <!-- Issuing Country and Passport Number -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Issuing country <span class="text-red-500">*</span></label>
+                <select class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm" x-ref="passportIssuingCountry">
+                  <option value="">Select issuing country</option>
+                  <option value="Sri Lanka">Sri Lanka</option>
+                  <option value="United States">United States</option>
+                  <option value="United Kingdom">United Kingdom</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Passport number <span class="text-red-500">*</span></label>
+                <input type="text" placeholder="Enter document number" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm" x-ref="passportNumber" />
+              </div>
+            </div>
 
-    <!-- Expiry Date -->
-    <div>
-      <label class="block text-sm font-medium text-gray-700 mb-1">Expiry date <span class="text-red-500">*</span></label>
-      <div class="grid grid-cols-3 gap-2">
-        <input type="text" placeholder="DD" maxlength="2" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm" />
-        <input type="text" placeholder="MM" maxlength="2" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm" />
-        <input type="text" placeholder="YYYY" maxlength="4" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm" />
-      </div>
-      <p class="text-xs text-gray-500 mt-1">
-        We'll safely store this data and remove it after two years of inactivity.
-      </p>
-    </div>
+            <!-- Expiry Date -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Expiry date <span class="text-red-500">*</span></label>
+              <div class="grid grid-cols-3 gap-2">
+                <input type="text" placeholder="DD" maxlength="2" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm" x-ref="passportExpiryDay" />
+                <input type="text" placeholder="MM" maxlength="2" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm" x-ref="passportExpiryMonth" />
+                <input type="text" placeholder="YYYY" maxlength="4" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm" x-ref="passportExpiryYear" />
+              </div>
+              <p class="text-xs text-gray-500 mt-1">
+                We'll safely store this data and remove it after two years of inactivity.
+              </p>
+            </div>
 
-    <!-- Consent Checkbox -->
-    <div class="flex items-start space-x-2">
-      <input type="checkbox" id="consent" class="mt-1 border-gray-300 rounded" />
-      <label for="consent" class="text-sm text-gray-700">
-        I consent to Booking.com storing my passport information in accordance with the
-        <a href="#" class="text-blue-600 hover:underline">privacy statement</a>
-      </label>
-    </div>
-  </div>
-</template>
+            <!-- Consent Checkbox -->
+            <div class="flex items-start space-x-2">
+              <input type="checkbox" id="consent" class="mt-1 border-gray-300 rounded" x-ref="passportConsent" />
+              <label for="consent" class="text-sm text-gray-700">
+                I consent to Booking.com storing my passport information in accordance with the
+                <a href="#" class="text-blue-600 hover:underline">privacy statement</a>
+              </label>
+            </div>
+          </div>
+        </template>
 
-
-        <!-- Action Buttons -->
+          <!-- Save & Cancel -->
         <div class="flex justify-end space-x-4 mt-2">
           <button @click="editing = null" class="text-blue-600 hover:underline text-sm">Cancel</button>
           <button
-            @click="completed[section] = true; editing = null"
+ @click="
+  if (section === 'name') {
+    const first = $refs.input1?.value || '';
+    const last = $refs.input2?.value || '';
+    completed.name = first + (first && last ? ' ' : '') + last;
+  } else if (section === 'displayName') {
+    completed.displayName = $refs.input1?.value || '';
+  } else if (section === 'address') {
+    completed.address = 
+      [$refs.country?.value, $refs.street?.value, $refs.city?.value, $refs.postcode?.value]
+      .filter(Boolean).join(', ');
+  } else if (section === 'passport') {
+    completed.passport = 
+      [
+        $refs.passportFirstName?.value,
+        $refs.passportLastName?.value,
+        $refs.passportIssuingCountry?.value,
+        $refs.passportNumber?.value,
+        ($refs.passportExpiryDay?.value && $refs.passportExpiryMonth?.value && $refs.passportExpiryYear?.value) 
+          ? `Expires: ${$refs.passportExpiryDay.value}/${$refs.passportExpiryMonth.value}/${$refs.passportExpiryYear.value}` 
+          : ''
+      ].filter(Boolean).join(' | ');
+  } else if (section === 'phone') {
+    completed.phone = ($refs.countryCode?.value || '') + ' ' + ($refs.phoneInput?.value || '');
+  } else if (section === 'dob') {
+    completed.dob = $refs.dobInput?.value || '';
+  } else if (section === 'nationality') {
+    completed.nationality = $refs.nationalityInput?.value || '';
+  } else if (section === 'gender') {
+    completed.gender = $refs.genderInput?.value || '';
+  } else {
+    completed[section] = $refs.input1?.value || '';
+  }
+  editing = null;
+"
+
             class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm font-medium"
-          >Save</button>
+          >
+            Save
+          </button>
         </div>
       </div>
     </div>
@@ -396,6 +414,22 @@
 
 
 
+
+<!-- Script to Update Flag Image Dynamically -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const select = document.getElementById("country-select");
+    const flagImg = document.getElementById("selected-flag");
+
+    if (select && flagImg) {
+      select.addEventListener("change", function () {
+        const selectedOption = this.options[this.selectedIndex];
+        const flagUrl = selectedOption.getAttribute("data-flag");
+        flagImg.src = flagUrl;
+      });
+    }
+  });
+</script>
 
 
 

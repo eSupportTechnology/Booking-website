@@ -133,6 +133,10 @@ Route::get('/partner-property-types', function () {
     return view('frontend.partner-property-types');
 })->name('partner.property.types');
 
+Route::get('/partner-apartment-create', function () {
+    return view('frontend.partner-apartment-create');
+})->name('partner.apartment.create');
+
 Route::get('/customer-profile-create', function () {
     return view('frontend.customer-profile-create');
 })->name('customer.profile.create');
