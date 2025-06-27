@@ -110,8 +110,7 @@
 
                     <button id="language-button" type="button"
                         class="flex items-center justify-center w-7 h-7 bg-white rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-hidden">
-                        <img src="" alt=""
-                            class="w-full h-full object-cover rounded-full" />
+                        <img src="" alt="" class="w-full h-full object-cover rounded-full" />
                     </button>
 
                     <!-- Language Modal -->
@@ -142,15 +141,13 @@
                                 </p>
                                 <div class="grid grid-cols-2 gap-4">
 
-                                        <a href="/">
-                                            <button
-                                                class="flex items-center justify-between p-2 space-x-2 text-base font-normal text-gray-700 rounded-lg hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
-                                                <img src="" alt=""
-                                                    class="h-5 w-5" />
-                                                <span></span>
-                                            </button>
-                                        </a>
-                                    @endforeach
+                                    <a href="/">
+                                        <button
+                                            class="flex items-center justify-between p-2 space-x-2 text-base font-normal text-gray-700 rounded-lg hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
+                                            <img src="" alt="" class="h-5 w-5" />
+                                            <span></span>
+                                        </button>
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -164,143 +161,140 @@
                         style="font-family: 'Noto Sans', sans-serif;">List your property</a>
 
 
-                        <!-- Profile dropdown -->
-                        <div class="relative group">
-                            <button class=" text-[#3CC0E9] font-base px-4 py-2 rounded  flex items-center space-x-2">
-                                <!-- Profile Icon with Border -->
-                                <div class="bg-white p-2 border border-[#3CC0E9] rounded-full">
-                                    <img src="{{ asset('assets/user.svg') }}" class="w-5 h-5" alt="Profile" />
-                                </div>
+                    <!-- Profile dropdown -->
+                    <div class="relative group">
+                        <button class=" text-[#3CC0E9] font-base px-4 py-2 rounded  flex items-center space-x-2">
+                            <!-- Profile Icon with Border -->
+                            <div class="bg-white p-2 border border-[#3CC0E9] rounded-full">
+                                <img src="{{ asset('assets/user.svg') }}" class="w-5 h-5" alt="Profile" />
+                            </div>
 
-                                <!-- My Account Link -->
-                                <a href="/my-account" class="text-white hover:underline"
-                                    style="font-family: 'Noto Sans', sans-serif;">
-                                    Your Account
-                                </a>
+                            <!-- My Account Link -->
+                            <a href="/my-account" class="text-white hover:underline"
+                                style="font-family: 'Noto Sans', sans-serif;">
+                                Your Account
+                            </a>
+                        </button>
+
+                        <!-- Dropdown -->
+                        <div
+                            class="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-md shadow-lg opacity-0 group-hover:opacity-100 group-hover:visible transition-all duration-200 invisible z-50">
+                            <a href="/profile"
+                                class="block px-4 text-base py-2 text-gray-700 hover:bg-gray-100 flex items-center gap-2">
+                                <img src="{{ asset('assets/mynaui_user.svg') }}" alt="My Account Icon"
+                                    class="w-5 h-5" />
+                                <span style="font-family: 'Noto Sans', sans-serif;">My Account</span>
+                            </a>
+                            <a href="/profile"
+                                class="block px-4 py-2 text-gray-700  text-base hover:bg-gray-100 flex items-center gap-2">
+                                <img src="{{ asset('assets/streamline_baggage.svg') }}" alt="My Account Icon"
+                                    class="w-4 h-4" />
+                                <span style="font-family: 'Noto Sans', sans-serif;">Bookings & Trips</span>
+                            </a>
+                            <a href="/profile"
+                                class="block px-4 py-2 text-gray-700  text-base hover:bg-gray-100 flex items-center gap-2">
+                                <img src="{{ asset('assets/mynaui_letter-g-circle.svg') }}" alt="My Account Icon"
+                                    class="w-5 h-5" />
+                                <span style="font-family: 'Noto Sans', sans-serif;">Genius loyalty programme</span>
+                            </a>
+                            <a href="/profile"
+                                class="block px-4 py-2 text-gray-700  text-base  hover:bg-gray-100 flex items-center gap-2">
+                                <img src="{{ asset('assets/lets-icons_wallet-light.svg') }}" alt="My Account Icon"
+                                    class="w-5 h-5" />
+                                <span style="font-family: 'Noto Sans', sans-serif;">Rewards & Wallet</span>
+                            </a>
+                            <a href="/profile"
+                                class="block px-4 py-2 text-gray-700  text-base  hover:bg-gray-100 flex items-center gap-2">
+                                <img src="{{ asset('assets/fluent_person-feedback-20-regular.svg') }}"
+                                    alt="My Account Icon" class="w-5 h-5" />
+                                <span style="font-family: 'Noto Sans', sans-serif;">Reviews</span>
+                            </a>
+                            <a href="/profile"
+                                class="block px-4 py-2 text-gray-700  text-base hover:bg-gray-100 flex items-center gap-2">
+                                <img src="{{ asset('assets/mdi-light_heart.svg') }}" alt="My Account Icon"
+                                    class="w-5 h-5" />
+                                <span style="font-family: 'Noto Sans', sans-serif;">Saved</span>
+                            </a>
+
+                            <button type="submit"
+                                class="w-full text-left px-4 py-2 text-gray-700 text-base hover:bg-gray-100 flex items-center gap-2">
+                                <img src="{{ asset('assets/simple-line-icons_logout.svg') }}" alt="Logout Icon"
+                                    class="w-4 h-4" />
+                                <span style="font-family: 'Noto Sans', sans-serif;">Logout</span>
                             </button>
 
-                            <!-- Dropdown -->
-                            <div
-                                class="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-md shadow-lg opacity-0 group-hover:opacity-100 group-hover:visible transition-all duration-200 invisible z-50">
-                                <a href="/profile"
-                                    class="block px-4 text-base py-2 text-gray-700 hover:bg-gray-100 flex items-center gap-2">
-                                    <img src="{{ asset('assets/mynaui_user.svg') }}" alt="My Account Icon"
-                                        class="w-5 h-5" />
-                                    <span style="font-family: 'Noto Sans', sans-serif;">My Account</span>
-                                </a>
-                                <a href="/profile"
-                                    class="block px-4 py-2 text-gray-700  text-base hover:bg-gray-100 flex items-center gap-2">
-                                    <img src="{{ asset('assets/streamline_baggage.svg') }}" alt="My Account Icon"
-                                        class="w-4 h-4" />
-                                    <span style="font-family: 'Noto Sans', sans-serif;">Bookings & Trips</span>
-                                </a>
-                                <a href="/profile"
-                                    class="block px-4 py-2 text-gray-700  text-base hover:bg-gray-100 flex items-center gap-2">
-                                    <img src="{{ asset('assets/mynaui_letter-g-circle.svg') }}" alt="My Account Icon"
-                                        class="w-5 h-5" />
-                                    <span style="font-family: 'Noto Sans', sans-serif;">Genius loyalty programme</span>
-                                </a>
-                                <a href="/profile"
-                                    class="block px-4 py-2 text-gray-700  text-base  hover:bg-gray-100 flex items-center gap-2">
-                                    <img src="{{ asset('assets/lets-icons_wallet-light.svg') }}" alt="My Account Icon"
-                                        class="w-5 h-5" />
-                                    <span style="font-family: 'Noto Sans', sans-serif;">Rewards & Wallet</span>
-                                </a>
-                                <a href="/profile"
-                                    class="block px-4 py-2 text-gray-700  text-base  hover:bg-gray-100 flex items-center gap-2">
-                                    <img src="{{ asset('assets/fluent_person-feedback-20-regular.svg') }}"
-                                        alt="My Account Icon" class="w-5 h-5" />
-                                    <span style="font-family: 'Noto Sans', sans-serif;">Reviews</span>
-                                </a>
-                                <a href="/profile"
-                                    class="block px-4 py-2 text-gray-700  text-base hover:bg-gray-100 flex items-center gap-2">
-                                    <img src="{{ asset('assets/mdi-light_heart.svg') }}" alt="My Account Icon"
-                                        class="w-5 h-5" />
-                                    <span style="font-family: 'Noto Sans', sans-serif;">Saved</span>
-                                </a>
-
-                                    <button type="submit"
-                                        class="w-full text-left px-4 py-2 text-gray-700 text-base hover:bg-gray-100 flex items-center gap-2">
-                                        <img src="{{ asset('assets/simple-line-icons_logout.svg') }}" alt="Logout Icon"
-                                            class="w-4 h-4" />
-                                        <span style="font-family: 'Noto Sans', sans-serif;">Logout</span>
-                                    </button>
-
-                            </div>
                         </div>
-                    @else
-                        <!-- Guest buttons -->
-                        <a href=""
-                            class="bg-white font-base px-4 py-2 rounded hover:bg-blue-100"
-                            style="font-family: 'Noto Sans', sans-serif; color:#3CC0E9;">Register</a>
-                        <a href=""
-                            class="bg-white font-base px-4 py-2 rounded hover:bg-blue-100"
-                            style="font-family: 'Noto Sans', sans-serif; color:#3CC0E9;">Sign in</a>
-                        @endif
-
                     </div>
 
+                    <!-- Guest buttons -->
+                    <a href="" class="bg-white font-base px-4 py-2 rounded hover:bg-blue-100"
+                        style="font-family: 'Noto Sans', sans-serif; color:#3CC0E9;">Register</a>
+                    <a href="" class="bg-white font-base px-4 py-2 rounded hover:bg-blue-100"
+                        style="font-family: 'Noto Sans', sans-serif; color:#3CC0E9;">Sign in</a>
+
                 </div>
+
             </div>
-        </section>
-    </header>
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            // Currency modal logic
-            const currentCurrency = document.getElementById("current-currency");
-            const currencyModal = document.getElementById("currency-modal");
-            const currencyCloseBtn = document.getElementById("currency-close-btn");
+        </div>
+    </section>
+</header>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        // Currency modal logic
+        const currentCurrency = document.getElementById("current-currency");
+        const currencyModal = document.getElementById("currency-modal");
+        const currencyCloseBtn = document.getElementById("currency-close-btn");
 
-            if (currentCurrency && currencyModal && currencyCloseBtn) {
-                // Open currency modal on clicking the currency span
-                currentCurrency.addEventListener("click", () => {
-                    currencyModal.classList.remove("hidden");
-                });
+        if (currentCurrency && currencyModal && currencyCloseBtn) {
+            // Open currency modal on clicking the currency span
+            currentCurrency.addEventListener("click", () => {
+                currencyModal.classList.remove("hidden");
+            });
 
-                // Close currency modal on close button click
-                currencyCloseBtn.addEventListener("click", () => {
+            // Close currency modal on close button click
+            currencyCloseBtn.addEventListener("click", () => {
+                currencyModal.classList.add("hidden");
+            });
+
+            // Close currency modal on clicking outside the modal content
+            window.addEventListener("click", (e) => {
+                if (e.target === currencyModal) {
+                    currencyModal.classList.add("hidden");
+                }
+            });
+
+            // Change currency when a currency button is clicked
+            currencyModal.querySelectorAll("button[data-currency]").forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    const selectedCurrency = btn.getAttribute("data-currency");
+                    currentCurrency.textContent = selectedCurrency;
                     currencyModal.classList.add("hidden");
                 });
+            });
+        }
 
-                // Close currency modal on clicking outside the modal content
-                window.addEventListener("click", (e) => {
-                    if (e.target === currencyModal) {
-                        currencyModal.classList.add("hidden");
-                    }
-                });
+        // Language modal logic
+        const languageButton = document.getElementById("language-button");
+        const languageModal = document.getElementById("language-modal");
+        const closeBtn = languageModal ? languageModal.querySelector(".close-btn") : null;
 
-                // Change currency when a currency button is clicked
-                currencyModal.querySelectorAll("button[data-currency]").forEach((btn) => {
-                    btn.addEventListener("click", () => {
-                        const selectedCurrency = btn.getAttribute("data-currency");
-                        currentCurrency.textContent = selectedCurrency;
-                        currencyModal.classList.add("hidden");
-                    });
-                });
-            }
+        if (languageButton && languageModal && closeBtn) {
+            // Open the language modal
+            languageButton.addEventListener("click", () => {
+                languageModal.classList.remove("hidden");
+            });
 
-            // Language modal logic
-            const languageButton = document.getElementById("language-button");
-            const languageModal = document.getElementById("language-modal");
-            const closeBtn = languageModal ? languageModal.querySelector(".close-btn") : null;
+            // Close language modal on close button click
+            closeBtn.addEventListener("click", () => {
+                languageModal.classList.add("hidden");
+            });
 
-            if (languageButton && languageModal && closeBtn) {
-                // Open the language modal
-                languageButton.addEventListener("click", () => {
-                    languageModal.classList.remove("hidden");
-                });
-
-                // Close language modal on close button click
-                closeBtn.addEventListener("click", () => {
+            // Close language modal on clicking outside the modal content
+            window.addEventListener("click", (event) => {
+                if (event.target === languageModal) {
                     languageModal.classList.add("hidden");
-                });
-
-                // Close language modal on clicking outside the modal content
-                window.addEventListener("click", (event) => {
-                    if (event.target === languageModal) {
-                        languageModal.classList.add("hidden");
-                    }
-                });
-            }
-        });
-    </script>
+                }
+            });
+        }
+    });
+</script>
