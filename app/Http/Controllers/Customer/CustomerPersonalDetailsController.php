@@ -79,9 +79,14 @@ class CustomerPersonalDetailsController extends Controller
 
         $passportFirstName = $request->input('passportFirstName');
         $passportLastName = $request->input('passportLastName');
-        $passportName = trim($passportFirstName . ' ' . $passportLastName);
 
-        $request->merge(['passport_name' => $passportName]);
+        if ($passportFirstName || $passportLastName) {
+            $passportName = trim("{$passportFirstName} {$passportLastName}");
+            $request->merge(['passport_name' => $passportName]);
+        } elseif ($existingDetail) {
+            $request->merge(['passport_name' => $existingDetail->passport_name]);
+        }
+
 
         $day = $request->input('passportExpiryDay');
         $month = $request->input('passportExpiryMonth');

@@ -149,15 +149,15 @@
                     editing: null,
                     phoneFlag: 'https://flagcdn.com/w40/lk.png',
                     completed: {
-                        name: '',
-                        displayName: '',
-                        emailAddress: '',
-                        phone: '',
-                        dob: '',
-                        nationality: '',
-                        gender: '',
-                        address: '',
-                        passport: ''
+                        name: '{{ isset($firstName) && isset($lastName) ? $firstName . ' ' . $lastName : '' }}',
+                    displayName: '{{ $details->display_name ?? '' }}',
+                    emailAddress: '{{ $email ?? '' }}',
+                    phone: '{{ $details->phone_number ?? '' }}',
+                    dob: '{{ optional($details->date_of_birth)->format('Y-m-d') }}',
+                    nationality: '{{ $details->nationality ?? '' }}',
+                    gender: '{{ $details->gender ?? '' }}',
+                    address: '{{ isset($details) ? collect([$details->country, $details->street, $details->city, $details->postcode])->filter()->join(', ') : '' }}',
+                    passport: '{{ isset($passportFirstName) && isset($passportLastName) ? collect([$passportFirstName, $passportLastName, $details->issuingCountry ?? '', $details->passportNumber ?? '', isset($passportExpiryDay) && isset($passportExpiryMonth) && isset($passportExpiryYear) ? 'Expires: ' . $passportExpiryDay . '/' . $passportExpiryMonth . '/' . $passportExpiryYear : ''])->filter()->join(' | ') : '' }}'
                     }
                 }" x-show="tab === 'personal'" x-cloak>
                     <div class="mb-6">
@@ -220,8 +220,8 @@
               completed[section]
                 ? completed[section]
                 : {
-                    name: 'Enter your full legal name.',
-                    displayName: 'This name is shown when you leave reviews or messages.',
+                    name: completed.name ? completed.first_name : 'Enter your full legal name.',
+                    displayName: completed.display_name ? completed.display_name : 'This name is shown when you leave reviews or messages.',
                     dob: 'Enter your date of birth.',
                     nationality: 'Select the country/region you\'re from.',
                     gender: 'Select your gender.',
@@ -245,6 +245,7 @@
 
                                 <div x-show="editing === section" class="mt-1 mb-4 space-y-2">
                                     <template x-if="section === 'name'">
+
                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <input type="text" name="first_name" id="first_name"
                                                 placeholder="First name(s)"
@@ -255,6 +256,8 @@
                                                 class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm"
                                                 value="{{ old('last_name', $lastName ?? '') }}" x-ref="input2" />
                                         </div>
+
+
                                     </template>
 
                                     <template x-if="section === 'displayName'">
@@ -396,8 +399,8 @@
                                                 <input id="street" name="street" type="text"
                                                     placeholder="Street name"
                                                     class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
-                                                    value="{{ old('street', $details ?? '') }}"
-                                                    value="" x-ref="street" />
+                                                    value="{{ old('street', $details ?? '') }}" value=""
+                                                    x-ref="street" />
                                             </div>
 
                                             <!-- City & Postcode -->
@@ -408,8 +411,7 @@
                                                     <input id="city" name="city" type="text"
                                                         placeholder="City"
                                                         class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
-                                                        value="{{ old('city', $details ?? '') }}"
-                                                        x-ref="city" />
+                                                        value="{{ old('city', $details ?? '') }}" x-ref="city" />
                                                 </div>
                                                 <div>
                                                     <label for="postcode"
@@ -489,18 +491,18 @@
                                                 <label class="block text-sm font-medium text-gray-700 mb-1">Expiry date
                                                     <span class="text-red-500">*</span></label>
                                                 <div class="grid grid-cols-3 gap-2">
-                                                    <input type="text" name="passportExpiryDay" id="passportExpiryDay"
-                                                        placeholder="DD" maxlength="2"
+                                                    <input type="text" name="passportExpiryDay"
+                                                        id="passportExpiryDay" placeholder="DD" maxlength="2"
                                                         class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
                                                         value="{{ old('passportExpiryDay', $passportExpiryDay ?? '') }}"
                                                         x-ref="passportExpiryDay" />
-                                                    <input type="text" name="passportExpiryMonth" id="passportExpiryMonth"
-                                                        placeholder="MM" maxlength="2"
+                                                    <input type="text" name="passportExpiryMonth"
+                                                        id="passportExpiryMonth" placeholder="MM" maxlength="2"
                                                         class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
                                                         value="{{ old('passportExpiryMonth', $passportExpiryMonth ?? '') }}"
                                                         x-ref="passportExpiryMonth" />
-                                                    <input type="text" name="passportExpiryYear" id="passportExpiryYear"
-                                                        placeholder="YYYY" maxlength="4"
+                                                    <input type="text" name="passportExpiryYear"
+                                                        id="passportExpiryYear" placeholder="YYYY" maxlength="4"
                                                         class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
                                                         value="{{ old('passportExpiryYear', $passportExpiryYear ?? '') }}"
                                                         x-ref="passportExpiryYear" />
