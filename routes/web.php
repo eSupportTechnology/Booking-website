@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\TravelerLoginController;
-use App\Http\Controllers\Auth\CustomerAuthController;
+use App\Http\Controllers\Customer\Auth\CustomerAuthController;
 use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TravelerDetailsController;
@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Route;
 use App\Mail\PartnerVerificationMail;
 use App\Http\Controllers\Partner\LoginController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Customer\CustomerPersonalDetailsController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -51,16 +52,20 @@ Route::prefix('customer')->group(function () {
     Route::get('/apple', [CustomerAuthController::class, 'redirectToApple'])->name('auth.apple');
     Route::get('/apple/callback', [CustomerAuthController::class, 'handleAppleCallback'])->name('customer.apple.callback');
 
-    // Route::middleware(['auth:traveler'])->group(function () {
-    //     Route::get('/dashboard', function () {
-    //         return view('dashboard');
-    //     })->name('traveler.dashboard');
+    // customer dashboard
+    Route::middleware(['auth:customer'])->group(function () {
+        Route::get('/', function () {
+            return view('Customer.home');
+        })->name('customer.dashboard');
+    });
+    Route::get('/customer-details/create', [CustomerPersonalDetailsController::class, 'edit'])->name('customer.details.create');
+    Route::post('/customer-details', [CustomerPersonalDetailsController::class, 'update'])->name('customer.details.store');
+
 
     Route::post('/customer/logout', function () {
-    Auth::guard('customer')->logout();
-    return redirect()->route('customer.login')->with('success', 'You have been logged out.');
-})->name('customer.logout');
-
+        Auth::guard('customer')->logout();
+        return redirect()->route('customer.login')->with('success', 'You have been logged out.');
+    })->name('customer.logout');
 });
 
 Route::get('/list-your-property', function () {
@@ -125,9 +130,9 @@ Route::get('/partner-forgot-password', function () {
     return view('frontend.partner-forgot-password');
 })->name('partner.forgot.password');
 
-Route::get('/partner-password-recover', function () {
-    return view('frontend.partner-forgotpassword-success');
-})->name('partner.forgot.password');
+// Route::get('/partner-password-recover', function () {
+//     return view('frontend.partner-forgotpassword-success');
+// })->name('partner.forgot.password');
 
 Route::get('/partner-property-types', function () {
     return view('frontend.partner-property-types');

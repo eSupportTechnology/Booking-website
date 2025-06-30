@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Auth;
+namespace App\Actions\Customer\Auth;
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;

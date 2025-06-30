@@ -25,11 +25,15 @@
                             class="w-6 h-6 md:w-7 md:h-7 cursor-pointer" />
                     </a>
 
-                    <!-- Language Button -->
+                    @php
+                        $locale = app()->getLocale();
+                        $language = config('languages.' . $locale);
+                        $flag = isset($language['flag']) ? asset($language['flag']) : asset('images/flags/uk.png');
+                    @endphp
+
                     <button id="language-button" type="button"
-                        class="flex items-center justify-center w-8 h-8 bg-white rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-hidden"
-                        title="Change Language">
-                        <img src="{{ asset('images/uk.png') }}" alt="UK Flag"
+                        class="flex items-center justify-center w-7 h-7 bg-white rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-hidden">
+                        <img src="{{ $flag }}" alt="{{ $language['name'] ?? 'Language' }}"
                             class="w-full h-full object-cover rounded-full" />
                     </button>
 
@@ -57,25 +61,16 @@
                             <div class="mt-4">
                                 <p class="mb-4 text-base text-gray-500 dark:text-gray-400">Suggested for you</p>
                                 <div class="grid grid-cols-2 gap-4">
-                                    <!-- English Button -->
-                                    <a href="{{ route('lang.change', ['lang' => 'en']) }}">
-                                        <button
-                                            class="flex items-center justify-between p-2 space-x-2 text-base font-normal text-gray-700 rounded-lg hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
-                                            <img src="https://upload.wikimedia.org/wikipedia/en/a/ae/Flag_of_the_United_Kingdom_%281-2%29.svg"
-                                                alt="English (UK)" class="h-5 w-5" />
-                                            <span>English (UK)</span>
-                                        </button>
-                                    </a>
-
-                                    <!-- Sinhala Button -->
-                                    <a href="{{ route('lang.change', ['lang' => 'si']) }}">
-                                        <button
-                                            class="flex items-center justify-between p-2 space-x-2 text-base font-normal text-gray-700 rounded-lg hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
-                                            <img src="https://upload.wikimedia.org/wikipedia/commons/4/48/Flag_of_Sri_Lanka.svg"
-                                                alt="සිංහල" class="h-5 w-5" />
-                                            <span>සිංහල (Sinhala)</span>
-                                        </button>
-                                    </a>
+                                    @foreach (config('languages') as $code => $lang)
+                                        <a href="{{ route('lang.change', ['lang' => $code]) }}">
+                                            <button
+                                                class="flex items-center justify-between p-2 space-x-2 text-base font-normal text-gray-700 rounded-lg hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
+                                                <img src="{{ $lang['flag'] }}" alt="{{ $lang['name'] }}"
+                                                    class="h-5 w-5" />
+                                                <span>{{ $lang['name'] }}</span>
+                                            </button>
+                                        </a>
+                                    @endforeach
                                 </div>
                             </div>
                         </div>
@@ -85,31 +80,6 @@
         </div>
     </section>
 </header>
-
-<!-- Language Modal Script -->
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const languageButton = document.getElementById("language-button");
-        const languageModal = document.getElementById("language-modal");
-        const closeBtn = languageModal?.querySelector(".close-btn");
-
-        if (languageButton && languageModal && closeBtn) {
-            languageButton.addEventListener("click", () => {
-                languageModal.classList.remove("hidden");
-            });
-
-            closeBtn.addEventListener("click", () => {
-                languageModal.classList.add("hidden");
-            });
-
-            window.addEventListener("click", (event) => {
-                if (event.target === languageModal) {
-                    languageModal.classList.add("hidden");
-                }
-            });
-        }
-    });
-</script>
 
 <!-- Main Content -->
 <main class="min-h-screen flex items-start justify-center pt-10 px-4 sm:px-6">
@@ -211,55 +181,7 @@
 </main>
 
 <script src="https://cdn.tailwindcss.com"></script>
-
-<script>
-    // Add loading state to Google auth button
-    document.getElementById('google-auth-btn').addEventListener('click', function(e) {
-        const btn = e.currentTarget;
-        const originalText = btn.innerHTML;
-
-        btn.innerHTML = `
-        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-gray-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-        </svg>
-        <span style="font-family: 'Noto Sans', sans-serif;">Connecting to Google...</span>
-    `;
-
-        btn.classList.add('pointer-events-none');
-
-        // Reset after 10 seconds in case of issues
-        setTimeout(() => {
-            btn.innerHTML = originalText;
-            btn.classList.remove('pointer-events-none');
-        }, 10000);
-    });
-
-    // Example starter JavaScript for disabling form submissions if there are invalid fields
-    (() => {
-        'use strict'
-
-        const forms = document.querySelectorAll('.needs-validation')
-
-        Array.from(forms).forEach(form => {
-            form.addEventListener('submit', event => {
-                // Hide all feedback messages first
-                form.querySelectorAll('.invalid-feedback').forEach(el => el.classList.add('hidden'))
-
-                if (!form.checkValidity()) {
-                    event.preventDefault()
-                    event.stopPropagation()
-
-                    // Show feedback messages
-                    form.querySelectorAll(':invalid').forEach(input => {
-                        const feedback = input.parentElement.querySelector(
-                            '.invalid-feedback')
-                        if (feedback) feedback.classList.remove('hidden')
-                    })
-                }
-
-                form.classList.add('was-validated')
-            }, false)
-        })
-    })()
-</script>
+@push('scripts')
+    <script src="{{ asset('assets/Customer/js/auth/login.js') }}"></script>
+@endpush
+@stack('scripts')

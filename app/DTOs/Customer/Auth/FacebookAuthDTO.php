@@ -1,10 +1,10 @@
 <?php
 
-namespace App\DTOs\Auth;
+namespace App\DTOs\Customer\Auth;
 
 use WendellAdriel\ValidatedDTO\ValidatedDTO;
 
-class AppleAuthDTO extends ValidatedDTO
+class FacebookAuthDTO extends ValidatedDTO
 {
     public string $email;
     public string $name;
@@ -32,13 +32,11 @@ class AppleAuthDTO extends ValidatedDTO
         ];
     }
 
-    public static function fromSocialUser($appleUser): self
+    public static function fromSocialUser($facebookUser): self
     {
-        $name = $appleUser->getName() ?: $appleUser->getEmail();
-
         return new self([
-            'email' => $appleUser->getEmail(),
-            'name' => $name,
+            'email' => $facebookUser->getEmail(),
+            'name' => $facebookUser->getName(),
         ]);
     }
 }
