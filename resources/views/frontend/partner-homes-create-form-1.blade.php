@@ -304,9 +304,23 @@
   <p>Details related to apartment...</p>
 </div>
 
-<div id="section-holiday-home" class="mt-20 p-8 bg-gray-100 rounded shadow-lg hidden">
-  <h3 class="text-xl font-bold mb-4">Holiday Home Details</h3>
-  <!-- Main Step 1 (How many apartments)-->
+<div id="section-holiday-home" class=" hidden">
+  
+ <!--Start Form-->
+  <div class="max-w-6xl p-4 ml-14  bg-gray-100" x-data="{ step: 1 }">
+  <form method="POST" action="#" class=" p-6 rounded-lg  space-y-6" enctype="multipart/form-data">
+      @csrf
+    <!-- Progress bar -->
+  <div x-show="showProgress" class="flex justify-between mb-6 text-sm font-medium">
+    <template x-for="n in 10" :key="n">
+      <div :class="step === n ? 'text-blue-600 font-bold' : 'text-gray-400'" class="flex-1 text-center">
+        Step <span x-text="n"></span>
+      </div>
+    </template>
+  </div>
+
+      
+<!-- Main Step 1 (How many apartments)-->
 <div x-show="step === 1" x-cloak>
    <div class="bg-white max-w-2xl w-full p-6 rounded-lg shadow ">
   <div x-data="{ selected: '', sameAddress: 'yes', propertyCount: 2 }" class="max-w-xl mx-auto p-4 space-y-6">
@@ -324,7 +338,7 @@
         <div class="flex items-center justify-between">
           <div class="flex items-center space-x-4">
             <img src="{{ asset('images/aprt-b.png') }}" alt="One Apartment" class="w-14 h-10" />
-            <span class="text-lg text-gray-800">One apartment</span>
+            <span class="text-lg text-gray-800">One holiday home</span>
           </div>
           <template x-if="selected === 'one'">
             <div class="text-blue-600 text-xl font-bold">✔</div>
@@ -342,7 +356,7 @@
         <div class="flex items-center justify-between">
           <div class="flex items-center space-x-4">
             <img src="{{ asset('images/aprt-a.png') }}" alt="Multiple Apartments" class="w-14 h-10" />
-            <span class="text-lg text-gray-800">Multiple apartments</span>
+            <span class="text-lg text-gray-800">Multiple holiday homes</span>
           </div>
           <template x-if="selected === 'multiple'">
             <div class="text-blue-600 text-xl font-bold">✔</div>
@@ -414,35 +428,25 @@
 
      <!-- Main Step 2 Start -->
 <div x-show="step === 2" x-cloak >
-    <div class="bg-white max-w-2xl w-full p-6 rounded-lg shadow text-center">
-        <p class="text-base text-gray-600 mb-8">You're listing:</p>
-
-        <!-- Icon -->
-        <div class="flex justify-center mb-8">
-             <img src="{{ asset('images/accomm_one_apt_main@2x.png') }}" alt="Multiple Apartments" class="w-16 h-16" />
+    
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <div class="bg-white shadow-md rounded-lg p-6 text-center">
+            <p class="text-gray-700">
+                Great, since your holiday homes are located at the same address there should be some things that apply to all of them. Let's start filling in those general settings.
+            </p>
         </div>
 
-        <!-- Heading -->
-        <h2 class="text-lg md:text-xl font-bold text-gray-800 mb-8">
-            Multiple apartments in the same location where guests can book an entire apartment
-        </h2>
-
-        <!-- Description -->
-        <p class="text-gray-700 mb-8">Does this sound like your property?</p>
-
-        <!-- Buttons -->
-          <template x-if="step === 2">
-        <div class="space-y-2">
-            <button   @click="step++" class="w-full bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded">
+        <!-- Navigation Buttons -->
+        <div class="mt-8 flex justify-end">
+            <button onclick="history.back()" class="px-4 py-2 mr-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 focus:outline-none focus:ring focus:ring-gray-200">
+                <i class="fas fa-arrow-left mr-1"></i> Back
+            </button>
+            <button onclick="window.location.href='/next-step'" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-200">
                 Continue
             </button>
-            <button   @click="step--" class="w-full border border-[#3CC0E9] text-[#3CC0E9] hover:bg-[#29ACD5]font-semibold py-2 px-4 rounded mb-6">
-                No, I need to make a change
-            </button>
         </div>
-   </template>
-     
-    </div>
+    </main>
 </div>
 <!--Main Step 2 -End-->
     
@@ -549,9 +553,14 @@
   </div>
 </div>
 <!--Main Step 3 End-->
+</div>
+    </form>
+  </div>
 
 
 </div>
+
+<!---------end holiday home section------------->
 
 <div id="section-villa" class="mt-20 p-8 bg-gray-100 rounded shadow-lg hidden">
   <h3 class="text-xl font-bold mb-4">Villa Details</h3>
