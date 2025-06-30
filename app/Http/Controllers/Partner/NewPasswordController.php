@@ -29,9 +29,9 @@ class NewPasswordController extends Controller
         );
 
         return $status == Password::PASSWORD_RESET
-            ? redirect()->route('partner.login.email')->with('status', __($status))
+            ? redirect()->route('partner.login.email')->with('success', 'Your password has been reset successfully. Please log in with your new password.')
             : back()->withInput($request->only('email'))
-                ->withErrors(['email' => __($status)]);
+                ->with('error', 'Unable to reset password. Please try again.');
     }
 }
 

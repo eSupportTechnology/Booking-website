@@ -28,13 +28,13 @@ class PartnerPasswordResetLinkController extends Controller
 
         // check if the user is a partner before sending the reset link.
         if (!$user || !$user->hasRole('partner')) {
-            return back()->withErrors(['email' => trans(Password::INVALID_USER)]);
+            return back()->with('error', 'No partner account found with this email address.');
         }
 
         // create token and send mail.
         $token = app('auth.password.broker')->createToken($user);
         Mail::to($user->email)->send(new PartnerResetPasswordMail($token, $user->email));
 
-        return back()->with('status', trans(Password::RESET_LINK_SENT));
+        return back()->with('success', 'Password reset link has been sent to your email address.');
     }
 } 
