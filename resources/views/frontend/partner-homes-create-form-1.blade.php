@@ -101,78 +101,84 @@
 
 
       <!-- Main Step 1 Content -->
-      <div x-show="step === 1" x-cloak>
-        <div class="bg-white max-w-2xl w-full p-6 rounded-lg shadow mx-auto" x-data="{ selected: '' }">
-          <h2 class="text-2xl font-bold text-center mb-6">What can guests book?</h2>
+<div x-show="step === 1" x-cloak>
+  <div class="bg-white max-w-2xl w-full p-6 rounded-lg shadow mx-auto" x-data="{ selected: '' }">
+    <h2 class="text-2xl font-bold text-center mb-6">What can guests book?</h2>
 
-          <!-- Options -->
-          <label
-            :class="selected === 'one' ? 'border-blue-600 border-2' : 'border border-gray-300'"
-            class="block rounded p-4 cursor-pointer transition bg-white mb-4"
-            @click="selected = 'one'"
-          >
-            <div class="flex items-center space-x-4">
-              <img src="{{ asset('images/accomm_single_home@2x (1).png') }}" alt="One Apartment" class="w-8 h-8" />
-              <div>
-                <span class="text-base font-bold text-gray-800">Entire place</span>
-                <p class="text-xs text-gray-800">
-                  Guests are able to use the entire place and do not have to share this with the host or other guests.
-                </p>
-              </div>
-            </div>
-            <template x-if="selected === 'one'">
-              <div class="text-blue-600 text-xl font-bold mt-2">✔</div>
-            </template>
-            <input type="radio" name="apartment_type" value="one" x-model="selected" class="hidden" />
-          </label>
+    <!-- Option 1 -->
+    <label
+      :class="selected === 'one' ? 'border-blue-600 border-2' : 'border border-gray-300'"
+      class="relative block rounded p-4 cursor-pointer transition bg-white mb-4"
+      @click="selected = 'one'"
+    >
+      <!-- ✔ Tick -->
+      <template x-if="selected === 'one'">
+        <div class="absolute top-2 right-2 text-blue-600 text-xl font-bold">✔</div>
+      </template>
 
-          <label
-            :class="selected === 'multiple' ? 'border-blue-600 border-2' : 'border border-gray-300'"
-            class="block rounded p-4 cursor-pointer transition bg-white"
-            @click="selected = 'multiple'"
-          >
-            <div class="flex items-center space-x-4">
-              <img src="{{ asset('images/accomm_private_room@2x.png') }}" alt="Multiple Apartments" class="w-8 h-8" />
-              <div>
-                <span class="text-base font-bold text-gray-800">A private room</span>
-                <p class="text-xs text-gray-800">
-                  Guests rent a room within the property. There are common areas that are either shared with the host or other guests.
-                </p>
-              </div>
-            </div>
-            <template x-if="selected === 'multiple'">
-              <div class="text-blue-600 text-xl font-bold mt-2">✔</div>
-            </template>
-            <input type="radio" name="apartment_type" value="multiple" x-model="selected" class="hidden" />
-          </label>
-
-          <!-- Navigation Buttons -->
-          <div class="flex items-center justify-between pt-4">
-            <button
-              type="button"
-              @click="if(step > 1) step--"
-              class="border border-[#3CC0E9] text-blue-600 hover:bg-[#29ACD5] font-semibold py-2 px-4 rounded"
-              :disabled="step === 1"
-              :class="step === 1 ? 'opacity-50 cursor-not-allowed' : ''"
-            >
-              ←
-            </button>
-            <button
-              type="button"
-              @click="if(selected !== '') step = 2"
-              class="font-semibold py-3 px-8 rounded bg-[#3CC0E9] hover:bg-[#29ACD5] text-white"
-              :disabled="selected === ''"
-              :class="selected === '' ? 'opacity-50 cursor-not-allowed' : ''"
-            >
-              Continue
-            </button>
-          </div>
+      <div class="flex items-center space-x-4">
+        <img src="{{ asset('images/accomm_single_home@2x (1).png') }}" alt="One Apartment" class="w-8 h-8" />
+        <div>
+          <span class="text-base font-bold text-gray-800">Entire place</span>
+          <p class="text-xs text-gray-800">
+            Guests are able to use the entire place and do not have to share this with the host or other guests.
+          </p>
         </div>
       </div>
+      <input type="radio" name="apartment_type" value="one" x-model="selected" class="hidden" />
+    </label>
+
+    <!-- Option 2 -->
+    <label
+      :class="selected === 'multiple' ? 'border-blue-600 border-2' : 'border border-gray-300'"
+      class="relative block rounded p-4 cursor-pointer transition bg-white"
+      @click="selected = 'multiple'"
+    >
+      <!-- ✔ Tick -->
+      <template x-if="selected === 'multiple'">
+        <div class="absolute top-2 right-2 text-blue-600 text-xl font-bold">✔</div>
+      </template>
+
+      <div class="flex items-center space-x-4">
+        <img src="{{ asset('images/accomm_private_room@2x.png') }}" alt="Multiple Apartments" class="w-8 h-8" />
+        <div>
+          <span class="text-base font-bold text-gray-800">A private room</span>
+          <p class="text-xs text-gray-800">
+            Guests rent a room within the property. There are common areas that are either shared with the host or other guests.
+          </p>
+        </div>
+      </div>
+      <input type="radio" name="apartment_type" value="multiple" x-model="selected" class="hidden" />
+    </label>
+
+    <!-- Navigation Buttons -->
+    <div class="flex items-center justify-between pt-4">
+      <button
+        type="button"
+        @click="if(step > 1) step--"
+        class="border border-[#3CC0E9] text-blue-600 hover:bg-[#29ACD5] font-semibold py-2 px-4 rounded"
+        :disabled="step === 1"
+        :class="step === 1 ? 'opacity-50 cursor-not-allowed' : ''"
+      >
+        ←
+      </button>
+      <button
+        type="button"
+        @click="if(selected !== '') step = 2"
+        class="font-semibold py-3 px-8 rounded bg-[#3CC0E9] hover:bg-[#29ACD5] text-white"
+        :disabled="selected === ''"
+        :class="selected === '' ? 'opacity-50 cursor-not-allowed' : ''"
+      >
+        Continue
+      </button>
+    </div>
+  </div>
+</div>
+
 
       <!-- Step 2: Selection Container -->
       <div id="selection-container" x-show="step === 2" x-cloak class="container mx-auto px-4 py-8 max-w-6xl">
-        <h2 class="text-2xl font-bold mb-8 text-center">
+        <h2 class="text-2xl font-bold mb-8 text-left">
           From the list below, which property category is most similar to your place?
         </h2>
 
@@ -196,14 +202,14 @@
                 <p class="text-sm text-gray-800" x-text="property.desc"></p>
 
                 <div
-                  class="tick-box absolute top-2 right-2"
-                  x-show="selectedBox === property.id"
-                  style="display: none;"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
+  class="tick-box absolute top-2 right-2"
+  x-show="selectedBox === property.id"
+>
+  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+  </svg>
+</div>
+
               </div>
             </template>
           </div>
@@ -211,24 +217,32 @@
 
         <!-- Help Link -->
         <div class="mt-8 text-left">
-          <a href="#" class="text-sm text-blue-500 hover:underline">
-            <i class="fas fa-question-circle mr-1"></i> I don't see my property type on the list
-          </a>
+       <a href="#" class="flex items-center space-x-2 text-sm text-blue-500 hover:underline">
+  <img src="{{ asset('assets/iconoir_question-mark-circle.svg') }}" class="w-5 h-5" />
+  <span class="text-base">I don't see my property type on the list</span>
+</a>
+
         </div>
 
-        <!-- Continue Button -->
-        <div class="mt-8 flex justify-end">
-          <button
-            id="continueBtn"
+             <template x-if="step === 2">
+  <div class="flex items-center justify-between pt-4">
+    <button type="button"
+            @click="step = 1"
+            class="border border-[#3CC0E9] text-blue-600  font-semibold py-2 px-4 rounded">
+      ← 
+    </button>
+    <button id="continueBtn"
             @click="if(selectedBox) { step = 3; }"
             :disabled="!selectedBox"
-            :class="!selectedBox ? 'bg-blue-300 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600 cursor-pointer'"
+            :class="!selectedBox ? 'bg-blue-300 cursor-not-allowed' : 'bg-[#3CC0E9] hover:bg-blue-600 cursor-pointer'"
             class="px-4 py-2 text-white rounded transition-all duration-200"
-            type="button"
-          >
-            Continue
-          </button>
-        </div>
+            type="button">
+      Continue 
+    </button>
+  </div>
+</template>
+
+     
       </div>
 
       <!-- Step 3+: Property Details Sections -->
@@ -248,39 +262,42 @@
           </section>
 
           <!-- Holiday Home -->
-          <section x-show="selectedBox === 'section-holiday-home'" class="mt-20 p-8 bg-gray-100 rounded " x-data="{ subStep: 1 }">
-            <form class="p-6 rounded-lg space-y-6" enctype="multipart/form-data" @submit.prevent>
+          <section x-show="selectedBox === 'section-holiday-home'"  x-data="{ subStep: 1 }">
+            <form class="p-6 rounded-lg " enctype="multipart/form-data" @submit.prevent>
               <!-- Step 1 -->
-              <div x-show="subStep === 1" x-cloak class=" p-6 rounded shadow">
-                <!-- Main Content -->
- 
-<div class="max-w-md mx-auto">
-  <!-- White Box -->
-  <div class="bg-white shadow-md rounded-lg p-6 text-left">
-    <p class="text-gray-700">
-      Great, since your holiday homes are located at the same address there should be some things that apply to all of them. Let's start filling in those general settings.
-    </p>
-  </div>
+             <div x-show="subStep === 1" x-cloak class="p-6 rounded">
+  <!-- Main Content -->
+  <div class="max-w-xl ml-4 mr-auto">
+    <!-- White Box -->
+    <div class="bg-white shadow-md  p-6 text-left">
+      <p class=" text-base text-gray-700">
+        Great, since your holiday homes are located at the same address there should be some things that apply to all of them. Let's start filling in those general settings.
+      </p>
+    </div>
 
-  <!-- Navigation Buttons -->
-  <div class="mt-6 flex justify-between">
-    <button onclick="history.back()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 focus:outline-none focus:ring focus:ring-gray-200">
-      ← Back
-    </button>
-    <button type="button" @click="subStep = 2" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-200">
-      Continue →
-    </button>
+    <!-- Navigation Buttons -->
+    <div class="mt-6 flex justify-between">
+      <button onclick="history.back()" class= "border border-[#3CC0E9]  text-blue-600 hover:bg-[#29ACD5] font-semibold py-2 px-4 rounded">
+        ← 
+      </button>
+      <button type="button" @click="subStep = 2"    class=" font-semibold py-3 px-8 rounded  bg-[#3CC0E9] hover:bg-[#29ACD5] text-white">
+        Continue 
+      </button>
+    </div>
   </div>
 </div>
 
 
-              </div>
+
+             
 
 
 
               <!-- Step 2 -->
-              <div x-show="subStep === 2" x-cloak class="bg-white p-6 rounded shadow">
-                <div class="relative w-[1200px] h-auto overflow-hidden rounded-lg shadow mx-auto my-10 ">
+              <div x-show="subStep === 2" x-cloak >
+ <div class="relative w-[1400px] h-auto overflow-hidden rounded-lg shadow mx-auto  -mt-14 -ml-16">
+
+
     <!-- Google Maps iframe full background -->
     <iframe 
         class="absolute inset-0 w-full h-full"
@@ -342,7 +359,7 @@
                    <div class="flex justify-between mt-6">
   <!-- Back Button (Left) -->
    <button type="button"
-          @click="wizardStep--"
+        @click="subStep = 1"
               class="border border-[#3CC0E9]  text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
         ←
       </button>
@@ -350,7 +367,7 @@
 
   <!-- Continue Button (Right) -->
   <button   type="submit"
-     @click="wizardStep++"
+   @click="subStep = 3"
           class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
     Continue
   </button>
