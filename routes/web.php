@@ -139,9 +139,21 @@ Route::get('/partner-property-types', function () {
     return view('frontend.partner-property-types');
 })->name('partner.property.types');
 
+Route::get('/partner-apartment-create-1', function () {
+    return view('frontend.partner-apartment-create-form-1');
+})->name('partner.apartment.create.1');
+
 Route::get('/customer-profile-create', function () {
     return view('frontend.customer-profile-create');
 })->name('customer.profile.create');
+
+Route::get('/partner-apartment-create-2', function () {
+    return view('frontend.partner-apartment-create-form-2');
+})->name('partner.apartment.create.2');
+
+Route::get('/partner-homes-create-1', function () {
+    return view('frontend.partner-homes-create-form-1');
+})->name('partner.homes.create.1');
 
 
 Route::get('/airport-taxis', function () {
