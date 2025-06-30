@@ -12,6 +12,7 @@ use App\Mail\PartnerVerificationMail;
 use App\Http\Controllers\Partner\LoginController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Customer\CustomerPersonalDetailsController;
+use App\Http\Controllers\PropertyController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -180,6 +181,10 @@ Route::prefix('traveler')->group(function () {
 
 // Partner Registration (Web)
 Route::prefix('partner')->group(function () {
+    Route::get('/property_category', [PropertyController::class, 'categories'])->name('partner.register.form');
+    Route::get('/property_subcategory/{id}', [PropertyController::class, 'subcategories'])->name('partner.register.form');
+    Route::get('/property_subtype/{id}', [PropertyController::class, 'subtypes'])->name('partner.register.form');
+    Route::post('/property/register', [PropertyController::class, 'register'])->name('partner.register.property');
     // Show email registration form
     Route::get('/register/email', function () {
         return view('partner.partner-account-create');
