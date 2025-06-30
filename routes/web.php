@@ -74,7 +74,7 @@ Route::get('/list-your-property', function () {
 
 
 Route::get('/', function () {
-    return view('frontend.home');
+    return view('Customer.home');
 });
 Route::get('/property', function () {
     return view('frontend.property');
