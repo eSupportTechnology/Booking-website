@@ -123,12 +123,28 @@
   x-show="tab === 'personal'"
   x-cloak
 >
-  <div class="mb-6">
+  <div class="flex items-center justify-between mb-6">
+  <!-- Left: Title and description -->
+  <div>
     <h2 class="text-2xl font-bold">Personal details</h2>
     <p class="text-gray-600 mt-1" style="font-family: 'Noto Sans', sans-serif;">
       Update your information and find out how it's used
     </p>
   </div>
+
+   <!-- Right: Profile Picture + Camera Upload Button -->
+  <div class="relative w-16 h-16">
+    <!-- Profile Image -->
+    <img src="https://via.placeholder.com/100" alt="Profile" class="w-full h-full rounded-full object-cover border" />
+
+    <!-- Camera Button -->
+    <label for="profile-upload" class="absolute bottom-0 right-0 bg-white border rounded-full p-1 shadow cursor-pointer hover:bg-gray-100">
+       <img src="{{ asset('assets/mdi_camera-outline.svg') }}" alt="Stay" class="w-3 h-3" />
+      <input type="file" id="profile-upload" class="hidden" />
+    </label>
+  </div>
+</div>
+
 
   <template x-for="(section, index) in Object.keys(completed)" :key="section">
     <div class="border-t pt-4 min-h-[100px] flex flex-col justify-center">
