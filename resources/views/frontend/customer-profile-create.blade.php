@@ -190,20 +190,44 @@
 
       <!-- Input Form Fields -->
       <div x-show="editing === section" class="mt-1 mb-4 space-y-2">
-        <template x-if="section === 'name'">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input type="text" placeholder="First name(s)" class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm" x-ref="input1" />
-            <input type="text" placeholder="Last name(s)" class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm" x-ref="input2" />
-          </div>
-        </template>
+   <template x-if="section === 'name'">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <input 
+      type="text" 
+      placeholder="First name(s)" 
+      class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm" 
+      x-ref="firstNameInput" 
+    />
+    <input 
+      type="text" 
+      placeholder="Last name(s)" 
+      class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm" 
+      x-ref="lastNameInput" 
+    />
+  </div>
+</template>
 
-        <template x-if="section === 'displayName'">
-          <input type="text" placeholder="Choose a display name" class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm" x-ref="input1" />
-        </template>
 
-        <template x-if="section === 'emailAddress'">
-          <input type="email" placeholder="Email address" class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm" x-ref="input1" />
-        </template>
+
+       <template x-if="section === 'displayName'">
+  <input
+    type="text"
+    x-model="completed.displayName"
+    placeholder="Choose a display name"
+    class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm"
+    x-ref="input1"
+  />
+</template>
+
+       <template x-if="section === 'emailAddress'">
+  <input 
+    type="email" 
+    placeholder="Email address" 
+    class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm" 
+    x-ref="emailInput" 
+  />
+</template>
+
 
     <template x-if="section === 'phone'">
   <div class="space-y-2">
@@ -264,14 +288,17 @@
   </select>
 </template>
 
-        <template x-if="section === 'gender'">
-          <select class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm" x-ref="input1">
-            <option value="">Select your gender</option>
-            <option value="Female">Female</option>
-            <option value="Male">Male</option>
-            <option value="Other">Other</option>
-          </select>
-        </template>
+      <template x-if="section === 'gender'">
+  <select
+    class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm"
+    x-ref="genderInput"
+  >
+    <option value="">Select your gender</option>
+    <option value="Female">Female</option>
+    <option value="Male">Male</option>
+    <option value="Other">Other</option>
+  </select>
+</template>
 
         <template x-if="section === 'address'">
           <div class="space-y-3">
@@ -367,13 +394,11 @@
           <button @click="editing = null" class="text-blue-600 hover:underline text-sm">Cancel</button>
           <button
  @click="
-  if (section === 'name') {
-    const first = $refs.input1?.value || '';
-    const last = $refs.input2?.value || '';
-    completed.name = first + (first && last ? ' ' : '') + last;
-  } else if (section === 'displayName') {
-    completed.displayName = $refs.input1?.value || '';
-  } else if (section === 'address') {
+if (section === 'name') {
+  const first = $refs.firstNameInput?.value || '';
+  const last = $refs.lastNameInput?.value || '';
+  completed.name = [first, last].filter(Boolean).join(' ');
+} else if (section === 'address') {
     completed.address = 
       [$refs.country?.value, $refs.street?.value, $refs.city?.value, $refs.postcode?.value]
       .filter(Boolean).join(', ');
@@ -396,11 +421,14 @@
     completed.nationality = $refs.nationalityInput?.value || '';
   } else if (section === 'gender') {
     completed.gender = $refs.genderInput?.value || '';
-  } else {
-    completed[section] = $refs.input1?.value || '';
   }
+    else if (section === 'emailAddress') {
+  completed.emailAddress = $refs.emailInput?.value || '';
+}
+
   editing = null;
 "
+
 
             class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm font-medium"
           >
