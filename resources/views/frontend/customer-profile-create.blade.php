@@ -104,7 +104,7 @@
 
       <!-- Main Content -->
       <main class="flex-1 bg-white py-2 px-6 space-y-8 mb-6">
- <section 
+ <section
   x-data="{
     editing: null,
     phoneFlag: 'https://flagcdn.com/w40/lk.png',
@@ -186,8 +186,8 @@
           <!-- GENERAL DISPLAY OR HINT TEXT -->
           <template x-if="section !== 'emailAddress' && section !== 'phone' && editing !== section">
             <p class="text-sm mt-1" :class="completed[section] ? 'text-gray-900 font-medium' : 'text-gray-500'" x-text="
-              completed[section] 
-                ? completed[section] 
+              completed[section]
+                ? completed[section]
                 : {
                     name: 'Enter your full legal name.',
                     displayName: 'This name is shown when you leave reviews or messages.',
@@ -208,17 +208,17 @@
       <div x-show="editing === section" class="mt-1 mb-4 space-y-2">
    <template x-if="section === 'name'">
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <input 
-      type="text" 
-      placeholder="First name(s)" 
-      class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm" 
-      x-ref="firstNameInput" 
+    <input
+      type="text"
+      placeholder="First name(s)"
+      class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm"
+      x-ref="firstNameInput"
     />
-    <input 
-      type="text" 
-      placeholder="Last name(s)" 
-      class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm" 
-      x-ref="lastNameInput" 
+    <input
+      type="text"
+      placeholder="Last name(s)"
+      class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm"
+      x-ref="lastNameInput"
     />
   </div>
 </template>
@@ -236,11 +236,11 @@
 </template>
 
        <template x-if="section === 'emailAddress'">
-  <input 
-    type="email" 
-    placeholder="Email address" 
-    class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm" 
-    x-ref="emailInput" 
+  <input
+    type="email"
+    placeholder="Email address"
+    class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm"
+    x-ref="emailInput"
   />
 </template>
 
@@ -410,23 +410,25 @@
           <button @click="editing = null" class="text-blue-600 hover:underline text-sm">Cancel</button>
           <button
  @click="
-if (section === 'name') {
-  const first = $refs.firstNameInput?.value || '';
-  const last = $refs.lastNameInput?.value || '';
-  completed.name = [first, last].filter(Boolean).join(' ');
-} else if (section === 'address') {
-    completed.address = 
+  if (section === 'name') {
+    const first = $refs.input1?.value || '';
+    const last = $refs.input2?.value || '';
+    completed.name = first + (first && last ? ' ' : '') + last;
+  } else if (section === 'displayName') {
+    completed.displayName = $refs.input1?.value || '';
+  } else if (section === 'address') {
+    completed.address =
       [$refs.country?.value, $refs.street?.value, $refs.city?.value, $refs.postcode?.value]
       .filter(Boolean).join(', ');
   } else if (section === 'passport') {
-    completed.passport = 
+    completed.passport =
       [
         $refs.passportFirstName?.value,
         $refs.passportLastName?.value,
         $refs.passportIssuingCountry?.value,
         $refs.passportNumber?.value,
-        ($refs.passportExpiryDay?.value && $refs.passportExpiryMonth?.value && $refs.passportExpiryYear?.value) 
-          ? `Expires: ${$refs.passportExpiryDay.value}/${$refs.passportExpiryMonth.value}/${$refs.passportExpiryYear.value}` 
+        ($refs.passportExpiryDay?.value && $refs.passportExpiryMonth?.value && $refs.passportExpiryYear?.value)
+          ? `Expires: ${$refs.passportExpiryDay.value}/${$refs.passportExpiryMonth.value}/${$refs.passportExpiryYear.value}`
           : ''
       ].filter(Boolean).join(' | ');
   } else if (section === 'phone') {
