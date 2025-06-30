@@ -153,7 +153,7 @@
                     displayName: '{{ $details->display_name ?? '' }}',
                     emailAddress: '{{ $email ?? '' }}',
                     phone: '{{ $details->phone_number ?? '' }}',
-                    dob: '{{ $details->date_of_birth ?? '' }}',
+                    dob: '{{ optional($details?->date_of_birth)->format('Y-m-d') }}',
                     nationality: '{{ $details->nationality ?? '' }}',
                     gender: '{{ $details->gender ?? '' }}',
                     address: '{{ isset($details) ? collect([$details->country, $details->street, $details->city, $details->postcode])->filter()->join(', ') : '' }}',

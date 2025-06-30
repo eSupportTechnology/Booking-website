@@ -176,7 +176,7 @@
                                 </div>
 
                                 <!-- My Account Link -->
-                                <a href="/my-account" class="text-white hover:underline"
+                                <a href="#" class="text-white hover:underline"
                                     style="font-family: 'Noto Sans', sans-serif;">
                                     Your Account
                                 </a>
