@@ -89,7 +89,7 @@ class PropertyController extends Controller
         ]);
 
         // Set the user_id from the logged-in user
-        $validated['user_id'] = auth()->user() ? auth()->user()->id : null;
+        $validated['user_id'] = \Illuminate\Support\Facades\Auth::check() ? \Illuminate\Support\Facades\Auth::id() : null;
 
         // Create DTO from request
         $dto = PropertyStep1DTO::fromRequest(new \Illuminate\Http\Request($validated));
@@ -97,20 +97,14 @@ class PropertyController extends Controller
         // Store in database (assuming you have a Property model)
         $property = $action->createPropertyStep1($dto);
         
-        // Store property ID in session for next steps
+        // Store property ID in session for next steps (optional)
         session(['property_id' => $property->id]);
         
-        return response()->json([
-            'success' => true,
-            'message' => 'Step 1 data saved successfully',
-            'property_id' => $property->id
-        ]);
+        // Redirect to step 2 with property ID
+        return redirect()->route('partner.property.apartment.step2', $property->id)->with('success', 'Step 1 data saved successfully');
         
     } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error saving data: ' . $e->getMessage()
-        ], 500);
+        return redirect()->back()->withErrors(['error' => 'Error saving data: ' . $e->getMessage()]);
     }
 }
 
