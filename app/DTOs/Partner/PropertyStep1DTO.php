@@ -36,4 +36,14 @@ class PropertyStep1DTO
             'address_type_id' => $this->address_type_id,
         ];
     }
+
+    public static function validationRules()
+    {
+        return [
+            'category_id' => 'required|exists:property_categories,id',
+            'subcategory_id' => 'required|exists:property_subcategories,id',
+            'property_count' => 'nullable|integer|min:1',
+            'address_type_id' => 'nullable|integer',
+        ];
+    }
 }

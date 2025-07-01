@@ -80,13 +80,8 @@ class PropertyController extends Controller
    public function storeStep1(Request $request, PropertyAction $action)
 {
     try {
-        // Validate all fields except user_id
-        $validated = $request->validate([
-            'category_id' => 'required|exists:property_categories,id',
-            'subcategory_id' => 'required|exists:property_subcategories,id',
-            'property_count' => 'nullable|integer|min:1',
-            'address_type_id' => 'nullable|integer',
-        ]);
+        // Validate using DTO rules
+        $validated = $request->validate(\App\DTOs\Partner\PropertyStep1DTO::validationRules());
 
         // Set the user_id from the logged-in user
         $validated['user_id'] = \Illuminate\Support\Facades\Auth::check() ? \Illuminate\Support\Facades\Auth::id() : null;
