@@ -2,41 +2,43 @@
 
 namespace App\DTOs\Partner;
 
-class PropertyStep2DTO
+use WendellAdriel\ValidatedDTO\ValidatedDTO;
+
+class PropertyStep2DTO extends ValidatedDTO
 {
-    public $title, $address, $city, $country, $zipcode, $description;
+    public string $title;
+    public string $address;
+    public string $city;
+    public string $country;
+    public ?string $zipcode;
+    public string $description;
 
-    public function __construct($title, $address, $city, $country, $zipcode, $description)
-    {
-        $this->title = $title;
-        $this->address = $address;
-        $this->city = $city;
-        $this->country = $country;
-        $this->zipcode = $zipcode;
-        $this->description = $description;
-    }
-
-    public static function fromRequest($request)
-    {
-        return new self(
-            $request->input('title'),
-            $request->input('address'),
-            $request->input('city'),
-            $request->input('country'),
-            $request->input('zipcode'),
-            $request->input('description')
-        );
-    }
-
-    public function toArray()
+    protected function rules(): array
     {
         return [
-            'title' => $this->title,
-            'address' => $this->address,
-            'city' => $this->city,
-            'country' => $this->country,
-            'zipcode' => $this->zipcode,
-            'description' => $this->description,
+            'title' => ['required', 'string', 'max:255'],
+            'address' => ['required', 'string'],
+            'city' => ['required', 'string'],
+            'country' => ['required', 'string'],
+            'zipcode' => ['nullable', 'string', 'max:20'],
+            'description' => ['required', 'string'],
+        ];
+    }
+
+    protected function defaults(): array
+    {
+        return [];
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'title' => 'string',
+            'address' => 'string',
+            'city' => 'string',
+            'country' => 'string',
+            'zipcode' => 'string',
+            'description' => 'string',
         ];
     }
 }

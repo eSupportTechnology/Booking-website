@@ -2,48 +2,41 @@
 
 namespace App\DTOs\Partner;
 
-class PropertyStep1DTO
+use WendellAdriel\ValidatedDTO\ValidatedDTO;
+use WendellAdriel\ValidatedDTO\Casting\IntegerCast;
+
+class PropertyStep1DTO extends ValidatedDTO
 {
-    public $user_id, $category_id, $subcategory_id, $property_count, $address_type_id;
+    public int $category_id;
+    public int $subcategory_id;
+    public ?int $property_count;
+    public ?int $address_type_id;
+    public ?int $user_id; // Added this since it's used in the controller
 
-    public function __construct($user_id, $category_id, $subcategory_id, $property_count = null, $address_type_id = null)
-    {
-        $this->user_id = $user_id;
-        $this->category_id = $category_id;
-        $this->subcategory_id = $subcategory_id;
-        $this->property_count = $property_count;
-        $this->address_type_id = $address_type_id;
-    }
-
-    public static function fromRequest($request)
-    {
-        return new self(
-            $request->input('user_id'),
-            $request->input('category_id'),
-            $request->input('subcategory_id'),
-            $request->input('property_count'),
-            $request->input('address_type_id')
-        );
-    }
-
-    public function toArray()
+    protected function rules(): array
     {
         return [
-            'user_id' => $this->user_id,
-            'category_id' => $this->category_id,
-            'subcategory_id' => $this->subcategory_id,
-            'property_count' => $this->property_count,
-            'address_type_id' => $this->address_type_id,
+            'category_id' => ['required', 'exists:property_categories,id'],
+            'subcategory_id' => ['required', 'exists:property_subcategories,id'],
+            'property_count' => ['nullable', 'integer', 'min:1'],
+            'address_type_id' => ['nullable', 'integer'],
+            'user_id' => ['nullable', 'integer'], // Allow user_id to be set
         ];
     }
 
-    public static function validationRules()
+    protected function defaults(): array
+    {
+        return [];
+    }
+
+    protected function casts(): array
     {
         return [
-            'category_id' => 'required|exists:property_categories,id',
-            'subcategory_id' => 'required|exists:property_subcategories,id',
-            'property_count' => 'nullable|integer|min:1',
-            'address_type_id' => 'nullable|integer',
+            'category_id' => new IntegerCast(),
+            'subcategory_id' => new IntegerCast(),
+            'property_count' => new IntegerCast(),
+            'address_type_id' => new IntegerCast(),
+            'user_id' => new IntegerCast(),
         ];
     }
 }

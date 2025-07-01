@@ -54,84 +54,56 @@ class PropertyController extends Controller
     {
         // Log all incoming request data
         Log::info('Property form submission:', $request->all());
-
-        $validated = $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'category_id' => 'required|exists:property_categories,id',
-            'subcategory_id' => 'required|exists:property_subcategories,id',
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'address' => 'required|string',
-            'city' => 'required|string',
-            'country' => 'required|string',
-            'zipcode' => 'nullable|string|max:20',
-            // Add other fields as needed
-        ]);
-
-        $property = \App\Models\Property::create($validated);
-
-        // Log the created property
-        Log::info('Property created:', $property->toArray());
-
-        // Redirect to next step or show success
-        return redirect()->route('partner.property.apartment.2')->with('success', 'Property created!');
     }
 
    public function storeStep1(Request $request, PropertyAction $action)
 {
+    Log::info('storeStep1 called', [
+        'request' => $request->all(),
+        'session' => session()->all(),
+        'user_id' => auth()?->id(),
+    ]);
     try {
-        // Validate using DTO rules
-        $validated = $request->validate(\App\DTOs\Partner\PropertyStep1DTO::validationRules());
-
+        // Instantiate DTO 
+        $dto = PropertyStep1DTO::fromRequest($request);
         // Set the user_id from the logged-in user
-        $validated['user_id'] = \Illuminate\Support\Facades\Auth::check() ? \Illuminate\Support\Facades\Auth::id() : null;
-
-        // Create DTO from request
-        $dto = PropertyStep1DTO::fromRequest(new \Illuminate\Http\Request($validated));
-        
-        // Store in database (assuming you have a Property model)
+        $dto->user_id = auth()?->id();
+        // Store in database
         $property = $action->createPropertyStep1($dto);
-        
-        // Store property ID in session for next steps (optional)
+        // Store property ID in session for next steps 
         session(['property_id' => $property->id]);
-        
+        Log::info('storeStep1 success', [
+            'property_id' => $property->id,
+            'redirect_to' => route('partner.property.apartment.step2', $property->id),
+        ]);
         // Redirect to step 2 with property ID
-        return redirect()->route('partner.property.apartment.step2', $property->id)->with('success', 'Step 1 data saved successfully');
-        
+        return redirect()->route('partner.property.apartment.step2', $property->id)
+            ->with('success', 'Step 1 data saved successfully');
     } catch (\Exception $e) {
+        Log::error('storeStep1 exception', [
+            'message' => $e->getMessage(),
+            'trace' => $e->getTraceAsString(),
+        ]);
         return redirect()->back()->withErrors(['error' => 'Error saving data: ' . $e->getMessage()]);
     }
 }
 
     public function showStep2($propertyId)
     {
-        $property = \App\Models\Property::findOrFail($propertyId);
+        $property = Property::findOrFail($propertyId);
         return view('partner.partner-apartment-create-form-2', compact('property'));
     }
 
     public function storeStep2(Request $request, $propertyId, PropertyAction $action)
     {
-        Log::info('storeStep2 - title:', ['title' => $request->input('title')]);
-        Log::info('storeStep2 - address:', ['address' => $request->input('address')]);
-        Log::info('storeStep2 - city:', ['city' => $request->input('city')]);
-        Log::info('storeStep2 - country:', ['country' => $request->input('country')]);
-        Log::info('storeStep2 - zipcode:', ['zipcode' => $request->input('zipcode')]);
-        Log::info('storeStep2 - description:', ['description' => $request->input('description')]);
-        $property = \App\Models\Property::findOrFail($propertyId);
-
-        $dto = PropertyStep2DTO::fromRequest($request);
-
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'address' => 'required|string',
-            'city' => 'required|string',
-            'country' => 'required|string',
-            'zipcode' => 'nullable|string|max:20',
-            'description' => 'required|string',
+        Log::info('storeStep2 called', [
+            'request' => $request->all(),
+            'session' => session()->all(),
+            'user_id' => auth()?->id(),
         ]);
-
+        $property = Property::findOrFail($propertyId);
+        $dto = PropertyStep2DTO::fromRequest($request);
         $action->updatePropertyStep2($property, $dto);
-
         // Redirect to next step or show success
         return redirect()->route('partner.property.apartment.3', $property->id);
     }

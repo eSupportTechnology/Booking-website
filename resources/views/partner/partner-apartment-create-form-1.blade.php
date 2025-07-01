@@ -95,35 +95,17 @@
   <!--Start Form-->
   <div class="max-w-6xl p-4 ml-14  bg-gray-100" x-data="{ 
     step: 1,
-    formData: {
-      user_id: {{ auth()->id() ?? 'null' }},
-      category_id: null,
-      subcategory_id: null,
-      property_count: null,
-      address_type_id: null,
-      selected_channels: []
-    },
-    submitForm() {
-      // Submit the form data
-      fetch('{{ route('partner.property.step1.store') }}', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
-        },
-        body: JSON.stringify(this.formData)
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          window.location.href = '{{ route('partner.property.apartment.2') }}';
-        } else {
-          console.error('Error:', data.message);
-        }
-      })
-      .catch(error => {
-        console.error('Error:', error);
-      });
+    categoryId: null,
+    subcategoryId: null,
+    addressTypeId: null,
+    showProgress: false,
+    selected: '',
+    sameAddress: 'yes',
+    propertyCount: 2,
+    selectedChannels: [],
+    url: '',
+    showImportSection() {
+      return this.selectedChannels.includes('Airbnb') || this.selectedChannels.includes('Vrbo');
     }
   }">
   
@@ -134,11 +116,11 @@
       @csrf
       
       <!-- Hidden fields for DTO data -->
-      <input type="hidden" name="user_id" :value="formData.user_id">
-      <input type="hidden" name="category_id" :value="formData.category_id">
-      <input type="hidden" name="subcategory_id" :value="formData.subcategory_id">
-      <input type="hidden" name="property_count" :value="formData.property_count">
-      <input type="hidden" name="address_type_id" :value="formData.address_type_id">
+      <input type="hidden" name="category_id" :value="categoryId">
+      <input type="hidden" name="subcategory_id" :value="subcategoryId">
+      <input type="hidden" name="property_count" :value="propertyCount">
+      <input type="hidden" name="address_type_id" :value="addressTypeId">
+      <input type="hidden" name="selected_channels" :value="selectedChannels.join(',')">
       
     <!-- Progress bar -->
   <div x-show="showProgress" class="flex justify-between mb-6 text-sm font-medium">
@@ -153,7 +135,7 @@
 <!-- Main Step 1 (How many apartments)-->
 <div x-show="step === 1" x-cloak>
    <div class="bg-white max-w-2xl w-full p-6 rounded-lg shadow ">
-  <div x-data="{ selected: '', sameAddress: 'yes', propertyCount: 2 }" class="max-w-xl mx-auto p-4 space-y-6">
+  <div class="max-w-xl mx-auto p-4 space-y-6">
     
     <h2 class="text-2xl font-bold text-center">How many apartments are you listing?</h2>
 
@@ -163,7 +145,7 @@
       <label
         :class="selected === '{{ $subcategory->name }}' ? 'border-blue-600 border-2' : 'border border-gray-300'"
         class="block rounded p-4 cursor-pointer transition bg-white"
-        @click="selected = '{{ $subcategory->name }}'; formData.subcategory_id = {{ $subcategory->id }}; formData.category_id = {{ $subcategory->category_id ?? 'null' }}"
+        @click="selected = '{{ $subcategory->name }}'; subcategoryId = {{ $subcategory->id }}; categoryId = {{ $subcategory->category_id ?? 'null' }}"
       >
         <div class="flex items-center justify-between">
           <div class="flex items-center space-x-4">
@@ -194,7 +176,7 @@
       <label
         :class="sameAddress === 'yes' ? 'border-blue-600 border-2' : 'border border-gray-300'"
         class="block rounded p-4 cursor-pointer bg-white"
-        @click="sameAddress = 'yes'; formData.address_type_id = 1"
+        @click="sameAddress = 'yes'; addressTypeId = 1"
       >
         <div class="flex items-center space-x-4">
              <img src="{{ asset('images/accomm_single_address@2x.png') }}" alt="Multiple Apartments" class="w-10 h-10" />
@@ -206,7 +188,7 @@
       <label
         :class="sameAddress === 'no' ? 'border-blue-600 border-2' : 'border border-gray-300'"
         class="block rounded p-4 cursor-pointer bg-white"
-        @click="sameAddress = 'no'; formData.address_type_id = 2"
+        @click="sameAddress = 'no'; addressTypeId = 2"
       >
         <div class="flex items-center space-x-4">
           <img src="{{ asset('images/accomm_multiple_address@2x.png') }}" alt="Multiple Apartments" class="w-14 h-10" />
@@ -235,9 +217,9 @@
         ←
       </button>
       <button type="button"
-      @click="step = step + 1"
+      @click="if(selected) step = 2"
               
-              class=" font-semibold py-3 px-8 rounded  bg-[#3CC0E9] hover:bg-[#29ACD5] text-white"> 
+              class=" font-semibold py-3 px-8 rounded  bg-[#3CC0E9] hover:bg-[#29ACD5] text-white" :class="!selected ? 'opacity-50 cursor-not-allowed' : ''"> 
         Continue
       </button>
     </div>
@@ -268,10 +250,10 @@
         <!-- Buttons -->
           <template x-if="step === 2">
         <div class="space-y-2">
-            <button   @click="step++" class="w-full bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded">
+            <button @click="step = 3" class="w-full bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded">
                 Continue
             </button>
-            <button   @click="step--" class="w-full border border-[#3CC0E9] text-[#3CC0E9] hover:bg-[#29ACD5]font-semibold py-2 px-4 rounded mb-6">
+            <button @click="step = 1" class="w-full border border-[#3CC0E9] text-[#3CC0E9] hover:bg-[#29ACD5] font-semibold py-2 px-4 rounded mb-6">
                 No, I need to make a change
             </button>
         </div>
@@ -303,31 +285,26 @@
     <div class="space-y-4 text-left">
       <label class="flex items-center space-x-3">
         <input type="checkbox" value="Airbnb" x-model="selectedChannels"
-               @change="formData.selected_channels = selectedChannels"
                class="form-checkbox h-5 w-5 text-blue-600">
         <span>Airbnb</span>
       </label>
       <label class="flex items-center space-x-3">
         <input type="checkbox" value="TripAdvisor" x-model="selectedChannels"
-               @change="formData.selected_channels = selectedChannels"
                class="form-checkbox h-5 w-5 text-blue-600">
         <span>TripAdvisor</span>
       </label>
       <label class="flex items-center space-x-3">
         <input type="checkbox" value="Vrbo" x-model="selectedChannels"
-               @change="formData.selected_channels = selectedChannels"
                class="form-checkbox h-5 w-5 text-blue-600">
         <span>Vrbo</span>
       </label>
       <label class="flex items-center space-x-3">
         <input type="checkbox" value="Another" x-model="selectedChannels"
-               @change="formData.selected_channels = selectedChannels"
                class="form-checkbox h-5 w-5 text-blue-600">
         <span>Another website</span>
       </label>
       <label class="flex items-center space-x-3 text-gray-400" :class="{ 'text-gray-900': !selectedChannels.length }">
         <input type="checkbox" value="None" x-model="selectedChannels"
-               @change="formData.selected_channels = selectedChannels"
                class="form-checkbox h-5 w-5 text-blue-600"
                :disabled="selectedChannels.length > 0">
         <span>My property isn't listed on any other websites</span>
@@ -342,11 +319,10 @@
      <div x-data="{ url: '' }" class="flex gap-2">
     <input 
         type="url" 
-        name="import_url"
         x-model="url"
+        :disabled="true"
         class="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring focus:border-blue-400"
         placeholder="https://www.airbnb.com/rooms/xxxxx or https://www.vrbo.com/xxxxx"
-        required
     >
     <button 
         type="button" 
@@ -374,8 +350,7 @@
         ←
       </button>
 <button 
-  type="button"
-  @click="if(selectedChannels.length > 0) submitForm()"
+  type="submit"
   :disabled="selectedChannels.length === 0"
   :class="selectedChannels.length === 0 
     ? 'bg-gray-300 text-gray-600 cursor-not-allowed' 

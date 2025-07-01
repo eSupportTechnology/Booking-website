@@ -256,29 +256,30 @@
         <div class="relative z-10 flex items-center justify-start h-auto p-4 mt-[110px]">
   <div class="bg-white bg-opacity-95 rounded-lg shadow-lg w-full max-w-md p-6 md:p-8 h-auto mb-4">
                 <h2 class="text-2xl font-semibold mb-4 text-gray-800">Where is your property?</h2>
-                <form action="#" method="POST">
+                <form method="POST" action="{{ route('partner.property.apartment.store.step2', $property->id) }}">
+                    @csrf
                     <div class="mb-4">
                         <label for="address" class="block text-sm font-medium text-gray-700">Find your address</label>
-                        <input type="text" id="address" name="address" value="Sri Lanka" class="mt-1 p-2 w-full border border-gray-300 rounded">
+                        <input type="text" id="address" name="address" value="{{ old('address', $property->address) }}" class="mt-1 p-2 w-full border border-gray-300 rounded">
                     </div>
                     <div class="mb-4">
                         <label for="apartment" class="block text-sm font-medium text-gray-700">Apartment or floor number (optional)</label>
-                        <input type="text" id="apartment" name="apartment" value="aaa" class="mt-1 p-2 w-full border border-gray-300 rounded">
+                        <input type="text" id="apartment" name="apartment" value="{{ old('apartment', $property->apartment) }}" class="mt-1 p-2 w-full border border-gray-300 rounded">
                     </div>
                     <div class="mb-4">
                         <label for="country" class="block text-sm font-medium text-gray-700">Country/region</label>
                         <select id="country" name="country" class="mt-1 p-2 w-full border border-gray-300 rounded">
-                            <option selected>Sri Lanka</option>
+                            <option selected>{{ old('country', $property->country) }}</option>
                         </select>
                     </div>
                     <div class="flex flex-col md:flex-row gap-4">
                         <div class="flex-1">
                             <label for="city" class="block text-sm font-medium text-gray-700">City</label>
-                            <input type="text" id="city" name="city" value="a" class="mt-1 p-2 w-full border border-gray-300 rounded">
+                            <input type="text" id="city" name="city" value="{{ old('city', $property->city) }}" class="mt-1 p-2 w-full border border-gray-300 rounded">
                         </div>
                         <div class="flex-1">
                             <label for="postcode" class="block text-sm font-medium text-gray-700">Post code / Zip code</label>
-                            <input type="text" id="postcode" name="postcode" value="80400" class="mt-1 p-2 w-full border border-gray-300 rounded">
+                            <input type="text" id="postcode" name="postcode" value="{{ old('postcode', $property->postcode) }}" class="mt-1 p-2 w-full border border-gray-300 rounded">
                         </div>
                     </div>
                     <div class="flex items-center mt-4">
