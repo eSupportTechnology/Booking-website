@@ -155,6 +155,8 @@ Route::get('/partner-homes-create-1', function () {
 })->name('partner.homes.create.1');
 
 
+
+
 Route::get('/airport-taxis', function () {
     return view('frontend.home');
 })->name('airport.taxis');
