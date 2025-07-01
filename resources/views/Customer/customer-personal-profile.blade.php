@@ -26,8 +26,8 @@
                 <div class="flex flex-col md:flex-row justify-between items-start space-y-4 md:space-y-0">
                     <div class="w-full md:w-auto">
                         <div class="flex flex-col items-start space-y-2">
-                            <h1 class="text-2xl font-bold" style="font-family: 'Poppins', sans-serif;">Bookintour.com
-                            </h1>
+                            <a href="/" class="text-2xl font-bold" style="font-family: 'Poppins', sans-serif;">Bookintour.com
+                            </a>
                             <div id="promo-box"
                                 class="bg-green-500 text-white px-4 py-2 rounded flex items-start justify-between w-full max-w-sm">
                                 <span class="text-sm">We offer special discounts this season!</span>
