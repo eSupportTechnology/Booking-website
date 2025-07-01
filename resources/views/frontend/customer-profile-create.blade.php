@@ -475,11 +475,182 @@ if (section === 'name') {
   });
 </script>
 
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <section x-data="{ showModal: false, showVerifyModal: false }" x-show="tab === 'security'" x-cloak>
+  <h2 class="text-xl font-bold">Security settings</h2>
+
+  <p class="text-sm text-gray-600 mb-4">
+    Change your security settings, set up secure authentication or delete your account.
+  </p>
+  <hr class="border-t border-gray-200 mb-6" />
+
+  <div class="divide-y text-sm">
+    <!-- Passkeys -->
+    <div class="flex justify-between py-4">
+      <div>
+        <p class="font-base font-semibold text-gray-800">Passkeys</p>
+        <p class="text-gray-600">
+          Easily and securely access your account without the need to remember old passwords.
+        </p>
+      </div>
+      <button @click="showModal = true" class="text-blue-600 hover:underline font-medium">Set up</button>
+    </div>
+
+    <!-- Two-factor authentication -->
+    <div class="flex justify-between py-4">
+      <div>
+        <p class="font-base font-semibold text-gray-800">Two-factor authentication</p>
+        <p class="text-gray-600">
+          Increase the security of your account by setting up two-factor authentication.
+        </p>
+      </div>
+      <button class="text-blue-600 hover:underline font-medium">Set up</button>
+    </div>
+
+    <!-- Active sessions -->
+    <div class="flex justify-between py-4">
+      <div>
+        <p class="font-base font-semibold text-gray-800">Active sessions</p>
+        <p class="text-gray-600">
+          Selecting ‘Sign out’ will sign you out from all devices except this one.
+          <br>The process can take up to 10 minutes.
+        </p>
+      </div>
+      <button class="text-blue-600 hover:underline font-medium">Sign out</button>
+    </div>
+
+    <!-- Delete account -->
+    <div class="flex justify-between py-4">
+      <div>
+        <p class="font-base font-semibold text-gray-800">Delete account</p>
+        <p class="text-gray-600">Permanently delete your Booking.com account</p>
+      </div>
+      <button class="text-blue-600 hover:underline font-medium">Delete account</button>
+    </div>
+  </div>
+
+  <!-- 🔐 Passkey Modal -->
+<div x-show="showModal" x-cloak class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+  <div @click.away="showModal = false" class="bg-white w-full max-w-xl p-6 rounded-lg shadow-lg"> <!-- ⬅️ increased width with max-w-xl -->
+    
+    <!-- Header -->
+    <div class="flex justify-between items-start mb-2">
+      <h2 class="text-lg font-semibold text-gray-800">Easily sign in with biometrics</h2>
+      <button @click="showModal = false" class="text-gray-500 hover:text-gray-800">
+        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Description -->
+    <p class="text-sm text-gray-600 mb-4">
+      Enjoy password-less access to your account using Passkeys. Instantly sign in using biometrics to save time and keep your account secure.
+    </p>
+
+    <!-- Feature List -->
+    <div class="space-y-4 text-sm text-gray-700">
+      <!-- Feature 1 -->
+      <div class="flex items-center gap-4"> <!-- ⬅️ aligned horizontally -->
+        <img src="{{ asset('assets/mdi_folder-lock-outline.svg') }}" alt="Lock" class="w-5 h-5" />
+        <div>
+          <p class="font-semibold text-sm">Fast, hassle-free sign-in</p>
+          <p class=" text-xs">Use your face, fingerprint or a simple PIN to sign in within seconds.</p>
+        </div>
+      </div>
+
+      <!-- Feature 2 -->
+      <div class="flex items-center gap-4">
+        <img src="{{ asset('assets/lets-icons_mobile.svg') }}" alt="Devices" class="w-5 h-5" />
+        <div>
+          <p class="font-semibold text-sm">Works across your devices</p>
+          <p class="text-xs">Use synced Apple, Google, or Microsoft devices.</p>
+        </div>
+      </div>
+
+      <!-- Feature 3 -->
+      <div class="flex items-center gap-4">
+        <img src="{{ asset('assets/ic_outline-lock.svg') }}" alt="Security" class="w-5 h-5" />
+        <div>
+          <p class="font-semibold text-sm">Enhanced security</p>
+          <p class="text-xs">Biometrics reduce security risks significantly.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="mt-6 flex justify-between">
+      <button @click="showModal = false"  class="px-4 py-2 border border-[#3CC0E9] text-[#3CC0E9] rounded  hover:bg-gray-100 font-semibold">Cancel</button>
+      <button
+        @click="showModal = false; showVerifyModal = true"
+        class="px-4 py-2 bg-[#3CC0E9] text-white font-semibold rounded hover:bg-[#29ACD5]">
+        Set up Passkeys
+      </button>
+    </div>
+  </div>
+</div>
 
 
-        <section x-show="tab === 'security'" x-cloak>
-          <h2 class="text-xl font-bold">Security settings</h2>
-        </section>
+  <!-- ✉️ Verification Code Modal -->
+<div x-show="showVerifyModal" x-cloak x-data="{ code: ['', '', '', '', '', ''] }" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+  <div @click.away="showVerifyModal = false" class="bg-white w-full max-w-md p-6 rounded-lg shadow-lg">
+    
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-lg font-semibold text-gray-800">Enter verification code</h2>
+      <button @click="showVerifyModal = false" class="text-gray-500 hover:text-gray-800">
+        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Description -->
+    <p class="text-sm text-gray-600 mb-4">We’ve sent a code to buddhiniweerathunga188@gmail.com<br>Please enter the code to continue enrolling a new passkey.</p>
+
+    <!-- Code Inputs -->
+    <div class="flex justify-center gap-2 mb-4">
+      <template x-for="(digit, index) in code" :key="index">
+        <input
+          type="text"
+          maxlength="1"
+          class="w-12 h-12 border rounded text-center text-lg tracking-wider focus:outline-none focus:ring focus:ring-blue-200"
+          x-model="code[index]"
+          @input="$refs['input' + (index + 1)]?.focus()"
+          :ref="'input' + index"
+          @keydown.backspace="$event.target.value === '' && $refs['input' + (index - 1)]?.focus()"
+        />
+      </template>
+    </div>
+
+    <!-- Description -->
+    <p class="text-sm text-gray-600 mb-4">Didn't receive an email? Please check your spam folder ot tap 'Cancel' to try again.</p>
+
+    <!-- Buttons -->
+    <div class="mt-6 flex justify-between">
+    <button
+  @click="showVerifyModal = false"
+  class="px-4 py-2 border border-[#3CC0E9] text-[#3CC0E9] rounded  hover:bg-gray-100 font-semibold">
+  Cancel
+</button>
+
+      <button
+        :disabled="code.join('').length < 6"
+        class="px-4 py-2 bg-[#3CC0E9] text-white font-semibold rounded hover:bg-[#29ACD5] disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        Verify
+      </button>
+    </div>
+  </div>
+</div>
+
+</section>
+
+
+
+
+
         <section x-show="tab === 'travellers'" x-cloak>
           <h2 class="text-xl font-bold">Other travellers</h2>
         </section>
