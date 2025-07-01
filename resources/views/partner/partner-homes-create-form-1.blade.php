@@ -163,7 +163,7 @@
                         <!-- Cards -->
                         <template x-for="(property, index) in properties" :key="index">
                             <div
-                                @click="selectedBox = property.id"
+                                @click="selectedBox = property.title"
                                 :class="selectedBox === property.id ? 'border-blue-500 bg-gray-100' : 'border border-gray-300'"
                                 class="relative rounded p-4 cursor-pointer transition-all duration-200">
                                 <h3 class="text-base font-bold text-gray-800 mb-4" x-text="property.title"></h3>
@@ -171,7 +171,7 @@
 
                                 <div
                                     class="tick-box absolute top-2 right-2"
-                                    x-show="selectedBox === property.id">
+                                    x-show="selectedBox === property.title">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                                     </svg>
@@ -213,10 +213,15 @@
             </div>
 
             <!-- Step 3+: Property Details Sections -->
-            <div x-show="step === 3">
+            <div x-show="step === 3" x-cloak class="bg-white p-6 rounded-lg shadow">
+                step: <span x-text="step"></span>,
+                subStep: <span x-text="subStep"></span>,
+                selectedBox: <span x-text="selectedBox"></span>
+
+
                 <div>
                     <!-- Apartment -->
-                    <section x-show="selectedBox === 'section-apartment'" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
+                    <section x-show="selectedBox === 'Apartment'">
                         <h3 class="text-xl font-bold mb-4">Apartment Details</h3>
                         <p>Details related to apartment...</p>
                         <button
@@ -228,10 +233,122 @@
                     </section>
 
                     <!-- Holiday Home -->
-                    <section x-show="selectedBox === 'section-holiday-home'" >
+                    <section x-show="selectedBox === 'Holiday home'">
                         <form class="p-6 rounded-lg " enctype="multipart/form-data" @submit.prevent>
                             <!-- Step 1 -->
                             <div x-show="subStep === 1" x-cloak class="p-6 rounded">
+                                <!-- Main Content -->
+                                <div class="max-w-xl ml-4 mr-auto">
+                                    <!-- White Box -->
+                                    <div class="bg-white shadow-md  p-6 text-left">
+                                        <label
+                                            :class="selected === 'one' ? 'border-blue-600 border-2' : 'border border-gray-300'"
+                                            class="relative block rounded p-4 cursor-pointer transition bg-white"
+                                            @click="selected = 'one'">
+
+                                            <!-- ✔ Tick -->
+                                            <template x-if="selected === 'one'">
+                                                <div class="absolute top-2 right-2 text-blue-600 text-xl font-bold">✔</div>
+                                            </template>
+
+                                            <div class="flex items-center space-x-4">
+                                                <img src="{{ asset('images/holiday_home_one.png') }}" alt="One Holiday Home" class="w-10 h-10" />
+                                                <div>
+                                                    <span class="text-base font-bold text-gray-800">One Holiday Home</span>
+                                                    <p class="text-sm text-gray-600">Use this if you're listing a single holiday home.</p>
+                                                </div>
+                                            </div>
+                                            <input type="radio" name="holiday_home_count" value="one" x-model="selected" class="hidden" />
+                                        </label>
+
+                                        <!-- Two Holiday Homes -->
+
+                                    </div>
+                                    <div class="bg-white shadow-md  p-6 text-left">
+                                        <label
+                                            :class="selected === 'multiple' ? 'border-blue-600 border-2' : 'border border-gray-300'"
+                                            class="relative block rounded p-4 cursor-pointer transition bg-white"
+                                            @click="selected = 'multiple'">
+
+                                            <!-- ✔ Tick -->
+                                            <template x-if="selected === 'multiple'">
+                                                <div class="absolute top-2 right-2 text-blue-600 text-xl font-bold">✔</div>
+                                            </template>
+
+                                            <div class="flex items-center space-x-4">
+                                                <img src="{{ asset('images/holiday_home_two.png') }}" alt="Multiple Holiday Homes" class="w-10 h-10" />
+                                                <div>
+                                                    <span class="text-base font-bold text-gray-800">Two Holiday Homes</span>
+                                                    <p class="text-sm text-gray-600">Select this if you're listing multiple holiday homes at the same address.</p>
+                                                </div>
+                                            </div>
+                                            <input type="radio" name="holiday_home_count" value="multiple" x-model="selected" class="hidden" />
+                                        </label>
+                                    </div>
+                                    <div x-show="selected === 'multiple'" x-cloak class="ml-6 mt-4">
+                                        <p class="text-sm text-gray-700 font-semibold mb-2">Are they located at the same address?</p>
+                                        <div class="space-y-3">
+                                            <!-- Same Address -->
+                                            <label
+                                                :class="addressType === 'same' ? 'border-blue-600 border-2' : 'border border-gray-300'"
+                                                class="relative block rounded p-4 cursor-pointer transition bg-white"
+                                                @click="addressType = 'same'">
+                                                <template x-if="addressType === 'same'">
+                                                    <div class="absolute top-2 right-2 text-blue-600 text-xl font-bold">✔</div>
+                                                </template>
+                                                <div class="flex items-center space-x-2">
+                                                    <span class="text-base font-medium text-gray-800">Same Address</span>
+                                                    <span><input type="radio" name="address_type" value="same" x-model="addressType" /></span>
+
+                                                </div>
+
+                                            </label>
+
+                                            <!-- Different Addresses -->
+                                            <label
+                                                :class="addressType === 'different' ? 'border-blue-600 border-2' : 'border border-gray-300'"
+                                                class="relative block rounded p-4 cursor-pointer transition bg-white"
+                                                @click="addressType = 'different'">
+                                                <template x-if="addressType === 'different'">
+                                                    <div class="absolute top-2 right-2 text-blue-600 text-xl font-bold">✔</div>
+                                                </template>
+                                                <div class="flex items-center space-x-2">
+                                                    <span class="text-base font-medium text-gray-800">Different Addresses</span>
+                                                    <span><input type="radio" name="address_type" value="different" x-model="addressType" /></span>
+
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <!-- Navigation Buttons -->
+                                    <div class="mt-6 flex justify-between">
+                                        <!-- <button onclick="history.back()" class="border border-[#3CC0E9]  text-blue-600 hover:bg-[#29ACD5] font-semibold py-2 px-4 rounded">
+                                            ←
+                                        </button> -->
+
+                                        <div class="mt-4">
+                                            <button
+                                                type="button"
+                                                @click="step = 2"
+                                                class="bg-gray-300 px-4 py-2 rounded">
+                                                Back to Selection
+                                            </button>
+                                            <button
+                                                type="button"
+                                                @click="subStep = 2"
+                                                class="font-semibold px-4 py-2  rounded bg-[#3CC0E9] hover:bg-[#29ACD5] text-white"
+                                                 :disabled="selected === ''"
+                                                :class="selected === '' ? 'opacity-50 cursor-not-allowed' : ''">
+                                                Continue
+                                            </button>
+                                          
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div x-show="subStep === 2" x-cloak class="p-6 rounded">
                                 <!-- Main Content -->
                                 <div class="max-w-xl ml-4 mr-auto">
                                     <!-- White Box -->
@@ -243,10 +360,13 @@
 
                                     <!-- Navigation Buttons -->
                                     <div class="mt-6 flex justify-between">
-                                        <button onclick="history.back()" class="border border-[#3CC0E9]  text-blue-600 hover:bg-[#29ACD5] font-semibold py-2 px-4 rounded">
+                                        <!-- <button onclick="history.back()" class="border border-[#3CC0E9]  text-blue-600 hover:bg-[#29ACD5] font-semibold py-2 px-4 rounded">
+                                            ←
+                                        </button> -->
+                                        <button type="button" @click="subStep = 1" class="border border-[#3CC0E9] text-blue-600 hover:bg-[#29ACD5] font-semibold py-2 px-4 rounded">
                                             ←
                                         </button>
-                                        <button type="button" @click="subStep = 2" class=" font-semibold py-3 px-8 rounded  bg-[#3CC0E9] hover:bg-[#29ACD5] text-white">
+                                        <button type="button" @click="subStep = 3" class=" font-semibold py-3 px-8 rounded  bg-[#3CC0E9] hover:bg-[#29ACD5] text-white">
                                             Continue
                                         </button>
                                     </div>
@@ -260,7 +380,7 @@
 
 
                             <!-- Step 2 -->
-                            <div x-show="subStep === 2" x-cloak>
+                            <div x-show="subStep === 3" x-cloak class="p-6 rounded">
                                 <div class="relative w-[1400px] h-auto overflow-hidden rounded-lg shadow mx-auto  -mt-14 -ml-16">
 
 
@@ -328,7 +448,7 @@
                                                 <div class="flex justify-between mt-6">
                                                     <!-- Back Button (Left) -->
                                                     <button type="button"
-                                                        @click="subStep = 1"
+                                                        @click="subStep = 2"
                                                         class="border border-[#3CC0E9]  text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
                                                         ←
                                                     </button>
@@ -336,7 +456,7 @@
 
                                                     <!-- Continue Button (Right) -->
                                                     <button type="submit"
-                                                        @click="subStep = 3"
+                                                        @click="subStep = 4"
                                                         class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
                                                         Continue
                                                     </button>
@@ -347,51 +467,49 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <div x-show="subStep === 4" x-cloak class="bg-white p-6 rounded shadow">
+                                <h2 class="text-xl font-bold mb-4">Step 4: Photos</h2>
+                                <input type="file" name="photos[]" multiple class="w-full border p-2 rounded" />
+                                <div class="flex justify-between mt-4">
+                                    <button type="button" @click="subStep = 3" class="bg-gray-300 px-4 py-2 rounded">Back</button>
+                                    <button type="button" @click="subStep = 5" class="bg-blue-600 text-white px-4 py-2 rounded">Next</button>
+                                </div>
+                            </div>
+                            <!-- Step 4 -->
+                            <div x-show="subStep === 5" x-cloak class="bg-white p-6 rounded shadow">
+                                <h2 class="text-xl font-bold mb-4">Step 5: Pricing</h2>
+                                <input type="number" name="price" placeholder="Price per night" class="w-full border p-2 rounded" />
+                                <div class="flex justify-between mt-4">
+                                    <button type="button" @click="subStep = 4" class="bg-gray-300 px-4 py-2 rounded">Back</button>
+                                    <button type="button" @click="subStep = 6" class="bg-blue-600 text-white px-4 py-2 rounded">Next</button>
+                                </div>
+                            </div>
+                            <!-- Step 5 -->
+                            <div x-show="subStep === 6" x-cloak class="bg-white p-6 rounded shadow">
+                                <h2 class="text-xl font-bold mb-4">Step 6: Availability</h2>
+                                <input type="date" name="available_from" class="w-full border p-2 rounded" />
+                                <div class="flex justify-between mt-4">
+                                    <button type="button" @click="subStep = 5" class="bg-gray-300 px-4 py-2 rounded">Back</button>
+                                    <button type="button" @click="subStep = 7" class="bg-blue-600 text-white px-4 py-2 rounded">Next</button>
+                                </div>
+                            </div>
+                            <!-- Step 6 -->
+                            <div x-show="subStep === 7" x-cloak class="bg-white p-6 rounded shadow">
+                                <h2 class="text-xl font-bold mb-4">Step 7: Review & Submit</h2>
+                                <p class="text-gray-700 mb-4">Please review all details and click submit to finish.</p>
+                                <div class="flex justify-between mt-4">
+                                    <button type="button" @click="subStep = 6" class="bg-gray-300 px-4 py-2 rounded">Back</button>
+                                    <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded">Submit</button>
+                                </div>
+                            </div>
+                        </form>
+                    </section>
+
                 </div>
                 <!-- Step 3 -->
-                <div x-show="subStep === 3" x-cloak class="bg-white p-6 rounded shadow">
-                    <h2 class="text-xl font-bold mb-4">Step 3: Photos</h2>
-                    <input type="file" name="photos[]" multiple class="w-full border p-2 rounded" />
-                    <div class="flex justify-between mt-4">
-                        <button type="button" @click="subStep = 2" class="bg-gray-300 px-4 py-2 rounded">Back</button>
-                        <button type="button" @click="subStep = 4" class="bg-blue-600 text-white px-4 py-2 rounded">Next</button>
-                    </div>
-                </div>
-                <!-- Step 4 -->
-                <div x-show="subStep === 4" x-cloak class="bg-white p-6 rounded shadow">
-                    <h2 class="text-xl font-bold mb-4">Step 4: Pricing</h2>
-                    <input type="number" name="price" placeholder="Price per night" class="w-full border p-2 rounded" />
-                    <div class="flex justify-between mt-4">
-                        <button type="button" @click="subStep = 3" class="bg-gray-300 px-4 py-2 rounded">Back</button>
-                        <button type="button" @click="subStep = 5" class="bg-blue-600 text-white px-4 py-2 rounded">Next</button>
-                    </div>
-                </div>
-                <!-- Step 5 -->
-                <div x-show="subStep === 5" x-cloak class="bg-white p-6 rounded shadow">
-                    <h2 class="text-xl font-bold mb-4">Step 5: Availability</h2>
-                    <input type="date" name="available_from" class="w-full border p-2 rounded" />
-                    <div class="flex justify-between mt-4">
-                        <button type="button" @click="subStep = 4" class="bg-gray-300 px-4 py-2 rounded">Back</button>
-                        <button type="button" @click="subStep = 6" class="bg-blue-600 text-white px-4 py-2 rounded">Next</button>
-                    </div>
-                </div>
-                <!-- Step 6 -->
-                <div x-show="subStep === 6" x-cloak class="bg-white p-6 rounded shadow">
-                    <h2 class="text-xl font-bold mb-4">Step 6: Review & Submit</h2>
-                    <p class="text-gray-700 mb-4">Please review all details and click submit to finish.</p>
-                    <div class="flex justify-between mt-4">
-                        <button type="button" @click="subStep = 5" class="bg-gray-300 px-4 py-2 rounded">Back</button>
-                        <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded">Submit</button>
-                    </div>
-                </div>
-                <div class="mt-4">
-                    <button
-                        type="button"
-                        @click="step = 2"
-                        class="bg-gray-300 px-4 py-2 rounded">
-                        Back to Selection
-                    </button>
-                </div>
+
+
             </div>
         </form>
         </section>
