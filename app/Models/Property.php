@@ -19,6 +19,7 @@ class Property extends Model
         'address',
         'city',
         'country',
+        'zipcode',
         'latitude',
         'longitude',
         'status'

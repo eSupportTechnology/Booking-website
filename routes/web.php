@@ -202,6 +202,10 @@ Route::prefix('partner')->group(function () {
         return view('partner.partner-account-create');
     })->name('partner.register.email.form');
 
+    Route::get('/property-apartment-2', function () {
+        return view('partner.partner-apartment-create-form-2');
+    })->name('partner.property.apartment.2');
+    Route::get('/property-apartment-1', [\App\Http\Controllers\PropertyController::class, 'apartmentSubcategories'])->name('partner.property.apartment.1');
     // Handle email registration POST
     Route::post('/register/email', [PartnerRegistrationController::class, 'storeEmail'])->name('partner.register.email');
 
@@ -264,6 +268,15 @@ Route::prefix('partner')->group(function () {
         ->name('partner.password.update');
 
     Route::get('/register/verify/{token}', [PartnerRegistrationController::class, 'verify'])->name('partner.register.verify.token');
+
+    Route::post('/property-apartment', [\App\Http\Controllers\PropertyController::class, 'storeApartment'])->name('partner.property.apartment.store');
+
+    // Step 1: Select One/Multiple
+    Route::post('/property-apartment/step1', [PropertyController::class, 'storeStep1'])->name('partner.property.apartment.store.step1');
+
+    // Step 2: Show next form and save more details
+    Route::get('/property-apartment/step2/{property}', [PropertyController::class, 'showStep2'])->name('partner.property.apartment.step2');
+    Route::post('/property-apartment/step2/{property}', [PropertyController::class, 'storeStep2'])->name('partner.property.apartment.store.step2');
 });
 
 Route::get('/partner/login', [LoginController::class, 'show'])->name('partner.login');
@@ -295,5 +308,7 @@ Route::post('/email/verification-notification', function (\Illuminate\Http\Reque
     $request->user()->sendEmailVerificationNotification();
     return back()->with('message', 'Verification link sent!');
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+
+Route::post('/partner/property/step1', [PropertyController::class, 'storeStep1'])->name('partner.property.step1.store');
 
 require __DIR__ . '/auth.php';

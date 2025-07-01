@@ -9,6 +9,8 @@ use App\Models\PropertySubcategory;
 use App\Models\PropertySubtype;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use App\DTOs\Partner\PropertyStep1DTO;
+use App\DTOs\Partner\PropertyStep2DTO;
 
 class PropertyAction
 {
@@ -38,5 +40,15 @@ class PropertyAction
         });
     }
 
+    public function createPropertyStep1(PropertyStep1DTO $dto)
+    {
+        return \App\Models\Property::create($dto->toArray());
+    }
+
+    public function updatePropertyStep2($property, PropertyStep2DTO $dto)
+    {
+        $property->update($dto->toArray());
+        return $property;
+    }
 
 }
