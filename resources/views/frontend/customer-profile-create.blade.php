@@ -651,11 +651,168 @@
 
 
 
+<section x-show="tab === 'travellers'" x-cloak x-data="{
+    showTravellerForm: false,
+    travellers: [],
+    form: {
+      firstName: '',
+      lastName: '',
+      dob: '',
+      gender: '',
+      termsAccepted: false,
+    },
+    saveTraveller() {
+      if (this.form.firstName && this.form.lastName && this.form.dob && this.form.gender && this.form.termsAccepted) {
+        this.travellers.push({ ...this.form });
+        this.showTravellerForm = false;
+        this.form = {
+          firstName: '',
+          lastName: '',
+          dob: '',
+          gender: '',
+          termsAccepted: false,
+        };
+      } else {
+        alert('Please complete all fields and accept the terms.');
+      }
+    },
+    removeTraveller(index) {
+      this.travellers.splice(index, 1);
+    }
+}">
+  <h2 class="text-xl font-bold">Other travellers</h2>
+  <p class="text-sm text-gray-600 mb-4">
+    Add or edit information about the people you’re travelling with.
+  </p>
+
+  <hr class="border-t border-gray-200 mb-6" />
+
+  <!-- Add Traveller Button (Aligned Right) -->
+  <div x-show="!showTravellerForm" class="mb-4 flex justify-end">
+    <button 
+      @click="showTravellerForm = true"
+      class="px-6 py-2 bg-[#3CC0E9] text-white font-semibold rounded hover:bg-[#29ACD5] transition duration-300"
+    >
+      + Add Traveller
+    </button>
+  </div>
+
+  <!-- Traveller Form -->
+  <div x-show="showTravellerForm" x-transition class="bg-gray-100 p-6 rounded-md max-w-2xl mx-auto mb-6">
+    <form @submit.prevent="saveTraveller" class="space-y-4">
+      <div class="space-y-4">
+        <!-- Names -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">First name(s) <span class="text-red-500">*</span></label>
+            <input type="text" placeholder="First name(s)" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm" x-ref="passportFirstName" x-model="form.firstName" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Last name(s) <span class="text-red-500">*</span></label>
+            <input type="text" placeholder="Last name(s)" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm" x-ref="passportLastName" x-model="form.lastName" />
+          </div>
+        </div>
+        <p class="text-xs text-gray-500">Please enter this person’s name exactly as written on their passport or other official travel document.</p>
+
+        <!-- Date of Birth -->
+   <div>
+  <label class="block text-sm font-medium text-gray-700 mb-1">
+    Date of birth <span class="text-red-500">*</span>
+  </label>
+
+  <!-- Replace this with a single date input -->
+  <input type="date" 
+         class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm"
+         x-ref="dobInput"
+         x-model="form.dob" />
+
+  <p class="text-xs text-gray-500 mt-1">
+    It’s important to enter a correct date of birth, as these details can be used for booking or ticketing purposes.
+  </p>
+</div>
 
 
-        <section x-show="tab === 'travellers'" x-cloak>
-          <h2 class="text-xl font-bold">Other travellers</h2>
-        </section>
+
+        <!-- Gender -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="w-[80%]">
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Gender <span class="text-red-500">*</span>
+            </label>
+            <select class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm" x-ref="passportIssuingCountry" x-model="form.gender">
+              <option value="">Select gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+            <p class="text-xs text-gray-500 mt-1 whitespace-nowrap">
+              Please select the gender written on this person's passport or other official travel document.
+            </p>
+          </div>
+        </div>
+
+        <!-- Consent Checkbox -->
+        <div class="flex items-start space-x-2">
+          <input type="checkbox" id="consent" class="mt-1 border-gray-300 rounded" x-ref="passportConsent" x-model="form.termsAccepted" />
+          <label for="consent" class="text-sm text-gray-700">
+            I confirm that I’m authorised to provide the personal data of any co-traveller (including children) to Booking.com for this service. In addition, I confirm that I’ve informed the other travellers that I’m providing their personal data to Booking.com.
+          </label>
+        </div>
+
+        <!-- Save and Cancel Buttons -->
+        <div class="flex justify-end space-x-4 pt-4">
+          <button type="button" @click="showTravellerForm = false"
+            class="px-4 py-2 border border-gray-400 text-gray-700 rounded hover:bg-gray-100 transition">
+            Cancel
+          </button>
+          <button type="submit"
+            class="px-6 py-2 bg-[#3CC0E9] text-white font-semibold rounded hover:bg-[#29ACD5] transition duration-300">
+            Save
+          </button>
+        </div>
+
+      </div>
+    </form>
+  </div>
+
+  
+
+  <!-- Travellers List -->
+  <template x-if="travellers.length > 0">
+    <div class="space-y-4 max-w-2xl mx-auto">
+      <template x-for="(traveller, index) in travellers" :key="index">
+        <div class="bg-white border border-gray-300 rounded-md p-4 relative">
+        <h3 class="text-lg font-semibold mb-2 flex items-center space-x-2">
+  <img src="{{ asset('assets/mynaui_user.svg') }}" alt="User Icon" class="w-8 h-8" />
+  <span x-text="traveller.firstName + ' ' + traveller.lastName"></span>
+ </span>
+</h3>
+<p class="text-sm">
+  <strong>Name:</strong>
+  <span class="ml-2" x-text="traveller.firstName + ' ' + traveller.lastName"></span>
+</p>
+<p class="text-sm">
+  <strong>Date of Birth:</strong>
+  <span class="ml-2" x-text="traveller.dob"></span>
+</p>
+<p class="text-sm">
+  <strong>Gender:</strong>
+  <span class="ml-2" x-text="traveller.gender"></span>
+</p>
+
+          <button @click="removeTraveller(index)"
+            class="absolute top-2 right-2 text-sm text-blue-600 hover:underline">
+            Remove
+          </button>
+        </div>
+      </template>
+    </div>
+  </template>
+</section>
+
+
+
+
         <section x-show="tab === 'customisation'" x-cloak>
           <h2 class="text-xl font-bold">Customisation preferences</h2>
         </section>
@@ -668,7 +825,7 @@
       </main>
     </div>
   </div>
-  <!-- FOOTER -->
+  <!--
 <footer class="bg-gray-100 mt-12">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-sm text-gray-600">
     <div class="space-x-3 mb-2">
@@ -684,7 +841,7 @@
     </div>
     <p class="text-xs text-gray-500">&copy; 1996–2025 Bookintour.com™. All rights reserved.</p>
   </div>
-</footer>
+</footer>-->
 
 </body>
 </html>
