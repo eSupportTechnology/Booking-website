@@ -15,6 +15,7 @@ class PropertyController extends Controller
     public function categories(PropertyAction $action)
     {
         $properties = $action->execute();
+        Log::info('Property categories fetched', ['properties' => $properties]);
         // dd($properties);
         return view('frontend.partner-property-types', compact('properties'));
     }
