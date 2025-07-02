@@ -193,10 +193,10 @@ Route::prefix('traveler')->group(function () {
 
 // Partner Registration (Web)
 Route::prefix('partner')->group(function () {
-    Route::get('/property_category', [PropertyController::class, 'categories'])->name('partner.register.form');
-    Route::get('/property_subcategory/{id}', [PropertyController::class, 'subcategories'])->name('partner.register.form');
-    Route::get('/property_subtype/{id}', [PropertyController::class, 'subtypes'])->name('partner.register.form');
-    Route::post('/property/register', [PropertyController::class, 'register'])->name('partner.register.property');
+    Route::get('/property_category', [PropertyController::class, 'categories'])->name('partner.property.category');
+    Route::get('/property_subcategory/{id}', [PropertyController::class, 'subcategories'])->name('partner.property.subcategory');
+    Route::get('/property_subtype/{id}', [PropertyController::class, 'subtypes'])->name('partner.property.subtype');
+    Route::post('/property/register', [PropertyController::class, 'register'])->name('partner.property.register');
     // Show email registration form
     Route::get('/register/email', function () {
         return view('partner.partner-account-create');
