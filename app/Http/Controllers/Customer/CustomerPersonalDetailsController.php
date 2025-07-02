@@ -13,7 +13,12 @@ class CustomerPersonalDetailsController extends Controller
 {
     public function edit()
     {
-        $user = Auth::user();
+        $user = Auth::guard('customer')->user();
+
+        if (!$user) {
+        abort(403, 'Unauthorized');
+    }
+
         $customerDetails = $user->customerPersonalDetail ?? null;
 
         $firstName = $user->name;
@@ -60,7 +65,11 @@ class CustomerPersonalDetailsController extends Controller
 
     public function update(Request $request, StoreOrUpdateCustomerPersonalDetailAction $action)
     {
-        $user = $request->user();
+        $user = Auth::guard('customer')->user();
+
+        if (!$user) {
+        abort(403, 'Unauthorized action.');
+    }
 
         // Update name/email if present
         if ($request->has(['first_name', 'last_name'])) {
