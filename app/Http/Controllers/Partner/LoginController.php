@@ -40,7 +40,7 @@ class LoginController extends Controller
 
         $email = session('partner_login_email');
         $user = User::where('email', $email)->first();
-        if ($user && $user->hasRole('partner')) {
+        if ($user && ($user->hasRole('partner') || $user->hasRole('customer'))) {
             return view('partner.partner-enter-pwd', [
                 'email' => $email,
             ]);
