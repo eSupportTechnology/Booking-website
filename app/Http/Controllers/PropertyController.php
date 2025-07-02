@@ -15,8 +15,8 @@ class PropertyController extends Controller
     public function categories(PropertyAction $action)
     {
         $properties = $action->execute();
-        dd($properties);
-        return response()->json($properties);
+        // dd($properties);
+        return view('frontend.partner-property-types', compact('properties'));
     }
 
     public function subcategories($categoryId, PropertyAction $action)

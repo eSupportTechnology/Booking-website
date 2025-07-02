@@ -279,6 +279,12 @@ Route::prefix('partner')->group(function () {
     // Step 2: Show next form and save more details
     Route::get('/property-apartment/step2/{property}', [PropertyController::class, 'showStep2'])->name('partner.property.apartment.step2');
     Route::post('/property-apartment/step2/{property}', [PropertyController::class, 'storeStep2'])->name('partner.property.apartment.store.step2');
+
+     Route::post('/logout', function () {
+        Auth::logout();
+        return redirect('/partner/login')->with('success', 'You have been logged out.');
+    })->name('partner.logout');
+
 });
 
 Route::get('/partner/login', [LoginController::class, 'show'])->name('partner.login');
