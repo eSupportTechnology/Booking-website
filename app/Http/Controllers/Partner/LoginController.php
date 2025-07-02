@@ -79,4 +79,14 @@ class LoginController extends Controller
     {
         return view('partner.partner-sign-in'); // or your custom login view
     }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/list-your-property')->with('success', 'Logged out successfully.');
+    }
 }
