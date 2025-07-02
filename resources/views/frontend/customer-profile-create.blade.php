@@ -649,11 +649,126 @@ if (section === 'name') {
 
 
 
+<section x-show="tab === 'travellers'" x-cloak x-data="{
+    showTravellerForm: false,
+    travellers: [],
+    form: {
+      firstName: '',
+      lastName: '',
+      dob: '',
+      gender: '',
+      termsAccepted: false,
+    },
+    saveTraveller() {
+      if (this.form.firstName && this.form.lastName && this.form.dob && this.form.gender && this.form.termsAccepted) {
+        this.travellers.push({ ...this.form });
+        this.showTravellerForm = false;
+        this.form = {
+          firstName: '',
+          lastName: '',
+          dob: '',
+          gender: '',
+          termsAccepted: false,
+        };
+      } else {
+        alert('Please complete all fields and accept the terms.');
+      }
+    },
+    removeTraveller(index) {
+      this.travellers.splice(index, 1);
+    }
+}">
+  <h2 class="text-xl font-bold">Other travellers</h2>
+  <p class="text-sm text-gray-600 mb-4">
+Add or edit information about the people you’re travelling with.
+  </p>
+
+   <hr class="border-t border-gray-200 mb-6" />
+
+<!-- Add Traveller Button (Aligned Right) -->
+<div x-show="!showTravellerForm" class="mb-4 flex justify-end">
+  <button 
+    @click="showTravellerForm = true"
+    class="px-6 py-2 bg-[#3CC0E9] text-white font-semibold rounded hover:bg-[#29ACD5] transition duration-300"
+  >
+    + Add Traveller
+  </button>
+</div>
 
 
-        <section x-show="tab === 'travellers'" x-cloak>
-          <h2 class="text-xl font-bold">Other travellers</h2>
-        </section>
+  <!-- Traveller Form -->
+  <div x-show="showTravellerForm" x-transition class="bg-gray-100 p-6 rounded-md max-w-2xl mx-auto mb-6">
+    <form @submit.prevent="saveTraveller" class="space-y-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label for="first_name" class="block text-sm font-medium text-gray-700">First Name</label>
+          <input type="text" id="first_name" x-model="form.firstName"
+            class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-400"
+            required />
+        </div>
+        <div>
+          <label for="last_name" class="block text-sm font-medium text-gray-700">Last Name</label>
+          <input type="text" id="last_name" x-model="form.lastName"
+            class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-400"
+            required />
+        </div>
+      </div>
+
+      <div>
+        <label for="dob" class="block text-sm font-medium text-gray-700">Date of Birth</label>
+        <input type="date" id="dob" x-model="form.dob"
+          class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-400"
+          required />
+      </div>
+
+      <div>
+        <label for="gender" class="block text-sm font-medium text-gray-700">Gender</label>
+        <select id="gender" x-model="form.gender"
+          class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-400"
+          required>
+          <option value="">Select Gender</option>
+          <option>Male</option>
+          <option>Female</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <div class="flex items-start">
+        <input type="checkbox" id="terms" x-model="form.termsAccepted"
+          class="mt-1 mr-2 rounded border-gray-300" />
+        <label for="terms" class="text-sm text-gray-700">I agree to the terms and conditions</label>
+      </div>
+
+      <div class="flex justify-end space-x-3 pt-2">
+        <button type="button" @click="showTravellerForm = false"
+          class="px-4 py-2 border border-gray-400 text-gray-700 rounded hover:bg-gray-200">Cancel</button>
+        <button type="submit"
+          class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Save</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Travellers List -->
+  <template x-if="travellers.length > 0">
+    <div class="space-y-4 max-w-2xl mx-auto">
+      <template x-for="(traveller, index) in travellers" :key="index">
+        <div class="bg-white border border-gray-300 rounded-md p-4 relative">
+          <h3 class="text-lg font-semibold mb-2">Traveller #<span x-text="index + 1"></span></h3>
+          <p><strong>Name:</strong> <span x-text="traveller.firstName + ' ' + traveller.lastName"></span></p>
+          <p><strong>Date of Birth:</strong> <span x-text="traveller.dob"></span></p>
+          <p><strong>Gender:</strong> <span x-text="traveller.gender"></span></p>
+          <button @click="removeTraveller(index)"
+            class="absolute top-2 right-2 text-sm text-red-600 hover:underline">
+            Remove
+          </button>
+        </div>
+      </template>
+    </div>
+  </template>
+</section>
+
+
+
         <section x-show="tab === 'customisation'" x-cloak>
           <h2 class="text-xl font-bold">Customisation preferences</h2>
         </section>
@@ -666,7 +781,7 @@ if (section === 'name') {
       </main>
     </div>
   </div>
-  <!-- FOOTER -->
+  <!--
 <footer class="bg-gray-100 mt-12">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-sm text-gray-600">
     <div class="space-x-3 mb-2">
@@ -682,7 +797,7 @@ if (section === 'name') {
     </div>
     <p class="text-xs text-gray-500">&copy; 1996–2025 Bookintour.com™. All rights reserved.</p>
   </div>
-</footer>
+</footer>-->
 
 </body>
 </html>
