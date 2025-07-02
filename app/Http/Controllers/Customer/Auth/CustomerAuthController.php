@@ -118,6 +118,9 @@ class CustomerAuthController extends Controller
                     'email_verified_at' => now(),
                 ]
             );
+            if (!$user->hasRole('customer')) {
+                $user->assignRole('customer');
+            }
 
             // Log in
             Auth::guard('customer')->login($user);

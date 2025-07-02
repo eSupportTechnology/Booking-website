@@ -2,6 +2,7 @@
 
 namespace App\Actions\Customer\Auth;
 
+use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
@@ -18,6 +19,7 @@ class VerifyOtpAction
             Session::forget('customer_email');
             Session::put('customer_verified', true);
             Session::put('customer_verified_email', $email);
+
             return true;
         }
 
