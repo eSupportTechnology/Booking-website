@@ -17,7 +17,7 @@
 
                         <!-- Push nav a bit down to separate from logo -->
                         @php
-                            $currentRoute = request()->route()->getName(); // Get current route name
+                        $currentRoute = request()->route()->getName(); // Get current route name
                         @endphp
 
                         <nav class="flex flex-wrap gap-4 text-sm md:text-base mt-6 ">
@@ -144,7 +144,8 @@
                                     <a href="/">
                                         <button
                                             class="flex items-center justify-between p-2 space-x-2 text-base font-normal text-gray-700 rounded-lg hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
-                                            <img src="" alt="" class="h-5 w-5" />
+                                            <img src="" alt=""
+                                                class="h-5 w-5" />
                                             <span></span>
                                         </button>
                                     </a>
@@ -225,6 +226,13 @@
 
                         </div>
                     </div>
+                    <!-- Guest buttons -->
+                    <a href=""
+                        class="bg-white font-base px-4 py-2 rounded hover:bg-blue-100"
+                        style="font-family: 'Noto Sans', sans-serif; color:#3CC0E9;">Register</a>
+                    <a href=""
+                        class="bg-white font-base px-4 py-2 rounded hover:bg-blue-100"
+                        style="font-family: 'Noto Sans', sans-serif; color:#3CC0E9;">Sign in</a>
 
                     <!-- Guest buttons -->
                     <a href="" class="bg-white font-base px-4 py-2 rounded hover:bg-blue-100"
