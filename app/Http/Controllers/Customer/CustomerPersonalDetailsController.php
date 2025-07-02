@@ -14,7 +14,7 @@ class CustomerPersonalDetailsController extends Controller
     public function edit()
     {
         $user = Auth::user();
-        $customerDetails = $user->customerPersonalDetail;
+        $customerDetails = $user->customerPersonalDetail ?? null;
 
         $firstName = $user->name;
         $lastName = '';
