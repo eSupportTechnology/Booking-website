@@ -102,6 +102,30 @@
 
     <h2 class="text-xl font-semibold mb-2" style="font-family: 'Noto Sans', sans-serif;">Sign in to manage your property</h2>
     
+    <!-- Success Alert -->
+    @if (session('success'))
+      <div class="mb-4 p-3 rounded bg-green-100 border border-green-400 text-green-700 text-sm" role="alert">
+        {{ session('success') }}
+      </div>
+    @endif
+
+    <!-- Error Alert -->
+    @if (session('error'))
+      <div class="mb-4 p-3 rounded bg-red-100 border border-red-400 text-red-700 text-sm" role="alert">
+        {{ session('error') }}
+      </div>
+    @endif
+
+    <!-- Validation Errors -->
+    @if ($errors->any())
+      <div class="mb-4 p-3 rounded bg-red-100 border border-red-400 text-red-700 text-sm" role="alert">
+        <ul class="mb-0 pl-4 list-disc">
+          @foreach ($errors->all() as $error)
+            <li>{{ $error }}</li>
+          @endforeach
+        </ul>
+      </div>
+    @endif
 
       <form method="POST" action="{{ route('partner.login.email') }}">
         @csrf

@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Partner;
 
 use App\Http\Controllers\Controller;
 use App\DTOs\Partner\RegisterPartnerDTO;
+use App\DTOs\Partner\PartnerEmailDTO;
 use App\Actions\Partner\RegisterPartnerAction;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class PartnerRegistrationController extends Controller
@@ -22,11 +24,17 @@ class PartnerRegistrationController extends Controller
      */
     public function storeEmail(Request $request)
     {
-        $registrationData = $request->session()->get('partner_registration', []);
-        $registrationData['email'] = $request->input('email');
-        $request->session()->put('partner_registration', $registrationData);
+        try {
+            $dto = PartnerEmailDTO::fromRequest($request);
+            
+            $registrationData = $request->session()->get('partner_registration', []);
+            $registrationData['email'] = $dto->email;
+            $request->session()->put('partner_registration', $registrationData);
 
-        return redirect()->route('partner.register.contact-details');
+            return redirect()->route('partner.register.contact-details')->with('success', 'Email saved successfully. Please continue with your contact details.');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return back()->withErrors($e->errors())->withInput();
+        }
     }
 
     /**
@@ -92,4 +100,3 @@ class PartnerRegistrationController extends Controller
         return redirect()->route('partner.register.verify');
     }
 }
-// This controller handles the registration of partners by accepting a DTO and executing the registration action.

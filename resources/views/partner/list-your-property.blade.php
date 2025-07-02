@@ -110,9 +110,9 @@
           <p>We'll facilitate payments for you</p>
         </li>
       </ul>
-      <button class="w-full bg-[#3CC0E9] text-white font-semibold py-2 rounded hover:bg-[#2bb3db] transition duration-200">
+      <a href="{{ route('partner.apartment.create') }}" class="block w-full bg-[#3CC0E9] text-white font-semibold py-2 rounded hover:bg-[#2bb3db] transition duration-200 text-center">
         Get started now →
-      </button>
+      </a>
       <p class="mt-4 text-sm">
         <span class="font-bold text-black">Already started a registration?</span><br>
         <a href="#" class="text-[#3CC0E9] hover:underline">Continue your registration</a>
@@ -619,8 +619,7 @@ Still have questions? Find answers to all your questions on our
                     <span class="ml-2"style="font-family: 'Noto Sans', sans-serif;">We'll facilitate payments for you</span>
                 </li>
             </ul>
-            <a href="#"
-               class="block bg-sky-400 hover:bg-sky-500 text-white text-center font-semibold py-2 rounded-md transition" style="font-family: 'Noto Sans', sans-serif;">
+            <a href="{{ route('partner.apartment.create') }}" class="block w-full bg-[#3CC0E9] text-white font-semibold py-2 rounded hover:bg-[#2bb3db] transition duration-200 text-center">
                 Get started now →
             </a>
         </div>
