@@ -155,4 +155,29 @@ class PropertyController extends Controller
         $property->save();
         return response()->json(['success' => true]);
     }
+
+    public function updatePartial(Request $request, Property $property)
+    {
+        \Log::info('updatePartial called', ['request' => $request->all(), 'property_id' => $property->id]);
+        try {
+            $before = $property->toArray();
+            \Log::info('Property before update', $before);
+            $property->update($request->only([
+                'title',
+                'address',
+                'apartment',
+                'country',
+                'city',
+                'zipcode',
+                'channel_manager',
+                'description',
+            ]));
+            $after = $property->fresh()->toArray();
+            \Log::info('Property after update', $after);
+            return response()->json(['success' => true, 'property' => $after]);
+        } catch (\Exception $e) {
+            \Log::error('updatePartial exception', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
 }

@@ -291,6 +291,9 @@ Route::prefix('partner')->group(function () {
         return redirect('/partner/login')->with('success', 'You have been logged out.');
     })->name('partner.logout');
 
+    // Partial update for AJAX step-by-step wizard
+    Route::patch('/property/{property}', [PropertyController::class, 'updatePartial'])->name('partner.property.update.partial');
+
 });
 
 Route::get('/partner/login', [LoginController::class, 'show'])->name('partner.login');
