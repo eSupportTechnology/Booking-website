@@ -24,7 +24,7 @@ class PropertyController extends Controller
     {
         $subcategories = $action->getPropertiesByCategory($categoryId);
         Log::info('Subcategories fetched for category ID ' . $categoryId, ['subcategories' => $subcategories]);
-        return view('partner.partner-homes-create-form-1', compact('subcategories'));
+        return view('partner.partner-homes-create-form-1', compact('subcategories', 'categoryId'));
     }
 
     public function subtypes($subcategoryId, PropertyAction $action)
@@ -34,7 +34,7 @@ class PropertyController extends Controller
     }
 
     public function register(Request $request, PropertyAction $action)
-    {   
+    {
         Log::info('Registering property with request data: ', $request->all());
         $propertyDTO = PropertyDTO::fromRequest($request);
         $property = $action->registerProperty($propertyDTO);
@@ -63,23 +63,40 @@ class PropertyController extends Controller
             'session' => session()->all(),
             'user_id' => auth()?->id(),
         ]);
+        // try {
+        //     $dto = PropertyStep1DTO::fromRequest($request);
+        //     $dto->user_id = auth()?->id();
+        //     $property = $action->createPropertyStep1($dto);
+        //     session(['property_id' => $property->id]);
+        //     Log::info('storeStep1 success', [
+        //         'property_id' => $property->id,
+        //         'redirect_to' => route('partner.property.apartment.step2', $property->id),
+        //     ]);
+        //     return redirect()->route('partner.property.apartment.step2', $property->id)
+        //         ->with('success', 'Step 1 data saved successfully');
+        // } catch (\Exception $e) {
+        //     Log::error('storeStep1 exception', [
+        //         'message' => $e->getMessage(),
+        //         'trace' => $e->getTraceAsString(),
+        //     ]);
+        //     return redirect()->back()->withErrors(['error' => 'Error saving data: ' . $e->getMessage()]);
+        // }
+
         try {
             $dto = PropertyStep1DTO::fromRequest($request);
             $dto->user_id = auth()?->id();
             $property = $action->createPropertyStep1($dto);
+
             session(['property_id' => $property->id]);
-            Log::info('storeStep1 success', [
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Step 1 data saved successfully',
                 'property_id' => $property->id,
-                'redirect_to' => route('partner.property.apartment.step2', $property->id),
             ]);
-            return redirect()->route('partner.property.apartment.step2', $property->id)
-                ->with('success', 'Step 1 data saved successfully');
         } catch (\Exception $e) {
-            Log::error('storeStep1 exception', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
-            return redirect()->back()->withErrors(['error' => 'Error saving data: ' . $e->getMessage()]);
+            Log::error('storeStep1 exception', ['message' => $e->getMessage()]);
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 422);
         }
     }
 

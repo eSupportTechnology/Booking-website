@@ -15,6 +15,8 @@
             font-family: 'Noto Sans', sans-serif;
         }
     </style>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
 </head>
 
 <body class="bg-gray-100 text-gray-800">
@@ -110,19 +112,51 @@
 
 
             <!-- Main Step 1 Content -->
-            <div x-show="step === 1" x-cloak>
+            <div x-show="step === 1" x-cloak x-data="{
+                    propertyId: null,
+                    selected: '',
+                    subcategories: {{ Js::from($subcategories) }},
+                    async submitStep1() {
+                        if (this.selected === '') return;
+
+                        const response = await fetch('{{ route('partner.property.apartment.store.step1') }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                apartment_type: this.selected,
+                                subcategory_id: this.selected,
+                                category_id: '{{ $categoryId }}' // if needed
+                            })
+                        });
+
+                        if (response.ok) {
+                            // Move to next step
+                            const data = await response.json();
+                            this.propertyId = data.property_id;
+                            step = 2;
+                            alert(data.message || 'Property created successfully');
+                        } else {
+                            const data = await response.json();
+                            alert('Error: ' + (data.message || 'Something went wrong'));
+                        }
+                    }
+
+                }">
                 <div class="bg-white max-w-2xl w-full p-6 rounded-lg shadow">
                     <div class="max-w-xl mx-auto p-4 space-y-6">
                         <h2 class="text-2xl font-bold text-center">What can guests book?</h2>
 
-                        <div x-data="{ selected: '', subcategories: {{ Js::from($subcategories) }} }" class="space-y-4">
+                        <div class="space-y-4">
                             <template x-for="subcategory in subcategories" :key="subcategory.id">
                                 <label
                                     :class="selected === subcategory.id ? 'border-blue-600 border-2' : 'border border-gray-300'"
                                     class="block rounded p-4 cursor-pointer transition bg-white relative"
                                     @click="selected = subcategory.id">
 
-                                    <!-- ✔ Tick -->
                                     <template x-if="selected === subcategory.id">
                                         <div class="absolute top-2 right-2 text-blue-600 text-xl font-bold">✔</div>
                                     </template>
@@ -134,40 +168,33 @@
                                             <p class="text-sm text-gray-600" x-text="subcategory.desc"></p>
                                         </div>
                                     </div>
+                                    <input type="hidden" name="category_id" value="{{ $categoryId }}">
 
-                                    <!-- Hidden radio input -->
-                                    <input
-                                        type="radio"
-                                        name="apartment_type"
-                                        :value="subcategory.id"
-                                        x-model="selected"
-                                        class="hidden" />
+                                    <input type="radio" name="subcategory_id" :value="subcategory.id" x-model="selected" class="hidden" />
                                 </label>
                             </template>
-                        </div>
 
-                        <!-- Navigation Buttons -->
-                        <div class="flex items-center justify-between pt-4">
-                            <button
-                                type="button"
-                                @click="window.location.href = '{{ route('partner.property_category') }}'"
-                                class="border border-[#3CC0E9] text-blue-600 hover:bg-[#29ACD5] font-semibold py-2 px-4 rounded"
-                                :disabled="step === 1"
-                                :class="step === 1 ? 'opacity-50 cursor-not-allowed' : ''">
-                                ←
-                            </button>
-                            <button
-                                type="button"
-                                @click="if(selected !== '') step = 2"
-                                class="font-semibold py-3 px-8 rounded bg-[#3CC0E9] hover:bg-[#29ACD5] text-white"
-                                :disabled="selected === ''"
-                                :class="selected === '' ? 'opacity-50 cursor-not-allowed' : ''">
-                                Continue
-                            </button>
+                            <div class="flex items-center justify-between pt-4">
+                                <button
+                                    type="button"
+                                    @click="window.location.href = '{{ route('partner.property.category') }}'"
+                                    class="border border-[#3CC0E9] text-blue-600 hover:bg-[#29ACD5] font-semibold py-2 px-4 rounded">
+                                    ←
+                                </button>
+                                <button
+                                    type="button"
+                                    @click="submitStep1()"
+                                    class="font-semibold py-3 px-8 rounded bg-[#3CC0E9] hover:bg-[#29ACD5] text-white"
+                                    :disabled="selected === ''"
+                                    :class="selected === '' ? 'opacity-50 cursor-not-allowed' : ''">
+                                    Continue
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+
 
 
 
@@ -181,13 +208,13 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         <!-- Cards -->
                         <template x-for="(property, index) in [
-              { id: 'section-apartment', title: 'Apartment', desc: 'Furnished and self-catering accommodation available for short- and long-term rental' },
-              { id: 'section-holiday-home', title: 'Holiday home', desc: 'Free-standing home with private, external entrance and rented specifically for holidays' },
-              { id: 'section-villa', title: 'Villa', desc: 'Private self-standing and self-catering home with luxury feel' },
-              { id: 'section-chalet', title: 'Chalet', desc: 'Free-standing home characterised by sloped roof and rented specifically for holidays' },
-              { id: 'section-holiday-park', title: 'Holiday park', desc: 'Private self-catering residences located on shared grounds with shared facilities or recreational activities' },
-              { id: 'section-aparthotel', title: 'Aparthotel', desc: 'A self-catering apartment with some hotel facilities like a reception desk' }
-            ]" :key="index">
+                        { id: 'section-apartment', title: 'Apartment', desc: 'Furnished and self-catering accommodation available for short- and long-term rental' },
+                        { id: 'section-holiday-home', title: 'Holiday home', desc: 'Free-standing home with private, external entrance and rented specifically for holidays' },
+                        { id: 'section-villa', title: 'Villa', desc: 'Private self-standing and self-catering home with luxury feel' },
+                        { id: 'section-chalet', title: 'Chalet', desc: 'Free-standing home characterised by sloped roof and rented specifically for holidays' },
+                        { id: 'section-holiday-park', title: 'Holiday park', desc: 'Private self-catering residences located on shared grounds with shared facilities or recreational activities' },
+                        { id: 'section-aparthotel', title: 'Aparthotel', desc: 'A self-catering apartment with some hotel facilities like a reception desk' }
+                        ]" :key="index">
                             <div
                                 @click="selectedBox = property.id"
                                 :class="selectedBox === property.id ? 'border-blue-500 bg-gray-100' : 'border border-gray-300'"
