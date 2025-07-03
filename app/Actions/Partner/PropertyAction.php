@@ -45,9 +45,16 @@ class PropertyAction
         return \App\Models\Property::create($dto->toArray());
     }
 
-    public function updatePropertyStep2($property, PropertyStep2DTO $dto)
+    public function updatePropertyStep2(Property $property, PropertyStep2DTO $dto)
     {
-        $property->update($dto->toArray());
+        $property->update([
+            'title' => $dto->title,
+            'address' => $dto->address,
+            'city' => $dto->city,
+            'country' => $dto->country,
+            'zipcode' => $dto->zipcode,
+            'description' => $dto->description,
+        ]);
         return $property;
     }
 

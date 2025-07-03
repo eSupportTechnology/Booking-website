@@ -227,7 +227,6 @@
   <div class="flex justify-end mt-4">
     <button
       type="submit"
-     @click="wizardStep++"
       class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
       Continue 
     </button>
@@ -310,7 +309,7 @@
 
   <!-- Continue Button (Right) -->
   <button   type="submit"
-     @click="wizardStep++"
+     
           class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
     Continue
   </button>

@@ -154,12 +154,12 @@
     <!-- Property Name Input (2/3 Width) -->
     <div class="md:col-span-2 flex">
       <div class="w-full bg-white p-6 rounded shadow-md flex flex-col text-base ">
-        <label for="property_name" class="block text-gray-700">Property name</label>
+        <label for="title" class="block text-gray-700">Property name</label>
         <input
           type="text"
-          id="property_name"
-          name="property_name"
-          value="ccc"
+          id="title"
+          name="title"
+          value="{{ old('title', $property->title) }}"
           class="w-full h-16 border border-gray-300 rounded p-4 mt-3 text-lg focus:outline-none focus:border-blue-500"
           placeholder="e.g., Sunset Villa"
           required>
@@ -256,7 +256,7 @@
         <div class="relative z-10 flex items-center justify-start h-auto p-4 mt-[110px]">
   <div class="bg-white bg-opacity-95 rounded-lg shadow-lg w-full max-w-md p-6 md:p-8 h-auto mb-4">
                 <h2 class="text-2xl font-semibold mb-4 text-gray-800">Where is your property?</h2>
-                <form method="POST" action="{{ route('partner.property.apartment.store.step2', $property->id) }}">
+                <form method="POST" action="{{ route('partner.property.store.step2', ['category' => $category, 'property' => $property->id]) }}">
                     @csrf
                     <div class="mb-4">
                         <label for="address" class="block text-sm font-medium text-gray-700">Find your address</label>
@@ -278,8 +278,8 @@
                             <input type="text" id="city" name="city" value="{{ old('city', $property->city) }}" class="mt-1 p-2 w-full border border-gray-300 rounded">
                         </div>
                         <div class="flex-1">
-                            <label for="postcode" class="block text-sm font-medium text-gray-700">Post code / Zip code</label>
-                            <input type="text" id="postcode" name="postcode" value="{{ old('postcode', $property->postcode) }}" class="mt-1 p-2 w-full border border-gray-300 rounded">
+                            <label for="zipcode" class="block text-sm font-medium text-gray-700">Post code / Zip code</label>
+                            <input type="text" id="zipcode" name="zipcode" value="{{ old('zipcode', $property->zipcode) }}" class="mt-1 p-2 w-full border border-gray-300 rounded">
                         </div>
                     </div>
                     <div class="flex items-center mt-4">
@@ -412,6 +412,30 @@
 
   </div>
 </div>
+
+<script>
+document.getElementById('continue-btn').addEventListener('click', function(e) {
+    e.preventDefault();
+    const propertyId = document.getElementById('property_id').value;
+    const title = document.getElementById('title').value;
+    fetch(`/partner/property/${propertyId}/update-title`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify({ title })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            // Move to next step in wizard
+        } else {
+            // Show error
+        }
+    });
+});
+</script>
 
 </body>
 </html>

@@ -14,8 +14,9 @@ class PropertyCategoriesTableSeeder extends Seeder
     public function run(): void
     {
         DB::table('property_categories')->insert([
-            ['name' => 'Apartment'],
+            
             ['name' => 'Homes'],
+            ['name' => 'Apartment'],
             ['name' => 'Hotel, B&Bs, and more'],
             ['name' => 'Alternative places'],
             // Add more if needed

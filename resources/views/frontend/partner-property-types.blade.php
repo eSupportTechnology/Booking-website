@@ -77,7 +77,7 @@
           <p class="text-sm text-gray-600 text-center">Furnished and self-catering accommodation, where guests rent the entire place.</p>
         </div>
 
-        <a href="{{ route('partner.apartment.create.1') }}" class="w-[70%] mt-4 mb-2">
+        <a href="{{ url('/partner/property_subcategory/2') }}" class="w-[70%] mt-4 mb-2">
           <button class="bg-[#3CC0E9] hover:bg-[#29ACD5] text-white px-4 py-2 rounded text-sm font-semibold w-full">
             List your property
           </button>

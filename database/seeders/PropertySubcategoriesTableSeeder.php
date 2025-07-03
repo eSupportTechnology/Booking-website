@@ -14,10 +14,8 @@ class PropertySubcategoriesTableSeeder extends Seeder
     public function run(): void
     {
         DB::table('property_subcategories')->insert([
-            // For Apartment (assuming category_id = 1)
-            ['category_id' => 1, 'name' => 'One'],
-            ['category_id' => 1, 'name' => 'Multiple'],
-            // Add more for other categories if needed
+            ['category_id' => 2, 'name' => 'One'],
+            ['category_id' => 2, 'name' => 'Multiple'],
         ]);
     }
 }

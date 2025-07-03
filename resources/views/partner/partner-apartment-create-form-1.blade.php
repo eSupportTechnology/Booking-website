@@ -111,7 +111,7 @@
     <!-- Add CSRF token meta tag -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <form method="POST" action="{{ route('partner.property.step1.store') }}" class=" p-6 rounded-lg  space-y-6" enctype="multipart/form-data">
+    <form method="POST" action="{{ route('partner.property.step1.store', ['category' => $category]) }}" class=" p-6 rounded-lg  space-y-6" enctype="multipart/form-data">
       @csrf
 
       <!-- Hidden fields for DTO data -->
