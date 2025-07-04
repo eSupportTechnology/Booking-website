@@ -496,7 +496,7 @@
       <!-- ℹ️ Tips Box -->
 <div x-data="{ showTips: true }">
   <div x-show="showTips" x-transition
-       class="bg-white border rounded-lg p-4 shadow-sm relative text-sm">
+       class="bg-white border rounded-none p-4 shadow-sm relative text-sm">
     
     <button
       @click="showTips = false"
