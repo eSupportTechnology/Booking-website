@@ -98,7 +98,7 @@
     </header>
 
     <!-- Start Form -->
-    <div class="max-w-6xl p-4 ml-14 bg-gray-100">
+    <div class="max-w-6xl p-4 ml-14 bg-gray-100" x-data="{ propertyId: null,selected: '',}">
 
         <!-- Step 1: Main Form Step -->
         <form class="p-6 rounded-lg space-y-6" @submit.prevent>
@@ -113,37 +113,55 @@
 
             <!-- Main Step 1 Content -->
             <div x-show="step === 1" x-cloak x-data="{
-                    propertyId: null,
-                    selected: '',
+                    
                     subcategories: {{ Js::from($subcategories) }},
                     async submitStep1() {
                         if (this.selected === '') return;
 
-                        const response = await fetch('{{ route('partner.property.apartment.store.step1') }}', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                'Accept': 'application/json',
-                            },
-                            body: JSON.stringify({
-                                apartment_type: this.selected,
-                                subcategory_id: this.selected,
-                                category_id: '{{ $categoryId }}' // if needed
-                            })
-                        });
+                        try {
+                            const response = await fetch('{{ route('partner.property.step1.store') }}', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                    'Accept': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                    apartment_type: this.selected,
+                                    subcategory_id: this.selected,
+                                    category_id: '{{ $categoryId }}'
+                                })
+                            });
 
-                        if (response.ok) {
-                            // Move to next step
+                            const contentType = response.headers.get('content-type');
+                            if (!response.ok || !contentType.includes('application/json')) {
+                                const text = await response.text();
+                                console.error('Server did not return JSON:', text);
+                                alert('Unexpected server response');
+                                return;
+                            }
+
                             const data = await response.json();
                             this.propertyId = data.property_id;
-                            step = 2;
+                            this.step = 2;
+                            await this.fetchSubtypes(this.selected);
                             alert(data.message || 'Property created successfully');
-                        } else {
-                            const data = await response.json();
-                            alert('Error: ' + (data.message || 'Something went wrong'));
+
+                        } catch (error) {
+                            console.error('Request failed:', error);
+                            alert('Request failed: ' + error.message);
                         }
-                    }
+                    },
+                    async fetchSubtypes(subcategoryId) {
+        try {
+            const response = await fetch(`/partner/property_subtype/${subcategoryId}`);
+            const data = await response.json();
+            console.log('Fetched subtypes:', data);
+            this.subtypes = data;
+        } catch (err) {
+            console.error('Failed to fetch subtypes:', err);
+        }
+    }
 
                 }">
                 <div class="bg-white max-w-2xl w-full p-6 rounded-lg shadow">
@@ -199,7 +217,34 @@
 
 
             <!-- Step 2: Selection Container -->
-            <div id="selection-container" x-show="step === 2" x-cloak class="container mx-auto px-4 py-8 max-w-6xl">
+            <div id="selection-container" x-show="step === 2" x-cloak class="container mx-auto px-4 py-8 max-w-6xl" x-data="{
+                    async submitStep2() {
+                        if (!this.selectedBox || !this.propertyId) return;
+
+                        const response = await fetch(`/partner/property/${this.selectedBox}/step2/${this.propertyId}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                category_id: this.selectedBox,
+                                property_id: this.propertyId
+                            })
+                        });
+
+                        if (response.ok) {
+                            const data = await response.json();
+                            this.step = 3;
+                            alert(data.message || 'Step 2 saved successfully');
+                        } else {
+                            const error = await response.json();
+                            alert(error.message || 'Error in Step 2');
+                        }
+                    }
+                }
+                 ">
                 <h2 class="text-2xl font-bold mb-8 text-left">
                     From the list below, which property category is most similar to your place?
                 </h2>
@@ -207,31 +252,23 @@
                 <div class="bg-white p-6 rounded-lg shadow">
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         <!-- Cards -->
-                        <template x-for="(property, index) in [
-                        { id: 'section-apartment', title: 'Apartment', desc: 'Furnished and self-catering accommodation available for short- and long-term rental' },
-                        { id: 'section-holiday-home', title: 'Holiday home', desc: 'Free-standing home with private, external entrance and rented specifically for holidays' },
-                        { id: 'section-villa', title: 'Villa', desc: 'Private self-standing and self-catering home with luxury feel' },
-                        { id: 'section-chalet', title: 'Chalet', desc: 'Free-standing home characterised by sloped roof and rented specifically for holidays' },
-                        { id: 'section-holiday-park', title: 'Holiday park', desc: 'Private self-catering residences located on shared grounds with shared facilities or recreational activities' },
-                        { id: 'section-aparthotel', title: 'Aparthotel', desc: 'A self-catering apartment with some hotel facilities like a reception desk' }
-                        ]" :key="index">
+                        <template x-for="(property, index) in subtypes" :key="property.id">
                             <div
                                 @click="selectedBox = property.id"
                                 :class="selectedBox === property.id ? 'border-blue-500 bg-gray-100' : 'border border-gray-300'"
                                 class="relative rounded p-4 cursor-pointer transition-all duration-200">
+
                                 <h3 class="text-base font-bold text-gray-800 mb-4" x-text="property.title"></h3>
                                 <p class="text-sm text-gray-800" x-text="property.desc"></p>
 
-                                <div
-                                    class="tick-box absolute top-2 right-2"
-                                    x-show="selectedBox === property.id">
+                                <div class="tick-box absolute top-2 right-2" x-show="selectedBox === property.id">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                                     </svg>
                                 </div>
-
                             </div>
                         </template>
+
                     </div>
                 </div>
 
@@ -251,14 +288,16 @@
                             class="border border-[#3CC0E9] text-blue-600  font-semibold py-2 px-4 rounded">
                             ←
                         </button>
+
                         <button id="continueBtn"
-                            @click="if(selectedBox) { step = 3; }"
+                            @click="submitStep2()"
                             :disabled="!selectedBox"
                             :class="!selectedBox ? 'bg-blue-300 cursor-not-allowed' : 'bg-[#3CC0E9] hover:bg-blue-600 cursor-pointer'"
-                            class="py-3 px-8   rounded transition-all duration-200 bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold"
+                            class="py-3 px-8 rounded transition-all duration-200 bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold"
                             type="button">
                             Continue
                         </button>
+
                     </div>
                 </template>
 
@@ -1648,6 +1687,87 @@
             </template>
         </form>
     </div>
+    <script>
+        function stepWizard() {
+            return {
+                step: 1,
+                selected: '', // subcategory id from step 1
+                selectedBox: '',
+                propertyId: null,
+                subtypes: [],
+
+                init() {
+                    // Initial setup
+                },
+
+                // async submitStep1() {
+                //     if (this.selected === '') return;
+
+                //     const response = await fetch('{{ route('partner.property.step1.store') }}', {
+                //         method: 'POST',
+                //         headers: {
+                //             'Content-Type': 'application/json',
+                //             'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                //             'Accept': 'application/json',
+                //         },
+                //         body: JSON.stringify({
+                //             apartment_type: this.selected
+                //         })
+                //     });
+
+                //     if (response.ok) {
+                //         const data = await response.json();
+                //         this.propertyId = data.property_id;
+                //         this.step = 2;
+
+                //         // Fetch subtypes based on subcategory
+                //         await this.fetchSubtypes(this.selected);
+                //     } else {
+                //         const error = await response.json();
+                //         alert(error.message || 'Error in Step 1');
+                //     }
+                // },
+
+                async fetchSubtypes(subcategoryId) {
+                    try {
+                        const response = await fetch(`/partner/property_subtype/${subcategoryId}`);
+                        const data = await response.json();
+                        console.log('Fetched subtypes:', data);
+                        this.subtypes = data;
+                    } catch (err) {
+                        console.error('Failed to fetch subtypes:', err);
+                    }
+                },
+
+                //     async submitStep2() {
+                //         if (!this.selectedBox || !this.propertyId) return;
+
+                //         const response = await fetch(`/property-apartment/step2/${this.propertyId}`, {
+                //             method: 'POST',
+                //             headers: {
+                //                 'Content-Type': 'application/json',
+                //                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                //                 'Accept': 'application/json',
+                //             },
+                //             body: JSON.stringify({
+                //                 category_id: this.selectedBox,
+                //                 property_id: this.propertyId
+                //             })
+                //         });
+
+                //         if (response.ok) {
+                //             const data = await response.json();
+                //             this.step = 3;
+                //             alert(data.message || 'Step 2 saved successfully');
+                //         } else {
+                //             const error = await response.json();
+                //             alert(error.message || 'Error in Step 2');
+                //         }
+                //     }
+                // };
+            }
+        }
+    </script>
 
 </body>
 

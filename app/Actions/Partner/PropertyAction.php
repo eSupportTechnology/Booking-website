@@ -35,7 +35,7 @@ class PropertyAction
             return [
                 'id' => $subtype->id,
                 'title' => $subtype->name,
-                'description' => $subtype->description,
+                'desc' => $subtype->description,
             ];
         });
     }

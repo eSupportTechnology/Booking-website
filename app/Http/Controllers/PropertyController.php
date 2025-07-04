@@ -32,7 +32,7 @@ class PropertyController extends Controller
     public function subcategories($categoryId, PropertyAction $action)
     {
         $subcategories = $action->getPropertiesByCategory($categoryId);
-        
+
         // Check if subcategories are empty
         if ($subcategories->isEmpty()) {
             Log::warning('No subcategories found for category ID ' . $categoryId);
@@ -40,15 +40,15 @@ class PropertyController extends Controller
         }
         switch ($categoryId) {
             case 1:  // Homes
-                return view('partner.partner-homes-create-form-1', compact('subcategories'));
+                return view('partner.partner-homes-create-form-1', compact('subcategories', 'categoryId'));
             case 2:  // Apartment
                 return view('partner.partner-apartment-create-form-1', [
                     'subcategories' => $subcategories,
                     'category' => 'apartment',
                 ]);
-            
+
             default:
-                abort(404); 
+                abort(404);
         }
         Log::info('Subcategories fetched for category ID ' . $categoryId, ['subcategories' => $subcategories]);
         return view('partner.partner-homes-create-form-1', compact('subcategories', 'categoryId'));
@@ -68,7 +68,7 @@ class PropertyController extends Controller
         $property = $action->registerProperty($propertyDTO);
         return response()->json($property, 201);
     }
-    
+
     public function showStep1($category, PropertyAction $action)
     {
         switch ($category) {
@@ -82,34 +82,48 @@ class PropertyController extends Controller
     }
 
     public function storeStep1(Request $request, PropertyAction $action)
-
     {
         Log::info('storeStep1 called', [
             'request' => $request->all(),
             'session' => session()->all(),
             'partner_id' => $request->input('partner_id'),
         ]);
+
         $category = $request->input('category_id');
-    
+
         try {
             $dto = PropertyStep1DTO::fromRequest($request);
             $dto->user_id = auth()->id();
             $dto->category = $category;
-            
+
             $property = $action->createPropertyStep1($dto);
 
             session(['property_id' => $property->id]);
 
             $categoryString = strtolower(PropertyCategory::find($property->category_id)?->name ?? 'apartment');
+
+            // 🔍 Check if the request expects JSON (i.e., it's from fetch/AJAX)
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'property_id' => $property->id,
+                    'message' => 'Step 1 data saved successfully',
+                ]);
+            }
+
+            // 🔁 Fallback for regular form submission
             return redirect()->route('partner.property.step2', [
                 'category' => $categoryString,
                 'property' => $property->id,
             ])->with('success', 'Step 1 data saved successfully');
         } catch (\Exception $e) {
             Log::error('storeStep1 exception', ['message' => $e->getMessage()]);
+
+            // Return error as JSON
             return response()->json(['success' => false, 'message' => $e->getMessage()], 422);
         }
     }
+
 
     public function showStep2($category, $propertyId, PropertyAction $action)
     {
@@ -123,8 +137,8 @@ class PropertyController extends Controller
 
     public function storeStep2(Request $request, $category, $propertyId, PropertyAction $action)
     {
-        \Log::info('storeStep2 called - DEBUG');
-        die('storeStep2 called');
+        Log::info('storeStep2 called - DEBUG');
+        // die('storeStep2 called');
         Log::info('storeStep2 called', [
             'request' => $request->all(),
             'session' => session()->all(),
