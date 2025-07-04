@@ -11,11 +11,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet" />
     {{-- Tailwind CSS via Vite --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <style>
-        body {
-            font-family: 'Noto Sans', sans-serif;
-        }
-    </style>
+    @push('styles')
+        <link rel="stylesheet" href="{{ asset('assets/Customer/css/customerpersonaldetails.css') }}">
+    @endpush
+    @stack('styles')
 </head>
 
 <body class="bg-white text-gray-800">
@@ -26,7 +25,8 @@
                 <div class="flex flex-col md:flex-row justify-between items-start space-y-4 md:space-y-0">
                     <div class="w-full md:w-auto">
                         <div class="flex flex-col items-start space-y-2">
-                            <a href="/" class="text-2xl font-bold" style="font-family: 'Poppins', sans-serif;">Bookintour.com
+                            <a href="/" class="text-2xl font-bold"
+                                style="font-family: 'Poppins', sans-serif;">Bookintour.com
                             </a>
                             <div id="promo-box"
                                 class="bg-green-500 text-white px-4 py-2 rounded flex items-start justify-between w-full max-w-sm">
@@ -150,21 +150,44 @@
                     phoneFlag: 'https://flagcdn.com/w40/lk.png',
                     completed: {
                         name: '{{ isset($firstName) && isset($lastName) ? $firstName . ' ' . $lastName : '' }}',
-                    displayName: '{{ $details->display_name ?? '' }}',
-                    emailAddress: '{{ $email ?? '' }}',
-                    phone: '{{ $details->phone_number ?? '' }}',
-                    dob: '{{ optional($details?->date_of_birth)->format('Y-m-d') }}',
-                    nationality: '{{ $details->nationality ?? '' }}',
-                    gender: '{{ $details->gender ?? '' }}',
-                    address: '{{ isset($details) ? collect([$details->country, $details->street, $details->city, $details->postcode])->filter()->join(', ') : '' }}',
-                    passport: '{{ isset($passportFirstName) && isset($passportLastName) ? collect([$passportFirstName, $passportLastName, $details->issuingCountry ?? '', $details->passportNumber ?? '', isset($passportExpiryDay) && isset($passportExpiryMonth) && isset($passportExpiryYear) ? 'Expires: ' . $passportExpiryDay . '/' . $passportExpiryMonth . '/' . $passportExpiryYear : ''])->filter()->join(' | ') : '' }}'
+                        displayName: '{{ $details->display_name ?? '' }}',
+                        emailAddress: '{{ $email ?? '' }}',
+                        phone: '{{ $details->phone_number ?? '' }}',
+                        dob: '{{ optional($details?->date_of_birth)->format('Y-m-d') }}',
+                        nationality: '{{ $details->nationality ?? '' }}',
+                        gender: '{{ $details->gender ?? '' }}',
+                        address: '{{ isset($details)? collect([$details->country, $details->street, $details->city, $details->postcode])->filter()->join(', '): '' }}',
+                        passport: '{{ isset($passportFirstName) && isset($passportLastName)? collect([$passportFirstName, $passportLastName, $details->issuingCountry ?? '', $details->passportNumber ?? '', isset($passportExpiryDay) && isset($passportExpiryMonth) && isset($passportExpiryYear) ? 'Expires: ' . $passportExpiryDay . '/' . $passportExpiryMonth . '/' . $passportExpiryYear : ''])->filter()->join(' | '): '' }}'
                     }
                 }" x-show="tab === 'personal'" x-cloak>
-                    <div class="mb-6">
-                        <h2 class="text-2xl font-bold">Personal details</h2>
-                        <p class="text-gray-600 mt-1" style="font-family: 'Noto Sans', sans-serif;">
-                            Update your information and find out how it's used
-                        </p>
+                    <div class="flex items-center justify-between mb-6">
+                        <!-- Left: Title and description -->
+                        <div>
+                            <h2 class="text-2xl font-bold">Personal details</h2>
+                            <p class="text-gray-600 mt-1" style="font-family: 'Noto Sans', sans-serif;">
+                                Update your information and find out how it's used
+                            </p>
+                        </div>
+
+                        <!-- Right: Profile Picture + Camera Upload Button -->
+                        <form id="auto-profile-upload" action="{{ route('customer.details.store') }}" method="POST"
+                            enctype="multipart/form-data">
+                            @csrf
+                            <div class="relative w-16 h-16">
+                                <img id="profile-preview"
+                                    src="{{ $details?->profile_image ? asset('storage/' . $details->profile_image) : 'https://via.placeholder.com/100' }}"
+                                    alt="Profile" class="w-full h-full rounded-full object-cover border" />
+
+                                <label for="profile-upload"
+                                    class="absolute bottom-0 right-0 bg-white border rounded-full p-1 shadow cursor-pointer hover:bg-gray-100">
+                                    <img src="{{ asset('assets/mdi_camera-outline.svg') }}" alt="Upload"
+                                        class="w-3 h-3" />
+                                    <input type="file" name="profile_image" id="profile-upload" class="hidden" />
+                                </label>
+                            </div>
+                        </form>
+
+
                     </div>
 
                     <template x-for="(section, index) in Object.keys(completed)" :key="section">
@@ -579,32 +602,375 @@
                 </section>
 
 
-
-
                 <!-- Script to Update Flag Image Dynamically -->
-                <script>
-                    document.addEventListener("DOMContentLoaded", function() {
-                        const select = document.getElementById("country-select");
-                        const flagImg = document.getElementById("selected-flag");
+                @push('scripts')
+                    <script src="{{ asset('assets/Customer/js/customerpersonaldetails.js') }}"></script>
+                @endpush
+                @stack('scripts')
 
-                        if (select && flagImg) {
-                            select.addEventListener("change", function() {
-                                const selectedOption = this.options[this.selectedIndex];
-                                const flagUrl = selectedOption.getAttribute("data-flag");
-                                flagImg.src = flagUrl;
-                            });
-                        }
-                    });
-                </script>
-
-
-
-                <section x-show="tab === 'security'" x-cloak>
+                <section x-data="{ showModal: false, showVerifyModal: false }" x-show="tab === 'security'" x-cloak>
                     <h2 class="text-xl font-bold">Security settings</h2>
+
+                    <p class="text-sm text-gray-600 mb-4">
+                        Change your security settings, set up secure authentication or delete your account.
+                    </p>
+                    <hr class="border-t border-gray-200 mb-6" />
+
+                    <div class="divide-y text-sm">
+                        <!-- Passkeys -->
+                        <div class="flex justify-between py-4">
+                            <div>
+                                <p class="font-base font-semibold text-gray-800">Passkeys</p>
+                                <p class="text-gray-600">
+                                    Easily and securely access your account without the need to remember old passwords.
+                                </p>
+                            </div>
+                            <button @click="showModal = true" class="text-blue-600 hover:underline font-medium">Set
+                                up</button>
+                        </div>
+
+                        <!-- Two-factor authentication -->
+                        <div class="flex justify-between py-4">
+                            <div>
+                                <p class="font-base font-semibold text-gray-800">Two-factor authentication</p>
+                                <p class="text-gray-600">
+                                    Increase the security of your account by setting up two-factor authentication.
+                                </p>
+                            </div>
+                            <button class="text-blue-600 hover:underline font-medium">Set up</button>
+                        </div>
+
+                        <!-- Active sessions -->
+                        <form method="POST" action="{{ route('customer.logout') }}">
+                            @csrf
+                            <div class="flex justify-between py-4">
+                                <div>
+                                    <p class="font-base font-semibold text-gray-800">Active sessions</p>
+                                    <p class="text-gray-600">
+                                        Selecting ‘Sign out’ will sign you out from all devices except this one.
+                                        <br>The process can take up to 10 minutes.
+                                    </p>
+                                </div>
+                                <button type="submit" class="text-blue-600 hover:underline font-medium">
+                                    Sign out
+                                </button>
+                            </div>
+                        </form>
+                        <!-- Delete account -->
+<form action="{{ route('customer.account.request-deletion') }}" method="POST"
+    onsubmit="return confirm('Are you sure you want to delete your account? A confirmation email will be sent to your email address.');">
+    @csrf
+    @method('DELETE')
+    <div class="flex justify-between py-4">
+        <div>
+            <p class="font-base font-semibold text-gray-800">Delete account</p>
+            <p class="text-gray-600">Permanently delete your account. A confirmation email will be sent.</p>
+        </div>
+        <button type="submit" class="text-red-600 hover:underline font-medium">
+            Delete account
+        </button>
+    </div>
+</form>
+
+                    </div>
+
+                    <!-- 🔐 Passkey Modal -->
+                    <div x-show="showModal" x-cloak
+                        class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                        <div @click.away="showModal = false"
+                            class="bg-white w-full max-w-xl p-6 rounded-lg shadow-lg">
+                            <!-- ⬅️ increased width with max-w-xl -->
+
+                            <!-- Header -->
+                            <div class="flex justify-between items-start mb-2">
+                                <h2 class="text-lg font-semibold text-gray-800">Easily sign in with biometrics</h2>
+                                <button @click="showModal = false" class="text-gray-500 hover:text-gray-800">
+                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <!-- Description -->
+                            <p class="text-sm text-gray-600 mb-4">
+                                Enjoy password-less access to your account using Passkeys. Instantly sign in using
+                                biometrics to save time and keep your account secure.
+                            </p>
+
+                            <!-- Feature List -->
+                            <div class="space-y-4 text-sm text-gray-700">
+                                <!-- Feature 1 -->
+                                <div class="flex items-center gap-4"> <!-- ⬅️ aligned horizontally -->
+                                    <img src="{{ asset('assets/mdi_folder-lock-outline.svg') }}" alt="Lock"
+                                        class="w-5 h-5" />
+                                    <div>
+                                        <p class="font-semibold text-sm">Fast, hassle-free sign-in</p>
+                                        <p class=" text-xs">Use your face, fingerprint or a simple PIN to sign in
+                                            within seconds.</p>
+                                    </div>
+                                </div>
+
+                                <!-- Feature 2 -->
+                                <div class="flex items-center gap-4">
+                                    <img src="{{ asset('assets/lets-icons_mobile.svg') }}" alt="Devices"
+                                        class="w-5 h-5" />
+                                    <div>
+                                        <p class="font-semibold text-sm">Works across your devices</p>
+                                        <p class="text-xs">Use synced Apple, Google, or Microsoft devices.</p>
+                                    </div>
+                                </div>
+
+                                <!-- Feature 3 -->
+                                <div class="flex items-center gap-4">
+                                    <img src="{{ asset('assets/ic_outline-lock.svg') }}" alt="Security"
+                                        class="w-5 h-5" />
+                                    <div>
+                                        <p class="font-semibold text-sm">Enhanced security</p>
+                                        <p class="text-xs">Biometrics reduce security risks significantly.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="mt-6 flex justify-between">
+                                <button @click="showModal = false"
+                                    class="px-4 py-2 border border-[#3CC0E9] text-[#3CC0E9] rounded  hover:bg-gray-100 font-semibold">Cancel</button>
+                                <button @click="showModal = false; showVerifyModal = true"
+                                    class="px-4 py-2 bg-[#3CC0E9] text-white font-semibold rounded hover:bg-[#29ACD5]">
+                                    Set up Passkeys
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- ✉️ Verification Code Modal -->
+                    <div x-show="showVerifyModal" x-cloak x-data="{ code: ['', '', '', '', '', ''] }"
+                        class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                        <div @click.away="showVerifyModal = false"
+                            class="bg-white w-full max-w-md p-6 rounded-lg shadow-lg">
+
+                            <!-- Header -->
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-lg font-semibold text-gray-800">Enter verification code</h2>
+                                <button @click="showVerifyModal = false" class="text-gray-500 hover:text-gray-800">
+                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <!-- Description -->
+                            <p class="text-sm text-gray-600 mb-4">We’ve sent a code to
+                                buddhiniweerathunga188@gmail.com<br>Please enter the code to continue enrolling a new
+                                passkey.</p>
+
+                            <!-- Code Inputs -->
+                            <div class="flex justify-center gap-2 mb-4">
+                                <template x-for="(digit, index) in code" :key="index">
+                                    <input type="text" maxlength="1"
+                                        class="w-12 h-12 border rounded text-center text-lg tracking-wider focus:outline-none focus:ring focus:ring-blue-200"
+                                        x-model="code[index]" @input="$refs['input' + (index + 1)]?.focus()"
+                                        :ref="'input' + index"
+                                        @keydown.backspace="$event.target.value === '' && $refs['input' + (index - 1)]?.focus()" />
+                                </template>
+                            </div>
+
+                            <!-- Description -->
+                            <p class="text-sm text-gray-600 mb-4">Didn't receive an email? Please check your spam
+                                folder ot tap 'Cancel' to try again.</p>
+
+                            <!-- Buttons -->
+                            <div class="mt-6 flex justify-between">
+                                <button @click="showVerifyModal = false"
+                                    class="px-4 py-2 border border-[#3CC0E9] text-[#3CC0E9] rounded  hover:bg-gray-100 font-semibold">
+                                    Cancel
+                                </button>
+
+                                <button :disabled="code.join('').length < 6"
+                                    class="px-4 py-2 bg-[#3CC0E9] text-white font-semibold rounded hover:bg-[#29ACD5] disabled:opacity-50 disabled:cursor-not-allowed">
+                                    Verify
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
                 </section>
-                <section x-show="tab === 'travellers'" x-cloak>
+                <section x-show="tab === 'travellers'" x-cloak x-data="{
+                    showTravellerForm: false,
+                    travellers: [],
+                    form: {
+                        firstName: '',
+                        lastName: '',
+                        dob: '',
+                        gender: '',
+                        termsAccepted: false,
+                    },
+                    saveTraveller() {
+                        if (this.form.firstName && this.form.lastName && this.form.dob && this.form.gender && this.form.termsAccepted) {
+                            this.travellers.push({ ...this.form });
+                            this.showTravellerForm = false;
+                            this.form = {
+                                firstName: '',
+                                lastName: '',
+                                dob: '',
+                                gender: '',
+                                termsAccepted: false,
+                            };
+                        } else {
+                            alert('Please complete all fields and accept the terms.');
+                        }
+                    },
+                    removeTraveller(index) {
+                        this.travellers.splice(index, 1);
+                    }
+                }">
                     <h2 class="text-xl font-bold">Other travellers</h2>
+                    <p class="text-sm text-gray-600 mb-4">
+                        Add or edit information about the people you’re travelling with.
+                    </p>
+
+                    <hr class="border-t border-gray-200 mb-6" />
+
+                    <!-- Add Traveller Button (Aligned Right) -->
+                    <div x-show="!showTravellerForm" class="mb-4 flex justify-end">
+                        <button @click="showTravellerForm = true"
+                            class="px-6 py-2 bg-[#3CC0E9] text-white font-semibold rounded hover:bg-[#29ACD5] transition duration-300">
+                            + Add Traveller
+                        </button>
+                    </div>
+
+                    <!-- Traveller Form -->
+                    <div x-show="showTravellerForm" x-transition
+                        class="bg-gray-100 p-6 rounded-md max-w-2xl mx-auto mb-6">
+                        <form @submit.prevent="saveTraveller" class="space-y-4">
+                            <div class="space-y-4">
+                                <!-- Names -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">First name(s) <span
+                                                class="text-red-500">*</span></label>
+                                        <input type="text" placeholder="First name(s)"
+                                            class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
+                                            x-ref="passportFirstName" x-model="form.firstName" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Last name(s) <span
+                                                class="text-red-500">*</span></label>
+                                        <input type="text" placeholder="Last name(s)"
+                                            class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
+                                            x-ref="passportLastName" x-model="form.lastName" />
+                                    </div>
+                                </div>
+                                <p class="text-xs text-gray-500">Please enter this person’s name exactly as written on
+                                    their passport or other official travel document.</p>
+
+                                <!-- Date of Birth -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                                        Date of birth <span class="text-red-500">*</span>
+                                    </label>
+
+                                    <!-- Replace this with a single date input -->
+                                    <input type="date"
+                                        class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm"
+                                        x-ref="dobInput" x-model="form.dob" />
+
+                                    <p class="text-xs text-gray-500 mt-1">
+                                        It’s important to enter a correct date of birth, as these details can be used
+                                        for booking or ticketing purposes.
+                                    </p>
+                                </div>
+
+
+
+                                <!-- Gender -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="w-[80%]">
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                                            Gender <span class="text-red-500">*</span>
+                                        </label>
+                                        <select class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
+                                            x-ref="passportIssuingCountry" x-model="form.gender">
+                                            <option value="">Select gender</option>
+                                            <option value="Male">Male</option>
+                                            <option value="Female">Female</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                        <p class="text-xs text-gray-500 mt-1 whitespace-nowrap">
+                                            Please select the gender written on this person's passport or other official
+                                            travel document.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- Consent Checkbox -->
+                                <div class="flex items-start space-x-2">
+                                    <input type="checkbox" id="consent" class="mt-1 border-gray-300 rounded"
+                                        x-ref="passportConsent" x-model="form.termsAccepted" />
+                                    <label for="consent" class="text-sm text-gray-700">
+                                        I confirm that I’m authorised to provide the personal data of any co-traveller
+                                        (including children) to Booking.com for this service. In addition, I confirm
+                                        that I’ve informed the other travellers that I’m providing their personal data
+                                        to Booking.com.
+                                    </label>
+                                </div>
+
+                                <!-- Save and Cancel Buttons -->
+                                <div class="flex justify-end space-x-4 pt-4">
+                                    <button type="button" @click="showTravellerForm = false"
+                                        class="px-4 py-2 border border-gray-400 text-gray-700 rounded hover:bg-gray-100 transition">
+                                        Cancel
+                                    </button>
+                                    <button type="submit"
+                                        class="px-6 py-2 bg-[#3CC0E9] text-white font-semibold rounded hover:bg-[#29ACD5] transition duration-300">
+                                        Save
+                                    </button>
+                                </div>
+
+                            </div>
+                        </form>
+                    </div>
+
+
+
+                    <!-- Travellers List -->
+                    <template x-if="travellers.length > 0">
+                        <div class="space-y-4 max-w-2xl mx-auto">
+                            <template x-for="(traveller, index) in travellers" :key="index">
+                                <div class="bg-white border border-gray-300 rounded-md p-4 relative">
+                                    <h3 class="text-lg font-semibold mb-2 flex items-center space-x-2">
+                                        <img src="{{ asset('assets/mynaui_user.svg') }}" alt="User Icon"
+                                            class="w-8 h-8" />
+                                        <span x-text="traveller.firstName + ' ' + traveller.lastName"></span>
+                                        </span>
+                                    </h3>
+                                    <p class="text-sm">
+                                        <strong>Name:</strong>
+                                        <span class="ml-2"
+                                            x-text="traveller.firstName + ' ' + traveller.lastName"></span>
+                                    </p>
+                                    <p class="text-sm">
+                                        <strong>Date of Birth:</strong>
+                                        <span class="ml-2" x-text="traveller.dob"></span>
+                                    </p>
+                                    <p class="text-sm">
+                                        <strong>Gender:</strong>
+                                        <span class="ml-2" x-text="traveller.gender"></span>
+                                    </p>
+
+                                    <button @click="removeTraveller(index)"
+                                        class="absolute top-2 right-2 text-sm text-blue-600 hover:underline">
+                                        Remove
+                                    </button>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
                 </section>
+
                 <section x-show="tab === 'customisation'" x-cloak>
                     <h2 class="text-xl font-bold">Customisation preferences</h2>
                 </section>

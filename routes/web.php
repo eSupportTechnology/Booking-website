@@ -58,7 +58,19 @@ Route::prefix('customer')->group(function () {
         Route::get('/', function () {
             return view('Customer.home');
         })->name('customer.dashboard');
+
+        Route::delete('/account/request-deletion', [CustomerAuthController::class, 'requestDeletion'])
+        ->name('customer.account.request-deletion');
     });
+    Route::get('/account/confirm-deletion/{token}', [CustomerAuthController::class, 'confirmDeletion'])
+    ->name('customer.account.confirm-deletion');
+
+    
+    Route::delete('/customer/account', [CustomerAuthController::class, 'destroy'])
+    ->middleware('auth:customer')
+    ->name('customer.account.destroy');
+
+
     Route::get('/customer-details/create', [CustomerPersonalDetailsController::class, 'edit'])->name('customer.details.create');
     Route::post('/customer-details', [CustomerPersonalDetailsController::class, 'update'])->name('customer.details.store');
 

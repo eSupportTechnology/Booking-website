@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Customer\Auth;
 
 use App\Actions\Customer\Auth\AppleAuthAction;
+use App\Actions\Customer\Auth\DeleteCustomerAccountAction;
 use App\Actions\Customer\Auth\FacebookAuthAction;
 use App\Actions\Customer\Auth\GoogleAuthAction;
 use App\Actions\Customer\Auth\SendCustomerOtpAction;
 use App\Actions\Customer\Auth\VerifyOtpAction;
 use App\DTOs\Customer\Auth\AppleAuthDTO;
 use App\DTOs\Customer\Auth\CustomerEmailRequestDTO;
+use App\DTOs\Customer\Auth\DeleteCustomerAccountDTO;
 use App\DTOs\Customer\Auth\FacebookAuthDTO;
 use App\DTOs\Customer\Auth\GoogleAuthDTO;
 use App\DTOs\Customer\Auth\VerifyOtpDTO;
@@ -21,6 +23,9 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Str;
+use App\Actions\Customer\Auth\RequestAccountDeletionAction;
+use App\DTOs\Customer\Auth\RequestAccountDeletionDTO;
+use App\Models\CustomerAccountDeletionToken;
 
 class CustomerAuthController extends Controller
 {
@@ -266,6 +271,61 @@ class CustomerAuthController extends Controller
             AppleAuthAction::class
         );
     }
+
+//     public function destroy(DeleteCustomerAccountAction $action)
+// {
+//     $user = Auth::guard('customer')->user();
+
+//     if (!$user) {
+//         abort(403, 'Unauthorized');
+//     }
+
+//     $dto = new DeleteCustomerAccountDTO([]);
+//     $dto->user = $user;
+
+//     $action->execute($dto);
+
+//     return redirect()->route('customer.login')->with('success', 'Account deleted successfully.');
+// }
+
+public function requestDeletion(RequestAccountDeletionAction $action)
+    {
+        $user = Auth::guard('customer')->user();
+
+        if (!$user) {
+            abort(403, 'Unauthorized');
+        }
+
+        $dto = new RequestAccountDeletionDTO([]);
+        $dto->user = $user;
+
+        $action->execute($dto);
+
+        return redirect()->back()->with('success', 'A confirmation email has been sent to your email address. Please check your email and click the confirmation link to complete the account deletion.');
+    }
+
+    public function confirmDeletion(string $token, DeleteCustomerAccountAction $action)
+    {
+        $deletionToken = CustomerAccountDeletionToken::findValidToken($token);
+
+        if (!$deletionToken) {
+            return redirect()->route('customer.login')->with('error', 'Invalid or expired deletion token.');
+        }
+
+        $user = User::where('email', $deletionToken->email)->first();
+
+        if (!$user) {
+            return redirect()->route('customer.login')->with('error', 'User not found.');
+        }
+
+        $dto = new DeleteCustomerAccountDTO([]);
+        $dto->user = $user;
+
+        $action->execute($dto);
+
+        return redirect()->route('customer.login')->with('success', 'Your account has been successfully deleted.');
+    }
+
 
     private function handleSocialCallback(Request $request, string $provider, string $dtoClass, string $actionClass)
     {
