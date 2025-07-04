@@ -146,15 +146,23 @@ class PropertyController extends Controller
         ]);
         try {
             $property = Property::findOrFail($propertyId);
+            // $property->update([
+            //     'subtype_id' => $request->input('category_id'),
+            // ]);
             Log::info('Loaded property for update', ['property' => $property->toArray()]);
             $dto = PropertyStep2DTO::fromRequest($request);
             Log::info('DTO created from request', ['dto' => $dto->toArray()]);
             $updatedProperty = $action->updatePropertyStep2($property, $dto);
             Log::info('Property after update', ['property' => $updatedProperty->toArray()]);
-            // Redirect to the next step using the dynamic category
-            return redirect()->route('partner.property.' . strtolower($category) . '.3', [
-                'category' => strtolower($category),
-                'property' => $property->id,
+            // // Redirect to the next step using the dynamic category
+            // return redirect()->route('partner.property.' . strtolower($category) . '.3', [
+            //     'category' => strtolower($category),
+            //     'property' => $property->id,
+            // ]);
+            return response()->json([
+                'success' => true,
+                'message' => 'Step 2 data saved successfully',
+                'property_id' => $property->id,
             ]);
         } catch (\Exception $e) {
             Log::error('storeStep2 exception', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);

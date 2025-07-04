@@ -54,6 +54,7 @@ class PropertyAction
             'country' => $dto->country,
             'zipcode' => $dto->zipcode,
             'description' => $dto->description,
+            'subtype_id' => $dto->subtype_id,
         ]);
         return $property;
     }

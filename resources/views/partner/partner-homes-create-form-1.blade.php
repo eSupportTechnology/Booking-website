@@ -229,7 +229,7 @@
                                 'Accept': 'application/json',
                             },
                             body: JSON.stringify({
-                                category_id: this.selectedBox,
+                                subtype_id: this.selectedBox,
                                 property_id: this.propertyId
                             })
                         });
@@ -380,14 +380,19 @@
                                             <input type="number" min="2" x-model.number="propertyCount" class="border rounded w-24 p-2" />
                                         </div>
                                     </div>
-
-                                    <div class="text-right pt-4">
+                                        
+                                    <div class="flex items-center justify-between pt-4">
+                                        <button type="button"
+                                            @click="step = 2"
+                                            class="border border-[#3CC0E9] text-blue-600  font-semibold py-2 px-4 rounded">
+                                            ←
+                                        </button>
                                         <button type="button"
                                             @click="nextStep"
                                             :disabled="selected === ''"
                                             :class="selected === '' ? 'opacity-50 cursor-not-allowed' : ''"
                                             class="bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-3 px-8 rounded">
-                                            Continue
+                                            Continuee
                                         </button>
                                     </div>
                                 </div>
@@ -437,95 +442,95 @@
                                         <template x-if="step === 3 && selected === 'one'">
                                             <div>
                                                 <div x-data="{
-      selectedChannels: [],
-      get showImportSection() {
-        return this.selectedChannels.includes('Airbnb') || this.selectedChannels.includes('Vrbo');
-      }
-    }"
-                                                    class="bg-white max-w-xl w-full p-6 rounded-lg shadow space-y-6">
+                                        selectedChannels: [],
+                                        get showImportSection() {
+                                            return this.selectedChannels.includes('Airbnb') || this.selectedChannels.includes('Vrbo');
+                                        }
+                                        }"
+                                                                                        class="bg-white max-w-xl w-full p-6 rounded-lg shadow space-y-6">
 
-                                                    <!-- Title -->
-                                                    <h2 class="text-2xl font-bold text-gray-900">Where else is your property listed?</h2>
+                                                                                        <!-- Title -->
+                                                                                        <h2 class="text-2xl font-bold text-gray-900">Where else is your property listed?</h2>
 
-                                                    <!-- Info -->
-                                                    <p class="text-sm text-gray-700">
-                                                        If your property is listed on Airbnb or Vrbo, you can speed up registration by importing it directly to Booking.com.
-                                                    </p>
+                                                                                        <!-- Info -->
+                                                                                        <p class="text-sm text-gray-700">
+                                                                                            If your property is listed on Airbnb or Vrbo, you can speed up registration by importing it directly to Booking.com.
+                                                                                        </p>
 
-                                                    <!-- Checkboxes -->
-                                                    <div class="space-y-4 text-left">
-                                                        <label class="flex items-center space-x-3">
-                                                            <input type="checkbox" value="Airbnb" x-model="selectedChannels"
-                                                                class="form-checkbox h-5 w-5 text-blue-600">
-                                                            <span>Airbnb</span>
-                                                        </label>
-                                                        <label class="flex items-center space-x-3">
-                                                            <input type="checkbox" value="TripAdvisor" x-model="selectedChannels"
-                                                                class="form-checkbox h-5 w-5 text-blue-600">
-                                                            <span>TripAdvisor</span>
-                                                        </label>
-                                                        <label class="flex items-center space-x-3">
-                                                            <input type="checkbox" value="Vrbo" x-model="selectedChannels"
-                                                                class="form-checkbox h-5 w-5 text-blue-600">
-                                                            <span>Vrbo</span>
-                                                        </label>
-                                                        <label class="flex items-center space-x-3">
-                                                            <input type="checkbox" value="Another" x-model="selectedChannels"
-                                                                class="form-checkbox h-5 w-5 text-blue-600">
-                                                            <span>Another website</span>
-                                                        </label>
-                                                        <label class="flex items-center space-x-3 text-gray-400" :class="{ 'text-gray-900': !selectedChannels.length }">
-                                                            <input type="checkbox" value="None" x-model="selectedChannels"
-                                                                class="form-checkbox h-5 w-5 text-blue-600"
-                                                                :disabled="selectedChannels.length > 0">
-                                                            <span>My property isn't listed on any other websites</span>
-                                                        </label>
-                                                    </div>
+                                                                                        <!-- Checkboxes -->
+                                                                                        <div class="space-y-4 text-left">
+                                                                                            <label class="flex items-center space-x-3">
+                                                                                                <input type="checkbox" value="Airbnb" x-model="selectedChannels"
+                                                                                                    class="form-checkbox h-5 w-5 text-blue-600">
+                                                                                                <span>Airbnb</span>
+                                                                                            </label>
+                                                                                            <label class="flex items-center space-x-3">
+                                                                                                <input type="checkbox" value="TripAdvisor" x-model="selectedChannels"
+                                                                                                    class="form-checkbox h-5 w-5 text-blue-600">
+                                                                                                <span>TripAdvisor</span>
+                                                                                            </label>
+                                                                                            <label class="flex items-center space-x-3">
+                                                                                                <input type="checkbox" value="Vrbo" x-model="selectedChannels"
+                                                                                                    class="form-checkbox h-5 w-5 text-blue-600">
+                                                                                                <span>Vrbo</span>
+                                                                                            </label>
+                                                                                            <label class="flex items-center space-x-3">
+                                                                                                <input type="checkbox" value="Another" x-model="selectedChannels"
+                                                                                                    class="form-checkbox h-5 w-5 text-blue-600">
+                                                                                                <span>Another website</span>
+                                                                                            </label>
+                                                                                            <label class="flex items-center space-x-3 text-gray-400" :class="{ 'text-gray-900': !selectedChannels.length }">
+                                                                                                <input type="checkbox" value="None" x-model="selectedChannels"
+                                                                                                    class="form-checkbox h-5 w-5 text-blue-600"
+                                                                                                    :disabled="selectedChannels.length > 0">
+                                                                                                <span>My property isn't listed on any other websites</span>
+                                                                                            </label>
+                                                                                        </div>
 
-                                                    <!-- Conditional Airbnb/Vrbo import section -->
-                                                    <div x-show="showImportSection" x-transition class="border-t pt-6 space-y-4">
-                                                        <h3 class="font-semibold text-gray-800">Import property details from Airbnb or Vrbo</h3>
+                                                                                        <!-- Conditional Airbnb/Vrbo import section -->
+                                                                                        <div x-show="showImportSection" x-transition class="border-t pt-6 space-y-4">
+                                                                                            <h3 class="font-semibold text-gray-800">Import property details from Airbnb or Vrbo</h3>
 
-                                                        <label class="block text-sm font-medium text-gray-700">Paste the link to your Airbnb or Vrbo listing</label>
-                                                        <div x-data="{ url: '' }" class="flex gap-2">
-                                                            <input
-                                                                type="url"
-                                                                name="import_url"
-                                                                x-model="url"
-                                                                class="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring focus:border-blue-400"
-                                                                placeholder="https://www.airbnb.com/rooms/xxxxx or https://www.vrbo.com/xxxxx"
-                                                                required>
-                                                            <button
-                                                                type="button"
-                                                                class="px-4 py-2 rounded"
-                                                                :class="url ? 'bg-blue-500 text-white cursor-pointer hover:bg-[#29ACD5]' : 'bg-gray-300 text-gray-600 cursor-not-allowed'"
-                                                                :disabled="!url">
-                                                                Apply
-                                                            </button>
-                                                        </div>
+                                                                                            <label class="block text-sm font-medium text-gray-700">Paste the link to your Airbnb or Vrbo listing</label>
+                                                                                            <div x-data="{ url: '' }" class="flex gap-2">
+                                                                                                <input
+                                                                                                    type="url"
+                                                                                                    name="import_url"
+                                                                                                    x-model="url"
+                                                                                                    class="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring focus:border-blue-400"
+                                                                                                    placeholder="https://www.airbnb.com/rooms/xxxxx or https://www.vrbo.com/xxxxx"
+                                                                                                    required>
+                                                                                                <button
+                                                                                                    type="button"
+                                                                                                    class="px-4 py-2 rounded"
+                                                                                                    :class="url ? 'bg-blue-500 text-white cursor-pointer hover:bg-[#29ACD5]' : 'bg-gray-300 text-gray-600 cursor-not-allowed'"
+                                                                                                    :disabled="!url">
+                                                                                                    Apply
+                                                                                                </button>
+                                                                                            </div>
 
-                                                        <p class="text-xs text-gray-600">
-                                                            Example links:<br>
-                                                            https://www.airbnb.com/rooms/xxxxxxx<br>
-                                                            https://www.vrbo.com/xxxxxx
-                                                        </p>
-                                                        <a href="#" class="text-blue-600 text-sm hover:underline">Where can I find this link?</a>
-                                                    </div>
+                                                                                            <p class="text-xs text-gray-600">
+                                                                                                Example links:<br>
+                                                                                                https://www.airbnb.com/rooms/xxxxxxx<br>
+                                                                                                https://www.vrbo.com/xxxxxx
+                                                                                            </p>
+                                                                                            <a href="#" class="text-blue-600 text-sm hover:underline">Where can I find this link?</a>
+                                                                                        </div>
 
-                                                    <!-- Navigation Buttons -->
-                                                    <template x-if="step === 3">
-                                                        <div class="flex items-center justify-between pt-4">
-                                                            <button type="button" @click="prevStep"
-                                                                class="border border-[#3CC0E9] text-blue-600 hover:bg-[#29ACD5] font-semibold py-2 px-4 rounded  ">
-                                                                ←
-                                                            </button>
-                                                            <button
-                                                                type="button"
-                                                                @click="if(selectedChannels.length > 0) window.location.href='{{ route('partner.apartment.create.2') }}'"
-                                                                :disabled="selectedChannels.length === 0"
-                                                                :class="selectedChannels.length === 0 
-    ? 'bg-gray-300 text-gray-600 cursor-not-allowed' 
-    : 'bg-[#3CC0E9] hover:bg-[#29ACD5] text-white cursor-pointer'"
+                                                                                        <!-- Navigation Buttons -->
+                                                                                        <template x-if="step === 3">
+                                                                                            <div class="flex items-center justify-between pt-4">
+                                                                                                <button type="button" @click="prevStep"
+                                                                                                    class="border border-[#3CC0E9] text-blue-600 hover:bg-[#29ACD5] font-semibold py-2 px-4 rounded  ">
+                                                                                                    ←
+                                                                                                </button>
+                                                                                                <button
+                                                                                                    type="button"
+                                                                                                    @click="if(selectedChannels.length > 0) window.location.href='{{ route('partner.apartment.create.2') }}'"
+                                                                                                    :disabled="selectedChannels.length === 0"
+                                                                                                    :class="selectedChannels.length === 0 
+                                        ? 'bg-gray-300 text-gray-600 cursor-not-allowed' 
+                                        : 'bg-[#3CC0E9] hover:bg-[#29ACD5] text-white cursor-pointer'"
                                                                 class="font-semibold py-3 px-6 rounded transition duration-200">
                                                                 Continue
                                                             </button>
