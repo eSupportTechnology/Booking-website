@@ -6,6 +6,9 @@
   <title>9-Step Wizard</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+ <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet" />
+  
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet" />
   <style>
     body { font-family: 'Noto Sans', sans-serif; }
   </style>
@@ -272,7 +275,7 @@
 
     <template x-if="step === 3">
       <div>
-        <div class="max-w-2xl mx-auto bg-white p-6 rounded shadow mt-10">
+        <div class="max-w-2xl ml-40 px-4 py-8  bg-white  rounded shadow mt-10">
   <h1 class="text-2xl font-bold mb-6">Tell us about your hotel</h1>
 
   <!-- Hotel Name -->
@@ -335,8 +338,10 @@
 
   <!-- Navigation -->
   <div class="flex justify-between items-center mt-8">
-    <button class="px-4 py-2 border border-blue-600 text-blue-600 rounded hover:bg-blue-50">← Back</button>
-    <button class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Continue</button>
+    <button type="submit"
+      @click="step < 9 ? step-- : step"  class="border border-[#3CC0E9]  text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">←</button>
+    <button type="submit"
+      @click="step < 9 ? step++ : step" class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">Continue</button>
   </div>
 </div>
 
@@ -344,7 +349,7 @@
     </template>
 
     <template x-if="step === 4">
-      <div>
+      <div class="max-w-4xl ml-40 px-4 py-8    mt-10">
              <section class="mb-8">
   <h1 class="text-xl text-gray-700 font-bold mb-4">What can guests use at your place?</h1>
 
@@ -362,11 +367,27 @@
           <div class="grid grid-cols-1 sm:grid-cols-1 gap-2 text-sm text-gray-700">
             <label class="flex items-center space-x-2">
               <input type="checkbox" name="property_types[]" value="Apartment" class="text-blue-500" />
+              <span>Restaurant</span>
+            </label>
+             <label class="flex items-center space-x-2">
+              <input type="checkbox" name="property_types[]" value="Apartment" class="text-blue-500" />
+              <span>Room service</span>
+            </label>
+             <label class="flex items-center space-x-2">
+              <input type="checkbox" name="property_types[]" value="Apartment" class="text-blue-500" />
               <span>Bar</span>
+            </label>
+             <label class="flex items-center space-x-2">
+              <input type="checkbox" name="property_types[]" value="Apartment" class="text-blue-500" />
+              <span>24-hour front desk</span>
+            </label>
+             <label class="flex items-center space-x-2">
+              <input type="checkbox" name="property_types[]" value="Apartment" class="text-blue-500" />
+              <span>Sauna</span>
             </label>
             <label class="flex items-center space-x-2">
               <input type="checkbox" name="property_types[]" value="Villa" class="text-blue-500" />
-              <span>Sauna</span>
+              <span>Fitness centre</span>
             </label>
             <label class="flex items-center space-x-2">
               <input type="checkbox" name="property_types[]" value="Holiday Home" class="text-blue-500" />
@@ -378,23 +399,47 @@
             </label>
             <label class="flex items-center space-x-2">
               <input type="checkbox" name="property_types[]" value="Cottage" class="text-blue-500" />
-              <span>Hot tub/Jacuzzi</span>
+              <span>Non-smoking rooms</span>
             </label>
             <label class="flex items-center space-x-2">
               <input type="checkbox" name="property_types[]" value="Cabin" class="text-blue-500" />
-              <span>Heating</span>
+              <span>Airport shuttle</span>
             </label>
             <label class="flex items-center space-x-2">
               <input type="checkbox" name="property_types[]" value="Bungalow" class="text-blue-500" />
-              <span>Free WiFi</span>
+              <span>Family rooms</span>
             </label>
             <label class="flex items-center space-x-2">
               <input type="checkbox" name="property_types[]" value="Farm Stay" class="text-blue-500" />
-              <span>Air conditioning</span>
+              <span>Spa and wellness centre</span>
             </label>
             <label class="flex items-center space-x-2">
               <input type="checkbox" name="property_types[]" value="Houseboat" class="text-blue-500" />
+              <span>Hot tub/Jacuzzi</span>
+            </label>
+              <label class="flex items-center space-x-2">
+              <input type="checkbox" name="property_types[]" value="Houseboat" class="text-blue-500" />
+              <span>Free WiFi</span>
+            </label>
+              <label class="flex items-center space-x-2">
+              <input type="checkbox" name="property_types[]" value="Houseboat" class="text-blue-500" />
+              <span>Air conditioning</span>
+            </label>
+              <label class="flex items-center space-x-2">
+              <input type="checkbox" name="property_types[]" value="Houseboat" class="text-blue-500" />
+              <span>Water park</span>
+            </label>
+              <label class="flex items-center space-x-2">
+              <input type="checkbox" name="property_types[]" value="Houseboat" class="text-blue-500" />
+              <span>Electric vehicle charging station</span>
+            </label>
+                 <label class="flex items-center space-x-2">
+              <input type="checkbox" name="property_types[]" value="Houseboat" class="text-blue-500" />
               <span>Swimming pool</span>
+            </label>
+              <label class="flex items-center space-x-2">
+              <input type="checkbox" name="property_types[]" value="Houseboat" class="text-blue-500" />
+              <span>Beach</span>
             </label>
           </div>
         </div>
@@ -436,8 +481,8 @@
           class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
           ←
         </button>
-        <button type="button" @click="nextStep"
-          class="px-4 py-3 bg-[#3CC0E9] font-semibold  text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ml-[290px]">
+        <button type="button"  @click="step > 1 ? step++ : step"
+          class="px-4 py-3 bg-[#3CC0E9] font-semibold  text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ml-[420px]">
           Continue
         </button>
       </div>
@@ -510,7 +555,7 @@
       ←
       </button>
       <button
-      type="button" @click="nextStep"
+      type="button"  @click="step > 1 ? step++ : step"
       class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
       Continue
       </button>
@@ -522,7 +567,7 @@
 
     <template x-if="step === 6">
       <div>
-         <div class="container mx-auto px-4 py-8 max-w-6xl">
+         <div class="container ml-32 px-4 py-8 max-w-2xl">
     <!-- Header -->
     <h2 class="text-2xl font-bold mb-8 text-left">
       What languages do you or your staff speak?
@@ -640,7 +685,7 @@
 
   <!-- Continue Button on the right -->
   <button
-   type="button" @click="nextStep"
+   type="button"  @click="step > 1 ? step++ : step"
      class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300"
   >
     Continue
@@ -719,7 +764,7 @@
 
     <template x-if="step === 7">
       <div>
-        <div class="container mx-auto px-4 py-8 max-w-6xl">
+        <div class="container ml-32 px-4 py-8 max-w-4xl">
       <!-- Header -->
       <h2 class="text-2xl font-bold mb-8 text-left">House rules</h2>
 
@@ -835,8 +880,8 @@
           class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
           ←
         </button>
-        <button type="button" @click="nextStep"
-          class="px-6 h-12 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ml-[250px]">
+        <button   type="button"  @click="step > 1 ? step++ : step"
+          class="px-6 h-12 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ml-[395px]">
           Continue 
         </button>
       </div>
@@ -844,18 +889,66 @@
   </div>
     </template>
 
-    <template x-if="step === 8">
-      <div>
-        <h2 class="text-xl font-bold mb-4">Step 8: Channel Manager</h2>
-        <p class="text-sm text-gray-600 mb-4">Do you want to connect to a channel manager?</p>
-        <label class="block mb-2">
-          <input type="radio" name="channel" class="mr-2" /> Yes, I will connect this listing to my channel manager
-        </label>
-        <label class="block">
-          <input type="radio" name="channel" class="mr-2" checked /> No, I won’t be using a channel manager at this time
-        </label>
-      </div>
-    </template>
+   <template x-if="step === 8">
+    <div class="mt-16">
+        <div class="max-w-3xl mx-auto p-4 space-y-4 ">
+
+            <!-- Step 1 - Completed -->
+            <div class="border border-gray-300 border rounded-lg p-4 flex justify-between items-center">
+                <div class="flex items-center gap-4">
+                    <img src="{{ asset('assets/flat-color-icons_ok.svg') }}" alt="Icon" class="w-6 h-6 md:w-7 md:h-7" />
+                    <div>
+                        <p class="text-sm text-gray-500">Step 1</p>
+                        <h2 class="text-base font-semibold">Property details</h2>
+                        <p class="text-xs text-gray-600">The basics, Add your property name, address, facilities and more</p>
+                    </div>
+                </div>
+                <a href="#" class="text-sky-600 font-medium text-sm hover:underline">Edit</a>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="border border-gray-300  rounded-lg p-4 flex justify-between items-center ">
+                <div class="flex items-center gap-4">
+                    <img src="{{ asset('assets/Group 3926.svg') }}" alt="Icon" class="w-6 h-6 md:w-7 md:h-7" />
+                    <div>
+                        <p class="text-sm text-gray-500">Step 2</p>
+                        <h2 class="text-base font-semibold">Apartments</h2>
+                        <p class="text-xs text-gray-600">Tell us about your first apartment. Once you’ve set one up you can add more.</p>
+                    </div>
+                </div>
+                <button class="bg-sky-400 hover:bg-sky-500 text-white text-sm font-semibold px-4 py-2 rounded">Add Apartment</button>
+            </div>
+
+            <!-- Step 3 - Photos -->
+            <div class="border border-gray-300 rounded-lg p-4 flex justify-between items-center ">
+                <div class="flex items-center gap-4">
+                    <img src="{{ asset('assets/Vector (40).svg') }}" alt="Icon" class="w-4 h-4 md:w-5 md:h-5 cursor-pointer" />
+                    <div>
+                        <p class="text-sm text-gray-500">Step 3</p>
+                        <h2 class="text-base font-semibold">Photos</h2>
+                        <p class="text-xs text-gray-600">Share some photos of your property so guests know what to expect.</p>
+                    </div>
+                </div>
+                <button class="border border-sky-400 text-sky-400 text-sm font-semibold px-4 py-2 rounded hover:bg-sky-50">Add Photos</button>
+            </div>
+
+            <!-- Step 4 - Final -->
+            <div class=" border border-gray-300 rounded-lg p-4 flex justify-between items-center">
+                <div class="flex items-center gap-4">
+                    <img src="{{ asset('assets/Vector (41).svg') }}" alt="Icon" class="w-4 h-4 md:w-5 md:h-5 cursor-pointer" />
+                    <div>
+                        <p class="text-sm text-gray-500">Step 4</p>
+                        <h2 class="text-base font-semibold">Final steps</h2>
+                        <p class="text-xs text-gray-600">Set up payments and invoicing before you open for bookings.</p>
+                    </div>
+                </div>
+                <button class="bg-gray-200 text-gray-500 text-sm font-semibold px-4 py-2 rounded cursor-not-allowed" disabled>Add final details</button>
+            </div>
+
+        </div>
+    </div>
+</template>
+
 
     <template x-if="step === 9">
       <div>
@@ -865,22 +958,7 @@
       </div>
     </template>
 
-    <!-- Navigation -->
-    <div class="flex justify-between mt-6">
-      <button
-        @click="step > 1 ? step-- : step"
-        :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-        class="px-4 py-2 rounded border border-gray-300 text-gray-700">
-        ← Back
-      </button>
-      <button
-        @click="step < 9 ? step++ : step"
-        :class="step === 9 ? 'opacity-50 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'"
-        class="px-6 py-2 rounded text-white font-semibold"
-        :disabled="step === 9">
-        Continue →
-      </button>
-    </div>
+   p
   </div>
 
 </body>
