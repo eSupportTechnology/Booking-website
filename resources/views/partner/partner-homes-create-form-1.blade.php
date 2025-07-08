@@ -237,6 +237,7 @@
                         if (response.ok) {
                             const data = await response.json();
                             this.step = 3;
+                            console.log('Step 2 selectedBox:', this.selectedBox);
                             alert(data.message || 'Step 2 saved successfully');
                         } else {
                             const error = await response.json();
@@ -308,7 +309,7 @@
             <template x-if="step === 3">
                 <div>
                     <!-- Apartment -->
-                    <section x-show="selectedBox === 'section-apartment'" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
+                    <section x-show="selectedBox === 3" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
                         <h3 class="text-xl font-bold mb-4">Apartment Details</h3>
                         <p>Details related to apartment...</p>
                         <button
@@ -319,7 +320,7 @@
                         </button>
                     </section>
 
-                    <section x-data="wizard()" x-show="selectedBox === 'section-holiday-home'" x-cloak>
+                    <section x-data="wizard()" x-show="selectedBox === 4" x-cloak>
                         <form class="p-6 rounded-lg" enctype="multipart/form-data" @submit.prevent>
                             <!-- Step 1: Choose one or multiple -->
                             <template x-if="step === 1">
@@ -392,7 +393,7 @@
                                             :disabled="selected === ''"
                                             :class="selected === '' ? 'opacity-50 cursor-not-allowed' : ''"
                                             class="bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-3 px-8 rounded">
-                                            Continuee
+                                            Continue
                                         </button>
                                     </div>
                                 </div>
@@ -1628,7 +1629,7 @@
                             function wizard() {
                                 return {
                                     step: 1,
-                                    selectedBox: 'section-holiday-home', // Ensure this matches to show this section
+                                    selectedBox: 4, // Ensure this matches to show this section
                                     selected: '',
                                     sameAddress: '',
                                     propertyCount: 2,
@@ -1662,28 +1663,28 @@
 
 
                     <!-- Villa -->
-                    <section x-show="selectedBox === 'section-villa'" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
+                    <section x-show="selectedBox === 2" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
                         <h3 class="text-xl font-bold mb-4">Villa Details</h3>
                         <p>Details related to villa...</p>
                         <button type="button" @click="step = 2" class="mt-4 bg-gray-300 px-4 py-2 rounded">Back</button>
                     </section>
 
                     <!-- Chalet -->
-                    <section x-show="selectedBox === 'section-chalet'" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
+                    <section x-show="selectedBox === 1" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
                         <h3 class="text-xl font-bold mb-4">Chalet Details</h3>
                         <p>Details related to chalet...</p>
                         <button type="button" @click="step = 2" class="mt-4 bg-gray-300 px-4 py-2 rounded">Back</button>
                     </section>
 
                     <!-- Holiday Park -->
-                    <section x-show="selectedBox === 'section-holiday-park'" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
+                    <section x-show="selectedBox === 6" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
                         <h3 class="text-xl font-bold mb-4">Holiday Park Details</h3>
                         <p>Details related to holiday park...</p>
                         <button type="button" @click="step = 2" class="mt-4 bg-gray-300 px-4 py-2 rounded">Back</button>
                     </section>
 
                     <!-- Aparthotel -->
-                    <section x-show="selectedBox === 'section-aparthotel'" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
+                    <section x-show="selectedBox ===5" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
                         <h3 class="text-xl font-bold mb-4">Aparthotel Details</h3>
                         <p>Details related to aparthotel...</p>
                         <button type="button" @click="step = 2" class="mt-4 bg-gray-300 px-4 py-2 rounded">Back</button>

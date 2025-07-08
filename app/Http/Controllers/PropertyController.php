@@ -146,9 +146,7 @@ class PropertyController extends Controller
         ]);
         try {
             $property = Property::findOrFail($propertyId);
-            // $property->update([
-            //     'subtype_id' => $request->input('category_id'),
-            // ]);
+           
             Log::info('Loaded property for update', ['property' => $property->toArray()]);
             $dto = PropertyStep2DTO::fromRequest($request);
             Log::info('DTO created from request', ['dto' => $dto->toArray()]);
