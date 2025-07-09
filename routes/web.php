@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
+
 Route::get('/login/email', [LoginController::class, 'showEmailForm'])->name('login.email');
 Route::post('/login/email', [LoginController::class, 'storeEmail']);
 
@@ -65,7 +66,7 @@ Route::prefix('customer')->group(function () {
     Route::get('/account/confirm-deletion/{token}', [CustomerAuthController::class, 'confirmDeletion'])
     ->name('customer.account.confirm-deletion');
 
-    
+
     Route::delete('/customer/account', [CustomerAuthController::class, 'destroy'])
     ->middleware('auth:customer')
     ->name('customer.account.destroy');

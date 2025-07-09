@@ -1,19 +1,12 @@
 <?php
 
-use App\Http\Controllers\SMSController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PropertyController;
+use App\Http\Controllers\SMSController;
 
-Route::prefix('sms')->group(function () {
-    Route::post('/send', [SMSController::class, 'sendSms']);
-    Route::post('/send-get', [SMSController::class, 'sendSmsGet']);
-});
-
-// use App\Http\Controllers\SmController;
-
-// Route::post('/send-sms', [SmController::class, 'send']);
-
+Route::post('/send-sms', [SMSController::class, 'send']);
+Route::post('/verify-otp', [SMSController::class, 'verify']);
 // You can define your API routes here. For now, it's empty.
 // In routes/api.php
 Route::post('/property/register', [PropertyController::class, 'register']);

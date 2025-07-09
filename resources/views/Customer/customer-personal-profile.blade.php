@@ -290,46 +290,191 @@
                                             value="{{ old('display_name', $details ?? '') }}" x-ref="input1" />
                                     </template>
 
-                                    <template x-if="section === 'emailAddress'">
-                                        <input type="email" name="email" id="email"
-                                            placeholder="Email address"
-                                            class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm"
-                                            value="{{ old('email', $email ?? '') }}" x-ref="input1" />
-                                    </template>
+                                   <template x-if="section === 'emailAddress'">
+  <div class="space-y-2" x-data="{ verifyMode: false, code: ['', '', '', '', '', ''], completed: { emailAddress: '', phone: '' } }">
 
-                                    <template x-if="section === 'phone'">
-                                        <div class="space-y-2">
-                                            <div
-                                                class="flex items-center border border-gray-300 rounded-md px-3 py-2 space-x-2">
-                                                <!-- Flag Image -->
-                                                <img :src="phoneFlag" alt="Flag" class="w-6 h-4 rounded" />
+    <!-- Email Input (hidden during OTP) -->
+    <template x-if="!verifyMode">
+      <input
+        type="email"
+        placeholder="Email address"
+        class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm"
+        x-model="completed.emailAddress"
+      />
+    </template>
 
-                                                <!-- Country Code Dropdown -->
-                                                <select x-ref="countryCode"
-                                                    @change="phoneFlag = $event.target.options[$event.target.selectedIndex].dataset.flag"
-                                                    class="bg-white border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm">
-                                                    <option value="+94" data-flag="https://flagcdn.com/w40/lk.png"
-                                                        selected>+94</option>
-                                                    <option value="+44" data-flag="https://flagcdn.com/w40/gb.png">
-                                                        +44
-                                                    </option>
-                                                    <option value="+49" data-flag="https://flagcdn.com/w40/de.png">
-                                                        +49
-                                                    </option>
-                                                    <option value="+1" data-flag="https://flagcdn.com/w40/us.png">
-                                                        +1
-                                                    </option>
-                                                </select>
+    <!-- OTP Input (only if verifyMode is true) -->
+    <template x-if="verifyMode">
+      <div class="space-y-2">
+        <label class="block text-sm font-medium text-gray-700">Enter the 6-digit OTP code</label>
+        <div class="flex justify-center gap-2 mb-4">
+          <template x-for="(digit, index) in code" :key="index">
+            <input
+              type="text"
+              maxlength="1"
+              class="w-12 h-12 border rounded text-center text-lg tracking-wider focus:outline-none focus:ring focus:ring-blue-200"
+              x-model="code[index]"
+              :ref="'input' + index"
+              @input="
+                if ($event.target.value.length === 1 && index < 5) {
+                  $refs['input' + (index + 1)]?.focus();
+                }
+              "
+              @keydown.backspace="
+                if ($event.target.value === '' && index > 0) {
+                  $refs['input' + (index - 1)]?.focus();
+                }
+              "
+            />
+          </template>
+        </div>
+      </div>
+    </template>
 
-                                                <!-- Phone Input -->
-                                                <input type="tel" name="phone_number" id="phone_number"
-                                                    placeholder="Enter phone number"
-                                                    class="flex-1 outline-none border-none focus:ring-0 text-gray-900 text-sm"
-                                                    value="{{ old('phone_number', $details ?? '') }}"
-                                                    x-ref="phoneInput" />
-                                            </div>
-                                        </div>
-                                    </template>
+    <!-- Buttons -->
+    <div class="flex justify-end space-x-4 mt-2">
+      <!-- Cancel Button -->
+      <button
+        type="button"
+       @click="editing = null"
+        class="text-blue-600 hover:underline text-sm"
+      >
+        Cancel
+      </button>
+
+      <!-- Verify Button (only if not in OTP mode) -->
+      <template x-if="!verifyMode">
+        <button
+          type="button"
+          @click="verifyMode = true"
+          class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm font-medium"
+        >
+          Verify
+        </button>
+      </template>
+
+      <!-- Confirm OTP Button (only if in OTP mode) -->
+      <template x-if="verifyMode">
+        <button
+          type="button"
+          @click="
+            completed.phone = 'OTP: ' + code.join('');
+            verifyMode = false;
+            code = ['', '', '', '', '', ''];
+          "
+          class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm font-medium"
+        >
+          Confirm OTP
+        </button>
+      </template>
+    </div>
+
+  </div>
+</template>
+
+
+   <template x-if="section === 'phone'">
+  <div x-data="{ verifyMode: false, otp: '', code: ['', '', '', '', '', ''] }" x-ref="phoneSection" class="space-y-2">
+
+    <!-- Phone Input View -->
+    <template x-if="!verifyMode">
+      <div>
+        <div class="flex items-center border border-gray-300 rounded-md px-3 py-2 space-x-2">
+          <!-- Flag -->
+          <img :src="phoneFlag" alt="Flag" class="w-6 h-4 rounded" />
+
+          <!-- Country Code Dropdown -->
+          <select
+            x-ref="countryCode"
+            @change="phoneFlag = $event.target.options[$event.target.selectedIndex].dataset.flag"
+            class="bg-white border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm"
+          >
+            <option value="+94" data-flag="https://flagcdn.com/w40/lk.png" selected>+94</option>
+            <option value="+44" data-flag="https://flagcdn.com/w40/gb.png">+44</option>
+            <option value="+49" data-flag="https://flagcdn.com/w40/de.png">+49</option>
+            <option value="+1" data-flag="https://flagcdn.com/w40/us.png">+1</option>
+          </select>
+
+          <!-- Phone Number -->
+          <input
+            type="tel"
+            placeholder="Enter phone number"
+            class="flex-1 outline-none border-none focus:ring-0 text-gray-900 text-sm"
+            x-ref="phoneInput"
+          />
+        </div>
+      </div>
+    </template>
+
+    <!-- OTP Input (only if verifyMode is true) -->
+    <template x-if="verifyMode">
+      <div class="space-y-2">
+        <label class="block text-sm font-medium text-gray-700">Enter the 6-digit OTP code</label>
+        <div class="flex justify-center gap-2 mb-4">
+          <template x-for="(digit, index) in code" :key="index">
+            <input
+              type="text"
+              maxlength="1"
+              class="w-12 h-12 border rounded text-center text-lg tracking-wider focus:outline-none focus:ring focus:ring-blue-200"
+              x-model="code[index]"
+              :ref="'input' + index"
+              @input="
+                if ($event.target.value.length === 1 && index < 5) {
+                  $refs['input' + (index + 1)]?.focus();
+                }
+              "
+              @keydown.backspace="
+                if ($event.target.value === '' && index > 0) {
+                  $refs['input' + (index - 1)]?.focus();
+                }
+              "
+            />
+          </template>
+        </div>
+      </div>
+    </template>
+
+    <!-- Buttons -->
+    <div class="flex justify-end space-x-4 mt-2">
+      <!-- Cancel Button -->
+      <button
+        type="button"
+       @click="editing = null"
+        class="text-blue-600 hover:underline text-sm"
+      >
+        Cancel
+      </button>
+
+      <!-- Verify Button (only if not in OTP mode) -->
+      <template x-if="!verifyMode">
+        <button
+          type="button"
+          @click="verifyMode = true"
+          class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm font-medium"
+        >
+          Verify
+        </button>
+      </template>
+
+      <!-- Confirm OTP Button (only if in OTP mode) -->
+      <template x-if="verifyMode">
+        <button
+          type="button"
+          @click="
+            completed.phone = 'OTP: ' + code.join('');
+            verifyMode = false;
+            code = ['', '', '', '', '', ''];
+          "
+          class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm font-medium"
+        >
+          Confirm OTP
+        </button>
+      </template>
+    </div>
+
+  </div>
+</template>
+
 
                                     <!-- Script to Update Flag Image Dynamically -->
                                     <script>
@@ -552,7 +697,7 @@
                                     </template>
 
                                     <!-- Save & Cancel -->
-                                    <div class="flex justify-end space-x-4 mt-2">
+                                    <div class="flex justify-end space-x-4 mt-2" x-show="section !== 'phone' && section !== 'emailAddress'">
                                         <button @click="editing = null"
                                             class="text-blue-600 hover:underline text-sm">Cancel</button>
                                         <button
