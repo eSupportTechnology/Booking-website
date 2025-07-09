@@ -27,7 +27,7 @@ Route::get('/login/password', [LoginController::class, 'showPasswordForm'])->nam
 Route::post('/login/password', [LoginController::class, 'loginWithPassword']);
 
 Route::get('/login', [LoginController::class, 'show'])->name('login');
-Route::post('/login', [AuthenticatedSessionController::class, 'store']);
+// Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 
 // Route::get('/login', function () {
 //     return view('frontend.login');
@@ -172,26 +172,26 @@ Route::get('/airport-taxis', function () {
 })->name('airport.taxis');
 
 // routes/web.php
-Route::prefix('traveler')->group(function () {
-    Route::get('/login', [TravelerLoginController::class, 'showLoginForm'])->name('traveler.login');
-    Route::post('/send-code', [TravelerLoginController::class, 'sendCode'])->name('send.code');
-    Route::get('/verify-code', [TravelerLoginController::class, 'showCodeForm'])->name('verify.code.form');
-    Route::post('/verify-code', [TravelerLoginController::class, 'verifyCode'])->name('verify.code');
-    Route::post('/logout', [TravelerLoginController::class, 'logout'])->name('traveler.logout');
-    Route::get('/auth/google', [TravelerLoginController::class, 'redirectToGoogle'])->name('traveler.google.login');
-    Route::get('/auth/google/callback', [TravelerLoginController::class, 'handleGoogleCallback']);
-    Route::get('auth/facebook', [TravelerLoginController::class, 'redirectToFacebook'])->name('traveler.facebook.login');
-    Route::get('auth/facebook/callback', [TravelerLoginController::class, 'handleFacebookCallback']);
+// Route::prefix('traveler')->group(function () {
+//     Route::get('/login', [TravelerLoginController::class, 'showLoginForm'])->name('traveler.login');
+//     Route::post('/send-code', [TravelerLoginController::class, 'sendCode'])->name('send.code');
+//     Route::get('/verify-code', [TravelerLoginController::class, 'showCodeForm'])->name('verify.code.form');
+//     Route::post('/verify-code', [TravelerLoginController::class, 'verifyCode'])->name('verify.code');
+//     Route::post('/logout', [TravelerLoginController::class, 'logout'])->name('traveler.logout');
+//     Route::get('/auth/google', [TravelerLoginController::class, 'redirectToGoogle'])->name('traveler.google.login');
+//     Route::get('/auth/google/callback', [TravelerLoginController::class, 'handleGoogleCallback']);
+//     Route::get('auth/facebook', [TravelerLoginController::class, 'redirectToFacebook'])->name('traveler.facebook.login');
+//     Route::get('auth/facebook/callback', [TravelerLoginController::class, 'handleFacebookCallback']);
 
-    Route::middleware(['auth:traveler'])->group(function () {
-        Route::get('/dashboard', function () {
-            return view('dashboard');
-        })->name('traveler.dashboard');
+//     Route::middleware(['auth:traveler'])->group(function () {
+//         Route::get('/dashboard', function () {
+//             return view('dashboard');
+//         })->name('traveler.dashboard');
 
-        Route::get('/profile', [TravelerDetailsController::class, 'showTravelerDetails'])->name('traveler.profile');
-        Route::put('/profile/update', [TravelerDetailsController::class, 'updateTravelerDetails'])->name('traveler.profile.update');
-    });
-});
+//         Route::get('/profile', [TravelerDetailsController::class, 'showTravelerDetails'])->name('traveler.profile');
+//         Route::put('/profile/update', [TravelerDetailsController::class, 'updateTravelerDetails'])->name('traveler.profile.update');
+//     });
+// });
 
 // Partner Registration (Web)
 Route::prefix('partner')->group(function () {
@@ -199,6 +199,17 @@ Route::prefix('partner')->group(function () {
     Route::get('/property_subcategory/{id}', [PropertyController::class, 'subcategories'])->name('partner.property.subcategory');
     Route::get('/property_subtype/{id}', [PropertyController::class, 'subtypes'])->name('partner.property.subtype');
     Route::post('/property/register', [PropertyController::class, 'register'])->name('partner.property.register');
+    // Show Step 1 form
+    Route::get('/property/{category}/step1', [PropertyController::class, 'showStep1'])->name('partner.property.step1.show');
+
+    // Handle Step 1 submission
+    Route::post('/partner/property/{category}/step1', [PropertyController::class, 'storeStep1'])->name('partner.property.step1.store');
+
+
+    // Show Step 2 form
+    Route::get('/property/{category}/step2/{property}', [PropertyController::class, 'showStep2'])
+        ->name('partner.property.step2');
+
     // Show email registration form
     Route::get('/register', [PartnerRegistrationController::class, 'createEmail'])->name('partner.register.email-create');
     Route::get('/register/email', [PartnerRegistrationController::class, 'createEmail'])->name('partner.register.email.form');
@@ -273,17 +284,17 @@ Route::prefix('partner')->group(function () {
 
     Route::post('/property-apartment', [\App\Http\Controllers\PropertyController::class, 'storeApartment'])->name('partner.property.apartment.store');
 
-    // Step 1: Select One/Multiple
-    Route::post('/property-apartment/step1', [PropertyController::class, 'storeStep1'])->name('partner.property.apartment.store.step1');
-
-    // Step 2: Show next form and save more details
-    Route::get('/property-apartment/step2/{property}', [PropertyController::class, 'showStep2'])->name('partner.property.apartment.step2');
-    Route::post('/property-apartment/step2/{property}', [PropertyController::class, 'storeStep2'])->name('partner.property.apartment.store.step2');
+    // Step 2: Show next form and save more details (dynamic for any category, static route name)
+    Route::get('/property/{category}/step2/{property}', [PropertyController::class, 'showStep2'])->name('partner.property.step2');
+    Route::post('/property/{category}/step2/{property}', [PropertyController::class, 'storeStep2'])->name('partner.property.store.step2');
 
      Route::post('/logout', function () {
         Auth::logout();
         return redirect('/partner/login')->with('success', 'You have been logged out.');
     })->name('partner.logout');
+
+    // Partial update for AJAX step-by-step wizard
+    Route::patch('/property/{property}', [PropertyController::class, 'updatePartial'])->name('partner.property.update.partial');
 
 });
 
@@ -308,5 +319,10 @@ Route::post('/email/verification-notification', function (\Illuminate\Http\Reque
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
 Route::post('/partner/property/step1', [PropertyController::class, 'storeStep1'])->name('partner.property.step1.store');
+Route::middleware(\App\Http\Middleware\EnsurePartner::class)->group(function () {
+    Route::get('/partner/property/test-index', [PropertyController::class, 'index']);
+});
+
+Route::post('/property/{property}/update-title', [PropertyController::class, 'updateTitle'])->name('partner.property.update-title');
 
 require __DIR__ . '/auth.php';

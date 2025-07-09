@@ -6,24 +6,30 @@ use WendellAdriel\ValidatedDTO\ValidatedDTO;
 
 class PropertyStep2DTO extends ValidatedDTO
 {
-    public string $title;
-    public string $address;
-    public string $city;
-    public string $country;
-    public ?string $zipcode;
-    public string $description;
 
-    protected function rules(): array
+    public ?string $title;
+    public ?string $address;
+    public ?string $city;
+    public ?string $country;
+    public ?string $zipcode;
+    public ?string $description;
+    public ?int $subtype_id;
+
+
+
+    public function rules(): array
     {
         return [
-            'title' => ['required', 'string', 'max:255'],
-            'address' => ['required', 'string'],
-            'city' => ['required', 'string'],
-            'country' => ['required', 'string'],
-            'zipcode' => ['nullable', 'string', 'max:20'],
-            'description' => ['required', 'string'],
+            'title' => ['nullable', 'string', 'max:255'],
+            'address' => ['nullable', 'string'],
+            'city' => ['nullable', 'string'],
+            'country' => ['nullable', 'string'],
+            'zipcode' => ['nullable', 'string'],
+            'description' => ['nullable', 'string'],
+            'subtype_id' => ['nullable', 'integer', 'exists:property_subtypes,id'],
         ];
     }
+
 
     protected function defaults(): array
     {

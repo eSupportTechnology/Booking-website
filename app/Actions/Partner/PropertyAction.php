@@ -11,6 +11,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use App\DTOs\Partner\PropertyStep1DTO;
 use App\DTOs\Partner\PropertyStep2DTO;
+use Illuminate\Support\Facades\Log;
 
 class PropertyAction
 {
@@ -35,7 +36,7 @@ class PropertyAction
             return [
                 'id' => $subtype->id,
                 'title' => $subtype->name,
-                'description' => $subtype->description,
+                'desc' => $subtype->description,
             ];
         });
     }
@@ -45,10 +46,19 @@ class PropertyAction
         return \App\Models\Property::create($dto->toArray());
     }
 
-    public function updatePropertyStep2($property, PropertyStep2DTO $dto)
+    public function updatePropertyStep2(Property $property, PropertyStep2DTO $dto)
     {
-        $property->update($dto->toArray());
+        Log::info("DTO ;", [$dto]);
+        $property->update(array_filter([
+            'title' => $dto->title,
+            'address' => $dto->address,
+            'city' => $dto->city,
+            'country' => $dto->country,
+            'zipcode' => $dto->zipcode,
+            'description' => $dto->description,
+            'subtype_id' => $dto->subtype_id,
+        ], fn($value) => !is_null($value)));
+
         return $property;
     }
-
 }
