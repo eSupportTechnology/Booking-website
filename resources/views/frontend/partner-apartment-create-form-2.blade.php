@@ -92,7 +92,9 @@
     </section>
   </header>
 
-<div x-data="{ step: 1, wizardStep: 1 }">
+
+
+<div x-data="{ step: 1, wizardStep: 1 , propertyWizardStep: 1 }">
 
  <!-- Sticky Top Navbar -->
   <nav class="border-b shadow-sm sticky top-0 z-50 ">
@@ -130,6 +132,23 @@
                 </template>
               </div>
             </template>
+
+            <!-- Progress bar under "Property setup" tab -->
+<!-- Progress bar under "Property setup" tab -->
+<template x-if="index === 1 && step === 2">
+  <div class="flex space-x-1 mt-1 w-35 sm:w-48 md:w-56 lg:w-64 xl:w-72 ml-[-15px] sm:ml-[-25px] md:ml-[-35px]">
+    <template x-for="i in 6">
+      <div 
+        :class="propertyWizardStep >= i ? 'bg-blue-600' : 'bg-gray-300'" 
+        class="h-1 flex-1 rounded-full">
+      </div>
+    </template>
+  </div>
+</template>
+
+
+
+            
 
             
 
@@ -402,6 +421,470 @@
 
       </div>
     </section>
+
+
+
+ <!-- Property Setup Section -->
+<section x-show="step === 2">
+ <div class="w-full max-w-xl   p-4  ml-32">
+
+  
+    <template x-if="propertyWizardStep === 1">
+  <div x-data="{ showBedTypeSelector: false }">
+    
+    <!-- Header -->
+    <h2 class="text-2xl font-bold mb-6">Property details</h2>
+    <p class="text-gray-600 mb-4">Where can people sleep?</p>
+
+    <!-- Bedroom Cards -->
+    <div class="space-y-4">
+      <!-- Bedroom 1 -->
+      <div class="bg-gray-100 p-4 rounded-lg flex justify-between items-center">
+        <div>
+          <h3 class="text-lg font-medium">Bedroom 1</h3>
+          <p class="text-sm text-gray-600">1 double bed</p>
+        </div>
+        <button class="bg-gray-200 hover:bg-gray-300 text-gray-500 font-semibold py-2 px-4 rounded-full focus:outline-none">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Living Room -->
+      <div class="bg-gray-100 p-4 rounded-lg flex justify-between items-center">
+        <div>
+          <h3 class="text-lg font-medium">Living room</h3>
+          <p class="text-sm text-gray-600">0 beds</p>
+        </div>
+        <button class="bg-gray-200 hover:bg-gray-300 text-gray-500 font-semibold py-2 px-4 rounded-full focus:outline-none">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Other Spaces -->
+      <div class="bg-gray-100 p-4 rounded-lg flex justify-between items-center">
+        <div>
+          <h3 class="text-lg font-medium">Other spaces</h3>
+          <p class="text-sm text-gray-600">0 beds</p>
+        </div>
+        <button class="bg-gray-200 hover:bg-gray-300 text-gray-500 font-semibold py-2 px-4 rounded-full focus:outline-none">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Add Bedroom Button -->
+    <div class="flex items-center mt-6">
+      <button 
+        @click="showBedTypeSelector = true"
+        class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v6m0 0v6m0-6h6m-6 0H6" />
+        </svg>
+        Add bedroom
+      </button>
+    </div>
+
+    <!-- Bed Type Selector (Only this toggles visibility) -->
+    <div x-show="showBedTypeSelector" class="mt-6 bg-white border border-gray-300 p-6 rounded shadow-md">
+      <h3 class="text-xl font-semibold mb-4">Select bed types for new bedroom</h3>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <label class="flex items-center space-x-2">
+          <input type="checkbox" class="h-4 w-4 text-blue-600">
+          <span>Double bed</span>
+        </label>
+        <label class="flex items-center space-x-2">
+          <input type="checkbox" class="h-4 w-4 text-blue-600">
+          <span>Single bed</span>
+        </label>
+        <label class="flex items-center space-x-2">
+          <input type="checkbox" class="h-4 w-4 text-blue-600">
+          <span>Queen bed</span>
+        </label>
+        <label class="flex items-center space-x-2">
+          <input type="checkbox" class="h-4 w-4 text-blue-600">
+          <span>Sofa bed</span>
+        </label>
+      </div>
+
+      <!-- Save and Cancel -->
+      <div class="flex justify-end mt-6 space-x-4">
+        <button 
+          @click="showBedTypeSelector = false"
+          class="text-gray-600 hover:underline text-sm">
+          Cancel
+        </button>
+        <button 
+          @click="showBedTypeSelector = false"
+          class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm font-medium">
+          Save Bedroom
+        </button>
+      </div>
+    </div>
+ <div class="flex justify-between mt-4">
+          <button @click="propertyWizardStep--"
+            class="text-blue-600 border border-blue-600 px-4 py-2 rounded hover:bg-blue-50">
+            Back
+          </button>
+          <button @click="propertyWizardStep++"
+            class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+            Next
+          </button>
+        </div>
+  </div>
+</template>
+
+
+
+
+
+
+
+
+    <template x-if="propertyWizardStep === 2">
+      
+  <div class="max-w-4xl mx-auto space-y-8">
+    <!-- Heading -->
+     <h2 class="text-2xl font-bold text-gray-900 mt-8">What can guests use at your place?</h2>
+
+   <!-- Amenities Section Container -->
+<div class="bg-white rounded-lg shadow-sm p-6 space-y-6">
+  @php
+    $amenities = [
+      'Highlights' => ['Private bathroom', 'Sea views', 'Family rooms', 'Airport shuttle', 'Spa and wellness center'],
+      'General' => ['Air conditioning', 'Heating', 'Free WiFi', 'Electric vehicle charging station'],
+      'Cooking and cleaning' => ['Kitchen', 'Microwave', 'Washing machine'],
+      'Entertainment' => ['Flat-screen TV', 'Swimming Pool', 'Hot tub', 'Minibar', 'Sauna'],
+      'Outside and view' => ['Balcony', 'Garden view', 'Terrace', 'View']
+    ];
+  @endphp
+
+  @foreach ($amenities as $category => $items)
+    <div class="space-y-3">
+      <h3 class="text-base font-semibold text-gray-800">{{ $category }}</h3>
+
+      <div class="flex flex-col space-y-2">
+        @foreach ($items as $item)
+          <label class="flex items-center space-x-2 text-gray-700 text-sm">
+            <input type="checkbox" name="amenities[]" value="{{ $item }}" class="form-checkbox h-5 w-5 text-blue-600">
+            <span>{{ $item }}</span>
+          </label>
+        @endforeach
+      </div>
+
+      @if (!$loop->last)
+        <hr class="border-t border-gray-200 mt-4">
+      @endif
+    </div>
+  @endforeach
+</div>
+
+
+ <div class="flex justify-between mt-6">
+    <!-- Back Button -->
+<button
+  type="button"
+ @click="propertyWizardStep--"
+  class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+  ←
+</button>
+
+
+
+    <!-- Continue Button -->
+   <!-- Continue Button (inside input field container, aligned right) -->
+  <div class="flex justify-end ">
+    <button
+      type="submit"
+    @click="propertyWizardStep++"
+      class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
+      Continue 
+    </button>
+  </div>
+
+  </div>
+  </div>
+
+
+    </template>
+
+
+
+
+    <template x-if="propertyWizardStep === 3">
+      <div class="space-y-4">
+        <h2 class="text-xl font-semibold text-gray-800">Step 3: Facilities</h2>
+        <!-- Facilities Checkboxes -->
+        <div class="space-y-2">
+          <label class="block"><input type="checkbox" class="mr-2">Wi-Fi</label>
+          <label class="block"><input type="checkbox" class="mr-2">Parking</label>
+          <label class="block"><input type="checkbox" class="mr-2">Swimming Pool</label>
+        </div>
+        <div class="flex justify-between mt-4">
+          <button @click="propertyWizardStep--"
+            class="text-blue-600 border border-blue-600 px-4 py-2 rounded hover:bg-blue-50">
+            Back
+          </button>
+          <button @click="propertyWizardStep++"
+            class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+            Next
+          </button>
+        </div>
+      </div>
+    </template>
+
+    <template x-if="propertyWizardStep === 4">
+      <div class="max-w-4xl mx-auto space-y-8">
+         <div class="container ml-24 px-4 py-8 max-w-2xl">
+    <!-- Header -->
+    <h2 class="text-2xl font-bold mb-8 text-left">
+      What languages do you or your staff speak?
+    </h2>
+
+    <!-- Language Selection Section -->
+    <div class="bg-white shadow-md rounded-lg p-6 mb-8">
+      <h3 class="text-lg  mb-4 font-bold">Select languages</h3>
+      <div class="space-y-2">
+        <label class="flex items-center cursor-pointer">
+          <input type="checkbox" class="mr-2" />
+          <span>English</span>
+        </label>
+        <label class="flex items-center cursor-pointer">
+          <input type="checkbox" class="mr-2" />
+          <span>French</span>
+        </label>
+        <label class="flex items-center cursor-pointer">
+          <input type="checkbox" class="mr-2" />
+          <span>German</span>
+        </label>
+        <label class="flex items-center cursor-pointer">
+          <input type="checkbox" class="mr-2" />
+          <span>Hindi</span>
+        </label>
+      </div>
+
+      <!-- Add Additional Languages -->
+      <div id="additionalLanguagesSection" class="mt-4 hidden relative">
+        <h3 class="text-lg font-medium mb-2 ">Add additional languages</h3>
+        
+        <!-- Searchable dropdown container -->
+        <div class="relative w-full max-w-md">
+          <input
+            type="text"
+            id="languageInput"
+            oninput="filterDropdown()"
+            onclick="toggleDropdown()"
+            placeholder="Search languages..."
+            autocomplete="off"
+            class="w-full border rounded p-2 pr-10 cursor-pointer"
+            readonly
+          />
+          <!-- Dropdown arrow -->
+          <button
+            type="button"
+            onclick="toggleDropdown()"
+            class="absolute right-2 top-2.5 text-gray-600 hover:text-gray-900 focus:outline-none"
+            tabindex="-1"
+          >
+            ▼
+          </button>
+
+          <!-- Dropdown list -->
+          <ul
+            id="languageDropdown"
+            class="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded max-h-40 overflow-auto shadow-lg hidden"
+          >
+            <li
+              class="p-2 hover:bg-blue-100 cursor-pointer"
+              onclick="selectLanguage(this)"
+            >Arabic</li>
+            <li
+              class="p-2 hover:bg-blue-100 cursor-pointer"
+              onclick="selectLanguage(this)"
+            >Bulgarian</li>
+            <li
+              class="p-2 hover:bg-blue-100 cursor-pointer"
+              onclick="selectLanguage(this)"
+            >Catalan</li>
+            <li
+              class="p-2 hover:bg-blue-100 cursor-pointer"
+              onclick="selectLanguage(this)"
+            >Chinese</li>
+            <li
+              class="p-2 hover:bg-blue-100 cursor-pointer"
+              onclick="selectLanguage(this)"
+            >Croatian</li>
+            <li
+              class="p-2 hover:bg-blue-100 cursor-pointer"
+              onclick="selectLanguage(this)"
+            >Czech</li>
+            <li
+              class="p-2 hover:bg-blue-100 cursor-pointer"
+              onclick="selectLanguage(this)"
+            >Danish</li>
+            <li
+              class="p-2 hover:bg-blue-100 cursor-pointer"
+              onclick="selectLanguage(this)"
+            >Dutch</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Toggle Button for Additional Languages -->
+      <a
+        href="#"
+        onclick="event.preventDefault(); toggleAdditionalLanguages();"
+        class="text-blue-500 hover:underline mt-4 block"
+      >
+        Add additional languages
+      </a>
+    </div>
+
+   <!-- Navigation Buttons -->
+<div class="mt-8 flex justify-between">
+  <!-- Back Button on the left -->
+  <button
+   type="button" @click="propertyWizardStep--"
+        :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
+  
+      class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+      ←
+  </button>
+
+  <!-- Continue Button on the right -->
+  <button
+   type="button"  @click="propertyWizardStep++"
+     class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300"
+  >
+    Continue
+  </button>
+</div>
+
+  </div>
+
+  <script>
+    function toggleAdditionalLanguages() {
+      const section = document.getElementById("additionalLanguagesSection");
+      section.classList.toggle("hidden");
+      if (!section.classList.contains("hidden")) {
+        document.getElementById("languageInput").focus();
+        showDropdown();
+      } else {
+        hideDropdown();
+      }
+    }
+
+    function toggleDropdown() {
+      const dropdown = document.getElementById("languageDropdown");
+      dropdown.classList.toggle("hidden");
+    }
+
+    function showDropdown() {
+      document.getElementById("languageDropdown").classList.remove("hidden");
+    }
+
+    function hideDropdown() {
+      document.getElementById("languageDropdown").classList.add("hidden");
+    }
+
+    function filterDropdown() {
+      const input = document.getElementById("languageInput");
+      const filter = input.value.toLowerCase();
+      const ul = document.getElementById("languageDropdown");
+      const items = ul.getElementsByTagName("li");
+      ul.classList.remove("hidden");
+      let visibleCount = 0;
+      for (let i = 0; i < items.length; i++) {
+        const txtValue = items[i].textContent || items[i].innerText;
+        if (txtValue.toLowerCase().indexOf(filter) > -1) {
+          items[i].style.display = "";
+          visibleCount++;
+        } else {
+          items[i].style.display = "none";
+        }
+      }
+      // Hide dropdown if no matches
+      if (visibleCount === 0) {
+        ul.classList.add("hidden");
+      }
+    }
+
+    function selectLanguage(element) {
+      const input = document.getElementById("languageInput");
+      input.value = element.textContent;
+      hideDropdown();
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener("click", function (event) {
+      const dropdown = document.getElementById("languageDropdown");
+      const input = document.getElementById("languageInput");
+      const container = document.getElementById("additionalLanguagesSection");
+      if (
+        !container.contains(event.target)
+      ) {
+        hideDropdown();
+      }
+    });
+  </script>
+      </div>
+      </div>
+    </template>
+
+    <template x-if="propertyWizardStep === 5">
+      <div class="space-y-4">
+        <h2 class="text-xl font-semibold text-gray-800">Step 5: Confirm Details</h2>
+        <p class="text-gray-600">Review and confirm the details you've entered.</p>
+        <!-- Just placeholder review text -->
+        <ul class="list-disc list-inside text-gray-700">
+          <li>Property: Villa</li>
+          <li>Rooms: 3</li>
+          <li>Facilities: Wi-Fi, Parking</li>
+        </ul>
+        <div class="flex justify-between mt-4">
+          <button @click="propertyWizardStep--"
+            class="text-blue-600 border border-blue-600 px-4 py-2 rounded hover:bg-blue-50">
+            Back
+          </button>
+          <button @click="step = 3; propertyWizardStep = 1"
+            class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+            Finish & Continue →
+          </button>
+        </div>
+      </div>
+    </template>
+    <template x-if="propertyWizardStep === 6">
+      <div class="space-y-4">
+        <h2 class="text-xl font-semibold text-gray-800">Step 5: Confirm Details</h2>
+        <p class="text-gray-600">Review and confirm the details you've entered.</p>
+        <!-- Just placeholder review text -->
+        <ul class="list-disc list-inside text-gray-700">
+          <li>Property: Villa</li>
+          <li>Rooms: 3</li>
+          <li>Facilities: Wi-Fi, Parking</li>
+        </ul>
+        <div class="flex justify-between mt-4">
+          <button @click="propertyWizardStep--"
+            class="text-blue-600 border border-blue-600 px-4 py-2 rounded hover:bg-blue-50">
+            Back
+          </button>
+          <button @click="step = 3; propertyWizardStep = 1"
+            class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+            Finish & Continue →
+          </button>
+        </div>
+      </div>
+    </template>
+  </div>
+</section>
+
+
 
  <!-- ✅ Step 3: Photos Upload Section -->
 <!-- ✅ Step 3: Photos Upload Section -->
