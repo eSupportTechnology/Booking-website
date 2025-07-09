@@ -7,7 +7,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Actions\Partner\LoginAction;
 use App\Models\User;
+use App\DTOs\Partner\PartnerLoginEmailDTO;
 use Illuminate\Support\Facades\Auth;
+use App\DTOs\Partner\PartnerLoginPasswordDTO;
 
 class LoginController extends Controller
 
@@ -19,15 +21,15 @@ class LoginController extends Controller
 
     public function storeEmail(Request $request)
     {
-        $request->validate([
-            'email' => 'required|email|exists:users,email',
-        ], [
-            'email.exists' => 'No account found with this email. Please register first.',
-        ]);
+        try {
+            $dto = PartnerLoginEmailDTO::fromRequest($request);
+            
+            session(['partner_login_email' => $dto->email]);
 
-        session(['partner_login_email' => $request->email]);
-
-        return redirect()->route('partner.login.password');
+            return redirect()->route('partner.login.password')->with('success', 'Email verified. Please enter your password.');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return back()->withErrors($e->errors())->withInput();
+        }
     }
 
     public function showPasswordForm()
@@ -40,7 +42,7 @@ class LoginController extends Controller
 
         $email = session('partner_login_email');
         $user = User::where('email', $email)->first();
-        if ($user && $user->hasRole('partner')) {
+        if ($user && ($user->hasRole('partner') || $user->hasRole('customer'))) {
             return view('partner.partner-enter-pwd', [
                 'email' => $email,
             ]);
@@ -52,31 +54,42 @@ class LoginController extends Controller
 
     public function loginWithPassword(Request $request, LoginAction $loginAction)
     {
-        $request->validate([
-            'password' => 'required|string',
-        ]);
+        try {
+            $email = $request->input('email') ?? session('partner_login_email');
 
-        $email = $request->input('email') ?? session('partner_login_email');
+            if (!$email) {
+                return redirect()->route('partner.login.email')->with('error', 'Session expired. Please re-enter your email.');
+            }
 
-        if (!$email) {
-            return redirect()->route('partner.login.email')->withErrors([
-                'email' => 'Session expired. Please re-enter your email.',
+            $dto = PartnerLoginPasswordDTO::fromArray([
+                'password' => $request->password,
+                'email' => $email
             ]);
-        }
 
-        if ($loginAction->execute($email, $request->password)) {
-            session()->forget('partner_login_email');
-            $user = Auth::user();
-            return redirect()->route('partner.list-your-property')->with('partner_name', $user ? $user->name : null);
-        }
+            if ($loginAction->execute($email, $dto->password)) {
+                session()->forget('partner_login_email');
+                $user = Auth::user();
+                return redirect()->route('partner.list-your-property')->with('success', 'Welcome back, ' . ($user ? $user->name : 'Partner') . '!');
+            }
 
-        return back()->withErrors([
-            'password' => 'Invalid password.',
-        ])->withInput();
+            return back()->with('error', 'Invalid password. Please try again.')->withInput();
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return back()->withErrors($e->errors())->withInput();
+        }
     }
 
     public function show()
     {
         return view('partner.partner-sign-in'); // or your custom login view
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/list-your-property')->with('success', 'Logged out successfully.');
     }
 }

@@ -35,6 +35,8 @@ class GoogleAuthAction
                 }
                 Log::debug("User created: ", $user->toArray());
 
+                $user->assignRole('customer');
+                
                 $isNewUser = true;
                 Log::info("New user created via Google Auth: {$dto->email}");
             }

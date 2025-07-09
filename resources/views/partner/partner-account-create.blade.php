@@ -31,6 +31,28 @@
       <h2 class="text-2xl font-semibold mb-2" style="font-family: 'Noto Sans', sans-serif;">Create your partner account</h2>
       <p class="text-gray-600 text-sm mb-6" style="font-family: 'Noto Sans', sans-serif;">Create an account to list and manage your property.</p>
 
+      @if (session('success'))
+        <div class="mb-4 p-3 rounded bg-green-100 border border-green-400 text-green-700 text-sm" role="alert">
+          {{ session('success') }}
+        </div>
+      @endif
+
+      @if (session('error'))
+        <div class="mb-4 p-3 rounded bg-red-100 border border-red-400 text-red-700 text-sm" role="alert">
+          {{ session('error') }}
+        </div>
+      @endif
+
+      @if ($errors->any())
+        <div class="mb-4 p-3 rounded bg-red-100 border border-red-400 text-red-700 text-sm" role="alert">
+          <ul class="mb-0 pl-4 list-disc">
+            @foreach ($errors->all() as $error)
+              <li>{{ $error }}</li>
+            @endforeach
+          </ul>
+        </div>
+      @endif
+
       <form method="POST" action="{{ route('partner.register.email') }}" id="emailForm">
         @csrf
         <label for="email" class="block text-sm font-medium text-gray-700 mb-1" style="font-family: 'Noto Sans', sans-serif;">Email address</label>

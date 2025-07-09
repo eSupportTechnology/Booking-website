@@ -12,6 +12,7 @@ use App\Mail\PartnerVerificationMail;
 use App\Http\Controllers\Partner\LoginController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Customer\CustomerPersonalDetailsController;
+use App\Http\Controllers\PropertyController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -74,7 +75,7 @@ Route::get('/list-your-property', function () {
 
 
 Route::get('/', function () {
-    return view('frontend.home');
+    return view('Customer.home');
 });
 Route::get('/property', function () {
     return view('frontend.property');
@@ -203,29 +204,32 @@ Route::prefix('traveler')->group(function () {
 
 // Partner Registration (Web)
 Route::prefix('partner')->group(function () {
+    Route::get('/property_category', [PropertyController::class, 'categories'])->name('partner.property.category');
+    Route::get('/property_subcategory/{id}', [PropertyController::class, 'subcategories'])->name('partner.property.subcategory');
+    Route::get('/property_subtype/{id}', [PropertyController::class, 'subtypes'])->name('partner.property.subtype');
+    Route::post('/property/register', [PropertyController::class, 'register'])->name('partner.property.register');
     // Show email registration form
-    Route::get('/register/email', function () {
-        return view('partner.partner-account-create');
-    })->name('partner.register.email.form');
+    Route::get('/register', [PartnerRegistrationController::class, 'createEmail'])->name('partner.register.email-create');
+    Route::get('/register/email', [PartnerRegistrationController::class, 'createEmail'])->name('partner.register.email.form');
 
+    Route::get('/property-apartment-2', function () {
+        return view('partner.partner-apartment-create-form-2');
+    })->name('partner.property.apartment.2');
+    Route::get('/property-apartment-1', [\App\Http\Controllers\PropertyController::class, 'apartmentSubcategories'])->name('partner.property.apartment.1');
     // Handle email registration POST
     Route::post('/register/email', [PartnerRegistrationController::class, 'storeEmail'])->name('partner.register.email');
 
     // Show contact details form
-    Route::get('/register/contact', function () {
-        return view('partner.partner-contact-details');
-    })->name('partner.register.contact.form');
+    Route::get('/register/contact', [PartnerRegistrationController::class, 'createContact'])->name('partner.register.contact-details');
 
     // Handle contact details POST
     Route::post('/register/contact', [PartnerRegistrationController::class, 'storeContact'])->name('partner.register.contact');
 
     // Show password creation form
-    Route::get('/register/password', function () {
-        return view('partner.partner-create-password');
-    })->name('partner.register.password');
+    Route::get('/register/password', [PartnerRegistrationController::class, 'createPassword'])->name('partner.register.password-create');
 
     // Handle password creation POST
-    Route::post('/register/password', [PartnerRegistrationController::class, 'storePassword'])->name('partner.register.password');
+    Route::post('/register/password', [PartnerRegistrationController::class, 'register'])->name('partner.register.password');
 
     // Show email verification page
     Route::get('/register/verify', function (\Illuminate\Http\Request $request) {
@@ -241,6 +245,11 @@ Route::prefix('partner')->group(function () {
     Route::get('/list-your-property', function () {
         return view('partner.list-your-property');
     })->name('partner.list-your-property');
+
+    // Partner apartment creation form
+    Route::get('/apartment/create', function () {
+        return view('partner.partner-apartment-create');
+    })->name('partner.apartment.create');
 
     // Partner two-step login
     Route::get('/sign-in', [LoginController::class, 'showEmailForm'])->name('partner.login.email');
@@ -270,20 +279,25 @@ Route::prefix('partner')->group(function () {
         ->name('partner.password.update');
 
     Route::get('/register/verify/{token}', [PartnerRegistrationController::class, 'verify'])->name('partner.register.verify.token');
+
+    Route::post('/property-apartment', [\App\Http\Controllers\PropertyController::class, 'storeApartment'])->name('partner.property.apartment.store');
+
+    // Step 1: Select One/Multiple
+    Route::post('/property-apartment/step1', [PropertyController::class, 'storeStep1'])->name('partner.property.apartment.store.step1');
+
+    // Step 2: Show next form and save more details
+    Route::get('/property-apartment/step2/{property}', [PropertyController::class, 'showStep2'])->name('partner.property.apartment.step2');
+    Route::post('/property-apartment/step2/{property}', [PropertyController::class, 'storeStep2'])->name('partner.property.apartment.store.step2');
+
+     Route::post('/logout', function () {
+        Auth::logout();
+        return redirect('/partner/login')->with('success', 'You have been logged out.');
+    })->name('partner.logout');
+
 });
 
 Route::get('/partner/login', [LoginController::class, 'show'])->name('partner.login');
 Route::post('/partner/login', [LoginController::class, 'login'])->name('partner.login.submit');
-
-// Partner Registration Flow
-Route::get('/partner/register', [PartnerRegistrationController::class, 'createEmail'])->name('partner.register.email-create');
-Route::post('/partner/register/email', [PartnerRegistrationController::class, 'storeEmail'])->name('partner.register.email');
-
-Route::get('/partner/register/contact', [PartnerRegistrationController::class, 'createContact'])->name('partner.register.contact-details');
-Route::post('/partner/register/contact', [PartnerRegistrationController::class, 'storeContact'])->name('partner.register.contact');
-
-Route::get('/partner/register/password', [PartnerRegistrationController::class, 'createPassword'])->name('partner.register.password-create');
-Route::post('/partner/register/password', [PartnerRegistrationController::class, 'register'])->name('partner.register.password');
 
 // Show the email verification notice
 Route::get('/email/verify', function () {
@@ -301,5 +315,7 @@ Route::post('/email/verification-notification', function (\Illuminate\Http\Reque
     $request->user()->sendEmailVerificationNotification();
     return back()->with('message', 'Verification link sent!');
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+
+Route::post('/partner/property/step1', [PropertyController::class, 'storeStep1'])->name('partner.property.step1.store');
 
 require __DIR__ . '/auth.php';

@@ -103,6 +103,31 @@
     <h2 class="text-xl font-semibold mb-2" style="font-family: 'Noto Sans', sans-serif;">Forgotten your password?</h2>
      <p class="text-gray-600 text-sm mb-4 " style="font-family: 'Noto Sans', sans-serif;">No problem! We'll send you a link to reset it. Please enter the email address you use to sign in to Booking.com.</p>
 
+    <!-- Success Alert -->
+    @if (session('success'))
+      <div class="mb-4 p-3 rounded bg-green-100 border border-green-400 text-green-700 text-sm" role="alert">
+        {{ session('success') }}
+      </div>
+    @endif
+
+    <!-- Error Alert -->
+    @if (session('error'))
+      <div class="mb-4 p-3 rounded bg-red-100 border border-red-400 text-red-700 text-sm" role="alert">
+        {{ session('error') }}
+      </div>
+    @endif
+
+    <!-- Validation Errors -->
+    @if ($errors->any())
+      <div class="mb-4 p-3 rounded bg-red-100 border border-red-400 text-red-700 text-sm" role="alert">
+        <ul class="mb-0 pl-4 list-disc">
+          @foreach ($errors->all() as $error)
+            <li>{{ $error }}</li>
+          @endforeach
+        </ul>
+      </div>
+    @endif
+
       <form method="POST" action="{{ route('partner.password.email') }}">
         @csrf
     <div class="mb-4 relative">
