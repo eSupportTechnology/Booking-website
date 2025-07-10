@@ -1,24 +1,32 @@
 <?php
 
-namespace App\Actions\Sms;
+namespace App\Actions\SMS;
 
-use App\DTOs\SendSingleSmsDTO;
+use App\DTOs\SMS\SendSingleSMSDTO;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
-class SendSingleSmsAction
+class SendSingleSMSAction
 {
-    public function execute(SendSingleSmsDTO $data): array
-    {
-        $response = Http::withBasicAuth(
-            config('services.quicksend.email'),
-            config('services.quicksend.api_key')
-        )->post('https://quicksend.lk/Client/api.php?FUN=SEND_SINGLE', [
-            'senderID' => $data->senderID,
-            'to'       => $data->to,
-            'msg'      => $data->msg,
-        ]);
+    public function execute(SendSingleSMSDTO $dto): array
+{
+    $url = config('services.quicksend.base_url') . '?FUN=SEND_SINGLE';
 
-        return $response->json();
-    }
+    $response = Http::withBasicAuth(
+        config('services.quicksend.email'),
+        config('services.quicksend.api_key')
+    )->post($url, [
+        'senderID' => config('services.quicksend.sender_id'),
+        'to'       => $dto->to,
+        'msg'      => $dto->message,
+    ]);
+
+    // Log everything
+    Log::info('QuickSend API Raw Response', [
+        'status' => $response->status(),
+        'body'   => $response->body(),
+    ]);
+
+    return $response->json();
 }
-
+}

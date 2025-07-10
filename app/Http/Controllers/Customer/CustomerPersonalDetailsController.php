@@ -64,59 +64,73 @@ class CustomerPersonalDetailsController extends Controller
 
 
     public function update(Request $request, StoreOrUpdateCustomerPersonalDetailAction $action)
-    {
-        $user = Auth::guard('customer')->user();
+{
+    $user = Auth::guard('customer')->user();
 
-        if (!$user) {
+    if (!$user) {
         abort(403, 'Unauthorized action.');
     }
 
-        // Update name/email if present
-        if ($request->has(['first_name', 'last_name'])) {
-            $user->name = trim($request->input('first_name', '') . ' ' . $request->input('last_name', ''));
-        }
-        if ($request->filled('email')) {
-            $user->email = $request->input('email');
-        }
-        $user->save();
-
-        $existingDetail = $user->customerPersonalDetail;
-
-        if (!$request->has('display_name') && $existingDetail) {
-            $request->merge(['display_name' => $existingDetail->display_name]);
-        }
-
-        $passportFirstName = $request->input('passportFirstName');
-        $passportLastName = $request->input('passportLastName');
-
-        if ($passportFirstName || $passportLastName) {
-            $passportName = trim("{$passportFirstName} {$passportLastName}");
-            $request->merge(['passport_name' => $passportName]);
-        } elseif ($existingDetail) {
-            $request->merge(['passport_name' => $existingDetail->passport_name]);
-        }
-
-
-        $day = $request->input('passportExpiryDay');
-        $month = $request->input('passportExpiryMonth');
-        $year = $request->input('passportExpiryYear');
-
-        if ($day && $month && $year) {
-            $passportExpiryDate = "{$year}-{$month}-{$day}";
-
-            if (strtotime($passportExpiryDate)) {
-                $request->merge(['passport_expiry_date' => $passportExpiryDate]);
-            }
-        }
-
-        $request->merge(['user_id' => $user->id]);
-
-        $dto = CustomerPersonalDetailDTO::fromRequest($request);
-
-        $action->execute($dto);
-
-        return redirect()
-            ->route('customer.details.create')
-            ->with('success', 'Details saved successfully.');
+    // Update user's name and email if provided
+    if ($request->has(['first_name', 'last_name'])) {
+        $user->name = trim($request->input('first_name') . ' ' . $request->input('last_name'));
     }
+
+    if ($request->filled('email')) {
+        $user->email = $request->input('email');
+    }
+
+    $user->save();
+
+    $existingDetail = $user->customerPersonalDetail;
+
+    // Preserve display_name if not present in request
+    if (!$request->has('display_name') && $existingDetail) {
+        $request->merge([
+            'display_name' => $existingDetail->display_name,
+        ]);
+    }
+
+    // Combine passport name
+    $passportFirstName = $request->input('passportFirstName');
+    $passportLastName = $request->input('passportLastName');
+
+    if ($passportFirstName || $passportLastName) {
+        $passportName = trim("{$passportFirstName} {$passportLastName}");
+        $request->merge(['passport_name' => $passportName]);
+    } elseif ($existingDetail) {
+        $request->merge(['passport_name' => $existingDetail->passport_name]);
+    }
+
+    // Combine passport expiry date
+    $day = $request->input('passportExpiryDay');
+    $month = $request->input('passportExpiryMonth');
+    $year = $request->input('passportExpiryYear');
+
+    if ($day && $month && $year) {
+        $passportExpiryDate = "{$year}-{$month}-{$day}";
+        if (strtotime($passportExpiryDate)) {
+            $request->merge(['passport_expiry_date' => $passportExpiryDate]);
+        }
+    }
+
+    // Merge user_id and uploaded image (if any)
+    $requestData = array_merge(
+        $request->all(),
+        ['user_id' => $user->id]
+    );
+
+    if ($request->hasFile('profile_image')) {
+        $requestData['profile_image'] = $request->file('profile_image');
+    }
+
+    // Pass data to DTO and action
+    $dto = new CustomerPersonalDetailDTO($requestData);
+    $action->execute($dto);
+
+    return redirect()
+        ->route('customer.details.create')
+        ->with('success', 'Details saved successfully.');
+}
+
 }

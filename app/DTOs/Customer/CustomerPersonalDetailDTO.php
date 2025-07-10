@@ -54,7 +54,7 @@ class CustomerPersonalDetailDTO extends ValidatedDTO
     protected function casts(): array
     {
         return [
-            'profile_image' => UploadedFile::class,
+            // 'profile_image' => UploadedFile::class,
         ];
     }
 }

@@ -2,67 +2,46 @@
 
 namespace App\Http\Controllers;
 
-use App\DTOs\SMS\SendSmsRequestDto;
-use App\DTOs\SMS\SmsResponseDto;
-use App\Services\QuickSendSmsService;
 use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
-use Exception;
-use InvalidArgumentException;
+use App\DTOs\SMS\SendSingleSMSDTO;
+use App\Actions\SMS\SendSingleSMSAction;
+use App\Services\OTPService;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Validator;
 
 class SMSController extends Controller
 {
-    public function __construct(
-        private readonly QuickSendSmsService $smsService
-    ) {}
+     protected OTPService $otpService;
 
-    public function sendSms(Request $request): JsonResponse
+    public function __construct(OTPService $otpService)
     {
-        $validatedData = $request->validate([
-            'phone_number' => 'required|string|min:10|max:12',
-            'message' => 'required|string|max:160',
-            'sender_id' => 'nullable|string|max:11'
-        ]);
-
-        try {
-            $smsRequest = SendSmsRequestDto::fromArray($validatedData);
-            $response = $this->smsService->sendSingleSms($smsRequest);
-
-            return $this->formatJsonResponse($response);
-
-        } catch (InvalidArgumentException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage()
-            ], 400);
-        }
+        $this->otpService = $otpService;
     }
 
-    public function sendSmsViaGet(Request $request): JsonResponse
+    public function send(Request $request)
     {
-        $validatedData = $request->validate([
-            'phone_number' => 'required|string|min:10|max:12',
-            'message' => 'required|string|max:160',
-            'sender_id' => 'nullable|string|max:11'
+        $request->validate(['phone_number' => 'required|string|min:10']);
+
+        $success = $this->otpService->send($request->phone_number);
+
+        return response()->json([
+            'success' => $success,
+            'message' => $success ? 'OTP sent.' : 'Failed to send OTP.'
         ]);
-
-        try {
-            $smsRequest = SendSmsRequestDto::fromArray($validatedData);
-            $response = $this->smsService->sendSingleSmsViaGet($smsRequest);
-
-            return $this->formatJsonResponse($response);
-
-        } catch (InvalidArgumentException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage()
-            ], 400);
-        }
     }
 
-    private function formatJsonResponse(SmsResponseDto $response): JsonResponse
+    public function verify(Request $request)
     {
-        $statusCode = $response->success ? 200 : 500;
-        return response()->json($response->toArray(), $statusCode);
+        $request->validate([
+            'phone_number' => 'required|string',
+            'otp' => 'required|string'
+        ]);
+
+        $valid = $this->otpService->verify($request->phone_number, $request->otp);
+
+        return response()->json([
+            'success' => $valid,
+            'message' => $valid ? 'OTP verified.' : 'Invalid OTP.'
+        ]);
     }
 }
