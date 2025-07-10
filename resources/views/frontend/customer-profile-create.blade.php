@@ -234,45 +234,191 @@
     x-ref="input1"
   />
 </template>
-
-       <template x-if="section === 'emailAddress'">
-  <input
-    type="email"
-    placeholder="Email address"
-    class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm"
-    x-ref="emailInput"
-  />
-</template>
-
-
-    <template x-if="section === 'phone'">
-  <div class="space-y-2">
-    <div class="flex items-center border border-gray-300 rounded-md px-3 py-2 space-x-2">
-      <!-- Flag Image -->
-      <img :src="phoneFlag" alt="Flag" class="w-6 h-4 rounded" />
-
-      <!-- Country Code Dropdown -->
-      <select
-        x-ref="countryCode"
-        @change="phoneFlag = $event.target.options[$event.target.selectedIndex].dataset.flag"
-        class="bg-white border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm"
-      >
-        <option value="+94" data-flag="https://flagcdn.com/w40/lk.png" selected>+94</option>
-        <option value="+44" data-flag="https://flagcdn.com/w40/gb.png">+44</option>
-        <option value="+49" data-flag="https://flagcdn.com/w40/de.png">+49</option>
-        <option value="+1" data-flag="https://flagcdn.com/w40/us.png">+1</option>
-      </select>
-
-      <!-- Phone Input -->
+<template x-if="section === 'emailAddress'">
+  <div class="space-y-2" x-data="{ verifyMode: false, code: ['', '', '', '', '', ''], completed: { emailAddress: '', phone: '' } }">
+    
+    <!-- Email Input (hidden during OTP) -->
+    <template x-if="!verifyMode">
       <input
-        type="tel"
-        placeholder="Enter phone number"
-        class="flex-1 outline-none border-none focus:ring-0 text-gray-900 text-sm"
-        x-ref="phoneInput"
+        type="email"
+        placeholder="Email address"
+        class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm"
+        x-model="completed.emailAddress"
       />
+    </template>
+
+    <!-- OTP Input (only if verifyMode is true) -->
+    <template x-if="verifyMode">
+      <div class="space-y-2">
+        <label class="block text-sm font-medium text-gray-700">Enter the 6-digit OTP code</label>
+        <div class="flex justify-center gap-2 mb-4">
+          <template x-for="(digit, index) in code" :key="index">
+            <input
+              type="text"
+              maxlength="1"
+              class="w-12 h-12 border rounded text-center text-lg tracking-wider focus:outline-none focus:ring focus:ring-blue-200"
+              x-model="code[index]"
+              :ref="'input' + index"
+              @input="
+                if ($event.target.value.length === 1 && index < 5) {
+                  $refs['input' + (index + 1)]?.focus();
+                }
+              "
+              @keydown.backspace="
+                if ($event.target.value === '' && index > 0) {
+                  $refs['input' + (index - 1)]?.focus();
+                }
+              "
+            />
+          </template>
+        </div>
+      </div>
+    </template>
+
+    <!-- Buttons -->
+    <div class="flex justify-end space-x-4 mt-2">
+      <!-- Cancel Button -->
+      <button
+        type="button"
+       @click="editing = null"
+        class="text-blue-600 hover:underline text-sm"
+      >
+        Cancel
+      </button>
+
+      <!-- Verify Button (only if not in OTP mode) -->
+      <template x-if="!verifyMode">
+        <button
+          type="button"
+          @click="verifyMode = true"
+          class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm font-medium"
+        >
+          Verify
+        </button>
+      </template>
+
+      <!-- Confirm OTP Button (only if in OTP mode) -->
+      <template x-if="verifyMode">
+        <button
+          type="button"
+          @click="
+            completed.phone = 'OTP: ' + code.join('');
+            verifyMode = false;
+            code = ['', '', '', '', '', ''];
+          "
+          class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm font-medium"
+        >
+          Confirm OTP
+        </button>
+      </template>
     </div>
+
   </div>
 </template>
+
+
+   <template x-if="section === 'phone'">
+  <div x-data="{ verifyMode: false, otp: '', code: ['', '', '', '', '', ''] }" x-ref="phoneSection" class="space-y-2">
+    
+    <!-- Phone Input View -->
+    <template x-if="!verifyMode">
+      <div>
+        <div class="flex items-center border border-gray-300 rounded-md px-3 py-2 space-x-2">
+          <!-- Flag -->
+          <img :src="phoneFlag" alt="Flag" class="w-6 h-4 rounded" />
+
+          <!-- Country Code Dropdown -->
+          <select
+            x-ref="countryCode"
+            @change="phoneFlag = $event.target.options[$event.target.selectedIndex].dataset.flag"
+            class="bg-white border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm"
+          >
+            <option value="+94" data-flag="https://flagcdn.com/w40/lk.png" selected>+94</option>
+            <option value="+44" data-flag="https://flagcdn.com/w40/gb.png">+44</option>
+            <option value="+49" data-flag="https://flagcdn.com/w40/de.png">+49</option>
+            <option value="+1" data-flag="https://flagcdn.com/w40/us.png">+1</option>
+          </select>
+
+          <!-- Phone Number -->
+          <input
+            type="tel"
+            placeholder="Enter phone number"
+            class="flex-1 outline-none border-none focus:ring-0 text-gray-900 text-sm"
+            x-ref="phoneInput"
+          />
+        </div>
+      </div>
+    </template>
+
+    <!-- OTP Input (only if verifyMode is true) -->
+    <template x-if="verifyMode">
+      <div class="space-y-2">
+        <label class="block text-sm font-medium text-gray-700">Enter the 6-digit OTP code</label>
+        <div class="flex justify-center gap-2 mb-4">
+          <template x-for="(digit, index) in code" :key="index">
+            <input
+              type="text"
+              maxlength="1"
+              class="w-12 h-12 border rounded text-center text-lg tracking-wider focus:outline-none focus:ring focus:ring-blue-200"
+              x-model="code[index]"
+              :ref="'input' + index"
+              @input="
+                if ($event.target.value.length === 1 && index < 5) {
+                  $refs['input' + (index + 1)]?.focus();
+                }
+              "
+              @keydown.backspace="
+                if ($event.target.value === '' && index > 0) {
+                  $refs['input' + (index - 1)]?.focus();
+                }
+              "
+            />
+          </template>
+        </div>
+      </div>
+    </template>
+
+    <!-- Buttons -->
+    <div class="flex justify-end space-x-4 mt-2">
+      <!-- Cancel Button -->
+      <button
+        type="button"
+       @click="editing = null"
+        class="text-blue-600 hover:underline text-sm"
+      >
+        Cancel
+      </button>
+
+      <!-- Verify Button (only if not in OTP mode) -->
+      <template x-if="!verifyMode">
+        <button
+          type="button"
+          @click="verifyMode = true"
+          class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm font-medium"
+        >
+          Verify
+        </button>
+      </template>
+
+      <!-- Confirm OTP Button (only if in OTP mode) -->
+      <template x-if="verifyMode">
+        <button
+          type="button"
+          @click="
+            completed.phone = 'OTP: ' + code.join('');
+            verifyMode = false;
+            code = ['', '', '', '', '', ''];
+          "
+          class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm font-medium"
+        >
+          Confirm OTP
+        </button>
+      </template>
+    </div>
+
+  </div>
+</template>
+
 
 <!-- Script to Update Flag Image Dynamically -->
 <script>
@@ -406,8 +552,8 @@
         </template>
 
           <!-- Save & Cancel -->
-        <div class="flex justify-end space-x-4 mt-2">
-          <button @click="editing = null" class="text-blue-600 hover:underline text-sm">Cancel</button>
+        <div class="flex justify-end space-x-4 mt-2" x-show="section !== 'phone' && section !== 'emailAddress'">
+          <button @click="editing = null" class="text-blue-600 hover:underline text-sm" >Cancel</button>
           <button
  @click="
   if (section === 'name') {
@@ -498,39 +644,231 @@
       </div>
       <button @click="showModal = true" class="text-blue-600 hover:underline font-medium">Set up</button>
     </div>
+<!-- Two-factor authentication (Grouped with steps) -->
+<div x-data="{ step: 0 }" class="py-4 border-b border-gray-200">
 
-    <!-- Two-factor authentication -->
-    <div class="flex justify-between py-4">
-      <div>
-        <p class="font-base font-semibold text-gray-800">Two-factor authentication</p>
-        <p class="text-gray-600">
-          Increase the security of your account by setting up two-factor authentication.
-        </p>
-      </div>
-      <button class="text-blue-600 hover:underline font-medium">Set up</button>
+  <!-- Heading + Button aligned horizontally -->
+  <div class="flex justify-between items-start">
+    <div>
+      <p class="font-base font-semibold text-gray-800">Two-factor authentication</p>
+      <p class="text-gray-600">
+        Increase the security of your account by setting up two-factor authentication.
+      </p>
+    </div>
+    <button x-show="step === 0" @click="step = 1" class="text-blue-600 hover:underline font-medium mt-1">
+      Set up
+    </button>
+  </div>
+
+  <!-- Step 1: Download Authenticator App -->
+  <div x-show="step === 1" x-transition class="mt-4 border border-gray-300 rounded-md p-4 relative bg-white">
+    <!-- Top-right corner buttons -->
+    <div class="absolute top-4 right-4 flex space-x-2">
+      <button @click="step = 0" class="text-blue-600 hover:underline font-medium mt-1">Cancel</button>
     </div>
 
-    <!-- Active sessions -->
-    <div class="flex justify-between py-4">
-      <div>
-        <p class="font-base font-semibold text-gray-800">Active sessions</p>
-        <p class="text-gray-600">
-          Selecting ‘Sign out’ will sign you out from all devices except this one.
-          <br>The process can take up to 10 minutes.
-        </p>
-      </div>
-      <button class="text-blue-600 hover:underline font-medium">Sign out</button>
-    </div>
+    <!-- Content -->
+    <h3 class="text-base font-semibold mb-2">1. Download an authenticator app</h3>
+    <p class="text-sm text-gray-700 mb-6 pr-24">
+      If you don’t have an authenticator app installed, please download one. We recommend using
+      <strong>Google Authenticator</strong> or <strong>Microsoft Authenticator</strong>.
+    </p>
 
-    <!-- Delete account -->
-    <div class="flex justify-between py-4">
-      <div>
-        <p class="font-base font-semibold text-gray-800">Delete account</p>
-        <p class="text-gray-600">Permanently delete your Booking.com account</p>
-      </div>
-      <button class="text-blue-600 hover:underline font-medium">Delete account</button>
+    <!-- Bottom-right corner buttons -->
+    <div class="flex justify-end space-x-4">
+      <button @click="step = 2" class="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700">Next</button>
     </div>
   </div>
+
+  <!-- Step 2: QR Code or Key -->
+<div x-show="step === 2" x-transition class="mt-6 border border-gray-300 rounded-md p-4 bg-white relative" x-data="{ showKey: false }">
+  
+  <!-- Top-right corner cancel button -->
+  <div class="absolute top-4 right-4">
+    <button @click="step = 0" class="text-blue-600 hover:underline font-medium">Cancel</button>
+  </div>
+
+  <!-- Title -->
+  <h3 class="text-base font-semibold mb-2">2. Scan the barcode/QR code</h3>
+
+
+  <!-- QR Code or Key Section -->
+  <div class="mb-4">
+    <!-- QR Code Box -->
+   <!-- QR Code Box -->
+<div x-show="!showKey" class="w-40 h-40 mb-4">
+  <img src="{{ asset('images/qr-code-placeholder.png') }}" alt="QR Code" class="w-full h-full object-contain rounded border border-gray-300" />
+</div>
+
+
+    <!-- Key Display -->
+    <div x-show="showKey" class="bg-gray-100 text-gray-800 text-sm px-4 py-3 rounded border border-dashed border-gray-400">
+      ABCD-EFGH-IJKL-MNOP
+    </div>
+  </div>
+
+  <!-- Toggle Button -->
+  <div class="mb-4">
+    <button 
+      @click="showKey = !showKey" 
+      class="px-4 py-2 text-sm border border-[#3CC0E9] text-[#3CC0E9] rounded hover:bg-gray-100">
+      <span x-text="showKey ? 'See QR Code' : 'View Key'"></span>
+    </button>
+  </div>
+
+  <!-- Additional Instruction -->
+  <p class="text-sm text-gray-700 mb-4">
+    Use your authenticator app to scan the barcode/QR code below. Alternatively, you can click “view key” and then copy and paste the code into your authenticator app.
+  </p>
+
+  <!-- Bottom Buttons -->
+  <div class="flex justify-end space-x-4">
+    <button @click="step = 3" class="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700">Next</button>
+  </div>
+</div>
+
+
+  <!-- Step 3: Enter Authentication Code -->
+<div x-show="step === 3" x-transition class="mt-6 border border-gray-300 rounded-md p-4 bg-white relative">
+  
+  <!-- Top-right corner cancel button -->
+  <div class="absolute top-4 right-4">
+    <button @click="step = 2" class="text-blue-600 hover:underline font-medium">Cancel</button>
+  </div>
+
+  <h3 class="text-base font-semibold mb-2">3. Enter the authentication code</h3>
+  <p class="text-sm text-gray-700 mb-4">
+    Enter the 6-digit code generated by your authenticator app.
+  </p>
+
+  <!-- Input Field -->
+  <input type="text" maxlength="6" placeholder="123456"
+         class="w-full max-w-xs border border-gray-300 rounded-md px-4 py-2 text-sm mb-4" />
+
+  <!-- Bottom-right verify button -->
+  <div class="flex justify-end space-x-4">
+    <button @click="alert('Authentication complete')" class="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700">Submit</button>
+  </div>
+</div>
+</div>
+
+
+
+<!-- Active sessions -->
+<div class="flex justify-between py-4 border-b border-gray-200">
+  
+  <div>
+    <p class="font-base font-semibold text-gray-800">Active sessions</p>
+    <p class="text-sm text-gray-600">
+      Selecting ‘Sign out’ will sign you out from all devices except this one.
+      <br>The process can take up to 10 minutes.
+    </p>
+  </div>
+  <button class="text-blue-600 hover:underline font-medium">Sign out</button>
+</div>
+
+
+<!-- Delete Account Section -->
+<div x-data="{
+  showDeleteSection: false,
+  selectedReason: 'emails',
+  feedback: ''
+}" class="py-4 border-t border-gray-200">
+
+  <!-- Heading + Delete Account Trigger -->
+  <div class="flex justify-between items-start">
+    <div>
+      <p class="font-base font-semibold text-gray-800">Delete account</p>
+      <p class="text-gray-600">Permanently delete your Booking.com account</p>
+    </div>
+    <!-- Show Delete Account button only if conditions box is hidden -->
+    <button 
+      x-show="!showDeleteSection" 
+      @click="showDeleteSection = true; selectedReason = 'emails'; feedback = ''" 
+      class="text-blue-600 hover:underline font-medium mt-1"
+    >
+      Delete account
+    </button>
+  </div>
+
+  <!-- Delete Account Conditions Section -->
+  <div x-show="showDeleteSection" x-transition class="relative mt-4 border border-gray-300 rounded-md p-4 bg-white space-y-4">
+
+    <!-- Top-right Cancel Button -->
+    <div class="absolute top-4 right-4">
+      <button 
+        @click="showDeleteSection = false" 
+        class="text-blue-600 hover:underline font-medium"
+      >
+        Cancel
+      </button>
+    </div>
+
+    <h3 class="text-base font-semibold text-gray-800">Why do you want to delete your account?</h3>
+
+    <ul class="text-sm text-gray-700 space-y-4">
+      <li class="flex items-start space-x-2">
+        <input type="radio" name="reason" value="emails" x-model="selectedReason" class="mt-1 border-gray-300 rounded" />
+        <div>
+          <p class="font-medium">I get too many emails from Booking.com</p>
+          <p class="text-gray-500">If you’d prefer to keep your account benefits without any marketing emails, you can unsubscribe instead.</p>
+        </div>
+      </li>
+      <li class="flex items-start space-x-2">
+        <input type="radio" name="reason" value="emailChange" x-model="selectedReason" class="mt-1 border-gray-300 rounded" />
+        <div>
+          <p class="font-medium">I want to use a different email address for my account</p>
+          <p class="text-gray-500">There's a faster way! Change it below or update it anytime in the ‘Personal details’ section of your account settings.</p>
+        </div>
+      </li>
+      <li class="flex items-start space-x-2">
+        <input type="radio" name="reason" value="dataRemoval" x-model="selectedReason" class="mt-1 border-gray-300 rounded" />
+        <div>
+          <p class="font-medium">I want to remove all my data</p>
+          <p class="text-gray-500 text-sm">
+            When your Booking.com account is deleted, you will no longer have access to your account data, your past reservation data, your favourite accommodations lists or your Genius status.
+            For more info about exercising your 
+            <a href="#" class="text-blue-600 hover:underline">data subject rights</a>, please see our 
+            <a href="#" class="text-blue-600 hover:underline">Privacy Statement</a> for Customers.
+          </p>
+        </div>
+      </li>
+    </ul>
+
+    <!-- Feedback for data removal -->
+    <div x-show="selectedReason === 'dataRemoval'" class="pt-2">
+      <label class="block text-sm text-gray-700 mb-1">Is there any feedback you'd like to give us before you go? We'll use it to fix problems and make our services better.</label>
+      <textarea x-model="feedback" rows="2" class="w-full border border-gray-300 rounded px-3 py-2 text-sm"></textarea>
+    </div>
+
+    <!-- Bottom Buttons -->
+    <div class="flex justify-end space-x-4 pt-4 flex-wrap">
+      <template x-if="selectedReason === 'emails'">
+        <button class="px-4 py-2 text-sm border border-blue-600 rounded text-blue-600 hover:bg-gray-100">
+          Unsubscribe
+        </button>
+      </template>
+
+      <template x-if="selectedReason === 'emailChange'">
+        <button class="px-4 py-2 text-sm border border-blue-600 rounded text-blue-600 hover:bg-gray-100">
+          Change Email
+        </button>
+      </template>
+
+      <template x-if="selectedReason === 'dataRemoval'">
+        <button class="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700">
+          Delete My Account
+        </button>
+      </template>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
 
   <!-- 🔐 Passkey Modal -->
 <div x-show="showModal" x-cloak class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">

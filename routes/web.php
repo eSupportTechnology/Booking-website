@@ -155,8 +155,17 @@ Route::get('/partner-homes-create-1', function () {
     return view('frontend.partner-homes-create-form-1');
 })->name('partner.homes.create.1');
 
+Route::get('/partner-hotels-rooms', function () {
+    return view('frontend.partner-hotels-rooms');
+})->name('partner.hotels.rooms');
 
+Route::get('/partner-hotels-create-2', function () {
+    return view('frontend.partner-hotels-create-2');
+})->name('partner.hotels.create.2');
 
+Route::get('/partner-hotels-create-1', function () {
+    return view('frontend.partner-hotels-create-1');
+})->name('partner.hotels.create.1');
 
 Route::get('/airport-taxis', function () {
     return view('frontend.home');
