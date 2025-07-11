@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet" />
     {{-- Tailwind CSS via Vite --}}
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @push('styles')
         <link rel="stylesheet" href="{{ asset('assets/Customer/css/customerpersonaldetails.css') }}">
@@ -196,16 +197,16 @@
                                 <div>
                                     <h3 class="text-sm font-bold text-gray-700"
                                         x-text="{
-            name: 'Name',
-            displayName: 'Display Name',
-            emailAddress: 'Email Address',
-            phone: 'Phone Number',
-            dob: 'Date of Birth',
-            nationality: 'Nationality',
-            gender: 'Gender',
-            address: 'Address',
-            passport: 'Passport Details'
-          }[section]">
+                                            name: 'Name',
+                                            displayName: 'Display Name',
+                                            emailAddress: 'Email Address',
+                                            phone: 'Phone Number',
+                                            dob: 'Date of Birth',
+                                            nationality: 'Nationality',
+                                            gender: 'Gender',
+                                            address: 'Address',
+                                            passport: 'Passport Details'
+                                        }[section]">
                                     </h3>
 
                                     <!-- EMAIL -->
@@ -228,8 +229,12 @@
                                             <div class="flex items-center space-x-2">
                                                 <span class="text-sm text-blue-600"
                                                     x-text="completed.phone || '+94XXXXXXX'"></span>
-                                                <span
+                                                    <span
                                                     class="bg-green-500 text-white text-xs px-2 py-0.5 rounded">Verified</span>
+                                                <template x-if="phoneVerified">
+                                                    <span
+                                                        class="bg-green-500 text-white text-xs px-2 py-0.5 rounded">Verified</span>
+                                                </template>
                                             </div>
                                         </div>
                                     </template>
@@ -240,18 +245,18 @@
                                         <p class="text-sm mt-1"
                                             :class="completed[section] ? 'text-gray-900 font-medium' : 'text-gray-500'"
                                             x-text="
-              completed[section]
-                ? completed[section]
-                : {
-                    name: completed.name ? completed.first_name : 'Enter your full legal name.',
-                    displayName: completed.display_name ? completed.display_name : 'This name is shown when you leave reviews or messages.',
-                    dob: 'Enter your date of birth.',
-                    nationality: 'Select the country/region you\'re from.',
-                    gender: 'Select your gender.',
-                    address: 'Add your address.',
-                    passport: 'Add your passport details.'
-                  }[section]
-            ">
+                                            completed[section]
+                                                ? completed[section]
+                                                : {
+                                                    name: completed.name ? completed.first_name : 'Enter your full legal name.',
+                                                    displayName: completed.display_name ? completed.display_name : 'This name is shown when you leave reviews or messages.',
+                                                    dob: 'Enter your date of birth.',
+                                                    nationality: 'Select the country/region you\'re from.',
+                                                    gender: 'Select your gender.',
+                                                    address: 'Add your address.',
+                                                    passport: 'Add your passport details.'
+                                                }[section]
+                                            ">
                                         </p>
                                     </template>
                                 </div>
@@ -287,193 +292,508 @@
                                         <input type="text" name="display_name" id="display_name"
                                             placeholder="Choose a display name"
                                             class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm"
-                                            value="{{ old('display_name', $details ?? '') }}" x-ref="input1" />
+                                            value="{{ old('display_name', $details ?? '') }}" />
                                     </template>
 
-                                   <template x-if="section === 'emailAddress'">
-  <div class="space-y-2" x-data="{ verifyMode: false, code: ['', '', '', '', '', ''], completed: { emailAddress: '', phone: '' } }">
+                                    <template x-if="section === 'emailAddress'">
+                                        <div class="space-y-2" x-data="{
+                                            verifyMode: false,
+                                            code: ['', '', '', '', '', ''],
+                                            loading: false,
+                                            error: '',
+                                            success: '',
+                                            canResend: true,
+                                            resendCountdown: 0,
+                                            completed: {
+                                                emailAddress: '{{ old('email', $email ?? '') }}',
+                                                phone: ''
+                                            },
 
-    <!-- Email Input (hidden during OTP) -->
-    <template x-if="!verifyMode">
-      <input
-        type="email"
-        placeholder="Email address"
-        class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm"
-        x-model="completed.emailAddress"
-      />
-    </template>
+                                            async sendOtp() {
+                                                if (!this.completed.emailAddress) {
+                                                    this.error = 'Please enter an email address';
+                                                    return;
+                                                }
 
-    <!-- OTP Input (only if verifyMode is true) -->
-    <template x-if="verifyMode">
-      <div class="space-y-2">
-        <label class="block text-sm font-medium text-gray-700">Enter the 6-digit OTP code</label>
-        <div class="flex justify-center gap-2 mb-4">
-          <template x-for="(digit, index) in code" :key="index">
-            <input
-              type="text"
-              maxlength="1"
-              class="w-12 h-12 border rounded text-center text-lg tracking-wider focus:outline-none focus:ring focus:ring-blue-200"
-              x-model="code[index]"
-              :ref="'input' + index"
-              @input="
-                if ($event.target.value.length === 1 && index < 5) {
-                  $refs['input' + (index + 1)]?.focus();
-                }
-              "
-              @keydown.backspace="
-                if ($event.target.value === '' && index > 0) {
-                  $refs['input' + (index - 1)]?.focus();
-                }
-              "
-            />
-          </template>
-        </div>
-      </div>
-    </template>
+                                                this.loading = true;
+                                                this.error = '';
+                                                this.success = '';
 
-    <!-- Buttons -->
-    <div class="flex justify-end space-x-4 mt-2">
-      <!-- Cancel Button -->
-      <button
-        type="button"
-       @click="editing = null"
-        class="text-blue-600 hover:underline text-sm"
-      >
-        Cancel
-      </button>
+                                                try {
+                                                    const response = await fetch('/customer/email/send-otp', {
+                                                        method: 'POST',
+                                                        headers: {
+                                                            'Content-Type': 'application/json',
+                                                            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                                                        },
+                                                        body: JSON.stringify({
+                                                            email: this.completed.emailAddress
+                                                        })
+                                                    });
 
-      <!-- Verify Button (only if not in OTP mode) -->
-      <template x-if="!verifyMode">
-        <button
-          type="button"
-          @click="verifyMode = true"
-          class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm font-medium"
-        >
-          Verify
-        </button>
-      </template>
+                                                    const data = await response.json();
 
-      <!-- Confirm OTP Button (only if in OTP mode) -->
-      <template x-if="verifyMode">
-        <button
-          type="button"
-          @click="
-            completed.phone = 'OTP: ' + code.join('');
-            verifyMode = false;
-            code = ['', '', '', '', '', ''];
-          "
-          class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm font-medium"
-        >
-          Confirm OTP
-        </button>
-      </template>
-    </div>
+                                                    if (data.success) {
+                                                        this.verifyMode = true;
+                                                        this.success = data.message;
+                                                        this.startResendCountdown();
+                                                        // Focus on first OTP input
+                                                        this.$nextTick(() => {
+                                                            this.$refs.input0?.focus();
+                                                        });
+                                                    } else {
+                                                        this.error = data.message || 'Failed to send verification code';
+                                                    }
+                                                } catch (error) {
+                                                    this.error = 'Network error. Please try again.';
+                                                } finally {
+                                                    this.loading = false;
+                                                }
+                                            },
 
-  </div>
-</template>
+                                            async verifyOtp() {
+                                                const otpCode = this.code.join('');
+
+                                                if (otpCode.length !== 6) {
+                                                    this.error = 'Please enter the complete 6-digit code';
+                                                    return;
+                                                }
+
+                                                this.loading = true;
+                                                this.error = '';
+                                                this.success = '';
+
+                                                try {
+                                                    const response = await fetch('/customer/email/verify-otp', {
+                                                        method: 'POST',
+                                                        headers: {
+                                                            'Content-Type': 'application/json',
+                                                            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                                                        },
+                                                        body: JSON.stringify({
+                                                            email: this.completed.emailAddress,
+                                                            otp: otpCode
+                                                        })
+                                                    });
+
+                                                    const data = await response.json();
+
+                                                    if (data.success) {
+                                                        this.success = data.message;
+                                                        this.completed.phone = 'EMAIL_VERIFIED: ' + this.completed.emailAddress;
+
+                                                        // Reset states after successful verification
+                                                        setTimeout(() => {
+                                                            this.verifyMode = false;
+                                                            this.code = ['', '', '', '', '', ''];
+                                                            this.error = '';
+                                                            this.success = '';
+                                                            editing = null; // Close the editing section
+                                                        }, 2000);
+                                                    } else {
+                                                        this.error = data.message || 'Invalid verification code';
+                                                    }
+                                                } catch (error) {
+                                                    this.error = 'Network error. Please try again.';
+                                                } finally {
+                                                    this.loading = false;
+                                                }
+                                            },
+
+                                            async resendOtp() {
+                                                if (!this.canResend) return;
+
+                                                this.loading = true;
+                                                this.error = '';
+                                                this.success = '';
+
+                                                try {
+                                                    const response = await fetch('/customer/email/resend-otp', {
+                                                        method: 'POST',
+                                                        headers: {
+                                                            'Content-Type': 'application/json',
+                                                            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                                                        },
+                                                        body: JSON.stringify({
+                                                            email: this.completed.emailAddress
+                                                        })
+                                                    });
+
+                                                    const data = await response.json();
+
+                                                    if (data.success) {
+                                                        this.success = data.message;
+                                                        this.startResendCountdown();
+                                                    } else {
+                                                        this.error = data.message || 'Failed to resend code';
+                                                    }
+                                                } catch (error) {
+                                                    this.error = 'Network error. Please try again.';
+                                                } finally {
+                                                    this.loading = false;
+                                                }
+                                            },
+
+                                            startResendCountdown() {
+                                                this.canResend = false;
+                                                this.resendCountdown = 60;
+
+                                                const interval = setInterval(() => {
+                                                    this.resendCountdown--;
+                                                    if (this.resendCountdown <= 0) {
+                                                        this.canResend = true;
+                                                        clearInterval(interval);
+                                                    }
+                                                }, 1000);
+                                            },
+
+                                            handleOtpInput(index, event) {
+                                                const value = event.target.value;
+                                                if (value.length === 1 && index < 5) {
+                                                    this.$refs['input' + (index + 1)]?.focus();
+                                                }
+                                            },
+
+                                            handleOtpBackspace(index, event) {
+                                                if (event.target.value === '' && index > 0) {
+                                                    this.$refs['input' + (index - 1)]?.focus();
+                                                }
+                                            }
+                                        }">
+
+                                            <!-- Error Message -->
+                                            <div x-show="error" x-text="error"
+                                                class="text-red-600 text-sm bg-red-50 border border-red-200 rounded-md p-2">
+                                            </div>
+
+                                            <!-- Success Message -->
+                                            <div x-show="success" x-text="success"
+                                                class="text-green-600 text-sm bg-green-50 border border-green-200 rounded-md p-2">
+                                            </div>
+
+                                            <!-- Email Input (hidden during OTP) -->
+                                            <template x-if="!verifyMode">
+                                                <div class="space-y-2">
+                                                    <input type="email" placeholder="Enter your email address"
+                                                        name="email" id="email"
+                                                        x-model="completed.emailAddress" x-ref="emailInput"
+                                                        :disabled="loading"
+                                                        class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
+                                                        @keydown.enter="sendOtp()" />
+                                                </div>
+                                            </template>
+
+                                            <!-- OTP Input Section -->
+                                            <template x-if="verifyMode">
+                                                <div class="space-y-4">
+                                                    <div class="text-center">
+                                                        <p class="text-sm text-gray-600 mb-2">
+                                                            We've sent a 6-digit verification code to:
+                                                        </p>
+                                                        <p class="text-sm font-medium text-gray-900"
+                                                            x-text="completed.emailAddress"></p>
+                                                    </div>
+
+                                                    <div class="flex justify-center gap-2">
+                                                        <template x-for="(digit, index) in code"
+                                                            :key="index">
+                                                            <input type="text" maxlength="1"
+                                                                :disabled="loading"
+                                                                class="w-12 h-12 border border-gray-300 rounded-md text-center text-lg font-medium tracking-wider focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                                                                x-model="code[index]" :ref="'input' + index"
+                                                                @input="handleOtpInput(index, $event)"
+                                                                @keydown.backspace="handleOtpBackspace(index, $event)" />
+                                                        </template>
+                                                    </div>
+
+                                                    <div class="text-center">
+                                                        <button type="button" @click="resendOtp()"
+                                                            :disabled="!canResend || loading"
+                                                            class="text-sm text-blue-600 hover:text-blue-800 disabled:text-gray-400 disabled:cursor-not-allowed">
+                                                            <span x-show="canResend && !loading">Resend Code</span>
+                                                            <span x-show="!canResend">Resend in <span
+                                                                    x-text="resendCountdown"></span>s</span>
+                                                            <span x-show="loading">Sending...</span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </template>
+
+                                            <!-- Action Buttons -->
+                                            <div class="flex justify-end space-x-4 mt-4">
+                                                <!-- Cancel Button -->
+                                                <button type="button"
+                                                    @click="editing = null; verifyMode = false; code = ['', '', '', '', '', '']; error = ''; success = ''"
+                                                    :disabled="loading"
+                                                    class="text-blue-600 hover:text-blue-800 text-sm disabled:text-gray-400 disabled:cursor-not-allowed">
+                                                    Cancel
+                                                </button>
+
+                                                <!-- Send OTP Button (only if not in OTP mode) -->
+                                                <template x-if="!verifyMode">
+                                                    <button type="button" @click="sendOtp()"
+                                                        :disabled="loading || !completed.emailAddress"
+                                                        class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm font-medium disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center gap-2">
+                                                        <span x-show="loading">
+                                                            <svg class="animate-spin h-4 w-4" fill="none"
+                                                                viewBox="0 0 24 24">
+                                                                <circle class="opacity-25" cx="12"
+                                                                    cy="12" r="10" stroke="currentColor"
+                                                                    stroke-width="4"></circle>
+                                                                <path class="opacity-75" fill="currentColor"
+                                                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                                                </path>
+                                                            </svg>
+                                                        </span>
+                                                        <span x-text="loading ? 'Sending...' : 'Send Code'"></span>
+                                                    </button>
+                                                </template>
+
+                                                <!-- Verify OTP Button (only if in OTP mode) -->
+                                                <template x-if="verifyMode">
+                                                    <button type="button" @click="verifyOtp()"
+                                                        :disabled="loading || code.join('').length !== 6"
+                                                        class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm font-medium disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center gap-2">
+                                                        <span x-show="loading">
+                                                            <svg class="animate-spin h-4 w-4" fill="none"
+                                                                viewBox="0 0 24 24">
+                                                                <circle class="opacity-25" cx="12"
+                                                                    cy="12" r="10" stroke="currentColor"
+                                                                    stroke-width="4"></circle>
+                                                                <path class="opacity-75" fill="currentColor"
+                                                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                                                </path>
+                                                            </svg>
+                                                        </span>
+                                                        <span
+                                                            x-text="loading ? 'Verifying...' : 'Verify Email'"></span>
+                                                    </button>
+                                                </template>
+                                            </div>
+
+                                        </div>
+                                    </template>
+
+                                    <!-- Fixed Phone Verification Section -->
+                                    <div x-data="{
+                                        verifyMode: false,
+                                        phoneFlag: 'https://flagcdn.com/w40/lk.png',
+                                        code: ['', '', '', '', '', ''],
+                                        storedPhoneNumber: '{{ old('phone_number', $details->phone_number ?? '') }}',
+                                        phoneVerified: {{ $details && $details->phone_verified ? 'true' : 'false' }},
+
+                                        sendOTP() {
+                                            const phoneNumber = this.$refs.countryCode.value + this.$refs.phoneInput.value;
+                                            if (!phoneNumber || phoneNumber.length < 6) {
+                                                alert('Please enter a valid phone number.');
+                                                return;
+                                            }
+                                            this.storedPhoneNumber = phoneNumber;
+
+                                            fetch('/api/send-sms', {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'Accept': 'application/json',
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                                                    },
+                                                    body: JSON.stringify({ phone_number: phoneNumber })
+                                                })
+                                                .then(res => res.json())
+                                                .then(data => {
+                                                    if (data.success) {
+                                                        alert('OTP sent successfully.');
+                                                        this.verifyMode = true;
+                                                    } else {
+                                                        alert('Failed to send OTP: ' + data.message);
+                                                    }
+                                                })
+                                                .catch(err => {
+                                                    console.error('Send OTP error:', err);
+                                                    alert('Something went wrong.');
+                                                });
+                                        },
+
+                                        verifyOTP() {
+                                            const otpCode = this.code.join('');
+                                            if (otpCode.length !== 6) {
+                                                alert('Please enter the 6-digit OTP.');
+                                                return;
+                                            }
+
+                                            fetch('/api/verify-otp', {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'Accept': 'application/json',
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                                                    },
+                                                    body: JSON.stringify({ phone_number: this.storedPhoneNumber, otp: otpCode })
+                                                })
+                                                .then(res => res.json())
+                                                .then(data => {
+                                                    if (data.success) {
+                                                        alert('OTP verified successfully.');
+                                                        this.phoneVerified = true;
+                                                        this.verifyMode = false;
+                                                        this.code = ['', '', '', '', '', ''];
+                                                        this.autoSavePhone();
+                                                    } else {
+                                                        alert('Invalid OTP. Please try again.');
+                                                    }
+                                                })
+                                                .catch(err => {
+                                                    console.error('Verify OTP error:', err);
+                                                    alert('Something went wrong with the verification.');
+                                                });
+                                        },
+
+                                        autoSavePhone() {
+                                            const form = document.querySelector('form[method=POST]');
+                                            if (form) {
+                                                const formData = new FormData(form);
+                                                formData.set('phone_number', this.storedPhoneNumber);
+                                                formData.set('phone_verified', '1');
+
+                                                fetch('{{ route('customer.details.store') }}', {
+                                                        method: 'POST',
+                                                        body: formData,
+                                                        headers: {
+                                                            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                                                        }
+                                                    })
+                                                    .then(response => response.json())
+                                                    .then(data => {
+                                                        console.log('Server response:', data);
+                                                        if (data.success) {
+                                                            console.log('Phone number saved successfully');
+                                                            this.editing = null;
+                                                            alert('Phone number verified and saved successfully!');
+                                                        } else {
+                                                            alert('Phone number verified but failed to save. Please try again.');
+                                                        }
+                                                    })
+                                                    .catch(error => {
+                                                        console.error('Error saving phone number:', error);
+                                                        alert('Phone number verified but failed to save. Please try again.');
+                                                    });
+                                            }
+                                        },
+
+                                        cancelVerification() {
+                                            this.editing = null;
+                                            this.verifyMode = false;
+                                            this.code = ['', '', '', '', '', ''];
+                                        }
+                                    }">
+                                        <!-- Hidden inputs to submit verified phone number -->
+                                        <input type="hidden" name="phone_number" :value="storedPhoneNumber">
+                                        <input type="hidden" name="phone_verified" :value="phoneVerified ? 1 : 0">
+
+                                        <template x-if="section === 'phone'">
+                                            <div class="space-y-2">
+                                                <!-- Phone Input View -->
+                                                <template x-if="!verifyMode">
+                                                    <div>
+                                                        <div
+                                                            class="flex items-center border border-gray-300 rounded-md px-3 py-2 space-x-2">
+                                                            <!-- Flag -->
+                                                            <img :src="phoneFlag" alt="Flag"
+                                                                class="w-6 h-4 rounded" />
+
+                                                            <!-- Country Code Dropdown -->
+                                                            <select x-ref="countryCode"
+                                                                @change="phoneFlag = $event.target.options[$event.target.selectedIndex].dataset.flag"
+                                                                class="bg-white border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm">
+                                                                <option value="+94"
+                                                                    data-flag="https://flagcdn.com/w40/lk.png"
+                                                                    selected>+94</option>
+                                                                <option value="+44"
+                                                                    data-flag="https://flagcdn.com/w40/gb.png">+44
+                                                                </option>
+                                                                <option value="+49"
+                                                                    data-flag="https://flagcdn.com/w40/de.png">+49
+                                                                </option>
+                                                                <option value="+1"
+                                                                    data-flag="https://flagcdn.com/w40/us.png">+1
+                                                                </option>
+                                                            </select>
+
+                                                            <!-- Phone Number Input -->
+                                                            <input type="tel" placeholder="Enter phone number"
+                                                                class="flex-1 outline-none border-none focus:ring-0 text-gray-900 text-sm"
+                                                                x-ref="phoneInput"
+                                                                :value="storedPhoneNumber.includes('+') ? storedPhoneNumber
+                                                                    .substring(3) : storedPhoneNumber">
+                                                        </div>
+                                                    </div>
+                                                </template>
+
+                                                <!-- OTP Input View -->
+                                                <template x-if="verifyMode">
+                                                    <div class="space-y-2">
+                                                        <label class="block text-sm font-medium text-gray-700">Enter
+                                                            the 6-digit OTP code</label>
+                                                        <div class="flex justify-center gap-2 mb-4">
+                                                            <template x-for="(digit, index) in code"
+                                                                :key="index">
+                                                                <input type="text" maxlength="1"
+                                                                    class="w-12 h-12 border rounded text-center text-lg tracking-wider focus:outline-none focus:ring focus:ring-blue-200"
+                                                                    x-model="code[index]" :ref="'input' + index"
+                                                                    @input="
+                                    if ($event.target.value.length === 1 && index < 5) {
+                                        $refs['input' + (index + 1)]?.focus();
+                                    }
+                                "
+                                                                    @keydown.backspace="
+                                    if ($event.target.value === '' && index > 0) {
+                                        $refs['input' + (index - 1)]?.focus();
+                                    }
+                                " />
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                </template>
+
+                                                <!-- Action Buttons -->
+                                                <div class="flex flex-col items-end mt-2 space-y-2">
+                                                    <!-- Verified Message -->
+                                                    <div x-show="phoneVerified"
+                                                        class="text-green-600 font-medium text-sm">
+                                                        ✅ Phone number verified
+                                                    </div>
+
+                                                    <div class="flex justify-end space-x-4 w-full">
+                                                        <!-- Cancel -->
+                                                        <button type="button" @click="cancelVerification()"
+                                                            class="text-blue-600 hover:underline text-sm">
+                                                            Cancel
+                                                        </button>
+
+                                                        <!-- Send OTP -->
+                                                        <template x-if="!verifyMode">
+                                                            <button type="button" @click="sendOTP()"
+                                                                class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm font-medium">
+                                                                Verify
+                                                            </button>
+                                                        </template>
+
+                                                        <!-- Confirm OTP -->
+                                                        <template x-if="verifyMode">
+                                                            <button type="button" @click="verifyOTP()"
+                                                                class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm font-medium">
+                                                                Confirm OTP
+                                                            </button>
+                                                        </template>
 
 
-   <template x-if="section === 'phone'">
-  <div x-data="{ verifyMode: false, otp: '', code: ['', '', '', '', '', ''] }" x-ref="phoneSection" class="space-y-2">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </div>
 
-    <!-- Phone Input View -->
-    <template x-if="!verifyMode">
-      <div>
-        <div class="flex items-center border border-gray-300 rounded-md px-3 py-2 space-x-2">
-          <!-- Flag -->
-          <img :src="phoneFlag" alt="Flag" class="w-6 h-4 rounded" />
 
-          <!-- Country Code Dropdown -->
-          <select
-            x-ref="countryCode"
-            @change="phoneFlag = $event.target.options[$event.target.selectedIndex].dataset.flag"
-            class="bg-white border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm"
-          >
-            <option value="+94" data-flag="https://flagcdn.com/w40/lk.png" selected>+94</option>
-            <option value="+44" data-flag="https://flagcdn.com/w40/gb.png">+44</option>
-            <option value="+49" data-flag="https://flagcdn.com/w40/de.png">+49</option>
-            <option value="+1" data-flag="https://flagcdn.com/w40/us.png">+1</option>
-          </select>
-
-          <!-- Phone Number -->
-          <input
-            type="tel"
-            placeholder="Enter phone number"
-            class="flex-1 outline-none border-none focus:ring-0 text-gray-900 text-sm"
-            x-ref="phoneInput"
-          />
-        </div>
-      </div>
-    </template>
-
-    <!-- OTP Input (only if verifyMode is true) -->
-    <template x-if="verifyMode">
-      <div class="space-y-2">
-        <label class="block text-sm font-medium text-gray-700">Enter the 6-digit OTP code</label>
-        <div class="flex justify-center gap-2 mb-4">
-          <template x-for="(digit, index) in code" :key="index">
-            <input
-              type="text"
-              maxlength="1"
-              class="w-12 h-12 border rounded text-center text-lg tracking-wider focus:outline-none focus:ring focus:ring-blue-200"
-              x-model="code[index]"
-              :ref="'input' + index"
-              @input="
-                if ($event.target.value.length === 1 && index < 5) {
-                  $refs['input' + (index + 1)]?.focus();
-                }
-              "
-              @keydown.backspace="
-                if ($event.target.value === '' && index > 0) {
-                  $refs['input' + (index - 1)]?.focus();
-                }
-              "
-            />
-          </template>
-        </div>
-      </div>
-    </template>
-
-    <!-- Buttons -->
-    <div class="flex justify-end space-x-4 mt-2">
-      <!-- Cancel Button -->
-      <button
-        type="button"
-       @click="editing = null"
-        class="text-blue-600 hover:underline text-sm"
-      >
-        Cancel
-      </button>
-
-      <!-- Verify Button (only if not in OTP mode) -->
-      <template x-if="!verifyMode">
-        <button
-          type="button"
-          @click="verifyMode = true"
-          class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm font-medium"
-        >
-          Verify
-        </button>
-      </template>
-
-      <!-- Confirm OTP Button (only if in OTP mode) -->
-      <template x-if="verifyMode">
-        <button
-          type="button"
-          @click="
-            completed.phone = 'OTP: ' + code.join('');
-            verifyMode = false;
-            code = ['', '', '', '', '', ''];
-          "
-          class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm font-medium"
-        >
-          Confirm OTP
-        </button>
-      </template>
-    </div>
-
-  </div>
-</template>
 
 
                                     <!-- Script to Update Flag Image Dynamically -->
@@ -697,7 +1017,8 @@
                                     </template>
 
                                     <!-- Save & Cancel -->
-                                    <div class="flex justify-end space-x-4 mt-2" x-show="section !== 'phone' && section !== 'emailAddress'">
+                                    <div class="flex justify-end space-x-4 mt-2"
+                                        x-show="section !== 'phone' && section !== 'emailAddress'">
                                         <button @click="editing = null"
                                             class="text-blue-600 hover:underline text-sm">Cancel</button>
                                         <button
@@ -802,20 +1123,21 @@
                             </div>
                         </form>
                         <!-- Delete account -->
-<form action="{{ route('customer.account.request-deletion') }}" method="POST"
-    onsubmit="return confirm('Are you sure you want to delete your account? A confirmation email will be sent to your email address.');">
-    @csrf
-    @method('DELETE')
-    <div class="flex justify-between py-4">
-        <div>
-            <p class="font-base font-semibold text-gray-800">Delete account</p>
-            <p class="text-gray-600">Permanently delete your account. A confirmation email will be sent.</p>
-        </div>
-        <button type="submit" class="text-red-600 hover:underline font-medium">
-            Delete account
-        </button>
-    </div>
-</form>
+                        <form action="{{ route('customer.account.request-deletion') }}" method="POST"
+                            onsubmit="return confirm('Are you sure you want to delete your account? A confirmation email will be sent to your email address.');">
+                            @csrf
+                            @method('DELETE')
+                            <div class="flex justify-between py-4">
+                                <div>
+                                    <p class="font-base font-semibold text-gray-800">Delete account</p>
+                                    <p class="text-gray-600">Permanently delete your account. A confirmation email will
+                                        be sent.</p>
+                                </div>
+                                <button type="submit" class="text-red-600 hover:underline font-medium">
+                                    Delete account
+                                </button>
+                            </div>
+                        </form>
 
                     </div>
 
