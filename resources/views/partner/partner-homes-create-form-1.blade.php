@@ -381,7 +381,7 @@
                                             <input type="number" min="2" x-model.number="propertyCount" class="border rounded w-24 p-2" />
                                         </div>
                                     </div>
-                                        
+
                                     <div class="flex items-center justify-between pt-4">
                                         <button type="button"
                                             @click="step = 2"
@@ -448,88 +448,88 @@
                                             return this.selectedChannels.includes('Airbnb') || this.selectedChannels.includes('Vrbo');
                                         }
                                         }"
-                                                                                        class="bg-white max-w-xl w-full p-6 rounded-lg shadow space-y-6">
+                                                    class="bg-white max-w-xl w-full p-6 rounded-lg shadow space-y-6">
 
-                                                                                        <!-- Title -->
-                                                                                        <h2 class="text-2xl font-bold text-gray-900">Where else is your property listed?</h2>
+                                                    <!-- Title -->
+                                                    <h2 class="text-2xl font-bold text-gray-900">Where else is your property listed?</h2>
 
-                                                                                        <!-- Info -->
-                                                                                        <p class="text-sm text-gray-700">
-                                                                                            If your property is listed on Airbnb or Vrbo, you can speed up registration by importing it directly to Booking.com.
-                                                                                        </p>
+                                                    <!-- Info -->
+                                                    <p class="text-sm text-gray-700">
+                                                        If your property is listed on Airbnb or Vrbo, you can speed up registration by importing it directly to Booking.com.
+                                                    </p>
 
-                                                                                        <!-- Checkboxes -->
-                                                                                        <div class="space-y-4 text-left">
-                                                                                            <label class="flex items-center space-x-3">
-                                                                                                <input type="checkbox" value="Airbnb" x-model="selectedChannels"
-                                                                                                    class="form-checkbox h-5 w-5 text-blue-600">
-                                                                                                <span>Airbnb</span>
-                                                                                            </label>
-                                                                                            <label class="flex items-center space-x-3">
-                                                                                                <input type="checkbox" value="TripAdvisor" x-model="selectedChannels"
-                                                                                                    class="form-checkbox h-5 w-5 text-blue-600">
-                                                                                                <span>TripAdvisor</span>
-                                                                                            </label>
-                                                                                            <label class="flex items-center space-x-3">
-                                                                                                <input type="checkbox" value="Vrbo" x-model="selectedChannels"
-                                                                                                    class="form-checkbox h-5 w-5 text-blue-600">
-                                                                                                <span>Vrbo</span>
-                                                                                            </label>
-                                                                                            <label class="flex items-center space-x-3">
-                                                                                                <input type="checkbox" value="Another" x-model="selectedChannels"
-                                                                                                    class="form-checkbox h-5 w-5 text-blue-600">
-                                                                                                <span>Another website</span>
-                                                                                            </label>
-                                                                                            <label class="flex items-center space-x-3 text-gray-400" :class="{ 'text-gray-900': !selectedChannels.length }">
-                                                                                                <input type="checkbox" value="None" x-model="selectedChannels"
-                                                                                                    class="form-checkbox h-5 w-5 text-blue-600"
-                                                                                                    :disabled="selectedChannels.length > 0">
-                                                                                                <span>My property isn't listed on any other websites</span>
-                                                                                            </label>
-                                                                                        </div>
+                                                    <!-- Checkboxes -->
+                                                    <div class="space-y-4 text-left">
+                                                        <label class="flex items-center space-x-3">
+                                                            <input type="checkbox" value="Airbnb" x-model="selectedChannels"
+                                                                class="form-checkbox h-5 w-5 text-blue-600">
+                                                            <span>Airbnb</span>
+                                                        </label>
+                                                        <label class="flex items-center space-x-3">
+                                                            <input type="checkbox" value="TripAdvisor" x-model="selectedChannels"
+                                                                class="form-checkbox h-5 w-5 text-blue-600">
+                                                            <span>TripAdvisor</span>
+                                                        </label>
+                                                        <label class="flex items-center space-x-3">
+                                                            <input type="checkbox" value="Vrbo" x-model="selectedChannels"
+                                                                class="form-checkbox h-5 w-5 text-blue-600">
+                                                            <span>Vrbo</span>
+                                                        </label>
+                                                        <label class="flex items-center space-x-3">
+                                                            <input type="checkbox" value="Another" x-model="selectedChannels"
+                                                                class="form-checkbox h-5 w-5 text-blue-600">
+                                                            <span>Another website</span>
+                                                        </label>
+                                                        <label class="flex items-center space-x-3 text-gray-400" :class="{ 'text-gray-900': !selectedChannels.length }">
+                                                            <input type="checkbox" value="None" x-model="selectedChannels"
+                                                                class="form-checkbox h-5 w-5 text-blue-600"
+                                                                :disabled="selectedChannels.length > 0">
+                                                            <span>My property isn't listed on any other websites</span>
+                                                        </label>
+                                                    </div>
 
-                                                                                        <!-- Conditional Airbnb/Vrbo import section -->
-                                                                                        <div x-show="showImportSection" x-transition class="border-t pt-6 space-y-4">
-                                                                                            <h3 class="font-semibold text-gray-800">Import property details from Airbnb or Vrbo</h3>
+                                                    <!-- Conditional Airbnb/Vrbo import section -->
+                                                    <div x-show="showImportSection" x-transition class="border-t pt-6 space-y-4">
+                                                        <h3 class="font-semibold text-gray-800">Import property details from Airbnb or Vrbo</h3>
 
-                                                                                            <label class="block text-sm font-medium text-gray-700">Paste the link to your Airbnb or Vrbo listing</label>
-                                                                                            <div x-data="{ url: '' }" class="flex gap-2">
-                                                                                                <input
-                                                                                                    type="url"
-                                                                                                    name="import_url"
-                                                                                                    x-model="url"
-                                                                                                    class="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring focus:border-blue-400"
-                                                                                                    placeholder="https://www.airbnb.com/rooms/xxxxx or https://www.vrbo.com/xxxxx"
-                                                                                                    required>
-                                                                                                <button
-                                                                                                    type="button"
-                                                                                                    class="px-4 py-2 rounded"
-                                                                                                    :class="url ? 'bg-blue-500 text-white cursor-pointer hover:bg-[#29ACD5]' : 'bg-gray-300 text-gray-600 cursor-not-allowed'"
-                                                                                                    :disabled="!url">
-                                                                                                    Apply
-                                                                                                </button>
-                                                                                            </div>
+                                                        <label class="block text-sm font-medium text-gray-700">Paste the link to your Airbnb or Vrbo listing</label>
+                                                        <div x-data="{ url: '' }" class="flex gap-2">
+                                                            <input
+                                                                type="url"
+                                                                name="import_url"
+                                                                x-model="url"
+                                                                class="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring focus:border-blue-400"
+                                                                placeholder="https://www.airbnb.com/rooms/xxxxx or https://www.vrbo.com/xxxxx"
+                                                                required>
+                                                            <button
+                                                                type="button"
+                                                                class="px-4 py-2 rounded"
+                                                                :class="url ? 'bg-blue-500 text-white cursor-pointer hover:bg-[#29ACD5]' : 'bg-gray-300 text-gray-600 cursor-not-allowed'"
+                                                                :disabled="!url">
+                                                                Apply
+                                                            </button>
+                                                        </div>
 
-                                                                                            <p class="text-xs text-gray-600">
-                                                                                                Example links:<br>
-                                                                                                https://www.airbnb.com/rooms/xxxxxxx<br>
-                                                                                                https://www.vrbo.com/xxxxxx
-                                                                                            </p>
-                                                                                            <a href="#" class="text-blue-600 text-sm hover:underline">Where can I find this link?</a>
-                                                                                        </div>
+                                                        <p class="text-xs text-gray-600">
+                                                            Example links:<br>
+                                                            https://www.airbnb.com/rooms/xxxxxxx<br>
+                                                            https://www.vrbo.com/xxxxxx
+                                                        </p>
+                                                        <a href="#" class="text-blue-600 text-sm hover:underline">Where can I find this link?</a>
+                                                    </div>
 
-                                                                                        <!-- Navigation Buttons -->
-                                                                                        <template x-if="step === 3">
-                                                                                            <div class="flex items-center justify-between pt-4">
-                                                                                                <button type="button" @click="prevStep"
-                                                                                                    class="border border-[#3CC0E9] text-blue-600 hover:bg-[#29ACD5] font-semibold py-2 px-4 rounded  ">
-                                                                                                    ←
-                                                                                                </button>
-                                                                                                <button
-                                                                                                    type="button"
-                                                                                                    @click="if(selectedChannels.length > 0) window.location.href='{{ route('partner.apartment.create.2') }}'"
-                                                                                                    :disabled="selectedChannels.length === 0"
-                                                                                                    :class="selectedChannels.length === 0 
+                                                    <!-- Navigation Buttons -->
+                                                    <template x-if="step === 3">
+                                                        <div class="flex items-center justify-between pt-4">
+                                                            <button type="button" @click="prevStep"
+                                                                class="border border-[#3CC0E9] text-blue-600 hover:bg-[#29ACD5] font-semibold py-2 px-4 rounded  ">
+                                                                ←
+                                                            </button>
+                                                            <button
+                                                                type="button"
+                                                                @click="nextStep"
+                                                                :disabled="selectedChannels.length === 0"
+                                                                :class="selectedChannels.length === 0 
                                         ? 'bg-gray-300 text-gray-600 cursor-not-allowed' 
                                         : 'bg-[#3CC0E9] hover:bg-[#29ACD5] text-white cursor-pointer'"
                                                                 class="font-semibold py-3 px-6 rounded transition duration-200">
@@ -546,6 +546,16 @@
                                             <div>
                                                 <h3 class="text-lg font-bold mb-2">Upload Photos</h3>
                                                 <input type="file" multiple class="border p-2 rounded w-full" />
+
+                                                <div>
+                                                    <button type="button" @click="prevStep" class="mt-4 bg-gray-300 px-4 py-2 rounded"> ←</button>
+                                                    <button
+                                                        type="button"
+                                                        @click="nextStep"
+                                                        class="mt-4 bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded">
+                                                        Continue
+                                                    </button>
+                                                </div>
                                             </div>
                                         </template>
 
@@ -553,6 +563,103 @@
                                             <div>
                                                 <h3 class="text-lg font-bold mb-2">Pricing</h3>
                                                 <input type="number" placeholder="Price per night" class="border p-2 rounded w-full" />
+
+                                                <div>
+                                                    <button type="button" @click="prevStep" class="mt-4 bg-gray-300 px-4 py-2 rounded"> ←</button>
+                                                    <button
+                                                        type="button"
+                                                        @click="nextStep"
+                                                        class="mt-4 bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded">
+                                                        Continue
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </template>
+
+                                        <template x-if="step === 6 && selected === 'one'">
+                                            <div>
+                                                <div class="relative w-[1400px] h-auto overflow-hidden rounded-lg shadow mx-auto -mt-14 -ml-16">
+
+                                                    <!-- Google Maps iframe full background -->
+                                                    <iframe
+                                                        class="absolute inset-0 w-full h-full"
+                                                        loading="lazy"
+                                                        src="https://www.google.com/maps?q=La+Grande+Villa+Nuwara+Eliya&output=embed"
+                                                        allowfullscreen>
+                                                    </iframe>
+
+                                                    <!-- Optional overlay for readability -->
+                                                    <div class="absolute inset-0"></div>
+
+                                                    <!-- Form content centered on map -->
+                                                    <div class="relative z-10 flex items-center justify-start h-auto p-4 mt-[110px]">
+                                                        <div class="bg-white bg-opacity-95 rounded-lg shadow-lg w-full max-w-md p-6 md:p-8 h-auto mb-4">
+                                                            <h2 class="text-2xl font-semibold mb-4 text-gray-800">Where is your property?</h2>
+                                                            <form x-data="{ addressForm: {} }">
+                                                                <div class="mb-4">
+                                                                    <label for="address" class="block text-sm font-medium text-gray-700">Find your address</label>
+                                                                    <input type="text" id="address" x-model="addressForm.address" name="address" value="Sri Lanka" class="mt-1 p-2 w-full border border-gray-300 rounded">
+                                                                </div>
+                                                                <div class="mb-4">
+                                                                    <label for="apartment" class="block text-sm font-medium text-gray-700">Apartment or floor number (optional)</label>
+                                                                    <input type="text" id="apartment" x-model="addressForm.apartment" name="apartment" value="aaa" class="mt-1 p-2 w-full border border-gray-300 rounded">
+                                                                </div>
+                                                                <div class="mb-4">
+                                                                    <label for="country" class="block text-sm font-medium text-gray-700">Country/region</label>
+                                                                    <select id="country" x-model="addressForm.country" name="country" class="mt-1 p-2 w-full border border-gray-300 rounded">
+                                                                        <option selected>Sri Lanka</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div class="flex flex-col md:flex-row gap-4">
+                                                                    <div class="flex-1">
+                                                                        <label for="city" class="block text-sm font-medium text-gray-700">City</label>
+                                                                        <input type="text" id="city" x-model="addressForm.city" name="city" value="a" class="mt-1 p-2 w-full border border-gray-300 rounded">
+                                                                    </div>
+                                                                    <div class="flex-1">
+                                                                        <label for="zipcode" class="block text-sm font-medium text-gray-700">Post code / Zip code</label>
+                                                                        <input type="text" id="zipcode" x-model="addressForm.zipcode" name="zipcode" value="80400" class="mt-1 p-2 w-full border border-gray-300 rounded">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="flex items-center mt-4">
+                                                                    <input id="update_address" type="checkbox" name="update_address" checked class="mr-2">
+                                                                    <label for="update_address" x-model="addressForm.update_address" class="text-sm text-gray-700">Update the address when moving the pin on the map.</label>
+                                                                </div>
+
+                                                                <!-- Dismissible message box -->
+                                                                <div x-data="{ showMessage: true }" x-show="showMessage" class="mt-4 bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded relative" role="alert">
+                                                                    <strong class="font-bold">Note:</strong>
+                                                                    <span class="block sm:inline">Make sure the pin location is accurate before continuing.</span>
+                                                                    <span @click="showMessage = false" class="absolute top-0 bottom-0 right-0 px-4 py-3 cursor-pointer">
+                                                                        <svg class="fill-current h-6 w-6 text-yellow-800" role="button" xmlns="http://www.w3.org/2000/svg"
+                                                                            viewBox="0 0 20 20">
+                                                                            <title>Close</title>
+                                                                            <path
+                                                                                d="M14.348 5.652a1 1 0 00-1.414 0L10 8.586 7.066 5.652a1 1 0 10-1.414 1.414L8.586 10l-2.934 2.934a1 1 0 101.414 1.414L10 11.414l2.934 2.934a1 1 0 001.414-1.414L11.414 10l2.934-2.934a1 1 0 000-1.414z" />
+                                                                        </svg>
+                                                                    </span>
+                                                                </div>
+
+                                                                <p class="text-sm text-gray-600 mt-2">
+                                                                    Is the red pin location incorrect? Uncheck the option above and click or press on the map to move the pin.
+                                                                </p>
+
+                                                                <!-- Buttons -->
+                                                                <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6">
+                                                                    <button type="button" @click="prevStep"
+                                                                        class="w-full sm:w-auto border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
+                                                                        ←
+                                                                    </button>
+                                                                    <button type="button" @click="nextStep"
+                                                                        class="w-full sm:w-auto px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
+                                                                        Continue
+                                                                    </button>
+                                                                </div>
+
+
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </template>
 
@@ -1428,7 +1535,7 @@
                                                                     <!-- Continue Button (inside input field container, aligned right) -->
                                                                     <div class="flex justify-end mt-4">
                                                                         <button
-                                                                            type="submit"
+                                                                            type="button"
                                                                             @click="nextStep"
                                                                             class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
                                                                             Continue
@@ -1641,13 +1748,37 @@
                                         this.step = 1;
                                     },
 
-                                    nextStep() {
-                                        // Simple validation: only proceed if selected is set
-                                        if (this.step === 1 && this.selected === '') return;
+                                    async nextStep() {
+                                        if (this.step === 6 && this.selected === 'one') {
+                                            try {
+                                                const response = await fetch(`/partner/property/step3/${this.propertyId}`, {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                    },
+                                                    body: JSON.stringify(this.addressForm,this.propertyId)
+                                                });
+                                                const result = await response.json();
+                                                if (result.success) {
+                                                    console.log('Step 2 saved:', result);
+                                                    this.step++;
+                                                } else {
+                                                    alert('Failed to save address step: ' + result.message);
+                                                }
+                                            } catch (e) {
+                                                console.error('Error saving step 2:', e);
+                                            }
+                                        } else {
+                                            if (this.step === 1 && this.selected === '') return;
 
-                                        if (this.step < this.totalSteps) {
-                                            this.step++;
+                                            if (this.step < this.totalSteps) {
+                                                this.step++;
+                                                propertyId = this.propertyId;
+                                                console.log('Property ID:', propertyId);
+                                            }
                                         }
+
                                     },
 
                                     prevStep() {

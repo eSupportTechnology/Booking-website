@@ -14,6 +14,7 @@ class PropertyStep2DTO extends ValidatedDTO
     public ?string $zipcode;
     public ?string $description;
     public ?int $subtype_id;
+    public ?string $apartment;
 
 
 
@@ -27,6 +28,7 @@ class PropertyStep2DTO extends ValidatedDTO
             'zipcode' => ['nullable', 'string'],
             'description' => ['nullable', 'string'],
             'subtype_id' => ['nullable', 'integer', 'exists:property_subtypes,id'],
+            'apartment' => ['nullable', 'string', 'max:255'],
         ];
     }
 
@@ -40,11 +42,12 @@ class PropertyStep2DTO extends ValidatedDTO
     {
         return [
             'title' => 'string',
-            'address' => 'string',
-            'city' => 'string',
+            // 'address' => 'string',
+            // 'city' => 'string',
             'country' => 'string',
-            'zipcode' => 'string',
+            // 'zipcode' => 'string',
             'description' => 'string',
+            // 'apartment' => 'string',
         ];
     }
 }
