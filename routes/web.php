@@ -127,6 +127,15 @@ Route::get('/partner-enter-password', function () {
     return view('frontend.partner-enter-password');
 })->name('partner.enter.password');
 
+Route::get('/partner-hotels-payments', function () {
+    return view('frontend.partner-hotels-payments');
+})->name('partner.hotels.payments');
+
+Route::get('/partner-hotels-photos', function () {
+    return view('frontend.partner-hotels-photos');
+})->name('partner.hotels.photos');
+
+
 Route::get('/partner-forgot-password', function () {
     return view('frontend.partner-forgot-password');
 })->name('partner.forgot.password');

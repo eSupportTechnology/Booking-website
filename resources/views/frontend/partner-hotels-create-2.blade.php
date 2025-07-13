@@ -87,8 +87,8 @@
   </header>
   <!-- Progress Bar -->
   <div class="w-full bg-gray-200 h-2">
-    <div class="bg-blue-600 h-2 transition-all duration-500"
-         :style="'width:' + (step * 100 / 9) + '%'"></div>
+    <div class="bg-[#3CC0E9] h-2 transition-all duration-500"
+         :style="'width:' + (step * 100 / 8) + '%'"></div>
   </div>
 
   <!-- Step Content Wrapper -->
@@ -166,11 +166,11 @@
 
   <!-- Continue Button (Right) -->
   <button   type="submit"
-      @click="step < 9 ? step++ : step"
-        :class="step === 9 ? 'opacity-50 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'"
-   
-        :disabled="step === 9"
-          class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
+      @click="step < 8 ? step++ : step"
+        :class="step === 8 ? 'opacity-50 cursor-not-allowed' : 'bg-[#3CC0E9] hover:bg-sky-500'"
+
+        :disabled="step === 8"
+          class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300">
     Continue
   </button>
 </div>
@@ -255,10 +255,10 @@
   <!-- Continue Button (Right) -->
   <button type="submit"
           @click="step < 9 ? step++ : step"
-        :class="step === 9 ? 'opacity-50 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'"
+        :class="step === 9 ? 'opacity-50 cursor-not-allowed' : 'bg-[#3CC0E9] hover:bg-sky-500'"
        
         :disabled="step === 9"
-          class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
+          class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300">
     Continue
   </button>
 </div>
@@ -339,9 +339,9 @@
   <!-- Navigation -->
   <div class="flex justify-between items-center mt-8">
     <button type="submit"
-      @click="step < 9 ? step-- : step"  class="border border-[#3CC0E9]  text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">←</button>
+      @click="step < 9 ? step-- : step"  class="border border-[#3CC0E9]  text-blue-600  hover:bg-blue-50 font-semibold py-2 px-4 rounded">←</button>
     <button type="submit"
-      @click="step < 9 ? step++ : step" class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">Continue</button>
+      @click="step < 9 ? step++ : step" class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300">Continue</button>
   </div>
 </div>
 
@@ -478,11 +478,11 @@
 <div class="flex  mt-6">
         <button type="button"  @click="step > 1 ? step-- : step"
         :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-          class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
+          class="border border-[#3CC0E9] text-blue-600  hover:bg-blue-50 font-semibold py-2 px-4 rounded">
           ←
         </button>
         <button type="button"  @click="step > 1 ? step++ : step"
-          class="px-4 py-3 bg-[#3CC0E9] font-semibold  text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ml-[420px]">
+          class="px-4 py-3 bg-[#3CC0E9] font-semibold  text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300 ml-[420px]">
           Continue
         </button>
       </div>
@@ -551,12 +551,12 @@
       <button
        type="button"  @click="step > 1 ? step-- : step"
         :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-      class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+      class="border border-[#3CC0E9] text-blue-600  hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
       ←
       </button>
       <button
       type="button"  @click="step > 1 ? step++ : step"
-      class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
+      class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300">
       Continue
       </button>
     </div>
@@ -679,14 +679,14 @@
    type="button"  @click="step > 1 ? step-- : step"
         :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
   
-      class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+      class="border border-[#3CC0E9] text-blue-600  hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
       ←
   </button>
 
   <!-- Continue Button on the right -->
   <button
    type="button"  @click="step > 1 ? step++ : step"
-     class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300"
+     class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300"
   >
     Continue
   </button>
@@ -877,11 +877,11 @@
       <div class="mt-8 flex ">
         <button type="button" @click="step > 1 ? step-- : step"
         :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-          class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+          class="border border-[#3CC0E9] text-blue-600  hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
           ←
         </button>
         <button   type="button"  @click="step > 1 ? step++ : step"
-          class="px-6 h-12 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ml-[395px]">
+          class="px-6 h-12 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300 ml-[395px]">
           Continue 
         </button>
       </div>
@@ -912,11 +912,13 @@
                     <img src="{{ asset('assets/Group 3926.svg') }}" alt="Icon" class="w-6 h-6 md:w-7 md:h-7" />
                     <div>
                         <p class="text-sm text-gray-500">Step 2</p>
-                        <h2 class="text-base font-semibold">Apartments</h2>
-                        <p class="text-xs text-gray-600">Tell us about your first apartment. Once you’ve set one up you can add more.</p>
+                        <h2 class="text-base font-semibold">Rooms</h2>
+                        <p class="text-xs text-gray-600">Tell us about your first room. Once you’ve set one up you can add more.</p>
                     </div>
                 </div>
-                <button class="bg-sky-400 hover:bg-sky-500 text-white text-sm font-semibold px-4 py-2 rounded">Add Apartment</button>
+                            <a href="{{ route('partner.hotels.rooms') }}" class=" bg-sky-400 border border-sky-400 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-sky-500">
+  Add room
+</a>
             </div>
 
             <!-- Step 3 - Photos -->
@@ -929,7 +931,10 @@
                         <p class="text-xs text-gray-600">Share some photos of your property so guests know what to expect.</p>
                     </div>
                 </div>
-                <button class="border border-sky-400 text-sky-400 text-sm font-semibold px-4 py-2 rounded hover:bg-sky-50">Add Photos</button>
+                <a href="{{ route('partner.hotels.photos') }}" class="border border-sky-400 text-sky-400 text-sm font-semibold px-4 py-2 rounded hover:bg-sky-50">
+  Add Photos
+</a>
+
             </div>
 
             <!-- Step 4 - Final -->
@@ -942,7 +947,9 @@
                         <p class="text-xs text-gray-600">Set up payments and invoicing before you open for bookings.</p>
                     </div>
                 </div>
-                <button class="bg-gray-200 text-gray-500 text-sm font-semibold px-4 py-2 rounded cursor-not-allowed" disabled>Add final details</button>
+               <a href="{{ route('partner.hotels.payments') }}" class=" bg-sky-400 border border-sky-400 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-sky-500">
+  Add final details
+</a>
             </div>
 
         </div>
