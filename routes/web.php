@@ -20,14 +20,6 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
-Route::get('/change-language/{lang}', function ($lang) {
-    if (in_array($lang, ['en', 'si'])) {
-        session(['locale' => $lang]);
-        app()->setLocale($lang);
-    }
-    return redirect()->back();
-})->name('change.language');
-
 
 Route::get('/login/email', [LoginController::class, 'showEmailForm'])->name('login.email');
 Route::post('/login/email', [LoginController::class, 'storeEmail']);
