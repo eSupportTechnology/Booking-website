@@ -15,6 +15,8 @@ class PropertyStep2DTO extends ValidatedDTO
     public ?string $description;
     public ?int $subtype_id;
     public ?string $apartment;
+    public ?int $address_type_id = null; 
+
 
 
 
@@ -29,6 +31,7 @@ class PropertyStep2DTO extends ValidatedDTO
             'description' => ['nullable', 'string'],
             'subtype_id' => ['nullable', 'integer', 'exists:property_subtypes,id'],
             'apartment' => ['nullable', 'string', 'max:255'],
+            'address_type_id' => ['nullable', 'integer', 'exists:address_types,id'],
         ];
     }
 

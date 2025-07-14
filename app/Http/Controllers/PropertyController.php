@@ -145,7 +145,8 @@ class PropertyController extends Controller
             'user_id' => auth()->id(),
         ]);
         try {
-            $property = Property::findOrFail($propertyId);
+            Log::info('Fetching property for update', ['property_id' => $request->input('property_id', $propertyId)]);
+            $property = Property::findOrFail($request->input('property_id', $propertyId));
            
             Log::info('Loaded property for update', ['property' => $property->toArray()]);
             $dto = PropertyStep2DTO::fromRequest($request);
