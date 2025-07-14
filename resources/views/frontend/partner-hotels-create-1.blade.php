@@ -269,9 +269,10 @@
         <!-- Buttons -->
      
         <div class="space-y-2">
+           <a href="{{ route('partner.hotels.create.2') }}">
             <button  type="button"  class="w-full bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded">
                 Continue
-            </button>
+            </button></a>
             <button   type="button" @click="step = 2" class="w-full border border-[#3CC0E9] text-[#3CC0E9] hover:bg-[#29ACD5]font-semibold py-2 px-4 rounded mb-6">
                 No, I need to make a change
             </button>
@@ -299,9 +300,10 @@
         <!-- Buttons -->
      
         <div class="space-y-2">
+           <a href="{{ route('partner.hotels.create.2') }}">
             <button  type="button"  class="w-full bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded">
                 Continue
-            </button>
+            </button></a>
             <button   type="button" @click="step = 2" class="w-full border border-[#3CC0E9] text-[#3CC0E9] hover:bg-[#29ACD5]font-semibold py-2 px-4 rounded mb-6">
                 No, I need to make a change
             </button>

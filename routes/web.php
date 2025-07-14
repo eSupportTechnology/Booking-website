@@ -176,6 +176,10 @@ Route::get('/partner-hotels-create-1', function () {
     return view('frontend.partner-hotels-create-1');
 })->name('partner.hotels.create.1');
 
+Route::get('/partner-hotels-edit', function () {
+    return view('frontend.partner-hotels-edit');
+})->name('partner.hotels.edit');
+
 Route::get('/airport-taxis', function () {
     return view('frontend.home');
 })->name('airport.taxis');

@@ -87,8 +87,8 @@
   </header>
   <!-- Progress Bar -->
   <div class="w-full bg-gray-200 h-2">
-    <div class="bg-blue-600 h-2 transition-all duration-500"
-         :style="'width:' + (step * 100 / 9) + '%'"></div>
+    <div class="bg-[#3CC0E9] h-2 transition-all duration-500"
+         :style="'width:' + (step * 100 / 7) + '%'"></div>
   </div>
 
   <!-- Step Content Wrapper -->
@@ -329,17 +329,25 @@
   <label class="block font-semibold text-sm text-gray-700 mb-1">How big is this room?</label>
   <p class="text-xs text-gray-500 ">Apartment size - optional</p>
  
-      <select class="w-full  border border-gray-300 rounded-md shadow-sm text-sm mt-2">
-  <option></option>
-  <option></option>
-</select>
+<input 
+    type="number"
+    min="1"
+    step="1"
+    inputmode="numeric"
+    pattern="\d*"
+    x-model="propertyCount"
+    name="property_count"
+    class="w-full border border-gray-300 rounded-md shadow-sm text-sm mt-2 px-2 py-2"
+>
+
+  
 
 </div>
 
     <!-- Size Unit Dropdown -->
     <div class="w-full lg:w-1/4">
       <label class="block text-sm text-transparent mb-1">Unit</label> <!-- invisible label for spacing -->
-      <select class="w-full bg-gray-300 text-black border border-gray-300 rounded-md shadow-sm text-sm mt-2">
+      <select class="w-full bg-gray-300 text-black border border-gray-300 rounded-md shadow-sm text-sm mt-2  px-2 py-2">
         <option>square meters</option>
         <option>square feet</option>
       </select>
@@ -369,18 +377,19 @@
   <div class="flex justify-between mt-6">
     
     <!-- Back Button (Left-aligned) -->
+     <a href="{{ route('partner.hotels.create.2') }}">
     <button type="button"
       @click="step > 1 ? step-- : step"
       :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
       class="border border-[#3CC0E9] text-blue-600 font-semibold py-2 px-4 rounded">
       ←
-    </button>
+    </button></a>
 
     <!-- Continue Button (Right-aligned) -->
     <button type="submit"
       @click="step < 9 ? step++ : step"
       :disabled="step === 9"
-      class="px-6 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
+      class="px-6 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300">
       Continue
     </button>
 
@@ -478,7 +487,7 @@
 
         <!-- Continue Button -->
         <button type="submit"  @click="step < 9 ? step++ : step"
-                class="px-6 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ml-[316px]">
+                class="px-6 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300 ml-[316px]">
           Continue
         </button>
       </div>
@@ -598,7 +607,7 @@
 
         <!-- Continue Button -->
         <button type="submit"  @click="step < 9 ? step++ : step"
-                class="px-6 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ml-[315px]">
+                class="px-6 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300 ml-[315px]">
           Continue
         </button>
       </div>
@@ -621,9 +630,62 @@
               </p>
               <label class="block text-sm font-semibold text-gray-700 mb-1 mt-6">Room Name</label>
               <select class="w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200 px-3 py-2">
-                <option>Double</option>
-                <option>Single</option>
-                <option>Suite</option>
+                 <option>Double Room</option>
+    <option>Double Room with Balcony</option>
+    <option>Double Room with Private Bathroom</option>
+    <option>Budget Double Room</option>
+    <option>Business Double Room with Gym Access</option>
+    <option>Deluxe Double Room</option>
+    <option>Deluxe Double Room (1 adult + 1 child)</option>
+    <option>Deluxe Double Room (1 adult + 2 children)</option>
+    <option>Deluxe Double Room (2 Adults + 1 Child)</option>
+    <option>Deluxe Double Room with Balcony</option>
+    <option>Deluxe Double Room with Balcony and Sea View</option>
+    <option>Deluxe Double Room with Bath</option>
+    <option>Deluxe Double Room with Castle View</option>
+    <option>Deluxe Double Room with Extra Bed</option>
+    <option>Deluxe Double Room with Sea View</option>
+    <option>Deluxe Double Room with Shower</option>
+    <option>Deluxe Double Room with Side Sea View</option>
+    <option>Deluxe Double or Twin Room</option>
+    <option>Deluxe King Room</option>
+    <option>Deluxe Queen Room</option>
+    <option>Deluxe Room</option>
+    <option>Deluxe Room (1 adult + 1 child)</option>
+    <option>Deluxe Room (1 adult + 2 children)</option>
+    <option>Deluxe Room (2 Adults + 1 Child)</option>
+    <option>Double Room (1 Adult + 1 Child)</option>
+    <option>Double Room - Disability Access</option>
+    <option>Double Room with Balcony (2 Adults + 1 Child)</option>
+    <option>Double Room with Balcony (3 Adults)</option>
+    <option>Double Room with Balcony and Sea View</option>
+    <option>Double Room with Garden View</option>
+    <option>Double Room with Lake View</option>
+    <option>Double Room with Mountain View</option>
+    <option>Double Room with Patio</option>
+    <option>Double Room with Pool View</option>
+    <option>Double Room with Private External Bathroom</option>
+    <option>Double Room with Sea View</option>
+    <option>Double Room with Shared Bathroom</option>
+    <option>Double Room with Shared Toilet</option>
+    <option>Double Room with Spa Bath</option>
+    <option>Double Room with Terrace</option>
+    <option>Queen Room - Disability Access</option>
+    <option>Queen Room with Balcony</option>
+    <option>Queen Room with Garden View</option>
+    <option>Queen Room with Pool View</option>
+    <option>Queen Room with Sea View</option>
+    <option>Queen Room with Shared Bathroom</option>
+    <option>Queen Room with Spa Bath</option>
+    <option>Small Double Room</option>
+    <option>Standard Double Room</option>
+    <option>Standard Double Room with Fan</option>
+    <option>Standard Double Room with Shared Bathroom</option>
+    <option>Standard King Room</option>
+    <option>Standard Queen Room</option>
+    <option>Superior Double Room</option>
+    <option>Superior King Room</option>
+    <option>Superior Queen Room</option>
               </select>
             </div>
           </div>
@@ -674,7 +736,7 @@
         </button>
         <button type="button"
                 @click="step < 9 ? step++ : step"
-                class="ml-auto px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ml-[335px]">
+                class="ml-auto px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300 ml-[335px]">
           Continue
         </button>
       </div>
@@ -791,7 +853,7 @@
         </button>
         <button type="button"
                 @click="step < 9 ? step++ : step"
-                class="ml-auto px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ml-[402px]">
+                class="ml-auto px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300 ml-[402px]">
           Continue
         </button>
       </div>
@@ -956,9 +1018,10 @@
   </button>
 
   <!-- Continue Button -->
-  <button class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition w-full sm:w-auto">
+  <a href="{{ route('partner.hotels.edit') }}">
+  <button class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-sky-500 transition w-full sm:w-auto">
     Continue
-  </button>
+  </button></a>
 </div>
 
 
@@ -968,20 +1031,6 @@
 
     
 
-   <template x-if="step === 8">
-    <div class="mt-16">
-       
-    </div>
-</template>
-
-
-    <template x-if="step === 9">
-      <div>
-        <h2 class="text-xl font-bold mb-4">Step 9: Review & Submit</h2>
-        <p class="text-sm text-gray-600 mb-4">Review your details before submission.</p>
-        <button class="mt-4 bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded font-semibold">Submit</button>
-      </div>
-    </template>
 
    
   </div>

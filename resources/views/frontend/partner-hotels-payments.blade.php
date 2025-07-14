@@ -139,11 +139,12 @@
 
     <!-- Continue Button -->
     <div class="flex justify-between items-center pt-4">
+        <a href="{{ route('partner.hotels.edit') }}">
       <button @click="step--"
               class="flex items-center border border-[#3CC0E9] rounded text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12">
        
         ←
-      </button>
+      </button></a>
       <button @click="step++"
             class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition ">
         Continue
@@ -479,10 +480,11 @@
        
         ←
       </button>
+      <a href="{{ route('partner.hotels.edit') }}">
       <button @click="step++"
             class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition ">
         Continue
-      </button>
+      </button></a>
     </div>
     
   </div>

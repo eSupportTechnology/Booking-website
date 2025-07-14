@@ -227,7 +227,10 @@
 
     <!-- Navigation Buttons -->
     <div class="mt-6 flex justify-between">
-      <button @click="step--"   class="border border-[#3CC0E9]  text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">← </button>
+      
+     <a href="{{ route('partner.hotels.edit') }}">
+      <button @click="step--"   class="border border-[#3CC0E9]  text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">← </button></a>
+      <a href="{{ route('partner.hotels.edit') }}">
       <button
         :disabled="uploadedPhotos.length < 3"
         :class="{
@@ -237,7 +240,7 @@
         class="px-6 py-2 text-white rounded"
       >
         Continue
-      </button>
+      </button></a>
     </div>
   </div>
 </section>
