@@ -7,6 +7,7 @@ use Illuminate\Database\Seeder;
 use Database\Seeders\RolesAndPermissionsSeeder;
 use Database\Seeders\PropertyCategoriesTableSeeder;
 use Database\Seeders\PropertySubcategoriesTableSeeder;
+use Faker\Provider\ar_EG\Address;
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,6 +17,9 @@ class DatabaseSeeder extends Seeder
             RolesAndPermissionsSeeder::class,
             PropertyCategoriesTableSeeder::class,
             PropertySubcategoriesTableSeeder::class,
+            PropertySubcategorySeeder::class,
+            PropertySubtypeSeeder::class,
+            AddressTypesTableSeeder::class,
         ]);
 
         // Create a test user

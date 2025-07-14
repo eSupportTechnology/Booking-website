@@ -15,6 +15,8 @@
             font-family: 'Noto Sans', sans-serif;
         }
     </style>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
 </head>
 
 <body class="bg-gray-100 text-gray-800">
@@ -96,7 +98,7 @@
     </header>
 
     <!-- Start Form -->
-    <div class="max-w-6xl p-4 ml-14 bg-gray-100">
+    <div class="max-w-6xl p-4 ml-14 bg-gray-100" x-data="{ propertyId: null,selected: '',}">
 
         <!-- Step 1: Main Form Step -->
         <form class="p-6 rounded-lg space-y-6" @submit.prevent>
@@ -110,70 +112,140 @@
 
 
             <!-- Main Step 1 Content -->
-            <div x-show="step === 1" x-cloak>
+            <div x-show="step === 1" x-cloak x-data="{
+                    
+                    subcategories: {{ Js::from($subcategories) }},
+                    async submitStep1() {
+                        if (this.selected === '') return;
 
-                <h2 class="text-2xl font-bold text-left mb-6">What can guests book?</h2>
-                <div
-                    class="bg-white max-w-xl w-full p-6 rounded-lg shadow"
-                    x-data="{
-                selected: '',
-                subcategories: {{ Js::from($subcategories) }}
-            }">
-                    <template x-for="subcategory in subcategories" :key="subcategory.id">
-                        <label
-                            :class="selected === subcategory.id ? 'border-blue-600 border-2' : 'border border-gray-300'"
-                            class="relative block rounded p-4 cursor-pointer transition bg-white mb-4"
-                            @click="selected = subcategory.id">
-                            <!-- ✔ Tick -->
-                            <template x-if="selected === subcategory.id">
-                                <div class="absolute top-2 right-2 text-blue-600 text-xl font-bold">✔</div>
+                        try {
+                            const response = await fetch('{{ route('partner.property.step1.store') }}', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                    'Accept': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                    apartment_type: this.selected,
+                                    subcategory_id: this.selected,
+                                    category_id: '{{ $categoryId }}'
+                                })
+                            });
+
+                            const contentType = response.headers.get('content-type');
+                            if (!response.ok || !contentType.includes('application/json')) {
+                                const text = await response.text();
+                                console.error('Server did not return JSON:', text);
+                                alert('Unexpected server response');
+                                return;
+                            }
+
+                            const data = await response.json();
+                            this.propertyId = data.property_id;
+                            this.step = 2;
+                            await this.fetchSubtypes(this.selected);
+                            alert(data.message || 'Property created successfully');
+
+                        } catch (error) {
+                            console.error('Request failed:', error);
+                            alert('Request failed: ' + error.message);
+                        }
+                    },
+                    async fetchSubtypes(subcategoryId) {
+        try {
+            const response = await fetch(`/partner/property_subtype/${subcategoryId}`);
+            const data = await response.json();
+            console.log('Fetched subtypes:', data);
+            this.subtypes = data;
+        } catch (err) {
+            console.error('Failed to fetch subtypes:', err);
+        }
+    }
+
+                }">
+                <div class="bg-white max-w-2xl w-full p-6 rounded-lg shadow">
+                    <div class="max-w-xl mx-auto p-4 space-y-6">
+                        <h2 class="text-2xl font-bold text-center">What can guests book?</h2>
+
+                        <div class="space-y-4">
+                            <template x-for="subcategory in subcategories" :key="subcategory.id">
+                                <label
+                                    :class="selected === subcategory.id ? 'border-blue-600 border-2' : 'border border-gray-300'"
+                                    class="block rounded p-4 cursor-pointer transition bg-white relative"
+                                    @click="selected = subcategory.id">
+
+                                    <template x-if="selected === subcategory.id">
+                                        <div class="absolute top-2 right-2 text-blue-600 text-xl font-bold">✔</div>
+                                    </template>
+
+                                    <div class="flex items-center space-x-4">
+                                        <img src="{{ asset('images/accomm_single_home@2x (1).png') }}" alt="Icon" class="w-10 h-10" />
+                                        <div>
+                                            <span class="text-lg text-gray-800 font-semibold" x-text="subcategory.name"></span>
+                                            <p class="text-sm text-gray-600" x-text="subcategory.desc"></p>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" name="category_id" value="{{ $categoryId }}">
+
+                                    <input type="radio" name="subcategory_id" :value="subcategory.id" x-model="selected" class="hidden" />
+                                </label>
                             </template>
 
-                            <div class="flex items-center space-x-4">
-                                <!-- Optional static image or dynamic one if you have it -->
-                                <img src="{{ asset('images/accomm_single_home@2x (1).png') }}" alt="One Apartment" class="w-8 h-8" />
-                                <div>
-                                    <span class="text-base font-bold text-gray-800" x-text="subcategory.name"></span>
-                                    <p class="text-xs text-gray-800" x-text="subcategory.desc"></p>
-                                </div>
+                            <div class="flex items-center justify-between pt-4">
+                                <button
+                                    type="button"
+                                    @click="window.location.href = '{{ route('partner.property.category') }}'"
+                                    class="border border-[#3CC0E9] text-blue-600 hover:bg-[#29ACD5] font-semibold py-2 px-4 rounded">
+                                    ←
+                                </button>
+                                <button
+                                    type="button"
+                                    @click="submitStep1()"
+                                    class="font-semibold py-3 px-8 rounded bg-[#3CC0E9] hover:bg-[#29ACD5] text-white"
+                                    :disabled="selected === ''"
+                                    :class="selected === '' ? 'opacity-50 cursor-not-allowed' : ''">
+                                    Continue
+                                </button>
                             </div>
-
-                            <!-- Hidden radio input for form submission -->
-                            <input
-                                type="radio"
-                                name="apartment_type"
-                                :value="subcategory.id"
-                                x-model="selected"
-                                class="hidden" />
-                        </label>
-                    </template>
-
-                    <!-- Navigation Buttons -->
-                    <div class="flex items-center justify-between pt-4">
-                        <button
-                            type="button"
-                            @click="if(step > 1) step--"
-                            class="border border-[#3CC0E9] text-blue-600 hover:bg-[#29ACD5] font-semibold py-2 px-4 rounded"
-                            :disabled="step === 1"
-                            :class="step === 1 ? 'opacity-50 cursor-not-allowed' : ''">
-                            ←
-                        </button>
-                        <button
-                            type="button"
-                            @click="if(selected !== '') step = 2"
-                            class="font-semibold py-3 px-8 rounded bg-[#3CC0E9] hover:bg-[#29ACD5] text-white"
-                            :disabled="selected === ''"
-                            :class="selected === '' ? 'opacity-50 cursor-not-allowed' : ''">
-                            Continue
-                        </button>
+                        </div>
                     </div>
                 </div>
-
             </div>
 
 
+
+
             <!-- Step 2: Selection Container -->
-            <div id="selection-container" x-show="step === 2" x-cloak class="container mx-auto px-4 py-8 max-w-6xl">
+            <div id="selection-container" x-show="step === 2" x-cloak class="container mx-auto px-4 py-8 max-w-6xl" x-data="{
+                    async submitStep2() {
+                        if (!this.selectedBox || !this.propertyId) return;
+
+                        const response = await fetch(`/partner/property/${this.selectedBox}/step2/${this.propertyId}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                subtype_id: this.selectedBox,
+                                property_id: this.propertyId
+                            })
+                        });
+
+                        if (response.ok) {
+                            const data = await response.json();
+                            this.step = 3;
+                            console.log('Step 2 selectedBox:', this.selectedBox);
+                            alert(data.message || 'Step 2 saved successfully');
+                        } else {
+                            const error = await response.json();
+                            alert(error.message || 'Error in Step 2');
+                        }
+                    }
+                }
+                 ">
                 <h2 class="text-2xl font-bold mb-8 text-left">
                     From the list below, which property category is most similar to your place?
                 </h2>
@@ -181,31 +253,23 @@
                 <div class="bg-white p-6 rounded-lg shadow">
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         <!-- Cards -->
-                        <template x-for="(property, index) in [
-              { id: 'section-apartment', title: 'Apartment', desc: 'Furnished and self-catering accommodation available for short- and long-term rental' },
-              { id: 'section-holiday-home', title: 'Holiday home', desc: 'Free-standing home with private, external entrance and rented specifically for holidays' },
-              { id: 'section-villa', title: 'Villa', desc: 'Private self-standing and self-catering home with luxury feel' },
-              { id: 'section-chalet', title: 'Chalet', desc: 'Free-standing home characterised by sloped roof and rented specifically for holidays' },
-              { id: 'section-holiday-park', title: 'Holiday park', desc: 'Private self-catering residences located on shared grounds with shared facilities or recreational activities' },
-              { id: 'section-aparthotel', title: 'Aparthotel', desc: 'A self-catering apartment with some hotel facilities like a reception desk' }
-            ]" :key="index">
+                        <template x-for="(property, index) in subtypes" :key="property.id">
                             <div
                                 @click="selectedBox = property.id"
                                 :class="selectedBox === property.id ? 'border-blue-500 bg-gray-100' : 'border border-gray-300'"
                                 class="relative rounded p-4 cursor-pointer transition-all duration-200">
+
                                 <h3 class="text-base font-bold text-gray-800 mb-4" x-text="property.title"></h3>
                                 <p class="text-sm text-gray-800" x-text="property.desc"></p>
 
-                                <div
-                                    class="tick-box absolute top-2 right-2"
-                                    x-show="selectedBox === property.id">
+                                <div class="tick-box absolute top-2 right-2" x-show="selectedBox === property.id">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                                     </svg>
                                 </div>
-
                             </div>
                         </template>
+
                     </div>
                 </div>
 
@@ -225,14 +289,16 @@
                             class="border border-[#3CC0E9] text-blue-600  font-semibold py-2 px-4 rounded">
                             ←
                         </button>
+
                         <button id="continueBtn"
-                            @click="if(selectedBox) { step = 3; }"
+                            @click="submitStep2()"
                             :disabled="!selectedBox"
                             :class="!selectedBox ? 'bg-blue-300 cursor-not-allowed' : 'bg-[#3CC0E9] hover:bg-blue-600 cursor-pointer'"
-                            class="py-3 px-8   rounded transition-all duration-200 bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold"
+                            class="py-3 px-8 rounded transition-all duration-200 bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold"
                             type="button">
                             Continue
                         </button>
+
                     </div>
                 </template>
 
@@ -243,7 +309,7 @@
             <template x-if="step === 3">
                 <div>
                     <!-- Apartment -->
-                    <section x-show="selectedBox === 'section-apartment'" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
+                    <section x-show="selectedBox === 3" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
                         <h3 class="text-xl font-bold mb-4">Apartment Details</h3>
                         <p>Details related to apartment...</p>
                         <button
@@ -254,7 +320,7 @@
                         </button>
                     </section>
 
-                    <section x-data="wizard()" x-show="selectedBox === 'section-holiday-home'" x-cloak>
+                    <section x-data="wizard()" x-show="selectedBox === 4" x-cloak>
                         <form class="p-6 rounded-lg" enctype="multipart/form-data" @submit.prevent>
                             <!-- Step 1: Choose one or multiple -->
                             <template x-if="step === 1">
@@ -316,7 +382,12 @@
                                         </div>
                                     </div>
 
-                                    <div class="text-right pt-4">
+                                    <div class="flex items-center justify-between pt-4">
+                                        <button type="button"
+                                            @click="step = 2"
+                                            class="border border-[#3CC0E9] text-blue-600  font-semibold py-2 px-4 rounded">
+                                            ←
+                                        </button>
                                         <button type="button"
                                             @click="nextStep"
                                             :disabled="selected === ''"
@@ -372,11 +443,11 @@
                                         <template x-if="step === 3 && selected === 'one'">
                                             <div>
                                                 <div x-data="{
-      selectedChannels: [],
-      get showImportSection() {
-        return this.selectedChannels.includes('Airbnb') || this.selectedChannels.includes('Vrbo');
-      }
-    }"
+                                        selectedChannels: [],
+                                        get showImportSection() {
+                                            return this.selectedChannels.includes('Airbnb') || this.selectedChannels.includes('Vrbo');
+                                        }
+                                        }"
                                                     class="bg-white max-w-xl w-full p-6 rounded-lg shadow space-y-6">
 
                                                     <!-- Title -->
@@ -456,11 +527,11 @@
                                                             </button>
                                                             <button
                                                                 type="button"
-                                                                @click="if(selectedChannels.length > 0) window.location.href='{{ route('partner.apartment.create.2') }}'"
+                                                                @click="nextStep"
                                                                 :disabled="selectedChannels.length === 0"
                                                                 :class="selectedChannels.length === 0 
-    ? 'bg-gray-300 text-gray-600 cursor-not-allowed' 
-    : 'bg-[#3CC0E9] hover:bg-[#29ACD5] text-white cursor-pointer'"
+                                        ? 'bg-gray-300 text-gray-600 cursor-not-allowed' 
+                                        : 'bg-[#3CC0E9] hover:bg-[#29ACD5] text-white cursor-pointer'"
                                                                 class="font-semibold py-3 px-6 rounded transition duration-200">
                                                                 Continue
                                                             </button>
@@ -475,6 +546,16 @@
                                             <div>
                                                 <h3 class="text-lg font-bold mb-2">Upload Photos</h3>
                                                 <input type="file" multiple class="border p-2 rounded w-full" />
+
+                                                <div>
+                                                    <button type="button" @click="prevStep" class="mt-4 bg-gray-300 px-4 py-2 rounded"> ←</button>
+                                                    <button
+                                                        type="button"
+                                                        @click="nextStep"
+                                                        class="mt-4 bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded">
+                                                        Continue
+                                                    </button>
+                                                </div>
                                             </div>
                                         </template>
 
@@ -482,6 +563,103 @@
                                             <div>
                                                 <h3 class="text-lg font-bold mb-2">Pricing</h3>
                                                 <input type="number" placeholder="Price per night" class="border p-2 rounded w-full" />
+
+                                                <div>
+                                                    <button type="button" @click="prevStep" class="mt-4 bg-gray-300 px-4 py-2 rounded"> ←</button>
+                                                    <button
+                                                        type="button"
+                                                        @click="nextStep"
+                                                        class="mt-4 bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded">
+                                                        Continue
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </template>
+
+                                        <template x-if="step === 6 && selected === 'one'">
+                                            <div>
+                                                <div class="relative w-[1400px] h-auto overflow-hidden rounded-lg shadow mx-auto -mt-14 -ml-16">
+
+                                                    <!-- Google Maps iframe full background -->
+                                                    <iframe
+                                                        class="absolute inset-0 w-full h-full"
+                                                        loading="lazy"
+                                                        src="https://www.google.com/maps?q=La+Grande+Villa+Nuwara+Eliya&output=embed"
+                                                        allowfullscreen>
+                                                    </iframe>
+
+                                                    <!-- Optional overlay for readability -->
+                                                    <div class="absolute inset-0"></div>
+
+                                                    <!-- Form content centered on map -->
+                                                    <div class="relative z-10 flex items-center justify-start h-auto p-4 mt-[110px]">
+                                                        <div class="bg-white bg-opacity-95 rounded-lg shadow-lg w-full max-w-md p-6 md:p-8 h-auto mb-4">
+                                                            <h2 class="text-2xl font-semibold mb-4 text-gray-800">Where is your property?</h2>
+                                                            <form x-data="{ addressForm: {} }">
+                                                                <div class="mb-4">
+                                                                    <label for="address" class="block text-sm font-medium text-gray-700">Find your address</label>
+                                                                    <input type="text" id="address" x-model="addressForm.address" name="address" value="Sri Lanka" class="mt-1 p-2 w-full border border-gray-300 rounded">
+                                                                </div>
+                                                                <div class="mb-4">
+                                                                    <label for="apartment" class="block text-sm font-medium text-gray-700">Apartment or floor number (optional)</label>
+                                                                    <input type="text" id="apartment" x-model="addressForm.apartment" name="apartment" value="aaa" class="mt-1 p-2 w-full border border-gray-300 rounded">
+                                                                </div>
+                                                                <div class="mb-4">
+                                                                    <label for="country" class="block text-sm font-medium text-gray-700">Country/region</label>
+                                                                    <select id="country" x-model="addressForm.country" name="country" class="mt-1 p-2 w-full border border-gray-300 rounded">
+                                                                        <option selected>Sri Lanka</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div class="flex flex-col md:flex-row gap-4">
+                                                                    <div class="flex-1">
+                                                                        <label for="city" class="block text-sm font-medium text-gray-700">City</label>
+                                                                        <input type="text" id="city" x-model="addressForm.city" name="city" value="a" class="mt-1 p-2 w-full border border-gray-300 rounded">
+                                                                    </div>
+                                                                    <div class="flex-1">
+                                                                        <label for="zipcode" class="block text-sm font-medium text-gray-700">Post code / Zip code</label>
+                                                                        <input type="text" id="zipcode" x-model="addressForm.zipcode" name="zipcode" value="80400" class="mt-1 p-2 w-full border border-gray-300 rounded">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="flex items-center mt-4">
+                                                                    <input id="update_address" type="checkbox" name="update_address" checked class="mr-2">
+                                                                    <label for="update_address" x-model="addressForm.update_address" class="text-sm text-gray-700">Update the address when moving the pin on the map.</label>
+                                                                </div>
+
+                                                                <!-- Dismissible message box -->
+                                                                <div x-data="{ showMessage: true }" x-show="showMessage" class="mt-4 bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded relative" role="alert">
+                                                                    <strong class="font-bold">Note:</strong>
+                                                                    <span class="block sm:inline">Make sure the pin location is accurate before continuing.</span>
+                                                                    <span @click="showMessage = false" class="absolute top-0 bottom-0 right-0 px-4 py-3 cursor-pointer">
+                                                                        <svg class="fill-current h-6 w-6 text-yellow-800" role="button" xmlns="http://www.w3.org/2000/svg"
+                                                                            viewBox="0 0 20 20">
+                                                                            <title>Close</title>
+                                                                            <path
+                                                                                d="M14.348 5.652a1 1 0 00-1.414 0L10 8.586 7.066 5.652a1 1 0 10-1.414 1.414L8.586 10l-2.934 2.934a1 1 0 101.414 1.414L10 11.414l2.934 2.934a1 1 0 001.414-1.414L11.414 10l2.934-2.934a1 1 0 000-1.414z" />
+                                                                        </svg>
+                                                                    </span>
+                                                                </div>
+
+                                                                <p class="text-sm text-gray-600 mt-2">
+                                                                    Is the red pin location incorrect? Uncheck the option above and click or press on the map to move the pin.
+                                                                </p>
+
+                                                                <!-- Buttons -->
+                                                                <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6">
+                                                                    <button type="button" @click="prevStep"
+                                                                        class="w-full sm:w-auto border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
+                                                                        ←
+                                                                    </button>
+                                                                    <button type="button" @click="nextStep"
+                                                                        class="w-full sm:w-auto px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
+                                                                        Continue
+                                                                    </button>
+                                                                </div>
+
+
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </template>
 
@@ -1357,7 +1535,7 @@
                                                                     <!-- Continue Button (inside input field container, aligned right) -->
                                                                     <div class="flex justify-end mt-4">
                                                                         <button
-                                                                            type="submit"
+                                                                            type="button"
                                                                             @click="nextStep"
                                                                             class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
                                                                             Continue
@@ -1558,7 +1736,7 @@
                             function wizard() {
                                 return {
                                     step: 1,
-                                    selectedBox: 'section-holiday-home', // Ensure this matches to show this section
+                                    selectedBox: 4, // Ensure this matches to show this section
                                     selected: '',
                                     sameAddress: '',
                                     propertyCount: 2,
@@ -1570,13 +1748,60 @@
                                         this.step = 1;
                                     },
 
-                                    nextStep() {
-                                        // Simple validation: only proceed if selected is set
-                                        if (this.step === 1 && this.selected === '') return;
+                                    async nextStep() {
+                                        if (this.step === 1 && this.selected === 'one') {
+                                            try {
+                                                const response = await fetch(`/partner/property/step3/${this.propertyId}`, {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                    },
+                                                    body: JSON.stringify({
+                                                        address_type_id: this.step,
+                                                        propertyId: this.propertyId
+                                                    })
+                                                });
+                                                const result = await response.json();
+                                                if (result.success) {
+                                                    console.log('Step 1 saved:', result);
+                                                    this.step++;
+                                                } else {
+                                                    alert('Failed to save address step: ' + result.message);
+                                                }
+                                            } catch (e) {
+                                                console.error('Error saving step 2:', e);
+                                            }
+                                        } else if (this.step === 6 && this.selected === 'one') {
+                                            try {
+                                                const response = await fetch(`/partner/property/step3/${this.propertyId}`, {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                    },
+                                                    body: JSON.stringify(this.addressForm, this.propertyId)
+                                                });
+                                                const result = await response.json();
+                                                if (result.success) {
+                                                    console.log('Step 2 saved:', result);
+                                                    this.step++;
+                                                } else {
+                                                    alert('Failed to save address step: ' + result.message);
+                                                }
+                                            } catch (e) {
+                                                console.error('Error saving step 2:', e);
+                                            }
+                                        } else {
+                                            if (this.step === 1 && this.selected === '') return;
 
-                                        if (this.step < this.totalSteps) {
-                                            this.step++;
+                                            if (this.step < this.totalSteps) {
+                                                this.step++;
+                                                propertyId = this.propertyId;
+                                                console.log('Property ID:', propertyId);
+                                            }
                                         }
+
                                     },
 
                                     prevStep() {
@@ -1592,28 +1817,28 @@
 
 
                     <!-- Villa -->
-                    <section x-show="selectedBox === 'section-villa'" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
+                    <section x-show="selectedBox === 2" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
                         <h3 class="text-xl font-bold mb-4">Villa Details</h3>
                         <p>Details related to villa...</p>
                         <button type="button" @click="step = 2" class="mt-4 bg-gray-300 px-4 py-2 rounded">Back</button>
                     </section>
 
                     <!-- Chalet -->
-                    <section x-show="selectedBox === 'section-chalet'" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
+                    <section x-show="selectedBox === 1" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
                         <h3 class="text-xl font-bold mb-4">Chalet Details</h3>
                         <p>Details related to chalet...</p>
                         <button type="button" @click="step = 2" class="mt-4 bg-gray-300 px-4 py-2 rounded">Back</button>
                     </section>
 
                     <!-- Holiday Park -->
-                    <section x-show="selectedBox === 'section-holiday-park'" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
+                    <section x-show="selectedBox === 6" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
                         <h3 class="text-xl font-bold mb-4">Holiday Park Details</h3>
                         <p>Details related to holiday park...</p>
                         <button type="button" @click="step = 2" class="mt-4 bg-gray-300 px-4 py-2 rounded">Back</button>
                     </section>
 
                     <!-- Aparthotel -->
-                    <section x-show="selectedBox === 'section-aparthotel'" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
+                    <section x-show="selectedBox ===5" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
                         <h3 class="text-xl font-bold mb-4">Aparthotel Details</h3>
                         <p>Details related to aparthotel...</p>
                         <button type="button" @click="step = 2" class="mt-4 bg-gray-300 px-4 py-2 rounded">Back</button>
@@ -1622,6 +1847,87 @@
             </template>
         </form>
     </div>
+    <script>
+        function stepWizard() {
+            return {
+                step: 1,
+                selected: '', // subcategory id from step 1
+                selectedBox: '',
+                propertyId: null,
+                subtypes: [],
+
+                init() {
+                    // Initial setup
+                },
+
+                // async submitStep1() {
+                //     if (this.selected === '') return;
+
+                //     const response = await fetch('{{ route('partner.property.step1.store') }}', {
+                //         method: 'POST',
+                //         headers: {
+                //             'Content-Type': 'application/json',
+                //             'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                //             'Accept': 'application/json',
+                //         },
+                //         body: JSON.stringify({
+                //             apartment_type: this.selected
+                //         })
+                //     });
+
+                //     if (response.ok) {
+                //         const data = await response.json();
+                //         this.propertyId = data.property_id;
+                //         this.step = 2;
+
+                //         // Fetch subtypes based on subcategory
+                //         await this.fetchSubtypes(this.selected);
+                //     } else {
+                //         const error = await response.json();
+                //         alert(error.message || 'Error in Step 1');
+                //     }
+                // },
+
+                async fetchSubtypes(subcategoryId) {
+                    try {
+                        const response = await fetch(`/partner/property_subtype/${subcategoryId}`);
+                        const data = await response.json();
+                        console.log('Fetched subtypes:', data);
+                        this.subtypes = data;
+                    } catch (err) {
+                        console.error('Failed to fetch subtypes:', err);
+                    }
+                },
+
+                //     async submitStep2() {
+                //         if (!this.selectedBox || !this.propertyId) return;
+
+                //         const response = await fetch(`/property-apartment/step2/${this.propertyId}`, {
+                //             method: 'POST',
+                //             headers: {
+                //                 'Content-Type': 'application/json',
+                //                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                //                 'Accept': 'application/json',
+                //             },
+                //             body: JSON.stringify({
+                //                 category_id: this.selectedBox,
+                //                 property_id: this.propertyId
+                //             })
+                //         });
+
+                //         if (response.ok) {
+                //             const data = await response.json();
+                //             this.step = 3;
+                //             alert(data.message || 'Step 2 saved successfully');
+                //         } else {
+                //             const error = await response.json();
+                //             alert(error.message || 'Error in Step 2');
+                //         }
+                //     }
+                // };
+            }
+        }
+    </script>
 
 </body>
 

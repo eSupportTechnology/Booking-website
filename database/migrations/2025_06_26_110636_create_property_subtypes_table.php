@@ -8,10 +8,10 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('property_subtypes', function (Blueprint $table) {
-$table->id();
-        $table->foreignId('subcategory_id')->constrained('property_subcategories');
-        $table->string('name');
-        $table->timestamps();
+            $table->id();
+            $table->foreignId('subcategory_id')->constrained('property_subcategories');
+            $table->string('name');
+            $table->timestamps();
         });
     }
 
