@@ -248,18 +248,7 @@
       <!-- Step 3+: Property Details Sections -->
       <template x-if="step === 3">
         <div>
-          <!-- Apartment -->
-          <section x-show="selectedBox === 'section-apartment'" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
-            <h3 class="text-xl font-bold mb-4">Apartment Details</h3>
-            <p>Details related to apartment...</p>
-            <button
-              type="button"
-              @click="step = 2"
-              class="mt-4 bg-gray-300 px-4 py-2 rounded"
-            >
-              Back
-            </button>
-          </section>
+         
 
  <section x-data="wizard()" x-show="selectedBox === 'section-holiday-home'" x-cloak>
   <form class="p-6 rounded-lg" enctype="multipart/form-data" @submit.prevent>

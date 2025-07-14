@@ -140,6 +140,15 @@ Route::get('/partner-enter-password', function () {
     return view('frontend.partner-enter-password');
 })->name('partner.enter.password');
 
+Route::get('/partner-hotels-payments', function () {
+    return view('frontend.partner-hotels-payments');
+})->name('partner.hotels.payments');
+
+Route::get('/partner-hotels-photos', function () {
+    return view('frontend.partner-hotels-photos');
+})->name('partner.hotels.photos');
+
+
 Route::get('/partner-forgot-password', function () {
     return view('frontend.partner-forgot-password');
 })->name('partner.forgot.password');
@@ -179,6 +188,10 @@ Route::get('/partner-hotels-create-2', function () {
 Route::get('/partner-hotels-create-1', function () {
     return view('frontend.partner-hotels-create-1');
 })->name('partner.hotels.create.1');
+
+Route::get('/partner-hotels-edit', function () {
+    return view('frontend.partner-hotels-edit');
+})->name('partner.hotels.edit');
 
 Route::get('/airport-taxis', function () {
     return view('frontend.home');
