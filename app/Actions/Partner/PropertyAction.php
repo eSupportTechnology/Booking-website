@@ -57,6 +57,7 @@ class PropertyAction
             'zipcode' => $dto->zipcode,
             'description' => $dto->description,
             'subtype_id' => $dto->subtype_id,
+            'address_type_id' => $dto->address_type_id,
         ], fn($value) => !is_null($value)));
 
         return $property;

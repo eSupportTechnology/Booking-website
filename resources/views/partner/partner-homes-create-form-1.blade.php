@@ -1749,7 +1749,7 @@
                                     },
 
                                     async nextStep() {
-                                        if (this.step === 6 && this.selected === 'one') {
+                                        if (this.step === 1 && this.selected === 'one') {
                                             try {
                                                 const response = await fetch(`/partner/property/step3/${this.propertyId}`, {
                                                     method: 'POST',
@@ -1757,7 +1757,30 @@
                                                         'Content-Type': 'application/json',
                                                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                                                     },
-                                                    body: JSON.stringify(this.addressForm,this.propertyId)
+                                                    body: JSON.stringify({
+                                                        address_type_id: this.step,
+                                                        propertyId: this.propertyId
+                                                    })
+                                                });
+                                                const result = await response.json();
+                                                if (result.success) {
+                                                    console.log('Step 1 saved:', result);
+                                                    this.step++;
+                                                } else {
+                                                    alert('Failed to save address step: ' + result.message);
+                                                }
+                                            } catch (e) {
+                                                console.error('Error saving step 2:', e);
+                                            }
+                                        } else if (this.step === 6 && this.selected === 'one') {
+                                            try {
+                                                const response = await fetch(`/partner/property/step3/${this.propertyId}`, {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                    },
+                                                    body: JSON.stringify(this.addressForm, this.propertyId)
                                                 });
                                                 const result = await response.json();
                                                 if (result.success) {
