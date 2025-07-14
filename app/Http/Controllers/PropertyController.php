@@ -135,7 +135,7 @@ class PropertyController extends Controller
         ]);
     }
 
-    public function storeStep2(Request $request, $category, $propertyId, PropertyAction $action)
+    public function storeStep2(Request $request,  $propertyId, PropertyAction $action)
     {
         Log::info('storeStep2 called - DEBUG');
         // die('storeStep2 called');
@@ -152,11 +152,7 @@ class PropertyController extends Controller
             Log::info('DTO created from request', ['dto' => $dto->toArray()]);
             $updatedProperty = $action->updatePropertyStep2($property, $dto);
             Log::info('Property after update', ['property' => $updatedProperty->toArray()]);
-            // // Redirect to the next step using the dynamic category
-            // return redirect()->route('partner.property.' . strtolower($category) . '.3', [
-            //     'category' => strtolower($category),
-            //     'property' => $property->id,
-            // ]);
+         
             return response()->json([
                 'success' => true,
                 'message' => 'Step 2 data saved successfully',
