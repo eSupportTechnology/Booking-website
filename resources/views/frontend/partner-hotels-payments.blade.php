@@ -361,6 +361,9 @@
 
 
 </div>
+<p class="text-sm text-gray-800">
+        Please provide the full names and dates of birth of all individuals who own 25% or more of the accommodation.
+      </p>
       <!-- Owner Input Blocks -->
       <template x-for="(owner, index) in owners" :key="index">
         <div class="border p-4 rounded-lg space-y-4 bg-white">
