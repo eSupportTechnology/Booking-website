@@ -57,7 +57,7 @@ return [
     'email' => env('QUICKSEND_EMAIL'),
     'api_key' => env('QUICKSEND_API_KEY'),
     'base_url' => env('QUICKSEND_BASE_URL', 'https://quicksend.lk/Client/api.php'),
-    'sender_id' => env('QUICKSEND_SENDER_ID', 'QKSendDemo'),
+    'sender_id' => env('QUICKSEND_SENDER_ID'),
 ],
 
 

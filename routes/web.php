@@ -12,6 +12,7 @@ use App\Mail\PartnerVerificationMail;
 use App\Http\Controllers\Partner\LoginController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Customer\CustomerPersonalDetailsController;
+use App\Http\Controllers\Customer\EmailVerifyController;
 use App\Http\Controllers\PropertyController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -74,6 +75,12 @@ Route::prefix('customer')->group(function () {
 
     Route::get('/customer-details/create', [CustomerPersonalDetailsController::class, 'edit'])->name('customer.details.create');
     Route::post('/customer-details', [CustomerPersonalDetailsController::class, 'update'])->name('customer.details.store');
+
+
+    // Email verification routes
+    Route::post('/email/send-otp', [EmailVerifyController::class, 'sendOtp'])->name('email.send-otp');
+    Route::post('/email/verify-otp', [EmailVerifyController::class, 'verifyOtp'])->name('email.verify-otp');
+    Route::post('/email/resend-otp', [EmailVerifyController::class, 'resendOtp'])->name('email.resend-otp');
 
 
     Route::post('/customer/logout', function () {
