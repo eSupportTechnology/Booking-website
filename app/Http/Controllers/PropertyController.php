@@ -32,7 +32,7 @@ class PropertyController extends Controller
     public function subcategories($categoryId, PropertyAction $action)
     {
         $subcategories = $action->getPropertiesByCategory($categoryId);
-
+        Log::info('Fetching subcategories for category ID: ' . $categoryId, ['subcategories' => $subcategories]);   
         // Check if subcategories are empty
         if ($subcategories->isEmpty()) {
             Log::warning('No subcategories found for category ID ' . $categoryId);

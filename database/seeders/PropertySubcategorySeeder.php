@@ -13,10 +13,16 @@ class PropertySubcategorySeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('property_subcategories')->insert([
-            ['category_id' => 1, 'name' => 'Entire Place', 'created_at' => now(), 'updated_at' => now()],
-            ['category_id' => 1, 'name' => 'Private Room', 'created_at' => now(), 'updated_at' => now()],
-        ]);
+        $subcategories = [
+            ['category_id' => 1, 'name' => 'Entire Place'],
+            ['category_id' => 1, 'name' => 'Private Room'],
+        ];
 
+        foreach ($subcategories as $subcategory) {
+            DB::table('property_subcategories')->updateOrInsert(
+                ['category_id' => $subcategory['category_id'], 'name' => $subcategory['name']],
+                ['created_at' => now(), 'updated_at' => now()]
+            );
+        }
     }
 }

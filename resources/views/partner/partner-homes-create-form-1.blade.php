@@ -309,23 +309,18 @@
             <template x-if="step === 3">
                 <div>
                     <!-- Apartment -->
-                    <section x-show="selectedBox === 3" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
-                        <h3 class="text-xl font-bold mb-4">Apartment Details</h3>
-                        <p>Details related to apartment...</p>
-                        <button
-                            type="button"
-                            @click="step = 2"
-                            class="mt-4 bg-gray-300 px-4 py-2 rounded">
-                            Back
-                        </button>
+                    <section
+                        x-init="if (selectedBox === 3) window.location.href = '{{ route('partner.apartment.create.1') }}'"
+                        x-show="false">
                     </section>
 
-                    <section x-data="wizard()" x-show="selectedBox === 4" x-cloak>
+
+                    <section x-data="wizard(selectedBox)" x-show="[1, 2, 4, 5, 6].includes(selectedBox)" x-cloak>
                         <form class="p-6 rounded-lg" enctype="multipart/form-data" @submit.prevent>
                             <!-- Step 1: Choose one or multiple -->
                             <template x-if="step === 1">
                                 <div class="bg-white max-w-2xl w-full p-6 rounded-lg shadow space-y-6 ">
-                                    <h2 class="text-xl font-bold text-left">How many holiday homes are you listing?</h2>
+                                    <h2 class="text-xl font-bold text-left" x-text="headingLabel"></h2>
 
                                     <div class="space-y-4">
                                         <label :class="selected === 'one' ? 'border-blue-600 border-2' : 'border border-gray-300'"
@@ -334,7 +329,7 @@
                                             <div class="flex items-center justify-between">
                                                 <div class="flex items-center space-x-4">
                                                     <img src="{{ asset('images/aprt-b.png') }}" class="w-14 h-10" />
-                                                    <span class="text-lg">One holiday home</span>
+                                                    <span class="text-lg" x-text="singleLabel"></span>
                                                 </div>
                                                 <template x-if="selected === 'one'">
                                                     <div class="text-blue-600 text-xl font-bold">✔</div>
@@ -348,7 +343,7 @@
                                             <div class="flex items-center justify-between">
                                                 <div class="flex items-center space-x-4">
                                                     <img src="{{ asset('images/aprt-a.png') }}" class="w-14 h-10" />
-                                                    <span class="text-lg">Multiple holiday homes</span>
+                                                    <span class="text-lg" x-text="multipleLabel"></span>
                                                 </div>
                                                 <template x-if="selected === 'multiple'">
                                                     <div class="text-blue-600 text-xl font-bold">✔</div>
@@ -595,7 +590,15 @@
                                                     <div class="relative z-10 flex items-center justify-start h-auto p-4 mt-[110px]">
                                                         <div class="bg-white bg-opacity-95 rounded-lg shadow-lg w-full max-w-md p-6 md:p-8 h-auto mb-4">
                                                             <h2 class="text-2xl font-semibold mb-4 text-gray-800">Where is your property?</h2>
-                                                            <form x-data="{ addressForm: {} }">
+                                                            <form x-data="{ 
+                                                                            addressForm: {
+                                                                                address: '',
+                                                                                apartment: '',
+                                                                                city: '',
+                                                                                zipcode: '',
+                                                                                country: 'Sri Lanka' 
+                                                                            } 
+                                                                            }">
                                                                 <div class="mb-4">
                                                                     <label for="address" class="block text-sm font-medium text-gray-700">Find your address</label>
                                                                     <input type="text" id="address" x-model="addressForm.address" name="address" value="Sri Lanka" class="mt-1 p-2 w-full border border-gray-300 rounded">
@@ -607,8 +610,9 @@
                                                                 <div class="mb-4">
                                                                     <label for="country" class="block text-sm font-medium text-gray-700">Country/region</label>
                                                                     <select id="country" x-model="addressForm.country" name="country" class="mt-1 p-2 w-full border border-gray-300 rounded">
-                                                                        <option selected>Sri Lanka</option>
+                                                                        <option value="Sri Lanka" selected>Sri Lanka</option>
                                                                     </select>
+
                                                                 </div>
                                                                 <div class="flex flex-col md:flex-row gap-4">
                                                                     <div class="flex-1">
@@ -1733,10 +1737,10 @@
                         </form>
 
                         <script>
-                            function wizard() {
+                            function wizard(selectedBoxValue) {
                                 return {
                                     step: 1,
-                                    selectedBox: 4, // Ensure this matches to show this section
+                                    selectedBox: selectedBoxValue, // Ensure this matches to show this section
                                     selected: '',
                                     sameAddress: '',
                                     propertyCount: 2,
@@ -1746,6 +1750,54 @@
                                         this.selected = option;
                                         // Reset step if needed
                                         this.step = 1;
+                                    },
+
+                                    get headingLabel() {
+                                        switch (this.selectedBox) {
+                                            case 1:
+                                                return 'How many chalets are you listing?';
+                                            case 2:
+                                                return 'How many villas are you listing?';
+                                            case 4:
+                                                return 'How many holiday homes are you listing?';
+                                            case 5:
+                                                return 'How many apart hotels are you listing?';
+                                            default:
+                                                return 'How many holiday parks are you listing?';
+                                        }
+                                    },
+
+
+                                    get singleLabel() {
+                                        console.log('Selected Box:', this.selectedBox);
+                                        switch (this.selectedBox) {
+                                            case 1:
+                                                return 'One Chalet';
+                                            case 2:
+                                                return 'One Villa';
+                                            case 4:
+                                                return 'One Holiday home';
+                                            case 5:
+                                                return 'One Apart hotel';
+                                            default:
+                                                return 'One Holiday park';
+                                        }
+                                    },
+
+                                    get multipleLabel() {
+                                        console.log('Selected Box:', this.selectedBox);
+                                        switch (this.selectedBox) {
+                                            case 1:
+                                                return 'Multiple Chalets';
+                                            case 2:
+                                                return 'Multiple Villas';
+                                            case 4:
+                                                return 'Multiple Holiday homes';
+                                            case 5:
+                                                return 'Multiple Apart hotels';
+                                            default:
+                                                return 'Multiple Holiday parks';
+                                        }
                                     },
 
                                     async nextStep() {
@@ -1774,6 +1826,8 @@
                                             }
                                         } else if (this.step === 6 && this.selected === 'one') {
                                             try {
+                                                console.log('Submitting form:', this.addressForm);
+
                                                 const response = await fetch(`/partner/property/step3/${this.propertyId}`, {
                                                     method: 'POST',
                                                     headers: {
@@ -1817,32 +1871,32 @@
 
 
                     <!-- Villa -->
-                    <section x-show="selectedBox === 2" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
+                    <!-- <section x-show="selectedBox === 2" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
                         <h3 class="text-xl font-bold mb-4">Villa Details</h3>
                         <p>Details related to villa...</p>
                         <button type="button" @click="step = 2" class="mt-4 bg-gray-300 px-4 py-2 rounded">Back</button>
-                    </section>
+                    </section> -->
 
                     <!-- Chalet -->
-                    <section x-show="selectedBox === 1" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
+                    <!-- <section x-show="selectedBox === 1" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
                         <h3 class="text-xl font-bold mb-4">Chalet Details</h3>
                         <p>Details related to chalet...</p>
                         <button type="button" @click="step = 2" class="mt-4 bg-gray-300 px-4 py-2 rounded">Back</button>
-                    </section>
+                    </section> -->
 
                     <!-- Holiday Park -->
-                    <section x-show="selectedBox === 6" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
+                    <!-- <section x-show="selectedBox === 6" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
                         <h3 class="text-xl font-bold mb-4">Holiday Park Details</h3>
                         <p>Details related to holiday park...</p>
                         <button type="button" @click="step = 2" class="mt-4 bg-gray-300 px-4 py-2 rounded">Back</button>
-                    </section>
+                    </section> -->
 
                     <!-- Aparthotel -->
-                    <section x-show="selectedBox ===5" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
+                    <!-- <section x-show="selectedBox ===5" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
                         <h3 class="text-xl font-bold mb-4">Aparthotel Details</h3>
                         <p>Details related to aparthotel...</p>
                         <button type="button" @click="step = 2" class="mt-4 bg-gray-300 px-4 py-2 rounded">Back</button>
-                    </section>
+                    </section> -->
                 </div>
             </template>
         </form>

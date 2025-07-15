@@ -13,7 +13,7 @@ class PropertySubcategoriesTableSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('property_subcategories')->insert([
+        DB::table('property_subcategories')->updateOrCreate([
             ['category_id' => 2, 'name' => 'One'],
             ['category_id' => 2, 'name' => 'Multiple'],
         ]);

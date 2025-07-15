@@ -9,17 +9,19 @@ class AddressTypesTableSeeder extends Seeder
 {
     public function run()
     {
-        DB::table('address_types')->insert([
-            [
-                'name' => 'one',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'name' => 'multiple_same_address', // or 'multiple' if you intend a simplified version
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-        ]);
+        $addressTypes = [
+            ['name' => 'one'],
+            ['name' => 'multiple_same_address'],
+        ];
+
+        foreach ($addressTypes as $type) {
+            DB::table('address_types')->updateOrInsert(
+                ['name' => $type['name']],
+                [
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]
+            );
+        }
     }
 }
