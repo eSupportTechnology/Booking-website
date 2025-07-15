@@ -8,8 +8,19 @@
                 <div class="w-full md:w-auto">
                     <div class="flex flex-col items-start">
                         <!-- Logo -->
+                        @php
+                            $host = str_replace('www.', '', request()->getHost());
+                            $domainConfig = config("domains.$host");
+                        @endphp
+
                         <a href="/" class="text-2xl font-bold">
-                            <h1>Bookintour.com</h1>
+                            @if ($domainConfig && $domainConfig['type'] === 'text')
+                                <h1>{{ $domainConfig['label'] }}</h1>
+                            @elseif ($domainConfig && $domainConfig['type'] === 'image')
+                                <img src="{{ asset($domainConfig['src']) }}" alt="Logo" class="h-8">
+                            @elseif (!$domainConfig)
+                                <h1>Booking.com</h1>
+                            @endif
                         </a>
 
                         <!-- Push nav a bit down to separate from logo -->
