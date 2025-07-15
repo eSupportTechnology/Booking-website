@@ -47,7 +47,7 @@ class PropertyStep2DTO extends ValidatedDTO
             'title' => 'string',
             // 'address' => 'string',
             // 'city' => 'string',
-            'country' => 'string',
+            // 'country' => 'string',
             // 'zipcode' => 'string',
             'description' => 'string',
             // 'apartment' => 'string',
