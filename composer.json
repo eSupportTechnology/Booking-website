@@ -7,9 +7,12 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "laragear/webauthn": "^4.0",
         "laravel/framework": "^12.0",
-        "laravel/socialite": "^5.20",
+        "laravel/socialite": "^5.21",
         "laravel/tinker": "^2.10.1",
+        "socialiteproviders/apple": "^5.6",
+        "spatie/laravel-data": "^4.17",
         "spatie/laravel-model-states": "^2.11",
         "spatie/laravel-permission": "^6.20",
         "wendelladriel/laravel-validated-dto": "^4.1"

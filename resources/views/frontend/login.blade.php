@@ -145,7 +145,6 @@
         <img src="{{ asset('images/facebook.png') }}" alt="Facebook" class="w-6 h-6">
       </button>
     </div>
-
     <hr class="flex-grow border-gray-300">
 
     <!-- Terms -->

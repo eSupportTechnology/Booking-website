@@ -6,7 +6,7 @@
   <section class="py-4">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex flex-col md:flex-row justify-between items-start space-y-4 md:space-y-0">
-        
+
         <!-- Left Section -->
         <div class="w-full md:w-auto">
           <div class="flex flex-col items-start space-y-2">
@@ -59,7 +59,7 @@
 
           <!-- Nav Links -->
           <a href="#" class="hover:underline font-sans" style="font-family: 'Noto Sans', sans-serif;">Already a partner?</a>
-          <a href="#" class="bg-[#1F8FB2] px-4 py-2 rounded hover:bg-[#29ACD5] text-white font-sans border border-white">Sign in</a>
+          <a href="{{ url('partner/sign-in') }}" class="bg-[#1F8FB2] px-4 py-2 rounded hover:bg-[#29ACD5] text-white font-sans border border-white">Sign in</a>
           <a href="#" class="bg-[#3CC0E9] px-4 py-2 rounded hover:bg-[#29ACD5] text-white font-sans">Help</a>
         </div>
       </div>
@@ -78,7 +78,7 @@
   on <span class="text-white font-extrabold">Bookintour.com</span>
 </h1>
 <p class="text-white text-xl mt-4 max-w-4xl font-light leading-snug" style="font-family: 'Noto Sans', sans-serif;">
-  List on one of the world’s most downloaded travel apps to earn more, faster and expand into new markets.
+  List on one of the world's most downloaded travel apps to earn more, faster and expand into new markets.
 </p>
 
 
@@ -103,11 +103,11 @@
         </li>
       </ul>
       <button class="w-full bg-[#3CC0E9] text-white font-semibold py-2 rounded hover:bg-[#2bb3db] transition duration-200">
-        Get started now →
+        <a href="{{ url('partner/register/email') }}" class="block w-full h-full text-white">Get started now →</a>
       </button>
       <p class="mt-4 text-sm">
         <span class="font-bold text-black">Already started a registration?</span><br>
-        <a href="#" class="text-[#3CC0E9] hover:underline">Continue your registration</a>
+        <a href="{{ url('partner/register/email') }}" class="text-[#3CC0E9] hover:underline">Continue your registration</a>
       </p>
     </div>
   </div>
@@ -116,7 +116,7 @@
 
 <section class="py-12 bg-white">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-           <h2 class="text-3xl font-semibold text-gray-800 mb-8"  style="font-family: 'Poppins', sans-serif;">Host worry-free. We’ve got your back</h2>
+           <h2 class="text-3xl font-semibold text-gray-800 mb-8"  style="font-family: 'Poppins', sans-serif;">Host worry-free. We've got your back</h2>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <!-- Column 1: Your rental, your rules -->
@@ -126,7 +126,7 @@
   <li class="flex items-start gap-2">
     <img src="{{ asset('assets/black-tick.svg') }}" alt="Check" class="w-5 h-5 mt-1" />
     <span class="text-base">
-      Accept or decline bookings with 
+      Accept or decline bookings with
       <a href="#" class="underline text-base text-blue-500">Request to Book</a>.
     </span>
   </li>
@@ -153,9 +153,9 @@
   <li class="flex items-start gap-2">
     <img src="{{ asset('assets/black-tick.svg') }}" alt="Check" class="w-5 h-5 mt-1" />
     <span class="text-base">
-   Chat with your guests before accepting 
+   Chat with your guests before accepting
 their stay with pre-booking messaging.*
-    
+
     </span>
   </li>
 
@@ -175,7 +175,7 @@ their stay with pre-booking messaging.*
   <li class="flex items-start gap-2">
     <img src="{{ asset('assets/black-tick.svg') }}" alt="Check" class="w-5 h-5 mt-1" />
     <span class="text-base">
-     Protection against liability claims from 
+     Protection against liability claims from
 guests and neighbours up to €/$/
 £1,000,000 for every reservation.
     </span>
@@ -224,7 +224,7 @@ guests and neighbours up to €/$/
           </div>
         </li>
       </ul>
-      
+
 
       <!-- Right Column -->
       <ul class="pl-0 space-y-4">
@@ -271,7 +271,7 @@ guests and neighbours up to €/$/
       <!-- Card 1 -->
 <div class="flex flex-col items-center text-center">
     <img src="{{ asset('images/post.png') }}" alt="Import Icon" class="w-[100px] h-[100px] mb-4" />
-    
+
     <!-- Content container to align left -->
     <div class="text-left">
         <h3 class="text-lg font-bold mb-2" style="font-family: 'Noto Sans', sans-serif;">
@@ -289,7 +289,7 @@ guests and neighbours up to €/$/
             <!-- Card 2: Start fast with review scores -->
          <div class="flex flex-col items-center text-center">
     <img src="{{ asset('images/puzzels.png') }}" alt="Review Icon" class="w-[100px] h-[100px] mb-4" />
-    
+
     <div class="text-left">
         <h3 class="text-lg font-bold mb-2" style="font-family: 'Noto Sans', sans-serif;">
             Start fast with review scores
@@ -304,13 +304,13 @@ guests and neighbours up to €/$/
             <!-- Card 3: Stand out in the market -->
        <div class="flex flex-col items-center text-center">
     <img src="{{ asset('images/search.png') }}" alt="Stand Out Icon" class="w-[90px] h-[100px] mb-4" />
-    
+
     <div class="text-left">
         <h3 class="text-lg font-bold mb-2" style="font-family: 'Noto Sans', sans-serif;">
             Stand out in the market
         </h3>
         <p class="text-base" style="font-family: 'Noto Sans', sans-serif;">
-            The “New to HorizonStay.com” label helps you stand out in our search results.
+            The "New to HorizonStay.com" label helps you stand out in our search results.
         </p>
     </div>
 </div>
@@ -326,9 +326,9 @@ guests and neighbours up to €/$/
 <section class="py-32 bg-white relative overflow-hidden">
     <!-- Background map slightly enlarged and centered -->
     <div class="absolute inset-0 flex items-center justify-center z-0">
-        <img 
-            src="{{ asset('images/map.png') }}" 
-            alt="World Map" 
+        <img
+            src="{{ asset('images/map.png') }}"
+            alt="World Map"
             class="w-[900px] h-auto object-contain opacity-30"
         />
     </div>
@@ -355,7 +355,7 @@ guests and neighbours up to €/$/
                 </div>
             </div>
 
-         
+
         </div>
                 <button class="bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded mt-2" style="font-family: 'Noto Sans', sans-serif;">
      Reach new guests today
@@ -375,7 +375,7 @@ guests and neighbours up to €/$/
             <!-- Testimonial Card -->
             <div class="border border-yellow-400 p-6 rounded-md bg-white shadow-sm">
                 <p class="text-sm italic mb-4" style="font-family: 'Noto Sans', sans-serif;">
-                    “I was able to list within 15 minutes, and no more than two hours later, I had my first booking!”
+                    "I was able to list within 15 minutes, and no more than two hours later, I had my first booking!"
                 </p>
                 <div class="flex items-center gap-3 mt-4">
                     <img src="{{ asset('images/x.jpg') }}" alt="Parley Rose" class="w-12 h-12 rounded-full object-cover border-2 border-gray-300" />
@@ -388,7 +388,7 @@ guests and neighbours up to €/$/
 
             <div class="border border-blue-400 p-6 rounded-md bg-white shadow-sm">
                 <p class="text-sm italic mb-4" style="font-family: 'Noto Sans', sans-serif;">
-                    “eSupport.com is the most straightforward [OTA] to work with. Everything is clear. It’s easy. And it frees us up to focus on the aspects that we can really add value to, like the guest experience.”
+                    "eSupport.com is the most straightforward [OTA] to work with. Everything is clear. It's easy. And it frees us up to focus on the aspects that we can really add value to, like the guest experience."
                 </p>
                 <div class="flex items-center gap-3 mt-4">
                     <img src="{{ asset('images/y.jpg') }}" alt="Martin Friedman" class="w-12 h-12 rounded-full object-cover border-2 border-gray-300" />
@@ -401,7 +401,7 @@ guests and neighbours up to €/$/
 
             <div class="border border-yellow-400 p-6 rounded-md bg-white shadow-sm">
                 <p class="text-sm italic mb-4" style="font-family: 'Noto Sans', sans-serif;">
-                    “eSupport.com accounts for our largest share of guests and has helped get us where we are today.”
+                    "eSupport.com accounts for our largest share of guests and has helped get us where we are today."
                 </p>
                 <div class="flex items-center gap-3 mt-4">
                     <img src="{{ asset('images/z.jpg') }}" alt="Michel and Aja" class="w-12 h-12 rounded-full object-cover border-2 border-gray-300" />
@@ -414,7 +414,7 @@ guests and neighbours up to €/$/
 
             <div class="border border-blue-400 p-6 rounded-md bg-white shadow-sm">
                 <p class="text-sm italic mb-4" style="font-family: 'Noto Sans', sans-serif;">
-                    “Travellers come to Charming Lofts from all over the world. eSupport.com really helps with that. Unlike some other platforms, it's multinational and caters to a much larger audience. For me, that was a real game-changer.”
+                    "Travellers come to Charming Lofts from all over the world. eSupport.com really helps with that. Unlike some other platforms, it's multinational and caters to a much larger audience. For me, that was a real game-changer."
                 </p>
                 <div class="flex items-center gap-3 mt-4">
                     <img src="{{ asset('images/t.jpg') }}" alt="Parley Rose" class="w-12 h-12 rounded-full object-cover border-2 border-gray-300" />
@@ -427,7 +427,7 @@ guests and neighbours up to €/$/
 
             <div class="border border-yellow-400 p-6 rounded-md bg-white shadow-sm">
                 <p class="text-sm italic mb-4" style="font-family: 'Noto Sans', sans-serif;">
-                    “After joining eSupport.com and setting up the listing, my occupancy went up significantly and bookings were coming in five to six months in advance.”
+                    "After joining eSupport.com and setting up the listing, my occupancy went up significantly and bookings were coming in five to six months in advance."
                 </p>
                 <div class="flex items-center gap-3 mt-4">
                     <img src="{{ asset('images/t.jpg') }}" alt="Martin Friedman" class="w-12 h-12 rounded-full object-cover border-2 border-gray-300" />
@@ -440,7 +440,7 @@ guests and neighbours up to €/$/
 
             <div class="border border-blue-400 p-6 rounded-md bg-white shadow-sm">
                 <p class="text-sm italic mb-4">
-                    “Getting started with eSupport.com was super simple and took no time at all.”
+                    "Getting started with eSupport.com was super simple and took no time at all."
                 </p>
                 <div class="flex items-center gap-3 mt-4">
                     <img src="{{ asset('images/v.jpg') }}" alt="Michel and Aja" class="w-12 h-12 rounded-full object-cover border-2 border-gray-300" />
@@ -454,7 +454,7 @@ guests and neighbours up to €/$/
 
         <!-- Join Button -->
         <div class="text-center mt-10">
-         
+
         </div>
               <button class="bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded mt-2" style="font-family: 'Noto Sans', sans-serif;">
      Reach new guests today
@@ -470,9 +470,9 @@ guests and neighbours up to €/$/
 
 </div>
 
-          
-       
-    
+
+
+
 
         <!-- Two column layout -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -499,7 +499,7 @@ guests and neighbours up to €/$/
                     <p class="mt-2 text-gray-600 hidden answer" style="font-family: 'Noto Sans', sans-serif;">
                         We offer a full refund within the first 14 days of your purchase.
                     </p>
-                </div> 
+                </div>
             </div>
 
             <!-- Right Column -->
@@ -525,9 +525,9 @@ guests and neighbours up to €/$/
                     <p class="mt-2 text-gray-600 hidden answer" style="font-family: 'Noto Sans', sans-serif;">
                         Yes, we offer a 7-day free trial with access to all features.
                     </p>
-                </div>   
+                </div>
 
-               
+
             </div>
         </div>
         <p class="mt-4 text-gray-600" style="font-family: 'Noto Sans', sans-serif;">
@@ -585,7 +585,7 @@ Still have questions? Find answers to all your questions on our
 </script>
 <footer class="bg-[#1A93B6] text-white py-12 px-4">
     <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 relative">
-        
+
         <!-- Left Text -->
         <div class="md:col-span-2 flex flex-col justify-center">
             <h2 class="text-4xl md:text-5xl font-bold mb-4" style="font-family: 'Poppins', sans-serif;">
