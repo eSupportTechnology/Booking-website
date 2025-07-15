@@ -46,6 +46,12 @@ class PropertyController extends Controller
                     'subcategories' => $subcategories,
                     'category' => 'apartment',
                 ]);
+            case 3:  // Hotel
+                return view('partner.partner-hotels-create-1', [
+                    'categoryId' => $categoryId,
+                    'subcategories' => $subcategories,
+                    'category' => 'hotel',
+                ]);
 
             default:
                 abort(404);
@@ -147,13 +153,13 @@ class PropertyController extends Controller
         try {
             Log::info('Fetching property for update', ['property_id' => $request->input('property_id', $propertyId)]);
             $property = Property::findOrFail($request->input('property_id', $propertyId));
-           
+
             Log::info('Loaded property for update', ['property' => $property->toArray()]);
             $dto = PropertyStep2DTO::fromRequest($request);
             Log::info('DTO created from request', ['dto' => $dto->toArray()]);
             $updatedProperty = $action->updatePropertyStep2($property, $dto);
             Log::info('Property after update', ['property' => $updatedProperty->toArray()]);
-         
+
             return response()->json([
                 'success' => true,
                 'message' => 'Step 2 data saved successfully',

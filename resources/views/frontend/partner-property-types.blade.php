@@ -102,7 +102,7 @@
         </a>
 
       </div>
-       <a href="{{ route('partner.hotels.create.1') }}">
+       <a href="">
       <button class="mt-4 mb-2 bg-[#3CC0E9] hover:bg-[#29ACD5] text-white px-4 py-2 rounded text-sm font-semibold mx-auto w-[70%]">
         List your property
       </button>
@@ -117,6 +117,7 @@
           <h2 class="text-base font-semibold">Hotel, B&Bs, and more</h2>
           <p class="text-sm text-gray-600 text-center">Properties like hotels, B&Bs, guest houses, hostels, aparthotels, etc.</p>
         </div>
+        <a href="{{ url('/partner/property_subcategory/3') }}">
         <button class="mt-4 mb-2 bg-[#3CC0E9] hover:bg-[#29ACD5] text-white px-4 py-2 rounded text-sm font-semibold mx-auto w-[70%]">
           List your property
         </button>
