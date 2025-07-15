@@ -9,19 +9,35 @@
                     <div class="flex flex-col items-start">
                         <!-- Logo -->
                         @php
-                            $host = str_replace('www.', '', request()->getHost());
-                            $domainConfig = config("domains.$host");
+                            use Illuminate\Support\Str;
+
+                            // 1. Get the raw host & port
+                            $host = request()->getHost(); // e.g. "www.BookingTour.com"
+                            $port = request()->getPort(); // e.g. 80, 443, or custom
+
+                            // 2. Normalize: lowercase + strip "www."
+                            $normalized = Str::of($host)->lower()->replaceFirst('www.', '')->toString();
+
+                            // 3. If non‑standard port, append it
+                            if ($port && !in_array($port, [80, 443])) {
+                                $normalized .= ":{$port}";
+                            }
+
+                            // 4. Pull in your domain config
+                            $domainConfig = config("domains.{$normalized}");
                         @endphp
 
                         <a href="/" class="text-2xl font-bold">
-                            @if ($domainConfig && $domainConfig['type'] === 'text')
+                            @if (!empty($domainConfig) && $domainConfig['type'] === 'text')
                                 <h1>{{ $domainConfig['label'] }}</h1>
-                            @elseif ($domainConfig && $domainConfig['type'] === 'image')
+                            @elseif (!empty($domainConfig) && $domainConfig['type'] === 'image')
                                 <img src="{{ asset($domainConfig['src']) }}" alt="Logo" class="h-8">
-                            @elseif (!$domainConfig)
+                            @else
+                                {{-- Fallback --}}
                                 <h1>Booking</h1>
                             @endif
                         </a>
+
 
 
                         <!-- Push nav a bit down to separate from logo -->
