@@ -19,9 +19,10 @@
                             @elseif ($domainConfig && $domainConfig['type'] === 'image')
                                 <img src="{{ asset($domainConfig['src']) }}" alt="Logo" class="h-8">
                             @elseif (!$domainConfig)
-                                <h1>Booking.com</h1>
+                                <h1>Booking</h1>
                             @endif
                         </a>
+
 
                         <!-- Push nav a bit down to separate from logo -->
                         @php
