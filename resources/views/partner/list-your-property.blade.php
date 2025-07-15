@@ -24,8 +24,15 @@
         <!-- Right Section -->
         <div class="flex items-center space-x-4 flex-wrap">
           <!-- Language Button -->
-          <button id="language-button" type="button" class="flex items-center justify-center w-7 h-7 bg-white rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-hidden">
-            <img src="{{ asset('images/uk.png') }}" alt="UK Flag" class="w-full h-full object-cover rounded-full" />
+          @php
+          $locale = app()->getLocale();
+          $language = config('languages.' . $locale);
+          $flag = isset($language['flag']) ? asset($language['flag']) : asset('images/flags/uk.png');
+          @endphp
+
+          <button id="language-button" type="button"
+            class="flex items-center justify-center w-7 h-7 bg-white rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-hidden">
+            <img src="{{ $flag }}" alt="{{ $language['name'] ?? 'Language' }}" class="w-full h-full object-cover rounded-full" />
           </button>
 
           <!-- Language Modal -->
@@ -44,41 +51,45 @@
               <div class="mt-4">
                 <p class="mb-4 text-base text-gray-500 dark:text-gray-400">Suggested for you</p>
                 <div class="grid grid-cols-2 gap-4">
-                  <button class="flex items-center justify-between p-2 space-x-2 text-base font-normal text-gray-700 rounded-lg hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
-                    <img src="https://upload.wikimedia.org/wikipedia/en/a/ae/Flag_of_the_United_Kingdom_%281-2%29.svg" alt="English (UK)" class="h-5 w-5" />
-                    <span>English (UK)</span>
-                  </button>
-                  <button class="flex items-center justify-between p-2 space-x-2 text-base font-normal text-gray-700 rounded-lg hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/4/48/Flag_of_Germany.svg" alt="Deutsch" class="h-5 w-5" />
-                    <span>Deutsch</span>
-                  </button>
+                  @foreach (config('languages') as $code => $lang)
+                  <a href="{{ route('lang.change', ['lang' => $code]) }}">
+                    <button class="flex items-center justify-between p-2 space-x-2 text-base font-normal text-gray-700 rounded-lg hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
+                      <img src="{{ asset($lang['flag']) }}" alt="{{ $lang['name'] }}" class="h-5 w-5" />
+                      <span>{{ $lang['name'] }}</span>
+                    </button>
+                  </a>
+                  @endforeach
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Nav Links -->
           @if(session('partner_name'))
           <span class="bg-white text-[#1F8FB2] px-4 py-2 rounded font-bold" style="font-family: 'Noto Sans', sans-serif;">{{ session('partner_name') }}</span>
-          <form action="{{ route('partner.logout') }}" method="POST">
-            @csrf
-            <button
-              type="submit"
-              class="bg-[#3CC0E9] px-4 py-2 rounded hover:bg-[#29ACD5] text-white font-sans">
-              Logout
-            </button>
-          </form>
+             <!-- Logout Link -->
+<a href="#" 
+   onclick="event.preventDefault(); document.getElementById('logout-form').submit();" 
+   class="bg-[#1F8FB2] px-4 py-2 rounded hover:bg-[#29ACD5] text-white font-sans border border-white">
+   Logout
+</a>
+
+<!-- Hidden Logout Form -->
+<form id="logout-form" action="{{ route('partner.logout') }}" method="POST" class="hidden">
+    @csrf
+</form>
 
           @elseif(Auth::check())
           <span class="bg-white text-[#1F8FB2] px-4 py-2 rounded font-bold" style="font-family: 'Noto Sans', sans-serif;">{{ Auth::user()->name }}</span>
-          <form action="{{ route('partner.logout') }}" method="POST">
+        <!-- Logout Link -->
+<form action="{{ route('partner.logout') }}" method="POST">
             @csrf
             <button
               type="submit"
               class="bg-[#3CC0E9] px-4 py-2 rounded hover:bg-[#29ACD5] text-white font-sans">
               Logout
             </button>
-          </form>
+          </form>
+
 
           @else
           <a href="#" class="hover:underline font-sans" style="font-family: 'Noto Sans', sans-serif;">Already a partner?</a>
@@ -86,6 +97,7 @@
           @endif
           <a href="#" class="bg-[#3CC0E9] px-4 py-2 rounded hover:bg-[#29ACD5] text-white font-sans">Help</a>
         </div>
+
       </div>
     </div>
   </section>
@@ -96,13 +108,13 @@
   <div class="container px-4 md:px-8 max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
     <!-- Left Text Column -->
     <div class="w-full md:w-1/2">
-      <h1 class="text-3xl md:text-5xl font-bold  -mt-12" style="font-family: 'Poppins', sans-serif; line-height: 1.4;">
-        List your <br>
-        <span class="text-[#3CC0E9] font-semibold">holiday rental</span><br>
-        on <span class="text-white font-extrabold">Bookintour.com</span>
+      <h1 class="text-3xl md:text-5xl font-bold -mt-12" style="font-family: 'Poppins', sans-serif; line-height: 1.4;">
+        @lang('messages.list_your') <br>
+        <span class="text-[#3CC0E9] font-semibold">@lang('messages.holiday_rental')</span><br>
+        @lang('messages.on') 
       </h1>
       <p class="text-white text-xl mt-4 max-w-4xl font-light leading-snug" style="font-family: 'Noto Sans', sans-serif;">
-        List on one of the world's most downloaded travel apps to earn more, faster and expand into new markets.
+        @lang('messages.description')
       </p>
 
       @if(Auth::check())
@@ -113,111 +125,121 @@
 
     <!-- Right Box -->
     <div class="w-full md:w-1/2 bg-white text-black p-6 rounded-lg border-4 border-yellow-400 shadow-md max-w-md">
-      <h2 class="text-xl font-bold mb-4" style="font-family: 'Poppins', sans-serif;">Register for free</h2>
+      <h2 class="text-xl font-bold mb-4" style="font-family: 'Poppins', sans-serif;">
+        @lang('messages.register_free')
+      </h2>
+
       <ul class="list-none space-y-2 mb-6">
         <li class="flex items-start">
           <span class="text-green-500 mr-2">✔</span>
-          <p>45% of hosts get their first booking within a week</p>
+          <p>@lang('messages.booking_within_week')</p>
         </li>
         <li class="flex items-start">
           <span class="text-green-500 mr-2">✔</span>
-          <p>Choose instant bookings or Request to Book</p>
+          <p>@lang('messages.choose_booking_option')</p>
         </li>
         <li class="flex items-start">
           <span class="text-green-500 mr-2">✔</span>
-          <p>We'll facilitate payments for you</p>
+          <p>@lang('messages.payment_facilitation')</p>
         </li>
       </ul>
+
       @if(Auth::check())
       <a href="{{ route('partner.property.category') }}" class="w-full bg-[#3CC0E9] text-white font-semibold py-2 rounded hover:bg-[#2bb3db] transition duration-200 text-center block">
-        Get started now →
+        @lang('messages.get_started_now') →
       </a>
       @else
       <button class="w-full bg-[#3CC0E9] text-white font-semibold py-2 rounded hover:bg-[#2bb3db] transition duration-200">
-        <a href="{{ url('partner/register/email') }}" class="block w-full h-full text-white">Get started now →</a>
+        <a href="{{ url('partner/register/email') }}" class="block w-full h-full text-white">@lang('messages.get_started_now') →</a>
       </button>
       @endif
 
       <p class="mt-4 text-sm">
-        <span class="font-bold text-black">Already started a registration?</span><br>
-        <a href="#" class="text-[#3CC0E9] hover:underline">Continue your registration</a>
+        <span class="font-bold text-black">@lang('messages.already_registered')</span><br>
+        <a href="#" class="text-[#3CC0E9] hover:underline">@lang('messages.continue_registration')</a>
       </p>
     </div>
+
   </div>
 </section>
 
 
 <section class="py-12 bg-white">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <h2 class="text-3xl font-semibold text-gray-800 mb-8" style="font-family: 'Poppins', sans-serif;">Host worry-free. We've got your back</h2>
+    <h2 class="text-3xl font-semibold text-gray-800 mb-8" style="font-family: 'Poppins', sans-serif;">
+      @lang('messages.host_worry_free')
+    </h2>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <!-- Column 1: Your rental, your rules -->
+      <!-- Column 1 -->
       <div>
-        <h3 class="text-xl font-semibold mb-4" style="font-family: 'Noto Sans', sans-serif;">Your rental, your rules</h3>
-        <ul class=" text-gray-700 space-y-3 " style="font-family: 'Noto Sans', sans-serif;">
+        <h3 class="text-xl font-semibold mb-4" style="font-family: 'Noto Sans', sans-serif;">
+          @lang('messages.your_rental_rules')
+        </h3>
+        <ul class="text-gray-700 space-y-3" style="font-family: 'Noto Sans', sans-serif;">
           <li class="flex items-start gap-2">
             <img src="{{ asset('assets/black-tick.svg') }}" alt="Check" class="w-5 h-5 mt-1" />
             <span class="text-base">
-              Accept or decline bookings with
-              <a href="#" class="underline text-base text-blue-500">Request to Book</a>.
+              @lang('messages.accept_decline_bookings')
+              <a href="#" class="underline text-base text-blue-500">@lang('messages.request_to_book')</a>.
             </span>
           </li>
 
           <li class="flex items-start gap-2">
             <img src="{{ asset('assets/black-tick.svg') }}" alt="Check" class="w-5 h-5 mt-1" />
             <span class="text-base">
-              Manage your guests' expectations by setting up clear house rules.
+              @lang('messages.set_house_rules')
             </span>
           </li>
         </ul>
-
 
         <button class="bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded mt-10" style="font-family: 'Noto Sans', sans-serif;">
-          Host with us today
+          @lang('messages.host_with_us')
         </button>
-        <p class="text-sm text-gray-500 mt-2" style="font-family: 'Noto Sans', sans-serif;">*Currently available for guest bookings made via iOS.</p>
+        <p class="text-sm text-gray-500 mt-2" style="font-family: 'Noto Sans', sans-serif;">
+          @lang('messages.ios_only_note')
+        </p>
       </div>
 
-      <!-- Column 2: Get to know your guests -->
+      <!-- Column 2 -->
       <div>
-        <h3 class="text-xl font-semibold mb-4" style="font-family: 'Noto Sans', sans-serif;">Your rental, your rules</h3>
-        <ul class=" text-gray-700 space-y-2" style="font-family: 'Noto Sans', sans-serif;">
+        <h3 class="text-xl font-semibold mb-4" style="font-family: 'Noto Sans', sans-serif;">
+          @lang('messages.get_to_know_guests')
+        </h3>
+        <ul class="text-gray-700 space-y-2" style="font-family: 'Noto Sans', sans-serif;">
           <li class="flex items-start gap-2">
             <img src="{{ asset('assets/black-tick.svg') }}" alt="Check" class="w-5 h-5 mt-1" />
             <span class="text-base">
-              Chat with your guests before accepting
-              their stay with pre-booking messaging.*
-
+              @lang('messages.chat_before_accepting')
             </span>
           </li>
 
           <li class="flex items-start gap-2">
             <img src="{{ asset('assets/black-tick.svg') }}" alt="Check" class="w-5 h-5 mt-1" />
             <span class="text-base">
-              Access guest travel history insights.
+              @lang('messages.access_guest_history')
             </span>
           </li>
         </ul>
       </div>
 
-      <!-- Column 3: Stay protected -->
+      <!-- Column 3 -->
       <div>
-        <h3 class="text-xl font-semibold mb-4" style="font-family: 'Noto Sans', sans-serif;">Your rental, your rules</h3>
-        <ul class=" text-gray-700 space-y-2" style="font-family: 'Noto Sans', sans-serif;">
+        <h3 class="text-xl font-semibold mb-4" style="font-family: 'Noto Sans', sans-serif;">
+          @lang('messages.stay_protected')
+        </h3>
+        <ul class="text-gray-700 space-y-2" style="font-family: 'Noto Sans', sans-serif;">
           <li class="flex items-start gap-2">
             <img src="{{ asset('assets/black-tick.svg') }}" alt="Check" class="w-5 h-5 mt-1" />
             <span class="text-base">
-              Protection against liability claims from
-              guests and neighbours up to €/$/
-              £1,000,000 for every reservation.
+              @lang('messages.liability_protection')
             </span>
           </li>
 
           <li class="flex items-start gap-2">
             <img src="{{ asset('assets/black-tick.svg') }}" alt="Check" class="w-5 h-5 mt-1" />
             <span class="text-base">
-              Access guest travel history insights.
+              @lang('messages.access_guest_history')
             </span>
           </li>
         </ul>
@@ -226,10 +248,11 @@
   </div>
 </section>
 
+
 <section class="py-12 bg-[#F5F5F5]">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <h2 class="text-3xl font-semibold text-gray-800 mb-8" style="font-family: 'Poppins', sans-serif;">
-      Take control of your finances with Payments by <br> eSupport.com
+      @lang('messages.take_control_of_your_finances_with_payments_by') 
     </h2>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-gray-700">
@@ -297,7 +320,7 @@
 <section class="py-12 bg-white">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <h2 class="text-3xl font-semibold text-gray-800 mb-8" style="font-family: 'Poppins', sans-serif;">
-      Simple to begin and stay ahead
+      @lang('messages.simple_to_begin_and_stay_ahead')
     </h2>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
       <!-- Card 1: Import your property details -->
@@ -369,7 +392,7 @@
   <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="text-center">
       <h2 class="text-4xl font-bold text-black mb-16 text-left -mt-12" style="font-family: 'Poppins', sans-serif;">
-        Reach a unique global customer base
+        @lang('messages.reach_a_unique_global_customer_base')
       </h2>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-center mb-12">
@@ -621,31 +644,30 @@
     <!-- Left Text -->
     <div class="md:col-span-2 flex flex-col justify-center">
       <h2 class="text-4xl md:text-5xl font-bold mb-4" style="font-family: 'Poppins', sans-serif;">
-        Sign up and start <br class="hidden md:block" />
-        welcoming guests today!
+        @lang('messages.sign_up_and_start') <br class="hidden md:block" />
+        @lang('messages.welcoming_guests_today')
       </h2>
     </div>
 
     <!-- CTA Box -->
     <div class="bg-white text-black p-6 rounded-lg border-4 border-yellow-400 shadow-md w-full max-w-sm mx-auto md:mx-0">
       <h3 class="text-lg font-semibold mb-4" style="font-family: 'Poppins', sans-serif;">Register for free</h3>
-      <ul class="space-y-2 mb-4 text-sm">
+      <ul class="list-none space-y-2 mb-6">
         <li class="flex items-start">
-          <span class="text-green-600 font-bold" style="font-family: 'Noto Sans', sans-serif;">✓</span>
-          <span class="ml-2" style="font-family: 'Noto Sans', sans-serif;">45% of hosts get their first booking within a week</span>
+          <span class="text-green-500 mr-2">✔</span>
+          <p>@lang('messages.booking_within_week')</p>
         </li>
         <li class="flex items-start">
-          <span class="text-green-600 font-bold" style="font-family: 'Noto Sans', sans-serif;">✓</span>
-          <span class="ml-2" style="font-family: 'Noto Sans', sans-serif;">Choose instant bookings or Request to Book</span>
+          <span class="text-green-500 mr-2">✔</span>
+          <p>@lang('messages.choose_booking_option')</p>
         </li>
         <li class="flex items-start">
-          <span class="text-green-600 font-bold" style="font-family: 'Noto Sans', sans-serif;">✓</span>
-          <span class="ml-2" style="font-family: 'Noto Sans', sans-serif;">We'll facilitate payments for you</span>
+          <span class="text-green-500 mr-2">✔</span>
+          <p>@lang('messages.payment_facilitation')</p>
         </li>
       </ul>
-      <a href="#"
-        class="block bg-sky-400 hover:bg-sky-500 text-white text-center font-semibold py-2 rounded-md transition" style="font-family: 'Noto Sans', sans-serif;">
-        Get started now →
+      <a href="{{ route('partner.property.category') }}" class="w-full bg-[#3CC0E9] text-white font-semibold py-2 rounded hover:bg-[#2bb3db] transition duration-200 text-center block">
+        @lang('messages.get_started_now') →
       </a>
     </div>
   </div>

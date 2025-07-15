@@ -646,46 +646,80 @@
             </div>
 <hr class="my-6 border-t border-gray-300">
             <!-- Type of breakfast -->
-            <div>
-                <p class="font-semibold text-sm text-gray-800 mb-2">What type of breakfast do you offer? <span class="text-sm text-gray-500">(Select all that apply)</span></p>
-                <div class="flex flex-wrap gap-2">
-                    @foreach(['A la carte', 'American', 'Asian', 'Breakfast to go', 'Buffet', 'Continental', 'Full English/Irish', 'Gluten-Free', 'Halal', 'Italian', 'Kosher', 'Vegan', 'Vegetarian'] as $option)
-                        <label class="bg-gray-100 px-3 py-1 rounded-full text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-200">
-                            <input type="checkbox" class="hidden"> {{ $option }}
-                        </label>
-                    @endforeach
-                </div>
-            </div>
+          <div x-data="{ selected: [] }">
+  <p class="font-semibold text-sm text-gray-800 mb-2">
+    What type of breakfast do you offer? 
+    <span class="text-sm text-gray-500">(Select all that apply)</span>
+  </p>
+
+  <div class="flex flex-wrap gap-2">
+    @foreach(['A la carte', 'American', 'Asian', 'Breakfast to go', 'Buffet', 'Continental', 'Full English/Irish', 'Gluten-Free', 'Halal', 'Italian', 'Kosher', 'Vegan', 'Vegetarian'] as $option)
+      <label
+        :class="selected.includes('{{ $option }}') 
+                  ? 'bg-[#3CC0E9] text-white' 
+                  : 'border border-gray-300 text-gray-700 hover:bg-gray-200'"
+        class="px-3 py-1 rounded-full text-sm font-medium cursor-pointer transition"
+      >
+        <input type="checkbox" class="hidden" 
+               :value="'{{ $option }}'"
+               x-model="selected"> 
+        {{ $option }}
+      </label>
+    @endforeach
+  </div>
+</div>
+
         </div>
 
         <!-- Parking Section -->
         <div class="bg-white shadow rounded-lg p-6 space-y-4 border">
-            <h3 class="text-xl font-semibold text-gray-700">Parking</h3>
+            <h3 class="text-base font-semibold text-gray-700">Parking</h3>
 
+            <hr class="my-6 border-t border-gray-300">
             <!-- Is parking available -->
             <div>
-                <p class="font-medium text-gray-800 mb-2">Is parking available to guests?</p>
-                <div class="flex flex-col sm:flex-row gap-4">
-                    <label><input type="radio" name="parking_available" class="mr-2"> Yes, free</label>
+                <p class="text-sm font-semibold text-gray-800 mb-2">Is parking available to guests?</p>
+                               <div class="flex flex-col text-sm gap-2">
+    <label><input type="radio" name="parking_available" class="mr-2"> Yes, free</label>
                     <label><input type="radio" name="parking_available" class="mr-2"> Yes, paid</label>
                     <label><input type="radio" name="parking_available" class="mr-2"> No</label>
-                </div>
+</div>
+               
             </div>
-
+    <hr class="my-6 border-t border-gray-300">
             <!-- Parking cost -->
-            <div>
-                <p class="font-medium text-gray-800 mb-2">How much does parking cost?</p>
-                <div class="flex flex-col sm:flex-row items-center gap-4">
-                    <select class="border rounded px-3 py-2 w-40">
-                        <option>USD</option>
-                        <option>LKR</option>
-                    </select>
-                    <input type="text" placeholder="Amount" class="border rounded px-3 py-2 w-32">
-                    <select class="border rounded px-3 py-2 w-32">
-                        <option>Per day</option>
-                        <option>Per stay</option>
-                    </select>
-                </div>
+       <div>
+  <p class="text-base font-semibold text-gray-800 mb-2">How much does parking cost?</p>
+
+  <div class="flex flex-col sm:flex-row items-center gap-4">
+
+    <!-- Input + Currency Select Wrapper -->
+    <div class="relative w-full max-w-xs">
+      <!-- Currency Select -->
+      <select class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-transparent text-gray-700 text-sm pr-1 pl-1 focus:outline-none">
+        <option value="usd">US$</option>
+        <option value="eur">€</option>
+        <option value="gbp">£</option>
+        <option value="lkr">Rs</option>
+      </select>
+
+      <!-- Input Field -->
+      <input
+        type="text"
+        value="120.00"
+        class="w-full border border-gray-400 rounded-md pl-14 pr-2 py-2 text-gray-700 font-semibold focus:ring-2 focus:ring-blue-300 focus:outline-none"
+      />
+    </div>
+
+    <!-- Rate Select -->
+    <select class="border border-gray-300 rounded px-3 py-2 w-32 text-sm text-gray-700">
+      <option>Per day</option>
+      <option>Per stay</option>
+    </select>
+
+  </div>
+
+
             </div>
 
             <!-- Reservation needed -->
@@ -1275,9 +1309,212 @@
 
 <!-- ✅ Step 5: Legal Information -->
 <section x-show="step === 5">
-  <h2 class="text-2xl font-bold text-blue-700 mb-4">Legal information</h2>
-  <p class="text-gray-600">Provide required legal documents and compliance information.</p>
-  <!-- Add your legal details form here -->
+   <div class="px-4 py-8 mt-6 w-full max-w-2xl mx-auto lg:ml-24 space-y-6" x-data="{ ownershipType: '', owners: [{ firstName: '', lastName: '', dob: '' }] }">
+
+    <h2 class="text-3xl font-bold text-gray-800">Partner verification</h2>
+
+    <div class="bg-white p-6 rounded-lg shadow-sm border space-y-4 text-sm text-gray-700">
+      <p class="text-sm text-gray-800">
+        In order to comply with various legal and regulatory requirements, we need to collect and verify some information about you and your property.
+      </p>
+
+      <div>
+        <label class="block font-semibold text-gray-900 mb-2">
+          Is the accommodation owned by an individual or business entity?
+        </label>
+        <select x-model="ownershipType" class="w-full p-2 border rounded text-sm focus:ring focus:ring-sky-200">
+          <option value="">Select an option</option>
+          <option value="individual">I am an individual running a business</option>
+          <option value="business">I represent a business entity</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Individual Form -->
+    <div x-show="ownershipType === 'individual'" x-transition class="bg-white p-6 rounded-lg  space-y-4">
+
+ <p class="text-sm text-gray-800">
+        Please provide the full names and dates of birth of all individuals who own 25% or more of the accommodation.
+      </p>
+      <!-- Owner Input Blocks -->
+      <template x-for="(owner, index) in owners" :key="index">
+        
+        <div class="border p-4 rounded-lg space-y-4 bg-white">
+          
+     
+          <div>
+            <label class="block  text-sm font-semibold text-gray-600">First Name</label>
+            <input type="text" x-model="owner.firstName" placeholder="First Name"
+                   class="w-full p-2 border rounded text-sm" />
+          </div>
+
+          <div>
+            <label class="block  text-sm font-semibold text-gray-600">Last Name</label>
+            <input type="text" x-model="owner.lastName" placeholder="Last Name"
+                   class="w-full p-2 border rounded text-sm" />
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-gray-600 mb-2">Date of Birth</label>
+            <input type="date" x-model="owner.dob"
+                   class="w-full p-2 border rounded text-sm focus:outline-none focus:ring-2 focus:ring-sky-200" />
+          </div>
+
+          <div x-show="owners.length > 1" class="text-right">
+            <button @click="owners.splice(index, 1)"
+                    class="text-red-600 text-sm hover:underline">
+              Remove
+            </button>
+          </div>
+        </div>
+      </template>
+
+  <!-- Add Another Owner -->
+      <div>
+        <button @click="owners.push({ firstName: '', lastName: '', dob: '' })"
+                type="button"
+                class="text-sky-600 text-sm font-medium hover:underline mt-2">
+          + Add another
+        </button>
+      </div>
+      <!-- Single Optional Field Outside Loop -->
+      <div>
+        <label class="block font-semibold text-sm text-gray-600">
+          If any owners go by an alternative name or names, please provide those details.
+          <span class="text-gray-500">- (Optional)</span>
+        </label>
+        <input type="text"
+               
+               class="w-full p-2 border rounded text-sm" />
+      </div>
+
+    
+    </div>
+
+    <!-- Business Form -->
+    <div x-show="ownershipType === 'business'" x-transition class="bg-white p-6 rounded-lg shadow border space-y-4">
+
+
+      <div class="border p-4 rounded-lg space-y-4 bg-white">
+
+<div>
+            <label class="block  text-sm font-semibold text-gray-600">Full name of business entity</label>
+            <input type="text" x-model="owner.firstName" placeholder="First Name"
+                   class="w-full p-2 border rounded text-sm" />
+          </div>
+
+          <div>
+            <label class="block  text-sm font-semibold text-gray-600">Address of business entity</label>
+            <input type="text" x-model="owner.address" placeholder="Address"
+                   class="w-full p-2 border rounded text-sm" />
+          </div>
+
+          <div>
+            <label class="block  text-sm font-semibold text-gray-600">Zip Code</label>
+            <input type="text" x-model="owner.zipCode" placeholder="Zip Code"
+                   class="w-full p-2 border rounded text-sm" />
+          </div>
+          <div>
+            <label class="block  text-sm font-semibold text-gray-600">City</label>
+            <input type="text" x-model="owner.city" placeholder="City"
+                   class="w-full p-2 border rounded text-sm" />
+          </div>
+      <div>
+  <label class="block text-sm font-semibold text-gray-600">Country</label>
+  <select x-model="owner.country"
+          class="w-full p-2 border rounded text-sm">
+    <option value="" >Select a country</option>
+    <option value="Sri Lanka">Sri Lanka</option>
+    <option value="India">India</option>
+    <option value="United States">United States</option>
+    <option value="United Kingdom">United Kingdom</option>
+    <option value="Australia">Australia</option>
+    <!-- Add more countries as needed -->
+  </select>
+</div>
+
+          
+
+ <div>
+        <label class="block font-semibold text-sm text-gray-600">
+        If the company operates under a different name (e.g. "trading as" name) in relation to the accommodation, please provide those details.
+          <span class="text-gray-500">- (Optional)</span>
+        </label>
+        <input type="text"
+               
+               class="w-full p-2 border rounded text-sm" />
+      </div>
+          
+
+
+</div>
+ <p class="text-sm text-gray-800">
+        Please provide the full names and dates of birth of all individuals who own 25% or more of the accommodation.
+      </p>
+      <!-- Owner Input Blocks -->
+      <template x-for="(owner, index) in owners" :key="index">
+        <div class="border p-4 rounded-lg space-y-4 bg-white">
+          
+          <div>
+            <label class="block  text-sm font-semibold text-gray-600">First Name</label>
+            <input type="text" x-model="owner.firstName" placeholder="First Name"
+                   class="w-full p-2 border rounded text-sm" />
+          </div>
+
+          <div>
+            <label class="block  text-sm font-semibold text-gray-600">Last Name</label>
+            <input type="text" x-model="owner.lastName" placeholder="Last Name"
+                   class="w-full p-2 border rounded text-sm" />
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-gray-600 mb-2">Date of Birth</label>
+            <input type="date" x-model="owner.dob"
+                   class="w-full p-2 border rounded text-sm focus:outline-none focus:ring-2 focus:ring-sky-200" />
+          </div>
+
+          <div x-show="owners.length > 1" class="text-right">
+            <button @click="owners.splice(index, 1)"
+                    class="text-red-600 text-sm hover:underline">
+              Remove
+            </button>
+          </div>
+        </div>
+      </template>
+
+  <!-- Add Another Owner -->
+      <div>
+        <button @click="owners.push({ firstName: '', lastName: '', dob: '' })"
+                type="button"
+                class="text-sky-600 text-sm font-medium hover:underline mt-2">
+          + Add another
+        </button>
+      </div>
+      <!-- Single Optional Field Outside Loop -->
+      <div>
+        <label class="block font-semibold text-sm text-gray-600">
+          If any owners go by an alternative name or names, please provide those details.
+          <span class="text-gray-500">- (Optional)</span>
+        </label>
+        <input type="text"
+               
+               class="w-full p-2 border rounded text-sm" />
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="flex justify-between pt-4">
+      <button @click="step--"
+             class="flex items-center border border-[#3CC0E9] rounded text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12">
+        
+            ←
+      </button>
+      <button @click="step++"
+              class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition ">
+        Continue
+      </button>
+    </div>
+  </div>
 </section>
 
 <!-- ✅ Step 6: Review and Complete -->

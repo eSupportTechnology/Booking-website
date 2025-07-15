@@ -98,7 +98,6 @@
             <!-- STEP 1 -->
             <div x-show="step === 1" x-cloak x-data="{
                 selectedBox: '',
-                step: 1,
                 propertyId: null,
                 subtypes: [],
                 subcategories: {{ Js::from($subcategories) }},
