@@ -1,28 +1,23 @@
 <?php
-// config/domains.php
+
 return [
-    // ← typo here:
-    // 'bookintour.com' => [ … ],
-    // 'www.bookintour.com' => [ … ],
-
-    // to the correct spelling:
-    'bookingtour.com'     => [
-        'type'  => 'text',
-        'label' => 'Bookingtour.com',
+    env('APP_DOMAIN') => [
+        'type' => env('APP_DOMAIN_TYPE', 'text'),
+        'label' => env('APP_DOMAIN_LABEL', 'Bookingtour.com'),
     ],
-    'www.bookingtour.com' => [
-        'type'  => 'text',
-        'label' => 'Bookingtour.com',
+    'www.' . env('APP_DOMAIN') => [
+        'type' => env('APP_DOMAIN_TYPE', 'text'),
+        'label' => env('APP_DOMAIN_LABEL', 'Bookingtour.com'),
     ],
 
-    'inselor.de'          => [
-        'type' => 'image',
-        'src'  => 'images/inselor-logo.png',
+    env('INSELOR_DOMAIN') => [
+        'type' => env('INSELOR_DOMAIN_TYPE', 'image'),
+        'src'  => env('INSELOR_DOMAIN_SRC', 'images/inselor-logo.png'),
     ],
-    'www.inselor.de'      => [
-        'type' => 'image',
-        'src'  => 'images/inselor-logo.png',
+    'www.' . env('INSELOR_DOMAIN') => [
+        'type' => env('INSELOR_DOMAIN_TYPE', 'image'),
+        'src'  => env('INSELOR_DOMAIN_SRC', 'images/inselor-logo.png'),
     ],
-
-    // ... your localhost/dev entries
 ];
+
+
