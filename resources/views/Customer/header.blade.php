@@ -16,17 +16,16 @@
                             @if (in_array($host, ['localhost', '127.0.0.1', 'bookintour.com']))
                                 <h1>Bookintour.com</h1>
                             @elseif ($host === 'inselor.de')
-                                <img src="{{ asset('images/inselor-logo.png') }}" alt="Inselor" class="h-10 w-auto" />
+                                <img src="{{ asset('images/inselor-logo.png') }}" alt="Inselor" class="h-12 w-auto align-middle" />
                             @endif
                         </a>
-
 
                         <!-- Push nav a bit down to separate from logo -->
                         @php
                             $currentRoute = request()->route()->getName(); // Get current route name
                         @endphp
 
-                        <nav class="flex flex-wrap gap-4 text-sm md:text-base mt-6 ">
+                        <nav class="flex flex-wrap gap-4 text-sm md:text-base ">
                             <!-- Stays Link -->
                             <a href="{{ route('stays') }}"
                                 class="flex items-center space-x-1 px-3 py-1 rounded-full border
