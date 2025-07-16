@@ -16,7 +16,7 @@
                             @if (in_array($host, ['localhost', '127.0.0.1', 'bookintour.com']))
                                 <h1>Bookintour.com</h1>
                             @elseif ($host === 'inselor.de')
-                                <img src="{{ asset('images/inselor-logo.png') }}" alt="Inselor" class="h-8" />
+                                <img src="{{ asset('images/inselor-logo.png') }}" alt="Inselor" class="h-10 w-auto" />
                             @endif
                         </a>
 
