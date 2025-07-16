@@ -167,16 +167,32 @@
 
                     @auth('customer')
                         <!-- Profile dropdown -->
-                        <!-- Profile dropdown -->
                         <div class="relative group">
                             <button class=" text-[#3CC0E9] font-base px-4 py-2 rounded  flex items-center space-x-2">
                                 <!-- Profile Icon with Border -->
-                                <div class="bg-white p-2 border border-[#3CC0E9] rounded-full">
-                                    <img src="{{ asset('assets/user.svg') }}" class="w-5 h-5" alt="Profile" />
+                                @php
+                                    $profileImage = Auth::guard('customer')->user()?->customerPersonalDetail
+                                        ?->profile_image;
+
+                                    $divClasses =
+                                        'bg-white border border-[#3CC0E9] rounded-full flex items-center justify-center ';
+                                    $divClasses .= $profileImage ? 'w-10 h-10' : 'p-2 w-10 h-10';
+
+                                    $imgClasses = $profileImage
+                                        ? 'w-10 h-10 rounded-full object-cover'
+                                        : 'w-7 h-7 rounded-full object-cover';
+                                @endphp
+
+                                <div class="{{ $divClasses }}">
+                                    <img src="{{ $profileImage ? asset('storage/' . $profileImage) : asset('assets/user.svg') }}"
+                                        class="{{ $imgClasses }}" alt="Profile" />
                                 </div>
 
+
+
+
                                 <!-- My Account Link -->
-                                <a href="/my-account" class="text-white hover:underline"
+                                <a href="#" class="text-white hover:underline"
                                     style="font-family: 'Noto Sans', sans-serif;">
                                     Your Account
                                 </a>
@@ -250,7 +266,7 @@
         </section>
     </header>
 
-@push('scripts')
-    <script src="{{ asset('assets/Customer/js/header.js') }}"></script>
-@endpush
-@stack('scripts')
+    @push('scripts')
+        <script src="{{ asset('assets/Customer/js/header.js') }}"></script>
+    @endpush
+    @stack('scripts')

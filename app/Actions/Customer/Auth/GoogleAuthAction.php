@@ -17,30 +17,50 @@ class GoogleAuthAction
         Log::info("Google Auth process started for: {$dto->email}");
 
         try {
-            $user = User::where('email', $dto->email)->first();
             $isNewUser = false;
 
-            if (!$user) {
-                $randomPassword = Str::random();
+            // Check for user, including soft-deleted
+            $user = User::withTrashed()->where('email', $dto->email)->first();
 
+            // If user is soft-deleted, restore and update
+            if ($user && $user->trashed()) {
+                $user->restore();
+
+                $user->update([
+                    'name' => $dto->name,
+                    'email_verified_at' => now(),
+                ]);
+
+                Log::info("Restored soft-deleted user via Google Auth: {$dto->email}");
+            }
+
+            // If user is entirely new
+            if (!$user) {
                 $user = User::create([
                     'name' => $dto->name,
                     'email' => $dto->email,
                     'email_verified_at' => now(),
-                    'password' => Hash::make($randomPassword),
+                    'password' => null, 
                 ]);
 
                 if (!$user) {
                     Log::error("User creation returned null.");
+                    throw new \Exception("Failed to create user.");
                 }
+
                 Log::debug("User created: ", $user->toArray());
 
+                $user->assignRole('customer');
                 $isNewUser = true;
+
                 Log::info("New user created via Google Auth: {$dto->email}");
             }
 
+
+            // Login the user
             Auth::login($user, true);
 
+            // Dispatch welcome email if new
             if ($isNewUser) {
                 SendWelcomeEmailJob::dispatch($dto->email, $dto->name);
             }

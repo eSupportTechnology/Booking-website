@@ -15,23 +15,40 @@ class FacebookAuthAction
         Log::info("Facebook Auth process started for: {$dto->email}");
 
         try {
-            // Check if user exists by email or Facebook ID
-            $user = User::where('email', $dto->email)
-                       ->first();
             $isNewUser = false;
 
+            // Check for user, including soft-deleted
+            $user = User::withTrashed()->where('email', $dto->email)->first();
+
+            // If user is soft-deleted, restore and update
+            if ($user && $user->trashed()) {
+                $user->restore();
+
+                $user->update([
+                    'name' => $dto->name,
+                    'email_verified_at' => now(),
+                ]);
+
+                Log::info("Restored soft-deleted user via Google Auth: {$dto->email}");
+            }
+
             if (!$user) {
-                // Create new user
                 $user = User::create([
                     'name' => $dto->name,
                     'email' => $dto->email,
                     'email_verified_at' => now(),
                     'password' => null,
                 ]);
+
                 $isNewUser = true;
                 Log::info("New user created via Facebook Auth: {$dto->email}");
+
+                // ✅ Assign role
+                if ($user && !$user->hasRole('customer')) {
+                    $user->assignRole('customer');
+                    Log::info("Role 'customer' assigned to Facebook-auth user: {$dto->email}");
+                }
             } else {
-                // Update existing user with Facebook data
                 $updateData = [];
 
                 if (!$user->email_verified_at) {
@@ -42,12 +59,16 @@ class FacebookAuthAction
                     $user->update($updateData);
                     Log::info("Existing user updated with Facebook data: {$dto->email}");
                 }
+
+                // ✅ Assign role if missing
+                if (!$user->hasRole('customer')) {
+                    $user->assignRole('customer');
+                    Log::info("Role 'customer' assigned to existing Facebook user: {$dto->email}");
+                }
             }
 
-            // Authenticate the user
             Auth::guard('customer')->login($user, true);
 
-            // Queue welcome email job only for new users
             if ($isNewUser) {
                 SendWelcomeEmailJob::dispatch($dto->email, $dto->name);
             }
@@ -57,12 +78,7 @@ class FacebookAuthAction
             return [
                 'success' => true,
                 'message' => $isNewUser ? 'Registration successful' : 'Login successful',
-                'user_data' => [
-                    'id' => $user->id,
-                    'email' => $user->email,
-                    'name' => $user->name,
-                    'is_new_user' => $isNewUser,
-                ]
+                'user_data' => $user, // Return full model, not array
             ];
 
         } catch (\Throwable $e) {

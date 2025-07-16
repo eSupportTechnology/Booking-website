@@ -110,8 +110,7 @@
 
                     <button id="language-button" type="button"
                         class="flex items-center justify-center w-7 h-7 bg-white rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-hidden">
-                        <img src="" alt=""
-                            class="w-full h-full object-cover rounded-full" />
+                        <img src="" alt="" class="w-full h-full object-cover rounded-full" />
                     </button>
 
                     <!-- Language Modal -->
@@ -234,6 +233,7 @@
                     <a href=""
                         class="bg-white font-base px-4 py-2 rounded hover:bg-blue-100"
                         style="font-family: 'Noto Sans', sans-serif; color:#3CC0E9;">Sign in</a>
+
 
                 </div>
 

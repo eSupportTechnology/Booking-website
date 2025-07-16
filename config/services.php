@@ -53,5 +53,12 @@ return [
         'private_key' => env('APPLE_PRIVATE_KEY'),
     ],
 
+'quicksend' => [
+    'email' => env('QUICKSEND_EMAIL'),
+    'api_key' => env('QUICKSEND_API_KEY'),
+    'base_url' => env('QUICKSEND_BASE_URL', 'https://quicksend.lk/Client/api.php'),
+    'sender_id' => env('QUICKSEND_SENDER_ID'),
+],
+
 
 ];

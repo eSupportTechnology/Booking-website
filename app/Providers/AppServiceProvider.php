@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Actions\SMS\SendSmsViaGetAction;
+use App\Actions\SMS\SendSmsViaPostAction;
+use App\Actions\SMS\ValidatePhoneNumberAction;
+use App\Services\QuickSendSmsService;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\ServiceProvider;
@@ -16,12 +20,25 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->singleton('translator', function ($app) {
-            $loader = new FileLoader(new Filesystem, base_path('lang')); // <-- custom lang path here
-            $translator = new Translator($loader, $app['config']['app.locale']);
-            $translator->setFallback($app['config']['app.fallback_locale']);
+        $this->app->singleton(ValidatePhoneNumberAction::class);
 
-            return $translator;
+        $this->app->singleton(SendSmsViaPostAction::class, function ($app) {
+            return new SendSmsViaPostAction(
+                $app->make(ValidatePhoneNumberAction::class)
+            );
+        });
+
+        $this->app->singleton(SendSmsViaGetAction::class, function ($app) {
+            return new SendSmsViaGetAction(
+                $app->make(ValidatePhoneNumberAction::class)
+            );
+        });
+
+        $this->app->singleton(QuickSendSmsService::class, function ($app) {
+            return new QuickSendSmsService(
+                $app->make(SendSmsViaPostAction::class),
+                $app->make(SendSmsViaGetAction::class)
+            );
         });
     }
 
@@ -30,6 +47,5 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        App::setLocale(session('locale', config('app.locale')));
     }
 }

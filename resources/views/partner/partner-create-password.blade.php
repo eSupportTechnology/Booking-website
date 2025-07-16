@@ -109,16 +109,28 @@
       <p class="text-sm text-gray-700 mt-1">Use a minimum of 10 characters, including uppercase letters, lowercase letters and numbers.</p>
     </div>
 
-    <!-- Display Validation Errors -->
+    <!-- Success Alert -->
+    @if (session('success'))
+      <div class="mb-4 p-3 rounded bg-green-100 border border-green-400 text-green-700 text-sm" role="alert">
+        {{ session('success') }}
+      </div>
+    @endif
+
+    <!-- Error Alert -->
+    @if (session('error'))
+      <div class="mb-4 p-3 rounded bg-red-100 border border-red-400 text-red-700 text-sm" role="alert">
+        {{ session('error') }}
+      </div>
+    @endif
+
+    <!-- Validation Errors -->
     @if ($errors->any())
-      <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-          <strong class="font-bold">Oops!</strong>
-          <span class="block sm:inline">There were some problems with your input.</span>
-          <ul class="mt-3 list-disc list-inside text-sm">
-              @foreach ($errors->all() as $error)
-                  <li>{{ $error }}</li>
-              @endforeach
-          </ul>
+      <div class="mb-4 p-3 rounded bg-red-100 border border-red-400 text-red-700 text-sm" role="alert">
+        <ul class="mb-0 pl-4 list-disc">
+          @foreach ($errors->all() as $error)
+            <li>{{ $error }}</li>
+          @endforeach
+        </ul>
       </div>
     @endif
 

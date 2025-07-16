@@ -12,6 +12,7 @@ use App\Mail\PartnerVerificationMail;
 use App\Http\Controllers\Partner\LoginController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Customer\CustomerPersonalDetailsController;
+use App\Http\Controllers\Customer\EmailVerifyController;
 use App\Http\Controllers\PropertyController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -59,9 +60,27 @@ Route::prefix('customer')->group(function () {
         Route::get('/', function () {
             return view('Customer.home');
         })->name('customer.dashboard');
+
+        Route::delete('/account/request-deletion', [CustomerAuthController::class, 'requestDeletion'])
+        ->name('customer.account.request-deletion');
     });
+    Route::get('/account/confirm-deletion/{token}', [CustomerAuthController::class, 'confirmDeletion'])
+    ->name('customer.account.confirm-deletion');
+
+
+    Route::delete('/customer/account', [CustomerAuthController::class, 'destroy'])
+    ->middleware('auth:customer')
+    ->name('customer.account.destroy');
+
+
     Route::get('/customer-details/create', [CustomerPersonalDetailsController::class, 'edit'])->name('customer.details.create');
     Route::post('/customer-details', [CustomerPersonalDetailsController::class, 'update'])->name('customer.details.store');
+
+
+    // Email verification routes
+    Route::post('/email/send-otp', [EmailVerifyController::class, 'sendOtp'])->name('email.send-otp');
+    Route::post('/email/verify-otp', [EmailVerifyController::class, 'verifyOtp'])->name('email.verify-otp');
+    Route::post('/email/resend-otp', [EmailVerifyController::class, 'resendOtp'])->name('email.resend-otp');
 
 
     Route::post('/customer/logout', function () {
@@ -76,7 +95,7 @@ Route::get('/list-your-property', function () {
 
 
 Route::get('/', function () {
-    return view('frontend.home');
+    return view('Customer.home');
 });
 Route::get('/property', function () {
     return view('frontend.property');
@@ -128,6 +147,15 @@ Route::get('/partner-enter-password', function () {
     return view('frontend.partner-enter-password');
 })->name('partner.enter.password');
 
+Route::get('/partner-hotels-payments', function () {
+    return view('frontend.partner-hotels-payments');
+})->name('partner.hotels.payments');
+
+Route::get('/partner-hotels-photos', function () {
+    return view('frontend.partner-hotels-photos');
+})->name('partner.hotels.photos');
+
+
 Route::get('/partner-forgot-password', function () {
     return view('frontend.partner-forgot-password');
 })->name('partner.forgot.password');
@@ -156,6 +184,21 @@ Route::get('/partner-homes-create-1', function () {
     return view('frontend.partner-homes-create-form-1');
 })->name('partner.homes.create.1');
 
+Route::get('/partner-hotels-rooms', function () {
+    return view('frontend.partner-hotels-rooms');
+})->name('partner.hotels.rooms');
+
+Route::get('/partner-hotels-create-2', function () {
+    return view('frontend.partner-hotels-create-2');
+})->name('partner.hotels.create.2');
+
+Route::get('/partner-hotels-create-1', function () {
+    return view('frontend.partner-hotels-create-1');
+})->name('partner.hotels.create.1');
+
+Route::get('/partner-hotels-edit', function () {
+    return view('frontend.partner-hotels-edit');
+})->name('partner.hotels.edit');
 
 Route::get('/airport-taxis', function () {
     return view('frontend.home');
@@ -210,9 +253,8 @@ Route::prefix('partner')->group(function () {
         ->name('partner.property.step2');
 
     // Show email registration form
-    Route::get('/register/email', function () {
-        return view('partner.partner-account-create');
-    })->name('partner.register.email.form');
+    Route::get('/register', [PartnerRegistrationController::class, 'createEmail'])->name('partner.register.email-create');
+    Route::get('/register/email', [PartnerRegistrationController::class, 'createEmail'])->name('partner.register.email.form');
 
     Route::get('/property-apartment-2', function () {
         return view('partner.partner-apartment-create-form-2');
@@ -222,20 +264,16 @@ Route::prefix('partner')->group(function () {
     Route::post('/register/email', [PartnerRegistrationController::class, 'storeEmail'])->name('partner.register.email');
 
     // Show contact details form
-    Route::get('/register/contact', function () {
-        return view('partner.partner-contact-details');
-    })->name('partner.register.contact.form');
+    Route::get('/register/contact', [PartnerRegistrationController::class, 'createContact'])->name('partner.register.contact-details');
 
     // Handle contact details POST
     Route::post('/register/contact', [PartnerRegistrationController::class, 'storeContact'])->name('partner.register.contact');
 
     // Show password creation form
-    Route::get('/register/password', function () {
-        return view('partner.partner-create-password');
-    })->name('partner.register.password');
+    Route::get('/register/password', [PartnerRegistrationController::class, 'createPassword'])->name('partner.register.password-create');
 
     // Handle password creation POST
-    Route::post('/register/password', [PartnerRegistrationController::class, 'storePassword'])->name('partner.register.password');
+    Route::post('/register/password', [PartnerRegistrationController::class, 'register'])->name('partner.register.password');
 
     // Show email verification page
     Route::get('/register/verify', function (\Illuminate\Http\Request $request) {
@@ -251,6 +289,11 @@ Route::prefix('partner')->group(function () {
     Route::get('/list-your-property', function () {
         return view('partner.list-your-property');
     })->name('partner.list-your-property');
+
+    // Partner apartment creation form
+    Route::get('/apartment/create', function () {
+        return view('partner.partner-apartment-create');
+    })->name('partner.apartment.create');
 
     // Partner two-step login
     Route::get('/sign-in', [LoginController::class, 'showEmailForm'])->name('partner.login.email');
@@ -300,16 +343,6 @@ Route::prefix('partner')->group(function () {
 
 Route::get('/partner/login', [LoginController::class, 'show'])->name('partner.login');
 Route::post('/partner/login', [LoginController::class, 'login'])->name('partner.login.submit');
-
-// Partner Registration Flow
-Route::get('/partner/register', [PartnerRegistrationController::class, 'createEmail'])->name('partner.register.email-create');
-Route::post('/partner/register/email', [PartnerRegistrationController::class, 'storeEmail'])->name('partner.register.email');
-
-Route::get('/partner/register/contact', [PartnerRegistrationController::class, 'createContact'])->name('partner.register.contact-details');
-Route::post('/partner/register/contact', [PartnerRegistrationController::class, 'storeContact'])->name('partner.register.contact');
-
-Route::get('/partner/register/password', [PartnerRegistrationController::class, 'createPassword'])->name('partner.register.password-create');
-Route::post('/partner/register/password', [PartnerRegistrationController::class, 'register'])->name('partner.register.password');
 
 // Show the email verification notice
 Route::get('/email/verify', function () {

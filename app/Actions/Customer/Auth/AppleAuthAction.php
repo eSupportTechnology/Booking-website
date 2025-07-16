@@ -15,13 +15,24 @@ class AppleAuthAction
         Log::info("Apple Auth process started for: {$dto->email}");
 
         try {
-            // Check if user exists by email or Apple ID
-            $user = User::where('email', $dto->email)
-                       ->first();
             $isNewUser = false;
 
+            // Check for user, including soft-deleted
+            $user = User::withTrashed()->where('email', $dto->email)->first();
+
+            // If user is soft-deleted, restore and update
+            if ($user && $user->trashed()) {
+                $user->restore();
+
+                $user->update([
+                    'name' => $dto->name,
+                    'email_verified_at' => now(),
+                ]);
+
+                Log::info("Restored soft-deleted user via Google Auth: {$dto->email}");
+            }
+
             if (!$user) {
-                // Create new user
                 $user = User::create([
                     'name' => $dto->name,
                     'email' => $dto->email,
@@ -30,8 +41,14 @@ class AppleAuthAction
                 ]);
                 $isNewUser = true;
                 Log::info("New user created via Apple Auth: {$dto->email}");
+
+                // ✅ Assign the 'customer' role
+                if ($user && !$user->hasRole('customer')) {
+                    $user->assignRole('customer');
+                    Log::info("Role 'customer' assigned to Apple-auth user: {$dto->email}");
+                }
             } else {
-                // Update existing user with Apple data
+                // Update existing user
                 $updateData = [];
 
                 if (!$user->email_verified_at) {
@@ -42,27 +59,26 @@ class AppleAuthAction
                     $user->update($updateData);
                     Log::info("Existing user updated with Apple data: {$dto->email}");
                 }
+
+                // ✅ Ensure role exists
+                if (!$user->hasRole('customer')) {
+                    $user->assignRole('customer');
+                    Log::info("Role 'customer' assigned to existing Apple user: {$dto->email}");
+                }
             }
 
-            // Authenticate the user
+            // Authenticate
             Auth::guard('customer')->login($user, true);
 
-            // Queue welcome email job only for new users
+            // Send welcome email
             if ($isNewUser) {
                 SendWelcomeEmailJob::dispatch($dto->email, $dto->name);
             }
 
-            Log::info("Apple Auth successful for: {$dto->email}");
-
             return [
                 'success' => true,
                 'message' => $isNewUser ? 'Registration successful' : 'Login successful',
-                'user_data' => [
-                    'id' => $user->id,
-                    'email' => $user->email,
-                    'name' => $user->name,
-                    'is_new_user' => $isNewUser,
-                ]
+                'user_data' => $user, // Return actual user model
             ];
 
         } catch (\Throwable $e) {
