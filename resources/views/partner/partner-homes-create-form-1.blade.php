@@ -116,7 +116,7 @@
                     if (this.selected === '') return;
 
                     try {
-                        const response = await fetch('{{ route('partner.property.step1.store') }}', {
+                        const response = await fetch('{{ route('partner.property.step1.store_new') }}', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -302,13 +302,14 @@
             </div>
 
             <!-- Step 3+: Property Details Sections -->
-            <template x-if="step === 3">
+            <template x-if="step === 3" @step-change.window="step = $event.detail">
                 <div>
                     <!-- Apartment -->
                     <section
-                        x-init="if (selectedBox === 3) window.location.href = '{{ route('partner.apartment.create.1') }}'"
+                        x-init="if (selectedBox === 3) window.location.href = '{{ route('partner.property.subcategory', 2) }}'"
                         x-show="false">
                     </section>
+
 
 
                     <section x-data="wizard(selectedBox)" x-show="[1, 2, 4, 5, 6].includes(selectedBox)" x-cloak>
@@ -389,11 +390,15 @@
                                     </div>
 
                                     <div class="flex items-center justify-between pt-4">
-                                        <button type="button" @click="step = 2"
+                                        <button type="button"
+                                            @click="$dispatch('step-change', 2)"
                                             class="border border-[#3CC0E9] text-blue-600  font-semibold py-2 px-4 rounded">
                                             ←
                                         </button>
-                                        <button type="button" @click="nextStep" :disabled="selected === ''"
+
+                                        <button type="button"
+                                            @click="nextStep"
+                                            :disabled="selected === ''"
                                             :class="selected === '' ? 'opacity-50 cursor-not-allowed' : ''"
                                             class="bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-3 px-8 rounded">
                                             Continue
@@ -560,37 +565,86 @@
                                         </template>
 
                                         <template x-if="step === 4 && selected === 'one'">
-                                            <div>
-                                                <h3 class="text-lg font-bold mb-2">Upload Photos</h3>
-                                                <input type="file" multiple class="border p-2 rounded w-full" />
+                                            <div class="space-y-6">
+                                                <h3 class="text-lg font-bold">Upload Photos</h3>
 
-                                                <div>
-                                                    <button type="button" @click="prevStep"
-                                                        class="mt-4 bg-gray-300 px-4 py-2 rounded"> ←</button>
-                                                    <button type="button" @click="nextStep"
-                                                        class="mt-4 bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded">
-                                                        Continue
+                                                <!-- Stylish Upload Box -->
+                                                <div
+                                                    class="relative border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center text-center hover:border-blue-400 transition"
+                                                    @dragover.prevent
+                                                    @drop.prevent>
+                                                    <svg class="w-12 h-12 text-blue-400 mb-2" fill="none" stroke="currentColor" stroke-width="1.5"
+                                                        viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            d="M3 16.5V18a2.5 2.5 0 002.5 2.5h13a2.5 2.5 0 002.5-2.5v-1.5M16.5 12L12 7.5 7.5 12M12 7.5V18" />
+                                                    </svg>
+
+                                                    <p class="text-gray-600 text-sm">Drag and drop your images here, or</p>
+
+                                                    <label class="mt-2 cursor-pointer inline-block bg-blue-100 hover:bg-blue-200 text-blue-700 px-4 py-2 rounded font-medium">
+                                                        Browse files
+                                                        <input type="file" multiple class="hidden" />
+                                                    </label>
+
+                                                    <p class="text-xs text-gray-500 mt-2">Accepted formats: JPG, PNG, WebP. Max size: 5MB each</p>
+                                                </div>
+
+                                                <!-- Navigation Buttons -->
+                                                <div class="flex justify-between pt-4">
+                                                    <button type="button"
+                                                        @click="prevStep"
+                                                        class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium px-5 py-2 rounded">
+                                                        ←
+                                                    </button>
+
+                                                    <button
+                                                        type="button"
+                                                        @click="nextStep"
+                                                        class="bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold px-6 py-2 rounded shadow">
+                                                        Continue →
                                                     </button>
                                                 </div>
                                             </div>
                                         </template>
+
 
                                         <template x-if="step === 5 && selected === 'one'">
-                                            <div>
-                                                <h3 class="text-lg font-bold mb-2">Pricing</h3>
-                                                <input type="number" placeholder="Price per night"
-                                                    class="border p-2 rounded w-full" />
+                                            <div class="space-y-6">
+                                                <h3 class="text-xl font-bold">Set Your Pricing</h3>
 
                                                 <div>
-                                                    <button type="button" @click="prevStep"
-                                                        class="mt-4 bg-gray-300 px-4 py-2 rounded"> ←</button>
-                                                    <button type="button" @click="nextStep"
-                                                        class="mt-4 bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded">
-                                                        Continue
+                                                    <label for="price" class="block text-sm font-medium text-gray-700 mb-1">Price per night (LKR)</label>
+                                                    <div class="relative rounded-md shadow-sm">
+                                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                            <span class="text-gray-500">Rs.</span>
+                                                        </div>
+                                                        <input
+                                                            id="price"
+                                                            type="number"
+                                                            min="0"
+                                                            placeholder="Enter amount"
+                                                            class="pl-12 pr-4 py-2 border border-gray-300 rounded-md w-full focus:ring-blue-500 focus:border-blue-500" />
+                                                    </div>
+                                                    <p class="text-sm text-gray-500 mt-1">Set a competitive price to attract more bookings.</p>
+                                                </div>
+
+                                                <div class="flex justify-between pt-4">
+                                                    <button type="button"
+                                                        @click="prevStep"
+                                                        class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium px-5 py-2 rounded">
+                                                        ← 
+                                                    </button>
+
+                                                    <button
+                                                        type="button"
+                                                        @click="nextStep"
+                                                        class="bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold px-6 py-2 rounded shadow">
+                                                        Continue →
                                                     </button>
                                                 </div>
                                             </div>
                                         </template>
+
 
                                         <template x-if="step === 6 && selected === 'one'">
                                             <div>
@@ -2127,9 +2181,9 @@
                                         console.log('Selected Box:', this.selectedBox);
                                         switch (this.selectedBox) {
                                             case 1:
-                                                return 'One Chalet';
-                                            case 2:
                                                 return 'One Villa';
+                                            case 2:
+                                                return 'One Chalet';
                                             case 4:
                                                 return 'One Holiday home';
                                             case 5:
@@ -2143,9 +2197,9 @@
                                         console.log('Selected Box:', this.selectedBox);
                                         switch (this.selectedBox) {
                                             case 1:
-                                                return 'Multiple Chalets';
-                                            case 2:
                                                 return 'Multiple Villas';
+                                            case 2:
+                                                return 'Multiple Chalets';
                                             case 4:
                                                 return 'Multiple Holiday homes';
                                             case 5:

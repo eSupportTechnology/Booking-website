@@ -361,7 +361,7 @@ Route::post('/email/verification-notification', function (\Illuminate\Http\Reque
     return back()->with('message', 'Verification link sent!');
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
-Route::post('/partner/property/step1', [PropertyController::class, 'storeStep1'])->name('partner.property.step1.store');
+Route::post('/partner/property/step1', [PropertyController::class, 'storeStep1'])->name('partner.property.step1.store_new');
 Route::middleware(\App\Http\Middleware\EnsurePartner::class)->group(function () {
     Route::get('/partner/property/test-index', [PropertyController::class, 'index']);
 });
