@@ -2328,7 +2328,7 @@
                 // async submitStep1() {
                 //     if (this.selected === '') return;
 
-                //     const response = await fetch('{{ route('partner.property.step1.store') }}', {
+                //     const response = await fetch('{{ route('partner.property.step1.store_new') }}', {
                 //         method: 'POST',
                 //         headers: {
                 //             'Content-Type': 'application/json',

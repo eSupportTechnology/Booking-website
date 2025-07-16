@@ -118,50 +118,13 @@
         <h2 class="text-base font-semibold">Alternative places</h2>
         <p class="text-sm text-gray-600 text-center">Properties like boats, campsites, luxury tents, etc.</p>
       </div>
-<<<<<<< HEAD
-       <a href="">
-=======
->>>>>>> staging
       <button class="mt-4 mb-2 bg-[#3CC0E9] hover:bg-[#29ACD5] text-white px-4 py-2 rounded text-sm font-semibold mx-auto w-[70%]">
         List your property
       </button>
     </div>
 
-<<<<<<< HEAD
-      <!-- Card 3 -->
-      <div class="bg-white p-4 rounded-none shadow border-t lg:border-l lg:border-t-0 text-center flex flex-col w-full h-full justify-between">
-        <div class="flex flex-col flex-grow items-center space-y-4 mt-6">
-          <img src="{{ asset('images/accomm_hotels_main_v2@2x.png') }}" alt="Apartment" class="w-12 h-12">
-          <h2 class="text-base font-semibold">Hotel, B&Bs, and more</h2>
-          <p class="text-sm text-gray-600 text-center">Properties like hotels, B&Bs, guest houses, hostels, aparthotels, etc.</p>
-        </div>
-        <a href="{{ url('/partner/property_subcategory/3') }}">
-        <button class="mt-4 mb-2 bg-[#3CC0E9] hover:bg-[#29ACD5] text-white px-4 py-2 rounded text-sm font-semibold mx-auto w-[70%]">
-          List your property
-        </button>
-      </div>
-
-      <!-- Card 4 -->
-      <div class="bg-white p-4 rounded-r-lg shadow border-t lg:border-l lg:border-t-0 text-center flex flex-col w-full h-full justify-between">
-        <div class="flex flex-col flex-grow items-center space-y-4 mt-6">
-          <img src="{{ asset('images/tent-big@2x.png') }}" alt="Apartment" class="w-12 h-12">
-          <h2 class="text-base font-semibold">Alternative places</h2>
-          <p class="text-sm text-gray-600 text-center">Properties like boats, campsites, luxury tents, etc.</p>
-        </div>
-        <button class="mt-4 mb-2 bg-[#3CC0E9] hover:bg-[#29ACD5] text-white px-4 py-2 rounded text-sm font-semibold mx-auto w-[70%]">
-          List your property
-        </button>
-      </div>
-
-    </div>
-
-    </div>
-
-  </main>
-=======
   </div>
 </main>
->>>>>>> staging
 
 </body>
 
