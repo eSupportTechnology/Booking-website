@@ -9,28 +9,16 @@
                     <div class="flex flex-col items-start">
                         <!-- Logo -->
                         @php
-    use Illuminate\Support\Str;
+                            $host = request()->getHost();
+                        @endphp
 
-    $host = request()->getHost();
-    $port = request()->getPort();
-
-    // Normalize host (lowercase, strip "www.")
-    $normalizedHost = Str::of($host)->lower()->replaceFirst('www.', '');
-
-    if ($port && ! in_array($port, [80, 443])) {
-        $normalizedHost .= ':' . $port;
-    }
-
-    $domainConfig = config("domains.$normalizedHost");
-@endphp
-
-<a href="/" class="text-2xl font-bold">
-    @if (!empty($domainConfig) && $domainConfig['type'] === 'text')
-        <h1>{{ $domainConfig['label'] }}</h1>
-    @elseif (!empty($domainConfig) && $domainConfig['type'] === 'image')
-        <img src="{{ asset($domainConfig['src']) }}" alt="Logo" class="h-8">
-    @endif
-</a>
+                        <a href="{{ url('/') }}" class="text-2xl font-bold flex items-center">
+                            @if (in_array($host, ['localhost', '127.0.0.1', 'bookintour.com']))
+                                <h1>Bookintour.com</h1>
+                            @elseif ($host === 'inselor.de')
+                                <img src="{{ asset('images/inselor-logo.png') }}" alt="Inselor" class="h-8" />
+                            @endif
+                        </a>
 
 
                         <!-- Push nav a bit down to separate from logo -->
