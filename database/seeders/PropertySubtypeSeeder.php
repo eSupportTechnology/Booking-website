@@ -10,12 +10,12 @@ class PropertySubtypeSeeder extends Seeder
     public function run(): void
     {
         $subtypes = [
-            ['subcategory_id' => 3, 'name' => 'Villa'],
-            ['subcategory_id' => 3, 'name' => 'Chalet'],
-            ['subcategory_id' => 3, 'name' => 'Apartment'],
-            ['subcategory_id' => 3, 'name' => 'Holiday Home'],
-            ['subcategory_id' => 3, 'name' => 'Apart Hotel'],
-            ['subcategory_id' => 3, 'name' => 'Holiday Park'],
+            ['subcategory_id' => 1, 'name' => 'Villa'],
+            ['subcategory_id' => 1, 'name' => 'Chalet'],
+            ['subcategory_id' => 1, 'name' => 'Apartment'],
+            ['subcategory_id' => 1, 'name' => 'Holiday Home'],
+            ['subcategory_id' => 1, 'name' => 'Apart Hotel'],
+            ['subcategory_id' => 1, 'name' => 'Holiday Park'],
         ];
 
         foreach ($subtypes as $subtype) {
