@@ -87,7 +87,7 @@
       case 'Hotel, B&Bs, and more':
       $image = 'images/accomm_hotels_main_v2@2x.png';
       $description = 'Properties like hotels, B&Bs, guest houses, hostels, aparthotels, etc.';
-      $route = route('partner.hotels.create.1');
+      $route = url('/partner/property_subcategory/3');
       break;
 
       case 'Alternative places':

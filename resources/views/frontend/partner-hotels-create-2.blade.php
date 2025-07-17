@@ -7,7 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet" />
-  
+
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet" />
   <style>
     body { font-family: 'Noto Sans', sans-serif; }
@@ -93,11 +93,11 @@
 
   <!-- Step Content Wrapper -->
   <div x-data>
-    
+
     <template x-if="step === 1">
   <div class="relative w-[1200px] h-auto overflow-hidden rounded-lg shadow mx-auto my-10 ">
     <!-- Google Maps iframe full background -->
-    <iframe 
+    <iframe
         class="absolute inset-0 w-full h-full"
         loading="lazy"
         src="https://www.google.com/maps?q=La+Grande+Villa+Nuwara+Eliya&output=embed"
@@ -162,7 +162,7 @@
               class="border border-[#3CC0E9]  text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
         ←
       </button>
-  
+
 
   <!-- Continue Button (Right) -->
   <button   type="submit"
@@ -201,7 +201,7 @@
       <p class="text-gray-700 mb-6">
         A channel manager is a third-party tool that lets you manage rates and availability across different sites you might list your place on, including Booking.com. If you're already using a channel manager, you can select 'Yes' to connect it to your listing.
       </p>
-    
+
 
     <!-- Radio Buttons -->
     <div class="bg-white p-4 border border-gray-200 rounded mb-8 space-y-4">
@@ -219,13 +219,13 @@
         <div class="bg-red-100 border border-red-300 rounded p-2">
       <div class="flex items-start text-sm text-red-700 space-x-2">
   <!-- Inline icon -->
-  <img src="{{ asset('assets/material-symbols-light_info-outline (2).svg') }}" 
-       alt="Help" 
+  <img src="{{ asset('assets/material-symbols-light_info-outline (2).svg') }}"
+       alt="Help"
        class="w-5 h-5 md:w-6 md:h-6 mt-1" />
 
   <!-- Text block -->
   <p>
-    Select 'Yes' only if you are already using a channel manager.  
+    Select 'Yes' only if you are already using a channel manager.
     You'll be able to connect your channel manager after your registration is complete – please continue to the next step.
   </p>
 </div>
@@ -250,13 +250,13 @@
               class="border border-[#3CC0E9]  text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
         ←
       </button>
- 
+
 
   <!-- Continue Button (Right) -->
   <button type="submit"
           @click="step < 9 ? step++ : step"
         :class="step === 9 ? 'opacity-50 cursor-not-allowed' : 'bg-[#3CC0E9] hover:bg-sky-500'"
-       
+
         :disabled="step === 9"
           class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300">
     Continue
@@ -354,14 +354,14 @@
   <h1 class="text-xl text-gray-700 font-bold mb-4">What can guests use at your place?</h1>
 
   <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-    
+
     <!-- Property Name Input + Checkboxes (2/3 Width) -->
     <div class="md:col-span-2 flex">
       <div class="w-full bg-white p-6 rounded shadow-md flex flex-col text-base">
-       
+
 
         <!-- 9 Checkboxes Section -->
-         
+
         <div class="mt-2">
           <h3 class="text-gray-700 font-semibold mb-2">Select property type(s)</h3>
           <div class="grid grid-cols-1 sm:grid-cols-1 gap-2 text-sm text-gray-700">
@@ -598,7 +598,7 @@
       <!-- Add Additional Languages -->
       <div id="additionalLanguagesSection" class="mt-4 hidden relative">
         <h3 class="text-lg font-medium mb-2 ">Add additional languages</h3>
-        
+
         <!-- Searchable dropdown container -->
         <div class="relative w-full max-w-md">
           <input
@@ -678,7 +678,7 @@
   <button
    type="button"  @click="step > 1 ? step-- : step"
         :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-  
+
       class="border border-[#3CC0E9] text-blue-600  hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
       ←
   </button>
@@ -882,7 +882,7 @@
         </button>
         <button   type="button"  @click="step > 1 ? step++ : step"
           class="px-6 h-12 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300 ml-[395px]">
-          Continue 
+          Continue
         </button>
       </div>
     </div>
@@ -965,7 +965,7 @@
       </div>
     </template>
 
-   
+
   </div>
 
 </body>
