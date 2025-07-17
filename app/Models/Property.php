@@ -22,6 +22,7 @@ class Property extends Model
         'zipcode',
         'latitude',
         'longitude',
+        'channel_manager',
         'status'
     ];
     public function photos()
@@ -35,5 +36,13 @@ class Property extends Model
     public function amenities()
     {
         return $this->belongsToMany(Amenity::class, 'property_amenity');
+    }
+    public function bedrooms()
+    {
+        return $this->hasMany(PropertyBedroom::class);
+    }
+    public function additionalDetails()
+    {
+        return $this->hasOne(PropertyAdditionalDetail::class);
     }
 }

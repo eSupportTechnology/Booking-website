@@ -329,7 +329,7 @@ Route::prefix('partner')->group(function () {
     // Step 2: Show next form and save more details (dynamic for any category, static route name)
     Route::get('/property/{category}/step2/{property}', [PropertyController::class, 'showStep2'])->name('partner.property.step2');
     Route::post('/property/{category}/step2/{property}', [PropertyController::class, 'storeStep2'])->name('partner.property.store.step2');
-    Route::post('/property/step3/{property}', [PropertyController::class, 'storeStep2'])->name('partner.property.store.step3');
+    Route::post('/property/step3/{property}', [PropertyController::class, 'storeStep2'])->name('partner.property.store.step2');
 
      Route::post('/logout', function () {
         Auth::logout();
@@ -361,11 +361,14 @@ Route::post('/email/verification-notification', function (\Illuminate\Http\Reque
     return back()->with('message', 'Verification link sent!');
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
-Route::post('/partner/property/step1', [PropertyController::class, 'storeStep1'])->name('partner.property.step1.store');
+Route::post('/partner/property/step1', [PropertyController::class, 'storeStep1'])->name('partner.property.step1.store_new');
 Route::middleware(\App\Http\Middleware\EnsurePartner::class)->group(function () {
     Route::get('/partner/property/test-index', [PropertyController::class, 'index']);
 });
 
 Route::post('/property/{property}/update-title', [PropertyController::class, 'updateTitle'])->name('partner.property.update-title');
+
+Route::patch('/partner/property/{property}/additional-details', [PropertyController::class, 'updateAdditionalDetails'])
+    ->name('partner.property.update.additional-details');
 
 require __DIR__ . '/auth.php';
