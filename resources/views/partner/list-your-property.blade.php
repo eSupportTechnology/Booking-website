@@ -66,25 +66,29 @@
 
           @if(session('partner_name'))
           <span class="bg-white text-[#1F8FB2] px-4 py-2 rounded font-bold" style="font-family: 'Noto Sans', sans-serif;">{{ session('partner_name') }}</span>
-          <form action="{{ route('partner.logout') }}" method="POST">
-            @csrf
-            <button
-              type="submit"
-              class="bg-[#3CC0E9] px-4 py-2 rounded hover:bg-[#29ACD5] text-white font-sans">
-              Logout
-            </button>
-          </form>
+          <a href="#" 
+   onclick="event.preventDefault(); document.getElementById('logout-form').submit();" 
+   class="bg-[#1F8FB2] px-4 py-2 rounded hover:bg-[#29ACD5] text-white font-sans border border-white">
+   Logout
+</a>
+
+<!-- Hidden Logout Form -->
+<form id="logout-form" action="{{ route('partner.logout') }}" method="POST" class="hidden">
+    @csrf
+</form>
 
           @elseif(Auth::check())
           <span class="bg-white text-[#1F8FB2] px-4 py-2 rounded font-bold" style="font-family: 'Noto Sans', sans-serif;">{{ Auth::user()->name }}</span>
-          <form action="{{ route('partner.logout') }}" method="POST">
-            @csrf
-            <button
-              type="submit"
-              class="bg-[#3CC0E9] px-4 py-2 rounded hover:bg-[#29ACD5] text-white font-sans">
-              Logout
-            </button>
-          </form>
+          <a href="#" 
+   onclick="event.preventDefault(); document.getElementById('logout-form').submit();" 
+   class="bg-[#1F8FB2] px-4 py-2 rounded hover:bg-[#29ACD5] text-white font-sans border border-white">
+   Logout
+</a>
+
+<!-- Hidden Logout Form -->
+<form id="logout-form" action="{{ route('partner.logout') }}" method="POST" class="hidden">
+    @csrf
+</form>
 
 
           @else

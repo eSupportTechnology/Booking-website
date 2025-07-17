@@ -163,7 +163,7 @@
                 }">
                 <div class="bg-white max-w-2xl w-full p-6 rounded-lg shadow">
                     <div class="max-w-xl mx-auto p-4 space-y-6">
-                        <h2 class="text-2xl font-bold text-center">What can guests book?</h2>
+                        <h2 class="text-2xl font-bold text-center">@lang('messages.what_can_guests_book')</h2>
 
                         <div class="space-y-4">
                             <template x-for="subcategory in subcategories" :key="subcategory.id">
@@ -202,7 +202,7 @@
                                     class="font-semibold py-3 px-8 rounded bg-[#3CC0E9] hover:bg-[#29ACD5] text-white"
                                     :disabled="selected === ''"
                                     :class="selected === '' ? 'opacity-50 cursor-not-allowed' : ''">
-                                    Continue
+                                    @lang('messages.continue')
                                 </button>
                             </div>
                         </div>
@@ -244,7 +244,7 @@
                     }
                 }">
                 <h2 class="text-2xl font-bold mb-8 text-left">
-                    From the list below, which property category is most similar to your place?
+                    @lang('messages.which_property_category_similar')
                 </h2>
 
                 <div class="bg-white p-6 rounded-lg shadow">
@@ -275,7 +275,7 @@
                 <div class="mt-8 text-left">
                     <a href="#" class="flex items-center space-x-2 text-sm text-blue-500 hover:underline">
                         <img src="{{ asset('assets/iconoir_question-mark-circle.svg') }}" class="w-5 h-5" />
-                        <span class="text-base">I don't see my property type on the list</span>
+                        <span class="text-base">@lang('messages.i_dont_see_my_property_type')</span>
                     </a>
 
                 </div>
@@ -292,7 +292,7 @@
                                 'bg-[#3CC0E9] hover:bg-blue-600 cursor-pointer'"
                             class="py-3 px-8 rounded transition-all duration-200 bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold"
                             type="button">
-                            Continue
+                            @lang('messages.continue')
                         </button>
 
                     </div>
@@ -1211,7 +1211,7 @@
                                                                                     class="w-6 h-6 md:w-7 md:h-7 cursor-pointer" />
                                                                                 <h3
                                                                                     class="text-gray-700 text-sm text-bold">
-                                                                                    What if I don’t see a facility I
+                                                                                    What if I don't see a facility I
                                                                                     offer?</h3>
                                                                             </div>
                                                                             <button @click="show = false"
@@ -1906,7 +1906,7 @@
 
                                                             <!-- Safety Info Box -->
                                                             <div class="bg-white border rounded-lg p-6 shadow-sm">
-                                                                <h2 class="font-semibold mb-4">We’re here to ensure you
+                                                                <h2 class="font-semibold mb-4">We're here to ensure you
                                                                     can receive bookings safely:</h2>
                                                                 <ul class="space-y-2 text-gray-700">
                                                                     <li class="flex items-start"><span
@@ -1976,7 +1976,7 @@
                                                                                         will be able to find your
                                                                                         holiday home and send a booking
                                                                                         request</li>
-                                                                                    <li>You’ll have 24 hours to accept
+                                                                                    <li>You'll have 24 hours to accept
                                                                                         or decline the request</li>
                                                                                     <li>Guests will have 24 hours to
                                                                                         finish their booking and confirm
@@ -1995,7 +1995,7 @@
                                                                             Properties that require Request to book have
                                                                             fewer confirmed bookings and a longer time
                                                                             until their first booking. They also require
-                                                                            more operational workload, as you’ll need to
+                                                                            more operational workload, as you'll need to
                                                                             respond to each request.
                                                                         </p>
                                                                     </div>
