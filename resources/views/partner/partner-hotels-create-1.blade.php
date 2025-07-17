@@ -105,7 +105,7 @@
                     if (this.selectedBox === '') return;
 
                     try {
-                        const response = await fetch('{{ route('partner.property.step1.store') }}', {
+                        const response = await fetch('{{ route('partner.property.step1.store_new') }}', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',

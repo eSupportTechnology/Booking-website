@@ -48,18 +48,68 @@ class PropertyAction
 
     public function updatePropertyStep2(Property $property, PropertyStep2DTO $dto)
     {
-        Log::info("DTO ;", [$dto]);
+        \Log::info('PropertyStep2DTO received:', (array) $dto);
         $property->update(array_filter([
             'title' => $dto->title,
             'address' => $dto->address,
+            'apartment' => $dto->apartment,
             'city' => $dto->city,
             'country' => $dto->country,
             'zipcode' => $dto->zipcode,
             'description' => $dto->description,
             'subtype_id' => $dto->subtype_id,
             'address_type_id' => $dto->address_type_id,
+            'channel_manager' => $dto->channel_manager,
         ], fn($value) => !is_null($value)));
 
+        // Save bedrooms if provided
+        \Log::info('Bedrooms array in DTO:', ['bedrooms' => $dto->bedrooms]);
+        if (!empty($dto->bedrooms)) {
+            $property->bedrooms()->delete();
+            foreach ($dto->bedrooms as $bedroom) {
+                \Log::info('Creating bedroom:', $bedroom);
+                $property->bedrooms()->create($bedroom);
+            }
+        }
+
+        $property->additionalDetails()->updateOrCreate(
+            [],
+            [
+                'guests' => $dto->guests,
+                'bathrooms' => $dto->bathrooms,
+                'allow_children' => $dto->allow_children,
+                'offer_cribs' => $dto->offer_cribs,
+                'apartment_size' => $dto->apartment_size,
+                'apartment_unit' => $dto->apartment_unit,
+            ]
+        );
+
         return $property;
+    }
+
+    public function updatePropertyPartial(Property $property, array $data, ?array $bedrooms = null)
+    {
+        $fields = [
+            'title',
+            'address',
+            'apartment',
+            'country',
+            'city',
+            'zipcode',
+            'channel_manager',
+            'description',
+        ];
+        $property->update(array_intersect_key($data, array_flip($fields)));
+
+        // Handle bedrooms data
+        if ($bedrooms !== null && is_array($bedrooms)) {
+            \Log::info('Processing bedrooms data:', ['bedrooms' => $bedrooms]);
+            $property->bedrooms()->delete();
+            foreach ($bedrooms as $bedroom) {
+                \Log::info('Creating bedroom:', $bedroom);
+                $property->bedrooms()->create($bedroom);
+            }
+        }
+        return $property->fresh();
     }
 }

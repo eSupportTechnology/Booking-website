@@ -16,6 +16,14 @@ class PropertyStep2DTO extends ValidatedDTO
     public ?int $subtype_id;
     public ?string $apartment;
     public ?int $address_type_id = null; 
+    public ?string $channel_manager;
+    public ?array $bedrooms = null;
+    public ?int $guests = null;
+    public ?int $bathrooms = null;
+    public ?string $allow_children = null;
+    public ?string $offer_cribs = null;
+    public ?int $apartment_size = null;
+    public ?string $apartment_unit = null;
 
 
 
@@ -32,6 +40,14 @@ class PropertyStep2DTO extends ValidatedDTO
             'subtype_id' => ['nullable', 'integer', 'exists:property_subtypes,id'],
             'apartment' => ['nullable', 'string', 'max:255'],
             'address_type_id' => ['nullable', 'integer', 'exists:address_types,id'],
+            'channel_manager' => ['nullable', 'string'],
+            'bedrooms' => ['nullable', 'array'],
+            'guests' => ['nullable', 'integer'],
+            'bathrooms' => ['nullable', 'integer'],
+            'allow_children' => ['nullable', 'string'],
+            'offer_cribs' => ['nullable', 'string'],
+            'apartment_size' => ['nullable', 'integer'],
+            'apartment_unit' => ['nullable', 'string'],
         ];
     }
 

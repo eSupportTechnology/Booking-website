@@ -11,6 +11,8 @@ use App\DTOs\Partner\PropertyStep1DTO;
 use App\DTOs\Partner\PropertyStep2DTO;
 use Illuminate\Support\Facades\DB;
 use App\Models\PropertyCategory;
+use App\DTOs\Partner\PropertyAdditionalDetailsDTO;
+use App\Actions\Partner\UpdatePropertyAdditionalDetailsAction;
 
 class PropertyController extends Controller
 {
@@ -26,7 +28,7 @@ class PropertyController extends Controller
         $properties = $action->execute();
         Log::info('Property categories fetched', ['properties' => $properties]);
         // dd($properties);
-        return view('frontend.partner-property-types', compact('properties'));
+        return view('partner.partner-property-types', compact('properties'));
     }
 
     public function subcategories($categoryId, PropertyAction $action)
@@ -179,28 +181,29 @@ class PropertyController extends Controller
         return response()->json(['success' => true]);
     }
 
-    public function updatePartial(Request $request, Property $property)
+    public function updatePartial(Request $request, Property $property, PropertyAction $action)
     {
         \Log::info('updatePartial called', ['request' => $request->all(), 'property_id' => $property->id]);
         try {
-            $before = $property->toArray();
-            \Log::info('Property before update', $before);
-            $property->update($request->only([
-                'title',
-                'address',
-                'apartment',
-                'country',
-                'city',
-                'zipcode',
-                'channel_manager',
-                'description',
-            ]));
-            $after = $property->fresh()->toArray();
-            \Log::info('Property after update', $after);
-            return response()->json(['success' => true, 'property' => $after]);
+            $bedrooms = $request->has('bedrooms') && is_array($request->bedrooms) ? $request->bedrooms : null;
+            $updatedProperty = $action->updatePropertyPartial($property, $request->all(), $bedrooms);
+            \Log::info('Property after update', $updatedProperty->toArray());
+            return response()->json(['success' => true, 'property' => $updatedProperty]);
         } catch (\Exception $e) {
             \Log::error('updatePartial exception', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
+    }
+
+    public function updateAdditionalDetails(
+        Request $request,
+        Property $property,
+        UpdatePropertyAdditionalDetailsAction $action
+    ) {
+        $dto = PropertyAdditionalDetailsDTO::fromRequest($request);
+
+        $action->execute($property, $dto);
+
+        return response()->json(['success' => true]);
     }
 }
