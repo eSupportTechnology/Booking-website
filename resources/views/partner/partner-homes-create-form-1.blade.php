@@ -97,7 +97,7 @@
     </header>
 
     <!-- Start Form -->
-    <div class="max-w-6xl p-4 ml-14 bg-gray-100" x-data="{ propertyId: null, selected: '', }">
+    <div class="max-w-6xl p-4 ml-14 bg-gray-100" x-data="{ propertyId: null, selected: '',  propertyName: ''}">
 
         <!-- Step 1: Main Form Step -->
         <form class="p-6 rounded-lg space-y-6" @submit.prevent>
@@ -339,7 +339,7 @@
                                         </label>
 
                                         <label
-                                            :class="selected === 'multiple' ? 'border-blue-600 border-2' :
+                                            :class="selected ===2 ? 'border-blue-600 border-2' :
                                                 'border border-gray-300'"
                                             class="block rounded p-4 cursor-pointer bg-white"
                                             @click="selectOption('multiple')">
@@ -355,7 +355,7 @@
                                         </label>
                                     </div>
 
-                                    <div x-show="selected === 'multiple'"
+                                    <div x-show="selected === 2"
                                         class="mt-6 space-y-4 bg-gray-50 p-4 rounded">
                                         <h3 class="text-lg font-semibold">Are these properties in the same address?
                                         </h3>
@@ -403,7 +403,7 @@
                                             :disabled="selected === ''"
                                             :class="selected === '' ? 'opacity-50 cursor-not-allowed' : ''"
                                             class="bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-3 px-8 rounded">
-                                            Continue
+                                            Continueee
                                         </button>
                                     </div>
                                 </div>
@@ -568,6 +568,40 @@
 
                                         <template x-if="step === 4 && selected === 'one'">
                                             <div class="space-y-6">
+                                                <h3 class="text-xl font-bold">Name Your Property</h3>
+
+                                                <div>
+                                                    <label for="propertyName" class="block text-sm font-medium text-gray-700 mb-1">Property Name</label>
+                                                    <div class="relative rounded-md shadow-sm">
+                                                        <input
+                                                            id="propertyName"
+                                                            type="text"
+                                                            x-model="propertyName"
+                                                            placeholder="e.g., Ocean View Apartment"
+                                                            class="pl-4 pr-4 py-2 border border-gray-300 rounded-md w-full focus:ring-blue-500 focus:border-blue-500" />
+                                                    </div>
+                                                    <p class="text-sm text-gray-500 mt-1">Choose a name that helps guests identify your property.</p>
+                                                </div>
+
+                                                <div class="flex justify-between pt-4">
+                                                    <button type="button"
+                                                        @click="prevStep"
+                                                        class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium px-5 py-2 rounded">
+                                                        ←
+                                                    </button>
+
+                                                    <button
+                                                        type="button"
+                                                        @click="nextStep"
+                                                        class="bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold px-6 py-2 rounded shadow">
+                                                        Continue →
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </template>
+
+                                        <template x-if="step === 5 && selected === 'one'">
+                                            <div class="space-y-6">
                                                 <h3 class="text-lg font-bold">Upload Photos</h3>
 
                                                 <!-- Stylish Upload Box -->
@@ -622,7 +656,7 @@
                                         </template>
 
 
-                                        <template x-if="step === 5 && selected === 'one'">
+                                        <template x-if="step === 6 && selected === 'one'">
                                             <div class="space-y-6">
                                                 <h3 class="text-xl font-bold">Set Your Pricing</h3>
 
@@ -660,7 +694,7 @@
                                         </template>
 
 
-                                        <template x-if="step === 6 && selected === 'one'">
+                                        <template x-if="step === 7 && selected === 'one'">
                                             <div>
                                                 <div
                                                     class="relative w-[1400px] h-auto overflow-hidden rounded-lg shadow mx-auto -mt-14 -ml-16">
@@ -2187,7 +2221,7 @@
                                     selectOption(option) {
                                         this.selected = option;
                                         // Reset step if needed
-                                        this.step = 1;
+                                        console.log('Selected:', this.selected);
                                     },
 
                                     get headingLabel() {
@@ -2239,8 +2273,10 @@
                                     },
 
                                     async nextStep() {
-                                        if (this.step === 1 && this.selected === 'one') {
+                                        if (this.step === 1 && this.selected === 'one' || this.selected === 'multiple') {
                                             try {
+
+                                                console.log('Addtress type:', this.step);
                                                 const response = await fetch(`/partner/property/step3/${this.propertyId}`, {
                                                     method: 'POST',
                                                     headers: {
@@ -2249,36 +2285,14 @@
                                                             .getAttribute('content')
                                                     },
                                                     body: JSON.stringify({
-                                                        address_type_id: this.step,
+                                                        address_type_id: this.selected === 'one' ? 1 : 2, // ✅ correct value: "one" or "multiple"
                                                         propertyId: this.propertyId
                                                     })
-                                                });
-                                                const result = await response.json();
-                                                if (result.success) {
-                                                    console.log('Step 1 saved:', result);
-                                                    this.step++;
-                                                } else {
-                                                    alert('Failed to save address step: ' + result.message);
-                                                }
-                                            } catch (e) {
-                                                console.error('Error saving step 2:', e);
-                                            }
-                                        } else if (this.step === 6 && this.selected === 'one') {
-                                            try {
-                                                console.log('Submitting form:', this.addressForm);
 
-                                                const response = await fetch(`/partner/property/step3/${this.propertyId}`, {
-                                                    method: 'POST',
-                                                    headers: {
-                                                        'Content-Type': 'application/json',
-                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                                            .getAttribute('content')
-                                                    },
-                                                    body: JSON.stringify(this.addressForm, this.propertyId)
                                                 });
                                                 const result = await response.json();
                                                 if (result.success) {
-                                                    console.log('Step 2 saved:', result);
+                                                    console.log('Address type saved:', result);
                                                     this.step++;
                                                 } else {
                                                     alert('Failed to save address step: ' + result.message);
@@ -2287,6 +2301,38 @@
                                                 console.error('Error saving step 2:', e);
                                             }
                                         } else if (this.step === 4 && this.selected === 'one') {
+                                            console.log('Submitting property name for property ID:', this.propertyId);
+
+                                            if (!this.propertyName || this.propertyName.trim() === '') {
+                                                alert('Please enter a property name.');
+                                                return;
+                                            }
+
+                                            fetch(`/partner/property/step3/${this.propertyId}`, {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                    },
+                                                    body: JSON.stringify({
+                                                        title: this.propertyName,
+                                                        property_id: this.propertyId
+                                                    })
+                                                })
+                                                .then(response => response.json())
+                                                .then(result => {
+                                                    if (result.success) {
+                                                        console.log('Property name saved:', result);
+                                                        this.step++; // move to next step
+                                                    } else {
+                                                        alert(result.message || 'Failed to save property name.');
+                                                    }
+                                                })
+                                                .catch(error => {
+                                                    console.error('Error saving property name:', error);
+                                                    alert('Something went wrong while saving the property name.');
+                                                });
+                                        } else if (this.step === 5 && this.selected === 'one') {
                                             console.log('Submitting photos for property ID:', this.propertyId);
                                             const files = this.$refs.photoInput.files;
                                             if (!files.length) {
@@ -2312,7 +2358,7 @@
                                                 .then(result => {
                                                     if (result.success) {
                                                         console.log('Photos uploaded');
-                                                        this.step++; 
+                                                        this.step++;
                                                     } else {
                                                         alert(result.message || 'Upload failed');
                                                     }
@@ -2321,6 +2367,29 @@
                                                     console.error('Upload error:', error);
                                                     alert('Something went wrong while uploading photos.');
                                                 });
+                                        } else if (this.step === 7 && this.selected === 'one') {
+                                            try {
+                                                console.log('Submitting form:', this.addressForm);
+
+                                                const response = await fetch(`/partner/property/step3/${this.propertyId}`, {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                                            .getAttribute('content')
+                                                    },
+                                                    body: JSON.stringify(this.addressForm, this.propertyId)
+                                                });
+                                                const result = await response.json();
+                                                if (result.success) {
+                                                    console.log('Addtress saved:', result);
+                                                    this.step++;
+                                                } else {
+                                                    alert('Failed to save address step: ' + result.message);
+                                                }
+                                            } catch (e) {
+                                                console.error('Error saving step 2:', e);
+                                            }
                                         } else {
                                             if (this.step === 1 && this.selected === '') return;
 

@@ -60,7 +60,7 @@ class PropertyStep2DTO extends ValidatedDTO
     protected function casts(): array
     {
         return [
-            'title' => 'string',
+            // 'title' => 'string',
             // 'address' => 'string',
             // 'city' => 'string',
             // 'country' => 'string',
