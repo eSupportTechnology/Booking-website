@@ -329,7 +329,7 @@ Route::prefix('partner')->group(function () {
     // Step 2: Show next form and save more details (dynamic for any category, static route name)
     Route::get('/property/{category}/step2/{property}', [PropertyController::class, 'showStep2'])->name('partner.property.step2');
     Route::post('/property/{category}/step2/{property}', [PropertyController::class, 'storeStep2'])->name('partner.property.store.step2');
-    Route::post('/property/step3/{property}', [PropertyController::class, 'storeStep2'])->name('partner.property.store.step3');
+    Route::post('/property/step3/{property}', [PropertyController::class, 'storeStep2'])->name('partner.property.store.step2');
 
      Route::post('/logout', function () {
         Auth::logout();
@@ -367,5 +367,9 @@ Route::middleware(\App\Http\Middleware\EnsurePartner::class)->group(function () 
 });
 
 Route::post('/property/{property}/update-title', [PropertyController::class, 'updateTitle'])->name('partner.property.update-title');
+
+// PATCH route for updating additional details (keep this new route)
+Route::patch('/partner/property/{property}/additional-details', [PropertyController::class, 'updateAdditionalDetails'])
+    ->name('partner.property.update.additional-details');
 
 require __DIR__ . '/auth.php';
