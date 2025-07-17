@@ -8,7 +8,7 @@
 </head>
 <body class="bg-gray-500 font-sans leading-normal tracking-normal" >
 
- 
+
 
     <!-- Footer -->
     <footer class="bg-white text-gray-600 py-8" style="background-color:#F5F5F5;">
