@@ -27,7 +27,7 @@
                     <div class="w-full md:w-auto">
                         <div class="flex flex-col items-start space-y-2">
                             <a href="/" class="text-2xl font-bold"
-                                style="font-family: 'Poppins', sans-serif;">Bookintour.com
+                                style="font-family: 'Poppins', sans-serif;">{{ config('domains.domain') }}
                             </a>
                             <div id="promo-box"
                                 class="bg-green-500 text-white px-4 py-2 rounded flex items-start justify-between w-full max-w-sm">
@@ -1006,7 +1006,7 @@
                                                 <input type="checkbox" id="consent"
                                                     class="mt-1 border-gray-300 rounded" x-ref="passportConsent" />
                                                 <label for="consent" class="text-sm text-gray-700">
-                                                    I consent to Booking.com storing my passport information in
+                                                    I consent to {{ config('domains.domain') }} storing my passport information in
                                                     accordance
                                                     with the
                                                     <a href="#" class="text-blue-600 hover:underline">privacy
@@ -1379,9 +1379,9 @@
                                         x-ref="passportConsent" x-model="form.termsAccepted" />
                                     <label for="consent" class="text-sm text-gray-700">
                                         I confirm that I’m authorised to provide the personal data of any co-traveller
-                                        (including children) to Booking.com for this service. In addition, I confirm
+                                        (including children) to {{ config('domains.subdomain') }} for this service. In addition, I confirm
                                         that I’ve informed the other travellers that I’m providing their personal data
-                                        to Booking.com.
+                                        to {{ config('domains.subdomain') }}.
                                     </label>
                                 </div>
 
@@ -1454,7 +1454,7 @@
     <footer class="bg-gray-100 mt-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-sm text-gray-600">
             <div class="space-x-3 mb-2">
-                <a href="#" class="hover:underline">About Booking.com</a>
+                <a href="#" class="hover:underline">About {{ config('domains.subdomain') }}</a>
                 <span class="text-gray-400">·</span>
                 <a href="#" class="hover:underline">Terms & Conditions</a>
                 <span class="text-gray-400">·</span>
@@ -1464,7 +1464,7 @@
                 <span class="text-gray-400">·</span>
                 <a href="#" class="hover:underline">Help Centre</a>
             </div>
-            <p class="text-xs text-gray-500">&copy; 1996–2025 Bookintour.com™. All rights reserved.</p>
+            <p class="text-xs text-gray-500">&copy; 1996–2025 {{ config('domains.domain') }}™. All rights reserved.</p>
         </div>
     </footer>
 

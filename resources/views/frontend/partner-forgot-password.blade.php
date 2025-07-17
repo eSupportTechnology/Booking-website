@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Signin Partner Account | Bookintour</title>
+  <title>Signin Partner Account | {{ config('domains.app_name') }}</title>
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -25,7 +25,7 @@
         <!-- Logo -->
         <div class="w-full md:w-auto md:ml-6">
           <a href="/" class="text-2xl font-bold">
-            <h1 style="font-family: 'Poppins', sans-serif;">Bookintour.com</h1>
+            <h1 style="font-family: 'Poppins', sans-serif;">{{ config('domains.domain') }}</h1>
           </a>
         </div>
 
@@ -96,12 +96,12 @@
 <!-- Form Section -->
 <section class="max-h-screen flex items-start justify-center pt-10 px-4 sm:px-6">
   <div class="w-full max-w-md space-y-6">
-    
+
 
     <div class="bg-white border border-gray-200 shadow-md rounded-md p-6 mt-8">
 
     <h2 class="text-xl font-semibold mb-2" style="font-family: 'Noto Sans', sans-serif;">Forgotten your password?</h2>
-     <p class="text-gray-600 text-sm mb-4 " style="font-family: 'Noto Sans', sans-serif;">No problem! We'll send you a link to reset it. Please enter the email address you use to sign in to Booking.com.</p>
+     <p class="text-gray-600 text-sm mb-4 " style="font-family: 'Noto Sans', sans-serif;">No problem! We'll send you a link to reset it. Please enter the email address you use to sign in to {{ config('domains.subdomain') }}.</p>
 
       <form method="POST" action="#">
         @csrf
@@ -110,8 +110,8 @@
     Username <span class="text-red-500">*</span>
   </label>
   <div class="relative">
-    <input type="email" id="email" name="email" required 
-           class="mt-1 w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" 
+    <input type="email" id="email" name="email" required
+           class="mt-1 w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
            placeholder="Enter your email address"/>
   </div>
 </div>
@@ -120,7 +120,7 @@
         <button type="submit" class="w-full text-white py-2 rounded hover:bg-blue-700 mb-2" style=" background-color:#3CC0E9;font-family: 'Noto Sans', sans-serif;">
           Send reset link
         </button>
-   
+
 
 
       </form>
@@ -128,14 +128,14 @@
       <div class="border-t border-gray-200 my-6"></div>
 
       <p class="text-xs text-gray-600 text-center" style="font-family: 'Noto Sans', sans-serif;">
-       By signing in or creating an account, you agree with our 
+       By signing in or creating an account, you agree with our
         <a href="#" class="text-blue-600 hover:underline" style="font-family: 'Noto Sans', sans-serif;">Terms & conditions</a> and
          <a href="#" class="text-blue-600 hover:underline" style="font-family: 'Noto Sans', sans-serif;">Privacy statement</a>
       </p>
 
      <p class="text-[11px] text-gray-400 text-center mt-4" style="font-family: 'Noto Sans', sans-serif;">All rights reserved.</p>
 
-      <p class="text-[11px] text-gray-400 text-center mt-1" style="font-family: 'Noto Sans', sans-serif;"> Copyright (2006 – 2025) Bookintour.com™</p>
+      <p class="text-[11px] text-gray-400 text-center mt-1" style="font-family: 'Noto Sans', sans-serif;"> Copyright (2006 – 2025) {{ config('domains.domain') }}™</p>
     </div>
   </div>
 </section>

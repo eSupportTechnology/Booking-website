@@ -2,7 +2,8 @@
 
 return [
     'Sign in or create an account' => 'පිවිසෙන්න හෝ ගිණුමක් සාදන්න',
-    'You can sign in using your Booking.com account to access our services.' => 'ඔබේ Booking.com ගිණුම භාවිතයෙන් පිවිසෙන්න.',
+    'You can sign in using your' => 'ඔබට පුරනය විය හැක ඔබගේ',
+    'account to access our services.' => 'ගිණුම භාවිතයෙන් අපගේ සේවාවන් වෙත පිවිසෙන්න.',
     'Email address' => 'ඊමේල් ලිපිනය',
     'Continue with email' => 'ඊමේල් සමඟ ඉදිරියට යන්න',
     'or use one of these options' => 'හෝ මේ විකල්ප වලින් එකක් භාවිතා කරන්න',
@@ -93,7 +94,7 @@ return [
 
     'list_your' => 'ඔබේ',
     'holiday_rental' => 'නිවාඩු නිකේතනය',
-    'on' => 'Bookintour.com හි ලැයිස්තුගත කරන්න',
+    'on' => 'මත',
     'description' => 'ලෝකයේ බහුලව බාගත කරන ලද සංචාරක යෙදුමක ලැයිස්තුගත වී වේගවත් ආදායමක් ලබා ගන්න.',
     'register_free' => 'නොමිලේ ලියාපදිංචි වන්න',
     'booking_within_week' => 'සතියක් ඇතුළත 45% ක් මුල් වාර වෙන්කිරීමක් ලබා ගනී',

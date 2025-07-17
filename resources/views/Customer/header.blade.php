@@ -9,13 +9,14 @@
                     <div class="flex flex-col items-start">
                         <!-- Logo -->
                         @php
-                            $host = request()->getHost();
+                            $host = config('domains.app_name');
+                           
                         @endphp
 
                         <a href="{{ url('/') }}" class="text-2xl font-bold flex items-center">
-                            @if (in_array($host, ['localhost', '127.0.0.1', 'bookintour.com']))
+                            @if($host == 'BookinTour')
                                 <h1>Bookintour.com</h1>
-                            @elseif ($host === 'inselor.de')
+                            @elseif ($host == 'Inselor')
                                 <img src="{{ asset('images/inselor-logo.png') }}" alt="Inselor" class="h-12 w-auto align-middle" />
                             @endif
                         </a>

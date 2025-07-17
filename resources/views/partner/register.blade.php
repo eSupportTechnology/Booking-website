@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Partner Registration - Bookintour.com</title>
+    <title>Partner Registration - {{ config('domains.domain') }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     @vite(['resources/js/app.js'])
 
@@ -27,7 +27,7 @@
                 <!-- Logo -->
                 <div class="w-full md:w-auto md:ml-6">
                     <a href="/" class="text-2xl font-bold">
-                        <h1 style="font-family: 'Poppins', sans-serif;">Bookintour.com</h1>
+                        <h1 style="font-family: 'Poppins', sans-serif;">{{ config('domains.domain') }}</h1>
                     </a>
                 </div>
 
@@ -55,18 +55,18 @@
     <div class="max-w-md mx-auto bg-white border border-gray-200 rounded-md shadow-md p-6 mt-6">
         <h2 class="text-2xl font-bold text-gray-900 mb-4">Become a Partner</h2>
         <p class="text-gray-600 text-sm mb-6">
-            List your property on Bookintour.com and start earning more bookings.
+            List your property on {{ config('domains.domain') }} and start earning more bookings.
         </p>
 
-        <a href="{{ route('partner.register.email.form') }}" 
-           class="block w-full text-white py-2 rounded hover:bg-blue-700 text-center" 
+        <a href="{{ route('partner.register.email.form') }}"
+           class="block w-full text-white py-2 rounded hover:bg-blue-700 text-center"
            style="background-color:#3CC0E9;font-family: 'Noto Sans', sans-serif;">
             Get Started
         </a>
 
         <div class="mt-6 text-center">
             <p class="text-sm text-gray-600">
-                Already have an account? 
+                Already have an account?
                 <a href="#" class="text-blue-600 hover:underline">Sign in</a>
             </p>
         </div>
@@ -78,7 +78,7 @@
                 <a href="#" class="text-blue-600 underline">Terms & conditions</a> and
                 <a href="#" class="text-blue-600 underline">Privacy statement</a>.
             </p>
-            <p class="mt-4">© 2006 – 2025 Bookintour.com™</p>
+            <p class="mt-4">© 2006 – 2025 {{ config('domains.domain') }}™</p>
         </div>
     </div>
 </main>

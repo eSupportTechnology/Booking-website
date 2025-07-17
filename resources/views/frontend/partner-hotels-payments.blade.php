@@ -18,7 +18,7 @@
       <div class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
         <!-- Logo -->
         <div class="w-full md:w-auto md:ml-6">
-          <a href="/" class="text-2xl font-bold font-poppins">Bookintour.com</a>
+          <a href="/" class="text-2xl font-bold font-poppins">{{ config('domains.domain') }}</a>
         </div>
 
         <!-- Right Section -->
@@ -103,16 +103,16 @@
     <!-- Guest Payment Options -->
     <div class="bg-white p-6 rounded-lg shadow-sm border space-y-3">
       <h3 class="font-semibold text-lg text-gray-900">How can your guests pay for their stay?</h3>
-     
-      
+
+
       <div class="flex flex-col space-y-2 pt-2">
   <label class="flex items-center space-x-2">
     <input type="radio" name="payment_method" class="form-radio text-sky-600 w-6 h-6" />
     <span class="text-sm text-gray-700">
-      Online, when they make a reservation, Bookingtour.com will facilitate your guests’ payments with the payments by Bookingtour service.
+      Online, when they make a reservation, {{ config('domains.domain') }} will facilitate your guests’ payments with the payments by {{ config('domains.app_name') }} service.
     </span>
   </label>
-  
+
   <label class="flex items-center space-x-2">
     <input type="radio" name="payment_method" class="form-radio text-sky-600 w-4 h-4" checked />
     <span class="text-sm text-gray-700">By credit, at my property</span>
@@ -123,16 +123,16 @@
 
     <!-- Info on how Bookintour.com handles payment -->
     <div class="bg-white p-6 rounded-lg shadow-sm border space-y-4">
-      <h3 class="font-semibold text-lg text-gray-900">How payment by Bookintour.com works</h3>
+      <h3 class="font-semibold text-lg text-gray-900">How payment by {{ config('domains.domain') }} works</h3>
       <ul class="list-decimal list-inside text-sm text-gray-700 space-y-2">
         <li>
-          <span class="font-sm font-semibold">Your guest pays</span> through Bookintour.com with more options like PayPal, WeChat Pay and AliPay.
+          <span class="font-sm font-semibold">Your guest pays</span> through {{ config('domains.domain') }} with more options like PayPal, WeChat Pay and AliPay.
         </li>
         <li>
           <span class="font-sm font-semibold">We facilitate your guest’s payment</span>  You don’t have to deal with fraud, chargebacks or invalid cards.
         </li>
         <li>
-          <span class="font-sm font-semibold">Bookintour.com sends payouts to you.</span> You’ll receive a bank transfer by the 15th of each month that covers all bookings with a check-out in the previous month.
+          <span class="font-sm font-semibold">{{ config('domains.domain') }} sends payouts to you.</span> You’ll receive a bank transfer by the 15th of each month that covers all bookings with a check-out in the previous month.
         </li>
       </ul>
     </div>
@@ -142,7 +142,7 @@
         <a href="{{ route('partner.hotels.edit') }}">
       <button @click="step--"
               class="flex items-center border border-[#3CC0E9] rounded text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12">
-       
+
         ←
       </button></a>
       <button @click="step++"
@@ -209,7 +209,7 @@
     <div class="flex justify-between pt-4">
       <button @click="step--"
              class="flex items-center border border-[#3CC0E9] rounded text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12">
-        
+
             ←
       </button>
       <button @click="step++"
@@ -297,11 +297,11 @@
           <span class="text-gray-500">- (Optional)</span>
         </label>
         <input type="text"
-               
+
                class="w-full p-2 border rounded text-sm" />
       </div>
 
-    
+
     </div>
 
     <!-- Business Form -->
@@ -346,7 +346,7 @@
   </select>
 </div>
 
-          
+
 
  <div>
         <label class="block font-semibold text-sm text-gray-600">
@@ -354,10 +354,10 @@
           <span class="text-gray-500">- (Optional)</span>
         </label>
         <input type="text"
-               
+
                class="w-full p-2 border rounded text-sm" />
       </div>
-          
+
 
 
 </div>
@@ -409,7 +409,7 @@
           <span class="text-gray-500">- (Optional)</span>
         </label>
         <input type="text"
-               
+
                class="w-full p-2 border rounded text-sm" />
       </div>
     </div>
@@ -418,7 +418,7 @@
     <div class="flex justify-between pt-4">
       <button @click="step--"
              class="flex items-center border border-[#3CC0E9] rounded text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12">
-        
+
             ←
       </button>
       <button @click="step++"
@@ -437,7 +437,7 @@
     <!-- Header -->
     <h2 class="text-2xl md:text-3xl font-bold text-gray-900 leading-relaxed">
   Some important information before <br class="hidden sm:block" />
-  you list your hotel on <br>Bookintour.com</span>
+  you list your hotel on <br>{{ config('domains.domain') }}</span>
 </h2>
 
     <div class="bg-white shadow-md rounded-lg border border-gray-200 p-6 space-y-4">
@@ -480,7 +480,7 @@
     <div class="flex justify-between items-center">
        <button @click="step--"
               class="flex items-center border border-[#3CC0E9] rounded text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12">
-       
+
         ←
       </button>
       <a href="{{ route('partner.hotels.edit') }}">
@@ -489,7 +489,7 @@
         Continue
       </button></a>
     </div>
-    
+
   </div>
 </template>
 

@@ -1,12 +1,8 @@
 <?php
 
 return [
-    'app_name' => env('APP_NAME', 'Bookintour.com'),
+    'app_name' => env('APP_NAME', 'BookinTour'),
+    'domain' => env('APP_DOMAIN', 'Bookintour.com'),
+    'subdomain' => env('APP_SUBDOMAIN', 'Booking.com'),
 
-    'sites' => [
-        'localhost' => 'Bookintour.com',
-        '127.0.0.1' => 'Bookintour.com',
-        'bookintour.com' => 'Bookintour.com',
-        'inselor.de' => 'Inselor',
-    ],
 ];

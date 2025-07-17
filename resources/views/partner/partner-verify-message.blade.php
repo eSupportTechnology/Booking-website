@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Verify Your Account - Bookintour.com</title>
+  <title>Verify Your Account - {{ config('domains.domain') }}</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
   @vite(['resources/js/app.js'])
@@ -29,17 +29,17 @@
     <section class="py-4">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
-          
+
           <!-- Logo -->
           <div class="w-full md:w-auto md:ml-6">
             <a href="/" class="text-2xl font-bold">
-              <h1 style="font-family: 'Poppins', sans-serif;">Bookintour.com</h1>
+              <h1 style="font-family: 'Poppins', sans-serif;">{{ config('domains.domain') }}</h1>
             </a>
           </div>
 
           <!-- Right Section -->
           <div class="flex items-center space-x-4 text-sm font-medium md:ml-auto">
-            
+
             <!-- Help Icon -->
             <a href="/help" title="Help">
               <img src="{{ asset('assets/question.svg') }}" alt="Help" class="w-6 h-6 md:w-7 md:h-7 cursor-pointer" />

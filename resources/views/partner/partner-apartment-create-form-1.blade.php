@@ -29,7 +29,7 @@
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
           <!-- Logo -->
           <div class="w-full md:w-auto md:ml-6">
-            <a href="/" class="text-2xl font-bold font-poppins">Bookintour.com</a>
+            <a href="/" class="text-2xl font-bold font-poppins">{{ config('domains.domain') }}</a>
           </div>
 
           <!-- Right Section -->
@@ -92,7 +92,7 @@
   </header>
 
   <!--Start Form-->
-  <div class="max-w-6xl p-4 ml-14  bg-gray-100" x-data="{ 
+  <div class="max-w-6xl p-4 ml-14  bg-gray-100" x-data="{
     step: 1,
     categoryId: null,
     subcategoryId: null,
@@ -273,7 +273,7 @@
 
           <!-- Info -->
           <p class="text-sm text-gray-700">
-            If your property is listed on Airbnb or Vrbo, you can speed up registration by importing it directly to Booking.com.
+            If your property is listed on Airbnb or Vrbo, you can speed up registration by importing it directly to {{ config('domains.subdomain') }}.
           </p>
 
           <!-- Checkboxes -->
@@ -345,8 +345,8 @@
               <button
                 type="submit"
                 :disabled="selectedChannels.length === 0"
-                :class="selectedChannels.length === 0 
-    ? 'bg-gray-300 text-gray-600 cursor-not-allowed' 
+                :class="selectedChannels.length === 0
+    ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
     : 'bg-[#3CC0E9] hover:bg-[#29ACD5] text-white cursor-pointer'"
                 class="font-semibold py-3 px-6 rounded transition duration-200">
                 Continue

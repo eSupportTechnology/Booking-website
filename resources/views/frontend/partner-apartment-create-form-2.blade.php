@@ -6,7 +6,7 @@
   <title>create apartment</title></title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-  
+
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet" />
@@ -26,7 +26,19 @@
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
           <!-- Logo -->
           <div class="w-full md:w-auto md:ml-6">
-            <a href="/" class="text-2xl font-bold font-poppins">Bookintour.com</a>
+              <!-- Logo -->
+                        @php
+                            $host = config('domains.app_name');
+
+                        @endphp
+
+                        <a href="{{ url('/') }}" class="text-2xl font-bold flex items-center">
+                            @if($host == 'BookinTour')
+                                <h1>Bookintour.com</h1>
+                            @elseif ($host == 'Inselor')
+                                <img src="{{ asset('images/inselor-logo.png') }}" alt="Inselor" class="h-12 w-auto align-middle" />
+                            @endif
+                        </a>
           </div>
 
           <!-- Right Section -->
@@ -99,16 +111,16 @@
  <!-- Sticky Top Navbar -->
   <nav class="border-b shadow-sm sticky top-0 z-50 ">
     <div class="max-w-full mx-auto px-4 py-3">
-      
+
       <!-- Scrollable/Responsive Nav Items -->
       <div class="flex flex-wrap sm:flex-nowrap overflow-x-auto space-x-6 sm:space-x-10 md:space-x-14 lg:space-x-20 xl:space-x-24 text-sm font-medium whitespace-nowrap">
-        
+
         <!-- Loop through nav steps -->
         <template x-for="(label, index) in ['Basic information', 'Property setup', 'Photos', 'Pricing and calendar', 'Legal information', 'Review and complete']" :key="index">
           <div class="relative">
-            
+
             <!-- Tab Label -->
-            <div 
+            <div
               @click="step = index + 1"
               class="flex items-center space-x-1 cursor-pointer transition duration-200"
               :class="step === index + 1 ? 'text-blue-600' : 'text-gray-700'"
@@ -125,8 +137,8 @@
             <template x-if="index === 0 && step === 1">
               <div class="flex space-x-1 mt-1 w-35 sm:w-48 md:w-46 lg:w-54 xl:w-62 ml-[-15px] sm:ml-[-25px] md:ml-[-35px]">
                 <template x-for="i in 3">
-                  <div 
-                    :class="wizardStep >= i ? 'bg-blue-600' : 'bg-gray-300'" 
+                  <div
+                    :class="wizardStep >= i ? 'bg-blue-600' : 'bg-gray-300'"
                     class="h-1 flex-1 rounded-full"
                   ></div>
                 </template>
@@ -138,8 +150,8 @@
 <template x-if="index === 1 && step === 2">
   <div class="flex space-x-1 mt-1 w-35 sm:w-48 md:w-56 lg:w-64 xl:w-72 ml-[-15px] sm:ml-[-25px] md:ml-[-35px]">
     <template x-for="i in 6">
-      <div 
-        :class="propertyWizardStep >= i ? 'bg-blue-600' : 'bg-gray-300'" 
+      <div
+        :class="propertyWizardStep >= i ? 'bg-blue-600' : 'bg-gray-300'"
         class="h-1 flex-1 rounded-full">
       </div>
     </template>
@@ -148,9 +160,9 @@
 
 
 
-            
 
-            
+
+
 
           </div>
         </template>
@@ -171,7 +183,7 @@
   <h1 class="text-xl text-gray-700 font-bold mb-4">What's the name of your place?</h1>
 
   <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-    
+
     <!-- Property Name Input (2/3 Width) -->
     <div class="md:col-span-2 flex">
       <div class="w-full bg-white p-6 rounded shadow-md flex flex-col text-base ">
@@ -249,7 +261,7 @@
     <button
       type="submit"
       class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
-      Continue 
+      Continue
     </button>
   </div>
 
@@ -262,7 +274,7 @@
 <template x-if="wizardStep === 2"  >
   <div class="relative w-[1200px] h-auto overflow-hidden rounded-lg shadow mx-auto my-10 ">
     <!-- Google Maps iframe full background -->
-    <iframe 
+    <iframe
         class="absolute inset-0 w-full h-full"
         loading="lazy"
         src="https://www.google.com/maps?q=La+Grande+Villa+Nuwara+Eliya&output=embed"
@@ -326,11 +338,11 @@
               class="border border-[#3CC0E9]  text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
         ←
       </button>
-  
+
 
   <!-- Continue Button (Right) -->
   <button   type="submit"
-     
+
           class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
     Continue
   </button>
@@ -354,9 +366,9 @@
         Do you want to connect this listing to your channel manager?
       </h2>
       <p class="text-gray-700 mb-6">
-        A channel manager is a third-party tool that lets you manage rates and availability across different sites you might list your place on, including Booking.com. If you're already using a channel manager, you can select 'Yes' to connect it to your listing.
+        A channel manager is a third-party tool that lets you manage rates and availability across different sites you might list your place on, including {{ config('domains.subdomain') }}. If you're already using a channel manager, you can select 'Yes' to connect it to your listing.
       </p>
-    
+
 
     <!-- Radio Buttons -->
     <div class="bg-white p-4 border border-gray-200 rounded mb-8 space-y-4">
@@ -374,13 +386,13 @@
         <div class="bg-red-100 border border-red-300 rounded p-2">
       <div class="flex items-start text-sm text-red-700 space-x-2">
   <!-- Inline icon -->
-  <img src="{{ asset('assets/material-symbols-light_info-outline (2).svg') }}" 
-       alt="Help" 
+  <img src="{{ asset('assets/material-symbols-light_info-outline (2).svg') }}"
+       alt="Help"
        class="w-5 h-5 md:w-6 md:h-6 mt-1" />
 
   <!-- Text block -->
   <p>
-    Select 'Yes' only if you are already using a channel manager.  
+    Select 'Yes' only if you are already using a channel manager.
     You'll be able to connect your channel manager after your registration is complete – please continue to the next step.
   </p>
 </div>
@@ -404,7 +416,7 @@
               class="border border-[#3CC0E9]  text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
         ←
       </button>
- 
+
 
   <!-- Continue Button (Right) -->
   <button type="submit"
@@ -425,12 +437,12 @@
 
  <!-- Property Setup Section -->
 <section x-show="step === 2">
- 
 
-  
+
+
     <template x-if="propertyWizardStep === 1">
   <div x-data="{ showBedTypeSelector: false }">
-    
+
     <!-- Header -->
     <h2 class="text-2xl font-bold mb-6">Property details</h2>
     <p class="text-gray-600 mb-4">Where can people sleep?</p>
@@ -479,7 +491,7 @@
 
     <!-- Add Bedroom Button -->
     <div class="flex items-center mt-6">
-      <button 
+      <button
         @click="showBedTypeSelector = true"
         class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded flex items-center">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -514,12 +526,12 @@
 
       <!-- Save and Cancel -->
       <div class="flex justify-end mt-6 space-x-4">
-        <button 
+        <button
           @click="showBedTypeSelector = false"
           class="text-gray-600 hover:underline text-sm">
           Cancel
         </button>
-        <button 
+        <button
           @click="showBedTypeSelector = false"
           class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm font-medium">
           Save Bedroom
@@ -547,7 +559,7 @@
 
 
     <template x-if="propertyWizardStep === 2">
-      
+
   <div class="max-w-2xl mx-auto space-y-8">
     <!-- Heading -->
      <h2 class="text-2xl font-bold text-gray-900 mt-8">What can guests use at your place?</h2>
@@ -603,7 +615,7 @@
       type="submit"
     @click="propertyWizardStep++"
       class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
-      Continue 
+      Continue
     </button>
   </div>
 
@@ -648,21 +660,21 @@
             <!-- Type of breakfast -->
           <div x-data="{ selected: [] }">
   <p class="font-semibold text-sm text-gray-800 mb-2">
-    What type of breakfast do you offer? 
+    What type of breakfast do you offer?
     <span class="text-sm text-gray-500">(Select all that apply)</span>
   </p>
 
   <div class="flex flex-wrap gap-2">
     @foreach(['A la carte', 'American', 'Asian', 'Breakfast to go', 'Buffet', 'Continental', 'Full English/Irish', 'Gluten-Free', 'Halal', 'Italian', 'Kosher', 'Vegan', 'Vegetarian'] as $option)
       <label
-        :class="selected.includes('{{ $option }}') 
-                  ? 'bg-[#3CC0E9] text-white' 
+        :class="selected.includes('{{ $option }}')
+                  ? 'bg-[#3CC0E9] text-white'
                   : 'border border-gray-300 text-gray-700 hover:bg-gray-200'"
         class="px-3 py-1 rounded-full text-sm font-medium cursor-pointer transition"
       >
-        <input type="checkbox" class="hidden" 
+        <input type="checkbox" class="hidden"
                :value="'{{ $option }}'"
-               x-model="selected"> 
+               x-model="selected">
         {{ $option }}
       </label>
     @endforeach
@@ -684,7 +696,7 @@
                     <label><input type="radio" name="parking_available" class="mr-2"> Yes, paid</label>
                     <label><input type="radio" name="parking_available" class="mr-2"> No</label>
 </div>
-               
+
             </div>
     <hr class="my-6 border-t border-gray-300">
             <!-- Parking cost -->
@@ -778,7 +790,7 @@
       <!-- Add Additional Languages -->
       <div id="additionalLanguagesSection" class="mt-4 hidden relative">
         <h3 class="text-lg font-medium mb-2 ">Add additional languages</h3>
-        
+
         <!-- Searchable dropdown container -->
         <div class="relative w-full max-w-md">
           <input
@@ -858,7 +870,7 @@
   <button
    type="button" @click="propertyWizardStep--"
         :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-  
+
       class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
       ←
   </button>
@@ -1045,7 +1057,7 @@
   <button
    type="button" @click="propertyWizardStep--"
         :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-  
+
       class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
       ←
   </button>
@@ -1077,7 +1089,7 @@
             You can easily customise these house rules later and additional house rules can be set on the Policies page of the extranet after you complete registration.
           </p>
 
-          
+
         </div>
       </div>
 
@@ -1194,7 +1206,7 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6 items-start">
       <!-- 📸 Photo Upload Area -->
-      <div 
+      <div
         class="border rounded-lg p-6 bg-white shadow-sm"
       >
         <p class="font-semibold text-gray-800 mb-2">Upload at least 5 photos of your property.</p>
@@ -1218,12 +1230,12 @@
   <img src="{{ asset('assets/mdi_camera-outline.svg') }}" alt="Upload" class="w-4 h-4" />
   <span>Upload photos</span>
 </label>
-<input 
+<input
   id="fileInput"
-  type="file" 
-  multiple 
-  accept="image/*" 
-  class="hidden" 
+  type="file"
+  multiple
+  accept="image/*"
+  class="hidden"
   @change="handleUpload"
 />
 
@@ -1258,7 +1270,7 @@
 <div x-data="{ showTips: true }">
   <div x-show="showTips" x-transition
        class="bg-white border rounded-none p-4 shadow-sm relative text-sm">
-    
+
     <button
       @click="showTips = false"
       class="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-lg"
@@ -1266,7 +1278,7 @@
     >
       &times;
     </button>
-    
+
     <h3 class="font-semibold text-gray-800 mb-2 text-base">What if I don't have professional photos?</h3>
     <p class="text-gray-600 mb-2">
       No problem! You can use a smartphone or a digital camera.
@@ -1338,10 +1350,10 @@
       </p>
       <!-- Owner Input Blocks -->
       <template x-for="(owner, index) in owners" :key="index">
-        
+
         <div class="border p-4 rounded-lg space-y-4 bg-white">
-          
-     
+
+
           <div>
             <label class="block  text-sm font-semibold text-gray-600">First Name</label>
             <input type="text" x-model="owner.firstName" placeholder="First Name"
@@ -1384,11 +1396,11 @@
           <span class="text-gray-500">- (Optional)</span>
         </label>
         <input type="text"
-               
+
                class="w-full p-2 border rounded text-sm" />
       </div>
 
-    
+
     </div>
 
     <!-- Business Form -->
@@ -1433,7 +1445,7 @@
   </select>
 </div>
 
-          
+
 
  <div>
         <label class="block font-semibold text-sm text-gray-600">
@@ -1441,10 +1453,10 @@
           <span class="text-gray-500">- (Optional)</span>
         </label>
         <input type="text"
-               
+
                class="w-full p-2 border rounded text-sm" />
       </div>
-          
+
 
 
 </div>
@@ -1454,7 +1466,7 @@
       <!-- Owner Input Blocks -->
       <template x-for="(owner, index) in owners" :key="index">
         <div class="border p-4 rounded-lg space-y-4 bg-white">
-          
+
           <div>
             <label class="block  text-sm font-semibold text-gray-600">First Name</label>
             <input type="text" x-model="owner.firstName" placeholder="First Name"
@@ -1497,7 +1509,7 @@
           <span class="text-gray-500">- (Optional)</span>
         </label>
         <input type="text"
-               
+
                class="w-full p-2 border rounded text-sm" />
       </div>
     </div>
@@ -1506,7 +1518,7 @@
     <div class="flex justify-between pt-4">
       <button @click="step--"
              class="flex items-center border border-[#3CC0E9] rounded text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12">
-        
+
             ←
       </button>
       <button @click="step++"

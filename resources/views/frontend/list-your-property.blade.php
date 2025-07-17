@@ -11,7 +11,7 @@
         <div class="w-full md:w-auto">
           <div class="flex flex-col items-start space-y-2">
             <!-- Logo -->
-            <h1 class="text-2xl font-bold" style="font-family: 'Poppins', sans-serif;">Bookintour.com</h1>
+            <h1 class="text-2xl font-bold" style="font-family: 'Poppins', sans-serif;">{{ config('domains.domain') }}</h1>
 
             <!-- Green Box Message -->
             <div id="promo-box" class="bg-green-500 text-white px-4 py-2 rounded flex items-start justify-between w-full max-w-sm">
@@ -75,7 +75,7 @@
    <h1 class="text-3xl md:text-5xl font-bold  -mt-12" style="font-family: 'Poppins', sans-serif; line-height: 1.4;">
   List your <br>
   <span class="text-[#3CC0E9] font-semibold">holiday rental</span><br>
-  on <span class="text-white font-extrabold">Bookintour.com</span>
+  on <span class="text-white font-extrabold">{{ config('domains.domain') }}</span>
 </h1>
 <p class="text-white text-xl mt-4 max-w-4xl font-light leading-snug" style="font-family: 'Noto Sans', sans-serif;">
   List on one of the world's most downloaded travel apps to earn more, faster and expand into new markets.
@@ -652,7 +652,7 @@ Still have questions? Find answers to all your questions on our
                 <span class="text-white">|</span>
                 <a href="#" class="underline" style="font-family: 'Poppins', sans-serif;">Privacy and Cookie Statement</a>
             </div>
-            <p class="mt-2 md:mt-0"  style="font-family: 'Poppins', sans-serif;">© Copyright <a href="#" class="underline"  style="font-family: 'Poppins', sans-serif;">Bookintour.com</a> 2025</p>
+            <p class="mt-2 md:mt-0"  style="font-family: 'Poppins', sans-serif;">© Copyright <a href="#" class="underline"  style="font-family: 'Poppins', sans-serif;">{{ config('domains.domain') }}</a> 2025</p>
         </div>
     </div>
 </footer>

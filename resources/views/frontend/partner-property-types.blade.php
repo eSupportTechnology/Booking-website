@@ -30,7 +30,7 @@
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
           <!-- Logo -->
           <div class="w-full md:w-auto md:ml-6">
-            <a href="/" class="text-2xl font-bold font-poppins">Bookintour.com</a>
+            <a href="/" class="text-2xl font-bold font-poppins">{{ config('domains.domain') }}</a>
           </div>
 
           <!-- Right Section -->
@@ -55,10 +55,10 @@
   <!-- Main Section -->
 <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10">
   <h2 class="text-xl sm:text-3xl font-bold text-left mb-2 mt-20">
-    List your property on Bookintour.com and start welcoming guests in no time!
+    List your property on {{ config('domains.domain') }} and start welcoming guests in no time!
   </h2>
   <p class="text-left text-gray-600 text-lg mb-8">
-    To get started, choose the type of property you want to list on Bookintour.com
+    To get started, choose the type of property you want to list on {{ config('domains.domain') }}
   </p>
 
   <!-- Responsive Property Cards All in One Row -->

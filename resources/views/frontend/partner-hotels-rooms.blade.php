@@ -7,7 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet" />
-  
+
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet" />
   <style>
     body { font-family: 'Noto Sans', sans-serif; }
@@ -20,7 +20,7 @@
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
           <!-- Logo -->
           <div class="w-full md:w-auto md:ml-6">
-            <a href="/" class="text-2xl font-bold font-poppins">Bookintour.com</a>
+            <a href="/" class="text-2xl font-bold font-poppins">{{ config('domains.domain') }}</a>
           </div>
 
           <!-- Right Section -->
@@ -93,19 +93,19 @@
 
   <!-- Step Content Wrapper -->
   <div x-data>
-    
+
     <template x-if="step === 1">
    <form class="p-4 space-y-6 mt-8 ml-">
 
 
-       
+
  <!-- Section Title -->
         <h2 class="text-2xl font-bold ml-32">Room Details</h2>
        <!-- Unit Type + Count Section -->
 <div class="w-full max-w-xl bg-white rounded-lg border border-gray-200 p-4 shadow-sm ml-32">
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-    
+
     <!-- Unit Type -->
   <div class="w-[500px]">
   <label class="block text-sm font-semibold text-gray-700 mb-1">What type of unit is this?</label>
@@ -124,7 +124,7 @@
   How many rooms of this type do you have?
 </label>
 
-      <input 
+      <input
         type="number"
         min="1"
         step="1"
@@ -253,14 +253,14 @@
 </div>
 
 
-  
+
 <!-- Tip Box Container (1/3 width) -->
 <div x-data="{ showTip: true }" x-show="showTip"
      x-transition:leave="transition ease duration-300"
      x-transition:leave-start="opacity-100 max-h-screen"
      x-transition:leave-end="opacity-0 max-h-0 overflow-hidden"
      class="bg-white border border-gray-300 rounded-lg p-4 text-sm text-gray-700 h-fit max-w-[300px] -ml-64">
-     
+
   <!-- Header Row -->
   <div class="flex items-center justify-between mb-2">
     <div class="flex items-center space-x-2">
@@ -298,17 +298,17 @@
   <label class="block font-semibold text-sm text-gray-700 mb-2">How many guests can stay in this room?</label>
 
   <div class="flex items-center w-20 border rounded-md px-2 py-1">
-    <button 
-      type="button" 
-      @click="if (guests > 1) guests--" 
+    <button
+      type="button"
+      @click="if (guests > 1) guests--"
       class="text-xl text-gray-600 hover:text-gray-800 focus:outline-none"
     >−</button>
 
     <span class="mx-4 text-lg font-semibold" x-text="guests"></span>
 
-    <button 
-      type="button" 
-      @click="guests++" 
+    <button
+      type="button"
+      @click="guests++"
       class="text-xl text-gray-600 hover:text-gray-800 focus:outline-none"
     >+</button>
   </div>
@@ -318,18 +318,18 @@
 
 
 
-   
+
 
       <!-- Room Size -->
 <div class="lg:col-span-2 bg-white rounded-lg border border-gray-300 p-4 space-y-4 max-w-xl ml-32">
   <div class="flex flex-col lg:flex-row gap-4 items-end"> <!-- ensure vertical alignment -->
-    
+
     <!-- Apartment Size Dropdown -->
     <div class="w-full lg:w-2/4">
   <label class="block font-semibold text-sm text-gray-700 mb-1">How big is this room?</label>
   <p class="text-xs text-gray-500 ">Apartment size - optional</p>
- 
-<input 
+
+<input
     type="number"
     min="1"
     step="1"
@@ -340,7 +340,7 @@
     class="w-full border border-gray-300 rounded-md shadow-sm text-sm mt-2 px-2 py-2"
 >
 
-  
+
 
 </div>
 
@@ -352,7 +352,7 @@
         <option>square feet</option>
       </select>
     </div>
-    
+
   </div>
     </div>
         <!-- Smoking Allowed -->
@@ -371,11 +371,11 @@
         </div>
 
 
-        
+
        <!-- Navigation Buttons -->
 <div class="lg:col-span-2  max-w-xl ml-32">
   <div class="flex justify-between mt-6">
-    
+
     <!-- Back Button (Left-aligned) -->
      <a href="{{ route('partner.hotels.create.2') }}">
     <button type="button"
@@ -407,7 +407,7 @@
   <div class="max-w-3xl ml-32 mt-16">
     <!-- Bathroom Details Wrapper -->
     <div class="max-w-6xl mx-auto p-4 space-y-6">
-      
+
       <!-- Title -->
       <h2 class="text-2xl font-bold">Bathroom details</h2>
 
@@ -500,7 +500,7 @@
     <div class="max-w-3xl ml-32 mt-16">
     <!-- Bathroom Details Wrapper -->
     <div class="max-w-6xl mx-auto p-4 space-y-6">
-      
+
       <!-- Title -->
       <h2 class="text-2xl font-bold">What can guests use in this room?</h2>
 
@@ -510,11 +510,11 @@
         <!-- Main Content Container -->
         <div class="lg:col-span-2 bg-white p-6 rounded-lg border border-gray-300 space-y-6">
 
-         
+
 
           <!-- Bathroom Amenities -->
           <div>
-          
+
             <label class="block font-semibold text-sm text-gray-700 mb-3">General Amenities</label>
 
             @php
@@ -542,7 +542,7 @@
             @php
               $amenities = [
                   'Balcony', 'Terrace', 'View',
-                 
+
               ];
             @endphp
 
@@ -562,7 +562,7 @@
             @php
               $amenities = [
                   'Electric kettle', 'Tea/Coffee maker', 'Dining area','Dining table','Microwave',
-                 
+
               ];
             @endphp
 
@@ -754,7 +754,7 @@
 
       <!-- Price input and Tip 1 in two separate columns -->
 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
-  
+
   <!-- Price input card (2/3 width) -->
   <div class="md:col-span-2 bg-white border rounded-lg p-6 shadow-sm space-y-4">
     <label class="block font-semibold text-base text-gray-700">How much do you want to charge per night?</label>
@@ -782,7 +782,7 @@
 
     <!-- Topic paragraph -->
     <p class="text-sm text-gray-600 pl-4">
-      <span class="text-gray-500">15.00%</span> Booking.com commission
+      <span class="text-gray-500">15.00%</span> {{ config('domains.subdomain') }} commission
     </p>
 
     <!-- Sub-items under topic -->
@@ -798,7 +798,7 @@
   <!-- Tip Box 1 (1/3 width, independent height) -->
   <div x-show="showTip1" class="relative bg-white border rounded-lg p-4 shadow-sm text-sm text-gray-700">
     <button @click="showTip1 = false" class="absolute top-2 right-2 text-gray-500 font-semibold">✕</button>
-    
+
     <div class="flex items-center mb-2">
       <img src="{{ asset('assets/system-uicons_lightbulb-on.svg') }}" alt="Tip Icon" class="w-6 h-6 mr-2">
       <strong>What if I’m not sure about my price?</strong>
@@ -811,7 +811,7 @@
 
       <!-- Discount and Tip 2 -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        
+
         <!-- Discount card -->
         <div class="md:col-span-2 bg-white border rounded-lg p-6 shadow-sm space-y-3">
           <label class="inline-flex items-center">
@@ -819,12 +819,12 @@
             <span class="ml-2 font-medium text-gray-700 font-semibold">Get guests’ attention with a 20% discount</span>
           </label>
           <p class="text-sm text-gray-600">
-            Give 20% off your first 3 bookings or for 90 days, whichever comes first. 
+            Give 20% off your first 3 bookings or for 90 days, whichever comes first.
             <a href="#" class="text-blue-600 underline">Learn more</a>
           </p>
           <hr class="my-4">
           <p class="text-sm text-gray-800">
-            <del class="text-gray-500">US$ 120.00</del> 
+            <del class="text-gray-500">US$ 120.00</del>
             <span class="text-green-600 font-semibold">US$ 96.00 per night</span>
           </p>
         </div>
@@ -837,7 +837,7 @@
             <strong>Rules for setting up a promotion</strong>
           </div>
           <p>
-            Make sure you're giving a genuine discount. It must represent a real discount in line with consumer protection rules. 
+            Make sure you're giving a genuine discount. It must represent a real discount in line with consumer protection rules.
             <a href="#" class="text-blue-600 underline">Learn More</a>
           </p>
         </div>
@@ -956,7 +956,7 @@
 
       </div>
 
-   
+
     </div>
 
     <h2 class="text-xl font-semibold text-gray-800">Standard rate plan</h2>
@@ -1029,10 +1029,10 @@
 </template>
 
 
-    
 
 
-   
+
+
   </div>
 
 </body>

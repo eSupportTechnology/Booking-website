@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Create Password | Bookintour</title>
+  <title>Create Password | {{ config('domains.app_name') }}</title>
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -30,9 +30,19 @@
       <div class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
         <!-- Logo -->
         <div class="w-full md:w-auto md:ml-6">
-          <a href="/" class="text-2xl font-bold">
-            <h1 style="font-family: 'Poppins', sans-serif;">Bookintour.com</h1>
-          </a>
+            <!-- Logo -->
+                        @php
+                            $host = config('domains.app_name');
+
+                        @endphp
+
+                        <a href="{{ url('/') }}" class="text-2xl font-bold flex items-center">
+                            @if($host == 'BookinTour')
+                                <h1>Bookintour.com</h1>
+                            @elseif ($host == 'Inselor')
+                                <img src="{{ asset('images/inselor-logo.png') }}" alt="Inselor" class="h-12 w-auto align-middle" />
+                            @endif
+                        </a>
         </div>
 
         <!-- Right Section -->
@@ -117,7 +127,7 @@
         <label for="password" class="block text-sm font-medium text-gray-700">Password <span class="text-red-500">*</span></label>
         <div class="relative">
           <input type="password" id="password" name="password" required class="mt-1 w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter a password"/>
-    
+
         </div>
       </div>
 
@@ -126,7 +136,7 @@
         <label for="confirm_password" class="block text-sm font-medium text-gray-700">Confirm password <span class="text-red-500">*</span></label>
         <div class="relative">
           <input type="password" id="confirm_password" name="confirm_password" required class="mt-1 w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Confirm your password"/>
-   
+
 
         </div>
       </div>
@@ -144,7 +154,7 @@
       </p>
 
       <p class="text-[11px] text-gray-400 text-center mt-2">
-        © 2006 – 2025 Booking.com™
+        © 2006 – 2025 {{ config('domains.domain') }}™
       </p>
     </form>
   </div>
