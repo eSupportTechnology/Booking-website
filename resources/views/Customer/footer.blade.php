@@ -95,7 +95,8 @@
                     $siteName = config('domains.sites.' . $host, 'Bookintour.com'); // fallback if not found
                 @endphp
 
-                <a href="{{ url('/') }}" class="text-blue-500 font-bold hover:underline">{{ $siteName }}</a>
+                <a href="{{ url('/') }}" class="text-blue-500 font-bold hover:underline"> {{ config('site.name') }}
+</a>
 
             </div>
         </div>

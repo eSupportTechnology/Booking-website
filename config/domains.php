@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'app_name' => env('APP_NAME', 'Bookintour.com'),
+
     'sites' => [
         'localhost' => 'Bookintour.com',
         '127.0.0.1' => 'Bookintour.com',
