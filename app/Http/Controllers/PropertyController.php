@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\DB;
 use App\Models\PropertyCategory;
 use App\DTOs\Partner\PropertyAdditionalDetailsDTO;
 use App\Actions\Partner\UpdatePropertyAdditionalDetailsAction;
+use App\DTOs\Partner\AccommodationDetailsDTO;
+use App\Actions\Partner\StoreAccommodationDetailsAction;
 
 class PropertyController extends Controller
 {
@@ -137,15 +139,18 @@ class PropertyController extends Controller
     {
         $property = Property::findOrFail($propertyId);
         $categoryString = strtolower($category);
+        $groupedAmenities = $action->getGroupedAmenities();
+
         return view('partner.partner-apartment-create-form-2', [
             'property' => $property,
             'category' => $categoryString,
+            'groupedAmenities' => $groupedAmenities,
         ]);
     }
 
     public function storeStep2(Request $request,  $propertyId, PropertyAction $action)
     {
-        Log::info('storeStep2 called - DEBUG');
+        \Log::info('storeStep2 called', $request->all());
         // die('storeStep2 called');
         Log::info('storeStep2 called', [
             'request' => $request->all(),
@@ -228,5 +233,47 @@ class PropertyController extends Controller
         $action->execute($property, $dto);
 
         return response()->json(['success' => true]);
+    }
+
+    /**
+     * Store accommodation, business entity, individual, and alt name details.
+     */
+    public function storeAccommodationDetails(Request $request, StoreAccommodationDetailsAction $action)
+    {
+        \Log::info('storeAccommodationDetails called', [
+            'request' => $request->all(),
+        ]);
+        try {
+            $dto = AccommodationDetailsDTO::fromRequest($request);
+            \Log::info('AccommodationDetailsDTO created', [
+                'dto' => (array) $dto,
+            ]);
+            $accommodation = $action->execute($dto);
+            \Log::info('Accommodation created', [
+                'accommodation_id' => $accommodation->id,
+            ]);
+            return response()->json([
+                'success' => true,
+                'accommodation_id' => $accommodation->id,
+                'message' => 'Accommodation details saved successfully.'
+            ], 201);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Log::error('ValidationException in storeAccommodationDetails', [
+                'errors' => $e->errors(),
+            ]);
+            return response()->json([
+                'success' => false,
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (\Exception $e) {
+            \Log::error('Exception in storeAccommodationDetails', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 }

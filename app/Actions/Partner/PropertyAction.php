@@ -84,6 +84,14 @@ class PropertyAction
             ]
         );
 
+        Log::info('Amenities array in DTO:', ['amenities' => $dto->amenities]);
+        if (!empty($dto->amenities)) {
+            $property->amenities()->sync($dto->amenities);
+            Log::info('Amenities synced to property', ['property_id' => $property->id, 'amenity_ids' => $dto->amenities]);
+        } else {
+            Log::info('No amenities to sync for property', ['property_id' => $property->id]);
+        }
+
         return $property;
     }
 
@@ -111,5 +119,15 @@ class PropertyAction
             }
         }
         return $property->fresh();
+    }
+
+    public function getGroupedAmenities()
+    {
+        return \App\Models\Amenity::all()->groupBy('category');
+    }
+
+    public function syncAmenities(Property $property, array $amenityIds)
+    {
+        $property->amenities()->sync($amenityIds);
     }
 }

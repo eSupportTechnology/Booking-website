@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Partner;
 use App\Http\Controllers\Controller;
 use App\DTOs\Partner\RegisterPartnerDTO;
 use App\DTOs\Partner\PartnerEmailDTO;
+use App\DTOs\Partner\AccommodationDetailsDTO;
 use App\Actions\Partner\RegisterPartnerAction;
+use App\Actions\Partner\StoreAccommodationDetailsAction;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -98,5 +100,31 @@ class PartnerRegistrationController extends Controller
 
         // Redirect to Laravel's built-in verification notice page
         return redirect()->route('partner.register.verify');
+    }
+
+    /**
+     * Store accommodation, business entity, individual, and alt name details.
+     */
+    public function storeAccommodationDetails(Request $request, StoreAccommodationDetailsAction $action)
+    {
+        try {
+            $dto = AccommodationDetailsDTO::fromRequest($request);
+            $accommodation = $action->execute($dto);
+            return response()->json([
+                'success' => true,
+                'accommodation_id' => $accommodation->id,
+                'message' => 'Accommodation details saved successfully.'
+            ], 201);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 }
