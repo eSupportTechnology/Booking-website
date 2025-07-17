@@ -29,7 +29,9 @@
                     class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
                     <!-- Logo -->
                     <div class="w-full md:w-auto md:ml-6">
-                        <a href="/" class="text-2xl font-bold font-poppins">Bookintour.com</a>
+                        <a href="/" class="text-2xl font-bold font-poppins">
+                            {{ config('app.name') }}
+                        </a>
                     </div>
                     <!-- Right Section -->
                     <div class="flex items-center space-x-4 text-sm font-medium md:ml-auto font-sans">
@@ -583,11 +585,23 @@
 
                                                     <label class="mt-2 cursor-pointer inline-block bg-blue-100 hover:bg-blue-200 text-blue-700 px-4 py-2 rounded font-medium">
                                                         Browse files
-                                                        <input type="file" multiple class="hidden" />
+                                                        <input
+                                                            type="file"
+                                                            multiple
+                                                            x-ref="photoInput"
+                                                            @change="handlePreview"
+                                                            accept="image/*"
+                                                            class="hidden" />
                                                     </label>
 
                                                     <p class="text-xs text-gray-500 mt-2">Accepted formats: JPG, PNG, WebP. Max size: 5MB each</p>
                                                 </div>
+                                                <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-4" x-show="previewFiles.length">
+                                                    <template x-for="(file, index) in previewFiles" :key="index">
+                                                        <img :src="file" class="rounded shadow object-cover w-full h-32 border border-gray-300" />
+                                                    </template>
+                                                </div>
+
 
                                                 <!-- Navigation Buttons -->
                                                 <div class="flex justify-between pt-4">
@@ -632,7 +646,7 @@
                                                     <button type="button"
                                                         @click="prevStep"
                                                         class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium px-5 py-2 rounded">
-                                                        ← 
+                                                        ←
                                                     </button>
 
                                                     <button
@@ -2155,6 +2169,21 @@
                                     propertyCount: 2,
                                     totalSteps: 14, // Adjust total steps as needed
 
+                                    previewFiles: [],
+
+                                    handlePreview(event) {
+                                        this.previewFiles = []; // Clear existing previews
+                                        const files = event.target.files;
+
+                                        for (let i = 0; i < files.length; i++) {
+                                            const reader = new FileReader();
+                                            reader.onload = e => {
+                                                this.previewFiles.push(e.target.result);
+                                            };
+                                            reader.readAsDataURL(files[i]);
+                                        }
+                                    },
+
                                     selectOption(option) {
                                         this.selected = option;
                                         // Reset step if needed
@@ -2257,6 +2286,41 @@
                                             } catch (e) {
                                                 console.error('Error saving step 2:', e);
                                             }
+                                        } else if (this.step === 4 && this.selected === 'one') {
+                                            console.log('Submitting photos for property ID:', this.propertyId);
+                                            const files = this.$refs.photoInput.files;
+                                            if (!files.length) {
+                                                alert('Please upload at least one photo.');
+                                                return;
+                                            }
+
+                                            const formData = new FormData();
+                                            formData.append('property_id', this.propertyId);
+
+                                            for (let i = 0; i < files.length; i++) {
+                                                formData.append('photos[]', files[i]);
+                                            }
+
+                                            fetch('/partner/property/upload-photos', {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                    },
+                                                    body: formData
+                                                })
+                                                .then(response => response.json())
+                                                .then(result => {
+                                                    if (result.success) {
+                                                        console.log('Photos uploaded');
+                                                        this.step++; 
+                                                    } else {
+                                                        alert(result.message || 'Upload failed');
+                                                    }
+                                                })
+                                                .catch(error => {
+                                                    console.error('Upload error:', error);
+                                                    alert('Something went wrong while uploading photos.');
+                                                });
                                         } else {
                                             if (this.step === 1 && this.selected === '') return;
 

@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\DB;
 use App\Models\PropertyCategory;
 use App\DTOs\Partner\PropertyAdditionalDetailsDTO;
 use App\Actions\Partner\UpdatePropertyAdditionalDetailsAction;
+use App\Models\PropertySubtype;
+use App\Services\FileUploadService;
 
 class PropertyController extends Controller
 {
@@ -34,7 +36,7 @@ class PropertyController extends Controller
     public function subcategories($categoryId, PropertyAction $action)
     {
         $subcategories = $action->getPropertiesByCategory($categoryId);
-        Log::info('Fetching subcategories for category ID: ' . $categoryId, ['subcategories' => $subcategories]);   
+        Log::info('Fetching subcategories for category ID: ' . $categoryId, ['subcategories' => $subcategories]);
         // Check if subcategories are empty
         if ($subcategories->isEmpty()) {
             Log::warning('No subcategories found for category ID ' . $categoryId);
@@ -195,28 +197,26 @@ class PropertyController extends Controller
         }
     }
 
-    public function uploadPhotos(Request $request)
-{
-    $request->validate([
-        'property_id' => 'required|exists:properties,id',
-        'photos.*' => 'required|image|mimes:jpg,jpeg,png,webp|max:5120', // 5MB
-    ]);
-
-    foreach ($request->file('photos') as $photo) {
-        $path = $photo->store('property_photos', 'public');
-
-        DB::table('property_photos')->insert([
-            'property_id' => $request->property_id,
-            'photo_url' => $path,
-            'is_cover' => false, // Or true for the first one, optionally
-            'created_at' => now(),
-            'updated_at' => now(),
+    public function uploadPhotos(Request $request, FileUploadService $fileUploadService)
+    {
+        $request->validate([
+            'property_id' => 'required|exists:properties,id',
+            'photos.*' => 'required|image|mimes:jpg,jpeg,png,webp|max:5120', // 5MB max
         ]);
+
+        $property_type = Property::find($request->input('property_id'))?->subtype_id ?? 'Property';
+        foreach ($request->file('photos') as $photo) {
+            $fileUploadService->uploadAndSave(
+                file: $photo,
+                fileType: 'image',
+                propertyType:PropertySubtype::find($property_type)?->name ?? 'Property'    ,
+                propertyId: $request->property_id,
+                directory: 'property_photos'
+            );
+        }
+
+        return response()->json(['success' => true]);
     }
-
-    return response()->json(['success' => true]);
-}
-
 
     public function updateAdditionalDetails(
         Request $request,
