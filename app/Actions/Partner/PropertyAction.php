@@ -48,7 +48,7 @@ class PropertyAction
 
     public function updatePropertyStep2(Property $property, PropertyStep2DTO $dto)
     {
-        \Log::info('PropertyStep2DTO received:', (array) $dto);
+        Log::info('PropertyStep2DTO received:', (array) $dto);
         $property->update(array_filter([
             'title' => $dto->title,
             'address' => $dto->address,
@@ -63,11 +63,11 @@ class PropertyAction
         ], fn($value) => !is_null($value)));
 
         // Save bedrooms if provided
-        \Log::info('Bedrooms array in DTO:', ['bedrooms' => $dto->bedrooms]);
+        Log::info('Bedrooms array in DTO:', ['bedrooms' => $dto->bedrooms]);
         if (!empty($dto->bedrooms)) {
             $property->bedrooms()->delete();
             foreach ($dto->bedrooms as $bedroom) {
-                \Log::info('Creating bedroom:', $bedroom);
+                Log::info('Creating bedroom:', $bedroom);
                 $property->bedrooms()->create($bedroom);
             }
         }
@@ -103,10 +103,10 @@ class PropertyAction
 
         // Handle bedrooms data
         if ($bedrooms !== null && is_array($bedrooms)) {
-            \Log::info('Processing bedrooms data:', ['bedrooms' => $bedrooms]);
+            Log::info('Processing bedrooms data:', ['bedrooms' => $bedrooms]);
             $property->bedrooms()->delete();
             foreach ($bedrooms as $bedroom) {
-                \Log::info('Creating bedroom:', $bedroom);
+                Log::info('Creating bedroom:', $bedroom);
                 $property->bedrooms()->create($bedroom);
             }
         }
