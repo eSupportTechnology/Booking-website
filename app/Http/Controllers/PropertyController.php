@@ -195,6 +195,29 @@ class PropertyController extends Controller
         }
     }
 
+    public function uploadPhotos(Request $request)
+{
+    $request->validate([
+        'property_id' => 'required|exists:properties,id',
+        'photos.*' => 'required|image|mimes:jpg,jpeg,png,webp|max:5120', // 5MB
+    ]);
+
+    foreach ($request->file('photos') as $photo) {
+        $path = $photo->store('property_photos', 'public');
+
+        DB::table('property_photos')->insert([
+            'property_id' => $request->property_id,
+            'photo_url' => $path,
+            'is_cover' => false, // Or true for the first one, optionally
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+    }
+
+    return response()->json(['success' => true]);
+}
+
+
     public function updateAdditionalDetails(
         Request $request,
         Property $property,
