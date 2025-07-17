@@ -368,7 +368,6 @@ Route::middleware(\App\Http\Middleware\EnsurePartner::class)->group(function () 
 
 Route::post('/property/{property}/update-title', [PropertyController::class, 'updateTitle'])->name('partner.property.update-title');
 
-// PATCH route for updating additional details (keep this new route)
 Route::patch('/partner/property/{property}/additional-details', [PropertyController::class, 'updateAdditionalDetails'])
     ->name('partner.property.update.additional-details');
 
