@@ -454,20 +454,30 @@
     <div class="bg-white p-4 rounded-lg shadow space-y-4">
         <h2 class="text-lg font-semibold">Where can people sleep?</h2>
 
-      <div class="space-y-4">
-    <div class="border border-gray-300 rounded px-3 py-2 w-96">
-        <p class="text-sm">Bedroom 1</p>
-        <p class="text-sm text-gray-600">1 full bed</p>
-    </div>
-    <div class="border border-gray-300 rounded px-3 py-2 w-96">
-        <p class="text-sm">Living Room</p>
-        <p class="text-sm text-gray-600">1 full bed</p>
-    </div>
-    <div class="border border-gray-300 rounded px-3 py-2 w-96">
-        <p class="text-sm">Other spaces</p>
-        <p class="text-sm text-gray-600">1 full bed</p>
-    </div>
+     <div class="flex flex-col gap-4">
+    <a href="{{ route('partner.apartment.bedrooms') }}">
+        <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer">
+            <p class="text-sm">Bedroom 1</p>
+            <p class="text-sm text-gray-600">1 full bed</p>
+        </div>
+    </a>
+
+    <a href="{{ route('partner.apartment.livingroom') }}">
+        <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer">
+            <p class="text-sm">Living Room</p>
+            <p class="text-sm text-gray-600">1 full bed</p>
+        </div>
+    </a>
+
+    <a href="{{ route('partner.apartment.otherspaces') }}">
+        <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer">
+            <p class="text-sm">Other spaces</p>
+            <p class="text-sm text-gray-600">1 full bed</p>
+        </div>
+    </a>
 </div>
+
+
 
 
 
@@ -1419,9 +1429,33 @@
 
 <!-- ✅ Step 4: Pricing and Calendar -->
 <section x-show="step === 4">
-    <template x-if="pricingWizardStep === 1">
+
+  <template x-if="pricingWizardStep === 1">
+      <div class="max-w-xl mx-auto space-y-8 lg:ml-32 px-4 py-6">
+  </div>
+  </template>
+  <template x-if="pricingWizardStep === 2">
+      <div class="max-w-xl mx-auto space-y-8 lg:ml-32 px-4 py-6">
+  </div>
+  </template>
+  <template x-if="pricingWizardStep === 3">
+      <div class="max-w-xl mx-auto space-y-8 lg:ml-32 px-4 py-6">
+  </div>
+  </template>
+  <template x-if="pricingWizardStep === 4">
+      <div class="max-w-xl mx-auto space-y-8 lg:ml-32 px-4 py-6">
+  </div>
   </template>
 </section>
+
+
+
+
+
+
+
+
+
 
 <!-- ✅ Step 5: Legal Information -->
 <section x-show="step === 5">

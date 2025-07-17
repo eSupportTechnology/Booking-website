@@ -184,6 +184,14 @@ Route::get('/partner-apartment-bedrooms', function () {
     return view('frontend.partner-apartments-bedrooms');
 })->name('partner.apartment.bedrooms');
 
+Route::get('/partner-apartment-otherspaces', function () {
+    return view('frontend.partner-apartments-otherspaces');
+})->name('partner.apartment.otherspaces');
+
+Route::get('/partner-apartment-livingroom', function () {
+    return view('frontend.partner-apartments-livingroom');
+})->name('partner.apartment.livingroom');
+
 Route::get('/customer-profile-create', function () {
     return view('frontend.customer-profile-create');
 })->name('customer.profile.create');
