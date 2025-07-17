@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             PropertyHotelSubcategorySeeder::class,
             PropertySubtypeSeeder::class,
             AddressTypesTableSeeder::class,
+            AmenitiesTableSeeder::class,
         ]);
 
         // Create a test user

@@ -29,6 +29,15 @@ class PropertyAction
     {
         return PropertySubcategory::where('category_id', $categoryId)->get();
     }
+    public function getAmenities(): Collection
+    {
+        return \App\Models\Amenity::all()->map(function ($amenity) {
+            return [
+                'id' => $amenity->id,
+                'name' => $amenity->name,
+            ];
+        });
+    }
 
     public function getPropertiesBySubcategory(int $subcategoryId): Collection
     {

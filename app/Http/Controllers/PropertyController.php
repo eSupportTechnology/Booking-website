@@ -38,7 +38,9 @@ class PropertyController extends Controller
     public function subcategories($categoryId, PropertyAction $action)
     {
         $subcategories = $action->getPropertiesByCategory($categoryId);
+        $amenities = $action->getAmenities();
         Log::info('Fetching subcategories for category ID: ' . $categoryId, ['subcategories' => $subcategories]);
+        Log::info('Available amenities', ['amenities' => $amenities]);
         // Check if subcategories are empty
         if ($subcategories->isEmpty()) {
             Log::warning('No subcategories found for category ID ' . $categoryId);
@@ -46,7 +48,7 @@ class PropertyController extends Controller
         }
         switch ($categoryId) {
             case 1:  // Homes
-                return view('partner.partner-homes-create-form-1', compact('subcategories', 'categoryId'));
+                return view('partner.partner-homes-create-form-1', compact('subcategories', 'categoryId', 'amenities'));
             case 2:  // Apartment
                 return view('partner.partner-apartment-create-form-1', [
                     'subcategories' => $subcategories,
@@ -214,7 +216,7 @@ class PropertyController extends Controller
             $fileUploadService->uploadAndSave(
                 file: $photo,
                 fileType: 'image',
-                propertyType:PropertySubtype::find($property_type)?->name ?? 'Property'    ,
+                propertyType: PropertySubtype::find($property_type)?->name ?? 'Property',
                 propertyId: $request->property_id,
                 directory: 'property_photos'
             );
@@ -275,5 +277,22 @@ class PropertyController extends Controller
                 'message' => $e->getMessage(),
             ], 500);
         }
+    }
+
+
+    public function saveAmenities(Request $request, Property $property)
+    {
+        $data = json_decode($request->getContent(), true);
+
+        Log::info('Raw request data', $data);
+
+        $amenities = $data['amenities'] ?? [];
+
+        // Optional validation
+        $validAmenityIds = \App\Models\Amenity::whereIn('id', $amenities)->pluck('id')->toArray();
+
+        $property->amenities()->sync($validAmenityIds);
+
+        return response()->json(['success' => true]);
     }
 }
