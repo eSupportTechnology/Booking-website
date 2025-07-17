@@ -295,4 +295,25 @@ class PropertyController extends Controller
 
         return response()->json(['success' => true]);
     }
+
+
+    public function savePolicy(Request $request, \App\Models\Property $property)
+    {
+        $data = json_decode($request->getContent(), true);
+        Log::info('Raw request data for policy', $data);
+        $validated = validator($data, [
+            'check_in_time' => 'required|date_format:H:i',
+            'check_out_time' => 'required|date_format:H:i',
+            'smoking_allowed' => 'required|boolean',
+            'pets_allowed' => 'required|boolean',
+            'cancellation_policy' => 'required|in:flexible,moderate,strict'
+        ])->validate();
+
+        $property->policies()->updateOrCreate(
+            ['property_id' => $property->id],
+            $validated
+        );
+
+        return response()->json(['success' => true]);
+    }
 }

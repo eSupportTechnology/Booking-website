@@ -1297,8 +1297,7 @@
                                                                     class="flex items-center justify-between cursor-pointer">
                                                                     <span>Smoking allowed</span>
                                                                     <div class="relative">
-                                                                        <input type="checkbox"
-                                                                            class="sr-only peer" />
+                                                                        <input type="checkbox" name="smoking_allowed" id="smoking_allowed" class="sr-only peer" />
                                                                         <div
                                                                             class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition">
                                                                         </div>
@@ -1312,8 +1311,7 @@
                                                                     class="flex items-center justify-between cursor-pointer">
                                                                     <span>Children allowed</span>
                                                                     <div class="relative">
-                                                                        <input type="checkbox"
-                                                                            class="sr-only peer" checked />
+                                                                        <input type="checkbox" name="children_allowed" id="children_allowed" class="sr-only peer" />
                                                                         <div
                                                                             class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition">
                                                                         </div>
@@ -1327,8 +1325,7 @@
                                                                     class="flex items-center justify-between cursor-pointer">
                                                                     <span>Parties/events allowed</span>
                                                                     <div class="relative">
-                                                                        <input type="checkbox"
-                                                                            class="sr-only peer" />
+                                                                        <input type="checkbox" name="parties_allowed" id="parties_allowed" class="sr-only peer" />
                                                                         <div
                                                                             class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition">
                                                                         </div>
@@ -1347,20 +1344,20 @@
                                                                 <div class="space-y-2">
                                                                     <label
                                                                         class="flex items-center cursor-pointer">
-                                                                        <input type="radio" name="pets"
+                                                                        <input type="radio" name="pets_allowed"
                                                                             value="yes" class="mr-2">
                                                                         <span>Yes</span>
                                                                     </label>
                                                                     <label
                                                                         class="flex items-center cursor-pointer">
-                                                                        <input type="radio" name="pets"
+                                                                        <input type="radio" name="pets_allowed"
                                                                             value="upon_request"
                                                                             class="mr-2">
                                                                         <span>Upon request</span>
                                                                     </label>
                                                                     <label
                                                                         class="flex items-center cursor-pointer">
-                                                                        <input type="radio" name="pets"
+                                                                        <input type="radio" name="pets_allowed"
                                                                             value="no" class="mr-2"
                                                                             checked>
                                                                         <span>No</span>
@@ -1378,13 +1375,13 @@
                                                                     <div class="w-full">
                                                                         <label
                                                                             class="block text-sm font-medium mb-1">From</label>
-                                                                        <input type="time" value="15:00"
+                                                                        <input type="time" id="check_in_from" value="15:00"
                                                                             class="w-full border rounded p-2" />
                                                                     </div>
                                                                     <div class="w-full">
                                                                         <label
                                                                             class="block text-sm font-medium mb-1">Until</label>
-                                                                        <input type="time" value="18:00"
+                                                                        <input type="time" id="check_out_until" value="18:00"
                                                                             class="w-full border rounded p-2" />
                                                                     </div>
                                                                 </div>
@@ -3242,6 +3239,40 @@
                                                 }
                                             } catch (e) {
                                                 console.error('Error saving amenities:', e);
+                                            }
+                                        } else if (this.step === 12 && this.selected === 'one') {
+                                            try {
+                                                const smokingAllowed = document.querySelector('#smoking_allowed').checked;
+                                                const petsValue = document.querySelector('input[name="pets_allowed"]:checked')?.value || 'no';
+
+                                                const checkInTime = document.querySelector('#check_in_from').value;
+                                                const checkOutTime = document.querySelector('#check_out_until').value;
+
+                                                const response = await fetch(`/partner/property/save-policy/${this.propertyId}`, {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                    },
+                                                    body: JSON.stringify({
+                                                        smoking_allowed: smokingAllowed,
+                                                        pets_allowed: petsValue !== 'no', // convert to boolean
+                                                        check_in_time: checkInTime,
+                                                        check_out_time: checkOutTime,
+                                                        cancellation_policy: 'flexible', // hardcoded for now; you can make this dynamic
+                                                        property_id: this.propertyId
+                                                    }),
+                                                });
+
+                                                const result = await response.json();
+
+                                                if (result.success) {
+                                                    console.log('Policy saved:', result);
+                                                    this.step++;
+                                                } else {
+                                                    alert('Failed to save policy: ' + result.message);
+                                                }
+                                            } catch (e) {
+                                                console.error('Error saving policy:', e);
                                             }
                                         } else {
                                             if (this.step === 1 && this.selected === '') return;

@@ -332,6 +332,7 @@ Route::prefix('partner')->group(function () {
     Route::post('/property/step3/{property}', [PropertyController::class, 'storeStep2'])->name('partner.property.store.step3');
     Route::post('/property/upload-photos', [PropertyController::class, 'uploadPhotos']);
     Route::post('/property/save-amenities/{property}', [PropertyController::class, 'saveAmenities']);
+    Route::post('/property/save-policy/{property}', [PropertyController::class, 'savePolicy']);
 
     // Store accommodation, business entity, individual, and alt name details
     Route::post('/accommodation/store', [PropertyController::class, 'storeAccommodationDetails'])->name('partner.accommodation.store');
