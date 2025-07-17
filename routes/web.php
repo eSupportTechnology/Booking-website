@@ -180,6 +180,10 @@ Route::get('/partner-apartment-create-1', function () {
     return view('frontend.partner-apartment-create-form-1');
 })->name('partner.apartment.create.1');
 
+Route::get('/partner-apartment-bedrooms', function () {
+    return view('frontend.partner-apartments-bedrooms');
+})->name('partner.apartment.bedrooms');
+
 Route::get('/customer-profile-create', function () {
     return view('frontend.customer-profile-create');
 })->name('customer.profile.create');

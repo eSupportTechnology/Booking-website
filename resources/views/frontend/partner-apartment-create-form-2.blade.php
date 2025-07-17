@@ -94,17 +94,18 @@
 
 
 
-<div x-data="{ step: 1, wizardStep: 1 , propertyWizardStep: 1 }">
+<div x-data="{ step: 1, wizardStep: 1 , propertyWizardStep: 1, pricingWizardStep:1 }">
 
  <!-- Sticky Top Navbar -->
   <nav class="border-b shadow-sm sticky top-0 z-50 ">
     <div class="max-w-full mx-auto px-4 py-3">
       
       <!-- Scrollable/Responsive Nav Items -->
-      <div class="flex flex-wrap sm:flex-nowrap overflow-x-auto space-x-6 sm:space-x-10 md:space-x-14 lg:space-x-20 xl:space-x-24 text-sm font-medium whitespace-nowrap">
+<div class="flex flex-wrap sm:flex-nowrap overflow-x-auto space-x-6 sm:space-x-12 md:space-x-16 lg:space-x-24 xl:space-x-32 text-sm font-medium whitespace-nowrap">
+
         
         <!-- Loop through nav steps -->
-        <template x-for="(label, index) in ['Basic information', 'Property setup', 'Photos', 'Pricing and calendar', 'Legal information', 'Review and complete']" :key="index">
+        <template x-for="(label, index) in ['Basic information', 'Property setup', 'Photos', 'Pricing and calendar', 'Legal information']" :key="index">
           <div class="relative">
             
             <!-- Tab Label -->
@@ -119,7 +120,15 @@
               <template x-if="index === 0 && wizardStep === 3">
                 <span class="text-green-600">✔️</span>
               </template>
+ <!-- Optional checkmark -->
+              <template x-if="index === 1 && propertyWizardStep === 6">
+                <span class="text-green-600">✔️</span>
+              </template>
+
+              
             </div>
+
+            
 
             <!-- 🔵 Progress bar only under "Basic information" when active -->
             <template x-if="index === 0 && step === 1">
@@ -136,7 +145,7 @@
             <!-- Progress bar under "Property setup" tab -->
 <!-- Progress bar under "Property setup" tab -->
 <template x-if="index === 1 && step === 2">
-  <div class="flex space-x-1 mt-1 w-35 sm:w-48 md:w-56 lg:w-64 xl:w-72 ml-[-15px] sm:ml-[-25px] md:ml-[-35px]">
+  <div class="flex space-x-1 mt-1 w-15 sm:w-25 md:w-30 lg:w-64 xl:w-72 ml-[-60px] sm:ml-[-80px] md:ml-[-90px]">
     <template x-for="i in 6">
       <div 
         :class="propertyWizardStep >= i ? 'bg-blue-600' : 'bg-gray-300'" 
@@ -147,7 +156,16 @@
 </template>
 
 
-
+<template x-if="index === 3 && step === 4">
+  <div class="flex space-x-1 mt-1 w-35 sm:w-48 md:w-56 lg:w-64 xl:w-72 ml-[-15px] sm:ml-[-25px] md:ml-[-35px]">
+    <template x-for="i in 4">
+      <div 
+        :class="pricingWizardStep >= i ? 'bg-blue-600' : 'bg-gray-300'" 
+        class="h-1 flex-1 rounded-full">
+      </div>
+    </template>
+  </div>
+</template>
             
 
             
@@ -247,7 +265,7 @@
    <!-- Continue Button (inside input field container, aligned right) -->
   <div class="flex justify-end mt-4">
     <button
-      type="submit"
+      type="submit"  @click="wizardStep++"
       class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
       Continue 
     </button>
@@ -330,7 +348,7 @@
 
   <!-- Continue Button (Right) -->
   <button   type="submit"
-     
+      @click="wizardStep++"
           class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
     Continue
   </button>
@@ -427,117 +445,156 @@
 <section x-show="step === 2">
  
 
-  
-    <template x-if="propertyWizardStep === 1">
-  <div x-data="{ showBedTypeSelector: false }">
+  <template x-if="propertyWizardStep === 1">
+   {{-- property-setup.blade.php --}}
+<div class="max-w-xl mx-auto space-y-8 lg:ml-32 px-4 py-6">
+
+<h2 class="text-2xl font-bold text-gray-900 mt-8">What can guests use at your place?</h2>
+    <!-- Where can people sleep -->
+    <div class="bg-white p-4 rounded-lg shadow space-y-4">
+        <h2 class="text-lg font-semibold">Where can people sleep?</h2>
+
+      <div class="space-y-4">
+    <div class="border border-gray-300 rounded px-3 py-2 w-96">
+        <p class="text-sm">Bedroom 1</p>
+        <p class="text-sm text-gray-600">1 full bed</p>
+    </div>
+    <div class="border border-gray-300 rounded px-3 py-2 w-96">
+        <p class="text-sm">Living Room</p>
+        <p class="text-sm text-gray-600">1 full bed</p>
+    </div>
+    <div class="border border-gray-300 rounded px-3 py-2 w-96">
+        <p class="text-sm">Other spaces</p>
+        <p class="text-sm text-gray-600">1 full bed</p>
+    </div>
+</div>
+
+
+
+        <!-- Add Bedroom Button (navigate to 2nd page) -->
+        <a href="{{ route('partner.apartment.bedrooms') }}" class="text-blue-600 hover:underline text-sm flex items-center space-x-1 mt-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+                 viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M12 4v16m8-8H4"/>
+            </svg>
+            <span>Add Bedroom</span>
+        </a>
+    </div>
+
+    <!-- Include Alpine.js in your Blade layout if not already -->
+<script src="//unpkg.com/alpinejs" defer></script>
+
+<!-- Guests and Bathrooms -->
+<div x-data="{ guests: 2, bathrooms: 1 }" class="bg-white p-4 rounded-lg shadow space-y-4 w-full max-w-xl">
+    <!-- Guests -->
+    <div>
+        <label class="block text-sm text-gray-800">How many guests can stay?</label>
+        <div class="flex items-center space-x-4 mt-1">
+            <button
+                @click="if (guests > 1) guests--"
+                class="border px-3 py-1 rounded text-base "
+            >−</button>
+            <span class="min-w-[2rem] text-center text-gray-700  text-base" x-text="guests"></span>
+            <button
+                @click="guests++"
+                class="border px-3 py-1 rounded text-base "
+            >+</button>
+        </div>
+    </div>
+
+    <!-- Bathrooms -->
+    <div >
+        <label class="block  text-sm text-gray-800">How many bathrooms are there?</label>
+        <div class="flex items-center space-x-4 mt-1">
+            <button
+                @click="if (bathrooms > 0) bathrooms--"
+                class="border px-3 py-1 rounded text-base"
+            >−</button>
+            <span class="min-w-[2rem] text-center text-gray-700  text-base" x-text="bathrooms"></span>
+            <button
+                @click="bathrooms++"
+                class="border px-3 py-1 rounded text-base"
+            >+</button>
+        </div>
+    </div>
+</div>
+
+
+    <!-- Children Policy -->
+    <div class="bg-white p-4 rounded-lg shadow space-y-4">
+        <div>
+            <p class="font-medium text-sm">Do you allow children?</p>
+            <label class="mr-4 text-sm"><input type="radio" name="children" checked> Yes</label>
+            <label class="text-sm"><input type="radio" name="children"> No</label>
+        </div>
+
+        <div>
+            <p class="font-medium text-sm">Do you allow infants?</p>
+            <p class="text-xs text-gray-500">cribs sleep most infants 0–3 years old and are available to guests on request.</p>
+            <label class="mr-4 text-sm"><input type="radio" name="infants" checked> Yes</label>
+            <label class="text-sm"><input type="radio" name="infants" > No</label>
+        </div>
+    </div>
+
+        <!-- Room Size -->
+<div class="lg:col-span-2 bg-white rounded-lg border border-gray-300 p-4 space-y-4 ">
+  <div class="flex flex-col lg:flex-row gap-4 items-end"> <!-- ensure vertical alignment -->
     
-    <!-- Header -->
-    <h2 class="text-2xl font-bold mb-6">Property details</h2>
-    <p class="text-gray-600 mb-4">Where can people sleep?</p>
+    <!-- Apartment Size Dropdown -->
+    <div class="w-full lg:w-2/4">
+  <label class="block  text-sm text-gray-700 mb-1">How big is this room?</label>
+  <p class="text-xs text-gray-500 ">Apartment size - optional</p>
+ 
+<input 
+    type="number"
+    min="1"
+    step="1"
+    inputmode="numeric"
+    pattern="\d*"
+    x-model="propertyCount"
+    name="property_count"
+    class="w-full border border-gray-300 rounded-md shadow-sm text-sm mt-2 px-2 py-2"
+>
 
-    <!-- Bedroom Cards -->
-    <div class="space-y-4">
-      <!-- Bedroom 1 -->
-      <div class="bg-gray-100 p-4 rounded-lg flex justify-between items-center">
-        <div>
-          <h3 class="text-lg font-medium">Bedroom 1</h3>
-          <p class="text-sm text-gray-600">1 double bed</p>
-        </div>
-        <button class="bg-gray-200 hover:bg-gray-300 text-gray-500 font-semibold py-2 px-4 rounded-full focus:outline-none">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-      </div>
+  
 
-      <!-- Living Room -->
-      <div class="bg-gray-100 p-4 rounded-lg flex justify-between items-center">
-        <div>
-          <h3 class="text-lg font-medium">Living room</h3>
-          <p class="text-sm text-gray-600">0 beds</p>
-        </div>
-        <button class="bg-gray-200 hover:bg-gray-300 text-gray-500 font-semibold py-2 px-4 rounded-full focus:outline-none">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-      </div>
+</div>
 
-      <!-- Other Spaces -->
-      <div class="bg-gray-100 p-4 rounded-lg flex justify-between items-center">
-        <div>
-          <h3 class="text-lg font-medium">Other spaces</h3>
-          <p class="text-sm text-gray-600">0 beds</p>
-        </div>
-        <button class="bg-gray-200 hover:bg-gray-300 text-gray-500 font-semibold py-2 px-4 rounded-full focus:outline-none">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-      </div>
+    <!-- Size Unit Dropdown -->
+    <div class="w-full lg:w-1/4">
+      <label class="block text-sm text-transparent mb-1">Unit</label> <!-- invisible label for spacing -->
+      <select class="w-full bg-gray-300 text-black border border-gray-300 rounded-md shadow-sm text-sm mt-2  px-2 py-2">
+        <option>square meters</option>
+        <option>square feet</option>
+      </select>
     </div>
-
-    <!-- Add Bedroom Button -->
-    <div class="flex items-center mt-6">
-      <button 
-        @click="showBedTypeSelector = true"
-        class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded flex items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v6m0 0v6m0-6h6m-6 0H6" />
-        </svg>
-        Add bedroom
-      </button>
-    </div>
-
-    <!-- Bed Type Selector (Only this toggles visibility) -->
-    <div x-show="showBedTypeSelector" class="mt-6 bg-white border border-gray-300 p-6 rounded shadow-md">
-      <h3 class="text-xl font-semibold mb-4">Select bed types for new bedroom</h3>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <label class="flex items-center space-x-2">
-          <input type="checkbox" class="h-4 w-4 text-blue-600">
-          <span>Double bed</span>
-        </label>
-        <label class="flex items-center space-x-2">
-          <input type="checkbox" class="h-4 w-4 text-blue-600">
-          <span>Single bed</span>
-        </label>
-        <label class="flex items-center space-x-2">
-          <input type="checkbox" class="h-4 w-4 text-blue-600">
-          <span>Queen bed</span>
-        </label>
-        <label class="flex items-center space-x-2">
-          <input type="checkbox" class="h-4 w-4 text-blue-600">
-          <span>Sofa bed</span>
-        </label>
-      </div>
-
-      <!-- Save and Cancel -->
-      <div class="flex justify-end mt-6 space-x-4">
-        <button 
-          @click="showBedTypeSelector = false"
-          class="text-gray-600 hover:underline text-sm">
-          Cancel
-        </button>
-        <button 
-          @click="showBedTypeSelector = false"
-          class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm font-medium">
-          Save Bedroom
-        </button>
-      </div>
-    </div>
- <div class="flex justify-between mt-4">
-          <button @click="propertyWizardStep--"
-            class="text-blue-600 border border-blue-600 px-4 py-2 rounded hover:bg-blue-50">
-            Back
-          </button>
-          <button @click="propertyWizardStep++"
-            class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-            Next
-          </button>
-        </div>
+    
   </div>
+    </div>
+
+    <div class="mt-8 flex justify-between">
+  <!-- Back Button on the left -->
+  <button
+   type="button" @click="propertyWizardStep--"
+        :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
+  
+      class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+      ←
+  </button>
+
+  <!-- Continue Button on the right -->
+  <button
+   type="button"  @click="propertyWizardStep++"
+     class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300"
+  >
+    Continue
+  </button>
+</div>
+</div>
+
 </template>
+
 
 
 
@@ -548,7 +605,8 @@
 
     <template x-if="propertyWizardStep === 2">
       
-  <div class="max-w-2xl mx-auto space-y-8">
+ <div class="max-w-2xl mx-auto space-y-8 lg:ml-32">
+
     <!-- Heading -->
      <h2 class="text-2xl font-bold text-gray-900 mt-8">What can guests use at your place?</h2>
 
@@ -585,12 +643,12 @@
 </div>
 
 
- <div class="flex justify-between mt-6">
+ <div class="flex justify-between mt-6 ">
     <!-- Back Button -->
 <button
   type="button"
  @click="propertyWizardStep--"
-  class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+  class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded mb-16">
   ←
 </button>
 
@@ -602,7 +660,7 @@
     <button
       type="submit"
     @click="propertyWizardStep++"
-      class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
+      class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 mb-16">
       Continue 
     </button>
   </div>
@@ -617,7 +675,7 @@
 
 
     <template x-if="propertyWizardStep === 3">
-    <div class="space-y-8 max-w-2xl mx-auto p-4">
+    <div class="space-y-8 max-w-2xl mx-auto p-4 lg:ml-32">
 
         <!-- Services at your property -->
         <h2 class="text-2xl md:text-3xl font-bold text-gray-800">Services at your property</h2>
@@ -689,27 +747,28 @@
     <hr class="my-6 border-t border-gray-300">
             <!-- Parking cost -->
        <div>
-  <p class="text-base font-semibold text-gray-800 mb-2">How much does parking cost?</p>
+  <p class="text-sm font-semibold text-gray-800 mb-2">How much does parking cost?</p>
 
   <div class="flex flex-col sm:flex-row items-center gap-4">
 
     <!-- Input + Currency Select Wrapper -->
     <div class="relative w-full max-w-xs">
-      <!-- Currency Select -->
-      <select class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-transparent text-gray-700 text-sm pr-1 pl-1 focus:outline-none">
-        <option value="usd">US$</option>
-        <option value="eur">€</option>
-        <option value="gbp">£</option>
-        <option value="lkr">Rs</option>
-      </select>
+  <!-- Currency Select -->
+  <select class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-transparent text-gray-700 text-sm pr-1 pl-1 focus:outline-none">
+    <option value="usd">US$</option>
+    <option value="eur">€</option>
+    <option value="gbp">£</option>
+    <option value="lkr">Rs</option>
+  </select>
 
-      <!-- Input Field -->
-      <input
-        type="text"
-        value="120.00"
-        class="w-full border border-gray-400 rounded-md pl-14 pr-2 py-2 text-gray-700 font-semibold focus:ring-2 focus:ring-blue-300 focus:outline-none"
-      />
-    </div>
+  <!-- Input Field -->
+  <input
+    type="text"
+    value="120.00"
+    class="w-full border border-gray-400 rounded-md pl-16 pr-2 py-2 text-gray-700 font-semibold focus:ring-2 focus:ring-blue-300 focus:outline-none"
+  />
+</div>
+
 
     <!-- Rate Select -->
     <select class="border border-gray-300 rounded px-3 py-2 w-32 text-sm text-gray-700">
@@ -724,29 +783,68 @@
 
             <!-- Reservation needed -->
             <div>
-                <p class="font-medium text-gray-800 mb-2">Do guests need to reserve a parking spot?</p>
-                <div class="flex flex-col sm:flex-row gap-4">
+                <p class="font-semibold text-sm text-gray-800 mb-2">Do guests need to reserve a parking spot?</p>
+
+                <div class="flex flex-col text-sm gap-2">
+    
                     <label><input type="radio" name="parking_reservation" class="mr-2"> Reservation needed</label>
-                    <label><input type="radio" name="parking_reservation" class="mr-2"> No reservation needed</label>
-                </div>
+                    <label><input type="radio" name="parking_reservation" class="mr-2">No reservation needed </label>
+</div>
+                
             </div>
 
             <!-- Parking location -->
             <div>
-                <p class="font-medium text-gray-800 mb-2">Where is the parking located?</p>
-                <div class="flex flex-col sm:flex-row gap-4">
-                    <label><input type="radio" name="parking_location" class="mr-2"> On site</label>
-                    <label><input type="radio" name="parking_location" class="mr-2"> Off site</label>
-                </div>
-            </div>
-        </div>
+                <p class="font-semibold text-sm text-gray-800 mb-2">Where is the parking located?</p>
 
+                <div class="flex flex-col text-sm gap-2">
+    
+                 <label><input type="radio" name="parking_location" class="mr-2"> On site</label>
+                    <label><input type="radio" name="parking_location" class="mr-2"> Off site</label>
+</div>
+                
+            </div>
+
+                <div>
+                <p class="font-semibold text-sm text-gray-800 mb-2">What type of parking is it?</p>
+
+                <div class="flex flex-col text-sm gap-2">
+
+                 <label><input type="radio" name="parking_type" class="mr-2">Private</label>
+                    <label><input type="radio" name="parking_type" class="mr-2">Public</label>
+</div>
+                
+            </div>
+
+            
+        </div>
+<div class="flex justify-between mt-6">
+    <!-- Back Button -->
+<button
+  type="button"
+ @click="propertyWizardStep--"
+  class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded mb-16">
+  ←
+</button>
+
+
+
+    <!-- Continue Button -->
+   <!-- Continue Button (inside input field container, aligned right) -->
+  <div class="flex justify-end ">
+    <button
+      type="submit"
+    @click="propertyWizardStep++"
+      class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 mb-16">
+      Continue 
+    </button>
+  </div>
     </div>
 </template>
 
 
     <template x-if="propertyWizardStep === 4">
-      <div class="max-w-4xl mx-auto space-y-8">
+      <div class="max-w-4xl mx-auto space-y-8 lg:ml-32">
          <div class="container ml-24 px-4 py-8 max-w-2xl">
     <!-- Header -->
     <h2 class="text-2xl font-bold mb-8 text-left">
@@ -944,7 +1042,7 @@
     </template>
 
   <template x-if="propertyWizardStep === 5">
-  <div class="max-w-4xl mx-auto space-y-8">
+  <div class="max-w-4xl mx-auto space-y-8 lg:ml-32">
     <div class="container w-full max-w-4xl ml-4 md:ml-24 px-4 py-8">
       <!-- Header -->
       <h2 class="text-2xl font-bold mb-8 text-left">House rules</h2>
@@ -1053,7 +1151,7 @@
   <!-- Continue Button on the right -->
   <button
    type="button"  @click="propertyWizardStep++"
-     class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300"
+     class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 "
   >
     Continue
   </button>
@@ -1088,74 +1186,93 @@
 
 
 <template x-if="propertyWizardStep === 6">
-    <div class="space-y-6 max-w-4xl mx-auto p-4">
+    <div class="max-w-2xl mx-auto space-y-8 px-4 sm:px-6 lg:px-8 lg:ml-32 py-6">
+       <h2 class="text-2xl font-bold mb-8 text-left">Host Profile</h2>
+        <div class="bg-white shadow-md rounded-lg p-4 space-y-6">
+            <h2 class="text-base text-gray-800">
+                Help your listing stand out by telling potential guests a little more about yourself, your property, and your neighborhood. This info will appear on your property page.
+            </h2>
 
-        <!-- Section Heading -->
-        <p class="text-lg text-gray-800 font-medium">
-            Help your listing stand out by telling potential guests a little more about yourself, your property, and your neighborhood.
-            <br class="hidden sm:block" />
-            This info will appear on your property page.
-        </p>
-
-        <!-- The Property -->
-        <div class="space-y-2">
-            <label class="flex items-start space-x-2">
-                <input type="checkbox" class="mt-1">
-                <span class="text-gray-800 font-medium">The property</span>
-            </label>
+            <!-- The Property Section -->
             <div>
-                <label class="block text-sm text-gray-600 mb-1">About the property</label>
-                <textarea rows="4" maxlength="1200" placeholder="What makes your place unique? What can guests expect"
-                    class="w-full border rounded px-4 py-2 resize-none"></textarea>
-                <div class="text-right text-sm text-gray-500">0/1200</div>
-            </div>
-        </div>
+                <label class="inline-flex items-center space-x-2">
+                    <input type="checkbox" class="form-checkbox text-blue-600">
+                    <span class="text-gray-800 font-sm ">The property</span>
+                </label>
 
-        <!-- The Host -->
-        <div class="space-y-2">
-            <label class="flex items-start space-x-2">
-                <input type="checkbox" class="mt-1">
-                <span class="text-gray-800 font-medium">The host</span>
-            </label>
-
-            <!-- Host name -->
-            <div>
-                <label class="block text-sm text-gray-600 mb-1">Host name</label>
-                <input type="text" maxlength="80" class="w-full border rounded px-4 py-2" />
-                <div class="text-right text-sm text-gray-500">0/80</div>
+                <div class="mt-2">
+                    <label class="block text-sm font-semibold text-gray-700">About the property</label>
+                    <textarea rows="4" maxlength="1200" placeholder="What makes your place unique? What can guests expect"
+                        class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"></textarea>
+                    <p class="text-right text-xs text-gray-500">0/1200</p>
+                </div>
             </div>
 
-            <!-- About host -->
+            <!-- The Host Section -->
             <div>
-                <label class="block text-sm text-gray-600 mb-1">About the host</label>
-                <textarea rows="4" maxlength="1200" placeholder="What are your interests? What do you like about hosting?"
-                    class="w-full border rounded px-4 py-2 resize-none"></textarea>
-                <div class="text-right text-sm text-gray-500">0/1200</div>
+                <label class="inline-flex items-center space-x-2">
+                    <input type="checkbox" class="form-checkbox text-blue-600">
+                    <span class="text-gray-800 font-medium">The host</span>
+                </label>
+
+                <div class="mt-2 space-y-2">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700">Host name</label>
+                        <input type="text" maxlength="80"
+                            class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
+                        <p class="text-right text-xs text-gray-500">0/80</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700">About the host</label>
+                        <textarea rows="4" maxlength="1200" placeholder="What are your interests? What do you like about hosting?"
+                            class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"></textarea>
+                        <p class="text-right text-xs text-gray-500">0/1200</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- The Neighborhood Section -->
+            <div>
+                <label class="inline-flex items-center space-x-2">
+                    <input type="checkbox" class="form-checkbox text-blue-600">
+                    <span class="text-gray-800 font-medium">The neighborhood</span>
+                </label>
+
+                <div class="mt-2">
+                    <label class="block text-sm font-semibold text-gray-700">About the neighborhood</label>
+                    <textarea rows="4" maxlength="1200" placeholder="What’s the area like? Are there any attractions nearby?"
+                        class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"></textarea>
+                    <p class="text-right text-xs text-gray-500">0/1200</p>
+                </div>
+            </div>
+
+            <!-- None of the Above Option -->
+            <div>
+                <label class="inline-flex items-center space-x-2">
+                    <input type="checkbox" class="form-checkbox text-blue-600">
+                    <span class="text-gray-800 font-medium">None of the above / I’ll add these later</span>
+                </label>
             </div>
         </div>
+        <div class="mt-12 flex justify-between">
+  <!-- Back Button on the left -->
+  <button
+   type="button" @click="propertyWizardStep--"
+        :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
+  
+      class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+      ←
+  </button>
 
-        <!-- The Neighborhood -->
-        <div class="space-y-2">
-            <label class="flex items-start space-x-2">
-                <input type="checkbox" class="mt-1">
-                <span class="text-gray-800 font-medium">The neighborhood</span>
-            </label>
-            <div>
-                <label class="block text-sm text-gray-600 mb-1">About the neighborhood</label>
-                <textarea rows="4" maxlength="1200" placeholder="What’s the area like? Are there any attractions nearby?"
-                    class="w-full border rounded px-4 py-2 resize-none"></textarea>
-                <div class="text-right text-sm text-gray-500">0/1200</div>
-            </div>
-        </div>
-
-        <!-- None of the above -->
-        <div>
-            <label class="flex items-start space-x-2">
-                <input type="checkbox" class="mt-1">
-                <span class="text-gray-800 font-medium">None of the above / I'll add these later</span>
-            </label>
-        </div>
-
+  <!-- Continue Button on the right -->
+  <button
+   type="button"  @click="propertyWizardStep++"
+     class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 "
+  >
+    Continue
+  </button>
+</div>
     </div>
 </template>
 
@@ -1302,9 +1419,8 @@
 
 <!-- ✅ Step 4: Pricing and Calendar -->
 <section x-show="step === 4">
-  <h2 class="text-2xl font-bold text-blue-700 mb-4">Pricing and calendar</h2>
-  <p class="text-gray-600">Set your nightly rates, availability, and booking rules.</p>
-  <!-- Add your pricing and calendar form here -->
+    <template x-if="pricingWizardStep === 1">
+  </template>
 </section>
 
 <!-- ✅ Step 5: Legal Information -->
@@ -1517,12 +1633,7 @@
   </div>
 </section>
 
-<!-- ✅ Step 6: Review and Complete -->
-<section x-show="step === 6">
-  <h2 class="text-2xl font-bold text-blue-700 mb-4">Review and complete</h2>
-  <p class="text-gray-600">Review all details you’ve entered before publishing your property listing.</p>
-  <!-- Add summary and submit button here -->
-</section>
+
 
 
   </div>
