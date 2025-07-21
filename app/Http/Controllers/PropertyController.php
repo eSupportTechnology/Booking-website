@@ -34,7 +34,7 @@ class PropertyController extends Controller
     public function subcategories($categoryId, PropertyAction $action)
     {
         $subcategories = $action->getPropertiesByCategory($categoryId);
-        Log::info('Fetching subcategories for category ID: ' . $categoryId, ['subcategories' => $subcategories]);   
+        Log::info('Fetching subcategories for category ID: ' . $categoryId, ['subcategories' => $subcategories]);
         // Check if subcategories are empty
         if ($subcategories->isEmpty()) {
             Log::warning('No subcategories found for category ID ' . $categoryId);
@@ -143,35 +143,46 @@ class PropertyController extends Controller
         ]);
     }
 
-    public function storeStep2(Request $request,  $propertyId, PropertyAction $action)
-    {
-        Log::info('storeStep2 called - DEBUG');
-        // die('storeStep2 called');
-        Log::info('storeStep2 called', [
-            'request' => $request->all(),
-            'session' => session()->all(),
-            'user_id' => auth()->id(),
-        ]);
-        try {
-            Log::info('Fetching property for update', ['property_id' => $request->input('property_id', $propertyId)]);
-            $property = Property::findOrFail($request->input('property_id', $propertyId));
+    public function storeStep2(Request $request, $propertyId, PropertyAction $action)
+{
 
-            Log::info('Loaded property for update', ['property' => $property->toArray()]);
-            $dto = PropertyStep2DTO::fromRequest($request);
-            Log::info('DTO created from request', ['dto' => $dto->toArray()]);
-            $updatedProperty = $action->updatePropertyStep2($property, $dto);
-            Log::info('Property after update', ['property' => $updatedProperty->toArray()]);
+    Log::info('storeStep2 called', [
+        'request' => $request->all(),
+        'session' => session()->all(),
+        'user_id' => auth()->id(),
+    ]);
+
+    try {
+        $property = Property::findOrFail($request->input('property_id', $propertyId));
+
+        // ✅ Only update address_type_id if that’s all we got
+        if ($request->has('address_type_id') && count($request->all()) === 2) {
+            $property->update([
+                'address_type_id' => $request->input('address_type_id')
+            ]);
 
             return response()->json([
                 'success' => true,
-                'message' => 'Step 2 data saved successfully',
+                'message' => 'Address type saved',
                 'property_id' => $property->id,
             ]);
-        } catch (\Exception $e) {
-            Log::error('storeStep2 exception', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 422);
         }
+
+        // Normal full step 2 flow
+        $dto = PropertyStep2DTO::fromRequest($request);
+        $updatedProperty = $action->updatePropertyStep2($property, $dto);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Step 2 data saved successfully',
+            'property_id' => $updatedProperty->id,
+        ]);
+    } catch (\Exception $e) {
+        Log::error('storeStep2 exception', ['message' => $e->getMessage()]);
+        return response()->json(['success' => false, 'message' => $e->getMessage()], 422);
     }
+}
+
 
     public function updateTitle(Request $request, $propertyId)
     {
