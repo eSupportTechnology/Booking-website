@@ -42,7 +42,7 @@ class PropertyController extends Controller
         $subcategories = $action->getPropertiesByCategory($categoryId);
         $amenities = $action->getAmenities();
         $roomTypes = $action->getRoomTypes();
-        $bedTypes= $action->getBedTypes();
+        $bedTypes = $action->getBedTypes();
         Log::info('Fetching subcategories for category ID: ' . $categoryId, ['subcategories' => $subcategories]);
         Log::info('Available amenities', ['amenities' => $amenities]);
         Log::info('Available room types', ['roomTypes' => $roomTypes]);
@@ -323,72 +323,49 @@ class PropertyController extends Controller
         return response()->json(['success' => true]);
     }
 
-    public function saveRooms(Request $request, $propertyId)
+    public function saveRooms(Request $request)
     {
         try {
-            // Validate the request
-             Log::info('Saving room details', [
-                'property_id' => $propertyId,
-                'validated_data' => $request->all()
-            ]);
             $validated = $request->validate([
-                'room_type_id'     => 'required|exists:room_types,id',
-                'name'             => 'nullable|string|max:255',
-                'price_per_night'  => 'required|numeric|min:0',
-                'max_guests'       => 'required|integer|min:1',
-                'bathroom_count'   => 'nullable|integer|min:0',
-                'size_sq_m'        => 'nullable|integer|min:0',
-                'beds'             => 'nullable|array',
-                'beds.*'           => 'integer|min:0', // bed_type_id => count
+                'property_id' => 'required|exists:properties,id',
+                'rooms' => 'required|array|min:1',
+                'rooms.*.room_type_id' => 'required|exists:room_types,id',
+                'rooms.*.name' => 'nullable|string',
+                'rooms.*.price_per_night' => 'nullable|numeric',
+                'rooms.*.max_guests' => 'nullable|integer',
+                'rooms.*.bathroom_count' => 'nullable|integer',
+                'rooms.*.size_sq_m' => 'nullable|numeric',
+                'rooms.*.beds' => 'nullable|array',
             ]);
-
-           
-            // Create new Room
-            $room = new Room();
-            $room->property_id     = $propertyId;
-            $room->room_type_id    = $validated['room_type_id'];
-            $room->name            = $validated['name'] ?? 'Room'; // fallback
-            $room->price_per_night = $validated['price_per_night'];
-            $room->max_guests      = $validated['max_guests'];
-            $room->bathroom_count  = $validated['bathroom_count'] ?? 0;
-            $room->size_sq_m       = $validated['size_sq_m'] ?? null;
-            $room->save();
-
-            // Save bed types (if any)
-            if (!empty($validated['beds'])) {
-                foreach ($validated['beds'] as $bedTypeId => $count) {
-                    if ($count > 0) {
-                        RoomBed::create([
-                            'room_id'       => $room->id,
-                            'bed_type_id'   => $bedTypeId,
-                            'count'         => $count
-                        ]);
+    
+            Log::info('Validated room data', $validated);
+            foreach ($validated['rooms'] as $roomData) {
+                $room = Room::create([
+                    'property_id' => $validated['property_id'],
+                    'room_type_id' => $roomData['room_type_id'],
+                    'name' => $roomData['name'],
+                    'price_per_night' => $roomData['price_per_night'],
+                    'max_guests' => $roomData['max_guests'],
+                    'bathroom_count' => $roomData['bathroom_count'],
+                    'size_sq_m' => $roomData['size_sq_m'],
+                ]);
+    
+                if (!empty($roomData['beds'])) {
+                    foreach ($roomData['beds'] as $bedTypeId => $count) {
+                        if ((int)$count > 0) {
+                            $room->beds()->attach($bedTypeId, ['count' => $count]);
+                        }
                     }
                 }
             }
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Room details saved successfully.',
-                'room_id' => $room->id
+    
+            return response()->json(['success' => 'success']);
+        } catch (\Exception  $e) {
+            Log::error('Error saving rooms', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
             ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            Log::error('Validation error while saving room details', [
-                'errors' => $e->errors(),
-                'data' => $request->all()
-            ]);
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation failed.',
-                'errors'  => $e->errors()
-            ], 422);
-        } catch (\Exception $e) {
-            Log::error('Error saving room details', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
-            return response()->json([
-                'success' => false,
-                'message' => 'An error occurred while saving the room.',
-                'error'   => $e->getMessage()
-            ], 500);
+            return response()->json(['error' => $e ->getMessage()], 500);
         }
     }
 }

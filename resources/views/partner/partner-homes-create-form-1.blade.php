@@ -666,7 +666,7 @@
                                         </template>
 
 
-                                        
+
 
 
                                         <template x-if="step === 6 && selected === 'one'">
@@ -1505,6 +1505,7 @@
                                                         size_sq_m: 0,
                                                         beds: {}
                                                     },
+                                                    rooms: [],
                                                     roomTypes: [],
                                                     bedTypes: [],
                                                 }"
@@ -1592,12 +1593,27 @@
                                                             class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
                                                             ←
                                                         </button>
-
+                                                        <button type="button" @click="addRoom"
+                                                            class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                                                            + Add Room
+                                                        </button>
                                                         <button type="button" @click="nextStep"
                                                             class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
                                                             Save Room & Continue
                                                         </button>
                                                     </div>
+
+                                                    <div class="mt-6 border-t pt-4">
+                                                        <h3 class="font-semibold mb-2">Added Rooms:</h3>
+                                                        <template x-for="(room, index) in rooms" :key="index">
+                                                            <div class="border p-2 rounded mb-2 bg-gray-50">
+                                                                <p><strong>Name:</strong> <span x-text="room.name"></span></p>
+                                                                <p><strong>Type:</strong> <span x-text="roomTypes.find(rt => rt.id == room.room_type_id)?.name"></span></p>
+                                                                <p><strong>Price:</strong> Rs. <span x-text="room.price_per_night"></span></p>
+                                                            </div>
+                                                        </template>
+                                                    </div>
+
                                                 </main>
                                             </div>
                                         </template>
@@ -3097,6 +3113,24 @@
 
                                     previewFiles: [],
 
+                                    addRoom() {
+
+
+                                        // Clone the current newRoom and push to rooms
+                                        const roomCopy = JSON.parse(JSON.stringify(this.newRoom));
+                                        this.rooms.push(roomCopy);
+
+                                        // Reset newRoom
+                                        this.newRoom = {
+                                            room_type_id: '',
+                                            name: '',
+                                            price_per_night: 0,
+                                            max_guests: 1,
+                                            bathroom_count: 0,
+                                            size_sq_m: 0,
+                                            beds: {}
+                                        };
+                                    },
                                     handlePreview(event) {
                                         this.previewFiles = [];
                                         const files = event.target.files;
@@ -3349,17 +3383,14 @@
                                         } else if (this.step === 13 && this.selected === 'one') {
                                             console.log('Saving room details for property ID:', this.propertyId);
 
-                                            if (!this.newRoom.room_type_id || !this.newRoom.max_guests || !this.newRoom.price_per_night) {
-                                                alert('Please fill out all required fields (room type, guests, price).');
+                                            if (this.rooms.length === 0) {
+                                                alert('Please add at least one room before continuing.');
                                                 return;
                                             }
+
                                             console.log('Saving room details:', {
-                                                property_id: this.propertyId,
-                                                room_type_id: this.newRoom.room_type_id,
-                                                name: this.newRoom.name,
-                                                price_per_night: this.newRoom.price_per_night,
-                                                max_guests: this.newRoom.max_guests,
-                                                beds: this.newRoom.beds
+                                                rooms: this.rooms
+
                                             });
 
 
@@ -3371,13 +3402,8 @@
                                                     },
                                                     body: JSON.stringify({
                                                         property_id: this.propertyId,
-                                                        room_type_id: this.newRoom.room_type_id,
-                                                        name: this.newRoom.name,
-                                                        price_per_night: this.newRoom.price_per_night,
-                                                        max_guests: this.newRoom.max_guests,
-                                                        bathroom_count: this.newRoom.bathroom_count,
-                                                        size_sq_m: this.newRoom.size_sq_m,
-                                                        beds: this.newRoom.beds // key-value pair: bed_type_id => count
+                                                        rooms: this.rooms
+
                                                     })
                                                 })
                                                 .then(response => response.json())

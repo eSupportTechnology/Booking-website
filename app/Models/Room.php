@@ -9,8 +9,14 @@ use App\Models\RoomBed;
 class Room extends Model
 {
     protected $fillable = [
-        'property_id', 'room_type_id', 'name', 'description',
-        'price_per_night', 'max_guests', 'bathroom_count', 'size_sq_m'
+        'property_id',
+        'room_type_id',
+        'name',
+        'description',
+        'price_per_night',
+        'max_guests',
+        'bathroom_count',
+        'size_sq_m'
     ];
 
     public function roomType()
@@ -20,6 +26,6 @@ class Room extends Model
 
     public function beds()
     {
-        return $this->hasMany(RoomBed::class);
+        return $this->belongsToMany(BedType::class, 'room_beds')->withPivot('count')->withTimestamps();
     }
 }

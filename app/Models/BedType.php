@@ -12,4 +12,9 @@ class BedType extends Model
     {
         return $this->hasMany(RoomBed::class);
     }
+
+    public function rooms()
+    {
+        return $this->belongsToMany(Room::class, 'bed_room')->withPivot('count')->withTimestamps();
+    }
 }
