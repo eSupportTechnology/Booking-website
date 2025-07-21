@@ -17,10 +17,11 @@ class DatabaseSeeder extends Seeder
             RolesAndPermissionsSeeder::class,
             PropertyCategoriesTableSeeder::class,
             // PropertySubcategoriesTableSeeder::class,
-            PropertyHotelSubcategorySeeder::class,
             PropertySubcategorySeeder::class,
+            PropertyHotelSubcategorySeeder::class,
             PropertySubtypeSeeder::class,
             AddressTypesTableSeeder::class,
+            AmenitiesTableSeeder::class,
         ]);
 
         // Create a test user

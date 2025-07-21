@@ -17,7 +17,7 @@
         font-family: 'Noto Sans', sans-serif;
       }
     </style>
-    <meta name="csrf-token" content="{{ csrf_token() }}" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
   </head>
   <body class="bg-gray-50 text-gray-800">
     <!-- Header -->
@@ -101,6 +101,7 @@
     step: 1,
     wizardStep: 1,
     propertyWizardStep: 1,
+     pricingWizardStep:1,
     // Backend-connected state
     propertyId: '{{ $property->id ?? 'new' }}', // Use 'new' if $property->id is not set
     title: '{{ old('title', $property->title ?? '') }}',
@@ -276,7 +277,10 @@
             offer_cribs: this.offerCribs,
             apartment_size: this.apartmentSize,
             apartment_unit: this.apartmentUnit,
+            amenities: this.selectedAmenities,
         };
+        console.log('Selected amenities:', this.selectedAmenities);
+        console.log('Payload:', payload);
         this.isLoading = true;
         fetch(`/partner/property/${this.propertyId}`, {
             method: 'PATCH',
@@ -368,6 +372,26 @@
             this.isLoading = false;
         });
     },
+    selectedAmenities: [],
+    propertyCount: 1,
+    owners: [
+      { firstName: '', address: '', zipCode: '', city: '', country: '' }
+    ],
+    ownershipType: '', // 'individual' or 'business'
+    // For individual
+    individual: { firstName: '', lastName: '', dob: '', altNames: [] },
+    // For business entity
+    business: {
+      businessName: '',
+      tradingName: '',
+      address: '',
+      zipCode: '',
+      city: '',
+      country: '',
+      owners: [
+        { firstName: '', lastName: '', dob: '', altNames: [] }
+      ]
+    }
 }"
       x-init="console.log('Wizard initialized', { title, address, city, country, zipcode, description })"
     >
@@ -381,7 +405,7 @@
             >
               <!-- Loop through nav steps -->
               <template
-                x-for="(label, index) in ['Basic information', 'Property setup', 'Photos', 'Pricing and calendar', 'Legal information', 'Review and complete']"
+                x-for="(label, index) in ['Basic information', 'Property setup', 'Photos', 'Pricing and calendar', 'Legal information']"
                 :key="index"
               >
                 <div class="relative">
@@ -396,6 +420,11 @@
                     <template x-if="index === 0 && wizardStep === 3">
                       <span class="text-green-600">✔️</span>
                     </template>
+
+                     <!-- Optional checkmark -->
+              <template x-if="index === 1 && propertyWizardStep === 6">
+                <span class="text-green-600">✔️</span>
+              </template>
                   </div>
                   <!-- 🔵 Progress bar only under "Basic information" when active -->
                   <template x-if="index === 0 && step === 1">
@@ -424,6 +453,17 @@
                       </template>
                     </div>
                   </template>
+
+                  <template x-if="index === 3 && step === 4">
+  <div class="flex space-x-1 mt-1 w-35 sm:w-48 md:w-56 lg:w-64 xl:w-72 ml-[-15px] sm:ml-[-25px] md:ml-[-35px]">
+    <template x-for="i in 4">
+      <div 
+        :class="pricingWizardStep >= i ? 'bg-blue-600' : 'bg-gray-300'" 
+        class="h-1 flex-1 rounded-full">
+      </div>
+    </template>
+  </div>
+</template>
                 </div>
               </template>
             </div>
@@ -764,651 +804,851 @@
             </div>
           </section>
           <!-- Property Setup Section -->
-          <section x-show="step === 2">
-            <div class="w-full max-w-xl p-4 ml-32">
-              <template x-if="propertyWizardStep === 1">
-                <div>
-                  <!-- Header -->
-                  <h2 class="text-2xl font-bold mb-6">Property details</h2>
-                  <p class="text-gray-600 mb-4">Where can people sleep?</p>
-                  <!-- Bedroom Cards -->
-                  <div class="space-y-4">
-                    <!-- Loop through rooms to display cards -->
-                    <template x-for="(room, id) in rooms" :key="id">
-                      <div class="bg-gray-100 p-4 rounded-lg flex justify-between items-center">
-                        <div>
-                          <h3 class="text-lg font-medium" x-text="room.name"></h3>
-                          <p class="text-sm text-gray-600" x-text="getBedSummary(id)"></p>
-                        </div>
-                        <button
-                          @click="openBedTypeSelector(id)"
-                          class="bg-gray-200 hover:bg-gray-300 text-gray-500 font-semibold py-2 px-4 rounded-full focus:outline-none"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            class="h-6 w-6"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
-                              d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                            />
-                          </svg>
-                        </button>
-                      </div>
-                    </template>
-                  </div>
-                  <!-- Add Bedroom Button -->
-                  <div class="flex items-center mt-6">
-                    <button
-                      @click="addBedroom()"
-                      class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded flex items-center"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-5 w-5 mr-2"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v6m0 0v6m0-6h6m-6 0H6" />
-                      </svg>
-                      Add bedroom
-                    </button>
-                  </div>
-                  <!-- Bed Type Selector Modal -->
-                  <div
-                    x-show="showBedTypeSelector"
-                    x-transition:enter="transition ease-out duration-300"
-                    x-transition:enter-start="opacity-0 transform scale-95"
-                    x-transition:enter-end="opacity-100 transform scale-100"
-                    x-transition:leave="transition ease-in duration-200"
-                    x-transition:leave-start="opacity-100 transform scale-100"
-                    x-transition:leave-end="opacity-0 transform scale-95"
-                    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-                  >
-                    <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
-                      <h3
-                        class="text-xl font-semibold mb-2"
-                        x-text="rooms[currentEditingRoomId]?.name || 'New Bedroom'"
-                      ></h3>
-                      <p class="text-gray-600 mb-6">Which beds are available in this room?</p>
-                      <div class="space-y-4">
-                        <!-- If editing Living room, only show Sofa bed -->
-                        <template x-if="currentEditingRoomId === 'livingRoom'">
-                          <div class="flex justify-between items-center py-3 border-b">
-                            <div>
-                              <div class="font-medium">Sofa bed(s)</div>
-                              <div class="text-sm text-gray-500">Varying sizes</div>
-                            </div>
-                            <div class="flex items-center space-x-3">
-                              <button @click="if(tempBedCounts.sofa > 0) tempBedCounts.sofa--" class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path></svg>
-                              </button>
-                              <span class="font-bold text-lg w-6 text-center" x-text="tempBedCounts.sofa"></span>
-                              <button @click="tempBedCounts.sofa++" class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-                              </button>
-                            </div>
-                          </div>
-                        </template>
-                        <!-- For all other rooms, show standard and more bed options as before -->
-                        <template x-if="currentEditingRoomId !== 'livingRoom'">
-                          <div>
-                            <!-- Standard Bed Options (Twin, Full, Queen, King) -->
-                            <div class="space-y-4">
-                              <!-- Twin Bed -->
-                              <div class="flex justify-between items-center py-3 border-b">
-                                <div>
-                                  <div class="font-medium">Twin bed(s)</div>
-                                  <div class="text-sm text-gray-500">35–51 inches wide</div>
-                                </div>
-                                <div class="flex items-center space-x-3">
-                                  <button @click="if(tempBedCounts.twin > 0) tempBedCounts.twin--" class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path></svg>
-                                  </button>
-                                  <span class="font-bold text-lg w-6 text-center" x-text="tempBedCounts.twin"></span>
-                                  <button @click="tempBedCounts.twin++" class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-                                  </button>
-                                </div>
-                              </div>
-                              <!-- Full Bed -->
-                              <div class="flex justify-between items-center py-3 border-b">
-                                <div>
-                                  <div class="font-medium">Full bed(s)</div>
-                                  <div class="text-sm text-gray-500">52–59 inches wide</div>
-                                </div>
-                                <div class="flex items-center space-x-3">
-                                  <button @click="if(tempBedCounts.full > 0) tempBedCounts.full--" class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path></svg>
-                                  </button>
-                                  <span class="font-bold text-lg w-6 text-center" x-text="tempBedCounts.full"></span>
-                                  <button @click="tempBedCounts.full++" class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-                                  </button>
-                                </div>
-                              </div>
-                              <!-- Queen Bed -->
-                              <div class="flex justify-between items-center py-3 border-b">
-                                <div>
-                                  <div class="font-medium">Queen bed(s)</div>
-                                  <div class="text-sm text-gray-500">60–70 inches wide</div>
-                                </div>
-                                <div class="flex items-center space-x-3">
-                                  <button @click="if(tempBedCounts.queen > 0) tempBedCounts.queen--" class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path></svg>
-                                  </button>
-                                  <span class="font-bold text-lg w-6 text-center" x-text="tempBedCounts.queen"></span>
-                                  <button @click="tempBedCounts.queen++" class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-                                  </button>
-                                </div>
-                              </div>
-                              <!-- King Bed -->
-                              <div class="flex justify-between items-center py-3 border-b">
-                                <div>
-                                  <div class="font-medium">King bed(s)</div>
-                                  <div class="text-sm text-gray-500">71–81 inches wide</div>
-                                </div>
-                                <div class="flex items-center space-x-3">
-                                  <button @click="if(tempBedCounts.king > 0) tempBedCounts.king--" class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path></svg>
-                                  </button>
-                                  <span class="font-bold text-lg w-6 text-center" x-text="tempBedCounts.king"></span>
-                                  <button @click="tempBedCounts.king++" class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
-                            <!-- More bed options toggle -->
-                            <div class="py-3">
-                              <button
-                                @click="showAllBedTypesInModal = !showAllBedTypesInModal"
-                                class="text-blue-600 hover:text-blue-800 font-medium p-0 h-auto"
-                              >
-                                <span x-text="showAllBedTypesInModal ? 'Fewer bed options' : 'More bed options'"></span>
-                              </button>
-                            </div>
-                            <!-- More Bed Types (Bunk, Sofa, Futon) -->
-                            <template x-if="showAllBedTypesInModal">
-                              <div class="space-y-4">
-                                <!-- Bunk Bed -->
-                                <div class="flex justify-between items-center py-3 border-b">
-                                  <div>
-                                    <div class="font-medium">Bunk bed(s)</div>
-                                    <div class="text-sm text-gray-500">Varying sizes</div>
-                                  </div>
-                                  <div class="flex items-center space-x-3">
-                                    <button @click="if(tempBedCounts.bunk > 0) tempBedCounts.bunk--" class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50">
-                                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path></svg>
-                                    </button>
-                                    <span class="font-bold text-lg w-6 text-center" x-text="tempBedCounts.bunk"></span>
-                                    <button @click="tempBedCounts.bunk++" class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50">
-                                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-                                    </button>
-                                  </div>
-                                </div>
-                                <!-- Sofa Bed -->
-                                <div class="flex justify-between items-center py-3 border-b">
-                                  <div>
-                                    <div class="font-medium">Sofa bed(s)</div>
-                                    <div class="text-sm text-gray-500">Varying sizes</div>
-                                  </div>
-                                  <div class="flex items-center space-x-3">
-                                    <button @click="if(tempBedCounts.sofa > 0) tempBedCounts.sofa--" class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50">
-                                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path></svg>
-                                    </button>
-                                    <span class="font-bold text-lg w-6 text-center" x-text="tempBedCounts.sofa"></span>
-                                    <button @click="tempBedCounts.sofa++" class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50">
-                                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-                                    </button>
-                                  </div>
-                                </div>
-                                <!-- Futon Bed -->
-                                <div class="flex justify-between items-center py-3 border-b">
-                                  <div>
-                                    <div class="font-medium">Futon bed(s)</div>
-                                    <div class="text-sm text-gray-500">Varying sizes</div>
-                                  </div>
-                                  <div class="flex items-center space-x-3">
-                                    <button @click="if(tempBedCounts.futon > 0) tempBedCounts.futon--" class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50">
-                                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path></svg>
-                                    </button>
-                                    <span class="font-bold text-lg w-6 text-center" x-text="tempBedCounts.futon"></span>
-                                    <button @click="tempBedCounts.futon++" class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50">
-                                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-                                    </button>
-                                  </div>
-                                </div>
-                              </div>
-                            </template>
-                          </div>
-                        </template>
-                        <!-- Action Buttons -->
-                        <div class="flex justify-end space-x-4 mt-6 pt-4 border-t">
-                          <button
-                            @click="cancelBedTypes()"
-                            class="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium"
-                          >
-                            Cancel
-                          </button>
-                          <button
-                            @click="saveBedTypes()"
-                            class="px-6 py-2 bg-blue-600 text-white font-medium rounded hover:bg-blue-700"
-                          >
-                            Save
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+          
 
-                  <div class="bg-white p-6 rounded-lg shadow-sm mt-8">
-                    <h3 class="text-base font-semibold text-gray-800 mb-4">How many guests can stay?</h3>
-                    <div class="flex items-center justify-center space-x-4">
-                      <button
-                        type="button"
-                        @click="guests = Math.max(1, guests - 1)"
-                        class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center"
-                        aria-label="Decrease guests"
-                      >-</button>
-                      <span class="text-2xl font-bold w-12 text-center" x-text="guests"></span>
-                      <button
-                        type="button"
-                        @click="guests = guests + 1"
-                        class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center"
-                        aria-label="Increase guests"
-                      >+</button>
-                    </div>
-                  </div>
+ <!-- Property Setup Section -->
+<section x-show="step === 2">
+ 
 
-                  <div class="bg-white p-6 rounded-lg shadow-sm mt-8">
-                    <h3 class="text-base font-semibold text-gray-800 mb-4">How many bathrooms are there?</h3>
-                    <div class="flex items-center justify-center space-x-4">
-                      <button
-                        type="button"
-                        @click="bathrooms = Math.max(0, bathrooms - 1)"
-                        class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center"
-                        aria-label="Decrease bathrooms"
-                      >-</button>
-                      <span class="text-2xl font-bold w-12 text-center" x-text="bathrooms"></span>
-                      <button
-                        type="button"
-                        @click="bathrooms = bathrooms + 1"
-                        class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center"
-                        aria-label="Increase bathrooms"
-                      >+</button>
-                    </div>
-                  </div>
+  <template x-if="propertyWizardStep === 1">
+   {{-- property-setup.blade.php --}}
+<div class="max-w-xl mx-auto space-y-8 lg:ml-32 px-4 py-6">
 
-                  <div class="bg-white p-6 rounded-lg shadow-sm space-y-6 mt-8">
-                  
-                    <div>
-                      <h3 class="text-base font-semibold text-gray-800 mb-4">Do you allow children?</h3>
-                      <div class="flex space-x-6">
-                        <label class="flex items-center space-x-2">
-                          <input type="radio" x-model="allowChildren" value="yes" />
-                          <span>Yes</span>
-                        </label>
-                        <label class="flex items-center space-x-2">
-                          <input type="radio" x-model="allowChildren" value="no" />
-                          <span>No</span>
-                        </label>
-                      </div>
-                    </div>
+<h2 class="text-2xl font-bold text-gray-900 mt-8">What can guests use at your place?</h2>
+    <!-- Where can people sleep -->
+    <div class="bg-white p-4 rounded-lg shadow space-y-4">
+        <h2 class="text-lg font-semibold">Where can people sleep?</h2>
 
-                   
-                    <div>
-                      <h3 class="text-base font-semibold text-gray-800 mb-4">Do you offer cribs?</h3>
-                      <p class="text-sm text-gray-600 mb-4">
-                        Cribs sleep most infants 0–3 years old and are available to guests on request.
-                      </p>
-                      <div class="flex space-x-6">
-                        <label class="flex items-center space-x-2">
-                          <input type="radio" x-model="offerCribs" value="yes" />
-                          <span>Yes</span>
-                        </label>
-                        <label class="flex items-center space-x-2">
-                          <input type="radio" x-model="offerCribs" value="no" />
-                          <span>No</span>
-                        </label>
-                      </div>
-                    </div>
-                  </div>
+      <div class="space-y-4">
+    <div class="border border-gray-300 rounded px-3 py-2 w-96">
+        <p class="text-sm">Bedroom 1</p>
+        <p class="text-sm text-gray-600">1 full bed</p>
+    </div>
+    <div class="border border-gray-300 rounded px-3 py-2 w-96">
+        <p class="text-sm">Living Room</p>
+        <p class="text-sm text-gray-600">1 full bed</p>
+    </div>
+    <div class="border border-gray-300 rounded px-3 py-2 w-96">
+        <p class="text-sm">Other spaces</p>
+        <p class="text-sm text-gray-600">1 full bed</p>
+    </div>
+</div>
 
-                 
-                  <div class="bg-white p-6 rounded-lg shadow-sm mt-8">
-                    <h3 class="text-base font-semibold text-gray-800 mb-4">How big is this apartment?</h3>
-                    <div class="flex items-center space-x-4">
-                      <div class="flex-1">
-                        <label for="apartment-size" class="sr-only">Apartment size</label>
-                        <input
-                          type="number"
-                          id="apartment-size"
-                          x-model="apartmentSize"
-                          placeholder="Apartment size - optional"
-                          class="w-full border border-gray-300 rounded p-2"
-                        />
-                      </div>
-                      <select x-model="apartmentUnit" class="w-[150px] border border-gray-300 rounded p-2">
-                        <option value="" disabled>Select unit</option>
-                        <option value="square meters">square meters</option>
-                        <option value="square feet">square feet</option>
-                      </select>
-                    </div>
-                  </div>
-                  <!-- Navigation buttons -->
-                  <div class="flex justify-between mt-8">
-                    <button
-                      @click="propertyWizardStep--"
-                      class="text-blue-600 border border-blue-600 px-4 py-2 rounded hover:bg-blue-50"
-                    >
-                      Back
-                    </button>
-                    <button
-                      @click="saveAdditionalDetails()"
-                      class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-                    >
-                      Next
-                    </button>
-                  </div>
-                </div>
-              </template>
-              <template x-if="propertyWizardStep === 2">
-                <div class="max-w-4xl mx-auto space-y-8">
-                  <!-- Heading -->
-                  <h2 class="text-2xl font-bold text-gray-900 mt-8">What can guests use at your place?</h2>
-                  <!-- Amenities Section Container -->
-                  <div class="bg-white rounded-lg shadow-sm p-6 space-y-6">
-                    @php
-                      $amenities = [
-                          'Highlights' => ['Private bathroom', 'Sea views', 'Family rooms', 'Airport shuttle', 'Spa and wellness center'],
-                          'General' => ['Air conditioning', 'Heating', 'Free WiFi', 'Electric vehicle charging station'],
-                          'Cooking and cleaning' => ['Kitchen', 'Microwave', 'Washing machine'],
-                          'Entertainment' => ['Flat-screen TV', 'Swimming Pool', 'Hot tub', 'Minibar', 'Sauna'],
-                          'Outside and view' => ['Balcony', 'Garden view', 'Terrace', 'View'],
-                      ];
-                    @endphp
-                    @foreach ($amenities as $category => $items)
-                      <div class="space-y-3">
-                        <h3 class="text-base font-semibold text-gray-800">{{ $category }}</h3>
-                        <div class="flex flex-col space-y-2">
-                          @foreach ($items as $item)
-                            <label class="flex items-center space-x-2 text-gray-700 text-sm">
-                              <input type="checkbox" name="amenities[]" value="{{ $item }}" class="form-checkbox h-5 w-5 text-blue-600" />
-                              <span>{{ $item }}</span>
-                            </label>
-                          @endforeach
-                        </div>
-                        @if (!$loop->last)
-                          <hr class="border-t border-gray-200 mt-4" />
-                        @endif
-                      </div>
-                    @endforeach
-                  </div>
-                  <div class="flex justify-between mt-6">
-                    <!-- Back Button -->
-                    <button
-                      type="button"
-                      @click="propertyWizardStep--"
-                      class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded"
-                    >
-                      ←
-                    </button>
-                    <!-- Continue Button -->
-                    <!-- Continue Button (inside input field container, aligned right) -->
-                    <div class="flex justify-end">
-                      <button
-                        type="submit"
-                        @click="propertyWizardStep++"
-                        class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300"
-                      >
-                        Continue
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </template>
-              <template x-if="propertyWizardStep === 3">
-                <div class="space-y-4">
-                  <h2 class="text-xl font-semibold text-gray-800">Step 3: Facilities</h2>
-                  <!-- Facilities Checkboxes -->
-                  <div class="space-y-2">
-                    <label class="block"><input type="checkbox" class="mr-2" />Wi-Fi</label>
-                    <label class="block"><input type="checkbox" class="mr-2" />Parking</label>
-                    <label class="block"><input type="checkbox" class="mr-2" />Swimming Pool</label>
-                  </div>
-                  <div class="flex justify-between mt-4">
-                    <button
-                      @click="propertyWizardStep--"
-                      class="text-blue-600 border border-blue-600 px-4 py-2 rounded hover:bg-blue-50"
-                    >
-                      Back
-                    </button>
-                    <button
-                      @click="propertyWizardStep++"
-                      class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-                    >
-                      Next
-                    </button>
-                  </div>
-                </div>
-              </template>
-              <template x-if="propertyWizardStep === 4">
-                <div class="max-w-4xl mx-auto space-y-8">
-                  <div class="container ml-24 px-4 py-8 max-w-2xl">
-                    <!-- Header -->
-                    <h2 class="text-2xl font-bold mb-8 text-left">What languages do you or your staff speak?</h2>
-                    <!-- Language Selection Section -->
-                    <div class="bg-white shadow-md rounded-lg p-6 mb-8">
-                      <h3 class="text-lg mb-4 font-bold">Select languages</h3>
-                      <div class="space-y-2">
-                        <label class="flex items-center cursor-pointer">
-                          <input type="checkbox" class="mr-2" />
-                          <span>English</span>
-                        </label>
-                        <label class="flex items-center cursor-pointer">
-                          <input type="checkbox" class="mr-2" />
-                          <span>French</span>
-                        </label>
-                        <label class="flex items-center cursor-pointer">
-                          <input type="checkbox" class="mr-2" />
-                          <span>German</span>
-                        </label>
-                        <label class="flex items-center cursor-pointer">
-                          <input type="checkbox" class="mr-2" />
-                          <span>Hindi</span>
-                        </label>
-                      </div>
-                      <!-- Add Additional Languages -->
-                      <div id="additionalLanguagesSection" class="mt-4 hidden relative">
-                        <h3 class="text-lg font-medium mb-2">Add additional languages</h3>
-                        <!-- Searchable dropdown container -->
-                        <div class="relative w-full max-w-md">
-                          <input
-                            type="text"
-                            id="languageInput"
-                            oninput="filterDropdown()"
-                            onclick="toggleDropdown()"
-                            placeholder="Search languages..."
-                            autocomplete="off"
-                            class="w-full border rounded p-2 pr-10 cursor-pointer"
-                            readonly
-                          />
-                          <!-- Dropdown arrow -->
-                          <button
-                            type="button"
-                            onclick="toggleDropdown()"
-                            class="absolute right-2 top-2.5 text-gray-600 hover:text-gray-900 focus:outline-none"
-                            tabindex="-1"
-                          >
-                            ▼
-                          </button>
-                          <!-- Dropdown list -->
-                          <ul
-                            id="languageDropdown"
-                            class="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded max-h-40 overflow-auto shadow-lg hidden"
-                          >
-                            <li class="p-2 hover:bg-blue-100 cursor-pointer" onclick="selectLanguage(this)">Arabic</li>
-                            <li class="p-2 hover:bg-blue-100 cursor-pointer" onclick="selectLanguage(this)">Bulgarian</li>
-                            <li class="p-2 hover:bg-blue-100 cursor-pointer" onclick="selectLanguage(this)">Catalan</li>
-                            <li class="p-2 hover:bg-blue-100 cursor-pointer" onclick="selectLanguage(this)">Chinese</li>
-                            <li class="p-2 hover:bg-blue-100 cursor-pointer" onclick="selectLanguage(this)">Croatian</li>
-                            <li class="p-2 hover:bg-blue-100 cursor-pointer" onclick="selectLanguage(this)">Czech</li>
-                            <li class="p-2 hover:bg-blue-100 cursor-pointer" onclick="selectLanguage(this)">Danish</li>
-                            <li class="p-2 hover:bg-blue-100 cursor-pointer" onclick="selectLanguage(this)">Dutch</li>
-                          </ul>
-                        </div>
-                      </div>
-                      <!-- Toggle Button for Additional Languages -->
-                      <a
-                        href="#"
-                        onclick="event.preventDefault(); toggleAdditionalLanguages();"
-                        class="text-blue-500 hover:underline mt-4 block"
-                      >
-                        Add additional languages
-                      </a>
-                    </div>
-                    <!-- Navigation Buttons -->
-                    <div class="mt-8 flex justify-between">
-                      <!-- Back Button on the left -->
-                      <button
-                        type="button"
-                        @click="propertyWizardStep--"
-                        :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-                        class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded"
-                      >
-                        ←
-                      </button>
-                      <!-- Continue Button on the right -->
-                      <button
-                        type="button"
-                        @click="propertyWizardStep++"
-                        class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300"
-                      >
-                        Continue
-                      </button>
-                    </div>
-                  </div>
-                  <script>
-                    function toggleAdditionalLanguages() {
-                      const section = document.getElementById('additionalLanguagesSection');
-                      section.classList.toggle('hidden');
-                      if (!section.classList.contains('hidden')) {
-                        document.getElementById('languageInput').focus();
-                        showDropdown();
-                      } else {
-                        hideDropdown();
-                      }
-                    }
-                    function toggleDropdown() {
-                      const dropdown = document.getElementById('languageDropdown');
-                      dropdown.classList.toggle('hidden');
-                    }
-                    function showDropdown() {
-                      document.getElementById('languageDropdown').classList.remove('hidden');
-                    }
-                    function hideDropdown() {
-                      document.getElementById('languageDropdown').classList.add('hidden');
-                    }
-                    function filterDropdown() {
-                      const input = document.getElementById('languageInput');
-                      const filter = input.value.toLowerCase();
-                      const ul = document.getElementById('languageDropdown');
-                      const items = ul.getElementsByTagName('li');
-                      ul.classList.remove('hidden');
-                      let visibleCount = 0;
-                      for (let i = 0; i < items.length; i++) {
-                        const txtValue = items[i].textContent || items[i].innerText;
-                        if (txtValue.toLowerCase().indexOf(filter) > -1) {
-                          items[i].style.display = '';
-                          visibleCount++;
-                        } else {
-                          items[i].style.display = 'none';
-                        }
-                      }
-                      // Hide dropdown if no matches
-                      if (visibleCount === 0) {
-                        ul.classList.add('hidden');
-                      }
-                    }
-                    function selectLanguage(element) {
-                      const input = document.getElementById('languageInput');
-                      input.value = element.textContent;
-                      hideDropdown();
-                    }
-                    // Close dropdown when clicking outside
-                    document.addEventListener('click', function (event) {
-                      const dropdown = document.getElementById('languageDropdown');
-                      const input = document.getElementById('languageInput');
-                      const container = document.getElementById('additionalLanguagesSection');
-                      if (!container.contains(event.target)) {
-                        hideDropdown();
-                      }
-                    });
-                  </script>
-                </div>
-              </template>
-              <template x-if="propertyWizardStep === 5">
-                <div class="space-y-4">
-                  <h2 class="text-xl font-semibold text-gray-800">Step 5: Confirm Details</h2>
-                  <p class="text-gray-600">Review and confirm the details you've entered.</p>
-                  <!-- Just placeholder review text -->
-                  <ul class="list-disc list-inside text-gray-700">
-                    <li>Property: Villa</li>
-                    <li>Rooms: 3</li>
-                    <li>Facilities: Wi-Fi, Parking</li>
-                  </ul>
-                  <div class="flex justify-between mt-4">
-                    <button
-                      @click="propertyWizardStep--"
-                      class="text-blue-600 border border-blue-600 px-4 py-2 rounded hover:bg-blue-50"
-                    >
-                      Back
-                    </button>
-                    <button
-                      @click="step = 3; propertyWizardStep = 1"
-                      class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-                    >
-                      Finish & Continue →
-                    </button>
-                  </div>
-                </div>
-              </template>
-              <template x-if="propertyWizardStep === 6">
-                <div class="space-y-4">
-                  <h2 class="text-xl font-semibold text-gray-800">Step 5: Confirm Details</h2>
-                  <p class="text-gray-600">Review and confirm the details you've entered.</p>
-                  <!-- Just placeholder review text -->
-                  <ul class="list-disc list-inside text-gray-700">
-                    <li>Property: Villa</li>
-                    <li>Rooms: 3</li>
-                    <li>Facilities: Wi-Fi, Parking</li>
-                  </ul>
-                  <div class="flex justify-between mt-4">
-                    <button
-                      @click="propertyWizardStep--"
-                      class="text-blue-600 border border-blue-600 px-4 py-2 rounded hover:bg-blue-50"
-                    >
-                      Back
-                    </button>
-                    <button
-                      @click="step = 3; propertyWizardStep = 1"
-                      class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-                    >
-                      Finish & Continue →
-                    </button>
-                  </div>
-                </div>
-              </template>
+
+
+        <!-- Add Bedroom Button (navigate to 2nd page) -->
+        <button
+  type="button"
+  @click="addBedroom"
+  class="text-blue-600 hover:underline text-sm flex items-center space-x-1 mt-2"
+>
+  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+       viewBox="0 0 24 24" stroke="currentColor">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M12 4v16m8-8H4"/>
+  </svg>
+  <span>Add Bedroom</span>
+</button>
+    </div>
+
+    <!-- Include Alpine.js in your Blade layout if not already -->
+<script src="//unpkg.com/alpinejs" defer></script>
+
+<!-- Guests and Bathrooms -->
+<div x-data="{ guests: 2, bathrooms: 1 }" class="bg-white p-4 rounded-lg shadow space-y-4 w-full max-w-xl">
+    <!-- Guests -->
+    <div>
+        <label class="block text-sm text-gray-800">How many guests can stay?</label>
+        <div class="flex items-center space-x-4 mt-1">
+            <button
+                @click="if (guests > 1) guests--"
+                class="border px-3 py-1 rounded text-base "
+            >−</button>
+            <span class="min-w-[2rem] text-center text-gray-700  text-base" x-text="guests"></span>
+            <button
+                @click="guests++"
+                class="border px-3 py-1 rounded text-base "
+            >+</button>
+        </div>
+    </div>
+
+    <!-- Bathrooms -->
+    <div >
+        <label class="block  text-sm text-gray-800">How many bathrooms are there?</label>
+        <div class="flex items-center space-x-4 mt-1">
+            <button
+                @click="if (bathrooms > 0) bathrooms--"
+                class="border px-3 py-1 rounded text-base"
+            >−</button>
+            <span class="min-w-[2rem] text-center text-gray-700  text-base" x-text="bathrooms"></span>
+            <button
+                @click="bathrooms++"
+                class="border px-3 py-1 rounded text-base"
+            >+</button>
+        </div>
+    </div>
+</div>
+
+
+    <!-- Children Policy -->
+    <div class="bg-white p-4 rounded-lg shadow space-y-4">
+        <div>
+            <p class="font-medium text-sm">Do you allow children?</p>
+            <label class="mr-4 text-sm"><input type="radio" name="children" checked> Yes</label>
+            <label class="text-sm"><input type="radio" name="children"> No</label>
+        </div>
+
+        <div>
+            <p class="font-medium text-sm">Do you allow infants?</p>
+            <p class="text-xs text-gray-500">cribs sleep most infants 0–3 years old and are available to guests on request.</p>
+            <label class="mr-4 text-sm"><input type="radio" name="infants" checked> Yes</label>
+            <label class="text-sm"><input type="radio" name="infants" > No</label>
+        </div>
+    </div>
+
+        <!-- Room Size -->
+<div class="lg:col-span-2 bg-white rounded-lg border border-gray-300 p-4 space-y-4 ">
+  <div class="flex flex-col lg:flex-row gap-4 items-end"> <!-- ensure vertical alignment -->
+    
+    <!-- Apartment Size Dropdown -->
+    <div class="w-full lg:w-2/4">
+  <label class="block  text-sm text-gray-700 mb-1">How big is this room?</label>
+  <p class="text-xs text-gray-500 ">Apartment size - optional</p>
+ 
+<input 
+    type="number"
+    min="1"
+    step="1"
+    inputmode="numeric"
+    pattern="\d*"
+    x-model="propertyCount"
+    name="property_count"
+    class="w-full border border-gray-300 rounded-md shadow-sm text-sm mt-2 px-2 py-2"
+>
+
+  
+
+</div>
+
+    <!-- Size Unit Dropdown -->
+    <div class="w-full lg:w-1/4">
+      <label class="block text-sm text-transparent mb-1">Unit</label> <!-- invisible label for spacing -->
+      <select class="w-full bg-gray-300 text-black border border-gray-300 rounded-md shadow-sm text-sm mt-2  px-2 py-2">
+        <option>square meters</option>
+        <option>square feet</option>
+      </select>
+    </div>
+    
+  </div>
+    </div>
+
+    <div class="mt-8 flex justify-between">
+  <!-- Back Button on the left -->
+  <button
+   type="button" @click="propertyWizardStep--"
+        :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
+  
+      class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+      ←
+  </button>
+
+  <!-- Continue Button on the right -->
+  <button
+   type="button"  @click="propertyWizardStep++"
+     class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300"
+  >
+    Continue
+  </button>
+</div>
+</div>
+
+</template>
+
+
+
+
+
+
+
+
+
+    <template x-if="propertyWizardStep === 2">
+      
+ <div class="max-w-2xl mx-auto space-y-8 lg:ml-32">
+
+    <!-- Heading -->
+     <h2 class="text-2xl font-bold text-gray-900 mt-8">What can guests use at your place?</h2>
+
+   <!-- Amenities Section Container -->
+<div class="bg-white rounded-lg shadow-sm p-6 space-y-6">
+  @php
+    $amenities = [
+      'Highlights' => ['Private bathroom', 'Sea views', 'Family rooms', 'Airport shuttle', 'Spa and wellness center'],
+      'General' => ['Air conditioning', 'Heating', 'Free WiFi', 'Electric vehicle charging station'],
+      'Cooking and cleaning' => ['Kitchen', 'Microwave', 'Washing machine'],
+      'Entertainment' => ['Flat-screen TV', 'Swimming Pool', 'Hot tub', 'Minibar', 'Sauna'],
+      'Outside and view' => ['Balcony', 'Garden view', 'Terrace', 'View']
+    ];
+  @endphp
+
+  @foreach ($amenities as $category => $items)
+    <div class="space-y-3">
+      <h3 class="text-base font-semibold text-gray-800">{{ $category }}</h3>
+
+      <div class="flex flex-col space-y-2">
+        @foreach ($items as $item)
+          <label class="flex items-center space-x-2 text-gray-700 text-sm">
+            <input type="checkbox" name="amenities[]" value="{{ $item }}" class="form-checkbox h-5 w-5 text-blue-600">
+            <span>{{ $item }}</span>
+          </label>
+        @endforeach
+      </div>
+
+      @if (!$loop->last)
+        <hr class="border-t border-gray-200 mt-4">
+      @endif
+    </div>
+  @endforeach
+</div>
+
+
+ <div class="flex justify-between mt-6 ">
+    <!-- Back Button -->
+<button
+  type="button"
+ @click="propertyWizardStep--"
+  class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded mb-16">
+  ←
+</button>
+
+
+
+    <!-- Continue Button -->
+   <!-- Continue Button (inside input field container, aligned right) -->
+  <div class="flex justify-end ">
+    <button
+      type="submit"
+    @click="propertyWizardStep++"
+      class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 mb-16">
+      Continue 
+    </button>
+  </div>
+
+  </div>
+  </div>
+
+
+    </template>
+
+
+
+
+    <template x-if="propertyWizardStep === 3">
+    <div class="space-y-8 max-w-2xl mx-auto p-4 lg:ml-32">
+
+        <!-- Services at your property -->
+        <h2 class="text-2xl md:text-3xl font-bold text-gray-800">Services at your property</h2>
+
+        <!-- Breakfast Section -->
+        <div class="bg-white shadow rounded-lg p-6 space-y-4 border">
+            <h3 class="text-base font-semibold text-gray-700">Breakfast</h3>
+ <hr class="my-6 border-t border-gray-300">
+            <!-- Do you serve guests breakfast -->
+            <div>
+                <p class="font-semibold text-sm text-gray-800 mb-2">Do you serve guests breakfast?</p>
+                <div class="flex flex-col text-sm gap-2">
+    <label><input type="radio" name="serve_breakfast" class="mr-2"> Yes</label>
+    <label><input type="radio" name="serve_breakfast" class="mr-2"> No</label>
+</div>
+
             </div>
-          </section>
+
+            <!-- Is breakfast included -->
+            <div>
+                <p class="font-semibold text-sm  text-gray-800 mb-2">Is breakfast included in the price guests pay?</p>
+                <div class="flex flex-col text-sm gap-2">
+                    <label><input type="radio" name="breakfast_included" class="mr-2"> Yes, it's included</label>
+                    <label><input type="radio" name="breakfast_included" class="mr-2"> No, it costs extra</label>
+                </div>
+            </div>
+<hr class="my-6 border-t border-gray-300">
+            <!-- Type of breakfast -->
+          <div x-data="{ selected: [] }">
+  <p class="font-semibold text-sm text-gray-800 mb-2">
+    What type of breakfast do you offer? 
+    <span class="text-sm text-gray-500">(Select all that apply)</span>
+  </p>
+
+  <div class="flex flex-wrap gap-2">
+    @foreach(['A la carte', 'American', 'Asian', 'Breakfast to go', 'Buffet', 'Continental', 'Full English/Irish', 'Gluten-Free', 'Halal', 'Italian', 'Kosher', 'Vegan', 'Vegetarian'] as $option)
+      <label
+        :class="selected.includes('{{ $option }}') 
+                  ? 'bg-[#3CC0E9] text-white' 
+                  : 'border border-gray-300 text-gray-700 hover:bg-gray-200'"
+        class="px-3 py-1 rounded-full text-sm font-medium cursor-pointer transition"
+      >
+        <input type="checkbox" class="hidden" 
+               :value="'{{ $option }}'"
+               x-model="selected"> 
+        {{ $option }}
+      </label>
+    @endforeach
+  </div>
+</div>
+
+        </div>
+
+        <!-- Parking Section -->
+        <div class="bg-white shadow rounded-lg p-6 space-y-4 border">
+            <h3 class="text-base font-semibold text-gray-700">Parking</h3>
+
+            <hr class="my-6 border-t border-gray-300">
+            <!-- Is parking available -->
+            <div>
+                <p class="text-sm font-semibold text-gray-800 mb-2">Is parking available to guests?</p>
+                               <div class="flex flex-col text-sm gap-2">
+    <label><input type="radio" name="parking_available" class="mr-2"> Yes, free</label>
+                    <label><input type="radio" name="parking_available" class="mr-2"> Yes, paid</label>
+                    <label><input type="radio" name="parking_available" class="mr-2"> No</label>
+</div>
+               
+            </div>
+    <hr class="my-6 border-t border-gray-300">
+            <!-- Parking cost -->
+       <div>
+  <p class="text-sm font-semibold text-gray-800 mb-2">How much does parking cost?</p>
+
+  <div class="flex flex-col sm:flex-row items-center gap-4">
+
+    <!-- Input + Currency Select Wrapper -->
+    <div class="relative w-full max-w-xs">
+  <!-- Currency Select -->
+  <select class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-transparent text-gray-700 text-sm pr-1 pl-1 focus:outline-none">
+    <option value="usd">US$</option>
+    <option value="eur">€</option>
+    <option value="gbp">£</option>
+    <option value="lkr">Rs</option>
+  </select>
+
+  <!-- Input Field -->
+  <input
+    type="text"
+    value="120.00"
+    class="w-full border border-gray-400 rounded-md pl-16 pr-2 py-2 text-gray-700 font-semibold focus:ring-2 focus:ring-blue-300 focus:outline-none"
+  />
+</div>
+
+
+    <!-- Rate Select -->
+    <select class="border border-gray-300 rounded px-3 py-2 w-32 text-sm text-gray-700">
+      <option>Per day</option>
+      <option>Per stay</option>
+    </select>
+
+  </div>
+
+
+            </div>
+
+            <!-- Reservation needed -->
+            <div>
+                <p class="font-semibold text-sm text-gray-800 mb-2">Do guests need to reserve a parking spot?</p>
+
+                <div class="flex flex-col text-sm gap-2">
+    
+                    <label><input type="radio" name="parking_reservation" class="mr-2"> Reservation needed</label>
+                    <label><input type="radio" name="parking_reservation" class="mr-2">No reservation needed </label>
+</div>
+                
+            </div>
+
+            <!-- Parking location -->
+            <div>
+                <p class="font-semibold text-sm text-gray-800 mb-2">Where is the parking located?</p>
+
+                <div class="flex flex-col text-sm gap-2">
+    
+                 <label><input type="radio" name="parking_location" class="mr-2"> On site</label>
+                    <label><input type="radio" name="parking_location" class="mr-2"> Off site</label>
+</div>
+                
+            </div>
+
+                <div>
+                <p class="font-semibold text-sm text-gray-800 mb-2">What type of parking is it?</p>
+
+                <div class="flex flex-col text-sm gap-2">
+
+                 <label><input type="radio" name="parking_type" class="mr-2">Private</label>
+                    <label><input type="radio" name="parking_type" class="mr-2">Public</label>
+</div>
+                
+            </div>
+
+            
+        </div>
+<div class="flex justify-between mt-6">
+    <!-- Back Button -->
+<button
+  type="button"
+ @click="propertyWizardStep--"
+  class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded mb-16">
+  ←
+</button>
+
+
+
+    <!-- Continue Button -->
+   <!-- Continue Button (inside input field container, aligned right) -->
+  <div class="flex justify-end ">
+    <button
+      type="submit"
+    @click="propertyWizardStep++"
+      class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 mb-16">
+      Continue 
+    </button>
+  </div>
+    </div>
+</template>
+
+
+    <template x-if="propertyWizardStep === 4">
+      <div class="max-w-4xl mx-auto space-y-8 lg:ml-32">
+         <div class="container ml-24 px-4 py-8 max-w-2xl">
+    <!-- Header -->
+    <h2 class="text-2xl font-bold mb-8 text-left">
+      What languages do you or your staff speak?
+    </h2>
+
+    <!-- Language Selection Section -->
+    <div class="bg-white shadow-md rounded-lg p-6 mb-8">
+      <h3 class="text-lg  mb-4 font-bold">Select languages</h3>
+      <div class="space-y-2">
+        <label class="flex items-center cursor-pointer">
+          <input type="checkbox" class="mr-2" />
+          <span>English</span>
+        </label>
+        <label class="flex items-center cursor-pointer">
+          <input type="checkbox" class="mr-2" />
+          <span>French</span>
+        </label>
+        <label class="flex items-center cursor-pointer">
+          <input type="checkbox" class="mr-2" />
+          <span>German</span>
+        </label>
+        <label class="flex items-center cursor-pointer">
+          <input type="checkbox" class="mr-2" />
+          <span>Hindi</span>
+        </label>
+      </div>
+
+      <!-- Add Additional Languages -->
+      <div id="additionalLanguagesSection" class="mt-4 hidden relative">
+        <h3 class="text-lg font-medium mb-2 ">Add additional languages</h3>
+        
+        <!-- Searchable dropdown container -->
+        <div class="relative w-full max-w-md">
+          <input
+            type="text"
+            id="languageInput"
+            oninput="filterDropdown()"
+            onclick="toggleDropdown()"
+            placeholder="Search languages..."
+            autocomplete="off"
+            class="w-full border rounded p-2 pr-10 cursor-pointer"
+            readonly
+          />
+          <!-- Dropdown arrow -->
+          <button
+            type="button"
+            onclick="toggleDropdown()"
+            class="absolute right-2 top-2.5 text-gray-600 hover:text-gray-900 focus:outline-none"
+            tabindex="-1"
+          >
+            ▼
+          </button>
+
+          <!-- Dropdown list -->
+          <ul
+            id="languageDropdown"
+            class="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded max-h-40 overflow-auto shadow-lg hidden"
+          >
+            <li
+              class="p-2 hover:bg-blue-100 cursor-pointer"
+              onclick="selectLanguage(this)"
+            >Arabic</li>
+            <li
+              class="p-2 hover:bg-blue-100 cursor-pointer"
+              onclick="selectLanguage(this)"
+            >Bulgarian</li>
+            <li
+              class="p-2 hover:bg-blue-100 cursor-pointer"
+              onclick="selectLanguage(this)"
+            >Catalan</li>
+            <li
+              class="p-2 hover:bg-blue-100 cursor-pointer"
+              onclick="selectLanguage(this)"
+            >Chinese</li>
+            <li
+              class="p-2 hover:bg-blue-100 cursor-pointer"
+              onclick="selectLanguage(this)"
+            >Croatian</li>
+            <li
+              class="p-2 hover:bg-blue-100 cursor-pointer"
+              onclick="selectLanguage(this)"
+            >Czech</li>
+            <li
+              class="p-2 hover:bg-blue-100 cursor-pointer"
+              onclick="selectLanguage(this)"
+            >Danish</li>
+            <li
+              class="p-2 hover:bg-blue-100 cursor-pointer"
+              onclick="selectLanguage(this)"
+            >Dutch</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Toggle Button for Additional Languages -->
+      <a
+        href="#"
+        onclick="event.preventDefault(); toggleAdditionalLanguages();"
+        class="text-blue-500 hover:underline mt-4 block"
+      >
+        Add additional languages
+      </a>
+    </div>
+
+   <!-- Navigation Buttons -->
+<div class="mt-8 flex justify-between">
+  <!-- Back Button on the left -->
+  <button
+   type="button" @click="propertyWizardStep--"
+        :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
+  
+      class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+      ←
+  </button>
+
+  <!-- Continue Button on the right -->
+  <button
+   type="button"  @click="propertyWizardStep++"
+     class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300"
+  >
+    Continue
+  </button>
+</div>
+
+  </div>
+
+  <script>
+    function toggleAdditionalLanguages() {
+      const section = document.getElementById("additionalLanguagesSection");
+      section.classList.toggle("hidden");
+      if (!section.classList.contains("hidden")) {
+        document.getElementById("languageInput").focus();
+        showDropdown();
+      } else {
+        hideDropdown();
+      }
+    }
+
+    function toggleDropdown() {
+      const dropdown = document.getElementById("languageDropdown");
+      dropdown.classList.toggle("hidden");
+    }
+
+    function showDropdown() {
+      document.getElementById("languageDropdown").classList.remove("hidden");
+    }
+
+    function hideDropdown() {
+      document.getElementById("languageDropdown").classList.add("hidden");
+    }
+
+    function filterDropdown() {
+      const input = document.getElementById("languageInput");
+      const filter = input.value.toLowerCase();
+      const ul = document.getElementById("languageDropdown");
+      const items = ul.getElementsByTagName("li");
+      ul.classList.remove("hidden");
+      let visibleCount = 0;
+      for (let i = 0; i < items.length; i++) {
+        const txtValue = items[i].textContent || items[i].innerText;
+        if (txtValue.toLowerCase().indexOf(filter) > -1) {
+          items[i].style.display = "";
+          visibleCount++;
+        } else {
+          items[i].style.display = "none";
+        }
+      }
+      // Hide dropdown if no matches
+      if (visibleCount === 0) {
+        ul.classList.add("hidden");
+      }
+    }
+
+    function selectLanguage(element) {
+      const input = document.getElementById("languageInput");
+      input.value = element.textContent;
+      hideDropdown();
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener("click", function (event) {
+      const dropdown = document.getElementById("languageDropdown");
+      const input = document.getElementById("languageInput");
+      const container = document.getElementById("additionalLanguagesSection");
+      if (
+        !container.contains(event.target)
+      ) {
+        hideDropdown();
+      }
+    });
+  </script>
+      </div>
+      </div>
+    </template>
+
+  <template x-if="propertyWizardStep === 5">
+  <div class="max-w-4xl mx-auto space-y-8 lg:ml-32">
+    <div class="container w-full max-w-4xl ml-4 md:ml-24 px-4 py-8">
+      <!-- Header -->
+      <h2 class="text-2xl font-bold mb-8 text-left">House rules</h2>
+
+      <div class="flex flex-col md:flex-row gap-6">
+        <!-- Left Section -->
+        <div class="bg-white shadow-md rounded-lg p-6 w-full md:w-2/3">
+          <!-- Toggle Switches -->
+          <div class="space-y-4">
+            <label class="flex items-center justify-between cursor-pointer">
+              <span>Smoking allowed</span>
+              <div class="relative">
+                <input type="checkbox" class="sr-only peer" />
+                <div class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition"></div>
+                <div class="absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-4"></div>
+              </div>
+            </label>
+
+            <label class="flex items-center justify-between cursor-pointer">
+              <span>Parties/events allowed</span>
+              <div class="relative">
+                <input type="checkbox" class="sr-only peer" />
+                <div class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition"></div>
+                <div class="absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-4"></div>
+              </div>
+            </label>
+          </div>
+
+          <hr class="my-6 border-t border-gray-300">
+
+          <!-- Pet Policy -->
+          <div class="mt-6">
+            <h3 class="text-base font-semibold mb-2">Do you allow pets?</h3>
+            <div class="space-y-2">
+              <label class="flex items-center cursor-pointer">
+                <input type="radio" name="pets" value="yes" class="mr-2">
+                <span>Yes</span>
+              </label>
+              <label class="flex items-center cursor-pointer">
+                <input type="radio" name="pets" value="upon_request" class="mr-2">
+                <span>Upon request</span>
+              </label>
+              <label class="flex items-center cursor-pointer">
+                <input type="radio" name="pets" value="no" class="mr-2" checked>
+                <span>No</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="mt-6">
+            <h3 class="text-base font-semibold mb-2">Are there additional fees for pets?</h3>
+            <div class="space-y-2">
+              <label class="flex items-center cursor-pointer">
+                <input type="radio" name="pets_fees" value="free" class="mr-2">
+                <span>Pets can stay for free</span>
+              </label>
+              <label class="flex items-center cursor-pointer">
+                <input type="radio" name="pets_fees" value="fees" class="mr-2">
+                <span>Fees may apply</span>
+              </label>
+            </div>
+          </div>
+
+          <hr class="my-6 border-t border-gray-300">
+
+          <!-- Check-in -->
+          <div class="mt-6">
+            <h3 class="text-base font-semibold mb-2">Check in</h3>
+            <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+              <div class="w-full">
+                <label class="block text-sm font-medium mb-1">From</label>
+                <input type="time" value="15:00" class="w-full border rounded p-2" />
+              </div>
+              <div class="w-full">
+                <label class="block text-sm font-medium mb-1">Until</label>
+                <input type="time" value="18:00" class="w-full border rounded p-2" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Check-out -->
+          <div class="mt-6">
+            <h3 class="text-base font-semibold mb-2">Check out</h3>
+            <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+              <div class="w-full">
+                <label class="block text-sm font-medium mb-1">From</label>
+                <input type="time" value="08:00" class="w-full border rounded p-2" />
+              </div>
+              <div class="w-full">
+                <label class="block text-sm font-medium mb-1">Until</label>
+                <input type="time" value="11:00" class="w-full border rounded p-2" />
+              </div>
+            </div>
+          </div>
+                 <!-- Navigation Buttons -->
+<div class="mt-12 flex justify-between">
+  <!-- Back Button on the left -->
+  <button
+   type="button" @click="propertyWizardStep--"
+        :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
+  
+      class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+      ←
+  </button>
+
+  <!-- Continue Button on the right -->
+  <button
+   type="button"  @click="propertyWizardStep++"
+     class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 "
+  >
+    Continue
+  </button>
+</div>
+        </div>
+
+        <!-- Right Section: Tip Box -->
+        <div x-data="{ show: true }" :class="show ? 'block' : 'invisible opacity-0'" class="bg-white shadow-md rounded-lg p-6 w-full h-[240px] md:w-1/3 relative">
+          <div class="flex justify-between items-start">
+            <div class="flex items-center space-x-2">
+              <img src="{{ asset('assets/system-uicons_lightbulb-on.svg') }}" alt="Help" class="w-6 h-6 md:w-7 md:h-7 cursor-pointer" />
+              <h3 class="text-gray-800 font-semibold text-base">What if my house rules change?</h3>
+            </div>
+            <button @click="show = false" class="text-gray-400 hover:text-gray-600">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+              </svg>
+            </button>
+          </div>
+          <p class="text-sm text-gray-700 mt-3">
+            You can easily customise these house rules later and additional house rules can be set on the Policies page of the extranet after you complete registration.
+          </p>
+
+          
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+</template>
+
+
+<template x-if="propertyWizardStep === 6">
+    <div class="max-w-2xl mx-auto space-y-8 px-4 sm:px-6 lg:px-8 lg:ml-32 py-6">
+       <h2 class="text-2xl font-bold mb-8 text-left">Host Profile</h2>
+        <div class="bg-white shadow-md rounded-lg p-4 space-y-6">
+            <h2 class="text-base text-gray-800">
+                Help your listing stand out by telling potential guests a little more about yourself, your property, and your neighborhood. This info will appear on your property page.
+            </h2>
+
+            <!-- The Property Section -->
+            <div>
+                <label class="inline-flex items-center space-x-2">
+                    <input type="checkbox" class="form-checkbox text-blue-600">
+                    <span class="text-gray-800 font-sm ">The property</span>
+                </label>
+
+                <div class="mt-2">
+                    <label class="block text-sm font-semibold text-gray-700">About the property</label>
+                    <textarea rows="4" maxlength="1200" placeholder="What makes your place unique? What can guests expect"
+                        class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"></textarea>
+                    <p class="text-right text-xs text-gray-500">0/1200</p>
+                </div>
+            </div>
+
+            <!-- The Host Section -->
+            <div>
+                <label class="inline-flex items-center space-x-2">
+                    <input type="checkbox" class="form-checkbox text-blue-600">
+                    <span class="text-gray-800 font-medium">The host</span>
+                </label>
+
+                <div class="mt-2 space-y-2">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700">Host name</label>
+                        <input type="text" maxlength="80"
+                            class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
+                        <p class="text-right text-xs text-gray-500">0/80</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700">About the host</label>
+                        <textarea rows="4" maxlength="1200" placeholder="What are your interests? What do you like about hosting?"
+                            class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"></textarea>
+                        <p class="text-right text-xs text-gray-500">0/1200</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- The Neighborhood Section -->
+            <div>
+                <label class="inline-flex items-center space-x-2">
+                    <input type="checkbox" class="form-checkbox text-blue-600">
+                    <span class="text-gray-800 font-medium">The neighborhood</span>
+                </label>
+
+                <div class="mt-2">
+                    <label class="block text-sm font-semibold text-gray-700">About the neighborhood</label>
+                    <textarea rows="4" maxlength="1200" placeholder="What's the area like? Are there any attractions nearby?"
+                        class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"></textarea>
+                    <p class="text-right text-xs text-gray-500">0/1200</p>
+                </div>
+            </div>
+
+            <!-- None of the Above Option -->
+            <div>
+                <label class="inline-flex items-center space-x-2">
+                    <input type="checkbox" class="form-checkbox text-blue-600">
+                    <span class="text-gray-800 font-medium">None of the above / I'll add these later</span>
+                </label>
+            </div>
+        </div>
+        <div class="mt-12 flex justify-between">
+  <!-- Back Button on the left -->
+  <button
+   type="button" @click="propertyWizardStep--"
+        :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
+  
+      class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+      ←
+  </button>
+
+  <!-- Continue Button on the right -->
+  <button
+   type="button"  @click="propertyWizardStep++"
+     class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 "
+  >
+    Continue
+  </button>
+</div>
+    </div>
+</template>
+
+
+
+
+</section>
           <!-- ✅ Step 3: Photos Upload Section -->
           <!-- ✅ Step 3: Photos Upload Section -->
           <!-- ✅ Step 3: Photos Upload Section -->
@@ -1544,24 +1784,178 @@
                 </div>
               </div>
             </section>
-            <!-- ✅ Step 4: Pricing and Calendar -->
+
+
+
             <section x-show="step === 4">
-              <h2 class="text-2xl font-bold text-blue-700 mb-4">Pricing and calendar</h2>
-              <p class="text-gray-600">Set your nightly rates, availability, and booking rules.</p>
-              <!-- Add your pricing and calendar form here -->
-            </section>
+
+  <template x-if="pricingWizardStep === 1">
+      <div class="max-w-xl mx-auto space-y-8 lg:ml-32 px-4 py-6">
+  </div>
+  </template>
+  <template x-if="pricingWizardStep === 2">
+      <div class="max-w-xl mx-auto space-y-8 lg:ml-32 px-4 py-6">
+  </div>
+  </template>
+  <template x-if="pricingWizardStep === 3">
+      <div class="max-w-xl mx-auto space-y-8 lg:ml-32 px-4 py-6">
+  </div>
+  </template>
+  <template x-if="pricingWizardStep === 4">
+      <div class="max-w-xl mx-auto space-y-8 lg:ml-32 px-4 py-6">
+  </div>
+  </template>
+</section>
+
+
+
             <!-- ✅ Step 5: Legal Information -->
             <section x-show="step === 5">
-              <h2 class="text-2xl font-bold text-blue-700 mb-4">Legal information</h2>
-              <p class="text-gray-600">Provide required legal documents and compliance information.</p>
-              <!-- Add your legal details form here -->
-            </section>
-            <!-- ✅ Step 6: Review and Complete -->
-            <section x-show="step === 6">
-              <h2 class="text-2xl font-bold text-blue-700 mb-4">Review and complete</h2>
-              <p class="text-gray-600">Review all details you've entered before publishing your property listing.</p>
-              <!-- Add summary and submit button here -->
-            </section>
+               <div class="px-4 py-8 mt-6 w-full max-w-2xl mx-auto lg:ml-24 space-y-6" x-data="{ ownershipType: '', owners: [{ firstName: '', lastName: '', dob: '' }] }">
+
+    <h2 class="text-3xl font-bold text-gray-800">Partner verification</h2>
+
+    <div class="bg-white p-6 rounded-lg shadow-sm border space-y-4 text-sm text-gray-700">
+      <p class="text-sm text-gray-800">
+        In order to comply with various legal and regulatory requirements, we need to collect and verify some information about you and your property.
+      </p>
+
+      <div>
+        <label class="block font-semibold text-gray-900 mb-2">
+          Is the accommodation owned by an individual or business entity?
+        </label>
+        <select x-model="ownershipType" class="w-full p-2 border rounded text-sm focus:ring focus:ring-sky-200">
+          <option value="">Select an option</option>
+          <option value="individual">I am an individual running a business</option>
+          <option value="business">I represent a business entity</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Individual Form -->
+    <div x-show="ownershipType === 'individual'" x-transition class="bg-white p-6 rounded-lg space-y-4">
+      <p class="text-sm text-gray-800">
+        Please provide the full names and dates of birth of the individual who owns the accommodation.
+      </p>
+      <div class="border p-4 rounded-lg space-y-4 bg-white">
+        <div>
+          <label class="block text-sm font-semibold text-gray-600">First Name</label>
+          <input type="text" x-model="individual.firstName" placeholder="First Name" class="w-full p-2 border rounded text-sm" />
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-gray-600">Last Name</label>
+          <input type="text" x-model="individual.lastName" placeholder="Last Name" class="w-full p-2 border rounded text-sm" />
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-gray-600 mb-2">Date of Birth</label>
+          <input type="date" x-model="individual.dob" class="w-full p-2 border rounded text-sm focus:outline-none focus:ring-2 focus:ring-sky-200" />
+        </div>
+        <!-- Alt names if needed -->
+        <div>
+          <label class="block font-semibold text-sm text-gray-600">
+            If the owner goes by an alternative name or names, please provide those details.
+            <span class="text-gray-500">- (Optional)</span>
+          </label>
+          <input type="text" x-model="individual.altNames[0]" class="w-full p-2 border rounded text-sm" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Business Form -->
+    <div x-show="ownershipType === 'business'" x-transition class="bg-white p-6 rounded-lg shadow border space-y-4">
+      <div class="border p-4 rounded-lg space-y-4 bg-white">
+        <div>
+          <label class="block text-sm font-semibold text-gray-600">Full name of business entity</label>
+          <input type="text" x-model="business.businessName" placeholder="Business Name" class="w-full p-2 border rounded text-sm" />
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-gray-600">Trading Name (optional)</label>
+          <input type="text" x-model="business.tradingName" placeholder="Trading Name" class="w-full p-2 border rounded text-sm" />
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-gray-600">Address of business entity</label>
+          <input type="text" x-model="business.address" placeholder="Address" class="w-full p-2 border rounded text-sm" />
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-gray-600">Zip Code</label>
+          <input type="text" x-model="business.zipCode" placeholder="Zip Code" class="w-full p-2 border rounded text-sm" />
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-gray-600">City</label>
+          <input type="text" x-model="business.city" placeholder="City" class="w-full p-2 border rounded text-sm" />
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-gray-600">Country</label>
+          <select x-model="business.country" class="w-full p-2 border rounded text-sm">
+            <option value="">Select a country</option>
+            <option value="Sri Lanka">Sri Lanka</option>
+            <option value="India">India</option>
+            <option value="United States">United States</option>
+            <option value="United Kingdom">United Kingdom</option>
+            <option value="Australia">Australia</option>
+          </select>
+        </div>
+        <div>
+          <label class="block font-semibold text-sm text-gray-600">
+            If the company operates under a different name (e.g. "trading as" name) in relation to the accommodation, please provide those details.
+            <span class="text-gray-500">- (Optional)</span>
+          </label>
+          <input type="text" x-model="business.tradingName" class="w-full p-2 border rounded text-sm" />
+        </div>
+      </div>
+      <p class="text-sm text-gray-800">
+        Please provide the full names and dates of birth of all individuals who own 25% or more of the accommodation.
+      </p>
+      <template x-for="(owner, index) in business.owners" :key="index">
+        <div class="border p-4 rounded-lg space-y-4 bg-white">
+          <div>
+            <label class="block text-sm font-semibold text-gray-600">First Name</label>
+            <input type="text" x-model="owner.firstName" placeholder="First Name" class="w-full p-2 border rounded text-sm" />
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-600">Last Name</label>
+            <input type="text" x-model="owner.lastName" placeholder="Last Name" class="w-full p-2 border rounded text-sm" />
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-600 mb-2">Date of Birth</label>
+            <input type="date" x-model="owner.dob" class="w-full p-2 border rounded text-sm focus:outline-none focus:ring-2 focus:ring-sky-200" />
+          </div>
+          <div>
+            <label class="block font-semibold text-sm text-gray-600">
+              If any owners go by an alternative name or names, please provide those details.
+              <span class="text-gray-500">- (Optional)</span>
+            </label>
+            <input type="text" x-model="owner.altNames[0]" class="w-full p-2 border rounded text-sm" />
+          </div>
+          <div x-show="business.owners.length > 1" class="text-right">
+            <button @click="business.owners.splice(index, 1)" type="button" class="text-red-600 text-sm hover:underline">Remove</button>
+          </div>
+        </div>
+      </template>
+      <div>
+        <button @click="business.owners.push({ firstName: '', lastName: '', dob: '', altNames: [] })" type="button" class="text-sky-600 text-sm font-medium hover:underline mt-2">+ Add another owner</button>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="flex justify-between pt-4">
+      <button @click="step--"
+             class="flex items-center border border-[#3CC0E9] rounded text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12">
+        
+            ←
+      </button>
+      <button @click="step++"
+              class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition ">
+        Continue
+      </button>
+    </div>
+  </div>
+</section>
+
+
+
+            
+
           </div>
         </div>
       </div>

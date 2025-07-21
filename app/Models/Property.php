@@ -45,4 +45,9 @@ class Property extends Model
     {
         return $this->hasOne(PropertyAdditionalDetail::class);
     }
+
+    public function policies()
+    {
+        return $this->hasOne(PropertyPolicy::class);
+    }
 }

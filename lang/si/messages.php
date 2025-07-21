@@ -119,4 +119,6 @@ return [
     'reach_a_unique_global_customer_base' => ' ලොව පුරා අමුත්තන් වෙත ළඟා වන්න',
     'sign_up_and_start' => 'අදම ලියාපදිංචි වන්න ',
     'welcoming_guests_today' => 'ඔබේ අමුත්තන් පිළිගන්න !',
+    'what_can_guests_book' => 'අමුත්තන් කුමක් වෙන්කරගත හැකිද?',
+    'which_property_category_similar_to_yours' => 'ඔබේ  ඉඩම් වර්ගය කුමක්ද?',
 ];

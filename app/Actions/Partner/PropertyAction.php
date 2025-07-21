@@ -29,6 +29,15 @@ class PropertyAction
     {
         return PropertySubcategory::where('category_id', $categoryId)->get();
     }
+    public function getAmenities(): Collection
+    {
+        return \App\Models\Amenity::all()->map(function ($amenity) {
+            return [
+                'id' => $amenity->id,
+                'name' => $amenity->name,
+            ];
+        });
+    }
 
     public function getPropertiesBySubcategory(int $subcategoryId): Collection
     {
@@ -48,7 +57,7 @@ class PropertyAction
 
     public function updatePropertyStep2(Property $property, PropertyStep2DTO $dto)
     {
-        \Log::info('PropertyStep2DTO received:', (array) $dto);
+        Log::info('PropertyStep2DTO received:', (array) $dto);
         $property->update(array_filter([
             'title' => $dto->title,
             'address' => $dto->address,
@@ -63,11 +72,11 @@ class PropertyAction
         ], fn($value) => !is_null($value)));
 
         // Save bedrooms if provided
-        \Log::info('Bedrooms array in DTO:', ['bedrooms' => $dto->bedrooms]);
+        Log::info('Bedrooms array in DTO:', ['bedrooms' => $dto->bedrooms]);
         if (!empty($dto->bedrooms)) {
             $property->bedrooms()->delete();
             foreach ($dto->bedrooms as $bedroom) {
-                \Log::info('Creating bedroom:', $bedroom);
+                Log::info('Creating bedroom:', $bedroom);
                 $property->bedrooms()->create($bedroom);
             }
         }
@@ -83,6 +92,14 @@ class PropertyAction
                 'apartment_unit' => $dto->apartment_unit,
             ]
         );
+
+        Log::info('Amenities array in DTO:', ['amenities' => $dto->amenities]);
+        if (!empty($dto->amenities)) {
+            $property->amenities()->sync($dto->amenities);
+            Log::info('Amenities synced to property', ['property_id' => $property->id, 'amenity_ids' => $dto->amenities]);
+        } else {
+            Log::info('No amenities to sync for property', ['property_id' => $property->id]);
+        }
 
         return $property;
     }
@@ -103,13 +120,23 @@ class PropertyAction
 
         // Handle bedrooms data
         if ($bedrooms !== null && is_array($bedrooms)) {
-            \Log::info('Processing bedrooms data:', ['bedrooms' => $bedrooms]);
+            Log::info('Processing bedrooms data:', ['bedrooms' => $bedrooms]);
             $property->bedrooms()->delete();
             foreach ($bedrooms as $bedroom) {
-                \Log::info('Creating bedroom:', $bedroom);
+                Log::info('Creating bedroom:', $bedroom);
                 $property->bedrooms()->create($bedroom);
             }
         }
         return $property->fresh();
+    }
+
+    public function getGroupedAmenities()
+    {
+        return \App\Models\Amenity::all()->groupBy('category');
+    }
+
+    public function syncAmenities(Property $property, array $amenityIds)
+    {
+        $property->amenities()->sync($amenityIds);
     }
 }

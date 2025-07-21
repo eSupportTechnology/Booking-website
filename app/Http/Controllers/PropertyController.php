@@ -13,6 +13,10 @@ use Illuminate\Support\Facades\DB;
 use App\Models\PropertyCategory;
 use App\DTOs\Partner\PropertyAdditionalDetailsDTO;
 use App\Actions\Partner\UpdatePropertyAdditionalDetailsAction;
+use App\Models\PropertySubtype;
+use App\Services\FileUploadService;
+use App\DTOs\Partner\AccommodationDetailsDTO;
+use App\Actions\Partner\StoreAccommodationDetailsAction;
 
 class PropertyController extends Controller
 {
@@ -34,7 +38,9 @@ class PropertyController extends Controller
     public function subcategories($categoryId, PropertyAction $action)
     {
         $subcategories = $action->getPropertiesByCategory($categoryId);
+        $amenities = $action->getAmenities();
         Log::info('Fetching subcategories for category ID: ' . $categoryId, ['subcategories' => $subcategories]);
+        Log::info('Available amenities', ['amenities' => $amenities]);
         // Check if subcategories are empty
         if ($subcategories->isEmpty()) {
             Log::warning('No subcategories found for category ID ' . $categoryId);
@@ -42,7 +48,7 @@ class PropertyController extends Controller
         }
         switch ($categoryId) {
             case 1:  // Homes
-                return view('partner.partner-homes-create-form-1', compact('subcategories', 'categoryId'));
+                return view('partner.partner-homes-create-form-1', compact('subcategories', 'categoryId', 'amenities'));
             case 2:  // Apartment
                 return view('partner.partner-apartment-create-form-1', [
                     'subcategories' => $subcategories,
@@ -137,14 +143,27 @@ class PropertyController extends Controller
     {
         $property = Property::findOrFail($propertyId);
         $categoryString = strtolower($category);
+        $groupedAmenities = $action->getGroupedAmenities();
+
         return view('partner.partner-apartment-create-form-2', [
             'property' => $property,
             'category' => $categoryString,
+            'groupedAmenities' => $groupedAmenities,
         ]);
     }
 
-    public function storeStep2(Request $request, $propertyId, PropertyAction $action)
-{
+    public function storeStep2(Request $request,  $propertyId, PropertyAction $action)
+    {
+        \Log::info('storeStep2 called', $request->all());
+        // die('storeStep2 called');
+        Log::info('storeStep2 called', [
+            'request' => $request->all(),
+            'session' => session()->all(),
+            'user_id' => auth()->id(),
+        ]);
+        try {
+            Log::info('Fetching property for update', ['property_id' => $request->input('property_id', $propertyId)]);
+            $property = Property::findOrFail($request->input('property_id', $propertyId));
 
     Log::info('storeStep2 called', [
         'request' => $request->all(),
@@ -206,6 +225,27 @@ class PropertyController extends Controller
         }
     }
 
+    public function uploadPhotos(Request $request, FileUploadService $fileUploadService)
+    {
+        $request->validate([
+            'property_id' => 'required|exists:properties,id',
+            'photos.*' => 'required|image|mimes:jpg,jpeg,png,webp|max:5120', // 5MB max
+        ]);
+
+        $property_type = Property::find($request->input('property_id'))?->subtype_id ?? 'Property';
+        foreach ($request->file('photos') as $photo) {
+            $fileUploadService->uploadAndSave(
+                file: $photo,
+                fileType: 'image',
+                propertyType: PropertySubtype::find($property_type)?->name ?? 'Property',
+                propertyId: $request->property_id,
+                directory: 'property_photos'
+            );
+        }
+
+        return response()->json(['success' => true]);
+    }
+
     public function updateAdditionalDetails(
         Request $request,
         Property $property,
@@ -214,6 +254,86 @@ class PropertyController extends Controller
         $dto = PropertyAdditionalDetailsDTO::fromRequest($request);
 
         $action->execute($property, $dto);
+
+        return response()->json(['success' => true]);
+    }
+
+    /**
+     * Store accommodation, business entity, individual, and alt name details.
+     */
+    public function storeAccommodationDetails(Request $request, StoreAccommodationDetailsAction $action)
+    {
+        \Log::info('storeAccommodationDetails called', [
+            'request' => $request->all(),
+        ]);
+        try {
+            $dto = AccommodationDetailsDTO::fromRequest($request);
+            \Log::info('AccommodationDetailsDTO created', [
+                'dto' => (array) $dto,
+            ]);
+            $accommodation = $action->execute($dto);
+            \Log::info('Accommodation created', [
+                'accommodation_id' => $accommodation->id,
+            ]);
+            return response()->json([
+                'success' => true,
+                'accommodation_id' => $accommodation->id,
+                'message' => 'Accommodation details saved successfully.'
+            ], 201);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Log::error('ValidationException in storeAccommodationDetails', [
+                'errors' => $e->errors(),
+            ]);
+            return response()->json([
+                'success' => false,
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (\Exception $e) {
+            \Log::error('Exception in storeAccommodationDetails', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+
+    public function saveAmenities(Request $request, Property $property)
+    {
+        $data = json_decode($request->getContent(), true);
+
+        Log::info('Raw request data', $data);
+
+        $amenities = $data['amenities'] ?? [];
+
+        // Optional validation
+        $validAmenityIds = \App\Models\Amenity::whereIn('id', $amenities)->pluck('id')->toArray();
+
+        $property->amenities()->sync($validAmenityIds);
+
+        return response()->json(['success' => true]);
+    }
+
+
+    public function savePolicy(Request $request, \App\Models\Property $property)
+    {
+        $data = json_decode($request->getContent(), true);
+        Log::info('Raw request data for policy', $data);
+        $validated = validator($data, [
+            'check_in_time' => 'required|date_format:H:i',
+            'check_out_time' => 'required|date_format:H:i',
+            'smoking_allowed' => 'required|boolean',
+            'pets_allowed' => 'required|boolean',
+            'cancellation_policy' => 'required|in:flexible,moderate,strict'
+        ])->validate();
+
+        $property->policies()->updateOrCreate(
+            ['property_id' => $property->id],
+            $validated
+        );
 
         return response()->json(['success' => true]);
     }

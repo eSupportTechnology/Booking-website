@@ -24,6 +24,7 @@ class PropertyStep2DTO extends ValidatedDTO
     public ?string $offer_cribs = null;
     public ?int $apartment_size = null;
     public ?string $apartment_unit = null;
+    public ?array $amenities = null;
 
 
 
@@ -48,6 +49,8 @@ class PropertyStep2DTO extends ValidatedDTO
             'offer_cribs' => ['nullable', 'string'],
             'apartment_size' => ['nullable', 'integer'],
             'apartment_unit' => ['nullable', 'string'],
+            'amenities' => ['nullable', 'array'],
+            'amenities.*' => ['integer', 'exists:amenities,id'],
         ];
     }
 

@@ -121,6 +121,8 @@ return [
     'reach_a_unique_global_customer_base' => 'Reach a unique global customer base',
     'sign_up_and_start' => 'Sign up and start',
     'welcoming_guests_today' => 'welcoming guests today!',
+    'what_can_guests_book' => 'What can guests book?',
+    'which_property_category_similar' => 'Which property category are you listing?',
 
     // Partner Apartment Create Form 1
     'how_many_apartments' => 'How many apartments are you listing?',
