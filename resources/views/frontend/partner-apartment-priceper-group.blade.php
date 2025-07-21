@@ -91,98 +91,80 @@
       </div>
     </section>
   </header>
-<div x-data="{ selectedDay: '1' }" class="max-w-xl mx-auto space-y-8 lg:ml-32 px-4 py-6">
-    <!-- Title -->
-    <h2 class="text-2xl font-bold text-gray-900">Cancellation policies</h2>
-<div class="bg-white p-6 rounded-lg shadow-md">
-    <!-- Question -->
-    <p class="text-lg font-medium">
-        How many days before their arrival can your guests 
-        <span class="font-semibold text-black">cancel their booking for free?</span>
+
+<div x-data="{ enabled: true }" class="max-w-xl mx-auto space-y-8 lg:ml-32 px-4 py-6">
+       <h1 class="text-2xl font-bold text-gray-800 mb-4">Price per group size</h1>
+  <!-- Header -->
+  <div class="bg-white p-6 rounded-lg shadow-md">
+  
+
+    <p class="text-sm text-gray-700 mb-1">
+      Offering lower rates for groups of less than 2 makes your property more attractive to potential guests.
+    </p>
+    <p class="text-sm text-gray-700 mb-4">
+      The recommended discounts are based on data from properties like yours. These can be updated at any time.
     </p>
 
-    <!-- Button Group -->
-   <!-- Button Group -->
-<div class="flex flex-wrap gap-3 items-start relative">
-    <template x-for="option in ['1', '5', '14', '30']" :key="option">
-        <div class="relative">
-            <!-- Badge for 1 day only -->
-            <template x-if="option === '1'">
-                <span
-                    class="absolute -top-3 left-1/2 -translate-x-1/2 bg-green-600 text-white text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wide"
-                >
-                    Recommended
-                </span>
-            </template>
-
-            <button
-                @click="selectedDay = option"
-                :class="{
-                    'bg-green-100 border-green-500 text-green-800': selectedDay === '1' && option === '1',
-                    'bg-orange-100 border-orange-500 text-orange-800': selectedDay !== '1' && selectedDay === option,
-                    'bg-white text-gray-800': selectedDay !== option
-                }"
-                class="px-4 py-2 border rounded-full text-sm font-medium mt-3 focus:outline-none"
-            >
-                <span x-text="option + ' day' + (option === '1' ? '' : 's')"></span>
-            </button>
-        </div>
-    </template>
-</div>
-
-    <!-- Alert Messages -->
-    <div>
-        <!-- 1 Day Selected -->
-        <template x-if="selectedDay === '1'">
-            <div class="bg-white border border-blue-200 text-sm text-gray-700 rounded p-4">
-                <p class="text-gray-700">
-                    Guests love flexibility – free cancellation rates are generally the most booked rates on our site. 
-                    Get your first booking sooner by allowing guests to cancel up to five days before check-in.
-                </p>
-            </div>
-        </template>
-
-        <!-- Other Selections (5, 14, 30) -->
-        <template x-if="selectedDay !== '1'">
-            <div class="bg-orange-50 border-l-4 border-orange-400 text-orange-800 text-sm p-4">
-                <p>
-                    Allow guests to cancel up to 
-                    <span x-text="selectedDay"></span> 
-                    day<span x-text="selectedDay === '1' ? '' : 's'"></span> before arrival to increase your chances of getting bookings.
-                </p>
-            </div>
-        </template>
+    <!-- Toggle -->
+    <div class="flex items-center gap-2 mb-4">
+      <label class="relative inline-flex items-center cursor-pointer">
+        <input type="checkbox" x-model="enabled" class="sr-only peer">
+        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+      </label>
+      <span class="text-sm text-gray-700 font-medium">Enabled</span>
     </div>
 
-    <!-- Blue Info Box (Always visible) -->
-    <div class="text-sm text-gray-700 border-l-4 border-blue-500 bg-blue-50 p-4">
-        <p>
-            Guests love flexibility – free cancellation rates are generally the most booked rates on our site. 
-            Get your first booking sooner by allowing guests to cancel up to five days before check-in.
-        </p>
+    <!-- Table -->
+    <div x-show="enabled" x-transition class="overflow-x-auto">
+      <table class="w-full text-sm text-left text-gray-700 border">
+        <thead class="bg-white text-gray-900  text-sm font-semibold">
+          <tr>
+            <th class="px-4 py-2">Occupancy</th>
+            <th class="px-4 py-2">Discount</th>
+            <th class="px-4 py-2">Guests pay</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="bg-white border-t">
+            <td class="px-4 py-2">2 guests</td>
+            <td class="px-4 py-2">0%</td>
+            <td class="px-4 py-2">US$ 120.00</td>
+          </tr>
+          <tr class="bg-white border-t">
+            <td class="px-4 py-2">1 guest</td>
+            <td class="px-4 py-2">
+              <input type="number" value="10" class="w-16 border rounded px-2 py-1 text-center" /> %
+            </td>
+            <td class="px-4 py-2">US$ 108.00</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
-    <!-- Protection Toggle -->
-    <div class="pt-4">
-        <p class="font-medium text-gray-800 mb-2">Protection against accidental bookings</p>
-        <div class="flex items-center gap-2">
-            <span class="text-sm text-gray-600">Off</span>
-            <input type="checkbox" checked class="toggle toggle-primary" />
-            <span class="text-sm text-gray-600">On</span>
-        </div>
-        <p class="text-sm text-gray-500 mt-2">
-            To avoid you having to spend time handling accidental bookings, we automatically waive cancellation fees 
-            for guests that cancel within the first 24 hours of making a booking.
-        </p>
-    </div>
-
-    <!-- Buttons -->
-    <div class="flex justify-between pt-6">
-        <button class="bg-white border border-gray-300 px-6 py-2 rounded-md text-sm font-medium">Cancel</button>
-        <button class="bg-blue-600 text-white px-6 py-2 rounded-md text-sm font-medium hover:bg-blue-700">Save</button>
-    </div>
+   
   </div>
-</div>
+    <div class="flex justify-between mt-6 ">
+    <!-- Back Button -->
+<button
+  type="button"
+ @click="propertyWizardStep--"
+  class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded mb-16">
+  ←
+</button>
 
+
+
+    <!-- Continue Button -->
+   <!-- Continue Button (inside input field container, aligned right) -->
+  <div class="flex justify-end ">
+    <button
+      type="submit"
+    @click="propertyWizardStep++"
+      class="px-12 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 mb-16">
+      Save
+    </button>
+  </div>
+
+</div>
 </body>
 </html>
