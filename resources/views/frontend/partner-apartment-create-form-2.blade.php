@@ -101,11 +101,11 @@
     <div class="max-w-full mx-auto px-4 py-3">
       
       <!-- Scrollable/Responsive Nav Items -->
-<div class="flex flex-wrap sm:flex-nowrap overflow-x-auto space-x-6 sm:space-x-12 md:space-x-16 lg:space-x-24 xl:space-x-32 text-sm font-medium whitespace-nowrap">
+<div class="flex flex-wrap sm:flex-nowrap overflow-x-auto space-x-6 sm:space-x-12 md:space-x-8 lg:space-x-24 xl:space-x-24 text-sm font-medium whitespace-nowrap">
 
         
         <!-- Loop through nav steps -->
-        <template x-for="(label, index) in ['Basic information', 'Property setup', 'Photos', 'Pricing and calendar', 'Legal information']" :key="index">
+        <template x-for="(label, index) in ['Basic information', 'Property setup', 'Photos', 'Pricing and calendar', 'Legal information','Review and complete']" :key="index">
           <div class="relative">
             
             <!-- Tab Label -->
@@ -157,7 +157,7 @@
 
 
 <template x-if="index === 3 && step === 4">
-  <div class="flex space-x-1 mt-1 w-35 sm:w-48 md:w-56 lg:w-64 xl:w-72 ml-[-15px] sm:ml-[-25px] md:ml-[-35px]">
+  <div class="flex space-x-1 mt-1 w-10 sm:w-16 md:w-24 lg:w-56 xl:w-72 ml-[-40px] sm:ml-[-60px] md:ml-[-70px]">
     <template x-for="i in 4">
       <div 
         :class="pricingWizardStep >= i ? 'bg-blue-600' : 'bg-gray-300'" 
@@ -1431,22 +1431,647 @@
 <section x-show="step === 4">
 
   <template x-if="pricingWizardStep === 1">
-      <div class="max-w-xl mx-auto space-y-8 lg:ml-32 px-4 py-6">
+  <div class="max-w-2xl mx-auto px-4 py-6 lg:ml-32 space-y-8">
+    <!-- Title -->
+    <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mt-4">
+      How you receive bookings
+    </h2>
+
+    <!-- Info Card -->
+    <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6 space-y-4">
+      <h3 class="text-base font-semibold text-gray-900">
+        We’re here to ensure you can receive bookings safely:
+      </h3>
+     <ul class="text-gray-700 space-y-1 text-sm">
+  @php
+    $tickIcon = asset('assets/Vector (42).svg'); // Use consistent and clean SVG
+  @endphp
+
+  @foreach([
+    'Set house rules guests must agree to before they stay',
+    'Request damage deposits for extra security',
+    'Report guest misconduct if something goes wrong',
+    'Receive protection against liability claims from guests and neighbours up to US$1,000,000 for every reservation'
+  ] as $text)
+    <li class="flex items-start">
+      <span class="text-green-600 mr-2 shrink-0">
+        <img src="{{ $tickIcon }}" alt="Tick" class="w-4 h-4" />
+      </span>
+      <span>{{ $text }}</span>
+    </li>
+  @endforeach
+</ul>
+
+
+    </div>
+
+    <!-- Booking Options -->
+    <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6 space-y-4">
+      <h3 class="text-base font-semibold text-gray-900">
+        How can guests book your apartment?
+      </h3>
+      <div class="space-y-2 text-sm">
+        <label class="flex items-center space-x-3">
+          <input type="radio" name="booking_type" class="form-radio text-blue-600" checked>
+          <span class="text-gray-800">All guests can book instantly <span class="ml-2 px-2 py-0.5 text-xs bg-green-100 text-green-700 rounded">Recommended</span></span>
+        </label>
+        <label class="flex items-center space-x-3">
+          <input type="radio" name="booking_type" class="form-radio text-blue-600">
+          <span class="text-gray-800">All guests will need to request to book</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Continue Button -->
+    <div class="flex justify-between items-center">
+      <button  @click="pricingWizardStep--"      class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
+          ←</button>
+      <button  @click="pricingWizardStep++" class="  px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500">Continue</button>
+    </div>
   </div>
-  </template>
+</template>
+
+
+
   <template x-if="pricingWizardStep === 2">
-      <div class="max-w-xl mx-auto space-y-8 lg:ml-32 px-4 py-6">
+    <div class="max-w-4xl mx-auto space-y-8 lg:ml-32 px-4 py-6">
+        <div class="max-w-4xl mx-auto px-4 py-8 space-y-6" x-data="{ showTip1: true, showTip2: true }">
+
+      <!-- Title -->
+      <h2 class="text-2xl font-bold text-gray-800">Set the price per night for this room</h2>
+
+      <!-- Price input and Tip 1 in two separate columns -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
+  
+  <!-- Price input card (2/3 width) -->
+  <div class="md:col-span-2 bg-white border rounded-lg p-6 shadow-sm space-y-4">
+    <label class="block font-semibold text-base text-gray-700">How much do you want to charge per night?</label>
+    <div class="relative">
+  <label class="block text-sm text-gray-700 mb-1">Price guests pay</label>
+
+  <!-- Currency Select Dropdown -->
+  <select class="absolute left-3 top-1/2 transform -translate-y-1/2 bg-transparent text-gray-700 text-sm pr-1 focus:outline-none border border-gray-300 rounded-md">
+    <option value="usd">US$</option>
+    <option value="eur">€</option>
+    <option value="gbp">£</option>
+    <option value="lkr">Rs</option>
+  </select>
+
+  <!-- Input Field -->
+  <input
+    type="text"
+    value="120.00"
+    class="w-full border border-gray-400 rounded-md p-2 pl-16 text-gray-700 font-semibold focus:ring-2 focus:ring-blue-300 focus:outline-none"
+  />
+
+  <p class="text-sm text-gray-500 mt-2">Including taxes, commission, and fees</p>
+</div>
+
+
+    <!-- Topic paragraph -->
+    <p class="text-sm text-gray-600 pl-4">
+      <span class="text-gray-500">15.00%</span> Bookintour.com commission
+    </p>
+
+    <!-- Sub-items under topic -->
+    <ul class="text-sm text-gray-600 space-y-1 pl-8">
+      <li><span class="text-green-600 font-semibold">✓</span> 24/7 help in your language</li>
+      <li><span class="text-green-600 font-semibold">✓</span> Save time with automatically confirmed bookings</li>
+      <li><span class="text-green-600 font-semibold">✓</span> We promote your place on Google</li>
+    </ul>
+
+    <p class="text-sm text-gray-800 font-medium border-t pt-3">US$ 30.00 Your earnings (including taxes)</p>
+  </div>
+
+  <!-- Tip Box 1 (1/3 width, independent height) -->
+  <div x-show="showTip1" class="relative bg-white border rounded-lg p-4 shadow-sm text-sm text-gray-700">
+    <button @click="showTip1 = false" class="absolute top-2 right-2 text-gray-500 font-semibold">✕</button>
+    
+    <div class="flex items-center mb-2">
+      <img src="{{ asset('assets/system-uicons_lightbulb-on.svg') }}" alt="Tip Icon" class="w-6 h-6 mr-2">
+      <strong>What if I’m not sure about my price?</strong>
+    </div>
+
+    <p>Don't worry, you can always change it later. You can even set weekend, midweek, and seasonal prices, giving you more control over what you earn.</p>
+  </div>
+
+</div>
+
+      <!-- Discount and Tip 2 -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        
+        <!-- Discount card -->
+        <div class="md:col-span-2 bg-white border rounded-lg p-6 shadow-sm space-y-3">
+          <label class="inline-flex items-center">
+            <input type="checkbox" class="form-checkbox text-blue-600 rounded-md" />
+            <span class="ml-2 font-medium text-gray-700 font-semibold">Get guests’ attention with a 20% discount</span>
+          </label>
+          <p class="text-sm text-gray-600">
+            Give 20% off your first 3 bookings or for 90 days, whichever comes first. 
+            <a href="#" class="text-blue-600 underline">Learn more</a>
+          </p>
+          <hr class="my-4">
+          <p class="text-sm text-gray-800">
+            <del class="text-gray-500">US$ 30.00</del> 
+            <span class="text-green-600 font-semibold">US$ 24.00 per night</span>
+          </p>
+        </div>
+
+        <!-- Tip Box 2 (separate column) -->
+        <div x-show="showTip2" class="relative bg-white border rounded-lg p-4 shadow-sm text-sm text-gray-700">
+          <button @click="showTip2 = false" class="absolute top-2 right-3 text-gray-500 font-semibold mb-2">✕</button>
+          <div class="flex items-center mb-2">
+            <img src="{{ asset('assets/material-symbols-light_info-outline.svg') }}" alt="Tip Icon" class="w-6 h-6 mr-2">
+            <strong>Rules for setting up a promotion</strong>
+          </div>
+          <p>
+            Make sure you're giving a genuine discount. It must represent a real discount in line with consumer protection rules. 
+            <a href="#" class="text-blue-600 underline">Learn More</a>
+          </p>
+        </div>
+      </div>
+
+      <!-- Navigation Buttons -->
+      <div class="flex mt-1">
+        <button type="button"
+                @click="step > 1 ? step-- : step"
+                :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
+                class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
+          ←
+        </button>
+        <button type="button"
+                @click="pricingWizardStep++"
+                class="ml-auto px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300 ml-[402px]">
+          Continue
+        </button>
+      </div>
+
+    </div>
+    </div>
+</template>
+
+
+<template x-if="pricingWizardStep === 3">
+    
+    <div class="px-4 py-8 mt-6 w-full max-w-2xl mx-auto lg:ml-24 space-y-6">
+
+    <!-- Main Title -->
+    <h2 class="text-3xl font-bold text-gray-800">Rate plans</h2>
+
+    <!-- Intro Paragraph -->
+    <div class="bg-white border rounded-lg p-4 shadow-sm">
+      <p class="text-sm text-gray-600">
+        To attract a wider range of guests, we suggest setting up multiple rate plans.
+        The recommended prices and policies for each plan are based on data from properties like yours,
+        but they can be edited now or after you complete registration.
+      </p>
+    </div>
+
+    <h2 class="text-xl font-semibold text-gray-800">Standard rate plan</h2>
+
+    <!-- Rate Plan Card -->
+    <div class="bg-white border rounded-lg p-6 shadow-sm space-y-6 w-full max-w-2xl mx-auto">
+
+      <!-- Cancellation Policy Section -->
+      <div class="space-y-4">
+        <div class="flex justify-between items-start">
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="text-base font-semibold text-gray-700">Cancellation policy</h3>
+              <img src="{{ asset('assets/material-symbols-light_info-outline.svg') }}" alt="Tip Icon" class="w-5 h-5">
+            </div>
+            <p class="text-xs text-gray-500">
+              This policy is set at the property level – any changes made will be applied to all rooms.
+            </p>
+          </div>
+         <button @click="$refs.section1.scrollIntoView({ behavior: 'smooth' })"
+        class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">
+  Edit
+</button>
+        </div>
+        <hr class="my-4">
+        <ul class="text-gray-900 text-sm space-y-2">
+          <li class="flex items-start gap-2">
+            <img src="{{ asset('assets/teenyicons_tick-circle-outline.svg') }}" alt="Tick" class="w-4 h-4 mt-1">
+            <span>Guests can cancel their bookings for free up to 1 day before their arrival</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <img src="{{ asset('assets/teenyicons_tick-circle-outline.svg') }}" alt="Tick" class="w-4 h-4 mt-1">
+            <span>Guests who cancel within 24 hours will have their cancellation fee waived</span>
+          </li>
+        </ul>
+      </div>
+
+      <hr class="my-4">
+
+      <!-- Price Per Group Size Section -->
+      <div class="space-y-4">
+        <div class="flex justify-between items-center">
+          <div class="flex items-center gap-2">
+            <h3 class="text-base font-semibold text-gray-700">Price per group size</h3>
+            <img src="{{ asset('assets/material-symbols-light_info-outline.svg') }}" alt="Tip Icon" class="w-5 h-5">
+          </div>
+          <button class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">Edit</button>
+        </div>
+
+        <hr class="my-4">
+<table class="table-auto border-separate border-spacing-x-2 w-full text-left text-gray-700">
+  <tbody>
+    <tr>
+      <td class="py-2 text-sm font-semibold">Occupancy</td>
+      <td class="py-2 text-sm font-semibold">Guests pay</td>
+    </tr>
+    <tr>
+      <td class="py-2">
+        <div class="flex items-center gap-1">
+          <img src="{{ asset('assets/guidance_user-1 (1).svg') }}" alt="User Icon" class="w-5 h-5">
+          <span>x 2</span>
+        </div>
+      </td>
+      <td class="py-2 text-sm">US$ 30.00</td>
+    </tr>
+    <tr>
+      <td class="py-2">
+        <div class="flex items-center gap-1">
+          <img src="{{ asset('assets/guidance_user-1 (1).svg') }}" alt="User Icon" class="w-5 h-5">
+          <span>x 1</span>
+        </div>
+      </td>
+      <td class="py-2 text-sm">US$ 27.00</td>
+    </tr>
+  </tbody>
+</table>
+
+
+      </div>
+
+   
+    </div>
+
+    <h2 class="text-xl font-semibold text-gray-800">Non-refundable rate plan</h2>
+
+    <!-- Second Rate Plan -->
+    <div class="bg-white border rounded-lg p-4 shadow-sm">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <h3 class="text-base font-semibold text-gray-700">Price and cancellation policy</h3>
+          <img src="{{ asset('assets/material-symbols-light_info-outline.svg') }}" alt="Tip Icon" class="w-5 h-5">
+        </div>
+        <button class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">Edit</button>
+      </div>
+      <hr class="my-4">
+      <ul class="text-gray-900 text-sm space-y-2">
+        <li class="flex items-start gap-2">
+          <img src="{{ asset('assets/teenyicons_tick-circle-outline.svg') }}" alt="Tick" class="w-4 h-4 mt-1">
+          <span>Guests will pay 10% less than the standard rate for a non-refundable rate</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <img src="{{ asset('assets/teenyicons_tick-circle-outline.svg') }}" alt="Tick" class="w-4 h-4 mt-1">
+          <span>Guests can't cancel their bookings for free anytime</span>
+        </li>
+      </ul>
+    </div>
+
+    <h2 class="text-xl font-semibold text-gray-800">Weekly rate plan</h2>
+
+    <!-- Third Rate Plan -->
+    <div class="bg-white border rounded-lg p-4 shadow-sm">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <h3 class="text-base font-semibold text-gray-700">Price and cancellation policy</h3>
+          <img src="{{ asset('assets/material-symbols-light_info-outline.svg') }}" alt="Tip Icon" class="w-5 h-5">
+        </div>
+        <button class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">Edit</button>
+      </div>
+      <hr class="my-4">
+      <ul class="text-gray-900 text-sm space-y-2">
+        <li class="flex items-start gap-2">
+          <img src="{{ asset('assets/teenyicons_tick-circle-outline.svg') }}" alt="Tick" class="w-4 h-4 mt-1">
+          <span>Guests will pay 15% less than the standard rate when they book for at least 7 nights</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <img src="{{ asset('assets/teenyicons_tick-circle-outline.svg') }}" alt="Tick" class="w-4 h-4 mt-1">
+          <span>Guests can cancel their bookings for free before 18:00 on the day of arrival. The guests will be charged cost of the first night if they cancel after this (based on the standard rate cancellation policy).</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Navigation Buttons -->
+<div class="flex justify-between items-center mt-4">
+  <!-- Back Button -->
+  <button type="button"
+          @click="step > 1 ? step-- : step"
+          :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
+          class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
+    ←
+  </button>
+
+  <!-- Continue Button -->
+  
+  <button       @click="pricingWizardStep++" class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-sky-500 transition w-full sm:w-auto">
+    Continue
+  </button>
+
+
   </div>
   </template>
-  <template x-if="pricingWizardStep === 3">
-      <div class="max-w-xl mx-auto space-y-8 lg:ml-32 px-4 py-6">
-  </div>
-  </template>
+
+ 
+
   <template x-if="pricingWizardStep === 4">
-      <div class="max-w-xl mx-auto space-y-8 lg:ml-32 px-4 py-6">
+  <div x-data="{
+    checkInOption: 'specific',
+    availabilityOption: '365',
+    syncOption: 'yes',
+    allowLongStay: 'yes',
+    showSyncTip: true,
+    showLongStayTip: true
+}" class="px-4 py-8 mt-6 w-full max-w-2xl mx-auto lg:ml-24 space-y-6">
+
+<h2 class="text-3xl font-bold text-gray-800">Availability</h2>
+    <!-- Check-in Date Selection -->
+<!-- Alpine.js Component -->
+<div x-data="calendarComponent()" class="bg-white p-6 rounded-lg shadow-md space-y-4">
+    <!-- Title -->
+    <p class="text-base font-semibold">When is the first date that guests can check in?</p>
+
+    <!-- Check-in Options -->
+    <div class="flex flex-col sm:flex-row gap-4">
+        <label class="flex items-center space-x-2" >
+            <input type="radio" value="soon" x-model="checkInOption" class="form-radio text-blue-600">
+            <span class="text-sm">As soon as possible</span>
+        </label>
+        <label class="flex items-center space-x-2">
+            <input type="radio" value="specific" x-model="checkInOption" class="form-radio text-blue-600">
+            <span class="text-sm">On a specific date</span>
+        </label>
+    </div>
+
+    <!-- Calendar UI -->
+    <div x-show="checkInOption === 'specific'" class="border rounded-md p-4 bg-white shadow space-y-4">
+        <!-- Navigation Arrows -->
+        <div class="flex justify-between items-center mb-4">
+            <button @click="prevMonthPair"
+        class="text-gray-600 hover:text-black font-bold border border-gray-400 rounded-md p-1">
+    &larr;
+</button>
+
+<button @click="nextMonthPair"
+        class="text-gray-600 hover:text-black font-bold border border-gray-400 rounded-md p-1">
+    &rarr;
+</button>
+
+        </div>
+
+        <!-- Two-Month Calendars Side by Side -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- First Month -->
+            <div>
+                <p class="text-center font-semibold mb-2" x-text="monthNames[month1] + ' ' + year"></p>
+                <div class="grid grid-cols-7 gap-1 text-center text-sm text-gray-700">
+                    <template x-for="day in weekDays" :key="day"><div class="font-bold" x-text="day"></div></template>
+                    <template x-for="n in getStartDay(month1)" :key="'pad1-' + n"><div></div></template>
+                    <template x-for="d in getDaysInMonth(month1)" :key="'d1-' + d">
+                        <div
+                            class="p-2 rounded cursor-pointer hover:bg-blue-100"
+                            :class="(day === d && month1 === selectedMonth) ? 'bg-blue-600 text-white' : ''"
+                            x-text="d"
+                            @click="selectDate(d, month1)">
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Second Month -->
+            <div>
+                <p class="text-center font-semibold mb-2" x-text="monthNames[month2] + ' ' + year"></p>
+                <div class="grid grid-cols-7 gap-1 text-center text-sm text-gray-700">
+                    <template x-for="day in weekDays" :key="day"><div class="font-bold" x-text="day"></div></template>
+                    <template x-for="n in getStartDay(month2)" :key="'pad2-' + n"><div></div></template>
+                    <template x-for="d in getDaysInMonth(month2)" :key="'d2-' + d">
+                        <div
+                            class="p-2 rounded cursor-pointer hover:bg-blue-100"
+                            :class="(day === d && month2 === selectedMonth) ? 'bg-blue-600 text-white' : ''"
+                            x-text="d"
+                            @click="selectDate(d, month2)">
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+<hr class="border-t border-gray-300 my-4">
+
+        <!-- Selected Date -->
+        <p class="text-sm text-gray-600 mt-4">
+            Guests can start booking right away, but the first available check-in date will be
+            <strong x-text="formattedSelectedDate()"></strong>.
+        </p>
+    </div>
+</div>
+
+<!-- Alpine.js Script -->
+<script>
+function calendarComponent() {
+    return {
+        checkInOption: 'soon',
+        year: 2025,
+        month1: 6, // July
+        month2: 7, // August
+        day: null,
+        selectedMonth: null,
+
+        weekDays: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+
+        monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July',
+                     'August', 'September', 'October', 'November', 'December'],
+
+        getDaysInMonth(month) {
+            return new Date(this.year, month + 1, 0).getDate();
+        },
+
+        getStartDay(month) {
+            const date = new Date(this.year, month, 1);
+            return (date.getDay() + 6) % 7; // Start from Monday
+        },
+
+        selectDate(day, month) {
+            this.day = day;
+            this.selectedMonth = month;
+        },
+
+        formattedSelectedDate() {
+            if (this.day !== null && this.selectedMonth !== null) {
+                return `${this.day} ${this.monthNames[this.selectedMonth]} ${this.year}`;
+            }
+            return '';
+        },
+
+        nextMonthPair() {
+            if (this.month2 === 11) {
+                this.month1 = 0;
+                this.month2 = 1;
+                this.year++;
+            } else {
+                this.month1++;
+                this.month2++;
+            }
+        },
+
+        prevMonthPair() {
+            if (this.month1 === 0) {
+                this.month1 = 10;
+                this.month2 = 11;
+                this.year--;
+            } else {
+                this.month1--;
+                this.month2--;
+            }
+        }
+    }
+}
+</script>
+
+
+
+
+    <!-- Availability -->
+    <div class="border rounded-md p-4 bg-white shadow space-y-4">
+        <p class="text-base font-semibold">How would you like to open up dates for booking?</p>
+        <div class="flex flex-col sm:flex-row gap-4">
+            <label class="flex items-center space-x-2">
+                <input type="radio" value="365" x-model="availabilityOption" class="form-radio text-blue-600">
+                <span class="text-sm">Continuously extend my availability to:</span>
+            </label>
+            
+        </div>
+
+        <div x-show="availabilityOption === '365'" class="pl-6">
+            <select class="border border-gray-300 p-2 rounded w-48 text-sm">
+                <option value="365">365 days</option>
+                <option value="180">180 days</option>
+                <option value="90">90 days</option>
+                <option value="60">60 days</option>
+            </select>
+        </div>
+        <label class="flex items-center space-x-2">
+                <input type="radio" value="18months" x-model="availabilityOption" class="form-radio text-blue-600">
+                <span class="text-sm">Only open up the first 18 months</span>
+            </label>
+    </div>
+
+
+
+ <!-- SYNC SECTION -->
+<div class="flex flex-col md:flex-row gap-6">
+  <!-- Left: Main Form (Updated width to max-w-2xl) -->
+  <div class="flex-1">
+    <div class="bg-white p-6 rounded-lg shadow-md space-y-4 max-w-2xl mx-auto"
+         x-data="{ showSyncTip: true, syncOption: 'no', icalUrl: '' }">
+      <p class="text-base font-semibold">Do you want to sync your availability with TripAdvisor?</p>
+      <p class="text-xs text-green-600">
+        You will avoid double bookings by syncing calendars. It will also help you get your property listed on Booking.com and open for bookings 80% faster.
+      </p>
+
+      <div class="space-y-4">
+        <label class="flex items-center space-x-2">
+          <input type="radio" value="yes" x-model="syncOption" class="form-radio text-blue-600">
+          <span class="text-sm">Yes, I’ll import unavailable dates from another website</span>
+        </label>
+
+        <div x-show="syncOption === 'yes'" class="space-y-2 border border-gray-300 rounded p-4">
+          <p class="text-sm">Paste your iCal link here</p>
+          <input 
+              type="text" 
+              placeholder="Paste your iCal link here" 
+              x-model="icalUrl"
+              class="border border-gray-300 p-2 rounded w-full"
+          >
+          <button 
+              class="bg-blue-700 text-white px-4 py-1 rounded mt-2"
+              :disabled="!icalUrl.trim()"
+              :class="{ 'opacity-50 cursor-not-allowed': !icalUrl.trim() }"
+          >
+              Import
+          </button>
+          <a href="#" class="text-sm text-blue-600">Where can I find my iCal link?</a>
+        </div>
+
+        <label class="flex items-center space-x-2">
+          <input type="radio" value="no" x-model="syncOption" class="form-radio text-blue-600">
+          <span class="text-sm">No, I won’t sync my availability</span>
+        </label>
+      </div>
+    </div>
   </div>
+
+  
+</div>
+
+<!-- LONG STAY SECTION -->
+<div class="flex flex-col md:flex-row gap-6 mt-8">
+  <!-- Left: Main Form (Updated width to max-w-2xl) -->
+  <div class="flex-1">
+    <div class="bg-white p-6 rounded-lg shadow-md space-y-4 max-w-2xl mx-auto"
+         x-data="{ allowLongStay: '', showLongStayTip: true }">
+      <p class="text-base font-semibold">Do you want to allow 30+ night stays?</p>
+      <p class="text-sm text-gray-600">Allowing guests to stay for up to 90 nights can help you fill your calendar and tap into the trend of guests working remotely.</p>
+
+
+      <p class="text-sm font-semibold">Will you accept reservations for stays over 30 nights?</p>
+      <div class="flex flex-col sm:flex-row gap-4">
+         
+        <label class="flex items-center space-x-2">
+          <input type="radio" value="yes" x-model="allowLongStay" class="form-radio text-blue-600">
+          <span>Yes</span>
+        </label>
+        <label class="flex items-center space-x-2">
+          <input type="radio" value="no" x-model="allowLongStay" class="form-radio text-blue-600">
+          <span>No</span>
+        </label>
+      </div>
+
+      <div>
+        <label class="block mb-2 text-sm font-semibold">What's the maximum number of nights you want guests to be able to book?</label>
+        <select class="border border-gray-300 p-2 rounded w-48">
+          <option value="90">90</option>
+          <option value="60">60</option>
+          <option value="45">45</option>
+          <option value="30">30</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  
+</div>
+
+
+     <!-- Navigation Buttons -->
+<div class="flex justify-between items-center mt-4">
+  <!-- Back Button -->
+  <button type="button"
+          @click="pricingWizardStep--"
+          :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
+          class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
+    ←
+  </button>
+
+  <!-- Continue Button -->
+  
+  <button       @click="pricingWizardStep++" class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-sky-500 transition w-full sm:w-auto">
+    Continue
+  </button>
+
+
+  </div>
+</div>
+
+
   </template>
 </section>
+
+
 
 
 
@@ -1667,7 +2292,338 @@
   </div>
 </section>
 
+<section x-data="{ businessType: 'individual' }" x-show="step === 6" class="w-full px-4 py-8 max-w-2xl mx-auto lg:ml-32">
+    <h2 class="text-2xl font-semibold mb-6">You’re almost there</h2>
 
+    <div class="bg-white p-6 rounded-lg shadow-md space-y-6">
+        <div>
+            <h3 class="text-lg font-semibold mb-2">Are you listing property as a business or individual?</h3>
+            <p class="text-sm text-gray-600 mb-4">
+                Your answer to this question will help us ensure that we include all of the necessary information in your contract.
+            </p>
+
+            <div class="space-y-2">
+                <label class="flex items-start space-x-2 mb-4 mt-4">
+                    <input type="radio" name="type" value="individual" x-model="businessType" class="mt-1">
+                    <div>
+                        <span class="font-semibold text-sm">Individual</span>
+                        <p class="text-sm text-gray-600">
+                            An individual or sole proprietor is a person who owns and operates an unincorporated business on their own.
+                        </p>
+                    </div>
+                </label>
+
+                <label class="flex items-start space-x-2 mb-4">
+                    <input type="radio" name="type" value="business" x-model="businessType" class="mt-1">
+                    <div>
+                        <span class="font-semibold text-sm">Business</span>
+                        <p class="text-sm text-gray-600">
+                            A business entity can be owned by several individuals, such as a partnership, public or private corporation, non-profit organisation, etc.
+                        </p>
+                    </div>
+                </label>
+                <hr class="my-6 border-t border-gray-300 mb-4">
+
+                <p class="text-sm text-gray-700 mb-2 mt-4">
+                    In case you choose to list more properties in the future, we will use the information below so that you only need to fill it once.
+                </p>
+            </div>
+        </div>
+
+        <!-- Business Form -->
+        <template x-if="businessType === 'business'">
+            <div>
+               <p class="text-lg font-semibold text-gray-700 ">
+                    Legal business name
+                </p>
+                <hr class="mt-4 border-t border-gray-300 mb-4">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1" for="legal_name">Legal business name <span class="text-red-500">*</span></label>
+                        <input type="text" id="legal_name" name="legal_name" class="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-300">
+                    </div>
+
+
+ <p class="text-lg font-semibold text-gray-700 mb-2">
+                 Registered business address
+                </p>
+                <hr class="mt-2 border-t border-gray-300 mb-4">
+                  <div class="mb-4">
+                        <label for="country" class="block text-sm font-medium text-gray-700">Country/region</label>
+                        <select id="country" name="country" class="mt-1 p-2 w-full border border-gray-300 rounded">
+                            <option selected>Sri Lanka</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1" for="middle_name">Address line 1  <span class="text-red-500">*</span></label>
+                        <input type="text" id="middle_name" name="middle_name" class="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-300">
+                    </div><div>
+                        <label class="block text-sm font-medium mb-1" for="middle_name">Address line 2  <span class="text-red-500">*</span></label>
+                        <input type="text" id="middle_name" name="middle_name" class="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-300">
+                    </div>
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <div class="flex-1">
+                            <label for="city" class="block text-sm font-medium text-gray-700">City<span class="text-red-500">*</span></label>
+                            <input type="text" id="city" name="city" value="a" class="mt-1 p-2 w-full border border-gray-300 rounded">
+                        </div>
+                        <div class="flex-1">
+                            <label for="postcode" class="block text-sm font-medium text-gray-700">Post code / Zip code</label>
+                            <input type="text" id="postcode" name="postcode" value="80400" class="mt-1 p-2 w-full border border-gray-300 rounded">
+                        </div>
+                    </div>
+                </div>
+
+                 <p class="text-lg font-semibold text-gray-700 mb-2 mt-6">
+                    Legal representative’s personal information
+                </p>
+     <hr class="mt-2 border-t border-gray-300 mb-4">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1" for="full_name">First name as started on ID <span class="text-red-500">*</span></label>
+                        <input type="text" id="full_name" name="full_name" class="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-300">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium mb-1" for="middle_name">Middle name(s) as started on ID <span class="text-red-500">*</span></label>
+                        <input type="text" id="middle_name" name="middle_name" class="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-300">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium mb-1" for="last_name">Last name as started on ID <span class="text-red-500">*</span></label>
+                        <input type="text" id="last_name" name="last_name" class="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-300">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium mb-1" for="email">Email <span class="text-red-500">*</span></label>
+                        <input type="email" id="email" name="email" class="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-300">
+                    </div>
+
+                    <!-- Phone Number with Country Flag -->
+                    <div class="mb-4">
+                        <label for="phone" class="block text-sm font-medium text-gray-800 mb-1">Phone number <span class="text-red-500">*</span></label>
+                        <div class="flex items-center border border-gray-300 rounded-md px-3 py-2 space-x-2">
+                            <!-- Flag Image -->
+                          <img class="selected-flag w-6 h-4 rounded mr-1" src="https://flagcdn.com/w40/lk.png" alt="Flag">
+
+                            <!-- Country Code Select -->
+                         <select class="country-select bg-white border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm">
+    <option value="+94" data-flag="https://flagcdn.com/w40/lk.png" selected>+94</option>
+    <option value="+44" data-flag="https://flagcdn.com/w40/gb.png">+44</option>
+    <option value="+49" data-flag="https://flagcdn.com/w40/de.png">+49</option>
+    <option value="+1" data-flag="https://flagcdn.com/w40/us.png">+1</option>
+</select>
+
+
+                            <!-- Phone Number Input -->
+                            <input type="tel" id="phone" name="phone" placeholder="Enter phone number"
+                                class="flex-1 outline-none border-none focus:ring-0 text-gray-900 text-sm" />
+                        </div>
+                    </div>
+            </div>
+        </template>
+
+        <!-- Individual Form -->
+        <template x-if="businessType === 'individual'">
+            <div >
+                <p class="text-lg font-semibold text-gray-700 mb-2">
+                    Personal information of the contracting party
+                </p>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1" for="full_name">First name as started on ID <span class="text-red-500">*</span></label>
+                        <input type="text" id="full_name" name="full_name" class="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-300">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium mb-1" for="middle_name">Middle name(s) as started on ID <span class="text-red-500">*</span></label>
+                        <input type="text" id="middle_name" name="middle_name" class="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-300">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium mb-1" for="last_name">Last name as started on ID <span class="text-red-500">*</span></label>
+                        <input type="text" id="last_name" name="last_name" class="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-300">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium mb-1" for="email">Email <span class="text-red-500">*</span></label>
+                        <input type="email" id="email" name="email" class="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-300">
+                    </div>
+
+                    <!-- Phone Number with Country Flag -->
+                    <div class="mb-4">
+                        <label for="phone" class="block text-sm font-medium text-gray-800 mb-1">Phone number <span class="text-red-500">*</span></label>
+                        <div class="flex items-center border border-gray-300 rounded-md px-3 py-2 space-x-2">
+                            <!-- Flag Image -->
+                            <img class="selected-flag w-6 h-4 rounded mr-1" src="https://flagcdn.com/w40/lk.png" alt="Flag">
+
+                            <!-- Country Code Select -->
+                            <select class="country-select bg-white border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm">
+    <option value="+94" data-flag="https://flagcdn.com/w40/lk.png" selected>+94</option>
+    <option value="+44" data-flag="https://flagcdn.com/w40/gb.png">+44</option>
+    <option value="+49" data-flag="https://flagcdn.com/w40/de.png">+49</option>
+    <option value="+1" data-flag="https://flagcdn.com/w40/us.png">+1</option>
+</select>
+
+
+                            <!-- Phone Number Input -->
+                            <input type="tel" id="phone" name="phone" placeholder="Enter phone number"
+                                class="flex-1 outline-none border-none focus:ring-0 text-gray-900 text-sm" />
+                        </div>
+                    </div>
+                    <p class="text-lg font-semibold text-gray-700 mb-2">
+                  Primary residence of the contracting party
+                </p>
+                  <div class="mb-4">
+                        <label for="country" class="block text-sm font-medium text-gray-700">Country/region</label>
+                        <select id="country" name="country" class="mt-1 p-2 w-full border border-gray-300 rounded">
+                            <option selected>Sri Lanka</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1" for="middle_name">Address line 1  <span class="text-red-500">*</span></label>
+                        <input type="text" id="middle_name" name="middle_name" class="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-300">
+                    </div><div>
+                        <label class="block text-sm font-medium mb-1" for="middle_name">Address line 2  <span class="text-red-500">*</span></label>
+                        <input type="text" id="middle_name" name="middle_name" class="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-300">
+                    </div>
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <div class="flex-1">
+                            <label for="city" class="block text-sm font-medium text-gray-700">City<span class="text-red-500">*</span></label>
+                            <input type="text" id="city" name="city" value="a" class="mt-1 p-2 w-full border border-gray-300 rounded">
+                        </div>
+                        <div class="flex-1">
+                            <label for="postcode" class="block text-sm font-medium text-gray-700">Post code / Zip code</label>
+                            <input type="text" id="postcode" name="postcode" value="80400" class="mt-1 p-2 w-full border border-gray-300 rounded">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+
+
+    </div>
+    <div class="max-w-3xl mx-auto mt-10 p-4 md:p-6 bg-white rounded-md shadow-sm border">
+  <h2 class="text-lg font-semibold text-gray-800 mb-4">
+    Some important information before you list your hotel on Bookintour.com
+  </h2>
+
+ <ul class="space-y-6 text-sm text-gray-700">
+  <li>
+    <div class="flex items-start gap-4">
+      <div class="pt-1">
+        <img src="{{ asset('assets/Vector.svg') }}" alt="Help" class="w-6 h-6 min-w-[1.5rem] min-h-[1.5rem]" />
+      </div>
+      <div>
+        <p class="font-semibold text-sm">Are bookings confirmed straight away?</p>
+        <p class="text-sm">Yes. They’re confirmed as soon as a guest makes a booking.</p>
+      </div>
+    </div>
+  </li>
+
+  <li>
+    <div class="flex items-start gap-4">
+      <div class="pt-1">
+        <img src="{{ asset('assets/Vector.svg') }}" alt="Help" class="w-6 h-6 min-w-[1.5rem] min-h-[1.5rem]" />
+      </div>
+      <div>
+        <p class="font-semibold text-sm">Can I choose who stays at my place?</p>
+        <p class="text-sm">No. If a date is open in your calendar, all guests using our site can book it.</p>
+      </div>
+    </div>
+  </li>
+
+  <li>
+    <div class="flex items-start gap-4">
+      <div class="pt-1">
+        <img src="{{ asset('assets/Vector.svg') }}" alt="Help" class="w-6 h-6 min-w-[1.5rem] min-h-[1.5rem]" />
+      </div>
+      <div>
+        <p class="font-semibold text-sm">Can I decide when I get bookings?</p>
+        <p class="text-sm">
+          Yes. The best way to do this is to keep your calendar up-to-date. Close any dates you don’t want a booking on. If you have bookings on other sites, close those dates as well.
+        </p>
+      </div>
+    </div>
+  </li>
+</ul>
+
+
+ 
+  <div class="mt-6 space-y-4 text-sm text-gray-700">
+    <label class="flex items-start gap-2">
+      <input type="checkbox" class="mt-1 accent-blue-600">
+      <span>
+        I certify that this is a legitimate accommodation business with all necessary licenses and permits, which can be shown upon first request. Bookintour.com B.V. reserves the right to verify and investigate any details provided in this registration.
+      </span>
+    </label>
+
+    <label class="flex items-start gap-2">
+      <input type="checkbox" class="mt-1 accent-blue-600">
+      <span>
+        I have read, accepted, and agreed to the <a href="#" class="text-blue-600 hover:underline">General Delivery Terms</a>.
+      </span>
+    </label>
+  </div>
+
+  
+</div>
+<!-- Button Row -->
+<div class="mt-6">
+  <div class="flex gap-4">
+    <!-- Back Button -->
+    <button  class="border border-[#3CC0E9]  text-blue-600  font-semibold py-2 px-4 rounded">
+        ←
+    </button>
+
+    <!-- Open for bookings Button (take remaining space) -->
+    <button class="flex-1 px-6 py-3 bg-[#3CC0E9]  text-white font-semibold rounded-md hover:bg-[#29ACD5] transition">
+      Open for bookings
+    </button>
+  </div>
+
+  <!-- I'm not ready link -->
+  <div class="mt-3 text-center">
+    <a href="#" class="text-sky-500 hover:underline text-sm">I'm not ready</a>
+  </div>
+</div>
+
+
+</section>
+<script>
+    const observeFlagDropdowns = () => {
+        document.querySelectorAll('.country-select').forEach(select => {
+            if (select.dataset.flagAttached) return; // Avoid duplicate listeners
+
+            const wrapper = select.closest('.flex');
+            const flag = wrapper?.querySelector('.selected-flag');
+
+            select.addEventListener('change', () => {
+                const selectedOption = select.options[select.selectedIndex];
+                const newFlag = selectedOption.getAttribute('data-flag');
+                if (newFlag && flag) {
+                    flag.src = newFlag;
+                }
+            });
+
+            select.dataset.flagAttached = "true";
+        });
+    };
+
+    // Initial run
+    document.addEventListener('DOMContentLoaded', observeFlagDropdowns);
+
+    // Watch for dynamic DOM changes (e.g., from Alpine x-if)
+    const observer = new MutationObserver(() => {
+        observeFlagDropdowns();
+    });
+
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+</script>
 
 
   </div>
