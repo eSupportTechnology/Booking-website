@@ -25,7 +25,7 @@
                 <div class="flex flex-col md:flex-row justify-between items-start space-y-4 md:space-y-0">
                     <div class="w-full md:w-auto">
                         <div class="flex flex-col items-start space-y-2">
-                            <h1 class="text-2xl font-bold" style="font-family: 'Poppins', sans-serif;">Bookintour.com
+                            <h1 class="text-2xl font-bold" style="font-family: 'Poppins', sans-serif;">{{ config('domains.domain') }}
                             </h1>
                             <div id="promo-box"
                                 class="bg-green-500 text-white px-4 py-2 rounded flex items-start justify-between w-full max-w-sm">
@@ -624,7 +624,7 @@
                                             <input type="checkbox" id="consent"
                                                 class="mt-1 border-gray-300 rounded" x-ref="passportConsent" />
                                             <label for="consent" class="text-sm text-gray-700">
-                                                I consent to Booking.com storing my passport information in accordance
+                                                I consent to {{ config('domains.subdomain') }} storing my passport information in accordance
                                                 with the
                                                 <a href="#" class="text-blue-600 hover:underline">privacy
                                                     statement</a>
@@ -752,7 +752,7 @@
                         <div class="flex justify-between py-4">
                             <div>
                                 <p class="font-base font-semibold text-gray-800">Delete account</p>
-                                <p class="text-gray-600">Permanently delete your Booking.com account</p>
+                                <p class="text-gray-600">Permanently delete your {{ config('domains.subdomain') }} account</p>
                             </div>
                             <button class="text-blue-600 hover:underline font-medium">Delete account</button>
                         </div>
@@ -999,9 +999,9 @@
                                         x-ref="passportConsent" x-model="form.termsAccepted" />
                                     <label for="consent" class="text-sm text-gray-700">
                                         I confirm that I’m authorised to provide the personal data of any co-traveller
-                                        (including children) to Booking.com for this service. In addition, I confirm
+                                        (including children) to {{ config('domains.subdomain') }} for this service. In addition, I confirm
                                         that I’ve informed the other travellers that I’m providing their personal data
-                                        to Booking.com.
+                                        to {{ config('domains.subdomain') }}.
                                     </label>
                                 </div>
 
@@ -1251,7 +1251,7 @@
   <div class="flex justify-between items-start">
     <div>
       <p class="font-base font-semibold text-gray-800">Delete account</p>
-      <p class="text-gray-600">Permanently delete your Booking.com account</p>
+      <p class="text-gray-600">Permanently delete your {{ config('domains.subdomain') }} account</p>
     </div>
     <!-- Show Delete Account button only if conditions box is hidden -->
     <button
@@ -1282,7 +1282,7 @@
       <li class="flex items-start space-x-2">
         <input type="radio" name="reason" value="emails" x-model="selectedReason" class="mt-1 border-gray-300 rounded" />
         <div>
-          <p class="font-medium">I get too many emails from Booking.com</p>
+          <p class="font-medium">I get too many emails from {{ config('domains.subdomain') }}</p>
           <p class="text-gray-500">If you’d prefer to keep your account benefits without any marketing emails, you can unsubscribe instead.</p>
         </div>
       </li>
@@ -1298,7 +1298,7 @@
         <div>
           <p class="font-medium">I want to remove all my data</p>
           <p class="text-gray-500 text-sm">
-            When your Booking.com account is deleted, you will no longer have access to your account data, your past reservation data, your favourite accommodations lists or your Genius status.
+            When your {{ config('domains.subdomain') }} account is deleted, you will no longer have access to your account data, your past reservation data, your favourite accommodations lists or your Genius status.
             For more info about exercising your
             <a href="#" class="text-blue-600 hover:underline">data subject rights</a>, please see our
             <a href="#" class="text-blue-600 hover:underline">Privacy Statement</a> for Customers.
@@ -1565,7 +1565,7 @@
         <div class="flex items-start space-x-2">
           <input type="checkbox" id="consent" class="mt-1 border-gray-300 rounded" x-ref="passportConsent" x-model="form.termsAccepted" />
           <label for="consent" class="text-sm text-gray-700">
-            I confirm that I’m authorised to provide the personal data of any co-traveller (including children) to Booking.com for this service. In addition, I confirm that I’ve informed the other travellers that I’m providing their personal data to Booking.com.
+            I confirm that I’m authorised to provide the personal data of any co-traveller (including children) to {{ config('domains.subdomain') }} for this service. In addition, I confirm that I’ve informed the other travellers that I’m providing their personal data to {{ config('domains.subdomain') }}.
           </label>
         </div>
 

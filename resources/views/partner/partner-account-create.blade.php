@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Create Partner Account | Bookintour</title>
+  <title>Create Partner Account | {{ config('domains.app_name') }}</title>
 
   <!-- CSRF Token -->
   <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -56,7 +56,7 @@
       <form method="POST" action="{{ route('partner.register.email') }}" id="emailForm">
         @csrf
         <label for="email" class="block text-sm font-medium text-gray-700 mb-1" style="font-family: 'Noto Sans', sans-serif;">Email address</label>
-        <input type="email" id="email" name="email" required 
+        <input type="email" id="email" name="email" required
                class="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4 @error('email') border-red-500 @enderror" />
         @error('email')
             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -84,7 +84,7 @@
         <a href="#" class="text-blue-600 hover:underline">Terms & conditions</a> and
         <a href="#" class="text-blue-600 hover:underline">Privacy statement</a>.
       </p>
-      <p class="text-[11px] text-gray-400 text-center mt-1">© 2006 – 2025 Bookintour.com™</p>
+      <p class="text-[11px] text-gray-400 text-center mt-1">© 2006 – 2025 {{ config('domains.domain') }}™</p>
     </div>
   </div>
 </section>

@@ -8,8 +8,17 @@
                 <div class="w-full md:w-auto">
                     <div class="flex flex-col items-start">
                         <!-- Logo -->
-                        <a href="/" class="text-2xl font-bold">
-                            <h1>Bookintour.com</h1>
+                        @php
+                            $host = config('domains.app_name');
+                           
+                        @endphp
+
+                        <a href="{{ url('/') }}" class="text-2xl font-bold flex items-center">
+                            @if($host == 'BookinTour')
+                                <h1>Bookintour.com</h1>
+                            @elseif ($host == 'Inselor')
+                                <img src="{{ asset('images/inselor-logo.png') }}" alt="Inselor" class="h-12 w-auto align-middle" />
+                            @endif
                         </a>
 
                         <!-- Push nav a bit down to separate from logo -->
@@ -17,7 +26,7 @@
                             $currentRoute = request()->route()->getName(); // Get current route name
                         @endphp
 
-                        <nav class="flex flex-wrap gap-4 text-sm md:text-base mt-6 ">
+                        <nav class="flex flex-wrap gap-4 text-sm md:text-base ">
                             <!-- Stays Link -->
                             <a href="{{ route('stays') }}"
                                 class="flex items-center space-x-1 px-3 py-1 rounded-full border

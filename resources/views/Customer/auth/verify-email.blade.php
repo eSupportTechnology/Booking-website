@@ -21,8 +21,18 @@
                 <div
                     class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
                     <div class="w-full md:w-auto md:ml-6">
-                        <a href="/" class="text-2xl font-bold">
-                            <h1 style="font-family: 'Poppins', sans-serif;">Bookintour.com</h1>
+                        <!-- Logo -->
+                        @php
+                            $host = config('domains.app_name');
+
+                        @endphp
+
+                        <a href="{{ url('/') }}" class="text-2xl font-bold flex items-center">
+                            @if($host == 'BookinTour')
+                                <h1>Bookintour.com</h1>
+                            @elseif ($host == 'Inselor')
+                                <img src="{{ asset('images/inselor-logo.png') }}" alt="Inselor" class="h-12 w-auto align-middle" />
+                            @endif
                         </a>
                     </div>
 
@@ -168,7 +178,7 @@
                         <p class="mt-4 justify-center text-center "style="font-family: 'Noto Sans', sans-serif;">All
                             rights reserved<br>Copyright
                             (2025)
-                            – Bookintour™
+                            – {{ config('domains.app_name') }}™
                         </p>
                     </div>
                 </form>

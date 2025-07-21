@@ -457,8 +457,8 @@
                   <template x-if="index === 3 && step === 4">
   <div class="flex space-x-1 mt-1 w-35 sm:w-48 md:w-56 lg:w-64 xl:w-72 ml-[-15px] sm:ml-[-25px] md:ml-[-35px]">
     <template x-for="i in 4">
-      <div 
-        :class="pricingWizardStep >= i ? 'bg-blue-600' : 'bg-gray-300'" 
+      <div
+        :class="pricingWizardStep >= i ? 'bg-blue-600' : 'bg-gray-300'"
         class="h-1 flex-1 rounded-full">
       </div>
     </template>
@@ -804,11 +804,11 @@
             </div>
           </section>
           <!-- Property Setup Section -->
-          
+
 
  <!-- Property Setup Section -->
 <section x-show="step === 2">
- 
+
 
   <template x-if="propertyWizardStep === 1">
    {{-- property-setup.blade.php --}}
@@ -909,13 +909,13 @@
         <!-- Room Size -->
 <div class="lg:col-span-2 bg-white rounded-lg border border-gray-300 p-4 space-y-4 ">
   <div class="flex flex-col lg:flex-row gap-4 items-end"> <!-- ensure vertical alignment -->
-    
+
     <!-- Apartment Size Dropdown -->
     <div class="w-full lg:w-2/4">
   <label class="block  text-sm text-gray-700 mb-1">How big is this room?</label>
   <p class="text-xs text-gray-500 ">Apartment size - optional</p>
- 
-<input 
+
+<input
     type="number"
     min="1"
     step="1"
@@ -926,7 +926,7 @@
     class="w-full border border-gray-300 rounded-md shadow-sm text-sm mt-2 px-2 py-2"
 >
 
-  
+
 
 </div>
 
@@ -938,7 +938,7 @@
         <option>square feet</option>
       </select>
     </div>
-    
+
   </div>
     </div>
 
@@ -947,7 +947,7 @@
   <button
    type="button" @click="propertyWizardStep--"
         :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-  
+
       class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
       ←
   </button>
@@ -973,7 +973,7 @@
 
 
     <template x-if="propertyWizardStep === 2">
-      
+
  <div class="max-w-2xl mx-auto space-y-8 lg:ml-32">
 
     <!-- Heading -->
@@ -1030,7 +1030,7 @@
       type="submit"
     @click="propertyWizardStep++"
       class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 mb-16">
-      Continue 
+      Continue
     </button>
   </div>
 
@@ -1075,21 +1075,21 @@
             <!-- Type of breakfast -->
           <div x-data="{ selected: [] }">
   <p class="font-semibold text-sm text-gray-800 mb-2">
-    What type of breakfast do you offer? 
+    What type of breakfast do you offer?
     <span class="text-sm text-gray-500">(Select all that apply)</span>
   </p>
 
   <div class="flex flex-wrap gap-2">
     @foreach(['A la carte', 'American', 'Asian', 'Breakfast to go', 'Buffet', 'Continental', 'Full English/Irish', 'Gluten-Free', 'Halal', 'Italian', 'Kosher', 'Vegan', 'Vegetarian'] as $option)
       <label
-        :class="selected.includes('{{ $option }}') 
-                  ? 'bg-[#3CC0E9] text-white' 
+        :class="selected.includes('{{ $option }}')
+                  ? 'bg-[#3CC0E9] text-white'
                   : 'border border-gray-300 text-gray-700 hover:bg-gray-200'"
         class="px-3 py-1 rounded-full text-sm font-medium cursor-pointer transition"
       >
-        <input type="checkbox" class="hidden" 
+        <input type="checkbox" class="hidden"
                :value="'{{ $option }}'"
-               x-model="selected"> 
+               x-model="selected">
         {{ $option }}
       </label>
     @endforeach
@@ -1111,7 +1111,7 @@
                     <label><input type="radio" name="parking_available" class="mr-2"> Yes, paid</label>
                     <label><input type="radio" name="parking_available" class="mr-2"> No</label>
 </div>
-               
+
             </div>
     <hr class="my-6 border-t border-gray-300">
             <!-- Parking cost -->
@@ -1155,11 +1155,11 @@
                 <p class="font-semibold text-sm text-gray-800 mb-2">Do guests need to reserve a parking spot?</p>
 
                 <div class="flex flex-col text-sm gap-2">
-    
+
                     <label><input type="radio" name="parking_reservation" class="mr-2"> Reservation needed</label>
                     <label><input type="radio" name="parking_reservation" class="mr-2">No reservation needed </label>
 </div>
-                
+
             </div>
 
             <!-- Parking location -->
@@ -1167,11 +1167,11 @@
                 <p class="font-semibold text-sm text-gray-800 mb-2">Where is the parking located?</p>
 
                 <div class="flex flex-col text-sm gap-2">
-    
+
                  <label><input type="radio" name="parking_location" class="mr-2"> On site</label>
                     <label><input type="radio" name="parking_location" class="mr-2"> Off site</label>
 </div>
-                
+
             </div>
 
                 <div>
@@ -1182,10 +1182,10 @@
                  <label><input type="radio" name="parking_type" class="mr-2">Private</label>
                     <label><input type="radio" name="parking_type" class="mr-2">Public</label>
 </div>
-                
+
             </div>
 
-            
+
         </div>
 <div class="flex justify-between mt-6">
     <!-- Back Button -->
@@ -1205,7 +1205,7 @@
       type="submit"
     @click="propertyWizardStep++"
       class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 mb-16">
-      Continue 
+      Continue
     </button>
   </div>
     </div>
@@ -1245,7 +1245,7 @@
       <!-- Add Additional Languages -->
       <div id="additionalLanguagesSection" class="mt-4 hidden relative">
         <h3 class="text-lg font-medium mb-2 ">Add additional languages</h3>
-        
+
         <!-- Searchable dropdown container -->
         <div class="relative w-full max-w-md">
           <input
@@ -1325,7 +1325,7 @@
   <button
    type="button" @click="propertyWizardStep--"
         :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-  
+
       class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
       ←
   </button>
@@ -1512,7 +1512,7 @@
   <button
    type="button" @click="propertyWizardStep--"
         :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-  
+
       class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
       ←
   </button>
@@ -1544,7 +1544,7 @@
             You can easily customise these house rules later and additional house rules can be set on the Policies page of the extranet after you complete registration.
           </p>
 
-          
+
         </div>
       </div>
 
@@ -1629,7 +1629,7 @@
   <button
    type="button" @click="propertyWizardStep--"
         :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-  
+
       class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
       ←
   </button>
@@ -1941,7 +1941,7 @@
     <div class="flex justify-between pt-4">
       <button @click="step--"
              class="flex items-center border border-[#3CC0E9] rounded text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12">
-        
+
             ←
       </button>
       <button @click="step++"
@@ -1954,7 +1954,7 @@
 
 
 
-            
+
 
           </div>
         </div>

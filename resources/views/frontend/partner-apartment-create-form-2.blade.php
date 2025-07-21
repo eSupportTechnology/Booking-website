@@ -26,7 +26,19 @@
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
           <!-- Logo -->
           <div class="w-full md:w-auto md:ml-6">
-            <a href="/" class="text-2xl font-bold font-poppins">Bookintour.com</a>
+              <!-- Logo -->
+                        @php
+                            $host = config('domains.app_name');
+
+                        @endphp
+
+                        <a href="{{ url('/') }}" class="text-2xl font-bold flex items-center">
+                            @if($host == 'BookinTour')
+                                <h1>Bookintour.com</h1>
+                            @elseif ($host == 'Inselor')
+                                <img src="{{ asset('images/inselor-logo.png') }}" alt="Inselor" class="h-12 w-auto align-middle" />
+                            @endif
+                        </a>
           </div>
 
           <!-- Right Section -->
@@ -101,8 +113,7 @@
     <div class="max-w-full mx-auto px-4 py-3">
 
       <!-- Scrollable/Responsive Nav Items -->
-<div class="flex flex-wrap sm:flex-nowrap overflow-x-auto space-x-6 sm:space-x-12 md:space-x-8 lg:space-x-24 xl:space-x-24 text-sm font-medium whitespace-nowrap">
-
+      <div class="flex flex-wrap sm:flex-nowrap overflow-x-auto space-x-6 sm:space-x-10 md:space-x-14 lg:space-x-20 xl:space-x-24 text-sm font-medium whitespace-nowrap">
 
         <!-- Loop through nav steps -->
         <template x-for="(label, index) in ['Basic information', 'Property setup', 'Photos', 'Pricing and calendar', 'Legal information','Review and complete']" :key="index">
@@ -166,6 +177,9 @@
     </template>
   </div>
 </template>
+
+
+
 
 
 
@@ -372,7 +386,7 @@
         Do you want to connect this listing to your channel manager?
       </h2>
       <p class="text-gray-700 mb-6">
-        A channel manager is a third-party tool that lets you manage rates and availability across different sites you might list your place on, including Booking.com. If you're already using a channel manager, you can select 'Yes' to connect it to your listing.
+        A channel manager is a third-party tool that lets you manage rates and availability across different sites you might list your place on, including {{ config('domains.subdomain') }}. If you're already using a channel manager, you can select 'Yes' to connect it to your listing.
       </p>
 
 
@@ -443,11 +457,15 @@
 
  <!-- Property Setup Section -->
 <section x-show="step === 2">
- <div class="w-full max-w-xl   p-4  ml-32">
 
-  <template x-if="propertyWizardStep === 1">
-   {{-- property-setup.blade.php --}}
-<div class="max-w-xl mx-auto space-y-8 lg:ml-32 px-4 py-6">
+
+
+    <template x-if="propertyWizardStep === 1">
+  <div x-data="{ showBedTypeSelector: false }">
+
+    <!-- Header -->
+    <h2 class="text-2xl font-bold mb-6">Property details</h2>
+    <p class="text-gray-600 mb-4">Where can people sleep?</p>
 
 <h2 class="text-2xl font-bold text-gray-900 mt-8">What can guests use at your place?</h2>
     <!-- Where can people sleep -->
@@ -492,24 +510,64 @@
         </a>
     </div>
 
-    <!-- Include Alpine.js in your Blade layout if not already -->
-<script src="//unpkg.com/alpinejs" defer></script>
+    <!-- Add Bedroom Button -->
+    <div class="flex items-center mt-6">
+      <button
+        @click="showBedTypeSelector = true"
+        class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v6m0 0v6m0-6h6m-6 0H6" />
+        </svg>
+        Add bedroom
+      </button>
+    </div>
 
-<!-- Guests and Bathrooms -->
-<div x-data="{ guests: 2, bathrooms: 1 }" class="bg-white p-4 rounded-lg shadow space-y-4 w-full max-w-xl">
-    <!-- Guests -->
-    <div>
-        <label class="block text-sm text-gray-800">How many guests can stay?</label>
-        <div class="flex items-center space-x-4 mt-1">
-            <button
-                @click="if (guests > 1) guests--"
-                class="border px-3 py-1 rounded text-base "
-            >−</button>
-            <span class="min-w-[2rem] text-center text-gray-700  text-base" x-text="guests"></span>
-            <button
-                @click="guests++"
-                class="border px-3 py-1 rounded text-base "
-            >+</button>
+    <!-- Bed Type Selector (Only this toggles visibility) -->
+    <div x-show="showBedTypeSelector" class="mt-6 bg-white border border-gray-300 p-6 rounded shadow-md">
+      <h3 class="text-xl font-semibold mb-4">Select bed types for new bedroom</h3>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <label class="flex items-center space-x-2">
+          <input type="checkbox" class="h-4 w-4 text-blue-600">
+          <span>Double bed</span>
+        </label>
+        <label class="flex items-center space-x-2">
+          <input type="checkbox" class="h-4 w-4 text-blue-600">
+          <span>Single bed</span>
+        </label>
+        <label class="flex items-center space-x-2">
+          <input type="checkbox" class="h-4 w-4 text-blue-600">
+          <span>Queen bed</span>
+        </label>
+        <label class="flex items-center space-x-2">
+          <input type="checkbox" class="h-4 w-4 text-blue-600">
+          <span>Sofa bed</span>
+        </label>
+      </div>
+
+      <!-- Save and Cancel -->
+      <div class="flex justify-end mt-6 space-x-4">
+        <button
+          @click="showBedTypeSelector = false"
+          class="text-gray-600 hover:underline text-sm">
+          Cancel
+        </button>
+        <button
+          @click="showBedTypeSelector = false"
+          class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm font-medium">
+          Save Bedroom
+        </button>
+      </div>
+    </div>
+ <div class="flex justify-between mt-4">
+          <button @click="propertyWizardStep--"
+            class="text-blue-600 border border-blue-600 px-4 py-2 rounded hover:bg-blue-50">
+            Back
+          </button>
+          <button @click="propertyWizardStep++"
+            class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+            Next
+          </button>
         </div>
     </div>
 
@@ -615,8 +673,7 @@
 
     <template x-if="propertyWizardStep === 2">
 
- <div class="max-w-2xl mx-auto space-y-8 lg:ml-32">
-
+  <div class="max-w-2xl mx-auto space-y-8">
     <!-- Heading -->
      <h2 class="text-2xl font-bold text-gray-900 mt-8">What can guests use at your place?</h2>
 
@@ -670,7 +727,7 @@
     <button
       type="submit"
     @click="propertyWizardStep++"
-      class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 mb-16">
+      class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
       Continue
     </button>
   </div>
@@ -2060,6 +2117,191 @@ function calendarComponent() {
           <option value="30">30</option>
         </select>
       </div>
+    </div>
+
+    <!-- Individual Form -->
+    <div x-show="ownershipType === 'individual'" x-transition class="bg-white p-6 rounded-lg  space-y-4">
+
+ <p class="text-sm text-gray-800">
+        Please provide the full names and dates of birth of all individuals who own 25% or more of the accommodation.
+      </p>
+      <!-- Owner Input Blocks -->
+      <template x-for="(owner, index) in owners" :key="index">
+
+        <div class="border p-4 rounded-lg space-y-4 bg-white">
+
+
+          <div>
+            <label class="block  text-sm font-semibold text-gray-600">First Name</label>
+            <input type="text" x-model="owner.firstName" placeholder="First Name"
+                   class="w-full p-2 border rounded text-sm" />
+          </div>
+
+          <div>
+            <label class="block  text-sm font-semibold text-gray-600">Last Name</label>
+            <input type="text" x-model="owner.lastName" placeholder="Last Name"
+                   class="w-full p-2 border rounded text-sm" />
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-gray-600 mb-2">Date of Birth</label>
+            <input type="date" x-model="owner.dob"
+                   class="w-full p-2 border rounded text-sm focus:outline-none focus:ring-2 focus:ring-sky-200" />
+          </div>
+
+          <div x-show="owners.length > 1" class="text-right">
+            <button @click="owners.splice(index, 1)"
+                    class="text-red-600 text-sm hover:underline">
+              Remove
+            </button>
+          </div>
+        </div>
+      </template>
+
+  <!-- Add Another Owner -->
+      <div>
+        <button @click="owners.push({ firstName: '', lastName: '', dob: '' })"
+                type="button"
+                class="text-sky-600 text-sm font-medium hover:underline mt-2">
+          + Add another
+        </button>
+      </div>
+      <!-- Single Optional Field Outside Loop -->
+      <div>
+        <label class="block font-semibold text-sm text-gray-600">
+          If any owners go by an alternative name or names, please provide those details.
+          <span class="text-gray-500">- (Optional)</span>
+        </label>
+        <input type="text"
+
+               class="w-full p-2 border rounded text-sm" />
+      </div>
+
+
+    </div>
+
+    <!-- Business Form -->
+    <div x-show="ownershipType === 'business'" x-transition class="bg-white p-6 rounded-lg shadow border space-y-4">
+
+
+      <div class="border p-4 rounded-lg space-y-4 bg-white">
+
+<div>
+            <label class="block  text-sm font-semibold text-gray-600">Full name of business entity</label>
+            <input type="text" x-model="owner.firstName" placeholder="First Name"
+                   class="w-full p-2 border rounded text-sm" />
+          </div>
+
+          <div>
+            <label class="block  text-sm font-semibold text-gray-600">Address of business entity</label>
+            <input type="text" x-model="owner.address" placeholder="Address"
+                   class="w-full p-2 border rounded text-sm" />
+          </div>
+
+          <div>
+            <label class="block  text-sm font-semibold text-gray-600">Zip Code</label>
+            <input type="text" x-model="owner.zipCode" placeholder="Zip Code"
+                   class="w-full p-2 border rounded text-sm" />
+          </div>
+          <div>
+            <label class="block  text-sm font-semibold text-gray-600">City</label>
+            <input type="text" x-model="owner.city" placeholder="City"
+                   class="w-full p-2 border rounded text-sm" />
+          </div>
+      <div>
+  <label class="block text-sm font-semibold text-gray-600">Country</label>
+  <select x-model="owner.country"
+          class="w-full p-2 border rounded text-sm">
+    <option value="" >Select a country</option>
+    <option value="Sri Lanka">Sri Lanka</option>
+    <option value="India">India</option>
+    <option value="United States">United States</option>
+    <option value="United Kingdom">United Kingdom</option>
+    <option value="Australia">Australia</option>
+    <!-- Add more countries as needed -->
+  </select>
+</div>
+
+
+
+ <div>
+        <label class="block font-semibold text-sm text-gray-600">
+        If the company operates under a different name (e.g. "trading as" name) in relation to the accommodation, please provide those details.
+          <span class="text-gray-500">- (Optional)</span>
+        </label>
+        <input type="text"
+
+               class="w-full p-2 border rounded text-sm" />
+      </div>
+
+
+
+</div>
+ <p class="text-sm text-gray-800">
+        Please provide the full names and dates of birth of all individuals who own 25% or more of the accommodation.
+      </p>
+      <!-- Owner Input Blocks -->
+      <template x-for="(owner, index) in owners" :key="index">
+        <div class="border p-4 rounded-lg space-y-4 bg-white">
+
+          <div>
+            <label class="block  text-sm font-semibold text-gray-600">First Name</label>
+            <input type="text" x-model="owner.firstName" placeholder="First Name"
+                   class="w-full p-2 border rounded text-sm" />
+          </div>
+
+          <div>
+            <label class="block  text-sm font-semibold text-gray-600">Last Name</label>
+            <input type="text" x-model="owner.lastName" placeholder="Last Name"
+                   class="w-full p-2 border rounded text-sm" />
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-gray-600 mb-2">Date of Birth</label>
+            <input type="date" x-model="owner.dob"
+                   class="w-full p-2 border rounded text-sm focus:outline-none focus:ring-2 focus:ring-sky-200" />
+          </div>
+
+          <div x-show="owners.length > 1" class="text-right">
+            <button @click="owners.splice(index, 1)"
+                    class="text-red-600 text-sm hover:underline">
+              Remove
+            </button>
+          </div>
+        </div>
+      </template>
+
+  <!-- Add Another Owner -->
+      <div>
+        <button @click="owners.push({ firstName: '', lastName: '', dob: '' })"
+                type="button"
+                class="text-sky-600 text-sm font-medium hover:underline mt-2">
+          + Add another
+        </button>
+      </div>
+      <!-- Single Optional Field Outside Loop -->
+      <div>
+        <label class="block font-semibold text-sm text-gray-600">
+          If any owners go by an alternative name or names, please provide those details.
+          <span class="text-gray-500">- (Optional)</span>
+        </label>
+        <input type="text"
+
+               class="w-full p-2 border rounded text-sm" />
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="flex justify-between pt-4">
+      <button @click="step--"
+             class="flex items-center border border-[#3CC0E9] rounded text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12">
+
+            ←
+      </button>
+      <button @click="step++"
+              class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition ">
+        Continue
+      </button>
     </div>
   </div>
 
