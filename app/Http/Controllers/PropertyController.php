@@ -161,15 +161,11 @@ class PropertyController extends Controller
             'session' => session()->all(),
             'user_id' => auth()->id(),
         ]);
-        try {
-            Log::info('Fetching property for update', ['property_id' => $request->input('property_id', $propertyId)]);
-            $property = Property::findOrFail($request->input('property_id', $propertyId));
-
-    Log::info('storeStep2 called', [
-        'request' => $request->all(),
-        'session' => session()->all(),
-        'user_id' => auth()->id(),
-    ]);
+        Log::info('storeStep2 called', [
+            'request' => $request->all(),
+            'session' => session()->all(),
+            'user_id' => auth()->id(),
+        ]);
 
     try {
         $property = Property::findOrFail($request->input('property_id', $propertyId));
