@@ -666,45 +666,10 @@
                                         </template>
 
 
+                                        
+
+
                                         <template x-if="step === 6 && selected === 'one'">
-                                            <div class="space-y-6">
-                                                <h3 class="text-xl font-bold">Set Your Pricing</h3>
-
-                                                <div>
-                                                    <label for="price" class="block text-sm font-medium text-gray-700 mb-1">Price per night (LKR)</label>
-                                                    <div class="relative rounded-md shadow-sm">
-                                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                                            <span class="text-gray-500">Rs.</span>
-                                                        </div>
-                                                        <input
-                                                            id="price"
-                                                            type="number"
-                                                            min="0"
-                                                            placeholder="Enter amount"
-                                                            class="pl-12 pr-4 py-2 border border-gray-300 rounded-md w-full focus:ring-blue-500 focus:border-blue-500" />
-                                                    </div>
-                                                    <p class="text-sm text-gray-500 mt-1">Set a competitive price to attract more bookings.</p>
-                                                </div>
-
-                                                <div class="flex justify-between pt-4">
-                                                    <button type="button"
-                                                        @click="prevStep"
-                                                        class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium px-5 py-2 rounded">
-                                                        ←
-                                                    </button>
-
-                                                    <button
-                                                        type="button"
-                                                        @click="nextStep"
-                                                        class="bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold px-6 py-2 rounded shadow">
-                                                        Continue →
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </template>
-
-
-                                        <template x-if="step === 7 && selected === 'one'">
                                             <div>
                                                 <div
                                                     class="relative w-[1400px] h-auto overflow-hidden rounded-lg shadow mx-auto -mt-14 -ml-16">
@@ -831,7 +796,7 @@
                                             </div>
                                         </template>
                                         <!-- Step 5 -->
-                                        <template x-if="step === 8 && selected === 'one'">
+                                        <template x-if="step === 7 && selected === 'one'">
                                             <div>
                                                 <div class="max-w-5xl mx-auto px-4 py-8">
                                                     <h1 class="text-2xl font-bold mb-4 mt-4">Connect to a
@@ -919,7 +884,7 @@
 
 
                                         <!-- Step 5 -->
-                                        <template x-if="step === 9 &&  selected === 'one'">
+                                        <template x-if="step === 8 &&  selected === 'one'">
                                             <div>
                                                 <section class="mb-8">
                                                     <h1 class="text-xl text-gray-700 font-bold mb-4">What can
@@ -1020,7 +985,7 @@
                                             </div>
                                         </template>
                                         <!-- Step 5 -->
-                                        <template x-if="step === 10 && selected === 'one'">
+                                        <template x-if="step === 9 && selected === 'one'">
                                             <div>
                                                 <div class="container mx-auto px-4 py-4 max-w-6xl mb-8">
 
@@ -1102,7 +1067,7 @@
                                             </div>
                                         </template>
                                         <!-- Step 5 -->
-                                        <template x-if="step === 11 && selected === 'one'">
+                                        <template x-if="step === 10 && selected === 'one'">
                                             <div>
                                                 <div class="container mx-auto px-4 py-8 max-w-6xl">
                                                     <!-- Header -->
@@ -1280,7 +1245,7 @@
                                             </div>
                                         </template>
                                         <!-- Step 5 -->
-                                        <template x-if="step === 12 && selected === 'one'">
+                                        <template x-if="step === 11 && selected === 'one'">
                                             <div>
                                                 <div class="container mx-auto px-4 py-8 max-w-6xl">
                                                     <!-- Header -->
@@ -1456,7 +1421,7 @@
                                         </template>
 
 
-                                        <template x-if="step === 13 && selected === 'one'">
+                                        <template x-if="step === 12 && selected === 'one'">
                                             <div>
                                                 <!-- Main Content -->
                                                 <main class="container mx-auto px-4 py-8 max-w-4xl">
@@ -1529,6 +1494,113 @@
                                             </div>
                                         </template>
 
+                                        <template x-if="step === 13 && selected === 'one'"
+                                            x-data="{
+                                                    newRoom: {
+                                                        room_type_id: '',
+                                                        name: '',
+                                                        price_per_night: 0,
+                                                        max_guests: 1,
+                                                        bathroom_count: 0,
+                                                        size_sq_m: 0,
+                                                        beds: {}
+                                                    },
+                                                    roomTypes: [],
+                                                    bedTypes: [],
+                                                }"
+                                            x-init="
+                                                    roomTypes = @js($roomTypes);
+                                                    bedTypes = @js($bedTypes)
+                                                ">
+                                            <div>
+                                                <!-- Main Content -->
+                                                <main class="container mx-auto px-4 py-8 max-w-4xl">
+                                                    <h2 class="text-2xl md:text-3xl font-bold mb-6 text-left">
+                                                        Room Details
+                                                    </h2>
+
+                                                    <div class="bg-white shadow-md rounded-lg p-6 md:p-8 space-y-6">
+
+                                                        <p class="text-gray-700 text-sm md:text-base">
+                                                            Add information about each room in your property. Include room type, number of guests it can host,
+                                                            price, and bed configuration.
+                                                        </p>
+
+                                                        <!-- Room Type -->
+                                                        <div>
+                                                            <label class="block text-sm font-medium text-gray-700 mb-1">Room Type</label>
+                                                            <select x-model="newRoom.room_type_id" class="w-full border rounded px-3 py-2">
+                                                                <template x-for="type in roomTypes" :key="type.id">
+                                                                    <option :value="type.id" x-text="type.name"></option>
+                                                                </template>
+                                                            </select>
+                                                        </div>
+
+                                                        <!-- Room Name -->
+                                                        <div>
+                                                            <label class="block text-sm font-medium text-gray-700 mb-1">Room Name</label>
+                                                            <input type="text" x-model="newRoom.name"
+                                                                class="w-full border border-gray-300 rounded px-3 py-2" placeholder="E.g. Master Bedroom" />
+                                                        </div>
+
+                                                        <!-- Price -->
+                                                        <div>
+                                                            <label class="block text-sm font-medium text-gray-700 mb-1">Price per Night (LKR)</label>
+                                                            <input type="number" x-model="newRoom.price_per_night" min="0" step="0.01"
+                                                                class="w-full border border-gray-300 rounded px-3 py-2" />
+                                                        </div>
+
+                                                        <!-- Max Guests -->
+                                                        <div>
+                                                            <label class="block text-sm font-medium text-gray-700 mb-1">Max Guests</label>
+                                                            <input type="number" x-model="newRoom.max_guests" min="1"
+                                                                class="w-full border border-gray-300 rounded px-3 py-2" />
+                                                        </div>
+
+                                                        <!-- Bathroom Count -->
+                                                        <div>
+                                                            <label class="block text-sm font-medium text-gray-700 mb-1">Bathroom Count</label>
+                                                            <input type="number" x-model="newRoom.bathroom_count" min="0"
+                                                                class="w-full border border-gray-300 rounded px-3 py-2" />
+                                                        </div>
+
+                                                        <!-- Size -->
+                                                        <div>
+                                                            <label class="block text-sm font-medium text-gray-700 mb-1">Size (sq. meters)</label>
+                                                            <input type="number" x-model="newRoom.size_sq_m" min="0"
+                                                                class="w-full border border-gray-300 rounded px-3 py-2" />
+                                                        </div>
+
+                                                        <!-- Bed Types -->
+                                                        <div>
+                                                            <label class="block text-sm font-medium text-gray-700 mb-1">Beds</label>
+                                                            <template x-for="(bedType, index) in bedTypes" :key="bedType.id">
+                                                                <div class="flex items-center mb-2">
+                                                                    <label class="w-1/2 text-gray-600 text-sm" x-text="bedType.name"></label>
+                                                                    <input type="number" min="0"
+                                                                        class="w-1/2 border border-gray-300 rounded px-3 py-1 ml-2"
+                                                                        @input="newRoom.beds[bedType.id] = +$event.target.value" />
+
+                                                                </div>
+                                                            </template>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Navigation Buttons -->
+                                                    <div class="mt-8 flex justify-between">
+                                                        <button type="button" @click="prevStep"
+                                                            class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                                                            ←
+                                                        </button>
+
+                                                        <button type="button" @click="nextStep"
+                                                            class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
+                                                            Save Room & Continue
+                                                        </button>
+                                                    </div>
+                                                </main>
+                                            </div>
+                                        </template>
 
                                         <template x-if="step === 14 && selected === 'one'">
                                             <div>
@@ -3017,16 +3089,16 @@
                             function wizard(selectedBoxValue) {
                                 return {
                                     step: 1,
-                                    selectedBox: selectedBoxValue, // Ensure this matches to show this section
+                                    selectedBox: selectedBoxValue,
                                     selected: '',
                                     sameAddress: '',
                                     propertyCount: 2,
-                                    totalSteps: 14, // Adjust total steps as needed
+                                    totalSteps: 14,
 
                                     previewFiles: [],
 
                                     handlePreview(event) {
-                                        this.previewFiles = []; // Clear existing previews
+                                        this.previewFiles = [];
                                         const files = event.target.files;
 
                                         for (let i = 0; i < files.length; i++) {
@@ -3188,7 +3260,7 @@
                                                     console.error('Upload error:', error);
                                                     alert('Something went wrong while uploading photos.');
                                                 });
-                                        } else if (this.step === 7 && this.selected === 'one') {
+                                        } else if (this.step === 6 && this.selected === 'one') {
                                             try {
                                                 console.log('Submitting form:', this.addressForm);
 
@@ -3211,7 +3283,7 @@
                                             } catch (e) {
                                                 console.error('Error saving step 2:', e);
                                             }
-                                        } else if (this.step === 9 && this.selected === 'one') {
+                                        } else if (this.step === 8 && this.selected === 'one') {
                                             try {
                                                 // Get all checked amenity IDs
                                                 const selectedAmenities = Array.from(document.querySelectorAll('input[name="amenities[]"]:checked'))
@@ -3240,7 +3312,7 @@
                                             } catch (e) {
                                                 console.error('Error saving amenities:', e);
                                             }
-                                        } else if (this.step === 12 && this.selected === 'one') {
+                                        } else if (this.step === 11 && this.selected === 'one') {
                                             try {
                                                 const smokingAllowed = document.querySelector('#smoking_allowed').checked;
                                                 const petsValue = document.querySelector('input[name="pets_allowed"]:checked')?.value || 'no';
@@ -3274,6 +3346,53 @@
                                             } catch (e) {
                                                 console.error('Error saving policy:', e);
                                             }
+                                        } else if (this.step === 13 && this.selected === 'one') {
+                                            console.log('Saving room details for property ID:', this.propertyId);
+
+                                            if (!this.newRoom.room_type_id || !this.newRoom.max_guests || !this.newRoom.price_per_night) {
+                                                alert('Please fill out all required fields (room type, guests, price).');
+                                                return;
+                                            }
+                                            console.log('Saving room details:', {
+                                                property_id: this.propertyId,
+                                                room_type_id: this.newRoom.room_type_id,
+                                                name: this.newRoom.name,
+                                                price_per_night: this.newRoom.price_per_night,
+                                                max_guests: this.newRoom.max_guests,
+                                                beds: this.newRoom.beds
+                                            });
+
+
+                                            fetch(`/partner/save-rooms/${this.propertyId}`, {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                    },
+                                                    body: JSON.stringify({
+                                                        property_id: this.propertyId,
+                                                        room_type_id: this.newRoom.room_type_id,
+                                                        name: this.newRoom.name,
+                                                        price_per_night: this.newRoom.price_per_night,
+                                                        max_guests: this.newRoom.max_guests,
+                                                        bathroom_count: this.newRoom.bathroom_count,
+                                                        size_sq_m: this.newRoom.size_sq_m,
+                                                        beds: this.newRoom.beds // key-value pair: bed_type_id => count
+                                                    })
+                                                })
+                                                .then(response => response.json())
+                                                .then(result => {
+                                                    if (result.success) {
+                                                        console.log('Room saved:', result);
+                                                        this.step++; // Move to step 15
+                                                    } else {
+                                                        alert(result.message || 'Failed to save room.');
+                                                    }
+                                                })
+                                                .catch(error => {
+                                                    console.error('Error saving room:', error);
+                                                    alert('Something went wrong while saving the room.');
+                                                });
                                         } else {
                                             if (this.step === 1 && this.selected === '') return;
 

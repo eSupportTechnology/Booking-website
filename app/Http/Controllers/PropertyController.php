@@ -17,6 +17,8 @@ use App\Models\PropertySubtype;
 use App\Services\FileUploadService;
 use App\DTOs\Partner\AccommodationDetailsDTO;
 use App\Actions\Partner\StoreAccommodationDetailsAction;
+use App\Models\Room;
+use App\Models\RoomBed;
 
 class PropertyController extends Controller
 {
@@ -39,8 +41,12 @@ class PropertyController extends Controller
     {
         $subcategories = $action->getPropertiesByCategory($categoryId);
         $amenities = $action->getAmenities();
+        $roomTypes = $action->getRoomTypes();
+        $bedTypes= $action->getBedTypes();
         Log::info('Fetching subcategories for category ID: ' . $categoryId, ['subcategories' => $subcategories]);
         Log::info('Available amenities', ['amenities' => $amenities]);
+        Log::info('Available room types', ['roomTypes' => $roomTypes]);
+        Log::info('Available bed types', ['bedTypes' => $bedTypes]);
         // Check if subcategories are empty
         if ($subcategories->isEmpty()) {
             Log::warning('No subcategories found for category ID ' . $categoryId);
@@ -48,7 +54,7 @@ class PropertyController extends Controller
         }
         switch ($categoryId) {
             case 1:  // Homes
-                return view('partner.partner-homes-create-form-1', compact('subcategories', 'categoryId', 'amenities'));
+                return view('partner.partner-homes-create-form-1', compact('subcategories', 'categoryId', 'amenities', 'roomTypes', 'bedTypes'));
             case 2:  // Apartment
                 return view('partner.partner-apartment-create-form-1', [
                     'subcategories' => $subcategories,
@@ -315,5 +321,74 @@ class PropertyController extends Controller
         );
 
         return response()->json(['success' => true]);
+    }
+
+    public function saveRooms(Request $request, $propertyId)
+    {
+        try {
+            // Validate the request
+             Log::info('Saving room details', [
+                'property_id' => $propertyId,
+                'validated_data' => $request->all()
+            ]);
+            $validated = $request->validate([
+                'room_type_id'     => 'required|exists:room_types,id',
+                'name'             => 'nullable|string|max:255',
+                'price_per_night'  => 'required|numeric|min:0',
+                'max_guests'       => 'required|integer|min:1',
+                'bathroom_count'   => 'nullable|integer|min:0',
+                'size_sq_m'        => 'nullable|integer|min:0',
+                'beds'             => 'nullable|array',
+                'beds.*'           => 'integer|min:0', // bed_type_id => count
+            ]);
+
+           
+            // Create new Room
+            $room = new Room();
+            $room->property_id     = $propertyId;
+            $room->room_type_id    = $validated['room_type_id'];
+            $room->name            = $validated['name'] ?? 'Room'; // fallback
+            $room->price_per_night = $validated['price_per_night'];
+            $room->max_guests      = $validated['max_guests'];
+            $room->bathroom_count  = $validated['bathroom_count'] ?? 0;
+            $room->size_sq_m       = $validated['size_sq_m'] ?? null;
+            $room->save();
+
+            // Save bed types (if any)
+            if (!empty($validated['beds'])) {
+                foreach ($validated['beds'] as $bedTypeId => $count) {
+                    if ($count > 0) {
+                        RoomBed::create([
+                            'room_id'       => $room->id,
+                            'bed_type_id'   => $bedTypeId,
+                            'count'         => $count
+                        ]);
+                    }
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Room details saved successfully.',
+                'room_id' => $room->id
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error('Validation error while saving room details', [
+                'errors' => $e->errors(),
+                'data' => $request->all()
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed.',
+                'errors'  => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            Log::error('Error saving room details', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while saving the room.',
+                'error'   => $e->getMessage()
+            ], 500);
+        }
     }
 }
