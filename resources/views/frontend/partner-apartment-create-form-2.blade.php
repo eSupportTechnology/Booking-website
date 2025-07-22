@@ -97,85 +97,74 @@
 <div x-data="{ step: 1, wizardStep: 1 , propertyWizardStep: 1, pricingWizardStep:1 }">
 
  <!-- Sticky Top Navbar -->
-  <nav class="border-b shadow-sm sticky top-0 z-50 ">
-    <div class="max-w-full mx-auto px-4 py-3">
-      
-      <!-- Scrollable/Responsive Nav Items -->
-<div class="flex flex-wrap sm:flex-nowrap overflow-x-auto space-x-6 sm:space-x-12 md:space-x-8 lg:space-x-24 xl:space-x-24 text-sm font-medium whitespace-nowrap">
+<nav class="border-b shadow-sm sticky top-0 z-50 bg-white">
+  <div class="max-w-full mx-auto px-4 py-3 overflow-x-auto">
+    <!-- Scrollable/Responsive Nav Items -->
+    <div class="flex flex-nowrap min-w-max space-x-6 sm:space-x-12 md:space-x-8 lg:space-x-24 xl:space-x-24 text-sm font-medium whitespace-nowrap">
 
-        
-        <!-- Loop through nav steps -->
-        <template x-for="(label, index) in ['Basic information', 'Property setup', 'Photos', 'Pricing and calendar', 'Legal information','Review and complete']" :key="index">
-          <div class="relative">
-            
-            <!-- Tab Label -->
-            <div 
-              @click="step = index + 1"
-              class="flex items-center space-x-1 cursor-pointer transition duration-200"
-              :class="step === index + 1 ? 'text-blue-600' : 'text-gray-700'"
-            >
-              <span x-text="label"></span>
+      <!-- Loop through nav steps -->
+      <template x-for="(label, index) in ['Basic information', 'Property setup', 'Photos', 'Pricing and calendar', 'Legal information','Review and complete']" :key="index">
+        <div class="relative">
+          
+          <!-- Tab Label -->
+          <div 
+            @click="step = index + 1"
+            class="flex items-center space-x-1 cursor-pointer transition duration-200"
+            :class="step === index + 1 ? 'text-blue-600' : 'text-gray-700'"
+          >
+            <span x-text="label"></span>
 
-              <!-- Optional checkmark -->
-              <template x-if="index === 0 && wizardStep === 3">
-                <span class="text-green-600">✔️</span>
-              </template>
- <!-- Optional checkmark -->
-              <template x-if="index === 1 && propertyWizardStep === 6">
-                <span class="text-green-600">✔️</span>
-              </template>
-
-              
-            </div>
-
-            
-
-            <!-- 🔵 Progress bar only under "Basic information" when active -->
-            <template x-if="index === 0 && step === 1">
-              <div class="flex space-x-1 mt-1 w-35 sm:w-48 md:w-46 lg:w-54 xl:w-62 ml-[-15px] sm:ml-[-25px] md:ml-[-35px]">
-                <template x-for="i in 3">
-                  <div 
-                    :class="wizardStep >= i ? 'bg-blue-600' : 'bg-gray-300'" 
-                    class="h-1 flex-1 rounded-full"
-                  ></div>
-                </template>
-              </div>
+            <!-- Optional checkmark -->
+            <template x-if="index === 0 && wizardStep === 3">
+              <span class="text-green-600">✔️</span>
             </template>
-
-            <!-- Progress bar under "Property setup" tab -->
-<!-- Progress bar under "Property setup" tab -->
-<template x-if="index === 1 && step === 2">
-  <div class="flex space-x-1 mt-1 w-15 sm:w-25 md:w-30 lg:w-64 xl:w-72 ml-[-60px] sm:ml-[-80px] md:ml-[-90px]">
-    <template x-for="i in 6">
-      <div 
-        :class="propertyWizardStep >= i ? 'bg-blue-600' : 'bg-gray-300'" 
-        class="h-1 flex-1 rounded-full">
-      </div>
-    </template>
-  </div>
-</template>
-
-
-<template x-if="index === 3 && step === 4">
-  <div class="flex space-x-1 mt-1 w-10 sm:w-16 md:w-24 lg:w-56 xl:w-72 ml-[-40px] sm:ml-[-60px] md:ml-[-70px]">
-    <template x-for="i in 4">
-      <div 
-        :class="pricingWizardStep >= i ? 'bg-blue-600' : 'bg-gray-300'" 
-        class="h-1 flex-1 rounded-full">
-      </div>
-    </template>
-  </div>
-</template>
-            
-
-            
-
+            <template x-if="index === 1 && propertyWizardStep === 6">
+              <span class="text-green-600">✔️</span>
+            </template>
           </div>
-        </template>
-      </div>
 
+          <!-- 🔵 Progress bar only under "Basic information" when active -->
+          <template x-if="index === 0 && step === 1">
+            <div class="flex space-x-1 mt-1 w-35 sm:w-48 md:w-46 lg:w-54 xl:w-62 ml-[-15px] sm:ml-[-25px] md:ml-[-35px]">
+              <template x-for="i in 3">
+                <div 
+                  :class="wizardStep >= i ? 'bg-blue-600' : 'bg-gray-300'" 
+                  class="h-1 flex-1 rounded-full"
+                ></div>
+              </template>
+            </div>
+          </template>
+
+          <!-- Progress bar under "Property setup" tab -->
+          <template x-if="index === 1 && step === 2">
+            <div class="flex space-x-1 mt-1 w-15 sm:w-25 md:w-30 lg:w-64 xl:w-72 ml-[-60px] sm:ml-[-80px] md:ml-[-90px]">
+              <template x-for="i in 6">
+                <div 
+                  :class="propertyWizardStep >= i ? 'bg-blue-600' : 'bg-gray-300'" 
+                  class="h-1 flex-1 rounded-full">
+                </div>
+              </template>
+            </div>
+          </template>
+
+          <!-- Progress bar under "Pricing and calendar" tab -->
+          <template x-if="index === 3 && step === 4">
+            <div class="flex space-x-1 mt-1 w-10 sm:w-16 md:w-24 lg:w-56 xl:w-72 ml-[-40px] sm:ml-[-60px] md:ml-[-70px]">
+              <template x-for="i in 4">
+                <div 
+                  :class="pricingWizardStep >= i ? 'bg-blue-600' : 'bg-gray-300'" 
+                  class="h-1 flex-1 rounded-full">
+                </div>
+              </template>
+            </div>
+          </template>
+
+        </div>
+      </template>
     </div>
-  </nav>
+  </div>
+</nav>
+
   <!-- 🧾 Page Content -->
   <div >
 

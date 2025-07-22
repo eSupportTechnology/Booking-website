@@ -91,97 +91,169 @@
       </div>
     </section>
   </header>
-<div x-data="{ selectedDay: '1' }" class="max-w-xl mx-auto space-y-8 lg:ml-32 px-4 py-6">
-    <!-- Title -->
-    <h2 class="text-2xl font-bold text-gray-900">Cancellation policies</h2>
-<div class="bg-white p-6 rounded-lg shadow-md">
-    <!-- Question -->
-    <p class="text-lg font-medium">
-        How many days before their arrival can your guests 
-        <span class="font-semibold text-black">cancel their booking for free?</span>
-    </p>
+<div x-data="{ selectedDay: '1', showTip: true }" class="max-w-7xl mx-auto px-4 py-6 lg:flex lg:space-x-8">
+    <!-- Left Side -->
+    <div class="max-w-xl w-full space-y-8">
+        <!-- Title -->
+        <h2 class="text-2xl font-bold text-gray-900 mt-6">Cancellation policies</h2>
 
-    <!-- Button Group -->
-   <!-- Button Group -->
-<div class="flex flex-wrap gap-3 items-start relative">
-    <template x-for="option in ['1', '5', '14', '30']" :key="option">
-        <div class="relative">
-            <!-- Badge for 1 day only -->
-            <template x-if="option === '1'">
-                <span
-                    class="absolute -top-3 left-1/2 -translate-x-1/2 bg-green-600 text-white text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wide"
-                >
-                    Recommended
-                </span>
-            </template>
+        <div class="bg-white p-6 rounded-lg shadow-md space-y-6">
+            <!-- Question -->
+            <p class="text-base ">
+                How many days before their arrival can your guests 
+                <span class="font-semibold text-black">cancel their booking for free?</span>
+            </p>
 
-            <button
-                @click="selectedDay = option"
-                :class="{
-                    'bg-green-100 border-green-500 text-green-800': selectedDay === '1' && option === '1',
-                    'bg-orange-100 border-orange-500 text-orange-800': selectedDay !== '1' && selectedDay === option,
-                    'bg-white text-gray-800': selectedDay !== option
-                }"
-                class="px-4 py-2 border rounded-full text-sm font-medium mt-3 focus:outline-none"
-            >
-                <span x-text="option + ' day' + (option === '1' ? '' : 's')"></span>
-            </button>
-        </div>
-    </template>
-</div>
+            <!-- Button Group -->
+            <div class="flex flex-wrap gap-3 items-start relative">
+                <template x-for="option in ['1', '5', '14', '30']" :key="option">
+                    <div class="relative">
+                        <!-- Badge for 1 day -->
+                       <template x-if="option === '1'">
+  <span
+    class="absolute -top-2 left-1/2 -translate-x-1/2 bg-green-600 text-white text-[10px] px-1 py-0.5 rounded tracking-wide"
+  >
+    Recommended
+  </span>
+</template>
 
-    <!-- Alert Messages -->
-    <div>
-        <!-- 1 Day Selected -->
-        <template x-if="selectedDay === '1'">
-            <div class="bg-white border border-blue-200 text-sm text-gray-700 rounded p-4">
-                <p class="text-gray-700">
-                    Guests love flexibility – free cancellation rates are generally the most booked rates on our site. 
-                    Get your first booking sooner by allowing guests to cancel up to five days before check-in.
-                </p>
+
+                        <button
+  @click="selectedDay = option"
+  :class="selectedDay === option 
+            ? 'border-blue-500 bg-blue-50 text-blue-800' 
+            : 'bg-white border border-gray-300 text-gray-800'"
+  class="px-3 py-1 rounded-full text-sm font-medium mt-3 focus:outline-none transition"
+>
+  <span x-text="option + ' day' + (option === '1' ? '' : 's')"></span>
+</button>
+
+                    </div>
+                </template>
             </div>
-        </template>
 
-        <!-- Other Selections (5, 14, 30) -->
-        <template x-if="selectedDay !== '1'">
-            <div class="bg-orange-50 border-l-4 border-orange-400 text-orange-800 text-sm p-4">
-                <p>
-                    Allow guests to cancel up to 
-                    <span x-text="selectedDay"></span> 
-                    day<span x-text="selectedDay === '1' ? '' : 's'"></span> before arrival to increase your chances of getting bookings.
-                </p>
-            </div>
-        </template>
-    </div>
-
-    <!-- Blue Info Box (Always visible) -->
+            <!-- Alert Message -->
+            <div>
+                <template x-if="selectedDay === '1'">
+                    <!-- Blue info box -->
     <div class="text-sm text-gray-700 border-l-4 border-blue-500 bg-blue-50 p-4">
         <p>
             Guests love flexibility – free cancellation rates are generally the most booked rates on our site. 
             Get your first booking sooner by allowing guests to cancel up to five days before check-in.
         </p>
     </div>
-
-    <!-- Protection Toggle -->
-    <div class="pt-4">
-        <p class="font-medium text-gray-800 mb-2">Protection against accidental bookings</p>
-        <div class="flex items-center gap-2">
-            <span class="text-sm text-gray-600">Off</span>
-            <input type="checkbox" checked class="toggle toggle-primary" />
-            <span class="text-sm text-gray-600">On</span>
-        </div>
-        <p class="text-sm text-gray-500 mt-2">
-            To avoid you having to spend time handling accidental bookings, we automatically waive cancellation fees 
-            for guests that cancel within the first 24 hours of making a booking.
+                </template>
+              <template x-if="selectedDay !== '1'">
+  <div class="space-y-4">
+    <!-- Orange box -->
+    <div class="bg-orange-50 border-l-4 border-orange-400 text-orange-800 text-sm p-4">
+        <p>
+            Allow guests to cancel up to 
+            <span x-text="selectedDay"></span> 
+            day<span x-text="selectedDay === '1' ? '' : 's'"></span> before arrival to increase your chances of getting bookings.
         </p>
     </div>
 
-    <!-- Buttons -->
-    <div class="flex justify-between pt-6">
-        <button class="bg-white border border-gray-300 px-6 py-2 rounded-md text-sm font-medium">Cancel</button>
-        <button class="bg-blue-600 text-white px-6 py-2 rounded-md text-sm font-medium hover:bg-blue-700">Save</button>
+    <!-- Blue info box -->
+    <div class="text-sm text-gray-700 border-l-4 border-blue-500 bg-blue-50 p-4">
+        <p>
+            Guests love flexibility – free cancellation rates are generally the most booked rates on our site. 
+            Get your first booking sooner by allowing guests to cancel up to five days before check-in.
+        </p>
     </div>
   </div>
+</template>
+
+            </div>
+
+          
+
+            <!-- Toggle Section -->
+            <div class="pt-4">
+                <p class="font-semibold text-base text-gray-800 mb-2">Protection against accidental bookings</p>
+               <!-- Switch Button with Alpine.js -->
+<div x-data="{ isOn: true }" class="flex items-center gap-2">
+    
+    <!-- Toggle -->
+    <button 
+        @click="isOn = !isOn"
+        :class="isOn ? 'bg-blue-600' : 'bg-gray-300'"
+        class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none"
+        role="switch"
+        :aria-checked="isOn"
+    >
+        <span 
+            :class="isOn ? 'translate-x-6' : 'translate-x-1'" 
+            class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
+        ></span>
+    </button>
+
+    <span class="text-sm text-gray-600">On</span>
+</div>
+
+                <p class="text-sm text-gray-500 mt-2">
+                    To avoid you having to spend time handling accidental bookings, we automatically waive cancellation fees 
+                    for guests that cancel within the first 24 hours of making a booking.
+                </p>
+            </div>
+
+            
+        </div>
+        
+    </div>
+
+    <!-- Right Side Tip Box -->
+    <template x-if="showTip">
+        <div class="mt-6 lg:mt-14 w-full max-w-xs">
+            <div class="bg-white rounded-lg shadow-md p-4 relative">
+                <!-- Close Button -->
+                <button @click="showTip = false" class="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-sm">
+                    ✕
+                </button>
+
+                <div class="flex items-start space-x-2">
+                    <svg class="w-5 h-5 text-yellow-500 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9 2a1 1 0 011 1v6h2a1 1 0 110 2H9a1 1 0 01-1-1V3a1 1 0 011-1zm0 12a1 1 0 100 2 1 1 0 000-2z" />
+                    </svg>
+                    <div class="space-y-1">
+  <!-- Flex row for icon + heading -->
+  <div class="flex items-center gap-2">
+    <img src="{{ asset('assets/system-uicons_lightbulb-on.svg') }}" alt="Help" class="w-6 h-6 md:w-7 md:h-7" />
+    <h3 class="font-semibold text-sm text-gray-800">What policy should I choose?</h3>
+  </div>
+
+  <!-- Description -->
+  <p class="text-sm text-gray-600">
+    Any policy you select now can be easily updated after you complete registration.
+  </p>
+</div>
+
+                </div>
+            </div>
+        </div>
+    </template>
+    
+</div>
+  <!-- Navigation Buttons aligned to main container -->
+<div class="max-w-xl mx-auto px-4 mt-6 flex justify-between items-left">
+  
+  <!-- Back Button -->
+  <button
+    type="button"
+    @click="step--"
+    class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded"
+  >
+    ←
+  </button>
+
+  <!-- Continue Button -->
+  <button
+    type="submit"
+    @click="wizardStep++"
+    class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300"
+  >
+    Continue
+  </button>
 </div>
 
 </body>
