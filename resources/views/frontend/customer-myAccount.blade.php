@@ -107,7 +107,7 @@
                 </div>
 
                 <a href="#" class="text-[#35C1EA] font-medium mt-4 block">Learn more about your rewards</a>
-
+            
             </div>
         </div>
         <!-- Sidebar1: Genius Progress -->
