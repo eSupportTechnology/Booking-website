@@ -306,6 +306,8 @@
         });
     },
     // Photo upload methods
+    isUploading: false,
+    uploadedPhotos: [],
     handleUpload(event) {
       const files = Array.from(event.target.files).slice(0, 5 - this.uploadedPhotos.length);
       files.forEach(file => {
@@ -325,6 +327,7 @@
     removePhoto(index) {
       this.uploadedPhotos.splice(index, 1);
     },
+    
     guests: 4,
     bathrooms: 2,
     allowChildren: 'yes',
@@ -1652,11 +1655,13 @@
           <!-- ✅ Step 3: Photos Upload Section -->
           <!-- ✅ Step 3: Photos Upload Section -->
           <!-- ✅ Step 3: Photos Upload Section -->
-          <section
-            x-show="step === 3"
-            class="px-4 py-6 md:px-8 lg:px-16 flex justify-center"
-            x-data="{
+<!-- ...existing code... -->
+<section
+  x-show="step === 3"
+  class="px-4 py-6 md:px-8 lg:px-16 flex justify-center"
+  x-data="{
     uploadedPhotos: [],
+    isUploading: false,
     handleUpload(event) {
       const files = Array.from(event.target.files).slice(0, 5 - this.uploadedPhotos.length);
       files.forEach(file => {
@@ -1675,9 +1680,40 @@
     },
     removePhoto(index) {
       this.uploadedPhotos.splice(index, 1);
+    },
+    async uploadPhotosAndContinue() {
+      if (this.uploadedPhotos.length < 3) {
+        alert('Please upload at least 3 photos.');
+        return;
+      }
+      this.isUploading = true;
+      const formData = new FormData();
+      formData.append('property_id', this.propertyId);
+      this.uploadedPhotos.forEach(photo => {
+        formData.append('photos[]', photo.file);
+      });
+      try {
+        const res = await fetch('/partner/property/upload-photos', {
+          method: 'POST',
+          headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+          },
+          body: formData
+        });
+        const data = await res.json();
+        if (data.success) {
+          this.step = 4;
+        } else {
+          alert(data.message || 'Upload failed');
+        }
+      } catch (err) {
+        alert('Upload error: ' + err.message);
+      } finally {
+        this.isUploading = false;
+      }
     }
-}"
-          >
+  }"
+>
             <div class="w-full max-w-6xl">
               <h2 class="text-xl md:text-2xl font-bold text-black mb-6 text-left mt-12">
                 What does your place look like?
@@ -1767,11 +1803,13 @@
                   <button
                     @click="step--"
                     class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded"
-                  >
+                    :disabled="isUploading"
+                    >
                     ←
                   </button>
                   <button
-                    :disabled="uploadedPhotos.length < 3"
+                    @click="uploadPhotosAndContinue"
+                    :disabled="uploadedPhotos.length < 3 || isUploading"
                     :class="{
                       'px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700cursor-pointer opacity-100 hover:bg-blue-700':
                         uploadedPhotos.length >= 3,
@@ -1779,7 +1817,8 @@
                     }"
                     class="px-6 py-2 text-white rounded"
                   >
-                    Continue
+                   <span x-show="!isUploading">Continue</span>
+                  <span x-show="isUploading">Uploading...</span>
                   </button>
                 </div>
               </div>
