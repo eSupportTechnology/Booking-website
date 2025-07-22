@@ -391,4 +391,11 @@ Route::post('/property/{property}/update-title', [PropertyController::class, 'up
 Route::patch('/partner/property/{property}/additional-details', [PropertyController::class, 'updateAdditionalDetails'])
     ->name('partner.property.update.additional-details');
 
+
+    
+
 require __DIR__ . '/auth.php';
+
+Route::get('/customer-myAccount', function () {
+    return view('frontend.customer-myAccount');
+})->name('account.myAccount');
