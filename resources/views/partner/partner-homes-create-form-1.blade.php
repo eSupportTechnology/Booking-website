@@ -29,19 +29,8 @@
                     class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
                     <!-- Logo -->
                     <div class="w-full md:w-auto md:ml-6">
-                        <!-- Logo -->
-                        @php
-                            $host = config('domains.app_name');
-
-                        @endphp
-
-                        <a href="{{ url('/') }}" class="text-2xl font-bold flex items-center">
-                            @if ($host == 'BookinTour')
-                                <h1>Bookintour.com</h1>
-                            @elseif ($host == 'Inselor')
-                                <img src="{{ asset('images/inselor-logo.png') }}" alt="Inselor"
-                                    class="h-12 w-auto align-middle" />
-                            @endif
+                        <a href="/" class="text-2xl font-bold font-poppins">
+                            {{ config('app.name') }}
                         </a>
                     </div>
                     <!-- Right Section -->
@@ -173,29 +162,7 @@
                         }
                     }
 
-                        const data = await response.json();
-                        this.propertyId = data.property_id;
-                        this.step = 2;
-                        await this.fetchSubtypes(this.selected);
-                        alert(data.message || 'Property created successfully');
-
-                    } catch (error) {
-                        console.error('Request failed:', error);
-                        alert('Request failed: ' + error.message);
-                    }
-                },
-                async fetchSubtypes(subcategoryId) {
-                    try {
-                        const response = await fetch(`/partner/property_subtype/${subcategoryId}`);
-                        const data = await response.json();
-                        console.log('Fetched subtypes:', data);
-                        this.subtypes = data;
-                    } catch (err) {
-                        console.error('Failed to fetch subtypes:', err);
-                    }
-                }
-
-            }">
+                }">
                 <div class="bg-white max-w-2xl w-full p-6 rounded-lg shadow">
                     <div class="max-w-xl mx-auto p-4 space-y-6">
                         <h2 class="text-2xl font-bold text-center">@lang('messages.what_can_guests_book')</h2>
@@ -506,7 +473,7 @@
                                                     <!-- Info -->
                                                     <p class="text-sm text-gray-700">
                                                         If your property is listed on Airbnb or Vrbo, you can speed up
-                                                        registration by importing it directly to {{ config('domains.subdomain') }}.
+                                                        registration by importing it directly to Booking.com.
                                                     </p>
 
                                                     <!-- Checkboxes -->
@@ -1643,6 +1610,12 @@
                                                                 <p><strong>Name:</strong> <span x-text="room.name"></span></p>
                                                                 <p><strong>Type:</strong> <span x-text="roomTypes.find(rt => rt.id == room.room_type_id)?.name"></span></p>
                                                                 <p><strong>Price:</strong> Rs. <span x-text="room.price_per_night"></span></p>
+
+                                                                <button
+                                                                    @click="if(confirm('Are you sure you want to remove this room?')) rooms.splice(index, 1)"
+                                                                    class="ml-4 bg-red-100 hover:bg-red-200 text-red-700 font-semibold px-3 py-1 rounded">
+                                                                    ✕ Remove
+                                                                </button>
                                                             </div>
                                                         </template>
                                                     </div>
@@ -1656,7 +1629,16 @@
                                                 <!-- Include Alpine.js -->
                                                 <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
-                                                <div x-data="{ type: '' }"
+                                                <div x-data="{
+                                                                    type: '',
+                                                                    individual: {
+                                                                        full_name: '',
+                                                                        national_id: ''
+                                                                    },
+                                                                    business: {
+                                                                        company_name: '',
+                                                                        registration_number:    ''
+                                                }}"
                                                     class="px-4 py-8 max-w-3xl mx-auto space-y-6">
 
                                                     <h1 class="text-2xl sm:text-3xl font-semibold">Partner
@@ -1694,7 +1676,7 @@
                                                             <div>
                                                                 <label class="block text-sm text-gray-700">Full
                                                                     Name</label>
-                                                                <input type="text"
+                                                                <input type="text" x-model="individual.full_name"
                                                                     class="w-full mt-1 border rounded px-3 py-2"
                                                                     placeholder="Enter your full name">
                                                             </div>
@@ -1702,7 +1684,7 @@
                                                                 <label
                                                                     class="block text-sm text-gray-700">National
                                                                     ID or Passport</label>
-                                                                <input type="text"
+                                                                <input type="text" x-model="individual.national_id"
                                                                     class="w-full mt-1 border rounded px-3 py-2"
                                                                     placeholder="Enter ID number">
                                                             </div>
@@ -1719,7 +1701,7 @@
                                                                 <label
                                                                     class="block text-sm text-gray-700">Company
                                                                     Name</label>
-                                                                <input type="text"
+                                                                <input type="text" x-model="business.company_name"
                                                                     class="w-full mt-1 border rounded px-3 py-2"
                                                                     placeholder="Enter company name">
                                                             </div>
@@ -1727,7 +1709,7 @@
                                                                 <label
                                                                     class="block text-sm text-gray-700">Business
                                                                     Registration Number</label>
-                                                                <input type="text"
+                                                                <input type="text" x-model="business.registration_number"
                                                                     class="w-full mt-1 border rounded px-3 py-2"
                                                                     placeholder="Enter registration number">
                                                             </div>
@@ -2015,7 +1997,7 @@
                                                                     A channel manager is a third-party tool that lets
                                                                     you manage rates and availability across different
                                                                     sites you might list your place on, including
-                                                                    {{ config('domains.subdomain') }}. If you're already using a channel
+                                                                    Booking.com. If you're already using a channel
                                                                     manager, you can select 'Yes' to connect it to your
                                                                     listing.
                                                                 </p>
@@ -3271,8 +3253,7 @@
                                                     method: 'POST',
                                                     headers: {
                                                         'Content-Type': 'application/json',
-                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                                            .getAttribute('content')
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                                                     },
                                                     body: JSON.stringify({
                                                         title: this.propertyName,
@@ -3453,6 +3434,33 @@
                                                     console.error('Error saving room:', error);
                                                     alert('Something went wrong while saving the room.');
                                                 });
+                                        } else if (this.step === 14 && this.selected === 'one') {
+                                            console.log('Submitting partner verification details for property ID:', this.propertyId);
+                                            const payload = {
+                                                property_id: this.propertyId,
+                                                type: this.type,
+                                                full_name: this.type === 'individual' ? this.individual.full_name : null,
+                                                national_id: this.type === 'individual' ? this.individual.national_id : null,
+                                                company_name: this.type === 'business' ? this.business.company_name : null,
+                                                registration_number: this.type === 'business' ? this.business.registration_number : null,
+                                            };
+
+                                            fetch(`/partner/partner-verification`, {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                    },
+                                                    body: JSON.stringify(payload)
+                                                })
+                                                .then(response => response.json())
+                                                .then(data => {
+                                                    console.log(data);
+                                                    this.step++; 
+                                                })
+                                                .catch(error => {
+                                                    console.error('Error:', error);
+                                                });
                                         } else {
                                             if (this.step === 1 && this.selected === '') return;
 
@@ -3477,37 +3485,6 @@
 
 
 
-                    <!-- Villa -->
-                    <section x-show="selectedBox === 2" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
-                        <h3 class="text-xl font-bold mb-4">Villa Details</h3>
-                        <p>Details related to villa...</p>
-                        <button type="button" @click="step = 2"
-                            class="mt-4 bg-gray-300 px-4 py-2 rounded">Back</button>
-                    </section>
-
-                    <!-- Chalet -->
-                    <section x-show="selectedBox === 1" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
-                        <h3 class="text-xl font-bold mb-4">Chalet Details</h3>
-                        <p>Details related to chalet...</p>
-                        <button type="button" @click="step = 2"
-                            class="mt-4 bg-gray-300 px-4 py-2 rounded">Back</button>
-                    </section>
-
-                    <!-- Holiday Park -->
-                    <section x-show="selectedBox === 6" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
-                        <h3 class="text-xl font-bold mb-4">Holiday Park Details</h3>
-                        <p>Details related to holiday park...</p>
-                        <button type="button" @click="step = 2"
-                            class="mt-4 bg-gray-300 px-4 py-2 rounded">Back</button>
-                    </section>
-
-                    <!-- Aparthotel -->
-                    <section x-show="selectedBox ===5" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
-                        <h3 class="text-xl font-bold mb-4">Aparthotel Details</h3>
-                        <p>Details related to aparthotel...</p>
-                        <button type="button" @click="step = 2"
-                            class="mt-4 bg-gray-300 px-4 py-2 rounded">Back</button>
-                    </section>
                 </div>
             </template>
         </form>

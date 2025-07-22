@@ -50,4 +50,9 @@ class Property extends Model
     {
         return $this->hasOne(PropertyPolicy::class);
     }
+
+    public function partnerVerification()
+    {
+        return $this->hasOne(PartnerVerification::class);
+    }
 }

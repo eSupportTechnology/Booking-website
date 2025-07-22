@@ -18,7 +18,7 @@ use App\Services\FileUploadService;
 use App\DTOs\Partner\AccommodationDetailsDTO;
 use App\Actions\Partner\StoreAccommodationDetailsAction;
 use App\Models\Room;
-use App\Models\RoomBed;
+use App\Models\PartnerVerification;
 
 class PropertyController extends Controller
 {
@@ -173,36 +173,36 @@ class PropertyController extends Controller
             'user_id' => auth()->id(),
         ]);
 
-    try {
-        $property = Property::findOrFail($request->input('property_id', $propertyId));
+        try {
+            $property = Property::findOrFail($request->input('property_id', $propertyId));
 
-        // ✅ Only update address_type_id if that’s all we got
-        if ($request->has('address_type_id') && count($request->all()) === 2) {
-            $property->update([
-                'address_type_id' => $request->input('address_type_id')
-            ]);
+            // ✅ Only update address_type_id if that’s all we got
+            if ($request->has('address_type_id') && count($request->all()) === 2) {
+                $property->update([
+                    'address_type_id' => $request->input('address_type_id')
+                ]);
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Address type saved',
+                    'property_id' => $property->id,
+                ]);
+            }
+
+            // Normal full step 2 flow
+            $dto = PropertyStep2DTO::fromRequest($request);
+            $updatedProperty = $action->updatePropertyStep2($property, $dto);
 
             return response()->json([
                 'success' => true,
-                'message' => 'Address type saved',
-                'property_id' => $property->id,
+                'message' => 'Step 2 data saved successfully',
+                'property_id' => $updatedProperty->id,
             ]);
+        } catch (\Exception $e) {
+            Log::error('storeStep2 exception', ['message' => $e->getMessage()]);
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 422);
         }
-
-        // Normal full step 2 flow
-        $dto = PropertyStep2DTO::fromRequest($request);
-        $updatedProperty = $action->updatePropertyStep2($property, $dto);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Step 2 data saved successfully',
-            'property_id' => $updatedProperty->id,
-        ]);
-    } catch (\Exception $e) {
-        Log::error('storeStep2 exception', ['message' => $e->getMessage()]);
-        return response()->json(['success' => false, 'message' => $e->getMessage()], 422);
     }
-}
 
 
     public function updateTitle(Request $request, $propertyId)
@@ -354,7 +354,7 @@ class PropertyController extends Controller
                 'rooms.*.size_sq_m' => 'nullable|numeric',
                 'rooms.*.beds' => 'nullable|array',
             ]);
-    
+
             Log::info('Validated room data', $validated);
             foreach ($validated['rooms'] as $roomData) {
                 $room = Room::create([
@@ -366,7 +366,7 @@ class PropertyController extends Controller
                     'bathroom_count' => $roomData['bathroom_count'],
                     'size_sq_m' => $roomData['size_sq_m'],
                 ]);
-    
+
                 if (!empty($roomData['beds'])) {
                     foreach ($roomData['beds'] as $bedTypeId => $count) {
                         if ((int)$count > 0) {
@@ -375,10 +375,38 @@ class PropertyController extends Controller
                     }
                 }
             }
-    
+
             return response()->json(['success' => 'success']);
         } catch (\Exception  $e) {
             Log::error('Error saving rooms', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+
+    public function storePartnerVerification(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'property_id' => 'required|exists:properties,id',
+                'type' => 'required|in:individual,business',
+                'full_name' => 'nullable|string',
+                'national_id' => 'nullable|string',
+                'company_name' => 'nullable|string',
+                'registration_number' => 'nullable|string',
+            ]);
+    
+            PartnerVerification::updateOrCreate(
+                ['property_id' => $validated['property_id']],
+                $validated
+            );
+    
+            return response()->json(['message' => 'Partner verification saved successfully']);
+        } catch (\Exception $e) {
+            Log::error('Error saving partner verification', [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
