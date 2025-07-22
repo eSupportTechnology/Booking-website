@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Signin Partner Account | Bookintour</title>
+  <title>Signin Partner Account | {{ config('domains.app_name') }}</title>
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -24,9 +24,19 @@
       <div class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
         <!-- Logo -->
         <div class="w-full md:w-auto md:ml-6">
-          <a href="/" class="text-2xl font-bold">
-            <h1 style="font-family: 'Poppins', sans-serif;">Bookintour.com</h1>
-          </a>
+            <!-- Logo -->
+                        @php
+                            $host = config('domains.app_name');
+
+                        @endphp
+
+                        <a href="{{ url('/') }}" class="text-2xl font-bold flex items-center">
+                            @if($host == 'BookinTour')
+                                <h1>Bookintour.com</h1>
+                            @elseif ($host == 'Inselor')
+                                <img src="{{ asset('images/inselor-logo.png') }}" alt="Inselor" class="h-12 w-auto align-middle" />
+                            @endif
+                        </a>
         </div>
 
         <!-- Right Section -->
@@ -96,12 +106,12 @@
 <!-- Form Section -->
 <section class="max-h-screen flex items-start justify-center pt-10 px-4 sm:px-6">
   <div class="w-full max-w-md space-y-6">
-    
+
 
     <div class="bg-white border border-gray-200 shadow-md rounded-md p-6 mt-8">
 
     <h2 class="text-xl font-semibold mb-2" style="font-family: 'Noto Sans', sans-serif;">Sign in to manage your property</h2>
-    
+
     <!-- Success Alert -->
     @if (session('success'))
       <div class="mb-4 p-3 rounded bg-green-100 border border-green-400 text-green-700 text-sm" role="alert">
@@ -135,9 +145,9 @@
         <button type="submit" class="w-full text-white py-2 rounded hover:bg-blue-700 mb-4" style=" background-color:#3CC0E9;font-family: 'Noto Sans', sans-serif;">
           Next
         </button>
-        
-      <button type="submit" 
-    class="w-full text-blue-600 font-semibold text-sm py-2 rounded mt-4 bg-white hover:bg-blue-100 transition-colors duration-200" 
+
+      <button type="submit"
+    class="w-full text-blue-600 font-semibold text-sm py-2 rounded mt-4 bg-white hover:bg-blue-100 transition-colors duration-200"
     style="font-family: 'Noto Sans', sans-serif;">
     Having trouble signing in?
 </button>
@@ -165,7 +175,7 @@
         <a href="#" class="text-blue-600 hover:underline" style="font-family: 'Noto Sans', sans-serif;">Privacy statement</a>.
       </p>
 
-      <p class="text-[11px] text-gray-400 text-center mt-1" style="font-family: 'Noto Sans', sans-serif;">© 2006 – 2025 Bookintour.com™</p>
+      <p class="text-[11px] text-gray-400 text-center mt-1" style="font-family: 'Noto Sans', sans-serif;">© 2006 – 2025 {{ config('domains.domain') }}™</p>
     </div>
   </div>
 </section>

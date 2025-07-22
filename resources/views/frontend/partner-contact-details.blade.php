@@ -24,9 +24,19 @@
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
           <!-- Logo -->
           <div class="w-full md:w-auto md:ml-6">
-            <a href="/" class="text-2xl font-bold font-poppins">
-              Bookintour.com
-            </a>
+              <!-- Logo -->
+                        @php
+                            $host = config('domains.app_name');
+
+                        @endphp
+
+                        <a href="{{ url('/') }}" class="text-2xl font-bold flex items-center">
+                            @if($host == 'BookinTour')
+                                <h1>Bookintour.com</h1>
+                            @elseif ($host == 'Inselor')
+                                <img src="{{ asset('images/inselor-logo.png') }}" alt="Inselor" class="h-12 w-auto align-middle" />
+                            @endif
+                        </a>
           </div>
 
           <!-- Right Section -->
@@ -89,7 +99,7 @@
   <main class="container mx-auto mt-16 px-4 sm:px-6 lg:px-8 max-w-md bg-white border border-gray-200 shadow-md rounded-md p-6">
     <h2 class="text-xl font-semibold mb-2"  style="font-family: 'Noto Sans', sans-serif;">Contact details</h2>
     <p class="text-sm text-gray-600 mb-6"  style="font-family: 'Noto Sans', sans-serif;">
-      Your full name and phone number are needed to ensure the security of your Bookintour.com account.
+      Your full name and phone number are needed to ensure the security of your {{ config('domains.domain') }} account.
     </p>
 
     <form>
@@ -145,7 +155,7 @@
         <a href="#" class="text-blue-600 underline">Terms &amp; conditions</a> and
         <a href="#" class="text-blue-600 underline">Privacy statement</a>.
       </p>
-      <p class="mt-4">© 2006 – 2025 Bookintour.com™</p>
+      <p class="mt-4">© 2006 – 2025 {{ config('domains.domain') }}™</p>
     </div>
   </main>
 

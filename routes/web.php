@@ -62,15 +62,15 @@ Route::prefix('customer')->group(function () {
         })->name('customer.dashboard');
 
         Route::delete('/account/request-deletion', [CustomerAuthController::class, 'requestDeletion'])
-        ->name('customer.account.request-deletion');
+            ->name('customer.account.request-deletion');
     });
     Route::get('/account/confirm-deletion/{token}', [CustomerAuthController::class, 'confirmDeletion'])
-    ->name('customer.account.confirm-deletion');
+        ->name('customer.account.confirm-deletion');
 
 
     Route::delete('/customer/account', [CustomerAuthController::class, 'destroy'])
-    ->middleware('auth:customer')
-    ->name('customer.account.destroy');
+        ->middleware('auth:customer')
+        ->name('customer.account.destroy');
 
 
     Route::get('/customer-details/create', [CustomerPersonalDetailsController::class, 'edit'])->name('customer.details.create');
@@ -171,6 +171,22 @@ Route::get('/partner-property-types', function () {
 Route::get('/partner-apartment-create-1', function () {
     return view('frontend.partner-apartment-create-form-1');
 })->name('partner.apartment.create.1');
+
+Route::get('/partner-apartment-bedrooms', function () {
+    return view('frontend.partner-apartments-bedrooms');
+})->name('partner.apartment.bedrooms');
+
+Route::get('/partner-apartment-otherspaces', function () {
+    return view('frontend.partner-apartments-otherspaces');
+})->name('partner.apartment.otherspaces');
+
+Route::get('/partner-apartment-livingroom', function () {
+    return view('frontend.partner-apartments-livingroom');
+})->name('partner.apartment.livingroom');
+
+Route::get('/partner-apartment-pricing-policies', function () {
+    return view('frontend.partner-apartment-pricing-cancel-policies');
+})->name('partner.apartment.pricing.policies');
 
 Route::get('/customer-profile-create', function () {
     return view('frontend.customer-profile-create');
@@ -327,18 +343,22 @@ Route::prefix('partner')->group(function () {
     Route::post('/property-apartment', [\App\Http\Controllers\PropertyController::class, 'storeApartment'])->name('partner.property.apartment.store');
 
     // Step 2: Show next form and save more details (dynamic for any category, static route name)
-    Route::get('/property/{category}/step2/{property}', [PropertyController::class, 'showStep2'])->name('partner.property.step2');
     Route::post('/property/{category}/step2/{property}', [PropertyController::class, 'storeStep2'])->name('partner.property.store.step2');
-    Route::post('/property/step3/{property}', [PropertyController::class, 'storeStep2'])->name('partner.property.store.step2');
+    Route::post('/property/step3/{property}', [PropertyController::class, 'storeStep2'])->name('partner.property.store.step3');
+    Route::post('/property/upload-photos', [PropertyController::class, 'uploadPhotos']);
+    Route::post('/property/save-amenities/{property}', [PropertyController::class, 'saveAmenities']);
+    Route::post('/property/save-policy/{property}', [PropertyController::class, 'savePolicy']);
 
-     Route::post('/logout', function () {
+    // Store accommodation, business entity, individual, and alt name details
+    Route::post('/accommodation/store', [PropertyController::class, 'storeAccommodationDetails'])->name('partner.accommodation.store');
+
+    Route::post('/logout', function () {
         Auth::logout();
         return redirect('/partner/login')->with('success', 'You have been logged out.');
     })->name('partner.logout');
 
     // Partial update for AJAX step-by-step wizard
     Route::patch('/property/{property}', [PropertyController::class, 'updatePartial'])->name('partner.property.update.partial');
-
 });
 
 Route::get('/partner/login', [LoginController::class, 'show'])->name('partner.login');
@@ -361,11 +381,14 @@ Route::post('/email/verification-notification', function (\Illuminate\Http\Reque
     return back()->with('message', 'Verification link sent!');
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
-Route::post('/partner/property/step1', [PropertyController::class, 'storeStep1'])->name('partner.property.step1.store');
+Route::post('/partner/property/step1', [PropertyController::class, 'storeStep1'])->name('partner.property.step1.store_new');
 Route::middleware(\App\Http\Middleware\EnsurePartner::class)->group(function () {
     Route::get('/partner/property/test-index', [PropertyController::class, 'index']);
 });
 
 Route::post('/property/{property}/update-title', [PropertyController::class, 'updateTitle'])->name('partner.property.update-title');
+
+Route::patch('/partner/property/{property}/additional-details', [PropertyController::class, 'updateAdditionalDetails'])
+    ->name('partner.property.update.additional-details');
 
 require __DIR__ . '/auth.php';

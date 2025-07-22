@@ -8,8 +8,18 @@
                 <div class="w-full md:w-auto">
                     <div class="flex flex-col items-start">
                         <!-- Logo -->
-                        <a href="/" class="text-2xl font-bold">
-                            <h1>Bookintour.com</h1>
+                        @php
+                            $host = config('domains.app_name');
+
+                        @endphp
+
+                        <a href="{{ url('/') }}" class="text-2xl font-bold flex items-center">
+                            @if ($host == 'BookinTour')
+                                <h1>Bookintour.com</h1>
+                            @elseif ($host == 'Inselor')
+                                <img src="{{ asset('images/inselor-logo.png') }}" alt="Inselor"
+                                    class="h-12 w-auto align-middle" />
+                            @endif
                         </a>
 
 
@@ -17,7 +27,7 @@
 
                         <!-- Push nav a bit down to separate from logo -->
                         @php
-                        $currentRoute = request()->route()->getName(); // Get current route name
+                            $currentRoute = request()->route()->getName(); // Get current route name
                         @endphp
 
                         <nav class="flex flex-wrap gap-4 text-sm md:text-base mt-6 ">
@@ -144,8 +154,7 @@
                                     <a href="/">
                                         <button
                                             class="flex items-center justify-between p-2 space-x-2 text-base font-normal text-gray-700 rounded-lg hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
-                                            <img src="" alt=""
-                                                class="h-5 w-5" />
+                                            <img src="" alt="" class="h-5 w-5" />
                                             <span></span>
                                         </button>
                                     </a>
@@ -227,11 +236,9 @@
                         </div>
                     </div>
                     <!-- Guest buttons -->
-                    <a href=""
-                        class="bg-white font-base px-4 py-2 rounded hover:bg-blue-100"
+                    <a href="" class="bg-white font-base px-4 py-2 rounded hover:bg-blue-100"
                         style="font-family: 'Noto Sans', sans-serif; color:#3CC0E9;">Register</a>
-                    <a href=""
-                        class="bg-white font-base px-4 py-2 rounded hover:bg-blue-100"
+                    <a href="" class="bg-white font-base px-4 py-2 rounded hover:bg-blue-100"
                         style="font-family: 'Noto Sans', sans-serif; color:#3CC0E9;">Sign in</a>
 
 

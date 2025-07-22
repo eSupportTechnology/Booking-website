@@ -3,7 +3,7 @@
 
 Dear {{ $name }},
 
-You've requested to log in or change the email address linked to your Booking.com account. For security reasons, we need to first verify your new email address.
+You've requested to log in or change the email address linked to your {{ config('domains.subdomain') }} account. For security reasons, we need to first verify your new email address.
 
 ### Your unique login code:
 

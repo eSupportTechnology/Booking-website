@@ -16,10 +16,12 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RolesAndPermissionsSeeder::class,
             PropertyCategoriesTableSeeder::class,
-            PropertySubcategoriesTableSeeder::class,
+            // PropertySubcategoriesTableSeeder::class,
             PropertySubcategorySeeder::class,
+            PropertyHotelSubcategorySeeder::class,
             PropertySubtypeSeeder::class,
             AddressTypesTableSeeder::class,
+            AmenitiesTableSeeder::class,
         ]);
 
         // Create a test user
