@@ -8,9 +8,9 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('property_amenity', function (Blueprint $table) {
-$table->id();
-        $table->foreignId('property_id')->constrained('properties');
-        $table->foreignId('amenity_id')->constrained('amenities');
+            $table->id();
+            $table->foreignId('property_id')->constrained('properties');
+            $table->foreignId('amenity_id')->constrained('amenities');
         });
     }
 

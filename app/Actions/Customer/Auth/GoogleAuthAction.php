@@ -36,13 +36,11 @@ class GoogleAuthAction
 
             // If user is entirely new
             if (!$user) {
-                $randomPassword = Str::random();
-
                 $user = User::create([
                     'name' => $dto->name,
                     'email' => $dto->email,
                     'email_verified_at' => now(),
-                    'password' => Hash::make($randomPassword),
+                    'password' => null, 
                 ]);
 
                 if (!$user) {
@@ -57,6 +55,7 @@ class GoogleAuthAction
 
                 Log::info("New user created via Google Auth: {$dto->email}");
             }
+
 
             // Login the user
             Auth::login($user, true);

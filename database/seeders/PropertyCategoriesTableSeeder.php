@@ -13,13 +13,18 @@ class PropertyCategoriesTableSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('property_categories')->insert([
-            
-            ['name' => 'Homes'],
-            ['name' => 'Apartment'],
-            ['name' => 'Hotel, B&Bs, and more'],
-            ['name' => 'Alternative places'],
-            // Add more if needed
-        ]);
+        $categories = [
+            'Homes',
+            'Apartment',
+            'Hotel, B&Bs, and more',
+            'Alternative places',
+        ];
+
+        foreach ($categories as $category) {
+            DB::table('property_categories')->updateOrInsert(
+                ['name' => $category],
+                ['name' => $category] // or add more fields like 'updated_at' if needed
+            );
+        }
     }
 }

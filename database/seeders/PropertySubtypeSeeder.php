@@ -9,14 +9,26 @@ class PropertySubtypeSeeder extends Seeder
 {
     public function run(): void
     {
-        DB::table('property_subtypes')->insert([
-            ['subcategory_id' => 1, 'name' => ' Villa', 'created_at' => now(), 'updated_at' => now()],
-            ['subcategory_id' => 1, 'name' => 'Chalet', 'created_at' => now(), 'updated_at' => now()],            
-            ['subcategory_id' => 1, 'name' => 'Apartment', 'created_at' => now(), 'updated_at' => now()],            
-            ['subcategory_id' => 1, 'name' => 'Holiday Home', 'created_at' => now(), 'updated_at' => now()],            
-            ['subcategory_id' => 1, 'name' => 'Apart Hotel', 'created_at' => now(), 'updated_at' => now()],            
-            ['subcategory_id' => 1, 'name' => 'Holiday Park', 'created_at' => now(), 'updated_at' => now()],            
+        $subtypes = [
+            ['subcategory_id' => 1, 'name' => 'Villa'],
+            ['subcategory_id' => 1, 'name' => 'Chalet'],
+            ['subcategory_id' => 1, 'name' => 'Apartment'],
+            ['subcategory_id' => 1, 'name' => 'Holiday Home'],
+            ['subcategory_id' => 1, 'name' => 'Apart Hotel'],
+            ['subcategory_id' => 1, 'name' => 'Holiday Park'],
+        ];
 
-        ]);
+        foreach ($subtypes as $subtype) {
+            DB::table('property_subtypes')->updateOrInsert(
+                [
+                    'subcategory_id' => $subtype['subcategory_id'],
+                    'name' => $subtype['name'],
+                ],
+                [
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]
+            );
+        }
     }
 }

@@ -11,7 +11,7 @@ class PropertyStep1DTO extends ValidatedDTO
     public int $subcategory_id;
     public ?int $property_count;
     public ?int $address_type_id;
-    public ?int $user_id; 
+    public ?int $user_id;
 
     protected function rules(): array
     {

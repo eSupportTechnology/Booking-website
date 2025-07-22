@@ -119,7 +119,7 @@ class CustomerAuthController extends Controller
                 ['email' => $email],
                 [
                     'name' => $nameFromEmail,
-                    'password' => bcrypt(Str::random(12)),
+                    'password' => null,
                     'email_verified_at' => now(),
                 ]
             );
