@@ -97,305 +97,305 @@
     <!-- Alpine.js root with merged state and backend logic -->
     <div
       x-data="{
-    // Step navigation
-    step: 1,
-    wizardStep: 1,
-    propertyWizardStep: 1,
-     pricingWizardStep:1,
-    // Backend-connected state
-    propertyId: '{{ $property->id ?? 'new' }}', // Use 'new' if $property->id is not set
-    title: '{{ old('title', $property->title ?? '') }}',
-    address: '{{ old('address', $property->address ?? '') }}',
-    city: '{{ old('city', $property->city ?? '') }}',
-    country: 'Sri Lanka', // <-- Set the default value!
-    zipcode: '{{ old('zipcode', $property->zipcode ?? '') }}',
-    description: '{{ old('description', $property->description ?? '') }}',
-    channelManager: 'yes', // or 'no' as default
-    isLoading: false,
-    // Photo upload state
-    uploadedPhotos: [],
+          // Step navigation
+          step: 1,
+          wizardStep: 1,
+          propertyWizardStep: 1,
+          pricingWizardStep:1,
+          // Backend-connected state
+          propertyId: '{{ $property->id ?? 'new' }}', // Use 'new' if $property->id is not set
+          title: '{{ old('title', $property->title ?? '') }}',
+          address: '{{ old('address', $property->address ?? '') }}',
+          city: '{{ old('city', $property->city ?? '') }}',
+          country: 'Sri Lanka', // <-- Set the default value!
+          zipcode: '{{ old('zipcode', $property->zipcode ?? '') }}',
+          description: '{{ old('description', $property->description ?? '') }}',
+          channelManager: 'yes', // or 'no' as default
+          isLoading: false,
+          // Photo upload state
+          uploadedPhotos: [],
 
-    // Room and Bed Management State
-    rooms: {
-        'bedroom1': { name: 'Bedroom 1', twin: 0, full: 1, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 },
-        'livingRoom': { name: 'Living room', twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 },
-        'otherSpaces': { name: 'Other spaces', twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 }
-    },
-    currentEditingRoomId: null, // Tracks which room is currently being edited
-    tempBedCounts: { twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 }, // Temporary state for the modal
-    nextRoomIndex: 2, // For generating unique IDs for new bedrooms (e.g., bedroom2, bedroom3)
-    showBedTypeSelector: false,
-    showAllBedTypesInModal: false, // New state to control showing all bed types in the modal
+          // Room and Bed Management State
+          rooms: {
+              'bedroom1': { name: 'Bedroom 1', twin: 0, full: 1, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 },
+              'livingRoom': { name: 'Living room', twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 },
+              'otherSpaces': { name: 'Other spaces', twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 }
+          },
+          currentEditingRoomId: null, // Tracks which room is currently being edited
+          tempBedCounts: { twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 }, // Temporary state for the modal
+          nextRoomIndex: 2, // For generating unique IDs for new bedrooms (e.g., bedroom2, bedroom3)
+          showBedTypeSelector: false,
+          showAllBedTypesInModal: false, // New state to control showing all bed types in the modal
 
-    // Methods for Room and Bed Management
-    openBedTypeSelector(roomId) {
-        this.currentEditingRoomId = roomId;
-        this.tempBedCounts = { ...this.rooms[roomId] };
-        // Set initial visibility of bed types based on the room
-        if (roomId === 'livingRoom') {
-            this.showAllBedTypesInModal = false; // Start with only sofa bed visible
-        } else {
-            this.showAllBedTypesInModal = true; // Start with all standard beds visible
-        }
-        this.showBedTypeSelector = true;
-    },
-    saveBedTypes() {
-        if (this.currentEditingRoomId) {
-            // Save the temporary bed counts back to the actual room state
-            this.rooms[this.currentEditingRoomId] = { ...this.rooms[this.currentEditingRoomId], ...this.tempBedCounts };
-        }
-        this.showBedTypeSelector = false;
-        this.currentEditingRoomId = null; // Clear the editing room
-    },
-    cancelBedTypes() {
-        // Just close the modal without saving changes from tempBedCounts
-        this.showBedTypeSelector = false;
-        this.currentEditingRoomId = null;
-    },
-    addBedroom() {
-        const newRoomId = `bedroom${this.nextRoomIndex++}`;
-        this.rooms[newRoomId] = { name: `Bedroom ${this.nextRoomIndex -1}`, twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 };
-        this.openBedTypeSelector(newRoomId);
-    },
-    getBedSummary(roomId) {
-        const beds = this.rooms[roomId];
-        if (!beds) return '0 beds'; // Handle newly added rooms before they are configured
+          // Methods for Room and Bed Management
+          openBedTypeSelector(roomId) {
+              this.currentEditingRoomId = roomId;
+              this.tempBedCounts = { ...this.rooms[roomId] };
+              // Set initial visibility of bed types based on the room
+              if (roomId === 'livingRoom') {
+                  this.showAllBedTypesInModal = false; // Start with only sofa bed visible
+              } else {
+                  this.showAllBedTypesInModal = true; // Start with all standard beds visible
+              }
+              this.showBedTypeSelector = true;
+          },
+          saveBedTypes() {
+              if (this.currentEditingRoomId) {
+                  // Save the temporary bed counts back to the actual room state
+                  this.rooms[this.currentEditingRoomId] = { ...this.rooms[this.currentEditingRoomId], ...this.tempBedCounts };
+              }
+              this.showBedTypeSelector = false;
+              this.currentEditingRoomId = null; // Clear the editing room
+          },
+          cancelBedTypes() {
+              // Just close the modal without saving changes from tempBedCounts
+              this.showBedTypeSelector = false;
+              this.currentEditingRoomId = null;
+          },
+          addBedroom() {
+              const newRoomId = `bedroom${this.nextRoomIndex++}`;
+              this.rooms[newRoomId] = { name: `Bedroom ${this.nextRoomIndex -1}`, twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 };
+              this.openBedTypeSelector(newRoomId);
+          },
+          getBedSummary(roomId) {
+              const beds = this.rooms[roomId];
+              if (!beds) return '0 beds'; // Handle newly added rooms before they are configured
 
-        const summaryParts = [];
-        if (beds.twin > 0) summaryParts.push(`${beds.twin} twin bed${beds.twin > 1 ? 's' : ''}`);
-        if (beds.full > 0) summaryParts.push(`${beds.full} full bed${beds.full > 1 ? 's' : ''}`);
-        if (beds.queen > 0) summaryParts.push(`${beds.queen} queen bed${beds.queen > 1 ? 's' : ''}`);
-        if (beds.king > 0) summaryParts.push(`${beds.king} king bed${beds.king > 1 ? 's' : ''}`);
-        if (beds.bunk > 0) summaryParts.push(`${beds.bunk} bunk bed${beds.bunk > 1 ? 's' : ''}`);
-        if (beds.sofa > 0) summaryParts.push(`${beds.sofa} sofa bed${beds.sofa > 1 ? 's' : ''}`);
-        if (beds.futon > 0) summaryParts.push(`${beds.futon} futon bed${beds.futon > 1 ? 's' : ''}`);
+              const summaryParts = [];
+              if (beds.twin > 0) summaryParts.push(`${beds.twin} twin bed${beds.twin > 1 ? 's' : ''}`);
+              if (beds.full > 0) summaryParts.push(`${beds.full} full bed${beds.full > 1 ? 's' : ''}`);
+              if (beds.queen > 0) summaryParts.push(`${beds.queen} queen bed${beds.queen > 1 ? 's' : ''}`);
+              if (beds.king > 0) summaryParts.push(`${beds.king} king bed${beds.king > 1 ? 's' : ''}`);
+              if (beds.bunk > 0) summaryParts.push(`${beds.bunk} bunk bed${beds.bunk > 1 ? 's' : ''}`);
+              if (beds.sofa > 0) summaryParts.push(`${beds.sofa} sofa bed${beds.sofa > 1 ? 's' : ''}`);
+              if (beds.futon > 0) summaryParts.push(`${beds.futon} futon bed${beds.futon > 1 ? 's' : ''}`);
 
-        return summaryParts.length > 0 ? summaryParts.join(', ') : '0 beds';
-    },
+              return summaryParts.length > 0 ? summaryParts.join(', ') : '0 beds';
+          },
 
-    // Backend methods (simplified, removed actual fetch for this example)
-    async saveName() {
-        if (!this.title.trim()) {
-            alert('Please enter a property name');
-            return;
-        }
-        this.isLoading = true;
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 500));
-        this.isLoading = false;
-        this.wizardStep = 2;
-    },
-    async saveLocation() {
-        if (!this.address.trim() || !this.city.trim() || !this.country.trim()) {
-            alert('Please fill in all required location fields');
-            return;
-        }
-        this.isLoading = true;
-        const payload = {
-            title: this.title,
-            address: this.address,
-            apartment: this.apartment || null,
-            city: this.city,
-            country: this.country,
-            zipcode: this.zipcode,
-            description: this.description,
-            subtype_id: this.subtype_id || null,
-            address_type_id: this.address_type_id || null,
-            channel_manager: this.channelManager,
-            bedrooms: Object.values(this.rooms).map(room => {
-                // Add room_type if not present
-                return {
-                    room_type: room.name === 'Living room' ? 'living_room' : (room.name === 'Other spaces' ? 'other' : 'bedroom'),
-                    name: room.name,
-                    twin: room.twin || 0,
-                    full: room.full || 0,
-                    queen: room.queen || 0,
-                    king: room.king || 0,
-                    bunk: room.bunk || 0,
-                    sofa: room.sofa || 0,
-                    futon: room.futon || 0,
-                };
-            }),
-        };
-        console.log('Sending payload to backend:', payload);
-        try {
-            let res = await fetch(`/partner/property/${this.propertyId}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
-                },
-                body: JSON.stringify(payload)
+          // Backend methods (simplified, removed actual fetch for this example)
+          async saveName() {
+              if (!this.title.trim()) {
+                  alert('Please enter a property name');
+                  return;
+              }
+              this.isLoading = true;
+              // Simulate API call
+              await new Promise(resolve => setTimeout(resolve, 500));
+              this.isLoading = false;
+              this.wizardStep = 2;
+          },
+          async saveLocation() {
+              if (!this.address.trim() || !this.city.trim() || !this.country.trim()) {
+                  alert('Please fill in all required location fields');
+                  return;
+              }
+              this.isLoading = true;
+              const payload = {
+                  title: this.title,
+                  address: this.address,
+                  apartment: this.apartment || null,
+                  city: this.city,
+                  country: this.country,
+                  zipcode: this.zipcode,
+                  description: this.description,
+                  subtype_id: this.subtype_id || null,
+                  address_type_id: this.address_type_id || null,
+                  channel_manager: this.channelManager,
+                  bedrooms: Object.values(this.rooms).map(room => {
+                      // Add room_type if not present
+                      return {
+                          room_type: room.name === 'Living room' ? 'living_room' : (room.name === 'Other spaces' ? 'other' : 'bedroom'),
+                          name: room.name,
+                          twin: room.twin || 0,
+                          full: room.full || 0,
+                          queen: room.queen || 0,
+                          king: room.king || 0,
+                          bunk: room.bunk || 0,
+                          sofa: room.sofa || 0,
+                          futon: room.futon || 0,
+                      };
+                  }),
+              };
+              console.log('Sending payload to backend:', payload);
+              try {
+                  let res = await fetch(`/partner/property/${this.propertyId}`, {
+                      method: 'PATCH',
+                      headers: {
+                          'Content-Type': 'application/json',
+                          'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                      },
+                      body: JSON.stringify(payload)
+                  });
+                  let data = await res.json();
+                  if (res.ok && data.success) {
+                      this.wizardStep = 3;
+                  } else {
+                      alert('Error: ' + (data.message || 'Could not update location.'));
+                  }
+              } catch (err) {
+                  alert('AJAX error: ' + err.message);
+              } finally {
+                  this.isLoading = false;
+              }
+          },
+          async saveChannelManager() {
+              this.isLoading = true;
+              // Simulate API call
+              await new Promise(resolve => setTimeout(resolve, 500));
+              this.isLoading = false;
+              this.step = 2;
+              this.propertyWizardStep = 1;
+          },
+          savePropertyDetails() {
+              const payload = {
+                  title: this.title,
+                  address: this.address,
+                  apartment: this.apartment || null,
+                  city: this.city,
+                  country: this.country,
+                  zipcode: this.zipcode,
+                  description: this.description,
+                  subtype_id: this.subtype_id || null,
+                  address_type_id: this.address_type_id || null,
+                  channel_manager: this.channelManager,
+                  bedrooms: Object.values(this.rooms).map(room => ({
+                      room_type: room.name === 'Living room' ? 'living_room' : (room.name === 'Other spaces' ? 'other' : 'bedroom'),
+                      name: room.name,
+                      twin: room.twin || 0,
+                      full: room.full || 0,
+                      queen: room.queen || 0,
+                      king: room.king || 0,
+                      bunk: room.bunk || 0,
+                      sofa: room.sofa || 0,
+                      futon: room.futon || 0,
+                  })),
+                  // Additional details for the new table
+                  guests: this.guests,
+                  bathrooms: this.bathrooms,
+                  allow_children: this.allowChildren,
+                  offer_cribs: this.offerCribs,
+                  apartment_size: this.apartmentSize,
+                  apartment_unit: this.apartmentUnit,
+                  amenities: this.selectedAmenities,
+              };
+              console.log('Selected amenities:', this.selectedAmenities);
+              console.log('Payload:', payload);
+              this.isLoading = true;
+              fetch(`/partner/property/${this.propertyId}`, {
+                  method: 'PATCH',
+                  headers: {
+                      'Content-Type': 'application/json',
+                      'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                  },
+                  body: JSON.stringify(payload)
+              })
+              .then(res => res.json())
+              .then(data => {
+                  if (data.success) {
+                      this.propertyWizardStep++;
+                  } else {
+                      alert('Error: ' + (data.message || 'Could not update property details.'));
+                  }
+              })
+              .catch(err => {
+                  alert('AJAX error: ' + err.message);
+              })
+              .finally(() => {
+                  this.isLoading = false;
+              });
+          },
+          // Photo upload methods
+          isUploading: false,
+          uploadedPhotos: [],
+          handleUpload(event) {
+            const files = Array.from(event.target.files).slice(0, 5 - this.uploadedPhotos.length);
+            files.forEach(file => {
+              const url = URL.createObjectURL(file);
+              this.uploadedPhotos.push({ file, url });
             });
-            let data = await res.json();
-            if (res.ok && data.success) {
-                this.wizardStep = 3;
-            } else {
-                alert('Error: ' + (data.message || 'Could not update location.'));
-            }
-        } catch (err) {
-            alert('AJAX error: ' + err.message);
-        } finally {
-            this.isLoading = false;
-        }
-    },
-    async saveChannelManager() {
-        this.isLoading = true;
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 500));
-        this.isLoading = false;
-        this.step = 2;
-        this.propertyWizardStep = 1;
-    },
-    savePropertyDetails() {
-        const payload = {
-            title: this.title,
-            address: this.address,
-            apartment: this.apartment || null,
-            city: this.city,
-            country: this.country,
-            zipcode: this.zipcode,
-            description: this.description,
-            subtype_id: this.subtype_id || null,
-            address_type_id: this.address_type_id || null,
-            channel_manager: this.channelManager,
-            bedrooms: Object.values(this.rooms).map(room => ({
-                room_type: room.name === 'Living room' ? 'living_room' : (room.name === 'Other spaces' ? 'other' : 'bedroom'),
-                name: room.name,
-                twin: room.twin || 0,
-                full: room.full || 0,
-                queen: room.queen || 0,
-                king: room.king || 0,
-                bunk: room.bunk || 0,
-                sofa: room.sofa || 0,
-                futon: room.futon || 0,
-            })),
-            // Additional details for the new table
-            guests: this.guests,
-            bathrooms: this.bathrooms,
-            allow_children: this.allowChildren,
-            offer_cribs: this.offerCribs,
-            apartment_size: this.apartmentSize,
-            apartment_unit: this.apartmentUnit,
-            amenities: this.selectedAmenities,
-        };
-        console.log('Selected amenities:', this.selectedAmenities);
-        console.log('Payload:', payload);
-        this.isLoading = true;
-        fetch(`/partner/property/${this.propertyId}`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
-            },
-            body: JSON.stringify(payload)
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                this.propertyWizardStep++;
-            } else {
-                alert('Error: ' + (data.message || 'Could not update property details.'));
-            }
-        })
-        .catch(err => {
-            alert('AJAX error: ' + err.message);
-        })
-        .finally(() => {
-            this.isLoading = false;
-        });
-    },
-    // Photo upload methods
-    isUploading: false,
-    uploadedPhotos: [],
-    handleUpload(event) {
-      const files = Array.from(event.target.files).slice(0, 5 - this.uploadedPhotos.length);
-      files.forEach(file => {
-        const url = URL.createObjectURL(file);
-        this.uploadedPhotos.push({ file, url });
-      });
-    },
-    handleUploadDrop(event) {
-      const dt = event.dataTransfer;
-      if (!dt) return;
-      const files = Array.from(dt.files).slice(0, 5 - this.uploadedPhotos.length);
-      files.forEach(file => {
-        const url = URL.createObjectURL(file);
-        this.uploadedPhotos.push({ file, url });
-      });
-    },
-    removePhoto(index) {
-      this.uploadedPhotos.splice(index, 1);
-    },
-    
-    guests: 4,
-    bathrooms: 2,
-    allowChildren: 'yes',
-    offerCribs: 'no',
-    apartmentSize: 100,
-    apartmentUnit: 'square meters',
-    saveAdditionalDetails() {
-        const payload = {
-            guests: this.guests,
-            bathrooms: this.bathrooms,
-            allow_children: this.allowChildren,
-            offer_cribs: this.offerCribs,
-            apartment_size: this.apartmentSize,
-            apartment_unit: this.apartmentUnit,
-        };
-        this.isLoading = true;
-        fetch(`/partner/property/${this.propertyId}/additional-details`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
-            },
-            body: JSON.stringify(payload)
-        })
-        .then(async res => {
-            const contentType = res.headers.get('content-type');
-            if (contentType && contentType.includes('application/json')) {
-                return res.json();
-            } else {
-                const text = await res.text();
-                throw new Error('Server did not return JSON: ' + text.substring(0, 200));
-            }
-        })
-        .then(data => {
-            if (data.success) {
-                this.propertyWizardStep++;
-            } else {
-                alert('Error: ' + (data.message || 'Could not update additional details.'));
-            }
-        })
-        .catch(err => {
-            alert('AJAX error: ' + err.message);
-        })
-        .finally(() => {
-            this.isLoading = false;
-        });
-    },
-    selectedAmenities: [],
-    propertyCount: 1,
-    owners: [
-      { firstName: '', address: '', zipCode: '', city: '', country: '' }
-    ],
-    ownershipType: '', // 'individual' or 'business'
-    // For individual
-    individual: { firstName: '', lastName: '', dob: '', altNames: [] },
-    // For business entity
-    business: {
-      businessName: '',
-      tradingName: '',
-      address: '',
-      zipCode: '',
-      city: '',
-      country: '',
-      owners: [
-        { firstName: '', lastName: '', dob: '', altNames: [] }
-      ]
-    }
-}"
+          },
+          handleUploadDrop(event) {
+            const dt = event.dataTransfer;
+            if (!dt) return;
+            const files = Array.from(dt.files).slice(0, 5 - this.uploadedPhotos.length);
+            files.forEach(file => {
+              const url = URL.createObjectURL(file);
+              this.uploadedPhotos.push({ file, url });
+            });
+          },
+          removePhoto(index) {
+            this.uploadedPhotos.splice(index, 1);
+          },
+          
+          guests: 4,
+          bathrooms: 2,
+          allowChildren: 'yes',
+          offerCribs: 'no',
+          apartmentSize: 100,
+          apartmentUnit: 'square meters',
+          saveAdditionalDetails() {
+              const payload = {
+                  guests: this.guests,
+                  bathrooms: this.bathrooms,
+                  allow_children: this.allowChildren,
+                  offer_cribs: this.offerCribs,
+                  apartment_size: this.apartmentSize,
+                  apartment_unit: this.apartmentUnit,
+              };
+              this.isLoading = true;
+              fetch(`/partner/property/${this.propertyId}/additional-details`, {
+                  method: 'PATCH',
+                  headers: {
+                      'Content-Type': 'application/json',
+                      'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                  },
+                  body: JSON.stringify(payload)
+              })
+              .then(async res => {
+                  const contentType = res.headers.get('content-type');
+                  if (contentType && contentType.includes('application/json')) {
+                      return res.json();
+                  } else {
+                      const text = await res.text();
+                      throw new Error('Server did not return JSON: ' + text.substring(0, 200));
+                  }
+              })
+              .then(data => {
+                  if (data.success) {
+                      this.propertyWizardStep++;
+                  } else {
+                      alert('Error: ' + (data.message || 'Could not update additional details.'));
+                  }
+              })
+              .catch(err => {
+                  alert('AJAX error: ' + err.message);
+              })
+              .finally(() => {
+                  this.isLoading = false;
+              });
+          },
+          selectedAmenities: [],
+          propertyCount: 1,
+          owners: [
+            { firstName: '', address: '', zipCode: '', city: '', country: '' }
+          ],
+          ownershipType: '', // 'individual' or 'business'
+          // For individual
+          individual: { firstName: '', lastName: '', dob: '', altNames: [] },
+          // For business entity
+          business: {
+            businessName: '',
+            tradingName: '',
+            address: '',
+            zipCode: '',
+            city: '',
+            country: '',
+            owners: [
+              { firstName: '', lastName: '', dob: '', altNames: [] }
+            ]
+          }
+      }"
       x-init="console.log('Wizard initialized', { title, address, city, country, zipcode, description })"
     >
       <div x-data="{ step: 1, wizardStep: 1 , propertyWizardStep: 1 }">
@@ -425,9 +425,9 @@
                     </template>
 
                      <!-- Optional checkmark -->
-              <template x-if="index === 1 && propertyWizardStep === 6">
-                <span class="text-green-600">✔️</span>
-              </template>
+                    <template x-if="index === 1 && propertyWizardStep === 6">
+                      <span class="text-green-600">✔️</span>
+                    </template>
                   </div>
                   <!-- 🔵 Progress bar only under "Basic information" when active -->
                   <template x-if="index === 0 && step === 1">
@@ -458,15 +458,15 @@
                   </template>
 
                   <template x-if="index === 3 && step === 4">
-  <div class="flex space-x-1 mt-1 w-35 sm:w-48 md:w-56 lg:w-64 xl:w-72 ml-[-15px] sm:ml-[-25px] md:ml-[-35px]">
-    <template x-for="i in 4">
-      <div
-        :class="pricingWizardStep >= i ? 'bg-blue-600' : 'bg-gray-300'"
-        class="h-1 flex-1 rounded-full">
-      </div>
-    </template>
-  </div>
-</template>
+                    <div class="flex space-x-1 mt-1 w-35 sm:w-48 md:w-56 lg:w-64 xl:w-72 ml-[-15px] sm:ml-[-25px] md:ml-[-35px]">
+                      <template x-for="i in 4">
+                        <div
+                          :class="pricingWizardStep >= i ? 'bg-blue-600' : 'bg-gray-300'"
+                          class="h-1 flex-1 rounded-full">
+                        </div>
+                      </template>
+                    </div>
+                  </template>
                 </div>
               </template>
             </div>
@@ -809,9 +809,10 @@
           <!-- Property Setup Section -->
 
 
- <!-- Property Setup Section -->
+          <!-- Property Setup Section -->
+<!-- Property Setup Section -->
 <section x-show="step === 2">
-
+ 
 
   <template x-if="propertyWizardStep === 1">
    {{-- property-setup.blade.php --}}
@@ -822,36 +823,42 @@
     <div class="bg-white p-4 rounded-lg shadow space-y-4">
         <h2 class="text-lg font-semibold">Where can people sleep?</h2>
 
-      <div class="space-y-4">
-    <div class="border border-gray-300 rounded px-3 py-2 w-96">
-        <p class="text-sm">Bedroom 1</p>
-        <p class="text-sm text-gray-600">1 full bed</p>
-    </div>
-    <div class="border border-gray-300 rounded px-3 py-2 w-96">
-        <p class="text-sm">Living Room</p>
-        <p class="text-sm text-gray-600">1 full bed</p>
-    </div>
-    <div class="border border-gray-300 rounded px-3 py-2 w-96">
-        <p class="text-sm">Other spaces</p>
-        <p class="text-sm text-gray-600">1 full bed</p>
-    </div>
+     <div class="flex flex-col gap-4">
+    <a href="{{ route('partner.property.step3', ['category' => 'apartment', 'property' => $property->id]) }}">
+        <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer">
+            <p class="text-sm">Bedroom 1</p>
+            <p class="text-sm text-gray-600">1 full bed</p>
+        </div>
+    </a>
+
+    <a href="{{ route('partner.apartment.livingroom') }}">
+        <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer">
+            <p class="text-sm">Living Room</p>
+            <p class="text-sm text-gray-600">1 full bed</p>
+        </div>
+    </a>
+
+    <a href="{{ route('partner.apartment.otherspaces') }}">
+        <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer">
+            <p class="text-sm">Other spaces</p>
+            <p class="text-sm text-gray-600">1 full bed</p>
+        </div>
+    </a>
 </div>
 
 
 
+
+
         <!-- Add Bedroom Button (navigate to 2nd page) -->
-        <button
-  type="button"
-  @click="addBedroom"
-  class="text-blue-600 hover:underline text-sm flex items-center space-x-1 mt-2"
->
-  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
-       viewBox="0 0 24 24" stroke="currentColor">
-    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M12 4v16m8-8H4"/>
-  </svg>
-  <span>Add Bedroom</span>
-</button>
+        <a href="{{ route('partner.property.step3', ['category' => 'apartment', 'property' => $property->id]) }}" class="text-blue-600 hover:underline text-sm flex items-center space-x-1 mt-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+                 viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M12 4v16m8-8H4"/>
+            </svg>
+            <span>Add Bedroom</span>
+        </a>
     </div>
 
     <!-- Include Alpine.js in your Blade layout if not already -->
@@ -912,13 +919,13 @@
         <!-- Room Size -->
 <div class="lg:col-span-2 bg-white rounded-lg border border-gray-300 p-4 space-y-4 ">
   <div class="flex flex-col lg:flex-row gap-4 items-end"> <!-- ensure vertical alignment -->
-
+    
     <!-- Apartment Size Dropdown -->
     <div class="w-full lg:w-2/4">
   <label class="block  text-sm text-gray-700 mb-1">How big is this room?</label>
   <p class="text-xs text-gray-500 ">Apartment size - optional</p>
-
-<input
+ 
+<input 
     type="number"
     min="1"
     step="1"
@@ -929,7 +936,7 @@
     class="w-full border border-gray-300 rounded-md shadow-sm text-sm mt-2 px-2 py-2"
 >
 
-
+  
 
 </div>
 
@@ -941,7 +948,7 @@
         <option>square feet</option>
       </select>
     </div>
-
+    
   </div>
     </div>
 
@@ -950,7 +957,7 @@
   <button
    type="button" @click="propertyWizardStep--"
         :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-
+  
       class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
       ←
   </button>
@@ -976,7 +983,7 @@
 
 
     <template x-if="propertyWizardStep === 2">
-
+      
  <div class="max-w-2xl mx-auto space-y-8 lg:ml-32">
 
     <!-- Heading -->
@@ -1033,7 +1040,7 @@
       type="submit"
     @click="propertyWizardStep++"
       class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 mb-16">
-      Continue
+      Continue 
     </button>
   </div>
 
@@ -1078,21 +1085,21 @@
             <!-- Type of breakfast -->
           <div x-data="{ selected: [] }">
   <p class="font-semibold text-sm text-gray-800 mb-2">
-    What type of breakfast do you offer?
+    What type of breakfast do you offer? 
     <span class="text-sm text-gray-500">(Select all that apply)</span>
   </p>
 
   <div class="flex flex-wrap gap-2">
     @foreach(['A la carte', 'American', 'Asian', 'Breakfast to go', 'Buffet', 'Continental', 'Full English/Irish', 'Gluten-Free', 'Halal', 'Italian', 'Kosher', 'Vegan', 'Vegetarian'] as $option)
       <label
-        :class="selected.includes('{{ $option }}')
-                  ? 'bg-[#3CC0E9] text-white'
+        :class="selected.includes('{{ $option }}') 
+                  ? 'bg-[#3CC0E9] text-white' 
                   : 'border border-gray-300 text-gray-700 hover:bg-gray-200'"
         class="px-3 py-1 rounded-full text-sm font-medium cursor-pointer transition"
       >
-        <input type="checkbox" class="hidden"
+        <input type="checkbox" class="hidden" 
                :value="'{{ $option }}'"
-               x-model="selected">
+               x-model="selected"> 
         {{ $option }}
       </label>
     @endforeach
@@ -1114,7 +1121,7 @@
                     <label><input type="radio" name="parking_available" class="mr-2"> Yes, paid</label>
                     <label><input type="radio" name="parking_available" class="mr-2"> No</label>
 </div>
-
+               
             </div>
     <hr class="my-6 border-t border-gray-300">
             <!-- Parking cost -->
@@ -1158,11 +1165,11 @@
                 <p class="font-semibold text-sm text-gray-800 mb-2">Do guests need to reserve a parking spot?</p>
 
                 <div class="flex flex-col text-sm gap-2">
-
+    
                     <label><input type="radio" name="parking_reservation" class="mr-2"> Reservation needed</label>
                     <label><input type="radio" name="parking_reservation" class="mr-2">No reservation needed </label>
 </div>
-
+                
             </div>
 
             <!-- Parking location -->
@@ -1170,11 +1177,11 @@
                 <p class="font-semibold text-sm text-gray-800 mb-2">Where is the parking located?</p>
 
                 <div class="flex flex-col text-sm gap-2">
-
+    
                  <label><input type="radio" name="parking_location" class="mr-2"> On site</label>
                     <label><input type="radio" name="parking_location" class="mr-2"> Off site</label>
 </div>
-
+                
             </div>
 
                 <div>
@@ -1185,10 +1192,10 @@
                  <label><input type="radio" name="parking_type" class="mr-2">Private</label>
                     <label><input type="radio" name="parking_type" class="mr-2">Public</label>
 </div>
-
+                
             </div>
 
-
+            
         </div>
 <div class="flex justify-between mt-6">
     <!-- Back Button -->
@@ -1208,7 +1215,7 @@
       type="submit"
     @click="propertyWizardStep++"
       class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 mb-16">
-      Continue
+      Continue 
     </button>
   </div>
     </div>
@@ -1248,7 +1255,7 @@
       <!-- Add Additional Languages -->
       <div id="additionalLanguagesSection" class="mt-4 hidden relative">
         <h3 class="text-lg font-medium mb-2 ">Add additional languages</h3>
-
+        
         <!-- Searchable dropdown container -->
         <div class="relative w-full max-w-md">
           <input
@@ -1328,7 +1335,7 @@
   <button
    type="button" @click="propertyWizardStep--"
         :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-
+  
       class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
       ←
   </button>
@@ -1515,7 +1522,7 @@
   <button
    type="button" @click="propertyWizardStep--"
         :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-
+  
       class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
       ←
   </button>
@@ -1547,7 +1554,7 @@
             You can easily customise these house rules later and additional house rules can be set on the Policies page of the extranet after you complete registration.
           </p>
 
-
+          
         </div>
       </div>
 
@@ -1632,7 +1639,7 @@
   <button
    type="button" @click="propertyWizardStep--"
         :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-
+  
       class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
       ←
   </button>
@@ -1647,8 +1654,6 @@
 </div>
     </div>
 </template>
-
-
 
 
 </section>
@@ -1714,43 +1719,43 @@
     }
   }"
 >
-            <div class="w-full max-w-6xl">
-              <h2 class="text-xl md:text-2xl font-bold text-black mb-6 text-left mt-12">
-                What does your place look like?
-              </h2>
-              <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6 items-start">
-                <!-- 📸 Photo Upload Area -->
-                <div class="border rounded-lg p-6 bg-white shadow-sm">
-                  <p class="font-semibold text-gray-800 mb-2">Upload at least 5 photos of your property.</p>
-                  <p class="text-sm text-gray-600 mb-4">
-                    The more you upload, the more likely you are to get bookings. You can add more later.
-                  </p>
-                  <!-- Upload box with drag and drop -->
-                  <div
-                    class="border border-dashed border-gray-400 rounded-lg p-6 text-center bg-gray-50 mb-6"
-                    @dragover.prevent
-                    @drop.prevent="handleUploadDrop($event)"
-                  >
-                    <div class="mb-4">
-                      <!-- camera SVG -->
-                    </div>
-                    <p class="text-gray-700 font-medium mb-2">Drag and drop or</p>
-                    <label
-                      class="inline-flex items-center gap-2 px-4 py-2 bg-white text-gray-800 border border-gray-800 rounded cursor-pointer hover:bg-gray-50 hover:text-black transition"
-                      for="fileInput"
-                    >
-                      <img src="{{ asset('assets/mdi_camera-outline.svg') }}" alt="Upload" class="w-4 h-4" />
-                      <span>Upload photos</span></label
-                    ><input
-                      id="fileInput"
-                      type="file"
-                      multiple
-                      accept="image/*"
-                      class="hidden"
-                      @change="handleUpload"
-                    />
-                    <p class="text-xs text-gray-500 mt-2">jpg/jpeg or png, maximum 47MB each, max 5 images</p>
-                  </div>
+  <div class="w-full max-w-6xl">
+    <h2 class="text-xl md:text-2xl font-bold text-black mb-6 text-left mt-12">
+      What does your place look like?
+    </h2>
+    <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6 items-start">
+      <!-- 📸 Photo Upload Area -->
+      <div class="border rounded-lg p-6 bg-white shadow-sm">
+        <p class="font-semibold text-gray-800 mb-2">Upload at least 5 photos of your property.</p>
+          <p class="text-sm text-gray-600 mb-4">
+            The more you upload, the more likely you are to get bookings. You can add more later.
+          </p>
+          <!-- Upload box with drag and drop -->
+          <div
+            class="border border-dashed border-gray-400 rounded-lg p-6 text-center bg-gray-50 mb-6"
+            @dragover.prevent
+            @drop.prevent="handleUploadDrop($event)"
+          >
+            <div class="mb-4">
+              <!-- camera SVG -->
+            </div>
+            <p class="text-gray-700 font-medium mb-2">Drag and drop or</p>
+            <label
+              class="inline-flex items-center gap-2 px-4 py-2 bg-white text-gray-800 border border-gray-800 rounded cursor-pointer hover:bg-gray-50 hover:text-black transition"
+              for="fileInput"
+            >
+              <img src="{{ asset('assets/mdi_camera-outline.svg') }}" alt="Upload" class="w-4 h-4" />
+              <span>Upload photos</span></label
+              ><input
+                id="fileInput"
+                type="file"
+                multiple
+                accept="image/*"
+                class="hidden"
+                @change="handleUpload"
+              />
+              <p class="text-xs text-gray-500 mt-2">jpg/jpeg or png, maximum 47MB each, max 5 images</p>
+            </div>
                   <!-- Uploaded photo previews -->
                   <template x-if="uploadedPhotos.length > 0">
                     <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">

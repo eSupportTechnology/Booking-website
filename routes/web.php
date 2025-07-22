@@ -193,7 +193,17 @@ Route::get('/customer-profile-create', function () {
 })->name('customer.profile.create');
 
 Route::get('/partner-apartment-create-2', function () {
-    return view('frontend.partner-apartment-create-form-2');
+    // Example: fetch the latest property for the current user (customize as needed)
+    $property = null;
+    if (auth()->check()) {
+        $property = \App\Models\Property::where('user_id', auth()->id())->latest()->first();
+    }
+    // Fallback: if no property found, create a dummy object to avoid errors
+    if (!$property) {
+        $property = new \App\Models\Property();
+        $property->id = 0;
+    }
+    return view('frontend.partner-apartment-create-form-2', compact('property'));
 })->name('partner.apartment.create.2');
 
 Route::get('/partner-homes-create-1', function () {
@@ -394,3 +404,15 @@ Route::patch('/partner/property/{property}/additional-details', [PropertyControl
     ->name('partner.property.update.additional-details');
 
 require __DIR__ . '/auth.php';
+
+Route::get('/partner/apartment/bedrooms/{property}', function ($propertyId) {
+    $property = \App\Models\Property::findOrFail($propertyId);
+    $bedTypes = \App\Models\BedType::all();
+    return view('partner.partner-apartments-bedrooms', compact('property', 'bedTypes'));
+})->name('partner.apartment.bedrooms');
+
+Route::get('/partner/property/{category}/step3/{property}', function ($category, $propertyId) {
+    $property = \App\Models\Property::findOrFail($propertyId);
+    $bedTypes = \App\Models\BedType::all();
+    return view('partner.partner-apartments-bedrooms', compact('property', 'bedTypes', 'category'));
+})->name('partner.property.step3');
