@@ -1633,10 +1633,11 @@
               This policy is set at the property level – any changes made will be applied to all rooms.
             </p>
           </div>
+          <a href="{{ route('partner.apartment.pricing.policies') }}">
          <button @click="$refs.section1.scrollIntoView({ behavior: 'smooth' })"
         class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">
   Edit
-</button>
+</button></a>
         </div>
         <hr class="my-4">
         <ul class="text-gray-900 text-sm space-y-2">
@@ -1660,7 +1661,8 @@
             <h3 class="text-base font-semibold text-gray-700">Price per group size</h3>
             <img src="{{ asset('assets/material-symbols-light_info-outline.svg') }}" alt="Tip Icon" class="w-5 h-5">
           </div>
-          <button class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">Edit</button>
+           <a href="{{ route('partner.apartment.price.group') }}">
+          <button class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">Edit</button></a>
         </div>
 
         <hr class="my-4">
@@ -1706,7 +1708,8 @@
           <h3 class="text-base font-semibold text-gray-700">Price and cancellation policy</h3>
           <img src="{{ asset('assets/material-symbols-light_info-outline.svg') }}" alt="Tip Icon" class="w-5 h-5">
         </div>
-        <button class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">Edit</button>
+         <a href="{{ route('partner.apartment.refundable.rate') }}">
+        <button class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">Edit</button></a>
       </div>
       <hr class="my-4">
       <ul class="text-gray-900 text-sm space-y-2">
@@ -1730,7 +1733,8 @@
           <h3 class="text-base font-semibold text-gray-700">Price and cancellation policy</h3>
           <img src="{{ asset('assets/material-symbols-light_info-outline.svg') }}" alt="Tip Icon" class="w-5 h-5">
         </div>
-        <button class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">Edit</button>
+         <a href="{{ route('partner.apartment.weekly.rate') }}">
+        <button class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">Edit</button></a>
       </div>
       <hr class="my-4">
       <ul class="text-gray-900 text-sm space-y-2">
@@ -2567,9 +2571,11 @@ function calendarComponent() {
     </button>
 
     <!-- Open for bookings Button (take remaining space) -->
-    <button class="flex-1 px-6 py-3 bg-[#3CC0E9]  text-white font-semibold rounded-md hover:bg-[#29ACD5] transition">
-      Open for bookings
-    </button>
+   <a href="{{ route('open.booking') }}"
+   class="flex-1 px-6 py-3 bg-[#3CC0E9] text-white text-center font-semibold rounded-md hover:bg-[#29ACD5] transition">
+   Open for bookings
+</a>
+
   </div>
 
   <!-- I'm not ready link -->

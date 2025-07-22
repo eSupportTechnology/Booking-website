@@ -204,6 +204,10 @@ Route::get('/partner-apartment-refundable-rate', function () {
     return view('frontend.partner-apartment-non-refundable-rate');
 })->name('partner.apartment.refundable.rate');
 
+Route::get('/open-booking', function () {
+    return view('frontend.open-booking');
+})->name('open.booking');
+
 Route::get('/partner-apartment-pricing-policies', function () {
     return view('frontend.partner-apartment-pricing-cancel-policies');
 })->name('partner.apartment.pricing.policies');
