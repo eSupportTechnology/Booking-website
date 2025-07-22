@@ -29,8 +29,19 @@
                     class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
                     <!-- Logo -->
                     <div class="w-full md:w-auto md:ml-6">
-                        <a href="/" class="text-2xl font-bold font-poppins">
-                            {{ config('app.name') }}
+                        <!-- Logo -->
+                        @php
+                            $host = config('domains.app_name');
+
+                        @endphp
+
+                        <a href="{{ url('/') }}" class="text-2xl font-bold flex items-center">
+                            @if ($host == 'BookinTour')
+                                <h1>Bookintour.com</h1>
+                            @elseif ($host == 'Inselor')
+                                <img src="{{ asset('images/inselor-logo.png') }}" alt="Inselor"
+                                    class="h-12 w-auto align-middle" />
+                            @endif
                         </a>
                     </div>
                     <!-- Right Section -->
@@ -162,7 +173,29 @@
                         }
                     }
 
-                }">
+                        const data = await response.json();
+                        this.propertyId = data.property_id;
+                        this.step = 2;
+                        await this.fetchSubtypes(this.selected);
+                        alert(data.message || 'Property created successfully');
+
+                    } catch (error) {
+                        console.error('Request failed:', error);
+                        alert('Request failed: ' + error.message);
+                    }
+                },
+                async fetchSubtypes(subcategoryId) {
+                    try {
+                        const response = await fetch(`/partner/property_subtype/${subcategoryId}`);
+                        const data = await response.json();
+                        console.log('Fetched subtypes:', data);
+                        this.subtypes = data;
+                    } catch (err) {
+                        console.error('Failed to fetch subtypes:', err);
+                    }
+                }
+
+            }">
                 <div class="bg-white max-w-2xl w-full p-6 rounded-lg shadow">
                     <div class="max-w-xl mx-auto p-4 space-y-6">
                         <h2 class="text-2xl font-bold text-center">@lang('messages.what_can_guests_book')</h2>
@@ -473,7 +506,7 @@
                                                     <!-- Info -->
                                                     <p class="text-sm text-gray-700">
                                                         If your property is listed on Airbnb or Vrbo, you can speed up
-                                                        registration by importing it directly to Booking.com.
+                                                        registration by importing it directly to {{ config('domains.subdomain') }}.
                                                     </p>
 
                                                     <!-- Checkboxes -->
@@ -1982,7 +2015,7 @@
                                                                     A channel manager is a third-party tool that lets
                                                                     you manage rates and availability across different
                                                                     sites you might list your place on, including
-                                                                    Booking.com. If you're already using a channel
+                                                                    {{ config('domains.subdomain') }}. If you're already using a channel
                                                                     manager, you can select 'Yes' to connect it to your
                                                                     listing.
                                                                 </p>
@@ -3238,7 +3271,8 @@
                                                     method: 'POST',
                                                     headers: {
                                                         'Content-Type': 'application/json',
-                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                                            .getAttribute('content')
                                                     },
                                                     body: JSON.stringify({
                                                         title: this.propertyName,
@@ -3443,6 +3477,37 @@
 
 
 
+                    <!-- Villa -->
+                    <section x-show="selectedBox === 2" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
+                        <h3 class="text-xl font-bold mb-4">Villa Details</h3>
+                        <p>Details related to villa...</p>
+                        <button type="button" @click="step = 2"
+                            class="mt-4 bg-gray-300 px-4 py-2 rounded">Back</button>
+                    </section>
+
+                    <!-- Chalet -->
+                    <section x-show="selectedBox === 1" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
+                        <h3 class="text-xl font-bold mb-4">Chalet Details</h3>
+                        <p>Details related to chalet...</p>
+                        <button type="button" @click="step = 2"
+                            class="mt-4 bg-gray-300 px-4 py-2 rounded">Back</button>
+                    </section>
+
+                    <!-- Holiday Park -->
+                    <section x-show="selectedBox === 6" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
+                        <h3 class="text-xl font-bold mb-4">Holiday Park Details</h3>
+                        <p>Details related to holiday park...</p>
+                        <button type="button" @click="step = 2"
+                            class="mt-4 bg-gray-300 px-4 py-2 rounded">Back</button>
+                    </section>
+
+                    <!-- Aparthotel -->
+                    <section x-show="selectedBox ===5" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
+                        <h3 class="text-xl font-bold mb-4">Aparthotel Details</h3>
+                        <p>Details related to aparthotel...</p>
+                        <button type="button" @click="step = 2"
+                            class="mt-4 bg-gray-300 px-4 py-2 rounded">Back</button>
+                    </section>
                 </div>
             </template>
         </form>

@@ -2,7 +2,8 @@
 
 return [
     'Sign in or create an account' => 'Sign in or Create an Account',
-    'You can sign in using your Booking.com account to access our services.' => 'You can sign in using your Booking.com account to access our services.',
+    'You can sign in using your' => 'You can sign in using your',
+    'account to access our services.' => 'account to access our services.',
     'Email address' => 'Email Address',
     'Continue with email' => 'Continue with Email',
     'or use one of these options' => 'or use one of these options',
@@ -95,7 +96,7 @@ return [
     //vendor
     'list_your' => 'List your',
     'holiday_rental' => 'holiday rental',
-    'on' => 'on Bookintour.com',
+    'on' => 'on',
     'description' => 'List on one of the world\'s most downloaded travel apps to earn more, faster and expand into new markets.',
      'register_free' => 'Register for free',
     'booking_within_week' => '45% of hosts get their first booking within a week',

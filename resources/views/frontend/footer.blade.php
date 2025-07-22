@@ -8,7 +8,7 @@
 </head>
 <body class="bg-gray-500 font-sans leading-normal tracking-normal" >
 
- 
+
 
     <!-- Footer -->
     <footer class="bg-white text-gray-600 py-8" style="background-color:#F5F5F5;">
@@ -69,10 +69,10 @@
             <!-- Copyright and Branding -->
             <div class="flex flex-col items-center justify-center space-y-2">
                 <p class="text-sm text-center">
-                    Bookintour is part of Bookintour Inc., the world leader in online travel and related services.<br>
-                    Copyright © 1996–2025 Bookintour™. All rights reserved.
+                    {{ config('domains.app_name') }} is part of {{ config('domains.app_name') }} Inc., the world leader in online travel and related services.<br>
+                    Copyright © 1996–2025 {{ config('domains.app_name') }}™. All rights reserved.
                 </p>
-                <a href="#" class="text-blue-500 font-bold hover:underline">Bookintour.com</a>
+                <a href="#" class="text-blue-500 font-bold hover:underline">{{ config('domains.domain') }}</a>
             </div>
         </div>
     </footer>

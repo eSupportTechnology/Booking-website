@@ -172,6 +172,22 @@ Route::get('/partner-apartment-create-1', function () {
     return view('frontend.partner-apartment-create-form-1');
 })->name('partner.apartment.create.1');
 
+Route::get('/partner-apartment-bedrooms', function () {
+    return view('frontend.partner-apartments-bedrooms');
+})->name('partner.apartment.bedrooms');
+
+Route::get('/partner-apartment-otherspaces', function () {
+    return view('frontend.partner-apartments-otherspaces');
+})->name('partner.apartment.otherspaces');
+
+Route::get('/partner-apartment-livingroom', function () {
+    return view('frontend.partner-apartments-livingroom');
+})->name('partner.apartment.livingroom');
+
+Route::get('/partner-apartment-pricing-policies', function () {
+    return view('frontend.partner-apartment-pricing-cancel-policies');
+})->name('partner.apartment.pricing.policies');
+
 Route::get('/customer-profile-create', function () {
     return view('frontend.customer-profile-create');
 })->name('customer.profile.create');

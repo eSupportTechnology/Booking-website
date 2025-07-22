@@ -2,17 +2,19 @@
 <html lang="en" x-data="{ step: 1 }">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>9-Step Wizard</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
- <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>9-Step Wizard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet" />
 
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet" />
-  <style>
-    body { font-family: 'Noto Sans', sans-serif; }
-  </style>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet" />
+    <style>
+        body {
+            font-family: 'Noto Sans', sans-serif;
+        }
+    </style>
 </head>
 
 <body class="bg-gray-100 text-gray-800">
@@ -23,97 +25,7 @@
                     class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
                     <!-- Logo -->
                     <div class="w-full md:w-auto md:ml-6">
-                        <!-- Logo -->
-                        @php
-                            $host = config('domains.app_name');
-
-                        @endphp
-
-            <!-- Language Button -->
-            <button
-              id="language-button"
-              type="button"
-              class="flex items-center justify-center w-8 h-8 bg-white rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-hidden"
-              title="Change Language"
-            >
-              <img src="{{ asset('images/uk.png') }}" alt="UK Flag" class="w-full h-full object-cover rounded-full" />
-            </button>
-
-            <!-- Language Modal -->
-            <div
-              id="language-modal"
-              class="fixed inset-0 hidden z-50 overflow-y-auto flex items-start justify-center px-4 py-8 bg-black bg-opacity-50"
-            >
-              <div class="relative w-full max-w-md p-6 bg-white rounded-lg shadow">
-                <!-- Modal Header -->
-                <div class="flex items-start justify-between">
-                  <h3 class="text-xl font-semibold text-gray-900">Select your language</h3>
-                  <button
-                    type="button"
-                    class="close-btn text-gray-400 hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
-                  >
-                    <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                      <path
-                        fill-rule="evenodd"
-                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                        clip-rule="evenodd"
-                      />
-                    </svg>
-                    <span class="sr-only">Close modal</span>
-                  </button>
-                </div>
-
-                <!-- Modal Body -->
-                <div class="mt-4">
-                  <p class="mb-4 text-base text-gray-500">Suggested for you</p>
-                  <div class="grid grid-cols-2 gap-4">
-                    <button class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100">
-                      <img src="https://flagcdn.com/w40/gb.png" alt="English (UK)" class="h-5 w-5" />
-                      <span>English (UK)</span>
-                    </button>
-                    <button class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100">
-                      <img src="https://flagcdn.com/w40/de.png" alt="Deutsch" class="h-5 w-5" />
-                      <span>Deutsch</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  </header>
-  <!-- Progress Bar -->
-  <div class="w-full bg-gray-200 h-2">
-    <div class="bg-[#3CC0E9] h-2 transition-all duration-500"
-         :style="'width:' + (step * 100 / 8) + '%'"></div>
-  </div>
-
-  <!-- Step Content Wrapper -->
-  <div x-data>
-
-    <template x-if="step === 1">
-  <div class="relative w-[1200px] h-auto overflow-hidden rounded-lg shadow mx-auto my-10 ">
-    <!-- Google Maps iframe full background -->
-    <iframe
-        class="absolute inset-0 w-full h-full"
-        loading="lazy"
-        src="https://www.google.com/maps?q=La+Grande+Villa+Nuwara+Eliya&output=embed"
-        allowfullscreen>
-    </iframe>
-
-        <!-- Optional overlay for readability -->
-        <div class="absolute inset-0 "></div>
-
-        <!-- Form content centered on map -->
-        <div class="relative z-10 flex items-center justify-start h-auto p-4 mt-[110px]">
-  <div class="bg-white bg-opacity-95 rounded-lg shadow-lg w-full max-w-md p-6 md:p-8 h-auto mb-4">
-                <h2 class="text-2xl font-semibold mb-4 text-gray-800">Where is your property?</h2>
-                <form action="#" method="POST">
-                    <div class="mb-4">
-                        <label for="address" class="block text-sm font-medium text-gray-700">Find your address</label>
-                        <input type="text" id="address" name="address" value="Sri Lanka" class="mt-1 p-2 w-full border border-gray-300 rounded">
+                        <a href="/" class="text-2xl font-bold font-poppins">Bookintour.com</a>
                     </div>
 
                     <!-- Right Section -->
@@ -168,46 +80,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="flex items-center mt-4">
-                        <input id="update_address" type="checkbox" name="update_address" checked class="mr-2">
-                        <label for="update_address" class="text-sm text-gray-700">Update the address when moving the pin on the map.</label>
-                    </div>
-                    <!-- Dismissible message box -->
-<div x-data="{ showMessage: true }" x-show="showMessage" class="mt-4 bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded relative" role="alert">
-  <strong class="font-bold">Note:</strong>
-  <span class="block sm:inline">Make sure the pin location is accurate before continuing.</span>
-  <span @click="showMessage = false" class="absolute top-0 bottom-0 right-0 px-4 py-3 cursor-pointer">
-    <svg class="fill-current h-6 w-6 text-yellow-800" role="button" xmlns="http://www.w3.org/2000/svg"
-         viewBox="0 0 20 20"><title>Close</title><path
-        d="M14.348 5.652a1 1 0 00-1.414 0L10 8.586 7.066 5.652a1 1 0 10-1.414 1.414L8.586 10l-2.934 2.934a1 1 0 101.414 1.414L10 11.414l2.934 2.934a1 1 0 001.414-1.414L11.414 10l2.934-2.934a1 1 0 000-1.414z"/></svg>
-  </span>
-</div>
-
-                    <p class="text-sm text-gray-600 mt-2">
-                        Is the red pin location incorrect? Uncheck the option above and click or press on the map to move the pin.
-                    </p>
-                   <div class="flex justify-between mt-6">
-  <!-- Back Button (Left) -->
-   <button type="button"
-           @click="step > 1 ? step-- : step"
-        :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-              class="border border-[#3CC0E9]  text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
-        ←
-      </button>
-
-
-  <!-- Continue Button (Right) -->
-  <button   type="submit"
-      @click="step < 8 ? step++ : step"
-        :class="step === 8 ? 'opacity-50 cursor-not-allowed' : 'bg-[#3CC0E9] hover:bg-sky-500'"
-
-        :disabled="step === 8"
-          class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300">
-    Continue
-  </button>
-</div>
-
-                </form>
+                </div>
             </div>
         </section>
     </header>
@@ -261,9 +134,9 @@
                                         class="mt-1 p-2 w-full border border-gray-300 rounded">
                                 </div>
                                 <div class="flex-1">
-                                    <label for="postcode" class="block text-sm font-medium text-gray-700">Post code /
+                                    <label for="zipcode" class="block text-sm font-medium text-gray-700">Post code /
                                         Zip code</label>
-                                    <input type="text" id="postcode" name="postcode" value="80400"
+                                    <input type="text" id="zipcode" name="zipcode" value="80400"
                                         class="mt-1 p-2 w-full border border-gray-300 rounded">
                                 </div>
                             </div>
@@ -317,6 +190,7 @@
                     </div>
                 </div>
             </div>
+        </template>
     </div>
     <!--end basic info step 2-->
 
@@ -338,7 +212,7 @@
                         </h2>
                         <p class="text-gray-700 mb-6">
                             A channel manager is a third-party tool that lets you manage rates and availability across
-                            different sites you might list your place on, including {{ config('domains.subdomain') }}. If you're already using
+                            different sites you might list your place on, including Booking.com. If you're already using
                             a channel manager, you can select 'Yes' to connect it to your listing.
                         </p>
 
@@ -406,23 +280,6 @@
     </template>
     </div>
 
-    <button type="button"    @click="step > 1 ? step-- : step"
-        :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-              class="border border-[#3CC0E9]  text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
-        ←
-      </button>
-
-
-  <!-- Continue Button (Right) -->
-  <button type="submit"
-          @click="step < 9 ? step++ : step"
-        :class="step === 9 ? 'opacity-50 cursor-not-allowed' : 'bg-[#3CC0E9] hover:bg-sky-500'"
-
-        :disabled="step === 9"
-          class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300">
-    Continue
-  </button>
-</div>
     </div>
     </section>
 
@@ -512,95 +369,168 @@
             <section class="mb-8">
                 <h1 class="text-xl text-gray-700 font-bold mb-4">What can guests use at your place?</h1>
 
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-    <!-- Property Name Input + Checkboxes (2/3 Width) -->
-    <div class="md:col-span-2 flex">
-      <div class="w-full bg-white p-6 rounded shadow-md flex flex-col text-base">
+                    <!-- Property Name Input + Checkboxes (2/3 Width) -->
+                    <div class="md:col-span-2 flex">
+                        <div class="w-full bg-white p-6 rounded shadow-md flex flex-col text-base">
 
 
-        <!-- 9 Checkboxes Section -->
+                            <!-- 9 Checkboxes Section -->
 
-        <div class="mt-2">
-          <h3 class="text-gray-700 font-semibold mb-2">Select property type(s)</h3>
-          <div class="grid grid-cols-1 sm:grid-cols-1 gap-2 text-sm text-gray-700">
-            <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Apartment" class="text-blue-500" />
-              <span>Restaurant</span>
-            </label>
-             <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Apartment" class="text-blue-500" />
-              <span>Room service</span>
-            </label>
-             <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Apartment" class="text-blue-500" />
-              <span>Bar</span>
-            </label>
-             <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Apartment" class="text-blue-500" />
-              <span>24-hour front desk</span>
-            </label>
-             <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Apartment" class="text-blue-500" />
-              <span>Sauna</span>
-            </label>
-            <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Villa" class="text-blue-500" />
-              <span>Fitness centre</span>
-            </label>
-            <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Holiday Home" class="text-blue-500" />
-              <span>Garden</span>
-            </label>
-            <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Chalet" class="text-blue-500" />
-              <span>Terrace</span>
-            </label>
-            <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Cottage" class="text-blue-500" />
-              <span>Non-smoking rooms</span>
-            </label>
-            <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Cabin" class="text-blue-500" />
-              <span>Airport shuttle</span>
-            </label>
-            <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Bungalow" class="text-blue-500" />
-              <span>Family rooms</span>
-            </label>
-            <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Farm Stay" class="text-blue-500" />
-              <span>Spa and wellness centre</span>
-            </label>
-            <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Houseboat" class="text-blue-500" />
-              <span>Hot tub/Jacuzzi</span>
-            </label>
-              <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Houseboat" class="text-blue-500" />
-              <span>Free WiFi</span>
-            </label>
-              <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Houseboat" class="text-blue-500" />
-              <span>Air conditioning</span>
-            </label>
-              <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Houseboat" class="text-blue-500" />
-              <span>Water park</span>
-            </label>
-              <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Houseboat" class="text-blue-500" />
-              <span>Electric vehicle charging station</span>
-            </label>
-                 <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Houseboat" class="text-blue-500" />
-              <span>Swimming pool</span>
-            </label>
-              <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Houseboat" class="text-blue-500" />
-              <span>Beach</span>
-            </label>
-          </div>
+                            <div class="mt-2">
+                                <h3 class="text-gray-700 font-semibold mb-2">Select property type(s)</h3>
+                                <div class="grid grid-cols-1 sm:grid-cols-1 gap-2 text-sm text-gray-700">
+                                    <label class="flex items-center space-x-2">
+                                        <input type="checkbox" name="property_types[]" value="Apartment"
+                                            class="text-blue-500" />
+                                        <span>Restaurant</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2">
+                                        <input type="checkbox" name="property_types[]" value="Apartment"
+                                            class="text-blue-500" />
+                                        <span>Room service</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2">
+                                        <input type="checkbox" name="property_types[]" value="Apartment"
+                                            class="text-blue-500" />
+                                        <span>Bar</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2">
+                                        <input type="checkbox" name="property_types[]" value="Apartment"
+                                            class="text-blue-500" />
+                                        <span>24-hour front desk</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2">
+                                        <input type="checkbox" name="property_types[]" value="Apartment"
+                                            class="text-blue-500" />
+                                        <span>Sauna</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2">
+                                        <input type="checkbox" name="property_types[]" value="Villa"
+                                            class="text-blue-500" />
+                                        <span>Fitness centre</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2">
+                                        <input type="checkbox" name="property_types[]" value="Holiday Home"
+                                            class="text-blue-500" />
+                                        <span>Garden</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2">
+                                        <input type="checkbox" name="property_types[]" value="Chalet"
+                                            class="text-blue-500" />
+                                        <span>Terrace</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2">
+                                        <input type="checkbox" name="property_types[]" value="Cottage"
+                                            class="text-blue-500" />
+                                        <span>Non-smoking rooms</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2">
+                                        <input type="checkbox" name="property_types[]" value="Cabin"
+                                            class="text-blue-500" />
+                                        <span>Airport shuttle</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2">
+                                        <input type="checkbox" name="property_types[]" value="Bungalow"
+                                            class="text-blue-500" />
+                                        <span>Family rooms</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2">
+                                        <input type="checkbox" name="property_types[]" value="Farm Stay"
+                                            class="text-blue-500" />
+                                        <span>Spa and wellness centre</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2">
+                                        <input type="checkbox" name="property_types[]" value="Houseboat"
+                                            class="text-blue-500" />
+                                        <span>Hot tub/Jacuzzi</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2">
+                                        <input type="checkbox" name="property_types[]" value="Houseboat"
+                                            class="text-blue-500" />
+                                        <span>Free WiFi</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2">
+                                        <input type="checkbox" name="property_types[]" value="Houseboat"
+                                            class="text-blue-500" />
+                                        <span>Air conditioning</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2">
+                                        <input type="checkbox" name="property_types[]" value="Houseboat"
+                                            class="text-blue-500" />
+                                        <span>Water park</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2">
+                                        <input type="checkbox" name="property_types[]" value="Houseboat"
+                                            class="text-blue-500" />
+                                        <span>Electric vehicle charging station</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2">
+                                        <input type="checkbox" name="property_types[]" value="Houseboat"
+                                            class="text-blue-500" />
+                                        <span>Swimming pool</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2">
+                                        <input type="checkbox" name="property_types[]" value="Houseboat"
+                                            class="text-blue-500" />
+                                        <span>Beach</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tips and Information (1/3 Width) -->
+                    <div class="flex flex-col gap-4">
+
+                        <!-- Tip Box 1 -->
+                        <div x-data="{ show: true }" x-show="show"
+                            class="bg-white p-4 border border-gray-200 rounded w-full md:w-[350px] lg:w-[400px]">
+
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center space-x-2">
+                                    <img src="{{ asset('assets/system-uicons_lightbulb-on.svg') }}" alt="Help"
+                                        class="w-6 h-6 md:w-7 md:h-7 cursor-pointer" />
+                                    <h3 class="text-gray-700 text-sm text-bold">What if I don’t see a facility I offer?
+                                    </h3>
+                                </div>
+                                <button @click="show = false" class="text-gray-500 hover:text-gray-700">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                        fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <p class="text-sm text-gray-700">
+                                The facilities listed here are the ones most searched for by guests. After you complete
+                                your registration, you can add more facilities from a larger list in the extranet, the
+                                platform you'll use to manage your property.
+                                <br>
+                                The ones selected here will apply to all of your holiday homes.
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Buttons Row (Outside grid, full width) -->
+                <!-- Buttons Row aligned with Checkbox Section -->
+                <div class="flex  mt-6">
+                    <button type="button" @click="step > 1 ? step-- : step"
+                        :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
+                        class="border border-[#3CC0E9] text-blue-600  hover:bg-blue-50 font-semibold py-2 px-4 rounded">
+                        ←
+                    </button>
+                    <button type="button" @click="step > 1 ? step++ : step"
+                        class="px-4 py-3 bg-[#3CC0E9] font-semibold  text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300 ml-[420px]">
+                        Continue
+                    </button>
+                </div>
+
+            </section>
         </div>
     </template>
 
@@ -706,31 +636,9 @@
                         </label>
                     </div>
 
-      <!-- Add Additional Languages -->
-      <div id="additionalLanguagesSection" class="mt-4 hidden relative">
-        <h3 class="text-lg font-medium mb-2 ">Add additional languages</h3>
-
-        <!-- Searchable dropdown container -->
-        <div class="relative w-full max-w-md">
-          <input
-            type="text"
-            id="languageInput"
-            oninput="filterDropdown()"
-            onclick="toggleDropdown()"
-            placeholder="Search languages..."
-            autocomplete="off"
-            class="w-full border rounded p-2 pr-10 cursor-pointer"
-            readonly
-          />
-          <!-- Dropdown arrow -->
-          <button
-            type="button"
-            onclick="toggleDropdown()"
-            class="absolute right-2 top-2.5 text-gray-600 hover:text-gray-900 focus:outline-none"
-            tabindex="-1"
-          >
-            ▼
-          </button>
+                    <!-- Add Additional Languages -->
+                    <div id="additionalLanguagesSection" class="mt-4 hidden relative">
+                        <h3 class="text-lg font-medium mb-2 ">Add additional languages</h3>
 
                         <!-- Searchable dropdown container -->
                         <div class="relative w-full max-w-md">
@@ -858,106 +766,6 @@
                 });
             </script>
         </div>
-      </div>
-
-      <!-- Toggle Button for Additional Languages -->
-      <a
-        href="#"
-        onclick="event.preventDefault(); toggleAdditionalLanguages();"
-        class="text-blue-500 hover:underline mt-4 block"
-      >
-        Add additional languages
-      </a>
-    </div>
-
-   <!-- Navigation Buttons -->
-<div class="mt-8 flex justify-between">
-  <!-- Back Button on the left -->
-  <button
-   type="button"  @click="step > 1 ? step-- : step"
-        :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-
-      class="border border-[#3CC0E9] text-blue-600  hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
-      ←
-  </button>
-
-  <!-- Continue Button on the right -->
-  <button
-   type="button"  @click="step > 1 ? step++ : step"
-     class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300"
-  >
-    Continue
-  </button>
-</div>
-
-  </div>
-
-  <script>
-    function toggleAdditionalLanguages() {
-      const section = document.getElementById("additionalLanguagesSection");
-      section.classList.toggle("hidden");
-      if (!section.classList.contains("hidden")) {
-        document.getElementById("languageInput").focus();
-        showDropdown();
-      } else {
-        hideDropdown();
-      }
-    }
-
-    function toggleDropdown() {
-      const dropdown = document.getElementById("languageDropdown");
-      dropdown.classList.toggle("hidden");
-    }
-
-    function showDropdown() {
-      document.getElementById("languageDropdown").classList.remove("hidden");
-    }
-
-    function hideDropdown() {
-      document.getElementById("languageDropdown").classList.add("hidden");
-    }
-
-    function filterDropdown() {
-      const input = document.getElementById("languageInput");
-      const filter = input.value.toLowerCase();
-      const ul = document.getElementById("languageDropdown");
-      const items = ul.getElementsByTagName("li");
-      ul.classList.remove("hidden");
-      let visibleCount = 0;
-      for (let i = 0; i < items.length; i++) {
-        const txtValue = items[i].textContent || items[i].innerText;
-        if (txtValue.toLowerCase().indexOf(filter) > -1) {
-          items[i].style.display = "";
-          visibleCount++;
-        } else {
-          items[i].style.display = "none";
-        }
-      }
-      // Hide dropdown if no matches
-      if (visibleCount === 0) {
-        ul.classList.add("hidden");
-      }
-    }
-
-    function selectLanguage(element) {
-      const input = document.getElementById("languageInput");
-      input.value = element.textContent;
-      hideDropdown();
-    }
-
-    // Close dropdown when clicking outside
-    document.addEventListener("click", function (event) {
-      const dropdown = document.getElementById("languageDropdown");
-      const input = document.getElementById("languageInput");
-      const container = document.getElementById("additionalLanguagesSection");
-      if (
-        !container.contains(event.target)
-      ) {
-        hideDropdown();
-      }
-    });
-  </script>
-      </div>
     </template>
 
     <template x-if="step === 7">
@@ -1103,40 +911,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- Right Section: Tip Box -->
-        <div x-data="{ show: true }" x-show="show" class="bg-white shadow-md rounded-lg p-6 w-full h-[300px] md:w-1/3 relative">
-          <div class="flex justify-between items-start">
-            <div class="flex items-center space-x-2">
-              <img src="{{ asset('assets/system-uicons_lightbulb-on.svg') }}" alt="Help" class="w-6 h-6 md:w-7 md:h-7 cursor-pointer" />
-              <h3 class="text-gray-800 font-semibold text-base">What if my house rules change?</h3>
-            </div>
-            <button @click="show = false" class="text-gray-400 hover:text-gray-600">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-              </svg>
-            </button>
-          </div>
-          <p class="text-sm text-gray-700 mt-3">
-            You can easily customise these house rules later and additional house rules can be set on the Policies page of the extranet after you complete registration.
-          </p>
-        </div>
-      </div>
-
-      <!-- Navigation Buttons -->
-      <div class="mt-8 flex ">
-        <button type="button" @click="step > 1 ? step-- : step"
-        :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-          class="border border-[#3CC0E9] text-blue-600  hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
-          ←
-        </button>
-        <button   type="button"  @click="step > 1 ? step++ : step"
-          class="px-6 h-12 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300 ml-[395px]">
-          Continue
-        </button>
-      </div>
-    </div>
-  </div>
     </template>
 
     <template x-if="step === 8">
@@ -1228,7 +1002,6 @@
     </template>
 
 
-  </div>
     </div>
 
 </body>

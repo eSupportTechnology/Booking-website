@@ -15,7 +15,7 @@ class PropertyStep2DTO extends ValidatedDTO
     public ?string $description;
     public ?int $subtype_id;
     public ?string $apartment;
-    public ?int $address_type_id = null; 
+    public ?int $address_type_id = null;
     public ?string $channel_manager;
     public ?array $bedrooms = null;
     public ?int $guests = null;

@@ -11,9 +11,18 @@
 
                 <!-- Logo -->
                 <div class="w-full md:w-auto md:ml-6">
-                    <a href="/" class="text-2xl font-bold">
-                        <h1 style="font-family: 'Poppins', sans-serif;">Bookintour.com</h1>
-                    </a>
+                     @php
+                            $host = config('domains.app_name');
+
+                        @endphp
+
+                        <a href="{{ url('/') }}" class="text-2xl font-bold flex items-center">
+                            @if($host == 'BookinTour')
+                                <h1>Bookintour.com</h1>
+                            @elseif ($host == 'Inselor')
+                                <img src="{{ asset('images/inselor-logo.png') }}" alt="Inselor" class="h-12 w-auto align-middle" />
+                            @endif
+                        </a>
                 </div>
 
                 <!-- Right Section -->
@@ -102,7 +111,9 @@
         <h2 class="text-2xl font-semibold mb-2" style="font-family: 'Noto Sans', sans-serif;">
             {{ __('messages.Sign in or create an account') }}</h2>
         <p class="text-gray-600 text-sm mb-6" style="font-family: 'Noto Sans', sans-serif;">
-            {{ __('messages.You can sign in using your Booking.com account to access our services.') }}
+            {{ __('messages.You can sign in using your')}}
+            {{ config('domains.subdomain') }}
+             {{ __('messages.account to access our services.') }}
         </p>
 
 
@@ -175,7 +186,7 @@
         <!-- Footer Text -->
         <p class="text-xs text-gray-500 mt-6 text-center">
             <span class="block" style="font-family: 'Noto Sans', sans-serif;">All rights reserved</span>
-            <span class="block" style="font-family: 'Noto Sans', sans-serif;">© 2006 – 2025 Bookintour.com™</span>
+            <span class="block" style="font-family: 'Noto Sans', sans-serif;">© 2006 – 2025 {{ config('domains.domain') }}™</span>
         </p>
     </div>
 </main>
