@@ -78,6 +78,29 @@ class PropertyController extends Controller
         Log::info('Subcategories fetched for category ID ' . $categoryId, ['subcategories' => $subcategories]);
         return view('partner.partner-homes-create-form-1', compact('subcategories', 'categoryId'));
     }
+    public function rooms($categoryId, PropertyAction $action)
+    {
+        $subcategories = $action->getPropertiesByCategory($categoryId);
+
+        if ($subcategories->isEmpty()) {
+            Log::warning('No subcategories found for category ID ' . $categoryId);
+            return redirect()->back()->withErrors(['error' => 'No subcategories found for this category.']);
+        }
+        switch ($categoryId) {
+            case 3:  // Hotel
+                return view('partner.partner-hotels-rooms', [
+                    'categoryId' => $categoryId,
+                    'subcategories' => $subcategories,
+                    'category' => 'hotel',
+                ]);
+
+            default:
+                abort(404);
+        }
+        Log::info('Subcategories fetched for category ID ' . $categoryId, ['subcategories' => $subcategories]);
+        return view('partner.partner-homes-create-form-1', compact('subcategories', 'categoryId'));
+    }
+
 
 
     public function subtypes($subcategoryId, PropertyAction $action)
@@ -179,36 +202,36 @@ class PropertyController extends Controller
             'user_id' => auth()->id(),
         ]);
 
-    try {
-        $property = Property::findOrFail($request->input('property_id', $propertyId));
+        try {
+            $property = Property::findOrFail($request->input('property_id', $propertyId));
 
-        // ✅ Only update address_type_id if that’s all we got
-        if ($request->has('address_type_id') && count($request->all()) === 2) {
-            $property->update([
-                'address_type_id' => $request->input('address_type_id')
-            ]);
+            // ✅ Only update address_type_id if that’s all we got
+            if ($request->has('address_type_id') && count($request->all()) === 2) {
+                $property->update([
+                    'address_type_id' => $request->input('address_type_id')
+                ]);
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Address type saved',
+                    'property_id' => $property->id,
+                ]);
+            }
+
+            // Normal full step 2 flow
+            $dto = PropertyStep2DTO::fromRequest($request);
+            $updatedProperty = $action->updatePropertyStep2($property, $dto);
 
             return response()->json([
                 'success' => true,
-                'message' => 'Address type saved',
-                'property_id' => $property->id,
+                'message' => 'Step 2 data saved successfully',
+                'property_id' => $updatedProperty->id,
             ]);
+        } catch (\Exception $e) {
+            Log::error('storeStep2 exception', ['message' => $e->getMessage()]);
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 422);
         }
-
-        // Normal full step 2 flow
-        $dto = PropertyStep2DTO::fromRequest($request);
-        $updatedProperty = $action->updatePropertyStep2($property, $dto);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Step 2 data saved successfully',
-            'property_id' => $updatedProperty->id,
-        ]);
-    } catch (\Exception $e) {
-        Log::error('storeStep2 exception', ['message' => $e->getMessage()]);
-        return response()->json(['success' => false, 'message' => $e->getMessage()], 422);
     }
-}
 
 
     public function updateTitle(Request $request, $propertyId)
@@ -326,37 +349,37 @@ class PropertyController extends Controller
 
 
     public function savePolicy(Request $request, \App\Models\Property $property)
-{
-    try {
-        $data = json_decode($request->getContent(), true);
-        Log::info('Decoded request', $data);
+    {
+        try {
+            $data = json_decode($request->getContent(), true);
+            Log::info('Decoded request', $data);
 
-        $validated = validator($data, [
-            'check_in_time' => 'required|date_format:H:i',
-            'check_out_time' => 'required|date_format:H:i',
-            'check_in_until' => 'required|date_format:H:i',
-            'check_out_until' => 'required|date_format:H:i',
-            'smoking_allowed' => 'required|boolean',
-            'pets_allowed' => 'required|boolean',
-            'children_allowed' => 'required|boolean',
-            'party_allowed' => 'required|boolean',
-            'cancellation_policy' => 'required|in:flexible,moderate,strict'
-        ])->validate();
+            $validated = validator($data, [
+                'check_in_time' => 'required|date_format:H:i',
+                'check_out_time' => 'required|date_format:H:i',
+                'check_in_until' => 'required|date_format:H:i',
+                'check_out_until' => 'required|date_format:H:i',
+                'smoking_allowed' => 'required|boolean',
+                'pets_allowed' => 'required|boolean',
+                'children_allowed' => 'required|boolean',
+                'party_allowed' => 'required|boolean',
+                'cancellation_policy' => 'required|in:flexible,moderate,strict'
+            ])->validate();
 
-        $property->policies()->updateOrCreate(
-            [],
-            $validated
-        );
+            $property->policies()->updateOrCreate(
+                [],
+                $validated
+            );
 
-        return response()->json(['success' => true]);
-    } catch (\Exception $e) {
-        Log::error('Policy save failed', [
-            'message' => $e->getMessage(),
-            'trace' => $e->getTraceAsString()
-        ]);
-        return response()->json(['error' => 'Server error'], 500);
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            Log::error('Policy save failed', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json(['error' => 'Server error'], 500);
+        }
     }
-}
 
 
     public function saveLanguages(Request $request, Property $property)

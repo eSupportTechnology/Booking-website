@@ -255,6 +255,7 @@ Route::get('/airport-taxis', function () {
 Route::prefix('partner')->group(function () {
     Route::get('/property_category', [PropertyController::class, 'categories'])->name('partner.property.category');
     Route::get('/property_subcategory/{id}', [PropertyController::class, 'subcategories'])->name('partner.property.subcategory');
+    Route::get('/hotels/rooms/{id}', [PropertyController::class, 'rooms'])->name('partner.hotels.room');
     Route::get('/property_subtype/{id}', [PropertyController::class, 'subtypes'])->name('partner.property.subtype');
     Route::post('/property/register', [PropertyController::class, 'register'])->name('partner.property.register');
     // Show Step 1 form

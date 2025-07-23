@@ -996,7 +996,7 @@
                                             can add more.</p>
                                     </div>
                                 </div>
-                                <a href="{{ route('partner.hotels.rooms') }}"
+                                <a href="{{ route('partner.hotels.room', ['id' => $categoryId]) }}"
                                     class=" bg-sky-400 border border-sky-400 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-sky-500">
                                     Add room
                                 </a>
