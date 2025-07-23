@@ -242,6 +242,10 @@ Route::get('/partner-alternative-places', function () {
     return view('frontend.partner-alternative-places');
 })->name('partner.alternative.places');
 
+Route::get('/partner-alternative-place-type', function () {
+    return view('frontend.partner-alternative-place-type');
+})->name('partner.alternative.place.type');
+
 Route::get('/partner-hotels-edit', function () {
     return view('frontend.partner-hotels-edit');
 })->name('partner.hotels.edit');
