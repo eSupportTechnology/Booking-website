@@ -65,4 +65,9 @@ class Property extends Model
     {
         return $this->belongsToMany(Language::class, 'property_language');
     }
+
+    public function hostProfile()
+    {
+        return $this->hasOne(\App\Models\PropertyHostProfile::class);
+    }
 }

@@ -358,24 +358,56 @@ class PropertyController extends Controller
     }
 
 
-    public function savePolicy(Request $request, \App\Models\Property $property)
+    public function savePolicy(Request $request, Property $property)
     {
-        $data = json_decode($request->getContent(), true);
-        Log::info('Raw request data for policy', $data);
-        $validated = validator($data, [
-            'check_in_time' => 'required|date_format:H:i',
-            'check_out_time' => 'required|date_format:H:i',
-            'smoking_allowed' => 'required|boolean',
-            'pets_allowed' => 'required|boolean',
-            'cancellation_policy' => 'required|in:flexible,moderate,strict'
-        ])->validate();
+        // Log the incoming request data
+        Log::info('savePolicy called', [
+            'property_id' => $property->id,
+            'request' => $request->all(),
+        ]);
 
-        $property->policies()->updateOrCreate(
-            ['property_id' => $property->id],
-            $validated
-        );
+        try {
+            $validated = $request->validate([
+                'smoking_allowed' => 'required|boolean',
+                'parties_allowed' => 'required|boolean',
+                'pets_allowed' => 'required|string',
+                'pets_fees' => 'required|string',
+                'check_in_from' => 'required',
+                'check_in_until' => 'required',
+                'check_out_from' => 'required',
+                'check_out_until' => 'required',
+                'cancellation_policy' => 'required|in:flexible,moderate,strict',
+            ]);
 
-        return response()->json(['success' => true]);
+            // Log the validated data
+            Log::info('savePolicy validated', $validated);
+
+            $policy = $property->policies()->updateOrCreate(
+                ['property_id' => $property->id],
+                [
+                    'smoking_allowed' => $validated['smoking_allowed'],
+                    'parties_allowed' => $validated['parties_allowed'],
+                    'pets_allowed' => $validated['pets_allowed'],
+                    'pets_fees' => $validated['pets_fees'],
+                    'check_in_from' => $validated['check_in_from'],
+                    'check_in_until' => $validated['check_in_until'],
+                    'check_out_from' => $validated['check_out_from'],
+                    'check_out_until' => $validated['check_out_until'],
+                    'cancellation_policy' => $validated['cancellation_policy'],
+                ]
+            );
+
+            // Log the policy after save
+            Log::info('savePolicy policy after save', $policy->toArray());
+
+            return response()->json(['success' => true, 'message' => 'Policy saved']);
+        } catch (\Exception $e) {
+            Log::error('savePolicy error', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
     }
 
     public function saveRooms(Request $request)
@@ -569,5 +601,28 @@ class PropertyController extends Controller
                 'message' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function saveHostProfile(Request $request, Property $property)
+    {
+        $validated = $request->validate([
+            'about_property' => 'nullable|string',
+            'about_host' => 'nullable|string',
+            'about_neighborhood' => 'nullable|string',
+            'show_property' => 'boolean',
+            'show_host' => 'boolean',
+            'show_neighborhood' => 'boolean',
+            'none_selected' => 'boolean',
+            'host_name' => 'nullable|string',
+        ]);
+
+        // You can use a new model/table (e.g., PropertyHostProfile) or add these fields to an existing table.
+        // Example for a new model:
+        $property->hostProfile()->updateOrCreate(
+            ['property_id' => $property->id],
+            $validated
+        );
+
+        return response()->json(['success' => true, 'message' => 'Host profile saved']);
     }
 }

@@ -261,6 +261,7 @@
                       method: 'PATCH',
                       headers: {
                           'Content-Type': 'application/json',
+                          'Accept': 'application/json',
                           'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
                       },
                       body: JSON.stringify(payload)
@@ -286,36 +287,36 @@
               this.propertyWizardStep = 1;
           },
           savePropertyDetails() {
-    const payload = {
-        title: this.title,
-        address: this.address,
-        apartment: this.apartment || null,
-        city: this.city,
-        country: this.country,
-        zipcode: this.zipcode,
-        description: this.description,
-        subtype_id: this.subtype_id || null,
-        address_type_id: this.address_type_id || null,
-        channel_manager: this.channelManager,
-        bedrooms: Object.values(this.rooms).map(room => ({
-            room_type: room.name === 'Living room' ? 'living_room' : (room.name === 'Other spaces' ? 'other' : 'bedroom'),
-            name: room.name,
-            twin: room.twin || 0,
-            full: room.full || 0,
-            queen: room.queen || 0,
-            king: room.king || 0,
-            bunk: room.bunk || 0,
-            sofa: room.sofa || 0,
-            futon: room.futon || 0,
-        })),
+            // Add this debug logging
+    console.log('Current wizard step:', this.propertyWizardStep);
+    console.log('Selected languages before save:', this.selectedLanguages);
+          const payload = {
         guests: this.guests,
         bathrooms: this.bathrooms,
         allow_children: this.allowChildren,
         offer_cribs: this.offerCribs,
         apartment_size: this.apartmentSize,
         apartment_unit: this.apartmentUnit,
+        breakfast_served: this.breakfastServed,
+        breakfast_included: this.breakfastIncluded,
+        breakfast_types: this.breakfastTypes,
+        parking_available: this.parkingAvailable,
+        parking_cost: this.parkingCost,
+        parking_currency: this.parkingCurrency,
+        parking_rate: this.parkingRate,
+        parking_reservation: this.parkingReservation,
+        parking_location: this.parkingLocation,
+        parking_type: this.parkingType,
+        languages: this.selectedLanguages,
+        check_in_from: this.checkInFrom,
+        check_in_until: this.checkInUntil,
+        check_out_from: this.checkOutFrom,
+        check_out_until: this.checkOutUntil,
     };
-
+    
+    // Log the complete payload
+    console.log('Payload being sent:', payload);
+    
     this.isLoading = true;
 
     // Helper to parse JSON safely
@@ -391,6 +392,53 @@
           // Photo upload methods
           isUploading: false,
           uploadedPhotos: [],
+          hostProfile: {
+        about_property: '',
+        about_host: '',
+        about_neighborhood: '',
+        show_property: false,
+        show_host: false,
+        show_neighborhood: false,
+        none_selected: false,
+        host_name: ''
+    },
+      saveHostProfile() {
+    const payload = {
+        property_id: this.propertyId,
+        about_property: this.hostProfile.about_property,
+        about_host: this.hostProfile.about_host,
+        about_neighborhood: this.hostProfile.about_neighborhood,
+        show_property: this.hostProfile.show_property,
+        show_host: this.hostProfile.show_host,
+        show_neighborhood: this.hostProfile.show_neighborhood,
+        none_selected: this.hostProfile.none_selected,
+        host_name: this.hostProfile.host_name,
+    };
+    this.isLoading = true;
+    fetch('/partner/property/' + this.propertyId + '/host-profile', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            this.propertyWizardStep++;
+        } else {
+            alert(data.message || 'Could not save host profile.');
+        }
+    })
+    .catch(err => {
+        alert('AJAX error: ' + err.message);
+    })
+    .finally(() => {
+        this.isLoading = false;
+    });
+},
           handleUpload(event) {
             const files = Array.from(event.target.files).slice(0, 5 - this.uploadedPhotos.length);
             files.forEach(file => {
@@ -418,6 +466,53 @@
           apartmentSize: 100,
           apartmentUnit: 'square meters',
           saveAdditionalDetails() {
+              // Check if propertyId is valid
+              if (!this.propertyId || this.propertyId === 'new') {
+                  alert('Property ID is missing. Please refresh the page.');
+                  return;
+              }
+
+              // For step 4 (languages), use dedicated language route
+              if (this.propertyWizardStep === 4) {
+                  console.log('Saving languages for step 4:', this.selectedLanguages);
+                  
+                  const payload = {
+                      languages: this.selectedLanguages
+                  };
+                  
+                  this.isLoading = true;
+                  
+                  fetch(`/partner/property/${this.propertyId}/languages`, {
+                      method: 'POST',
+                      headers: {
+                          'Content-Type': 'application/json',
+                          'Accept': 'application/json',
+                          'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                      },
+                      body: JSON.stringify(payload)
+                  })
+                  .then(async res => {
+                      const data = await res.json();
+                      if (res.ok && data.success) {
+                          console.log('Languages saved successfully:', data);
+                          this.propertyWizardStep++;
+                      } else {
+                          console.error('Language save error:', data);
+                          alert('Error: ' + (data.message || 'Could not save languages.'));
+                      }
+                  })
+                  .catch(err => {
+                      console.error('AJAX error:', err);
+                      alert('AJAX error: ' + err.message);
+                  })
+                  .finally(() => {
+                      this.isLoading = false;
+                  });
+                  
+                  return; // Exit early for language step
+              }
+
+              // For other steps, use the existing logic
               const payload = {
                   guests: this.guests,
                   bathrooms: this.bathrooms,
@@ -435,7 +530,6 @@
                   parking_reservation: this.parkingReservation,
                   parking_location: this.parkingLocation,
                   parking_type: this.parkingType,
-                  languages: this.selectedLanguages,
               };
               this.isLoading = true;
 
@@ -525,16 +619,19 @@
               { firstName: '', lastName: '', dob: '', altNames: [] }
             ]
           },
-          // Add these methods to your main x-data object (before the closing brace)
+          
 async loadLanguages() {
-  try {
-    const response = await fetch('/partner/languages');
-    const languages = await response.json();
-    this.availableLanguages = languages;
-    this.filteredLanguages = languages;
-  } catch (error) {
-    console.error('Error loading languages:', error);
-  }
+    try {
+        console.log('Loading languages...');
+        const response = await fetch('/partner/languages');
+        const languages = await response.json();
+        console.log('Languages loaded:', languages);
+        
+        this.availableLanguages = languages;
+        this.filteredLanguages = languages;
+    } catch (error) {
+        console.error('Error loading languages:', error);
+    }
 },
 
 filterLanguages() {
@@ -548,19 +645,32 @@ filterLanguages() {
 },
 
 selectLanguage(languageId, languageName) {
-  if (!this.selectedLanguages.includes(languageId)) {
-    this.selectedLanguages.push(languageId);
-  }
-  this.showDropdown = false;
-  this.searchTerm = '';
-  this.filteredLanguages = this.availableLanguages;
+    console.log('selectLanguage called with:', { languageId, languageName });
+    console.log('selectedLanguages before:', this.selectedLanguages);
+    
+    if (!this.selectedLanguages.includes(languageId)) {
+        this.selectedLanguages.push(languageId);
+        console.log('Language added. selectedLanguages after:', this.selectedLanguages);
+    } else {
+        console.log('Language already selected');
+    }
+    
+    this.showDropdown = false;
+    this.searchTerm = '';
+    this.filteredLanguages = this.availableLanguages;
 },
 
 removeLanguage(languageId) {
-  const index = this.selectedLanguages.indexOf(languageId);
-  if (index > -1) {
-    this.selectedLanguages.splice(index, 1);
-  }
+    console.log('removeLanguage called with:', languageId);
+    console.log('selectedLanguages before removal:', this.selectedLanguages);
+    
+    const index = this.selectedLanguages.indexOf(languageId);
+    if (index > -1) {
+        this.selectedLanguages.splice(index, 1);
+        console.log('Language removed. selectedLanguages after:', this.selectedLanguages);
+    } else {
+        console.log('Language not found in array');
+    }
 },
 
 getLanguageName(languageId) {
@@ -577,7 +687,54 @@ toggleAdditionalLanguages() {
   if (this.showAdditionalLanguages && this.availableLanguages.length === 0) {
     this.loadLanguages();
   }
-}
+},
+
+async saveHouseRules() {
+    const payload = {
+        property_id: this.propertyId,
+        smoking_allowed: this.smokingAllowed,
+        parties_allowed: this.partiesAllowed,
+        pets_allowed: this.petsAllowed,
+        pets_fees: this.petsFees,
+        check_in_from: this.checkInFrom,
+        check_in_until: this.checkInUntil,
+        check_out_from: this.checkOutFrom,
+        check_out_until: this.checkOutUntil,
+        cancellation_policy: 'flexible', // or whatever value you want
+    };
+    this.isLoading = true;
+    try {
+        const res = await fetch('/partner/property/' + this.propertyId + '/policy', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+            },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+            this.propertyWizardStep++;
+        } else {
+            alert(data.message || 'Could not save house rules.');
+        }
+    } catch (err) {
+        alert('AJAX error: ' + err.message);
+    } finally {
+        this.isLoading = false;
+    }
+},
+
+    // ...existing state...
+    smokingAllowed: false,
+    partiesAllowed: false,
+    petsAllowed: 'no',
+    petsFees: 'free',
+    checkInFrom: '15:00',
+    checkInUntil: '18:00',
+    checkOutFrom: '08:00',
+    checkOutUntil: '11:00',
+    // ...rest of your state and methods...
       }"
       x-init="console.log('Wizard initialized', { title, address, city, country, zipcode, description })"
     >
@@ -992,7 +1149,6 @@ toggleAdditionalLanguages() {
           <!-- Property Setup Section -->
 
           <!-- Property Setup Section -->
-<!-- Property Setup Section -->
 <section x-show="step === 2">
 
   <!-- Property Setup Step 1: Where can people sleep, guests, bathrooms, children, infants, apartment size/unit -->
@@ -1473,7 +1629,7 @@ toggleAdditionalLanguages() {
             <label class="flex items-center justify-between cursor-pointer">
               <span>Smoking allowed</span>
               <div class="relative">
-                <input type="checkbox" class="sr-only peer" />
+                <input type="checkbox" x-model="smokingAllowed" class="sr-only peer" />
                 <div class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition"></div>
                 <div class="absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-4"></div>
               </div>
@@ -1482,7 +1638,7 @@ toggleAdditionalLanguages() {
             <label class="flex items-center justify-between cursor-pointer">
               <span>Parties/events allowed</span>
               <div class="relative">
-                <input type="checkbox" class="sr-only peer" />
+                <input type="checkbox" x-model="partiesAllowed" class="sr-only peer" />
                 <div class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition"></div>
                 <div class="absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-4"></div>
               </div>
@@ -1496,15 +1652,15 @@ toggleAdditionalLanguages() {
             <h3 class="text-base font-semibold mb-2">Do you allow pets?</h3>
             <div class="space-y-2">
               <label class="flex items-center cursor-pointer">
-                <input type="radio" name="pets" value="yes" class="mr-2">
+                <input type="radio" name="pets" value="yes" x-model="petsAllowed" class="mr-2">
                 <span>Yes</span>
               </label>
               <label class="flex items-center cursor-pointer">
-                <input type="radio" name="pets" value="upon_request" class="mr-2">
+                <input type="radio" name="pets" value="upon_request" x-model="petsAllowed" class="mr-2">
                 <span>Upon request</span>
               </label>
               <label class="flex items-center cursor-pointer">
-                <input type="radio" name="pets" value="no" class="mr-2" checked>
+                <input type="radio" name="pets" value="no" x-model="petsAllowed" class="mr-2">
                 <span>No</span>
               </label>
             </div>
@@ -1514,11 +1670,11 @@ toggleAdditionalLanguages() {
             <h3 class="text-base font-semibold mb-2">Are there additional fees for pets?</h3>
             <div class="space-y-2">
               <label class="flex items-center cursor-pointer">
-                <input type="radio" name="pets_fees" value="free" class="mr-2">
+                <input type="radio" name="pets_fees" value="free" x-model="petsFees" class="mr-2">
                 <span>Pets can stay for free</span>
               </label>
               <label class="flex items-center cursor-pointer">
-                <input type="radio" name="pets_fees" value="fees" class="mr-2">
+                <input type="radio" name="pets_fees" value="fees" x-model="petsFees" class="mr-2">
                 <span>Fees may apply</span>
               </label>
             </div>
@@ -1532,11 +1688,11 @@ toggleAdditionalLanguages() {
             <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
               <div class="w-full">
                 <label class="block text-sm font-medium mb-1">From</label>
-                <input type="time" value="15:00" class="w-full border rounded p-2" />
+                <input type="time" x-model="checkInFrom" ... />
               </div>
               <div class="w-full">
                 <label class="block text-sm font-medium mb-1">Until</label>
-                <input type="time" value="18:00" class="w-full border rounded p-2" />
+                <input type="time" x-model="checkInUntil" ... />
               </div>
             </div>
           </div>
@@ -1547,11 +1703,11 @@ toggleAdditionalLanguages() {
             <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
               <div class="w-full">
                 <label class="block text-sm font-medium mb-1">From</label>
-                <input type="time" value="08:00" class="w-full border rounded p-2" />
+                <input type="time" x-model="checkOutFrom" ... />
               </div>
               <div class="w-full">
                 <label class="block text-sm font-medium mb-1">Until</label>
-                <input type="time" value="11:00" class="w-full border rounded p-2" />
+                <input type="time" x-model="checkOutUntil" ... />
               </div>
             </div>
           </div>
@@ -1568,7 +1724,7 @@ toggleAdditionalLanguages() {
 
   <!-- Continue Button on the right -->
   <button
-   type="button"  @click="propertyWizardStep++"
+   type="button"  @click="saveHouseRules"
      class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 "
   >
     Continue
@@ -1614,13 +1770,12 @@ toggleAdditionalLanguages() {
             <!-- The Property Section -->
             <div>
                 <label class="inline-flex items-center space-x-2">
-                    <input type="checkbox" class="form-checkbox text-blue-600">
+                    <input type="checkbox" x-model="hostProfile.show_property" class="form-checkbox text-blue-600">
                     <span class="text-gray-800 font-sm ">The property</span>
                 </label>
-
-                <div class="mt-2">
+                <div class="mt-2" x-show="hostProfile.show_property">
                     <label class="block text-sm font-semibold text-gray-700">About the property</label>
-                    <textarea rows="4" maxlength="1200" placeholder="What makes your place unique? What can guests expect"
+                    <textarea x-model="hostProfile.about_property" rows="4" maxlength="1200" placeholder="What makes your place unique? What can guests expect"
                         class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"></textarea>
                     <p class="text-right text-xs text-gray-500">0/1200</p>
                 </div>
@@ -1629,21 +1784,20 @@ toggleAdditionalLanguages() {
             <!-- The Host Section -->
             <div>
                 <label class="inline-flex items-center space-x-2">
-                    <input type="checkbox" class="form-checkbox text-blue-600">
+                    <input type="checkbox" x-model="hostProfile.show_host" class="form-checkbox text-blue-600">
                     <span class="text-gray-800 font-medium">The host</span>
                 </label>
-
-                <div class="mt-2 space-y-2">
+                <div class="mt-2 space-y-2" x-show="hostProfile.show_host">
                     <div>
                         <label class="block text-sm font-semibold text-gray-700">Host name</label>
-                        <input type="text" maxlength="80"
+                        <input x-model="hostProfile.host_name" type="text" maxlength="80"
                             class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
                         <p class="text-right text-xs text-gray-500">0/80</p>
                     </div>
 
                     <div>
                         <label class="block text-sm font-semibold text-gray-700">About the host</label>
-                        <textarea rows="4" maxlength="1200" placeholder="What are your interests? What do you like about hosting?"
+                        <textarea x-model="hostProfile.about_host" rows="4" maxlength="1200" placeholder="What are your interests? What do you like about hosting?"
                             class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"></textarea>
                         <p class="text-right text-xs text-gray-500">0/1200</p>
                     </div>
@@ -1653,13 +1807,12 @@ toggleAdditionalLanguages() {
             <!-- The Neighborhood Section -->
             <div>
                 <label class="inline-flex items-center space-x-2">
-                    <input type="checkbox" class="form-checkbox text-blue-600">
+                    <input type="checkbox" x-model="hostProfile.show_neighborhood" class="form-checkbox text-blue-600">
                     <span class="text-gray-800 font-medium">The neighborhood</span>
                 </label>
-
-                <div class="mt-2">
+                <div class="mt-2" x-show="hostProfile.show_neighborhood">
                     <label class="block text-sm font-semibold text-gray-700">About the neighborhood</label>
-                    <textarea rows="4" maxlength="1200" placeholder="What's the area like? Are there any attractions nearby?"
+                    <textarea x-model="hostProfile.about_neighborhood" rows="4" maxlength="1200" placeholder="What's the area like? Are there any attractions nearby?"
                         class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"></textarea>
                     <p class="text-right text-xs text-gray-500">0/1200</p>
                 </div>
@@ -1668,7 +1821,7 @@ toggleAdditionalLanguages() {
             <!-- None of the Above Option -->
             <div>
                 <label class="inline-flex items-center space-x-2">
-                    <input type="checkbox" class="form-checkbox text-blue-600">
+                    <input type="checkbox" x-model="hostProfile.none_selected" class="form-checkbox text-blue-600">
                     <span class="text-gray-800 font-medium">None of the above / I'll add these later</span>
                 </label>
             </div>
@@ -1685,7 +1838,7 @@ toggleAdditionalLanguages() {
 
   <!-- Continue Button on the right -->
   <button
-   type="button"  @click="propertyWizardStep++"
+   type="button"  @click="saveHostProfile"
      class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 "
   >
     Continue
@@ -1699,7 +1852,7 @@ toggleAdditionalLanguages() {
           <!-- ✅ Step 3: Photos Upload Section -->
           <!-- ✅ Step 3: Photos Upload Section -->
           <!-- ✅ Step 3: Photos Upload Section -->
-<!-- ...existing code... -->
+<!-- ...rest of the code... -->
 <section
   x-show="step === 3"
   class="px-4 py-6 md:px-8 lg:px-16 flex justify-center"

@@ -375,7 +375,7 @@ Route::prefix('partner')->group(function () {
     Route::post('/property/{property}/services', [\App\Http\Controllers\PropertyServiceController::class, 'store'])->name('partner.property.services.store');
     Route::post('/property/{property}/languages', [\App\Http\Controllers\PropertyController::class, 'saveLanguages'])->name('partner.property.languages.store');
     Route::get('/languages', [\App\Http\Controllers\PropertyController::class, 'getLanguages'])->name('partner.languages.get');
-    Route::post('/property/save-additional-details', [\App\Http\Controllers\PropertyController::class, 'saveAdditionalDetails'])->name('partner.property.save-additional-details');
+    Route::post('/property/save-additional-details', [PropertyController::class, 'saveAdditionalDetails'])->name('partner.property.save-additional-details');
 });
 
 Route::get('/partner/login', [LoginController::class, 'show'])->name('partner.login');
@@ -423,3 +423,7 @@ Route::get('/partner/property/{category}/step3/{property}', function ($category,
 })->name('partner.property.step3');
 
 Route::post('/partner/property/bedroom/{property}', [PropertyController::class, 'saveBedroom'])->name('partner.property.bedroom.store');
+
+Route::post('/partner/property/{property}/policy', [\App\Http\Controllers\PropertyController::class, 'savePolicy']);
+
+Route::post('/partner/property/{property}/host-profile', [PropertyController::class, 'saveHostProfile']);
