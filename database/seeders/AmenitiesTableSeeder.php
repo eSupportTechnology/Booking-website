@@ -39,6 +39,7 @@ class AmenitiesTableSeeder extends Seeder
             ['name' => 'Garden view', ],
             ['name' => 'Terrace', ],
             ['name' => 'View',],
+            
         ];
 
         foreach ($amenities as $data) {

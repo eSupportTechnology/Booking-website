@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             PropertySubtypeSeeder::class,
             AddressTypesTableSeeder::class,
             AmenitiesTableSeeder::class,
+            LanguagesTableSeeder::class,
         ]);
 
         // Create a test user

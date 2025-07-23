@@ -17,6 +17,8 @@ use App\Models\PropertySubtype;
 use App\Services\FileUploadService;
 use App\DTOs\Partner\AccommodationDetailsDTO;
 use App\Actions\Partner\StoreAccommodationDetailsAction;
+use App\Models\Amenity;
+use App\Models\Languages;
 
 class PropertyController extends Controller
 {
@@ -38,9 +40,14 @@ class PropertyController extends Controller
     public function subcategories($categoryId, PropertyAction $action)
     {
         $subcategories = $action->getPropertiesByCategory($categoryId);
-        $amenities = $action->getAmenities();
+
+        $amenities = Amenity::all();
+        $languages = Languages::all();
         Log::info('Fetching subcategories for category ID: ' . $categoryId, ['subcategories' => $subcategories]);
         Log::info('Available amenities', ['amenities' => $amenities]);
+        Log::info('Available languages', ['languages' => $languages]);
+        $groupedAmenities = $action->getGroupedAmenities();
+        $groupedLanguages = $action->getgroupedLanguages();
         // Check if subcategories are empty
         if ($subcategories->isEmpty()) {
             Log::warning('No subcategories found for category ID ' . $categoryId);
@@ -56,6 +63,10 @@ class PropertyController extends Controller
                 ]);
             case 3:  // Hotel
                 return view('partner.partner-hotels-create-1', [
+                    'amenities' => $amenities,
+                    'languages' => $languages,
+                    'groupedAmenities' => $groupedAmenities,
+                    'groupedLanguages' => $groupedLanguages,
                     'categoryId' => $categoryId,
                     'subcategories' => $subcategories,
                     'category' => 'hotel',
@@ -154,7 +165,8 @@ class PropertyController extends Controller
 
     public function storeStep2(Request $request,  $propertyId, PropertyAction $action)
     {
-        \Log::info('storeStep2 called', $request->all());
+
+        Log::info('storeStep2 called', $request->all());
         // die('storeStep2 called');
         Log::info('storeStep2 called', [
             'request' => $request->all(),
@@ -296,7 +308,6 @@ class PropertyController extends Controller
         }
     }
 
-
     public function saveAmenities(Request $request, Property $property)
     {
         $data = json_decode($request->getContent(), true);
@@ -315,21 +326,51 @@ class PropertyController extends Controller
 
 
     public function savePolicy(Request $request, \App\Models\Property $property)
-    {
+{
+    try {
         $data = json_decode($request->getContent(), true);
-        Log::info('Raw request data for policy', $data);
+        Log::info('Decoded request', $data);
+
         $validated = validator($data, [
             'check_in_time' => 'required|date_format:H:i',
             'check_out_time' => 'required|date_format:H:i',
+            'check_in_until' => 'required|date_format:H:i',
+            'check_out_until' => 'required|date_format:H:i',
             'smoking_allowed' => 'required|boolean',
             'pets_allowed' => 'required|boolean',
+            'children_allowed' => 'required|boolean',
+            'party_allowed' => 'required|boolean',
             'cancellation_policy' => 'required|in:flexible,moderate,strict'
         ])->validate();
 
         $property->policies()->updateOrCreate(
-            ['property_id' => $property->id],
+            [],
             $validated
         );
+
+        return response()->json(['success' => true]);
+    } catch (\Exception $e) {
+        Log::error('Policy save failed', [
+            'message' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+        return response()->json(['error' => 'Server error'], 500);
+    }
+}
+
+
+    public function saveLanguages(Request $request, Property $property)
+    {
+        $data = json_decode($request->getContent(), true);
+
+        Log::info('Raw request data', $data);
+
+        $languages = $data['languages'] ?? [];
+
+        // Optional validation
+        $validLanguageIds = Languages::whereIn('id', $languages)->pluck('id')->toArray();
+
+        $property->languages()->sync($validLanguageIds);
 
         return response()->json(['success' => true]);
     }
