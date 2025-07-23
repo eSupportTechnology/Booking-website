@@ -3,16 +3,29 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\RoomType;
+use App\Models\RoomBed;
 
 class Room extends Model
 {
-    use HasFactory;
-    protected $fillable = ['property_id', 'name', 'description', 'price_per_night', 'max_guests', 'bed_count', 'bathroom_count', 'size_sq_m'];
-    public function availability() {
-        return $this->hasMany(RoomAvailability::class);
+    protected $fillable = [
+        'property_id',
+        'room_type_id',
+        'name',
+        'description',
+        'price_per_night',
+        'max_guests',
+        'bathroom_count',
+        'size_sq_m'
+    ];
+
+    public function roomType()
+    {
+        return $this->belongsTo(RoomType::class);
     }
-    public function property() {
-        return $this->belongsTo(Property::class);
+
+    public function beds()
+    {
+        return $this->belongsToMany(BedType::class, 'room_beds')->withPivot('count')->withTimestamps();
     }
 }
