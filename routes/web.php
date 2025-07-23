@@ -8,13 +8,13 @@ use App\Http\Controllers\TravelerDetailsController;
 use App\Models\Traveler;
 use App\Http\Controllers\Partner\PartnerRegistrationController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Mail\PartnerVerificationMail;
 use App\Http\Controllers\Partner\LoginController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Customer\CustomerPersonalDetailsController;
 use App\Http\Controllers\Customer\EmailVerifyController;
 use App\Http\Controllers\PropertyController;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\App;
@@ -209,7 +209,17 @@ Route::get('/customer-profile-create', function () {
 })->name('customer.profile.create');
 
 Route::get('/partner-apartment-create-2', function () {
-    return view('frontend.partner-apartment-create-form-2');
+    // Example: fetch the latest property for the current user (customize as needed)
+    $property = null;
+    if (Auth::check()) {
+        $property = \App\Models\Property::where('user_id', Auth::id())->latest()->first();
+    }
+    // Fallback: if no property found, create a dummy object to avoid errors
+    if (!$property) {
+        $property = new \App\Models\Property();
+        $property->id = 0;
+    }
+    return view('frontend.partner-apartment-create-form-2', compact('property'));
 })->name('partner.apartment.create.2');
 
 Route::get('/partner-homes-create-1', function () {
@@ -368,6 +378,8 @@ Route::prefix('partner')->group(function () {
     Route::post('/property/upload-photos', [PropertyController::class, 'uploadPhotos']);
     Route::post('/property/save-amenities/{property}', [PropertyController::class, 'saveAmenities']);
     Route::post('/property/save-policy/{property}', [PropertyController::class, 'savePolicy']);
+    Route::post('/save-rooms/{property}', [PropertyController::class, 'saveRooms']);
+    Route::post('/partner-verification', [PropertyController::class, 'storePartnerVerification']);
 
     // Store accommodation, business entity, individual, and alt name details
     Route::post('/accommodation/store', [PropertyController::class, 'storeAccommodationDetails'])->name('partner.accommodation.store');
@@ -379,6 +391,11 @@ Route::prefix('partner')->group(function () {
 
     // Partial update for AJAX step-by-step wizard
     Route::patch('/property/{property}', [PropertyController::class, 'updatePartial'])->name('partner.property.update.partial');
+    Route::post('/property/{property}/amenities', [PropertyController::class, 'saveAmenities'])->name('partner.property.amenities.store');
+    Route::post('/property/{property}/services', [\App\Http\Controllers\PropertyServiceController::class, 'store'])->name('partner.property.services.store');
+    Route::post('/property/{property}/languages', [\App\Http\Controllers\PropertyController::class, 'saveLanguages'])->name('partner.property.languages.store');
+    Route::get('/languages', [\App\Http\Controllers\PropertyController::class, 'getLanguages'])->name('partner.languages.get');
+    Route::post('/property/save-additional-details', [\App\Http\Controllers\PropertyController::class, 'saveAdditionalDetails'])->name('partner.property.save-additional-details');
 });
 
 Route::get('/partner/login', [LoginController::class, 'show'])->name('partner.login');
@@ -412,3 +429,17 @@ Route::patch('/partner/property/{property}/additional-details', [PropertyControl
     ->name('partner.property.update.additional-details');
 
 require __DIR__ . '/auth.php';
+
+Route::get('/partner/apartment/bedrooms/{property}', function ($propertyId) {
+    $property = \App\Models\Property::findOrFail($propertyId);
+    $bedTypes = \App\Models\BedType::all();
+    return view('partner.partner-apartments-bedrooms', compact('property', 'bedTypes'));
+})->name('partner.apartment.bedrooms');
+
+Route::get('/partner/property/{category}/step3/{property}', function ($category, $propertyId) {
+    $property = \App\Models\Property::findOrFail($propertyId);
+    $bedTypes = \App\Models\BedType::all();
+    return view('partner.partner-apartments-bedrooms', compact('property', 'bedTypes', 'category'));
+})->name('partner.property.step3');
+
+Route::post('/partner/property/bedroom/{property}', [PropertyController::class, 'saveBedroom'])->name('partner.property.bedroom.store');

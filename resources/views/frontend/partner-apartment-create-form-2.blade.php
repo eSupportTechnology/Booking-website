@@ -444,7 +444,7 @@
         <h2 class="text-lg font-semibold">Where can people sleep?</h2>
 
      <div class="flex flex-col gap-4">
-    <a href="{{ route('partner.apartment.bedrooms') }}">
+    <a href="{{ route('partner.apartment.bedrooms', ['property' => $property->id]) }}">
         <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer">
             <p class="text-sm">Bedroom 1</p>
             <p class="text-sm text-gray-600">1 full bed</p>
@@ -471,7 +471,7 @@
 
 
         <!-- Add Bedroom Button (navigate to 2nd page) -->
-        <a href="{{ route('partner.apartment.bedrooms') }}" class="text-blue-600 hover:underline text-sm flex items-center space-x-1 mt-2">
+        <a href="{{ route('partner.apartment.bedrooms', ['property' => $property->id]) }}" class="text-blue-600 hover:underline text-sm flex items-center space-x-1 mt-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
                  viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -1240,7 +1240,7 @@
 
                 <div class="mt-2">
                     <label class="block text-sm font-semibold text-gray-700">About the neighborhood</label>
-                    <textarea rows="4" maxlength="1200" placeholder="What’s the area like? Are there any attractions nearby?"
+                    <textarea rows="4" maxlength="1200" placeholder="What's the area like? Are there any attractions nearby?"
                         class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"></textarea>
                     <p class="text-right text-xs text-gray-500">0/1200</p>
                 </div>
@@ -1250,7 +1250,7 @@
             <div>
                 <label class="inline-flex items-center space-x-2">
                     <input type="checkbox" class="form-checkbox text-blue-600">
-                    <span class="text-gray-800 font-medium">None of the above / I’ll add these later</span>
+                    <span class="text-gray-800 font-medium">None of the above / I'll add these later</span>
                 </label>
             </div>
         </div>
@@ -1391,7 +1391,7 @@
       Here are some tips for taking great photos of your property
     </a>
     <p class="text-gray-600">
-      If you don’t know who took a photo, it's best to avoid using it. Only use photos others have taken if you have permission.
+      If you don't know who took a photo, it's best to avoid using it. Only use photos others have taken if you have permission.
     </p>
   </div>
 </div>
@@ -1429,7 +1429,7 @@
     <!-- Info Card -->
     <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6 space-y-4">
       <h3 class="text-base font-semibold text-gray-900">
-        We’re here to ensure you can receive bookings safely:
+        We're here to ensure you can receive bookings safely:
       </h3>
      <ul class="text-gray-700 space-y-1 text-sm">
   @php
@@ -1538,7 +1538,7 @@
     
     <div class="flex items-center mb-2">
       <img src="{{ asset('assets/system-uicons_lightbulb-on.svg') }}" alt="Tip Icon" class="w-6 h-6 mr-2">
-      <strong>What if I’m not sure about my price?</strong>
+      <strong>What if I'm not sure about my price?</strong>
     </div>
 
     <p>Don't worry, you can always change it later. You can even set weekend, midweek, and seasonal prices, giving you more control over what you earn.</p>
@@ -1553,7 +1553,7 @@
         <div class="md:col-span-2 bg-white border rounded-lg p-6 shadow-sm space-y-3">
           <label class="inline-flex items-center">
             <input type="checkbox" class="form-checkbox text-blue-600 rounded-md" />
-            <span class="ml-2 font-medium text-gray-700 font-semibold">Get guests’ attention with a 20% discount</span>
+            <span class="ml-2 font-medium text-gray-700 font-semibold">Get guests' attention with a 20% discount</span>
           </label>
           <p class="text-sm text-gray-600">
             Give 20% off your first 3 bookings or for 90 days, whichever comes first. 
@@ -1969,7 +1969,7 @@ function calendarComponent() {
       <div class="space-y-4">
         <label class="flex items-center space-x-2">
           <input type="radio" value="yes" x-model="syncOption" class="form-radio text-blue-600">
-          <span class="text-sm">Yes, I’ll import unavailable dates from another website</span>
+          <span class="text-sm">Yes, I'll import unavailable dates from another website</span>
         </label>
 
         <div x-show="syncOption === 'yes'" class="space-y-2 border border-gray-300 rounded p-4">
@@ -1992,7 +1992,7 @@ function calendarComponent() {
 
         <label class="flex items-center space-x-2">
           <input type="radio" value="no" x-model="syncOption" class="form-radio text-blue-600">
-          <span class="text-sm">No, I won’t sync my availability</span>
+          <span class="text-sm">No, I won't sync my availability</span>
         </label>
       </div>
     </div>
@@ -2286,7 +2286,7 @@ function calendarComponent() {
 </section>
 
 <section x-data="{ businessType: 'individual' }" x-show="step === 6" class="w-full px-4 py-8 max-w-2xl mx-auto lg:ml-32">
-    <h2 class="text-2xl font-semibold mb-6">You’re almost there</h2>
+    <h2 class="text-2xl font-semibold mb-6">You're almost there</h2>
 
     <div class="bg-white p-6 rounded-lg shadow-md space-y-6">
         <div>
@@ -2367,7 +2367,7 @@ function calendarComponent() {
                 </div>
 
                  <p class="text-lg font-semibold text-gray-700 mb-2 mt-6">
-                    Legal representative’s personal information
+                    Legal representative's personal information
                 </p>
      <hr class="mt-2 border-t border-gray-300 mb-4">
                 <div class="space-y-4">
@@ -2510,7 +2510,7 @@ function calendarComponent() {
       </div>
       <div>
         <p class="font-semibold text-sm">Are bookings confirmed straight away?</p>
-        <p class="text-sm">Yes. They’re confirmed as soon as a guest makes a booking.</p>
+        <p class="text-sm">Yes. They're confirmed as soon as a guest makes a booking.</p>
       </div>
     </div>
   </li>
@@ -2535,7 +2535,7 @@ function calendarComponent() {
       <div>
         <p class="font-semibold text-sm">Can I decide when I get bookings?</p>
         <p class="text-sm">
-          Yes. The best way to do this is to keep your calendar up-to-date. Close any dates you don’t want a booking on. If you have bookings on other sites, close those dates as well.
+          Yes. The best way to do this is to keep your calendar up-to-date. Close any dates you don't want a booking on. If you have bookings on other sites, close those dates as well.
         </p>
       </div>
     </div>
