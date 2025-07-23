@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,6 +17,7 @@
       font-family: 'Noto Sans', sans-serif;
     }
   </style>
+  <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body class="bg-gray-50 text-gray-800">
 <!-- Header -->
@@ -93,10 +93,53 @@
     </section>
   </header>
  <!-- Horizontal Layout Container -->
-<div class="max-w-3xl mx-auto space-y-8 lg:ml-32 px-4 py-6">
+<div x-data="{
+    beds: {{ json_encode($bedTypes->map(fn($bed) => ['id' => $bed->id, 'name' => $bed->name, 'count' => 0])) }},
+    showMoreBeds: false,
+    isLoading: false,
+    increment(bedId) {
+        const bed = this.beds.find(b => b.id === bedId);
+        if (bed) {
+            bed.count++;
+        }
+    },
+    decrement(bedId) {
+        const bed = this.beds.find(b => b.id === bedId);
+        if (bed && bed.count > 0) {
+            bed.count--;
+        }
+    },
+    async save() {
+        this.isLoading = true;
+        const payload = {
+            room_name: 'Bedroom 1', // Or make this dynamic if needed
+            beds: this.beds.filter(b => b.count > 0)
+        };
+        try {
+            let res = await fetch('{{ route('partner.property.bedroom.store', $property) }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                },
+                body: JSON.stringify(payload)
+            });
+            let data = await res.json();
+            if (res.ok && data.success) {
+                window.location.href = '{{ route('partner.property.step2', ['category' => 'apartment', 'property' => $property->id]) }}';
+            } else {
+                alert('Error: ' + (data.message || 'Could not save bedroom.'));
+            }
+        } catch (err) {
+            alert('AJAX error: ' + err.message);
+        } finally {
+            this.isLoading = false;
+        }
+    }
+}" class="max-w-3xl mx-auto space-y-8 lg:ml-32 px-4 py-6">
 <h2 class="text-3xl font-bold text-gray-900 mt-8">Bedroom 1</h2>
   <!-- Bed Types Container (2/3 width) -->
-<div x-data="{ showMoreBeds: false }" class="lg:col-span-2 bg-white rounded-lg border border-gray-300 p-4 space-y-4 max-w-xl ">
+<div class="lg:col-span-2 bg-white rounded-lg border border-gray-300 p-4 space-y-4 max-w-xl ">
   <label class="block font-medium text-gray-700 mb-2">Which beds are available in this room?</label>
 
  @php
@@ -106,7 +149,7 @@
 
 
 @foreach ($mainBeds as $bed)
-  <div x-data="{ guests: 0 }" class="flex items-center justify-between border rounded-md px-3 py-2 mb-2">
+  <div class="flex items-center justify-between border rounded-md px-3 py-2 mb-2">
     <div class="flex items-start gap-2">
       <img src="{{ asset('assets/famicons_bed.svg') }}" alt="Icon" class="w-5 h-5" />
       <div>
@@ -114,10 +157,10 @@
       </div>
     </div>
     <div class="flex items-center gap-2">
-      <button type="button" @click="if (guests > 0) guests--"
+      <button type="button" @click="decrement({{ $bed->id }})"
               class="text-xl text-gray-600 hover:text-gray-800 focus:outline-none">−</button>
-      <span class="mx-4 text-sm font-semibold" x-text="guests"></span>
-      <button type="button" @click="guests++"
+      <span class="mx-4 text-sm font-semibold" x-text="beds.find(b => b.id === {{ $bed->id }}).count"></span>
+      <button type="button" @click="increment({{ $bed->id }})"
               class="text-xl text-gray-600 hover:text-gray-800 focus:outline-none">+</button>
     </div>
   </div>
@@ -141,7 +184,7 @@
      x-transition:leave-end="opacity-0 max-h-0 overflow-hidden"
      class="space-y-4 pt-2">
   @foreach ($extraBeds as $bed)
-    <div x-data="{ guests: 0 }" class="flex items-center justify-between border rounded-md px-3 py-2 mb-2">
+    <div class="flex items-center justify-between border rounded-md px-3 py-2 mb-2">
       <div class="flex items-start gap-2">
         <img src="{{ asset('assets/famicons_bed.svg') }}" alt="Icon" class="w-5 h-5" />
         <div>
@@ -149,10 +192,10 @@
         </div>
       </div>
       <div class="flex items-center gap-2">
-        <button type="button" @click="if (guests > 0) guests--"
+        <button type="button" @click="decrement({{ $bed->id }})"
                 class="text-xl text-gray-600 hover:text-gray-800 focus:outline-none">−</button>
-        <span class="mx-4 text-sm font-semibold" x-text="guests"></span>
-        <button type="button" @click="guests++"
+        <span class="mx-4 text-sm font-semibold" x-text="beds.find(b => b.id === {{ $bed->id }}).count"></span>
+        <button type="button" @click="increment({{ $bed->id }})"
                 class="text-xl text-gray-600 hover:text-gray-800 focus:outline-none">+</button>
       </div>
     </div>
@@ -164,33 +207,27 @@
   
 </div>
 <div class="mt-8 flex justify-between items-center">
-     <a href="{{ route('partner.apartment.create.2') }}">
-  <!-- Back Button on the left -->
-  <button
-    type="button"
-  
-    :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-    class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded"
-  >
-    ←
-  </button></a>
+  <a href="{{ url('/partner/property/apartment/step2/' . $property->id) }}">
+    <!-- Back Button -->
+    <button type="button" class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+      ←
+    </button>
+  </a>
 
   <!-- Continue Button slightly aligned to the left -->
   <div class="pr-40"> <!-- This padding pulls it slightly to the left -->
     
-   <a href="{{ route('partner.apartment.create.2') }}">
+   
     <button
       type="button"
-     
+      @click="save"
       class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300"
     >
-      Continue
+      Save and Continue
     </button>
-    </a>
+    
   </div>
 </div>
-
-
 
 
 

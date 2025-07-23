@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
             AmenitiesTableSeeder::class,
             SeedersBedTypeSeeder::class,
             SeedersRoomTypeSeeder::class,
+            LanguageSeeder::class,
         ]);
 
         // Create a test user

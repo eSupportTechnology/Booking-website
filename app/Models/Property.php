@@ -55,4 +55,14 @@ class Property extends Model
     {
         return $this->hasOne(PartnerVerification::class);
     }
+
+    public function services()
+    {
+        return $this->hasOne(PropertyService::class);
+    }
+
+    public function languages()
+    {
+        return $this->belongsToMany(Language::class, 'property_language');
+    }
 }

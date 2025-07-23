@@ -8,13 +8,13 @@ use App\Http\Controllers\TravelerDetailsController;
 use App\Models\Traveler;
 use App\Http\Controllers\Partner\PartnerRegistrationController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Mail\PartnerVerificationMail;
 use App\Http\Controllers\Partner\LoginController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Customer\CustomerPersonalDetailsController;
 use App\Http\Controllers\Customer\EmailVerifyController;
 use App\Http\Controllers\PropertyController;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\App;
@@ -195,8 +195,8 @@ Route::get('/customer-profile-create', function () {
 Route::get('/partner-apartment-create-2', function () {
     // Example: fetch the latest property for the current user (customize as needed)
     $property = null;
-    if (auth()->check()) {
-        $property = \App\Models\Property::where('user_id', auth()->id())->latest()->first();
+    if (Auth::check()) {
+        $property = \App\Models\Property::where('user_id', Auth::id())->latest()->first();
     }
     // Fallback: if no property found, create a dummy object to avoid errors
     if (!$property) {
@@ -371,6 +371,11 @@ Route::prefix('partner')->group(function () {
 
     // Partial update for AJAX step-by-step wizard
     Route::patch('/property/{property}', [PropertyController::class, 'updatePartial'])->name('partner.property.update.partial');
+    Route::post('/property/{property}/amenities', [PropertyController::class, 'saveAmenities'])->name('partner.property.amenities.store');
+    Route::post('/property/{property}/services', [\App\Http\Controllers\PropertyServiceController::class, 'store'])->name('partner.property.services.store');
+    Route::post('/property/{property}/languages', [\App\Http\Controllers\PropertyController::class, 'saveLanguages'])->name('partner.property.languages.store');
+    Route::get('/languages', [\App\Http\Controllers\PropertyController::class, 'getLanguages'])->name('partner.languages.get');
+    Route::post('/property/save-additional-details', [\App\Http\Controllers\PropertyController::class, 'saveAdditionalDetails'])->name('partner.property.save-additional-details');
 });
 
 Route::get('/partner/login', [LoginController::class, 'show'])->name('partner.login');
@@ -416,3 +421,5 @@ Route::get('/partner/property/{category}/step3/{property}', function ($category,
     $bedTypes = \App\Models\BedType::all();
     return view('partner.partner-apartments-bedrooms', compact('property', 'bedTypes', 'category'));
 })->name('partner.property.step3');
+
+Route::post('/partner/property/bedroom/{property}', [PropertyController::class, 'saveBedroom'])->name('partner.property.bedroom.store');
