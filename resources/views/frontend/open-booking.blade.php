@@ -9,8 +9,18 @@
 </head>
 <body class="bg-[#1595b2] flex items-center justify-center min-h-screen">
 
+     @php
+                            $host = config('domains.app_name');
+
+                        @endphp
+
+                       
+
     <div class="text-center px-4 sm:px-6 lg:px-8">
-        <h1 class="text-white text-2xl sm:text-3xl font-semibold mb-6">Bookintour.com</h1>
+        @if ($host == 'BookinTour')  <h1 class="text-white text-2xl sm:text-3xl font-semibold mb-6">Bookintour.com</h1>@elseif ($host == 'Inselor')
+                                <img src="{{ asset('images/inselor-logo.png') }}" alt="Inselor"
+                                    class="h-12 w-auto align-middle" />
+                            @endif
         
         <!-- Bed icon -->
         <div class="flex justify-center mb-6">
