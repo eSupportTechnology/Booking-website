@@ -1745,7 +1745,46 @@
                                         </template>
 
                                         <!-- Steps for 'multiple' -->
-                                        <template x-if="selected === 'multiple'" x-data="{ currentUnit: 1, unitFacilities: Array.from({ length: propertyCount }, () => []),unitServices: Array.from({ length: 3 }, () => ({ breakfast: '', parking: '' ,languages: []})),}">
+                                        <template x-if="selected === 'multiple'" 
+                                                x-data="{ 
+                                                        currentUnit: 1, unitFacilities: Array.from({ length: propertyCount }, () => []),unitServices: Array.from({ length: 3 }, () => ({ breakfast: '', parking: '',hostprofile: '' ,languages: [], houseRules: {
+                                                        smokingAllowed: false,
+                                                        childrenAllowed: true,
+                                                        partiesAllowed: false,
+                                                        petsPolicy: 'no',
+                                                        checkInFrom: '15:00',
+                                                        checkInUntil: '18:00',
+                                                        checkOutFrom: '08:00',
+                                                        checkOutUntil: '11:00'
+                                                        }})),
+                                                        toggleLanguage(lang) {
+                                                            const index = this.unitServices[this.currentUnit - 1].languages.indexOf(lang);
+                                                            if (index === -1) {
+                                                                this.unitServices[this.currentUnit - 1].languages.push(lang);
+                                                            } else {
+                                                                this.unitServices[this.currentUnit - 1].languages.splice(index, 1);
+                                                            }
+                                                            console.log(this.unitServices); // Log updated structure
+                                                        },
+                                                        handleUnitPhotoUpload(unitId, event) {
+                                                            const files = Array.from(event.target.files);
+                                                            if (!this.unitPhotos[unitId]) this.unitPhotos[unitId] = [];
+                                                            if (!this.previewUnitPhotos[unitId]) this.previewUnitPhotos[unitId] = [];
+
+                                                            files.forEach(file => {
+                                                                // Save actual file
+                                                                this.unitPhotos[unitId].push(file);
+
+                                                                // Preview
+                                                                const reader = new FileReader();
+                                                                reader.onload = () => {
+                                                                    this.previewUnitPhotos[unitId].push(reader.result);
+                                                                };
+                                                                reader.readAsDataURL(file);
+                                                            });
+                                                        },
+
+                                                    }">
                                             <div>
 
 
@@ -2325,7 +2364,7 @@
                                                                     ←
                                                                 </button>
 
-                                                                <!-- Continue Button on the right -->
+                                                                <!-- Continue Button n tohe right -->
                                                                 <button type="button" @click="nextStep"
                                                                     class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
                                                                     Continue
@@ -2346,16 +2385,7 @@
                                                                 }
                                                             }
 
-                                                            function toggleLanguage(language) {
-                                                            const currentLanguages = this.unitServices[this.currentUnit - 1]?.languages || [];
-                                                            const index = currentLanguages.indexOf(language);
-                                                            if (index === -1) {
-                                                                currentLanguages.push(language);
-                                                            } else {
-                                                                currentLanguages.splice(index, 1);
-                                                            }
-                                                            this.unitServices[this.currentUnit - 1].languages = currentLanguages;
-                                                            }
+                                                            
 
                                                             function selectLanguage(element) {
                                                                 const selected = element.textContent.trim();
@@ -2365,10 +2395,13 @@
                                                                 if (!langArray.includes(selected)) {
                                                                     langArray.push(selected);
                                                                 }
+                                                                console.log(`Selected language: ${selected}`);
 
+                                                                // clear input and hide dropdown
                                                                 document.getElementById("languageInput").value = "";
                                                                 hideDropdown();
-                                                            }
+                                                                }
+
 
                                                             function toggleDropdown() {
                                                                 const dropdown = document.getElementById("languageDropdown");
@@ -2430,7 +2463,7 @@
                                                     <div>
                                                         <div class="container mx-auto px-4 py-8 max-w-6xl">
                                                             <!-- Header -->
-                                                            <h2 class="text-2xl font-bold mb-8 text-left">House rules
+                                                            <h2 class="text-2xl font-bold mb-8 text-left">House rules of property <span x-text="currentUnit"></span>
                                                             </h2>
 
                                                             <div class="flex flex-col md:flex-row gap-6">
@@ -2443,8 +2476,10 @@
                                                                             class="flex items-center justify-between cursor-pointer">
                                                                             <span>Smoking allowed</span>
                                                                             <div class="relative">
-                                                                                <input type="checkbox"
-                                                                                    class="sr-only peer" />
+                                                                              <input type="checkbox"
+                                                                                class="sr-only peer"
+                                                                                x-model="unitServices[currentUnit - 1].houseRules.smokingAllowed" />
+
                                                                                 <div
                                                                                     class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition">
                                                                                 </div>
@@ -2459,7 +2494,9 @@
                                                                             <span>Children allowed</span>
                                                                             <div class="relative">
                                                                                 <input type="checkbox"
-                                                                                    class="sr-only peer" checked />
+                                                                                    class="sr-only peer"
+                                                                                    x-model="unitServices[currentUnit - 1].houseRules.childrenAllowed" />
+
                                                                                 <div
                                                                                     class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition">
                                                                                 </div>
@@ -2474,7 +2511,9 @@
                                                                             <span>Parties/events allowed</span>
                                                                             <div class="relative">
                                                                                 <input type="checkbox"
-                                                                                    class="sr-only peer" />
+                                                                                    class="sr-only peer"
+                                                                                    x-model="unitServices[currentUnit - 1].houseRules.partiesAllowed" />
+
                                                                                 <div
                                                                                     class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition">
                                                                                 </div>
@@ -2493,22 +2532,20 @@
                                                                         <div class="space-y-2">
                                                                             <label
                                                                                 class="flex items-center cursor-pointer">
-                                                                                <input type="radio" name="pets"
-                                                                                    value="yes" class="mr-2">
+                                                                               <input type="radio" name="pets" value="yes"
+                                                                                    x-model="unitServices[currentUnit - 1].houseRules.petsPolicy" />
                                                                                 <span>Yes</span>
                                                                             </label>
                                                                             <label
                                                                                 class="flex items-center cursor-pointer">
-                                                                                <input type="radio" name="pets"
-                                                                                    value="upon_request"
-                                                                                    class="mr-2">
+                                                                                <input type="radio" name="pets" value="upon_request"
+                                                                                    x-model="unitServices[currentUnit - 1].houseRules.petsPolicy" />
                                                                                 <span>Upon request</span>
                                                                             </label>
                                                                             <label
                                                                                 class="flex items-center cursor-pointer">
-                                                                                <input type="radio" name="pets"
-                                                                                    value="no" class="mr-2"
-                                                                                    checked>
+                                                                               <input type="radio" name="pets" value="no"
+                                                                                    x-model="unitServices[currentUnit - 1].houseRules.petsPolicy" />
                                                                                 <span>No</span>
                                                                             </label>
                                                                         </div>
@@ -2524,13 +2561,15 @@
                                                                             <div class="w-full">
                                                                                 <label
                                                                                     class="block text-sm font-medium mb-1">From</label>
-                                                                                <input type="time" value="15:00"
+                                                                                <input type="time"
+                                                                                    x-model="unitServices[currentUnit - 1].houseRules.checkInFrom"
                                                                                     class="w-full border rounded p-2" />
                                                                             </div>
                                                                             <div class="w-full">
                                                                                 <label
                                                                                     class="block text-sm font-medium mb-1">Until</label>
-                                                                                <input type="time" value="18:00"
+                                                                                <input type="time"
+                                                                                    x-model="unitServices[currentUnit - 1].houseRules.checkInUntil"
                                                                                     class="w-full border rounded p-2" />
                                                                             </div>
                                                                         </div>
@@ -2544,13 +2583,15 @@
                                                                             <div class="w-full">
                                                                                 <label
                                                                                     class="block text-sm font-medium mb-1">From</label>
-                                                                                <input type="time" value="08:00"
+                                                                                <input type="time"
+                                                                                    x-model="unitServices[currentUnit - 1].houseRules.checkOutFrom"
                                                                                     class="w-full border rounded p-2" />
                                                                             </div>
                                                                             <div class="w-full">
                                                                                 <label
                                                                                     class="block text-sm font-medium mb-1">Until</label>
-                                                                                <input type="time" value="11:00"
+                                                                                <input type="time"
+                                                                                    x-model="unitServices[currentUnit - 1].houseRules.checkOutUntil"
                                                                                     class="w-full border rounded p-2" />
                                                                             </div>
                                                                         </div>
@@ -2609,80 +2650,66 @@
                                                     <div>
                                                         <!-- Main Content -->
                                                         <main class="container mx-auto px-4 py-8 max-w-4xl">
-                                                            <h2 class="text-2xl md:text-3xl font-bold mb-6 text-left">
-                                                                Host profile
-                                                            </h2>
+                                                            <h2 class="text-2xl md:text-3xl font-bold mb-6 text-left">Host profile of property <span x-text="currentUnit"></span> </h2>
 
                                                             <div class="bg-white shadow-md rounded-lg p-6 md:p-8">
                                                                 <p class="text-gray-700 mb-4 text-sm md:text-base">
-                                                                    Help your listing stand out by telling potential
-                                                                    guests a bit more about yourself, your property and
-                                                                    your neighbourhood. This information will be shown
-                                                                    on your property page.
+                                                                    Help your listing stand out by telling potential guests a bit more about yourself, your property and your neighbourhood. This information will be shown on your property page.
                                                                 </p>
 
                                                                 <div class="space-y-3">
-                                                                    <label
-                                                                        class="flex items-start sm:items-center cursor-pointer">
-                                                                        <input type="radio" name="profile-info"
-                                                                            value="property"
-                                                                            class="mr-3 mt-1 sm:mt-0">
-                                                                        <span class="text-sm sm:text-base">The
-                                                                            property</span>
+                                                                    <label class="flex items-start sm:items-center cursor-pointer">
+                                                                        <input type="radio" name="profile-info" value="property"
+                                                                            class="mr-3 mt-1 sm:mt-0"
+                                                                            x-model="unitServices[currentUnit - 1].hostProfile">
+                                                                        <span class="text-sm sm:text-base">The property</span>
                                                                     </label>
 
-                                                                    <label
-                                                                        class="flex items-start sm:items-center cursor-pointer">
-                                                                        <input type="radio" name="profile-info"
-                                                                            value="host" class="mr-3 mt-1 sm:mt-0">
-                                                                        <span class="text-sm sm:text-base">The
-                                                                            host</span>
+                                                                    <label class="flex items-start sm:items-center cursor-pointer">
+                                                                        <input type="radio" name="profile-info" value="host"
+                                                                            class="mr-3 mt-1 sm:mt-0"
+                                                                            x-model="unitServices[currentUnit - 1].hostProfile">
+                                                                        <span class="text-sm sm:text-base">The host</span>
                                                                     </label>
 
-                                                                    <label
-                                                                        class="flex items-start sm:items-center cursor-pointer">
-                                                                        <input type="radio" name="profile-info"
-                                                                            value="neighbourhood"
-                                                                            class="mr-3 mt-1 sm:mt-0">
-                                                                        <span class="text-sm sm:text-base">The
-                                                                            neighbourhood</span>
+                                                                    <label class="flex items-start sm:items-center cursor-pointer">
+                                                                        <input type="radio" name="profile-info" value="neighbourhood"
+                                                                            class="mr-3 mt-1 sm:mt-0"
+                                                                            x-model="unitServices[currentUnit - 1].hostProfile">
+                                                                        <span class="text-sm sm:text-base">The neighbourhood</span>
                                                                     </label>
 
-                                                                    <label
-                                                                        class="flex items-start sm:items-center cursor-pointer">
-                                                                        <input type="radio" name="profile-info"
-                                                                            value="later" class="mr-3 mt-1 sm:mt-0"
-                                                                            checked>
-                                                                        <span class="text-sm sm:text-base">None of the
-                                                                            above/I'll add these later</span>
+                                                                    <label class="flex items-start sm:items-center cursor-pointer">
+                                                                        <input type="radio" name="profile-info" value="later"
+                                                                            class="mr-3 mt-1 sm:mt-0"
+                                                                            x-model="unitServices[currentUnit - 1].hostProfile">
+                                                                        <span class="text-sm sm:text-base">None of the above/I'll add these later</span>
                                                                     </label>
                                                                 </div>
                                                             </div>
 
                                                             <!-- Navigation Buttons -->
                                                             <div class="mt-8 flex justify-between">
-                                                                <!-- Back Button on the left -->
                                                                 <button type="button" @click="prevStep"
-                                                                    class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                                                                        class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
                                                                     ←
                                                                 </button>
 
-                                                                <!-- Continue Button on the right -->
                                                                 <button type="button" @click="nextStep"
-                                                                    class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
+                                                                        class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
                                                                     Continue
                                                                 </button>
                                                             </div>
-
                                                         </main>
                                                     </div>
                                                 </template>
+
                                                 <template x-if="step === 11">
                                                     <div>
                                                         <div class="max-w-5xl mx-auto px-4 py-10 space-y-32">
                                                             <section class="mb-8">
                                                                 <h1 class="text-2xl text-gray-700 font-bold mb-4">
-                                                                    What's the name of your place?</h1>
+                                                                    What's the name of your place <span x-text="currentUnit"></span>?</h1>
 
                                                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
@@ -2694,7 +2721,8 @@
                                                                                 class="block text-gray-700">Property
                                                                                 name</label>
                                                                             <input type="text" id="property_name"
-                                                                                name="property_name" value="ccc"
+                                                                                name="property_name"
+                                                                                x-model="formData.propertyName"
                                                                                 class="w-full h-16 border border-gray-300 rounded p-4 mt-3 text-lg focus:outline-none focus:border-blue-500"
                                                                                 placeholder="e.g., Sunset Villa"
                                                                                 required>
@@ -2787,7 +2815,7 @@
                                                                     <!-- Continue Button -->
                                                                     <!-- Continue Button (inside input field container, aligned right) -->
                                                                     <div class="flex justify-end mt-4">
-                                                                        <button type="button" @click="nextStep"
+                                                                        <button type="button" @click="console.log('Saved data:', formData); nextStep()" 
                                                                             class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
                                                                             Continue
                                                                         </button>
@@ -2800,7 +2828,63 @@
                                                     </div>
 
                                                 </template>
-                                                <template x-if="step === 12">
+                                                <template x-if="step === 12 ">
+                                                    <div class="space-y-6">
+                                                        <h3 class="text-lg font-bold">Upload Photos for Unit #<span x-text="currentUnit"></span></h3>
+
+                                                        <!-- Upload Box -->
+                                                        <div
+                                                            class="relative border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center text-center hover:border-blue-400 transition"
+                                                            @dragover.prevent
+                                                            @drop.prevent>
+                                                            <svg class="w-12 h-12 text-blue-400 mb-2" fill="none" stroke="currentColor" stroke-width="1.5"
+                                                                viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                                    d="M3 16.5V18a2.5 2.5 0 002.5 2.5h13a2.5 2.5 0 002.5-2.5v-1.5M16.5 12L12 7.5 7.5 12M12 7.5V18" />
+                                                            </svg>
+
+                                                            <p class="text-gray-600 text-sm">Drag and drop your images here, or</p>
+
+                                                            <label class="mt-2 cursor-pointer inline-block bg-blue-100 hover:bg-blue-200 text-blue-700 px-4 py-2 rounded font-medium">
+                                                                Browse files
+                                                                <input
+                                                                    type="file"
+                                                                    multiple
+                                                                    x-ref="unitPhotoInput"
+                                                                    @change="handleUnitPhotoUpload(currentUnit, $event)"
+                                                                    accept="image/*"
+                                                                    class="hidden" />
+                                                            </label>
+
+                                                            <p class="text-xs text-gray-500 mt-2">Accepted formats: JPG, PNG, WebP. Max size: 5MB each</p>
+                                                        </div>
+
+                                                        <!-- Photo Previews -->
+                                                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-4" x-show="previewUnitPhotos[currentUnit]?.length">
+                                                            <template x-for="(file, index) in previewUnitPhotos[currentUnit]" :key="index">
+                                                                <img :src="file" class="rounded shadow object-cover w-full h-32 border border-gray-300" />
+                                                            </template>
+                                                        </div>
+
+                                                        <!-- Navigation Buttons -->
+                                                        <div class="flex justify-between pt-4">
+                                                            <button type="button"
+                                                                @click="prevStep"
+                                                                class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium px-5 py-2 rounded">
+                                                                ←
+                                                            </button>
+
+                                                            <button
+                                                                type="button"
+                                                                @click="nextStep"
+                                                                class="bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold px-6 py-2 rounded shadow">
+                                                                Continue →
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </template>
+
+                                                <template x-if="step === 13">
                                                     <div>
                                                         <!-- AlpineJS is required -->
                                                         <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
@@ -2928,7 +3012,7 @@
 
                                                     </div>
                                                 </template>
-                                                <template x-if="step === 13">
+                                                <template x-if="step === 14">
                                                     <div>
                                                         <!-- Include Alpine.js -->
                                                         <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
@@ -3030,12 +3114,22 @@
 
                                                     </div>
                                                 </template>
-                                                <template x-if="step === 14">
+                                                <template x-if="step === 15">
                                                     <div>
                                                         <h3 class="text-lg font-bold mb-2">Upload Additional Documents
                                                         </h3>
                                                         <input type="file" multiple
                                                             class="border p-2 rounded w-full" />
+                                                    </div>
+                                                    <div class="flex justify-between mt-8">
+                                                        <button type="button" @click="prevStep"
+                                                            class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                                                            ←
+                                                        </button>
+                                                        <button type="button" @click="nextStep"
+                                                            class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
+                                                            Continue
+                                                        </button>
                                                     </div>
                                                 </template>
                                             </div>
@@ -3060,12 +3154,25 @@
                                     selected: '',
                                     sameAddress: '',
                                     propertyCount: 2,
-                                    totalSteps: 14,
+                                    totalSteps: 15,
                                     currentUnit: 1,
+                                    unitPhotos: {},             // Holds all photo arrays per unit
+                                    previewUnitPhotos: {},      // Holds base64 previews per unit
                                     unitFacilities: [],
                                     unitServices: [],
                                     previewFiles: [],
-
+                                    formData: {
+                                        propertyName: '',
+                                        description: '',
+                                        addressForm: {
+                                            address_line_1: '',
+                                            address_line_2: '',
+                                            city: '',
+                                            state: '',
+                                            country: '',
+                                            postal_code: ''
+                                        }
+                                    },
                                     addRoom() {
 
 
@@ -3399,8 +3506,11 @@
                                                 .catch(error => {
                                                     console.error('Error:', error);
                                                 });
-                                        } else if (this.step === 8 && this.selected === 'multiple') {
+                                        } else if (this.step === 12 && this.selected === 'multiple') {
                                             if (this.currentUnit < this.propertyCount) {
+                                                console.log('Saving unit services for property ID:', this.propertyId);
+                                                console.log('Property Count:', this.propertyCount);
+                                                console.log(JSON.stringify(this.unitServices, null, 2));
                                                 this.currentUnit++;
                                                 this.step = 6; // Repeat for next unit
                                             } else {
