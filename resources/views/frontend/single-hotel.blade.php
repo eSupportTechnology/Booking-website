@@ -153,14 +153,16 @@
                     <label class="inline-flex items-center cursor-pointer">
                         <input type="checkbox" x-model="pets" class="sr-only peer">
                         <div class="w-10 h-6 bg-gray-300 rounded-full peer peer-checked:bg-blue-600 relative transition-all">
-                            <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-all peer-checked:translate-x-4"></div>
+                            <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-all peer-checked:translate-x-4">
+                            </div>
                         </div>
                     </label>
                 </div>
 
                 <p class="text-xs text-gray-500">
                     Assistance animals aren’t considered pets.<br>
-                    <a href="#" class="text-blue-600 underline">Read more about travelling with assistance animals</a>
+                    <a href="#" class="text-blue-600 underline">Read more about travelling with assistance
+                        animals</a>
                 </p>
 
                 <!-- Done Button -->
@@ -203,276 +205,378 @@
     </div>
 </section>
 
+
 <section class="min-h-screen p-4 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex flex-col lg:flex-row gap-6">
-            <!-- Left Side: Image & Info -->
-            <div class="lg:w-3/4 w-full space-y-4">
-                <h2 class="text-xl md:text-2xl font-bold">La Grande Villa</h2>
 
-                <div class="flex items-center gap-2 text-yellow-400">
-                    <div class="flex">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star-half-alt"></i>
-                    </div>
-                    <span class="text-sm text-gray-600">3.5</span>
-                    <i class="fas fa-lock text-gray-600"></i>
+        <!-- Header Section -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 p-4 bg-white rounded-lg shadow-sm">
+            <!-- Left: Title and Info -->
+            <div>
+                <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">La Grande Villa</h1>
+                <div class="flex items-center mb-2">
+                    @for ($i = 0; $i < 4; $i++) <svg class="w-5 h-5 text-yellow-500" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                        </svg>
+                        @endfor
                 </div>
-
                 <div class="flex items-center text-gray-600 text-sm">
-                    <i class="fas fa-map-marker-alt mr-2 text-sky-500"></i>
+                    <svg class="w-5 h-5 mr-1 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z" />
+                    </svg>
                     No.24, 22000 Nuwara Eliya, Sri Lanka
                 </div>
+            </div>
 
-                <!-- Gallery Layout -->
+            <!-- Right: Actions -->
+            <div class="flex flex-col items-start sm:items-end space-y-2">
+                <div class="flex items-center gap-4">
+                    <svg class="w-6 h-6 text-blue-400 hover:text-blue-600 cursor-pointer" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    </svg>
+                    <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md shadow">
+                        Reserve
+                    </button>
+                </div>
+                <div class="flex items-center text-blue-400 text-sm">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.007 12.007 0 002.944 12c0 2.873.996 5.474 2.618 7.594L12 22.944l6.438-3.35C20.004 17.474 21 14.873 21 12a12.007 12.007 0 00-2.382-7.016z" />
+                    </svg>
+                    We Price Match
+                </div>
+            </div>
+        </div>
 
+        <div class="flex flex-col lg:grid lg:grid-cols-7 lg:grid-rows-5 gap-4 mt-6 h-auto lg:h-[600px]">
+
+            <div class="w-full lg:col-span-5 lg:row-span-5 space-y-4">
                 @php
                 $images = [
-                'h4.jpg', 'h2.jpg', 'h1.jpg', 'h5.jpg', 'h6.jpg', 'h7.jpg', 'h8.jpg', 'h9.jpg',
-                'h10.jpg', 'h11.jpg', 'h12.jpg'
+                'h1.jpg',
+                'h2.jpg',
+                'h3.jpg',
+                'h4.jpg',
+                'h5.jpg',
+                'h6.jpg',
+                'h7.jpg',
+                'h8.jpg',
+                'h9.jpg',
+                'h10.jpg',
                 ];
 
-                $visibleImages = array_slice($images, 0, 8);
-                $remainingCount = count($images) - count($visibleImages);
+                $desktopVisibleImageCount = 8;
+                $mobileVisibleImageCount = 3;
+
+                $desktopImages = array_slice($images, 0, $desktopVisibleImageCount);
+                $mobileImages = array_slice($images, 0, $mobileVisibleImageCount);
+
+                $remainingCount = count($images) - $desktopVisibleImageCount;
                 @endphp
 
-                <div class="grid grid-cols-10 grid-rows-8 gap-4">
-                    @foreach($visibleImages as $index => $img)
+
+                <div class="hidden lg:grid grid-cols-10 grid-rows-8 gap-2 h-full">
                     @php
                     $positions = [
-                    ['col-span-7 row-span-6'],
-                    ['col-span-3 row-span-3 col-start-8'],
-                    ['col-span-3 row-span-3 col-start-8 row-start-4'],
-                    ['col-span-2 row-span-2 row-start-7'],
-                    ['col-span-2 row-span-2 col-start-3 row-start-7'],
-                    ['col-span-2 row-span-2 col-start-5 row-start-7'],
-                    ['col-span-2 row-span-2 col-start-7 row-start-7'],
-                    ['col-span-2 row-span-2 col-start-9 row-start-7'],
+                    'col-span-7 row-span-6',
+                    'col-span-3 row-span-3 col-start-8',
+                    'col-span-3 row-span-3 col-start-8 row-start-4',
+                    'col-span-2 row-span-2 row-start-7',
+                    'col-span-2 row-span-2 col-start-3 row-start-7',
+                    'col-span-2 row-span-2 col-start-5 row-start-7',
+                    'col-span-2 row-span-2 col-start-7 row-start-7',
+                    'col-span-2 row-span-2 col-start-9 row-start-7',
                     ];
-                    $position = $positions[$index];
                     @endphp
-
-                    <div class="{{ $position[0] }} relative">
-                        <img src="{{ asset('images/' . $img) }}" alt="Gallery Image" class="w-full h-full object-cover rounded-lg">
-
-                        @if($index === 7 && $remainingCount > 0)
-                        <div onclick="openGalleryModal({{ 8 }})" class="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center text-white text-xl font-bold rounded-lg cursor-pointer">
+                    @foreach ($desktopImages as $index => $img)
+                    <div class="{{ $positions[$index] }} relative overflow-hidden"> {{-- Added overflow-hidden for rounded corners --}}
+                        <img src="{{ asset('images/' . $img) }}" class="w-full h-full object-cover rounded-lg" alt="Gallery Image {{ $index + 1 }}">
+                        @if ($index === $desktopVisibleImageCount - 1 && $remainingCount > 0)
+                        <div onclick="openGalleryModal({{ $desktopVisibleImageCount }})" class="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center text-white text-lg font-bold cursor-pointer hover:bg-opacity-70 transition rounded-lg">
                             {{ $remainingCount }}+ more
                         </div>
                         @endif
                     </div>
                     @endforeach
                 </div>
+                
+                <div class="grid grid-cols-4 grid-rows-2 gap-2 lg:hidden h-[300px] sm:h-[400px]">
+                    @php
+                    $mobilePositions = ['col-span-3 row-span-2', 'col-start-4', 'col-start-4 row-start-2'];
+                    @endphp
 
-                <!-- Modal -->
-                <div id="galleryModal" class="fixed inset-0 z-50 bg-black/90 flex items-center justify-center hidden">
-                    <!-- Close Button -->
-                    <button onclick="closeGalleryModal()" class="absolute top-6 right-6 text-white text-3xl hover:scale-110 transition">
-                        &times;
-                    </button>
-
-                    <!-- Prev Button -->
-                    <button onclick="prevImage()" class="absolute left-4 top-1/2 -translate-y-1/2 text-white bg-black/40 hover:bg-black/70 p-3 rounded-full transition">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-                        </svg>
-                    </button>
-
-                    <!-- Image Display -->
-                    <img id="modalImage" src="" alt="Gallery Image" class="max-h-[90vh] max-w-[90vw] rounded-xl shadow-xl border border-white/10 transition duration-300">
-
-                    <!-- Next Button -->
-                    <button onclick="nextImage()" class="absolute right-4 top-1/2 -translate-y-1/2 text-white bg-black/40 hover:bg-black/70 p-3 rounded-full transition">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                        </svg>
-                    </button>
-
-                    <!-- Image Counter -->
-                    <div class="absolute bottom-6 text-white text-sm tracking-wide">
-                        <span id="imageCounter"></span>
+                    @foreach ($mobileImages as $index => $img)
+                    <div class="{{ $mobilePositions[$index] }} relative overflow-hidden"> {{-- Added overflow-hidden for rounded corners --}}
+                        <img src="{{ asset('images/' . $img) }}" class="w-full h-full object-cover rounded-md" alt="Gallery Image {{ $index + 1 }}">
+                        @if ($index === $mobileVisibleImageCount - 1 && $remainingCount > 0)
+                        <div onclick="openGalleryModal({{ $mobileVisibleImageCount }})" class="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center text-white text-base font-semibold rounded-md cursor-pointer">
+                            {{ $remainingCount }}+ more
+                        </div>
+                        @endif
                     </div>
+                    @endforeach
                 </div>
-
-                <script>
-                    const images = @json($images);
-                    let currentIndex = 0;
-
-                    function openGalleryModal(startIndex = 0) {
-                        currentIndex = startIndex;
-                        updateModalImage();
-                        document.getElementById('galleryModal').classList.remove('hidden');
-                    }
-
-                    function closeGalleryModal() {
-                        document.getElementById('galleryModal').classList.add('hidden');
-                    }
-
-                    function updateModalImage() {
-                        const img = document.getElementById('modalImage');
-                        const counter = document.getElementById('imageCounter');
-                        img.src = `/images/${images[currentIndex]}`;
-                        counter.textContent = `Image ${currentIndex + 1} of ${images.length}`;
-                    }
-
-                    function nextImage() {
-                        if (currentIndex < images.length - 1) {
-                            currentIndex++;
-                            updateModalImage();
-                        }
-                    }
-
-                    function prevImage() {
-                        if (currentIndex > 0) {
-                            currentIndex--;
-                            updateModalImage();
-                        }
-                    }
-                </script>
-
             </div>
 
-            <!-- Right Side: Review & Map -->
-            <div class="lg:w-1/4 w-full space-y-6">
-                <div class="flex items-center justify-between gap-2">
-                    <div class="flex items-center gap-4 text-blue-500 text-xl">
-                        <button class="hover:text-blue-600">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 116.364 6.364L12 21.364l-7.682-7.682a4.5 4.5 0 010-6.364z" />
-                            </svg>
-                        </button>
-                        <button class="hover:text-blue-600">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 8a3 3 0 11-6 0 3 3 0 016 0zM4 6v13a2 2 0 002 2h12a2 2 0 002-2V6" />
-                            </svg>
-                        </button>
-                    </div>
-                    <button class="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded text-sm">Reserve</button>
-                </div>
+            <!-- side area -->
+            <div class="w-full lg:col-span-2 lg:row-span-5 p-2">
+                <div class="h-full flex flex-col justify-between gap-4">
 
-                <div class="flex items-center gap-2 text-blue-600 text-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 9V7a4 4 0 00-8 0v2m-2 0h12M5 13h14l-1.5 9h-11L5 13z" />
-                    </svg>
-                    <span>We Price Match</span>
-                </div>
+                    <!-- Review Card -->
+                    <div class="w-full bg-white border rounded-lg p-4 shadow-md flex-grow space-y-4">
+                        <!-- Rating Summary -->
+                        <div class="flex justify-between items-start border-b-2">
+                            <div>
+                                <h2 class="text-lg font-semibold text-gray-800">Superb</h2>
+                                <p class="text-sm text-gray-500">939 reviews</p>
+                            </div>
+                            <div class="bg-blue-500 text-white text-sm font-semibold px-2 py-1 rounded">8.6</div>
+                        </div>
 
-                <div class="bg-gray-100 rounded-lg p-4 shadow">
-                    <div class="flex justify-between items-center">
-                        <h3 class="font-semibold text-lg">Superb</h3>
-                        <span class="bg-blue-500 text-white px-2 py-1 rounded text-sm">8.6</span>
-                    </div>
-                    <p class="text-sm text-gray-700 mt-2 italic">
-                        “Really comfortable bed, and big spa bath. Enjoyed the pool table as was heavy rain outside,
-                        and the Sri Lankan breakfast was delicious!”
-                    </p>
-                    <div class="flex items-center mt-3 gap-2">
-                        <div class="bg-green-500 text-white w-8 h-8 flex items-center justify-center rounded-full font-semibold">L</div>
+                        <!-- Review Text -->
                         <div>
-                            <p class="text-sm font-medium">Linton</p>
-                            <p class="text-xs text-gray-500 flex items-center gap-1">
-                                <img src="https://flagcdn.com/gb.svg" class="w-4 h-3" alt="UK"> United Kingdom
-                            </p>
+                            <h3 class="text-sm font-semibold mb-1 text-gray-700">Guests who stayed here loved</h3>
+                            <p class="text-sm text-gray-700 ml-4 italic">“Really comfortable bed, and big spa bath. Enjoyed the pool table as was heavy rain outside, and the Sri Lankan breakfast was delicious! table as was heavy rain outside, and the Sri Lankan breakfast”</p>
+                        </div>
+
+                        <!-- Reviewer Info -->
+                        <div class="mt-3 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-green-600 text-white flex items-center justify-center rounded-full font-semibold">L</div>
+                            <div class="flex items-center gap-8">
+                                <p class="font-medium text-gray-800 mb-0">Linton</p>
+                                <div class="flex justify-between items-center gap-1">
+                                    <img src="{{ asset('assets/net.svg') }}" class="w-5 h-3 object-cover rounded-sm" alt="UK Flag">
+                                    <span class="text-gray-500 text-xs">United Kingdom</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Staff Rating -->
+                        <div class="flex justify-between items-center pt-2 border-t">
+                            <span class="text-sm font-semibold text-gray-700">Staff</span>
+                            <div class="border border-gray-300 px-2 py-0.5 text-sm rounded-md text-gray-800">8.6</div>
                         </div>
                     </div>
 
-                    <div class="flex items-center justify-between bg-white p-4 shadow rounded-lg mt-4">
-                        <span class="text-gray-800 font-medium">Staff</span>
-                        <span class="bg-gray-200 px-3 py-1 rounded text-sm font-semibold">8.6</span>
+                    <!-- Map Section -->
+                    <div class="w-full rounded-lg overflow-hidden shadow">
+                        <div class="relative">
+                            <iframe class="w-full h-44 sm:h-56" loading="lazy" src="https://www.google.com/maps?q=La+Grande+Villa+Nuwara+Eliya&output=embed" frameborder="0" allowfullscreen aria-hidden="false" tabindex="0"></iframe>
+                            <button class="absolute bottom-2 left-2 bg-blue-500 hover:bg-blue-600 text-white text-sm px-3 py-1 rounded-md shadow">
+                                Show on map
+                            </button>
+                        </div>
                     </div>
                 </div>
-
-                <div class="rounded-lg overflow-hidden shadow">
-                    <iframe class="w-full h-44 md:h-60" loading="lazy" src="https://www.google.com/maps?q=La+Grande+Villa+Nuwara+Eliya&output=embed"></iframe>
-                    <button class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 font-semibold">Show on map</button>
-                </div>
             </div>
+
         </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="galleryModal" class="fixed inset-0 -top-20 z-50 bg-black/90 flex items-center justify-center hidden">
+        <button onclick="closeGalleryModal()" class="absolute top-20 right-20 text-white text-3xl hover:scale-110 transition">&times;</button>
+        <button onclick="prevImage()" class="absolute left-4 top-1/2 -translate-y-1/2 text-white bg-black/40 hover:bg-black/70 p-3 rounded-full transition">
+            <svg class="w-10 h-10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+        </button>
+        <img id="modalImage" src="" alt="Gallery Image" class="max-h-[90vh] max-w-[90vw] rounded-xl shadow-xl border border-white/10 transition duration-300">
+        <button onclick="nextImage()" class="absolute right-4 top-1/2 -translate-y-1/2 text-white bg-black/40 hover:bg-black/70 p-3 rounded-full transition">
+            <svg class="w-10 h-10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+        </button>
+        <div class="absolute bottom-6 text-white text-sm tracking-wide">
+            <span id="imageCounter"></span>
+        </div>
+    </div>
+
+    <script>
+        const images = @json($images);
+        let currentIndex = 0;
+
+        function openGalleryModal(startIndex = 0) {
+            currentIndex = startIndex;
+            updateModalImage();
+            document.getElementById('galleryModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        }
+
+        function closeGalleryModal() {
+            document.getElementById('galleryModal').classList.add('hidden');
+            document.body.style.overflow = ''; // Restore background scrolling
+        }
+
+        function updateModalImage() {
+            const img = document.getElementById('modalImage');
+            const counter = document.getElementById('imageCounter');
+            // Ensure images array is not empty before trying to access elements
+            if (images.length > 0) {
+                img.src = `/images/${images[currentIndex]}`;
+                counter.textContent = `Image ${currentIndex + 1} of ${images.length}`;
+            } else {
+                // Handle case where no images are loaded
+                img.src = ''; // Or a placeholder
+                counter.textContent = 'No images available';
+            }
+        }
+
+        function nextImage() {
+            if (currentIndex < images.length - 1) {
+                currentIndex++;
+                updateModalImage();
+            } else {
+                // Optional: Loop back to the first image
+                currentIndex = 0;
+                updateModalImage();
+            }
+        }
+
+        function prevImage() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateModalImage();
+            } else {
+                // Optional: Loop to the last image
+                currentIndex = images.length - 1;
+                updateModalImage();
+            }
+        }
+
+        // --- New Event Listeners for Closing Modal ---
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const galleryModal = document.getElementById('galleryModal');
+            const modalImage = document.getElementById('modalImage'); // Get reference to the image element
+
+            // 1. Close on Escape Key
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape' && !galleryModal.classList.contains('hidden')) {
+                    closeGalleryModal();
+                }
+            });
+
+            // 2. Close on Background Click
+            galleryModal.addEventListener('click', (event) => {
+                // Check if the click occurred directly on the modal background,
+                // not on the image or navigation buttons.
+                if (event.target === galleryModal) {
+                    closeGalleryModal();
+                }
+            });
+
+            // Prevent clicks on the image itself from closing the modal
+            // This prevents closing if the user clicks the image accidentally
+            modalImage.addEventListener('click', (event) => {
+                event.stopPropagation();
+            });
+        });
+    </script>
+    </div>
+
+
+    </div>
+</section>
+
+<section class="min-h-screen flex items-center justify-center p-4 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         <!-- Second Section Starts Here -->
-        <div class="mt-10">
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 py-2">
-                <div class="bg-white rounded-lg shadow-md p-4 flex items-center space-x-3 border border border-gray-300">
-                    <img src="{{ asset('assets/houses.svg') }}" alt="Houses" class="w-6 h-6" />
-                    <span class="text-gray-800 text-base font-medium" style="font-family: 'Noto Sans', sans-serif;">Houses</span>
-                </div>
+        <div class="mt-10 select-none">
+            <div class="grid grid-cols-6 gap-4 py-2">
+                @php
+                    $featuresTop = [
+                        ['icon' => 'houses.svg', 'label' => 'Houses'],
+                        ['icon' => 'mountain.svg', 'label' => 'Mountain view'],
+                        ['icon' => 'garden.svg', 'label' => 'Garden'],
+                        ['icon' => 'bath.svg', 'label' => 'Bath'],
+                        ['icon' => 'wifi.svg', 'label' => 'Free WiFi'],
+                        ['icon' => 'terrace.svg', 'label' => 'Terrace'],
+                    ];
+                @endphp
 
-                <div class="bg-white rounded-lg shadow-md p-4 flex items-center space-x-3 border border border-gray-300">
-                    <img src="{{ asset('assets/mountain.svg') }}" alt="Mountain" class="w-6 h-6" />
-                    <span class="text-gray-800 text-base font-medium" style="font-family: 'Noto Sans', sans-serif;">Mountain view</span>
-                </div>
+                @foreach($featuresTop as $feature)
+                    <div class="group relative bg-white rounded-lg shadow-sm p-4 flex items-center justify-center lg:justify-start border border-gray-300 hover:shadow-md transition duration-300">
+                        <!-- Icon -->
+                        <img src="{{ asset('assets/' . $feature['icon']) }}" alt="{{ $feature['label'] }}" class="w-6 h-6" />
 
-                <div class="bg-white rounded-lg shadow-md p-4 flex items-center space-x-3 border border border-gray-300">
-                    <img src="{{ asset('assets/garden.svg') }}" alt="Garden" class="w-6 h-6" />
-                    <span class="text-gray-800 text-base font-medium" style="font-family: 'Noto Sans', sans-serif;">Garden</span>
-                </div>
+                        <!-- Label for desktop -->
+                        <span class="hidden lg:inline-block ml-3 text-gray-800 text-sm font-medium" style="font-family: 'Noto Sans', sans-serif;">
+                            {{ $feature['label'] }}
+                        </span>
 
-                <div class="bg-white rounded-lg shadow-md p-4 flex items-center space-x-3 border border border-gray-300">
-                    <img src="{{ asset('assets/bbq.svg') }}" alt="BBQ" class="w-6 h-6" />
-                    <span class="text-gray-800 text-base font-medium" style="font-family: 'Noto Sans', sans-serif;">BBQ facilities</span>
-                </div>
-
-                <div class="bg-white rounded-lg shadow-md p-4 flex items-center space-x-3 border border border-gray-300">
-                    <img src="{{ asset('assets/wifi.svg') }}" alt="WiFi" class="w-6 h-6" />
-                    <span class="text-gray-800 text-base font-medium" style="font-family: 'Noto Sans', sans-serif;">Free WiFi</span>
-                </div>
-
-                <div class="bg-white rounded-lg shadow-md p-4 flex items-center space-x-3 border border border-gray-300">
-                    <img src="{{ asset('assets/terrace.svg') }}" alt="Terrace" class="w-6 h-6" />
-                    <span class="text-gray-800 text-base font-medium" style="font-family: 'Noto Sans', sans-serif;">Terrace</span>
-                </div>
+                        <!-- Tooltip for mobile only -->
+                        <div class="absolute bottom-full mb-2 bg-black text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap lg:hidden">
+                            {{ $feature['label'] }}
+                        </div>
+                    </div>
+                @endforeach
             </div>
 
-            <div class="flex flex-wrap gap-4 py-4">
-                <div class="bg-white rounded-lg shadow-md p-4 flex items-center space-x-2 flex-[0_0_24%] border border border-gray-300">
-                    <img src="{{ asset('assets/balcony.svg') }}" alt="Balcony" class="w-5 h-5" />
-                    <span class="text-gray-800 text-base font-medium" style="font-family: 'Noto Sans', sans-serif;">Balcony</span>
-                </div>
+            <div class="grid grid-cols-4 gap-4 py-2">
+                @php
+                    $featuresBottom = [
+                        ['icon' => 'balcony.svg', 'label' => 'Balcony'],
+                        ['icon' => 'parking.svg', 'label' => 'Free parking'],
+                        ['icon' => 'bbq.svg', 'label' => 'BBQ facilities'],
+                        ['icon' => 'housekeeping.svg', 'label' => 'Daily housekeeping'],
+                    ];
+                @endphp
 
-                <div class="bg-white rounded-lg shadow-md p-4 flex items-center space-x-2 flex-[0_0_24%] border border border-gray-300">
-                    <img src="{{ asset('assets/parking.svg') }}" alt="Free Parking" class="w-5 h-5" />
-                    <span class="text-gray-800 text-base font-medium" style="font-family: 'Noto Sans', sans-serif;">Free parking</span>
-                </div>
+                @foreach($featuresBottom as $feature)
+                    <div class="group relative bg-white rounded-lg shadow-sm p-4 flex items-center justify-center lg:justify-start border border-gray-300 hover:shadow-md transition duration-300">
+                        <!-- Icon -->
+                        <img src="{{ asset('assets/' . $feature['icon']) }}" alt="{{ $feature['label'] }}" class="w-6 h-6" />
 
-                <div class="bg-white rounded-lg shadow-md p-4 flex items-center space-x-2 flex-[0_0_24%] border border border-gray-300
-">
-                    <img src="{{ asset('assets/bath.svg') }}" alt="Bath" class="w-5 h-5" />
-                    <span class="text-gray-800 text-base font-medium" style="font-family: 'Noto Sans', sans-serif;">Bath</span>
-                </div>
+                        <!-- Label for desktop -->
+                        <span class="hidden lg:inline-block ml-3 text-gray-800 text-sm font-medium" style="font-family: 'Noto Sans', sans-serif;">
+                            {{ $feature['label'] }}
+                        </span>
 
-
-                <div class="bg-white rounded-lg shadow-md p-4 flex items-center space-x-2 flex-[0_0_24%] border border border-gray-300">
-                    <img src="{{ asset('assets/housekeeping.svg') }}" alt="Housekeeping" class="w-5 h-5" />
-                    <span class="text-gray-800 text-base font-medium" style="font-family: 'Noto Sans', sans-serif;">Housekeeping</span>
-                </div>
+                        <!-- Tooltip for mobile only -->
+                        <div class="absolute bottom-full mb-2 bg-black text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap lg:hidden">
+                            {{ $feature['label'] }}
+                        </div>
+                    </div>
+                @endforeach
             </div>
-
-
-
         </div>
 
-
-
-
+        
         <div class="flex flex-col lg:flex-row gap-6 mt-10">
             <!-- Left Column -->
             <div class="flex-1 space-y-4">
                 <h2 class="text-2xl font-bold text-black">Experience world-class service at La Grande Villa</h2>
 
-                <p class="text-green-600 font-semibold" style="font-family: 'Noto Sans', sans-serif;">Reliable info: <span class="text-gray-700">Guests say the description and photos for this property are very accurate.</span></p>
+                <p class="text-green-600 font-semibold" style="font-family: 'Noto Sans', sans-serif;">Reliable info:
+                    <span class="text-gray-700">Guests say the description and photos for this property are very
+                        accurate.</span>
+                </p>
 
 
                 <div class="space-y-3 text-gray-800">
-                    <p style="font-family: 'Noto Sans', sans-serif;" class="text-sm"><span class="font-bold" style="font-family: 'Noto Sans', sans-serif;">Elegant Accommodation:</span> La Grande Villa in Nuwara Eliya offers a 5-star villa experience with a beautiful garden, terrace, and outdoor seating area. Guests enjoy free WiFi, private check-in and check-out services, and a paid shuttle service.</p>
+                    <p style="font-family: 'Noto Sans', sans-serif;" class="text-sm"><span class="font-bold" style="font-family: 'Noto Sans', sans-serif;">Elegant Accommodation:</span> La Grande Villa
+                        in Nuwara Eliya offers a 5-star villa experience with a beautiful garden, terrace, and outdoor
+                        seating area. Guests enjoy free WiFi, private check-in and check-out services, and a paid
+                        shuttle service.</p>
 
-                    <p style="font-family: 'Noto Sans', sans-serif;" class="text-sm"><span class="font-bold" style="font-family: 'Noto Sans', sans-serif;">Comfortable Amenities:</span> The property features a lounge, hot tub, concierge service, and family rooms. Additional amenities include a fitness centre, spa bath, and bicycle parking. Free on-site private parking is available for guests.</p>
+                    <p style="font-family: 'Noto Sans', sans-serif;" class="text-sm"><span class="font-bold" style="font-family: 'Noto Sans', sans-serif;">Comfortable Amenities:</span> The property
+                        features a lounge, hot tub, concierge service, and family rooms. Additional amenities include a
+                        fitness centre, spa bath, and bicycle parking. Free on-site private parking is available for
+                        guests.</p>
 
-                    <p style="font-family: 'Noto Sans', sans-serif;" class="text-sm"><span class="font-bold" style="font-family: 'Noto Sans', sans-serif;">Dining Experience:</span> A family-friendly restaurant serves Indian, local, Asian, international, and European cuisines. Breakfast options include continental, vegetarian, halal, and gluten-free with pancakes and fruits. Lunch and dinner are also available.</p>
+                    <p style="font-family: 'Noto Sans', sans-serif;" class="text-sm"><span class="font-bold" style="font-family: 'Noto Sans', sans-serif;">Dining Experience:</span> A family-friendly
+                        restaurant serves Indian, local, Asian, international, and European cuisines. Breakfast options
+                        include continental, vegetarian, halal, and gluten-free with pancakes and fruits. Lunch and
+                        dinner are also available.</p>
 
-                    <p style="font-family: 'Noto Sans', sans-serif;" class="text-sm"><span class="font-bold" style="font-family: 'Noto Sans', sans-serif;">Prime Location:</span> Located 48 km from Castlereigh Reservoir Seaplane Base and 3 km from Gregory Lake, La Grande Villa is near Hakgala Botanical Garden (9 km) and other attractions. Highly rated for its garden, hot tub, and attentive staff.</p>
+                    <p style="font-family: 'Noto Sans', sans-serif;" class="text-sm"><span class="font-bold" style="font-family: 'Noto Sans', sans-serif;">Prime Location:</span> Located 48 km from
+                        Castlereigh Reservoir Seaplane Base and 3 km from Gregory Lake, La Grande Villa is near Hakgala
+                        Botanical Garden (9 km) and other attractions. Highly rated for its garden, hot tub, and
+                        attentive staff.</p>
 
-                    <p class="text-sm text-gray-500" style="font-family: 'Noto Sans', sans-serif;">Distance in property description is calculated using © OpenStreetMap</p>
+                    <p class="text-sm text-gray-500" style="font-family: 'Noto Sans', sans-serif;">Distance in
+                        property description is calculated using © OpenStreetMap</p>
                 </div>
 
                 <!-- Facilities -->
@@ -482,11 +586,13 @@
             <!-- Right Sidebar -->
             <div class="w-full lg:w-1/5 bg-blue-100 rounded-lg py-4 px-4 space-y-4">
                 <h3 class="font-bold text-xs" style="font-family: 'Noto Sans', sans-serif;">Property highlights</h3>
-                <p class="text-xs" style="font-family: 'Noto Sans', sans-serif;"><span class="text-xs"><i class="fas fa-map-marker-alt"></i>Top location:</span> Highly rated by recent guests (9.1)</p>
+                <p class="text-xs" style="font-family: 'Noto Sans', sans-serif;"><span class="text-xs"><i class="fas fa-map-marker-alt"></i>Top location:</span> Highly rated by recent guests (9.1)
+                </p>
 
                 <div>
                     <h3 class="font-bold text-xs" style="font-family: 'Noto Sans', sans-serif;">Breakfast info</h3>
-                    <p class="text-xs" style="font-family: 'Noto Sans', sans-serif;">Continental, Vegetarian, Halal, Gluten-free, Breakfast to go</p>
+                    <p class="text-xs" style="font-family: 'Noto Sans', sans-serif;">Continental, Vegetarian, Halal,
+                        Gluten-free, Breakfast to go</p>
                 </div>
 
                 <p class="text-xs flex items-center gap-x-1" style="font-family: 'Noto Sans', sans-serif;">
@@ -505,7 +611,8 @@
                 </div>
 
                 <button class="w-full bg-sky-500 text-white font-medium py-2 rounded hover:bg-sky-600 text-xs">Reserve</button>
-                <button class="w-full border border-sky-500 text-sky-500 py-2 rounded hover:bg-sky-100 text-xs">♡ Save the property</button>
+                <button class="w-full border border-sky-500 text-sky-500 py-2 rounded hover:bg-sky-100 text-xs">♡ Save
+                    the property</button>
             </div>
         </div>
 
@@ -517,18 +624,7 @@
         <div>
             <h3 class="text-lg font-semibold text-black mt-6 mb-4">Most popular facilities</h3>
             <div class="flex flex-wrap gap-4">
-                @foreach ([
-                ['icon' => 'Vector(30).svg', 'label' => 'Good free WiFi (32Mbps)'],
-                ['icon' => 'Group(10).svg', 'label' => 'Family rooms'],
-                ['icon' => 'Group(11).svg', 'label' => 'Free parking'],
-                ['icon' => 'Vector(31).svg', 'label' => 'Restaurant'],
-                ['icon' => 'Vector(32).svg', 'label' => 'Non-smoking rooms'],
-                ['icon' => 'Vector(33).svg', 'label' => 'Airport shuttle'],
-                ['icon' => 'Group(12).svg', 'label' => 'Room service'],
-                ['icon' => 'Vector(34).svg', 'label' => 'Facilities for disabled guests'],
-                ['icon' => 'Group(13).svg', 'label' => 'Heating'],
-                ['icon' => 'Vector(35).svg', 'label' => 'Good breakfast'],
-                ] as $facility)
+                @foreach ([['icon' => 'Vector(30).svg', 'label' => 'Good free WiFi (32Mbps)'], ['icon' => 'Group(10).svg', 'label' => 'Family rooms'], ['icon' => 'Group(11).svg', 'label' => 'Free parking'], ['icon' => 'Vector(31).svg', 'label' => 'Restaurant'], ['icon' => 'Vector(32).svg', 'label' => 'Non-smoking rooms'], ['icon' => 'Vector(33).svg', 'label' => 'Airport shuttle'], ['icon' => 'Group(12).svg', 'label' => 'Room service'], ['icon' => 'Vector(34).svg', 'label' => 'Facilities for disabled guests'], ['icon' => 'Group(13).svg', 'label' => 'Heating'], ['icon' => 'Vector(35).svg', 'label' => 'Good breakfast']] as $facility)
                 <div class="flex items-center space-x-2 flex-[0_0_48%] md:flex-[0_0_23%] lg:flex-[0_0_18%] bg-white rounded-lg shadow-md border border-gray-300 p-3">
                     <img src="{{ asset('assets/' . $facility['icon']) }}" alt="{{ $facility['label'] }}" class="w-5 h-5">
                     <span class="text-sm text-gray-800 font-medium">{{ $facility['label'] }}</span>
@@ -582,7 +678,8 @@
                             <img src="{{ asset('assets/calender.svg') }}" alt="Calendar" class="w-5 h-5" />
                             <span class="text-gray-800 truncate">
                                 <template x-if="activeTab === 'check'">
-                                    <span><span x-text="checkIn ? checkIn : 'Check-in'" class="text-base"></span> — <span x-text="checkOut ? checkOut : 'Check-out'" class="text-base"></span></span>
+                                    <span><span x-text="checkIn ? checkIn : 'Check-in'" class="text-base"></span> —
+                                        <span x-text="checkOut ? checkOut : 'Check-out'" class="text-base"></span></span>
                                 </template>
                                 <template x-if="activeTab === 'flexible'">
                                     <span x-text="flexibleOption ? flexibleOption : 'Flexible dates'"></span>
@@ -602,11 +699,13 @@
                             <div x-show="activeTab === 'check'" x-transition>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
-                                        <label class="block text-xs text-gray-500 font-semibold mb-1">Check-in Date</label>
+                                        <label class="block text-xs text-gray-500 font-semibold mb-1">Check-in
+                                            Date</label>
                                         <input type="date" x-model="checkIn" class="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none" />
                                     </div>
                                     <div>
-                                        <label class="block text-xs text-gray-500 font-semibold mb-1">Check-out Date</label>
+                                        <label class="block text-xs text-gray-500 font-semibold mb-1">Check-out
+                                            Date</label>
                                         <input type="date" x-model="checkOut" class="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none" />
                                     </div>
                                 </div>
@@ -614,7 +713,8 @@
 
                             <!-- Flexible Options -->
                             <div x-show="activeTab === 'flexible'" x-transition>
-                                <label class="block text-xs text-gray-500 font-semibold mb-1">Select Flexible Dates</label>
+                                <label class="block text-xs text-gray-500 font-semibold mb-1">Select Flexible
+                                    Dates</label>
                                 <select x-model="flexibleOption" class="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none">
                                     <option value="" disabled>Select option</option>
                                     <option value="Weekend Getaway">Weekend Getaway</option>
@@ -676,7 +776,8 @@
                                 <label class="inline-flex items-center cursor-pointer">
                                     <input type="checkbox" x-model="pets" class="sr-only peer">
                                     <div class="w-10 h-6 bg-gray-300 rounded-full peer peer-checked:bg-blue-600 relative transition-all">
-                                        <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-all peer-checked:translate-x-4"></div>
+                                        <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-all peer-checked:translate-x-4">
+                                        </div>
                                     </div>
                                 </label>
                             </div>
@@ -701,7 +802,7 @@
             </div>
         </div>
 
-        <section class="p-4 sm:p-6 lg:p-10 bg-white">
+        <div class="p-4 sm:p-6 lg:p-10 bg-white">
             <h2 class="text-xl sm:text-2xl font-bold mb-6">All available villas</h2>
 
             <div class="w-full overflow-x-auto">
@@ -723,7 +824,9 @@
                             <td class="p-3 align-top border border-blue-500">
                                 <h3 class="text-blue-600 font-semibold underline">Private Villa by the Tea Resort</h3>
                                 <p class="text-gray-600 mt-1 text-sm">
-                                    Guests will have a special experience at this double room featuring a hot tub, spa bath and fireplace. The spacious double room provides soundproof walls, a minibar, a terrace with garden views as well as a private bathroom with a walk-in shower.
+                                    Guests will have a special experience at this double room featuring a hot tub, spa
+                                    bath and fireplace. The spacious double room provides soundproof walls, a minibar, a
+                                    terrace with garden views as well as a private bathroom with a walk-in shower.
                                 </p>
                             </td>
 
@@ -791,7 +894,7 @@
                     </tbody>
                 </table>
             </div>
-        </section>
+        </div>
 
 
 
@@ -888,7 +991,8 @@
                     </div>
                 </div>
                 <p class="text-sm text-gray-700 mb-2">
-                    “Really comfortable bed, and big spa bath. Enjoyed the pool table as was heavy rain outside, and the Sri Lankan breakfast was delicious!”
+                    “Really comfortable bed, and big spa bath. Enjoyed the pool table as was heavy rain outside, and the
+                    Sri Lankan breakfast was delicious!”
                 </p>
                 <a href="#" class="text-blue-600 text-sm underline">Read more</a>
             </div>
@@ -903,7 +1007,8 @@
                     </div>
                 </div>
                 <p class="text-sm text-gray-700 mb-2">
-                    “The Hospitality is the best and out of the world. Very homely feeling and Room comfort was outstanding.. Highly recommended!! Must stay property... Cheers !!”
+                    “The Hospitality is the best and out of the world. Very homely feeling and Room comfort was
+                    outstanding.. Highly recommended!! Must stay property... Cheers !!”
                 </p>
                 <a href="#" class="text-blue-600 text-sm underline">Read more</a>
             </div>
@@ -918,7 +1023,8 @@
                     </div>
                 </div>
                 <p class="text-sm text-gray-700 mb-2">
-                    “We didn’t realise it was a Muslim hotel and so there was no alcohol available. However they were very accommodating... Food service was incredibly slow for dinner but all cooked fresh.”
+                    “We didn’t realise it was a Muslim hotel and so there was no alcohol available. However they were
+                    very accommodating... Food service was incredibly slow for dinner but all cooked fresh.”
                 </p>
                 <a href="#" class="text-blue-600 text-sm underline">Read more</a>
             </div>
@@ -947,7 +1053,8 @@
                 </div>
                 <div class="ml-auto">
                     <span class="text-sm text-gray-500">Host review score</span>
-                    <div class="text-center bg-blue-100 text-blue-600 font-semibold text-sm rounded px-2 py-1 mt-1">8.6</div>
+                    <div class="text-center bg-blue-100 text-blue-600 font-semibold text-sm rounded px-2 py-1 mt-1">8.6
+                    </div>
                 </div>
             </div>
         </div>
@@ -971,7 +1078,8 @@
         <div>
             <div class="flex items-center justify-between mb-3">
                 <h2 class="text-xl font-semibold">House rules</h2>
-                <button class="bg-sky-500 hover:bg-sky-600 text-white text-sm px-4 py-2 rounded">See availability</button>
+                <button class="bg-sky-500 hover:bg-sky-600 text-white text-sm px-4 py-2 rounded">See
+                    availability</button>
             </div>
             <p class="text-sm text-gray-600 mb-4">La Grande Villa takes special requests - add in the next step!</p>
 
@@ -984,15 +1092,18 @@
                 <!-- Row 2 -->
                 <div>
                     <strong>Cancellation / prepayment</strong><br>
-                    Cancellation and prepayment policies vary according to accommodation type. Please check what may apply to each option when making your selection.
+                    Cancellation and prepayment policies vary according to accommodation type. Please check what may
+                    apply to each option when making your selection.
                 </div>
                 <!-- Row 3 -->
                 <div>
                     <strong>Children and beds</strong><br>
                     <strong>Child policies</strong><br>
-                    To see correct prices and occupancy information, please add the number of children in your group and their ages to your search.<br><br>
+                    To see correct prices and occupancy information, please add the number of children in your group and
+                    their ages to your search.<br><br>
                     <strong>Cot and extra bed policies</strong><br>
-                    The number of cots allowed is dependent on the option you choose. Please check your selected option for more information.
+                    The number of cots allowed is dependent on the option you choose. Please check your selected option
+                    for more information.
                 </div>
                 <!-- Row 4 -->
                 <div><strong>No age restriction</strong><br>There is no age requirement for check-in</div>
@@ -1018,17 +1129,21 @@
         <div>
             <div class="flex items-center justify-between mb-3">
                 <h2 class="text-xl font-semibold">The fine print</h2>
-                <button class="bg-sky-500 hover:bg-sky-600 text-white text-sm px-4 py-2 rounded">See availability</button>
+                <button class="bg-sky-500 hover:bg-sky-600 text-white text-sm px-4 py-2 rounded">See
+                    availability</button>
             </div>
             <div class="bg-gray-50 border rounded-lg p-4 text-sm text-gray-700">
-                Please inform La Grande Villa in advance of your expected arrival time. You can use the Special Requests box when booking, or contact the property directly with the contact details provided in your confirmation. Quiet hours are between 22:00 and 06:00.
+                Please inform La Grande Villa in advance of your expected arrival time. You can use the Special Requests
+                box when booking, or contact the property directly with the contact details provided in your
+                confirmation. Quiet hours are between 22:00 and 06:00.
             </div>
         </div>
 
         <!-- FAQ Placeholder -->
         <div>
             <h2 class="text-lg font-semibold">FAQs about La Grande Villa</h2>
-            <p class="text-sm text-gray-600 mt-1">How much does it cost to rent a car in Sri Lanka for a week? • Which pickup locations in Sri Lanka are the most popular?</p>
+            <p class="text-sm text-gray-600 mt-1">How much does it cost to rent a car in Sri Lanka for a week? • Which
+                pickup locations in Sri Lanka are the most popular?</p>
         </div>
         <!-- Two column layout -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1100,8 +1215,6 @@
         });
     });
 </script>
-
-
 @endsection
 <script>
     document.addEventListener("DOMContentLoaded", () => {
@@ -1120,9 +1233,11 @@
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     links.forEach(link => {
-                        link.classList.remove("border-b-2", "border-blue-500", "text-blue-600", "font-semibold");
+                        link.classList.remove("border-b-2", "border-blue-500",
+                            "text-blue-600", "font-semibold");
                         if (link.getAttribute("href") === `#${entry.target.id}`) {
-                            link.classList.add("border-b-2", "border-blue-500", "text-blue-600", "font-semibold");
+                            link.classList.add("border-b-2", "border-blue-500",
+                                "text-blue-600", "font-semibold");
                         }
                     });
                 }
