@@ -1757,6 +1757,9 @@
                                                         checkOutFrom: '08:00',
                                                         checkOutUntil: '11:00'
                                                         }})),
+                                                        address: '',
+                                                        addresses:[],
+                                                        unitAddresses: Array(propertyCount).fill(''),
                                                         toggleLanguage(lang) {
                                                             const index = this.unitServices[this.currentUnit - 1].languages.indexOf(lang);
                                                             if (index === -1) {
@@ -1883,8 +1886,8 @@
                                                                     <!-- Shared address form -->
                                                                     <div>
                                                                         <div class="mb-4">
-                                                                                    <label class="block text-sm font-medium text-gray-700">Find your address</label>
-                                                                                    <input type="text" class="mt-1 p-2 w-full border border-gray-300 rounded" placeholder="Address" />
+                                                                                <label class="block text-sm font-medium text-gray-700">Find your address</label>
+                                                                                <input type="text" x-model="address" class="mt-1 p-2 w-full border border-gray-300 rounded" placeholder="Address" />
                                                                         </div>
                                                                     </div>
                                                                 </template>
@@ -1898,7 +1901,7 @@
                                                                             <!-- Inline address form -->
                                                                             <div class="mb-4">
                                                                                 <label class="block text-sm font-medium text-gray-700">Find your address</label>
-                                                                                <input type="text" class="mt-1 p-2 w-full border border-gray-300 rounded" placeholder="Address" />
+                                                                                <input type="text" :id="`property-address-${i - 1}`"     x-model="unitAddresses[i - 1]"  class="mt-1 p-2 w-full border border-gray-300 rounded" placeholder="Address" />
                                                                             </div>
                                                                             <!-- Repeat other address fields as needed -->
                                                                         </div>
@@ -3152,7 +3155,7 @@
                                     step: 1,
                                     selectedBox: selectedBoxValue,
                                     selected: '',
-                                    sameAddress: '',
+                                    sameAddress: 'yes',
                                     propertyCount: 2,
                                     totalSteps: 15,
                                     currentUnit: 1,
@@ -3506,7 +3509,53 @@
                                                 .catch(error => {
                                                     console.error('Error:', error);
                                                 });
-                                        } else if (this.step === 12 && this.selected === 'multiple') {
+                                        } else if (this.step === 4 && this.selected === 'multiple') {
+                                             if (this.sameAddress === 'yes') {
+                                                console.log('Saving same address for all properties with ID:', this.propertyId);
+                                                fetch('/property/save-address-same', {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                    },
+                                                    body: JSON.stringify({
+                                                        property_id: this.propertyId,
+                                                        count: this.propertyCount,
+                                                        address: this.address
+                                                    })
+                                                })
+                                                .then(res => res.json())
+                                                .then(data => {
+                                                    console.log('Saved:', data);
+                                                    this.step++ ;
+                                                });
+                                            } else {
+                                                // Different address for each property
+                                                console.log('Saving multiple addresses for properties with ID:', this.propertyId);
+                                                const allAddresses = Array.from({ length: this.propertyCount }, (_, i) => {
+                                                    const input = document.querySelector(`#property-address-${i}`);
+                                                    return input ? input.value : '';
+                                                });
+
+                                                fetch('/property/save-address-multiple', {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                    },
+                                                    body: JSON.stringify({
+                                                        first_property_id: this.propertyId,
+                                                        addresses: allAddresses
+                                                    })
+                                                })
+                                                .then(res => res.json())
+                                                .then(data => {
+                                                    alert('Addresses saved successfully');
+                                                    console.log('Saved Multiple:', data);
+                                                    this.step++;
+                                                });
+                                            }
+                                        }else if (this.step === 12 && this.selected === 'multiple') {
                                             if (this.currentUnit < this.propertyCount) {
                                                 console.log('Saving unit services for property ID:', this.propertyId);
                                                 console.log('Property Count:', this.propertyCount);

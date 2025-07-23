@@ -222,7 +222,7 @@ class PropertyController extends Controller
         Log::info('updatePartial called', ['request' => $request->all(), 'property_id' => $property->id]);
         try {
             $dataToUpdate = $request->except(['bedrooms']); // Exclude bedrooms from the main property update if they are handled separately
-    
+
             // Update additional details if they exist in the request
             if ($request->hasAny(['guests', 'bathrooms', 'allow_children', 'offer_cribs', 'apartment_size', 'apartment_unit'])) {
                 $additionalDetailsData = [
@@ -233,12 +233,12 @@ class PropertyController extends Controller
                     'apartment_size' => $request->input('apartment_size'),
                     'apartment_unit' => $request->input('apartment_unit'),
                 ];
-    
+
                 $property->additionalDetails()->updateOrCreate(
                     ['property_id' => $property->id],
                     $additionalDetailsData
                 );
-    
+
                 // Remove these keys from dataToUpdate to avoid errors in the action
                 unset(
                     $dataToUpdate['guests'],
@@ -249,7 +249,7 @@ class PropertyController extends Controller
                     $dataToUpdate['apartment_unit']
                 );
             }
-    
+
             $bedrooms = $request->has('bedrooms') && is_array($request->bedrooms) ? $request->bedrooms : null;
             $updatedProperty = $action->updatePropertyPartial($property, $dataToUpdate, $bedrooms);
             Log::info('Property after update', $updatedProperty->toArray());
@@ -468,19 +468,19 @@ class PropertyController extends Controller
                 'company_name' => 'nullable|string',
                 'registration_number' => 'nullable|string',
             ]);
-    
+
             PartnerVerification::updateOrCreate(
                 ['property_id' => $validated['property_id']],
                 $validated
             );
-    
+
             return response()->json(['message' => 'Partner verification saved successfully']);
         } catch (\Exception $e) {
             Log::error('Error saving partner verification', [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
-            return response()->json(['error' => $e ->getMessage()], 500);
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
@@ -490,9 +490,8 @@ class PropertyController extends Controller
         return view('partner.partner-apartments-bedrooms', [
             'propertyId' => $property,
         ]);
-        
     }
-    
+
     public function saveBedroom(Request $request, Property $property)
     {
         $validated = $request->validate([
@@ -601,6 +600,72 @@ class PropertyController extends Controller
                 'message' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function saveAddressSame(Request $request)
+    {
+        try {
+            Log::info('saveAddressSame called', [
+                'request' => $request->all(),
+            ]);
+            $validated = $request->validate([
+                'property_id' => 'required|exists:properties,id',
+                'count' => 'required|integer|min:1',
+                'address' => 'required|string|max:255',
+            ]);
+
+            $existingProperty = Property::findOrFail($validated['property_id']);
+            Property::findOrFail($validated['property_id'])->update([
+                'address' => $validated['address'],
+            ]);
+
+            for ($i = 1; $i < $validated['count']; $i++) {
+                Property::create([
+                    'user_id' => Auth::id(),
+                    'category_id' => $existingProperty->category_id,
+                    'subcategory_id' => $existingProperty->subcategory_id,
+                    'subtype_id' => $existingProperty->subtype_id,
+                    'address' => $validated['address'],
+                ]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Address saved successfully.',
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error saving same address', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function saveAddressMultiple(Request $request)
+    {
+        $validated = $request->validate([
+            'first_property_id' => 'required|exists:properties,id',
+            'addresses' => 'required|array',
+        ]);
+
+        $addresses = $validated['addresses'];
+
+        Property::findOrFail($validated['first_property_id'])->update([
+            'address' => $addresses[0]
+        ]);
+
+        for ($i = 1; $i < count($addresses); $i++) {
+            Property::create([
+                'address' => $addresses[$i],
+                'category_id' => session('category_id'),
+                'subcategory_id' => session('subcategory_id'),
+                'apartment_type' => session('apartment_type'),
+                // other required fields...
+            ]);
+        }
+
+        return response()->json(['message' => 'Multiple addresses saved']);
     }
 
     public function saveHostProfile(Request $request, Property $property)
