@@ -228,13 +228,21 @@ Route::get('/partner-hotels-create-1', function () {
     return view('frontend.partner-hotels-create-1');
 })->name('partner.hotels.create.1');
 
-Route::get('/partner-alternative-places', function () {
-    return view('frontend.partner-alternative-places');
-})->name('partner.alternative.places');
 
 Route::get('/partner-alternative-place-type', function () {
-    return view('frontend.partner-alternative-place-type');
+    return view('frontend.partner-alternative-places-types');
 })->name('partner.alternative.place.type');
+
+
+Route::get('/partner-alternative-entireplace', function () {
+    return view('frontend.partner-alternative-entireplace');
+})->name('partner.alternative.entireplace');
+
+
+Route::get('/partner-alternative-privateroom', function () {
+    return view('frontend.partner-alternative-privateroom');
+})->name('partner.alternative.privateroom');
+
 
 Route::get('/partner-hotels-edit', function () {
     return view('frontend.partner-hotels-edit');

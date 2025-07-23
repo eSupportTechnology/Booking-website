@@ -1,0 +1,242 @@
+@extends('frontend.partner-layout')
+
+@section('title', 'Alternative Places Entire Types')
+
+@section('content')
+<div x-data="wizardForm()" class="container mx-auto mt-16 px-4 md:px-6 lg:px-8 lg:ml-32">
+
+    <!-- Step 0: Category Selection -->
+    <template x-if="step === 0">
+        <div class="max-w-6xl mx-auto mt-8">
+            <h2 class="text-2xl md:text-3xl font-bold text-left mb-6">
+                From the list below, which property category is most similar to your place?
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 mt-6">
+                <template x-for="option in categoryOptions" :key="option.value">
+                    <div
+                        @click="selectCategory(option.value)"
+                        :class="category === option.value ? 'border-[#3CC0E9] border-2 bg-blue-50' : 'border border-gray-300'"
+                        class="relative cursor-pointer p-6 rounded-xl shadow-sm transition duration-200 hover:border-blue-400"
+                    >
+                        <h3 class="text-lg font-semibold mb-2 capitalize" x-text="option.label"></h3>
+                        <p class="text-sm text-gray-600" x-text="option.description"></p>
+
+                        <template x-if="category === option.value">
+                            <span class="absolute top-2 right-2 text-blue-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                            </span>
+                        </template>
+                    </div>
+                </template>
+            </div>
+
+            <!-- Help Link -->
+            <div class="mt-8 text-left">
+                <a href="#" class="flex items-center space-x-2 text-sm text-blue-500 hover:underline">
+                    <img src="{{ asset('assets/iconoir_question-mark-circle.svg') }}" class="w-5 h-5" />
+                    <span class="text-base">I don't see my property type on the list</span>
+                </a>
+            </div>
+
+            <div class="flex items-center justify-between pt-4">
+                <button type="button" @click="step = 1"
+                    class="border border-[#3CC0E9] text-blue-600 font-semibold py-2 px-4 rounded">
+                    ←
+                </button>
+                <span></span>
+                <button  
+                    @click="continueWizard"
+                    :disabled="!category"
+                    class="py-3 px-8 rounded transition-all duration-200 bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                    type="button">
+                    Continue
+                </button>
+            </div>
+        </div>
+    </template>
+
+    <!-- Steps 1 & 2 -->
+    <template x-if="step > 0">
+        <div class="max-w-3xl mx-auto">
+
+            <!-- Step 1 -->
+            <template x-if="step === 1">
+                <div class="space-y-4">
+                    <div class="bg-white max-w-2xl w-full p-6 rounded-lg shadow mx-auto mt-16 px-4 md:px-6 lg:px-8 lg:ml-32">
+                        <div class="max-w-xl mx-auto p-4 space-y-6">
+
+                            <h2 class="text-2xl font-bold text-center">How many apartments are you listing?</h2>
+
+                            <!-- Apartment type options -->
+                            <div class="space-y-4">
+                                <label
+                                    :class="selected === 'one' ? 'border-blue-600 border-2' : 'border border-gray-300'"
+                                    class="block rounded p-4 cursor-pointer transition bg-white"
+                                    @click="selected = 'one'">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center space-x-4">
+                                            <img src="{{ asset('images/aprt-b.png') }}" alt="One Campsite" class="w-14 h-10" />
+                                            <span class="text-lg text-gray-800">One campsite</span>
+                                        </div>
+                                        <template x-if="selected === 'one'">
+                                            <div class="text-blue-600 text-xl font-bold">✔</div>
+                                        </template>
+                                    </div>
+                                    <input type="radio" name="apartment_type" value="one" x-model="selected" class="hidden" />
+                                </label>
+
+                                <label
+                                    :class="selected === 'multiple' ? 'border-blue-600 border-2' : 'border border-gray-300'"
+                                    class="block rounded p-4 cursor-pointer transition bg-white"
+                                    @click="selected = 'multiple'">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center space-x-4">
+                                            <img src="{{ asset('images/aprt-a.png') }}" alt="Multiple Campsites" class="w-14 h-10" />
+                                            <span class="text-lg text-gray-800">Multiple campsites</span>
+                                        </div>
+                                        <template x-if="selected === 'multiple'">
+                                            <div class="text-blue-600 text-xl font-bold">✔</div>
+                                        </template>
+                                    </div>
+                                    <input type="radio" name="apartment_type" value="multiple" x-model="selected" class="hidden" />
+                                </label>
+                            </div>
+
+                            <!-- Conditional fields for multiple apartments -->
+                            <div x-show="selected === 'multiple'" x-transition class="mt-6 space-y-4 bg-gray-50 p-4 rounded">
+                                <h3 class="text-lg font-semibold">Are these properties in the same address or building?</h3>
+
+                                <label
+                                    :class="sameAddress === 'yes' ? 'border-blue-600 border-2' : 'border border-gray-300'"
+                                    class="block rounded p-4 cursor-pointer bg-white" @click="sameAddress = 'yes'">
+                                    <div class="flex items-center space-x-4">
+                                        <img src="{{ asset('images/accomm_single_address@2x.png') }}" class="w-10 h-10" />
+                                        <span>Yes, these apartments are at the same address or building</span>
+                                    </div>
+                                </label>
+
+                                <label
+                                    :class="sameAddress === 'no' ? 'border-blue-600 border-2' : 'border border-gray-300'"
+                                    class="block rounded p-4 cursor-pointer bg-white" @click="sameAddress = 'no'">
+                                    <div class="flex items-center space-x-4">
+                                        <img src="{{ asset('images/accomm_multiple_address@2x.png') }}" class="w-14 h-10" />
+                                        <span>No, these apartments are at different addresses or buildings</span>
+                                    </div>
+                                </label>
+
+                                <div>
+                                    <label class="block font-medium mb-1">Number of properties</label>
+                                    <input type="number" min="2" x-model="propertyCount" name="property_count"
+                                        class="border rounded w-24 p-2" />
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between pt-4">
+                                <button type="button" @click="step--"
+                                    class="border border-[#3CC0E9] text-blue-600 hover:bg-[#29ACD5] font-semibold py-2 px-4 rounded">
+                                    ←
+                                </button>
+                                <template x-if="step < 2">
+                                    <button type="button" @click="nextStep"
+                                        class="font-semibold py-3 px-8 rounded bg-[#3CC0E9] hover:bg-[#29ACD5] text-white">
+                                        Continue
+                                    </button>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+
+            <!-- Step 2 -->
+            <template x-if="step === 2">
+                <div class="space-y-4">
+                    <template x-if="selected === 'one'">
+                        <div>
+                            <h3 class="text-xl font-semibold">Details for single campsite</h3>
+                            <label class="block">
+                                <span class="text-gray-700">Location</span>
+                                <input type="text" class="mt-1 w-full border border-gray-300 rounded-md p-3" placeholder="Enter location">
+                            </label>
+                            <label class="block">
+                                <span class="text-gray-700">Description</span>
+                                <textarea class="mt-1 w-full border border-gray-300 rounded-md p-3" rows="4" placeholder="Describe the campsite..."></textarea>
+                            </label>
+                        </div>
+                    </template>
+
+                    <template x-if="selected === 'multiple'">
+                        <div>
+                            <h3 class="text-xl font-semibold">Details for multiple campsites</h3>
+                            <label class="block">
+                                <span class="text-gray-700">Main Address</span>
+                                <input type="text" class="mt-1 w-full border border-gray-300 rounded-md p-3" placeholder="Enter main location">
+                            </label>
+                            <label class="block">
+                                <span class="text-gray-700">Common Description</span>
+                                <textarea class="mt-1 w-full border border-gray-300 rounded-md p-3" rows="4" placeholder="Describe all properties..."></textarea>
+                            </label>
+                            <label class="block">
+                                <span class="text-gray-700">Any special instructions?</span>
+                                <input type="text" class="mt-1 w-full border border-gray-300 rounded-md p-3" placeholder="Instructions...">
+                            </label>
+                        </div>
+                    </template>
+                </div>
+            </template>
+
+        </div>
+    </template>
+</div>
+
+<!-- Script -->
+<script>
+    function wizardForm() {
+        return {
+            step: 0,
+            category: '',
+            selected: '',
+            sameAddress: 'yes',
+            propertyCount: 2,
+            categoryOptions: [
+                {
+                    value: 'campsite',
+                    label: 'Campsite',
+                    description: 'Accommodation offering cabins or bungalows alongside areas for camping or caravans with shared facilities or recreational activities'
+                },
+                {
+                    value: 'boat',
+                    label: 'Boat',
+                    description: 'Commercial travel accommodation located on a boat'
+                },
+                {
+                    value: 'luxury_tent',
+                    label: 'Luxury tent',
+                    description: 'Tents with fixed bedding and some services, located in natural surroundings'
+                }
+            ],
+            get categoryLabel() {
+                const selected = this.categoryOptions.find(opt => opt.value === this.category);
+                return selected ? selected.label : '';
+            },
+            selectCategory(value) {
+                this.category = value;
+            },
+            continueWizard() {
+                if (this.category !== '') {
+                    this.step = 1;
+                }
+            },
+            nextStep() {
+                if (this.step < 2) this.step++;
+            },
+            previousStep() {
+                if (this.step > 1) this.step--;
+            },
+        };
+    }
+</script>
+@endsection
