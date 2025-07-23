@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
 
+
 Route::get('/login/email', [LoginController::class, 'showEmailForm'])->name('login.email');
 Route::post('/login/email', [LoginController::class, 'storeEmail']);
 
@@ -392,3 +393,16 @@ Route::patch('/partner/property/{property}/additional-details', [PropertyControl
     ->name('partner.property.update.additional-details');
 
 require __DIR__ . '/auth.php';
+
+Route::get('/admin/dashboard', function () {
+    return view('frontend.admin.dashboard');
+})->name('admin.dashboard');
+
+
+
+
+
+
+
+
+
