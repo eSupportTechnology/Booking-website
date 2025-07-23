@@ -339,7 +339,7 @@
                                         </label>
 
                                         <label
-                                            :class="selected ===2 ? 'border-blue-600 border-2' :
+                                            :class="selected === 'multiple' ? 'border-blue-600 border-2' :
                                                 'border border-gray-300'"
                                             class="block rounded p-4 cursor-pointer bg-white"
                                             @click="selectOption('multiple')">
@@ -355,7 +355,7 @@
                                         </label>
                                     </div>
 
-                                    <div x-show="selected === 2"
+                                    <div x-show="selected === 'multiple'" x-cloak
                                         class="mt-6 space-y-4 bg-gray-50 p-4 rounded">
                                         <h3 class="text-lg font-semibold">Are these properties in the same address?
                                         </h3>
@@ -1745,70 +1745,34 @@
                                         </template>
 
                                         <!-- Steps for 'multiple' -->
-                                        <template x-if="selected === 'multiple'">
+                                        <template x-if="selected === 'multiple'" x-data="{ currentUnit: 1, unitFacilities: Array.from({ length: propertyCount }, () => []),unitServices: Array.from({ length: 3 }, () => ({ breakfast: '', parking: '' ,languages: []})),}">
                                             <div>
 
 
-                                                <!-- Step 1 -->
-                                                <template x-if="step === 1">
-                                                    <div>
-                                                        <div
-                                                            class="bg-white max-w-2xl w-full p-6 rounded-lg shadow text-center">
-                                                            <p class="text-base text-gray-600 mb-8">You're listing:</p>
-
-                                                            <!-- Icon -->
-                                                            <div class="flex justify-center mb-8">
-                                                                <img src="{{ asset('images/accomm_one_apt_main@2x.png') }}"
-                                                                    alt="Multiple Apartments" class="w-16 h-16" />
-                                                            </div>
-
-                                                            <!-- Heading -->
-                                                            <h2
-                                                                class="text-lg md:text-xl font-bold text-gray-800 mb-8">
-                                                                Multiple apartments in the same location where guests
-                                                                can book an entire apartment
-                                                            </h2>
-
-                                                            <!-- Description -->
-                                                            <p class="text-gray-700 mb-8">Does this sound like your
-                                                                property?</p>
-
-                                                            <!-- Buttons -->
-                                                            <div class="space-y-2">
-                                                                <button type="button" @click="nextStep"
-                                                                    class="w-full bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded">
-                                                                    Continue
-                                                                </button>
-                                                                <button type="button" @click="prevStep"
-                                                                    class="w-full border border-[#3CC0E9] text-[#3CC0E9] hover:bg-[#29ACD5] font-semibold py-2 px-4 rounded mb-6">
-                                                                    No, I need to make a change
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </template>
 
                                                 <!-- Step 2 -->
-                                                <template x-if="step === 2">
-                                                    <div
-                                                        class="bg-white max-w-2xl w-full p-6 rounded-lg shadow text-center">
+                                                <template x-if="step === 2 && selected === 'multiple'">
+                                                    <div class="bg-white max-w-2xl w-full p-6 rounded-lg shadow text-center">
                                                         <p class="text-base text-gray-600 mb-8">You're listing:</p>
 
                                                         <!-- Icon -->
                                                         <div class="flex justify-center mb-8">
-                                                            <img src="{{ asset('images/accomm_one_apt_main@2x.png') }}"
-                                                                alt="Multiple Apartments" class="w-16 h-16" />
+                                                            <template x-if="sameAddress === 'yes'">
+                                                                <img src="{{ asset('images/accomm_one_apt_main@2x.png') }}" alt="Same Location" class="w-16 h-16" />
+                                                            </template>
+                                                            <template x-if="sameAddress === 'no'">
+                                                                <img src="{{ asset('images/accomm_multiple_location@2x.png') }}" alt="Different Locations" class="w-16 h-16" />
+                                                            </template>
                                                         </div>
 
                                                         <!-- Heading -->
-                                                        <h2 class="text-lg md:text-xl font-bold text-gray-800 mb-8">
-                                                            Multiple holiday homes in the same location where guests can
-                                                            book an entire home
+                                                        <h2 class="text-lg md:text-xl font-bold text-gray-800 mb-8" x-text="sameAddress === 'yes' 
+                                                            ? 'Multiple holiday homes in the same location where guests can book an entire home' 
+                                                            : 'Multiple holiday homes in different locations that guests can book separately'">
                                                         </h2>
 
                                                         <!-- Description -->
-                                                        <p class="text-gray-700 mb-8">Does this sound like your
-                                                            property?</p>
+                                                        <p class="text-gray-700 mb-8">Does this sound like your property?</p>
 
                                                         <!-- Buttons -->
                                                         <div class="space-y-2">
@@ -1817,36 +1781,41 @@
                                                                 Continue
                                                             </button>
                                                             <button type="button" @click="prevStep"
-                                                                class="w-full border border-[#3CC0E9] text-[#3CC0E9]  font-semibold py-2 px-4 rounded mb-6">
+                                                                class="w-full border border-[#3CC0E9] text-[#3CC0E9] font-semibold py-2 px-4 rounded mb-6">
                                                                 No, I need to make a change
                                                             </button>
                                                         </div>
                                                     </div>
                                                 </template>
 
+
                                                 <!-- Step 3 -->
-                                                <template x-if="step === 3">
+                                                <template x-if="step === 3 && selected === 'multiple'">
                                                     <div>
                                                         <!-- Main Content -->
                                                         <div class="max-w-xl ml-4 mr-auto">
                                                             <!-- White Box -->
-                                                            <div class="bg-white shadow-md  p-6 text-left">
-                                                                <p class=" text-base text-gray-700">
-                                                                    Great, since your holiday homes are located at the
-                                                                    same address there should be some things that apply
-                                                                    to all of them. Let's start filling in those general
-                                                                    settings.
-                                                                </p>
+                                                            <div class="bg-white shadow-md p-6 text-left">
+                                                                <template x-if="sameAddress === 'yes'">
+                                                                    <p class="text-base text-gray-700">
+                                                                        Great, since your holiday homes are located at the same address, there should be some settings that apply to all of them. Let's start with those general settings.
+                                                                    </p>
+                                                                </template>
+                                                                <template x-if="sameAddress === 'no'">
+                                                                    <p class="text-base text-gray-700">
+                                                                        Since your holiday homes are at different addresses, we'll help you set up each one individually, starting with some shared preferences.
+                                                                    </p>
+                                                                </template>
                                                             </div>
 
                                                             <!-- Navigation Buttons -->
                                                             <div class="mt-6 flex justify-between">
                                                                 <button type="button" @click="prevStep"
-                                                                    class="border border-[#3CC0E9]  text-blue-600 hover:bg-[#29ACD5] font-semibold py-2 px-4 rounded">
+                                                                    class="border border-[#3CC0E9] text-blue-600 hover:bg-[#29ACD5] font-semibold py-2 px-4 rounded">
                                                                     ←
                                                                 </button>
                                                                 <button type="button" @click="nextStep"
-                                                                    class=" font-semibold py-3 px-8 rounded  bg-[#3CC0E9] hover:bg-[#29ACD5] text-white">
+                                                                    class="font-semibold py-3 px-8 rounded bg-[#3CC0E9] hover:bg-[#29ACD5] text-white">
                                                                     Continue
                                                                 </button>
                                                             </div>
@@ -1856,124 +1825,60 @@
 
                                                 <!-- Step 4 -->
                                                 <template x-if="step === 4">
-                                                    <div>
-                                                        <div
-                                                            class="relative w-[1400px] h-auto overflow-hidden rounded-lg shadow mx-auto -mt-14 -ml-16">
+                                                    <div class="relative w-[1400px] h-auto overflow-hidden rounded-lg shadow mx-auto -mt-14 -ml-16">
+                                                        <!-- Google Maps iframe background -->
+                                                        <iframe class="absolute inset-0 w-full h-full"
+                                                            loading="lazy"
+                                                            src="https://www.google.com/maps?q=La+Grande+Villa+Nuwara+Eliya&output=embed"
+                                                            allowfullscreen>
+                                                        </iframe>
 
-                                                            <!-- Google Maps iframe full background -->
-                                                            <iframe class="absolute inset-0 w-full h-full"
-                                                                loading="lazy"
-                                                                src="https://www.google.com/maps?q=La+Grande+Villa+Nuwara+Eliya&output=embed"
-                                                                allowfullscreen>
-                                                            </iframe>
+                                                        <div class="absolute inset-0"></div>
 
-                                                            <!-- Optional overlay for readability -->
-                                                            <div class="absolute inset-0"></div>
+                                                        <div class="relative z-10 flex items-center justify-start h-auto p-4 mt-[110px]">
+                                                            <div class="bg-white bg-opacity-95 rounded-lg shadow-lg w-full max-w-[700px] p-6 md:p-8 h-auto mb-4 overflow-y-auto max-h-[80vh]">
 
-                                                            <!-- Form content centered on map -->
-                                                            <div
-                                                                class="relative z-10 flex items-center justify-start h-auto p-4 mt-[110px]">
-                                                                <div
-                                                                    class="bg-white bg-opacity-95 rounded-lg shadow-lg w-full max-w-md p-6 md:p-8 h-auto mb-4">
-                                                                    <h2
-                                                                        class="text-2xl font-semibold mb-4 text-gray-800">
-                                                                        Where is your property?</h2>
-                                                                    <form>
+                                                                <h2 class="text-2xl font-semibold mb-4 text-gray-800">Where is your property?</h2>
+
+                                                                <template x-if="selected === 'one' || sameAddress === 'yes'">
+                                                                    <!-- Shared address form -->
+                                                                    <div>
                                                                         <div class="mb-4">
-                                                                            <label for="address"
-                                                                                class="block text-sm font-medium text-gray-700">Find
-                                                                                your address</label>
-                                                                            <input type="text" id="address"
-                                                                                name="address" value="Sri Lanka"
-                                                                                class="mt-1 p-2 w-full border border-gray-300 rounded">
+                                                                                    <label class="block text-sm font-medium text-gray-700">Find your address</label>
+                                                                                    <input type="text" class="mt-1 p-2 w-full border border-gray-300 rounded" placeholder="Address" />
                                                                         </div>
-                                                                        <div class="mb-4">
-                                                                            <label for="apartment"
-                                                                                class="block text-sm font-medium text-gray-700">Apartment
-                                                                                or floor number (optional)</label>
-                                                                            <input type="text" id="apartment"
-                                                                                name="apartment" value="aaa"
-                                                                                class="mt-1 p-2 w-full border border-gray-300 rounded">
-                                                                        </div>
-                                                                        <div class="mb-4">
-                                                                            <label for="country"
-                                                                                class="block text-sm font-medium text-gray-700">Country/region</label>
-                                                                            <select id="country" name="country"
-                                                                                class="mt-1 p-2 w-full border border-gray-300 rounded">
-                                                                                <option selected>Sri Lanka</option>
-                                                                            </select>
-                                                                        </div>
-                                                                        <div class="flex flex-col md:flex-row gap-4">
-                                                                            <div class="flex-1">
-                                                                                <label for="city"
-                                                                                    class="block text-sm font-medium text-gray-700">City</label>
-                                                                                <input type="text" id="city"
-                                                                                    name="city" value="a"
-                                                                                    class="mt-1 p-2 w-full border border-gray-300 rounded">
+                                                                    </div>
+                                                                </template>
+
+                                                                <template x-if="selected === 'multiple' && sameAddress === 'no'">
+                                                                    <!-- Multiple address forms -->
+                                                                    <template x-for="i in propertyCount" :key="i">
+                                                                        <div class="mb-8 border border-gray-200 rounded p-4">
+                                                                            <h3 class="text-lg font-semibold mb-2 text-gray-700">Property <span x-text="i"></span></h3>
+
+                                                                            <!-- Inline address form -->
+                                                                            <div class="mb-4">
+                                                                                <label class="block text-sm font-medium text-gray-700">Find your address</label>
+                                                                                <input type="text" class="mt-1 p-2 w-full border border-gray-300 rounded" placeholder="Address" />
                                                                             </div>
-                                                                            <div class="flex-1">
-                                                                                <label for="postcode"
-                                                                                    class="block text-sm font-medium text-gray-700">Post
-                                                                                    code / Zip code</label>
-                                                                                <input type="text" id="postcode"
-                                                                                    name="postcode" value="80400"
-                                                                                    class="mt-1 p-2 w-full border border-gray-300 rounded">
-                                                                            </div>
+                                                                            <!-- Repeat other address fields as needed -->
                                                                         </div>
-                                                                        <div class="flex items-center mt-4">
-                                                                            <input id="update_address" type="checkbox"
-                                                                                name="update_address" checked
-                                                                                class="mr-2">
-                                                                            <label for="update_address"
-                                                                                class="text-sm text-gray-700">Update
-                                                                                the address when moving the pin on the
-                                                                                map.</label>
-                                                                        </div>
+                                                                    </template>
 
-                                                                        <!-- Dismissible message box -->
-                                                                        <div x-data="{ showMessage: true }"
-                                                                            x-show="showMessage"
-                                                                            class="mt-4 bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded relative"
-                                                                            role="alert">
-                                                                            <strong class="font-bold">Note:</strong>
-                                                                            <span class="block sm:inline">Make sure the
-                                                                                pin location is accurate before
-                                                                                continuing.</span>
-                                                                            <span @click="showMessage = false"
-                                                                                class="absolute top-0 bottom-0 right-0 px-4 py-3 cursor-pointer">
-                                                                                <svg class="fill-current h-6 w-6 text-yellow-800"
-                                                                                    role="button"
-                                                                                    xmlns="http://www.w3.org/2000/svg"
-                                                                                    viewBox="0 0 20 20">
-                                                                                    <title>Close</title>
-                                                                                    <path
-                                                                                        d="M14.348 5.652a1 1 0 00-1.414 0L10 8.586 7.066 5.652a1 1 0 10-1.414 1.414L8.586 10l-2.934 2.934a1 1 0 101.414 1.414L10 11.414l2.934 2.934a1 1 0 001.414-1.414L11.414 10l2.934-2.934a1 1 0 000-1.414z" />
-                                                                                </svg>
-                                                                            </span>
-                                                                        </div>
+                                                                </template>
 
-                                                                        <p class="text-sm text-gray-600 mt-2">
-                                                                            Is the red pin location incorrect? Uncheck
-                                                                            the option above and click or press on the
-                                                                            map to move the pin.
-                                                                        </p>
-
-                                                                        <!-- Buttons -->
-                                                                        <div
-                                                                            class="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6">
-                                                                            <button type="button" @click="prevStep"
-                                                                                class="w-full sm:w-auto border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
-                                                                                ←
-                                                                            </button>
-                                                                            <button type="button" @click="nextStep"
-                                                                                class="w-full sm:w-auto px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
-                                                                                Continue
-                                                                            </button>
-                                                                        </div>
-
-
-                                                                    </form>
+                                                                <!-- Navigation buttons -->
+                                                                <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6">
+                                                                    <button type="button" @click="prevStep"
+                                                                        class="w-full sm:w-auto border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
+                                                                        ←
+                                                                    </button>
+                                                                    <button type="button" @click="nextStep"
+                                                                        class="w-full sm:w-auto px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
+                                                                        Continue
+                                                                    </button>
                                                                 </div>
+
                                                             </div>
                                                         </div>
                                                     </div>
@@ -2068,11 +1973,12 @@
 
 
                                                 <!-- Step 5 -->
-                                                <template x-if="step === 6">
+                                                <template x-if="step === 6" >
                                                     <div>
                                                         <section class="mb-8">
-                                                            <h1 class="text-xl text-gray-700 font-bold mb-4">What can
-                                                                guests use at your place?</h1>
+                                                            <h1 class="text-xl text-gray-700 font-bold mb-4">
+                                                                What can guests use at Unit <span x-text="currentUnit"></span>?
+                                                            </h1>
 
                                                             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
@@ -2093,73 +1999,64 @@
                                                                                 <label
                                                                                     class="flex items-center space-x-2">
                                                                                     <input type="checkbox"
-                                                                                        name="property_types[]"
-                                                                                        value="Apartment"
-                                                                                        class="text-blue-500" />
+                                                                                        :name="`facilities_unit_${currentUnit}[]`" :value="'Bar'" x-model="unitFacilities[currentUnit - 1]" />
                                                                                     <span>Bar</span>
                                                                                 </label>
                                                                                 <label
                                                                                     class="flex items-center space-x-2">
                                                                                     <input type="checkbox"
-                                                                                        name="property_types[]"
-                                                                                        value="Villa"
-                                                                                        class="text-blue-500" />
+                                                                                        :name="`facilities_unit_${currentUnit}[]`" :value="'Sauna'" x-model="unitFacilities[currentUnit - 1]" />
                                                                                     <span>Sauna</span>
                                                                                 </label>
                                                                                 <label
                                                                                     class="flex items-center space-x-2">
                                                                                     <input type="checkbox"
-                                                                                        name="property_types[]"
-                                                                                        value="Holiday Home"
-                                                                                        class="text-blue-500" />
+                                                                                        :name="`facilities_unit_${currentUnit}[]`" :value="'Garden'" x-model="unitFacilities[currentUnit - 1]" />
                                                                                     <span>Garden</span>
                                                                                 </label>
                                                                                 <label
                                                                                     class="flex items-center space-x-2">
                                                                                     <input type="checkbox"
-                                                                                        name="property_types[]"
-                                                                                        value="Chalet"
-                                                                                        class="text-blue-500" />
+                                                                                        :name="`facilities_unit_${currentUnit}[]`" 
+                                                                                        :value="'Terrace'" 
+                                                                                        x-model="unitFacilities[currentUnit - 1]" />
                                                                                     <span>Terrace</span>
                                                                                 </label>
                                                                                 <label
                                                                                     class="flex items-center space-x-2">
                                                                                     <input type="checkbox"
-                                                                                        name="property_types[]"
-                                                                                        value="Cottage"
-                                                                                        class="text-blue-500" />
+                                                                                        :name="`facilities_unit_${currentUnit}[]`" 
+                                                                                        :value="'Hot tub/Jacuzzi'" 
+                                                                                        x-model="unitFacilities[currentUnit - 1]" />
                                                                                     <span>Hot tub/Jacuzzi</span>
                                                                                 </label>
                                                                                 <label
                                                                                     class="flex items-center space-x-2">
                                                                                     <input type="checkbox"
-                                                                                        name="property_types[]"
-                                                                                        value="Cabin"
-                                                                                        class="text-blue-500" />
+                                                                                        :name="`facilities_unit_${currentUnit}[]`"
+                                                                                        :value="'Heating'"
+                                                                                        x-model="unitFacilities[currentUnit - 1]" />
                                                                                     <span>Heating</span>
                                                                                 </label>
                                                                                 <label
                                                                                     class="flex items-center space-x-2">
                                                                                     <input type="checkbox"
-                                                                                        name="property_types[]"
-                                                                                        value="Bungalow"
-                                                                                        class="text-blue-500" />
+                                                                                        :name="`facilities_unit_${currentUnit}[]`"
+                                                                                        :value="'WiFi'"
+                                                                                        x-model="unitFacilities[currentUnit - 1]" />
+
                                                                                     <span>Free WiFi</span>
                                                                                 </label>
                                                                                 <label
                                                                                     class="flex items-center space-x-2">
                                                                                     <input type="checkbox"
-                                                                                        name="property_types[]"
-                                                                                        value="Farm Stay"
-                                                                                        class="text-blue-500" />
+                                                                                        :name="`facilities_unit_${currentUnit}[]`" :value="'Air conditioning'" x-model="unitFacilities[currentUnit - 1]" />
                                                                                     <span>Air conditioning</span>
                                                                                 </label>
                                                                                 <label
                                                                                     class="flex items-center space-x-2">
                                                                                     <input type="checkbox"
-                                                                                        name="property_types[]"
-                                                                                        value="Houseboat"
-                                                                                        class="text-blue-500" />
+                                                                                        :name="`facilities_unit_${currentUnit}[]`" :value="'Swimming pool'" x-model="unitFacilities[currentUnit - 1]" />
                                                                                     <span>Swimming pool</span>
                                                                                 </label>
                                                                             </div>
@@ -2229,7 +2126,7 @@
                                                         </section>
                                                     </div>
                                                 </template>
-                                                <!-- Step 5 -->
+                                                <!-- Step 7 -->
                                                 <template x-if="step === 7">
                                                     <div>
                                                         <div class="container mx-auto px-4 py-4 max-w-6xl mb-8">
@@ -2237,7 +2134,7 @@
                                                             <!-- Header -->
                                                             <h2
                                                                 class="text-2xl font-bold mb-4 text-left ml-6 max-w-xl">
-                                                                Services at your property
+                                                                Services at your property <span x-text="currentUnit"></span>
                                                             </h2>
 
                                                             <!-- Sections stacked vertically, aligned with header -->
@@ -2252,15 +2149,18 @@
                                                                     <div class="space-y-2">
                                                                         <label
                                                                             class="flex items-center cursor-pointer">
-                                                                            <input type="radio" name="breakfast"
-                                                                                value="yes" class="mr-2" />
+                                                                            <input type="radio"
+                                                                                :name="`breakfast_unit_${currentUnit}`"
+                                                                                value="yes" class="mr-2"
+                                                                                x-model="unitServices[currentUnit - 1].breakfast" />
                                                                             <span>Yes</span>
                                                                         </label>
                                                                         <label
                                                                             class="flex items-center cursor-pointer">
-                                                                            <input type="radio" name="breakfast"
+                                                                            <input type="radio"
+                                                                                :name="`breakfast_unit_${currentUnit}`"
                                                                                 value="no" class="mr-2"
-                                                                                checked />
+                                                                                x-model="unitServices[currentUnit - 1].breakfast" />
                                                                             <span>No</span>
                                                                         </label>
                                                                     </div>
@@ -2311,13 +2211,13 @@
                                                         </div>
                                                     </div>
                                                 </template>
-                                                <!-- Step 5 -->
+                                                <!-- Step 8 -->
                                                 <template x-if="step === 8">
                                                     <div>
                                                         <div class="container mx-auto px-4 py-8 max-w-6xl">
                                                             <!-- Header -->
                                                             <h2 class="text-2xl font-bold mb-8 text-left">
-                                                                What languages do you or your staff speak?
+                                                                What languages do you or your staff in property <span x-text="currentUnit"></span> speak?
                                                             </h2>
 
                                                             <!-- Language Selection Section -->
@@ -2326,20 +2226,32 @@
                                                                 </h3>
                                                                 <div class="space-y-2">
                                                                     <label class="flex items-center cursor-pointer">
-                                                                        <input type="checkbox" class="mr-2" />
+                                                                        <input type="checkbox" class="mr-2"
+                                                                                :value="'English'"
+                                                                                @change="toggleLanguage('English')"
+                                                                                :checked="unitServices[currentUnit - 1]?.languages?.includes('English')" />
                                                                         <span>English</span>
+                                                                        </label>
+                                                                    <label class="flex items-center cursor-pointer">
+                                                                        <input type="checkbox" class="mr-2"
+                                                                                :value="'Spanish'"
+                                                                                @change="toggleLanguage('Spanish')"
+                                                                                :checked="unitServices[currentUnit - 1]?.languages?.includes('Spanish')" />
+                                                                        <span>Spanish</span>
                                                                     </label>
                                                                     <label class="flex items-center cursor-pointer">
-                                                                        <input type="checkbox" class="mr-2" />
+                                                                        <input type="checkbox" class="mr-2"
+                                                                                :value="'French'"
+                                                                                @change="toggleLanguage('French')"
+                                                                                :checked="unitServices[currentUnit - 1]?.languages?.includes('French')" />
                                                                         <span>French</span>
                                                                     </label>
                                                                     <label class="flex items-center cursor-pointer">
-                                                                        <input type="checkbox" class="mr-2" />
+                                                                        <input type="checkbox" class="mr-2"
+                                                                                :value="'German'"
+                                                                                @change="toggleLanguage('German')"
+                                                                                :checked="unitServices[currentUnit - 1]?.languages?.includes('German')" />
                                                                         <span>German</span>
-                                                                    </label>
-                                                                    <label class="flex items-center cursor-pointer">
-                                                                        <input type="checkbox" class="mr-2" />
-                                                                        <span>Hindi</span>
                                                                     </label>
                                                                 </div>
 
@@ -2434,6 +2346,30 @@
                                                                 }
                                                             }
 
+                                                            function toggleLanguage(language) {
+                                                            const currentLanguages = this.unitServices[this.currentUnit - 1]?.languages || [];
+                                                            const index = currentLanguages.indexOf(language);
+                                                            if (index === -1) {
+                                                                currentLanguages.push(language);
+                                                            } else {
+                                                                currentLanguages.splice(index, 1);
+                                                            }
+                                                            this.unitServices[this.currentUnit - 1].languages = currentLanguages;
+                                                            }
+
+                                                            function selectLanguage(element) {
+                                                                const selected = element.textContent.trim();
+                                                                const unitIndex = Alpine.store('stepForm').currentUnit - 1;
+                                                                const langArray = Alpine.store('stepForm').unitServices[unitIndex].languages;
+
+                                                                if (!langArray.includes(selected)) {
+                                                                    langArray.push(selected);
+                                                                }
+
+                                                                document.getElementById("languageInput").value = "";
+                                                                hideDropdown();
+                                                            }
+
                                                             function toggleDropdown() {
                                                                 const dropdown = document.getElementById("languageDropdown");
                                                                 dropdown.classList.toggle("hidden");
@@ -2489,7 +2425,7 @@
                                                         </script>
                                                     </div>
                                                 </template>
-                                                <!-- Step 5 -->
+                                                <!-- Step 9 -->
                                                 <template x-if="step === 9">
                                                     <div>
                                                         <div class="container mx-auto px-4 py-8 max-w-6xl">
@@ -3125,7 +3061,9 @@
                                     sameAddress: '',
                                     propertyCount: 2,
                                     totalSteps: 14,
-
+                                    currentUnit: 1,
+                                    unitFacilities: [],
+                                    unitServices: [],
                                     previewFiles: [],
 
                                     addRoom() {
@@ -3214,7 +3152,7 @@
                                     },
 
                                     async nextStep() {
-                                        if (this.step === 1 && this.selected === 'one' || this.selected === 'multiple') {
+                                        if ((this.step === 1 && this.selected === 'one')) {
                                             try {
 
                                                 console.log('Addtress type:', this.step);
@@ -3456,11 +3394,18 @@
                                                 .then(response => response.json())
                                                 .then(data => {
                                                     console.log(data);
-                                                    this.step++; 
+                                                    this.step++;
                                                 })
                                                 .catch(error => {
                                                     console.error('Error:', error);
                                                 });
+                                        } else if (this.step === 8 && this.selected === 'multiple') {
+                                            if (this.currentUnit < this.propertyCount) {
+                                                this.currentUnit++;
+                                                this.step = 6; // Repeat for next unit
+                                            } else {
+                                                this.step++;
+                                            }
                                         } else {
                                             if (this.step === 1 && this.selected === '') return;
 
