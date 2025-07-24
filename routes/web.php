@@ -446,10 +446,22 @@ Route::get('/admin/dashboard', function () {
 })->name('admin.dashboard');
 
 
+// Admin Routes for Property
+Route::get('/admin/apartments', function () {
+    return view('frontend.admin.apartments');
+})->name('admin.apartments');
 
+Route::get('/admin/homes', function () {
+    return view('frontend.admin.homes');
+})->name('admin.homes');
 
+Route::get('/admin/hotels', function () {
+    return view('frontend.admin.hotels');
+})->name('admin.hotels');
 
-
+Route::get('/admin/alternative-places', function () {
+    return view('frontend.admin.alternative-places');
+})->name('admin.alternative.places');
 
 
 
