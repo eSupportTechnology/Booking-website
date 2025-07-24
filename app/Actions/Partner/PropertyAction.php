@@ -49,6 +49,26 @@ class PropertyAction
             ];
         });
     }
+    
+    public function getRoomTypes(): Collection
+    {
+        return \App\Models\RoomType::all()->map(function ($roomType) {
+            return [
+                'id' => $roomType->id,
+                'name' => $roomType->name,
+            ];
+        });
+    }
+
+    public function getBedTypes(): Collection
+    {
+        return \App\Models\BedType::all()->map(function ($bedType) {
+            return [
+                'id' => $bedType->id,
+                'name' => $bedType->name,
+            ];
+        });
+    }
 
     public function getPropertiesBySubcategory(int $subcategoryId): Collection
     {

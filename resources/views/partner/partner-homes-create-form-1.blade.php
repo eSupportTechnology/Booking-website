@@ -29,19 +29,8 @@
                     class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
                     <!-- Logo -->
                     <div class="w-full md:w-auto md:ml-6">
-                        <!-- Logo -->
-                        @php
-                            $host = config('domains.app_name');
-
-                        @endphp
-
-                        <a href="{{ url('/') }}" class="text-2xl font-bold flex items-center">
-                            @if ($host == 'BookinTour')
-                                <h1>Bookintour.com</h1>
-                            @elseif ($host == 'Inselor')
-                                <img src="{{ asset('images/inselor-logo.png') }}" alt="Inselor"
-                                    class="h-12 w-auto align-middle" />
-                            @endif
+                        <a href="/" class="text-2xl font-bold font-poppins">
+                            {{ config('app.name') }}
                         </a>
                     </div>
                     <!-- Right Section -->
@@ -173,29 +162,7 @@
                         }
                     }
 
-                        const data = await response.json();
-                        this.propertyId = data.property_id;
-                        this.step = 2;
-                        await this.fetchSubtypes(this.selected);
-                        alert(data.message || 'Property created successfully');
-
-                    } catch (error) {
-                        console.error('Request failed:', error);
-                        alert('Request failed: ' + error.message);
-                    }
-                },
-                async fetchSubtypes(subcategoryId) {
-                    try {
-                        const response = await fetch(`/partner/property_subtype/${subcategoryId}`);
-                        const data = await response.json();
-                        console.log('Fetched subtypes:', data);
-                        this.subtypes = data;
-                    } catch (err) {
-                        console.error('Failed to fetch subtypes:', err);
-                    }
-                }
-
-            }">
+                }">
                 <div class="bg-white max-w-2xl w-full p-6 rounded-lg shadow">
                     <div class="max-w-xl mx-auto p-4 space-y-6">
                         <h2 class="text-2xl font-bold text-center">@lang('messages.what_can_guests_book')</h2>
@@ -372,7 +339,7 @@
                                         </label>
 
                                         <label
-                                            :class="selected ===2 ? 'border-blue-600 border-2' :
+                                            :class="selected === 'multiple' ? 'border-blue-600 border-2' :
                                                 'border border-gray-300'"
                                             class="block rounded p-4 cursor-pointer bg-white"
                                             @click="selectOption('multiple')">
@@ -388,7 +355,7 @@
                                         </label>
                                     </div>
 
-                                    <div x-show="selected === 2"
+                                    <div x-show="selected === 'multiple'" x-cloak
                                         class="mt-6 space-y-4 bg-gray-50 p-4 rounded">
                                         <h3 class="text-lg font-semibold">Are these properties in the same address?
                                         </h3>
@@ -506,7 +473,7 @@
                                                     <!-- Info -->
                                                     <p class="text-sm text-gray-700">
                                                         If your property is listed on Airbnb or Vrbo, you can speed up
-                                                        registration by importing it directly to {{ config('domains.subdomain') }}.
+                                                        registration by importing it directly to Booking.com.
                                                     </p>
 
                                                     <!-- Checkboxes -->
@@ -699,45 +666,10 @@
                                         </template>
 
 
+
+
+
                                         <template x-if="step === 6 && selected === 'one'">
-                                            <div class="space-y-6">
-                                                <h3 class="text-xl font-bold">Set Your Pricing</h3>
-
-                                                <div>
-                                                    <label for="price" class="block text-sm font-medium text-gray-700 mb-1">Price per night (LKR)</label>
-                                                    <div class="relative rounded-md shadow-sm">
-                                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                                            <span class="text-gray-500">Rs.</span>
-                                                        </div>
-                                                        <input
-                                                            id="price"
-                                                            type="number"
-                                                            min="0"
-                                                            placeholder="Enter amount"
-                                                            class="pl-12 pr-4 py-2 border border-gray-300 rounded-md w-full focus:ring-blue-500 focus:border-blue-500" />
-                                                    </div>
-                                                    <p class="text-sm text-gray-500 mt-1">Set a competitive price to attract more bookings.</p>
-                                                </div>
-
-                                                <div class="flex justify-between pt-4">
-                                                    <button type="button"
-                                                        @click="prevStep"
-                                                        class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium px-5 py-2 rounded">
-                                                        ←
-                                                    </button>
-
-                                                    <button
-                                                        type="button"
-                                                        @click="nextStep"
-                                                        class="bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold px-6 py-2 rounded shadow">
-                                                        Continue →
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </template>
-
-
-                                        <template x-if="step === 7 && selected === 'one'">
                                             <div>
                                                 <div
                                                     class="relative w-[1400px] h-auto overflow-hidden rounded-lg shadow mx-auto -mt-14 -ml-16">
@@ -864,7 +796,7 @@
                                             </div>
                                         </template>
                                         <!-- Step 5 -->
-                                        <template x-if="step === 8 && selected === 'one'">
+                                        <template x-if="step === 7 && selected === 'one'">
                                             <div>
                                                 <div class="max-w-5xl mx-auto px-4 py-8">
                                                     <h1 class="text-2xl font-bold mb-4 mt-4">Connect to a
@@ -952,7 +884,7 @@
 
 
                                         <!-- Step 5 -->
-                                        <template x-if="step === 9 &&  selected === 'one'">
+                                        <template x-if="step === 8 &&  selected === 'one'">
                                             <div>
                                                 <section class="mb-8">
                                                     <h1 class="text-xl text-gray-700 font-bold mb-4">What can
@@ -1053,7 +985,7 @@
                                             </div>
                                         </template>
                                         <!-- Step 5 -->
-                                        <template x-if="step === 10 && selected === 'one'">
+                                        <template x-if="step === 9 && selected === 'one'">
                                             <div>
                                                 <div class="container mx-auto px-4 py-4 max-w-6xl mb-8">
 
@@ -1135,7 +1067,7 @@
                                             </div>
                                         </template>
                                         <!-- Step 5 -->
-                                        <template x-if="step === 11 && selected === 'one'">
+                                        <template x-if="step === 10 && selected === 'one'">
                                             <div>
                                                 <div class="container mx-auto px-4 py-8 max-w-6xl">
                                                     <!-- Header -->
@@ -1313,7 +1245,7 @@
                                             </div>
                                         </template>
                                         <!-- Step 5 -->
-                                        <template x-if="step === 12 && selected === 'one'">
+                                        <template x-if="step === 11 && selected === 'one'">
                                             <div>
                                                 <div class="container mx-auto px-4 py-8 max-w-6xl">
                                                     <!-- Header -->
@@ -1489,7 +1421,7 @@
                                         </template>
 
 
-                                        <template x-if="step === 13 && selected === 'one'">
+                                        <template x-if="step === 12 && selected === 'one'">
                                             <div>
                                                 <!-- Main Content -->
                                                 <main class="container mx-auto px-4 py-8 max-w-4xl">
@@ -1562,13 +1494,151 @@
                                             </div>
                                         </template>
 
+                                        <template x-if="step === 13 && selected === 'one'"
+                                            x-data="{
+                                                    newRoom: {
+                                                        room_type_id: '',
+                                                        name: '',
+                                                        price_per_night: 0,
+                                                        max_guests: 1,
+                                                        bathroom_count: 0,
+                                                        size_sq_m: 0,
+                                                        beds: {}
+                                                    },
+                                                    rooms: [],
+                                                    roomTypes: [],
+                                                    bedTypes: [],
+                                                }"
+                                            x-init="
+                                                    roomTypes = @js($roomTypes);
+                                                    bedTypes = @js($bedTypes)
+                                                ">
+                                            <div>
+                                                <!-- Main Content -->
+                                                <main class="container mx-auto px-4 py-8 max-w-4xl">
+                                                    <h2 class="text-2xl md:text-3xl font-bold mb-6 text-left">
+                                                        Room Details
+                                                    </h2>
+
+                                                    <div class="bg-white shadow-md rounded-lg p-6 md:p-8 space-y-6">
+
+                                                        <p class="text-gray-700 text-sm md:text-base">
+                                                            Add information about each room in your property. Include room type, number of guests it can host,
+                                                            price, and bed configuration.
+                                                        </p>
+
+                                                        <!-- Room Type -->
+                                                        <div>
+                                                            <label class="block text-sm font-medium text-gray-700 mb-1">Room Type</label>
+                                                            <select x-model="newRoom.room_type_id" class="w-full border rounded px-3 py-2">
+                                                                <template x-for="type in roomTypes" :key="type.id">
+                                                                    <option :value="type.id" x-text="type.name"></option>
+                                                                </template>
+                                                            </select>
+                                                        </div>
+
+                                                        <!-- Room Name -->
+                                                        <div>
+                                                            <label class="block text-sm font-medium text-gray-700 mb-1">Room Name</label>
+                                                            <input type="text" x-model="newRoom.name"
+                                                                class="w-full border border-gray-300 rounded px-3 py-2" placeholder="E.g. Master Bedroom" />
+                                                        </div>
+
+                                                        <!-- Price -->
+                                                        <div>
+                                                            <label class="block text-sm font-medium text-gray-700 mb-1">Price per Night (LKR)</label>
+                                                            <input type="number" x-model="newRoom.price_per_night" min="0" step="0.01"
+                                                                class="w-full border border-gray-300 rounded px-3 py-2" />
+                                                        </div>
+
+                                                        <!-- Max Guests -->
+                                                        <div>
+                                                            <label class="block text-sm font-medium text-gray-700 mb-1">Max Guests</label>
+                                                            <input type="number" x-model="newRoom.max_guests" min="1"
+                                                                class="w-full border border-gray-300 rounded px-3 py-2" />
+                                                        </div>
+
+                                                        <!-- Bathroom Count -->
+                                                        <div>
+                                                            <label class="block text-sm font-medium text-gray-700 mb-1">Bathroom Count</label>
+                                                            <input type="number" x-model="newRoom.bathroom_count" min="0"
+                                                                class="w-full border border-gray-300 rounded px-3 py-2" />
+                                                        </div>
+
+                                                        <!-- Size -->
+                                                        <div>
+                                                            <label class="block text-sm font-medium text-gray-700 mb-1">Size (sq. meters)</label>
+                                                            <input type="number" x-model="newRoom.size_sq_m" min="0"
+                                                                class="w-full border border-gray-300 rounded px-3 py-2" />
+                                                        </div>
+
+                                                        <!-- Bed Types -->
+                                                        <div>
+                                                            <label class="block text-sm font-medium text-gray-700 mb-1">Beds</label>
+                                                            <template x-for="(bedType, index) in bedTypes" :key="bedType.id">
+                                                                <div class="flex items-center mb-2">
+                                                                    <label class="w-1/2 text-gray-600 text-sm" x-text="bedType.name"></label>
+                                                                    <input type="number" min="0"
+                                                                        class="w-1/2 border border-gray-300 rounded px-3 py-1 ml-2"
+                                                                        @input="newRoom.beds[bedType.id] = +$event.target.value" />
+
+                                                                </div>
+                                                            </template>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Navigation Buttons -->
+                                                    <div class="mt-8 flex justify-between">
+                                                        <button type="button" @click="prevStep"
+                                                            class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                                                            ←
+                                                        </button>
+                                                        <button type="button" @click="addRoom"
+                                                            class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                                                            + Add Room
+                                                        </button>
+                                                        <button type="button" @click="nextStep"
+                                                            class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
+                                                            Save Room & Continue
+                                                        </button>
+                                                    </div>
+
+                                                    <div class="mt-6 border-t pt-4">
+                                                        <h3 class="font-semibold mb-2">Added Rooms:</h3>
+                                                        <template x-for="(room, index) in rooms" :key="index">
+                                                            <div class="border p-2 rounded mb-2 bg-gray-50">
+                                                                <p><strong>Name:</strong> <span x-text="room.name"></span></p>
+                                                                <p><strong>Type:</strong> <span x-text="roomTypes.find(rt => rt.id == room.room_type_id)?.name"></span></p>
+                                                                <p><strong>Price:</strong> Rs. <span x-text="room.price_per_night"></span></p>
+
+                                                                <button
+                                                                    @click="if(confirm('Are you sure you want to remove this room?')) rooms.splice(index, 1)"
+                                                                    class="ml-4 bg-red-100 hover:bg-red-200 text-red-700 font-semibold px-3 py-1 rounded">
+                                                                    ✕ Remove
+                                                                </button>
+                                                            </div>
+                                                        </template>
+                                                    </div>
+
+                                                </main>
+                                            </div>
+                                        </template>
 
                                         <template x-if="step === 14 && selected === 'one'">
                                             <div>
                                                 <!-- Include Alpine.js -->
                                                 <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
-                                                <div x-data="{ type: '' }"
+                                                <div x-data="{
+                                                                    type: '',
+                                                                    individual: {
+                                                                        full_name: '',
+                                                                        national_id: ''
+                                                                    },
+                                                                    business: {
+                                                                        company_name: '',
+                                                                        registration_number:    ''
+                                                }}"
                                                     class="px-4 py-8 max-w-3xl mx-auto space-y-6">
 
                                                     <h1 class="text-2xl sm:text-3xl font-semibold">Partner
@@ -1606,7 +1676,7 @@
                                                             <div>
                                                                 <label class="block text-sm text-gray-700">Full
                                                                     Name</label>
-                                                                <input type="text"
+                                                                <input type="text" x-model="individual.full_name"
                                                                     class="w-full mt-1 border rounded px-3 py-2"
                                                                     placeholder="Enter your full name">
                                                             </div>
@@ -1614,7 +1684,7 @@
                                                                 <label
                                                                     class="block text-sm text-gray-700">National
                                                                     ID or Passport</label>
-                                                                <input type="text"
+                                                                <input type="text" x-model="individual.national_id"
                                                                     class="w-full mt-1 border rounded px-3 py-2"
                                                                     placeholder="Enter ID number">
                                                             </div>
@@ -1631,7 +1701,7 @@
                                                                 <label
                                                                     class="block text-sm text-gray-700">Company
                                                                     Name</label>
-                                                                <input type="text"
+                                                                <input type="text" x-model="business.company_name"
                                                                     class="w-full mt-1 border rounded px-3 py-2"
                                                                     placeholder="Enter company name">
                                                             </div>
@@ -1639,7 +1709,7 @@
                                                                 <label
                                                                     class="block text-sm text-gray-700">Business
                                                                     Registration Number</label>
-                                                                <input type="text"
+                                                                <input type="text" x-model="business.registration_number"
                                                                     class="w-full mt-1 border rounded px-3 py-2"
                                                                     placeholder="Enter registration number">
                                                             </div>
@@ -1675,70 +1745,76 @@
                                         </template>
 
                                         <!-- Steps for 'multiple' -->
-                                        <template x-if="selected === 'multiple'">
+                                        <template x-if="selected === 'multiple'" 
+                                                x-data="{ 
+                                                        currentUnit: 1, unitFacilities: Array.from({ length: propertyCount }, () => []),unitServices: Array.from({ length: 3 }, () => ({ breakfast: '', parking: '',hostprofile: '' ,languages: [], houseRules: {
+                                                        smokingAllowed: false,
+                                                        childrenAllowed: true,
+                                                        partiesAllowed: false,
+                                                        petsPolicy: 'no',
+                                                        checkInFrom: '15:00',
+                                                        checkInUntil: '18:00',
+                                                        checkOutFrom: '08:00',
+                                                        checkOutUntil: '11:00'
+                                                        }})),
+                                                        address: '',
+                                                        addresses:[],
+                                                        unitAddresses: Array(propertyCount).fill(''),
+                                                        toggleLanguage(lang) {
+                                                            const index = this.unitServices[this.currentUnit - 1].languages.indexOf(lang);
+                                                            if (index === -1) {
+                                                                this.unitServices[this.currentUnit - 1].languages.push(lang);
+                                                            } else {
+                                                                this.unitServices[this.currentUnit - 1].languages.splice(index, 1);
+                                                            }
+                                                            console.log(this.unitServices); // Log updated structure
+                                                        },
+                                                        handleUnitPhotoUpload(unitId, event) {
+                                                            const files = Array.from(event.target.files);
+                                                            if (!this.unitPhotos[unitId]) this.unitPhotos[unitId] = [];
+                                                            if (!this.previewUnitPhotos[unitId]) this.previewUnitPhotos[unitId] = [];
+
+                                                            files.forEach(file => {
+                                                                // Save actual file
+                                                                this.unitPhotos[unitId].push(file);
+
+                                                                // Preview
+                                                                const reader = new FileReader();
+                                                                reader.onload = () => {
+                                                                    this.previewUnitPhotos[unitId].push(reader.result);
+                                                                };
+                                                                reader.readAsDataURL(file);
+                                                            });
+                                                        },
+
+                                                    }">
                                             <div>
 
 
-                                                <!-- Step 1 -->
-                                                <template x-if="step === 1">
-                                                    <div>
-                                                        <div
-                                                            class="bg-white max-w-2xl w-full p-6 rounded-lg shadow text-center">
-                                                            <p class="text-base text-gray-600 mb-8">You're listing:</p>
-
-                                                            <!-- Icon -->
-                                                            <div class="flex justify-center mb-8">
-                                                                <img src="{{ asset('images/accomm_one_apt_main@2x.png') }}"
-                                                                    alt="Multiple Apartments" class="w-16 h-16" />
-                                                            </div>
-
-                                                            <!-- Heading -->
-                                                            <h2
-                                                                class="text-lg md:text-xl font-bold text-gray-800 mb-8">
-                                                                Multiple apartments in the same location where guests
-                                                                can book an entire apartment
-                                                            </h2>
-
-                                                            <!-- Description -->
-                                                            <p class="text-gray-700 mb-8">Does this sound like your
-                                                                property?</p>
-
-                                                            <!-- Buttons -->
-                                                            <div class="space-y-2">
-                                                                <button type="button" @click="nextStep"
-                                                                    class="w-full bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded">
-                                                                    Continue
-                                                                </button>
-                                                                <button type="button" @click="prevStep"
-                                                                    class="w-full border border-[#3CC0E9] text-[#3CC0E9] hover:bg-[#29ACD5] font-semibold py-2 px-4 rounded mb-6">
-                                                                    No, I need to make a change
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </template>
 
                                                 <!-- Step 2 -->
-                                                <template x-if="step === 2">
-                                                    <div
-                                                        class="bg-white max-w-2xl w-full p-6 rounded-lg shadow text-center">
+                                                <template x-if="step === 2 && selected === 'multiple'">
+                                                    <div class="bg-white max-w-2xl w-full p-6 rounded-lg shadow text-center">
                                                         <p class="text-base text-gray-600 mb-8">You're listing:</p>
 
                                                         <!-- Icon -->
                                                         <div class="flex justify-center mb-8">
-                                                            <img src="{{ asset('images/accomm_one_apt_main@2x.png') }}"
-                                                                alt="Multiple Apartments" class="w-16 h-16" />
+                                                            <template x-if="sameAddress === 'yes'">
+                                                                <img src="{{ asset('images/accomm_one_apt_main@2x.png') }}" alt="Same Location" class="w-16 h-16" />
+                                                            </template>
+                                                            <template x-if="sameAddress === 'no'">
+                                                                <img src="{{ asset('images/accomm_multiple_location@2x.png') }}" alt="Different Locations" class="w-16 h-16" />
+                                                            </template>
                                                         </div>
 
                                                         <!-- Heading -->
-                                                        <h2 class="text-lg md:text-xl font-bold text-gray-800 mb-8">
-                                                            Multiple holiday homes in the same location where guests can
-                                                            book an entire home
+                                                        <h2 class="text-lg md:text-xl font-bold text-gray-800 mb-8" x-text="sameAddress === 'yes' 
+                                                            ? 'Multiple holiday homes in the same location where guests can book an entire home' 
+                                                            : 'Multiple holiday homes in different locations that guests can book separately'">
                                                         </h2>
 
                                                         <!-- Description -->
-                                                        <p class="text-gray-700 mb-8">Does this sound like your
-                                                            property?</p>
+                                                        <p class="text-gray-700 mb-8">Does this sound like your property?</p>
 
                                                         <!-- Buttons -->
                                                         <div class="space-y-2">
@@ -1747,36 +1823,41 @@
                                                                 Continue
                                                             </button>
                                                             <button type="button" @click="prevStep"
-                                                                class="w-full border border-[#3CC0E9] text-[#3CC0E9]  font-semibold py-2 px-4 rounded mb-6">
+                                                                class="w-full border border-[#3CC0E9] text-[#3CC0E9] font-semibold py-2 px-4 rounded mb-6">
                                                                 No, I need to make a change
                                                             </button>
                                                         </div>
                                                     </div>
                                                 </template>
 
+
                                                 <!-- Step 3 -->
-                                                <template x-if="step === 3">
+                                                <template x-if="step === 3 && selected === 'multiple'">
                                                     <div>
                                                         <!-- Main Content -->
                                                         <div class="max-w-xl ml-4 mr-auto">
                                                             <!-- White Box -->
-                                                            <div class="bg-white shadow-md  p-6 text-left">
-                                                                <p class=" text-base text-gray-700">
-                                                                    Great, since your holiday homes are located at the
-                                                                    same address there should be some things that apply
-                                                                    to all of them. Let's start filling in those general
-                                                                    settings.
-                                                                </p>
+                                                            <div class="bg-white shadow-md p-6 text-left">
+                                                                <template x-if="sameAddress === 'yes'">
+                                                                    <p class="text-base text-gray-700">
+                                                                        Great, since your holiday homes are located at the same address, there should be some settings that apply to all of them. Let's start with those general settings.
+                                                                    </p>
+                                                                </template>
+                                                                <template x-if="sameAddress === 'no'">
+                                                                    <p class="text-base text-gray-700">
+                                                                        Since your holiday homes are at different addresses, we'll help you set up each one individually, starting with some shared preferences.
+                                                                    </p>
+                                                                </template>
                                                             </div>
 
                                                             <!-- Navigation Buttons -->
                                                             <div class="mt-6 flex justify-between">
                                                                 <button type="button" @click="prevStep"
-                                                                    class="border border-[#3CC0E9]  text-blue-600 hover:bg-[#29ACD5] font-semibold py-2 px-4 rounded">
+                                                                    class="border border-[#3CC0E9] text-blue-600 hover:bg-[#29ACD5] font-semibold py-2 px-4 rounded">
                                                                     ←
                                                                 </button>
                                                                 <button type="button" @click="nextStep"
-                                                                    class=" font-semibold py-3 px-8 rounded  bg-[#3CC0E9] hover:bg-[#29ACD5] text-white">
+                                                                    class="font-semibold py-3 px-8 rounded bg-[#3CC0E9] hover:bg-[#29ACD5] text-white">
                                                                     Continue
                                                                 </button>
                                                             </div>
@@ -1786,124 +1867,60 @@
 
                                                 <!-- Step 4 -->
                                                 <template x-if="step === 4">
-                                                    <div>
-                                                        <div
-                                                            class="relative w-[1400px] h-auto overflow-hidden rounded-lg shadow mx-auto -mt-14 -ml-16">
+                                                    <div class="relative w-[1400px] h-auto overflow-hidden rounded-lg shadow mx-auto -mt-14 -ml-16">
+                                                        <!-- Google Maps iframe background -->
+                                                        <iframe class="absolute inset-0 w-full h-full"
+                                                            loading="lazy"
+                                                            src="https://www.google.com/maps?q=La+Grande+Villa+Nuwara+Eliya&output=embed"
+                                                            allowfullscreen>
+                                                        </iframe>
 
-                                                            <!-- Google Maps iframe full background -->
-                                                            <iframe class="absolute inset-0 w-full h-full"
-                                                                loading="lazy"
-                                                                src="https://www.google.com/maps?q=La+Grande+Villa+Nuwara+Eliya&output=embed"
-                                                                allowfullscreen>
-                                                            </iframe>
+                                                        <div class="absolute inset-0"></div>
 
-                                                            <!-- Optional overlay for readability -->
-                                                            <div class="absolute inset-0"></div>
+                                                        <div class="relative z-10 flex items-center justify-start h-auto p-4 mt-[110px]">
+                                                            <div class="bg-white bg-opacity-95 rounded-lg shadow-lg w-full max-w-[700px] p-6 md:p-8 h-auto mb-4 overflow-y-auto max-h-[80vh]">
 
-                                                            <!-- Form content centered on map -->
-                                                            <div
-                                                                class="relative z-10 flex items-center justify-start h-auto p-4 mt-[110px]">
-                                                                <div
-                                                                    class="bg-white bg-opacity-95 rounded-lg shadow-lg w-full max-w-md p-6 md:p-8 h-auto mb-4">
-                                                                    <h2
-                                                                        class="text-2xl font-semibold mb-4 text-gray-800">
-                                                                        Where is your property?</h2>
-                                                                    <form>
+                                                                <h2 class="text-2xl font-semibold mb-4 text-gray-800">Where is your property?</h2>
+
+                                                                <template x-if="selected === 'one' || sameAddress === 'yes'">
+                                                                    <!-- Shared address form -->
+                                                                    <div>
                                                                         <div class="mb-4">
-                                                                            <label for="address"
-                                                                                class="block text-sm font-medium text-gray-700">Find
-                                                                                your address</label>
-                                                                            <input type="text" id="address"
-                                                                                name="address" value="Sri Lanka"
-                                                                                class="mt-1 p-2 w-full border border-gray-300 rounded">
+                                                                                <label class="block text-sm font-medium text-gray-700">Find your address</label>
+                                                                                <input type="text" x-model="address" class="mt-1 p-2 w-full border border-gray-300 rounded" placeholder="Address" />
                                                                         </div>
-                                                                        <div class="mb-4">
-                                                                            <label for="apartment"
-                                                                                class="block text-sm font-medium text-gray-700">Apartment
-                                                                                or floor number (optional)</label>
-                                                                            <input type="text" id="apartment"
-                                                                                name="apartment" value="aaa"
-                                                                                class="mt-1 p-2 w-full border border-gray-300 rounded">
-                                                                        </div>
-                                                                        <div class="mb-4">
-                                                                            <label for="country"
-                                                                                class="block text-sm font-medium text-gray-700">Country/region</label>
-                                                                            <select id="country" name="country"
-                                                                                class="mt-1 p-2 w-full border border-gray-300 rounded">
-                                                                                <option selected>Sri Lanka</option>
-                                                                            </select>
-                                                                        </div>
-                                                                        <div class="flex flex-col md:flex-row gap-4">
-                                                                            <div class="flex-1">
-                                                                                <label for="city"
-                                                                                    class="block text-sm font-medium text-gray-700">City</label>
-                                                                                <input type="text" id="city"
-                                                                                    name="city" value="a"
-                                                                                    class="mt-1 p-2 w-full border border-gray-300 rounded">
+                                                                    </div>
+                                                                </template>
+
+                                                                <template x-if="selected === 'multiple' && sameAddress === 'no'">
+                                                                    <!-- Multiple address forms -->
+                                                                    <template x-for="i in propertyCount" :key="i">
+                                                                        <div class="mb-8 border border-gray-200 rounded p-4">
+                                                                            <h3 class="text-lg font-semibold mb-2 text-gray-700">Property <span x-text="i"></span></h3>
+
+                                                                            <!-- Inline address form -->
+                                                                            <div class="mb-4">
+                                                                                <label class="block text-sm font-medium text-gray-700">Find your address</label>
+                                                                                <input type="text" :id="`property-address-${i - 1}`"     x-model="unitAddresses[i - 1]"  class="mt-1 p-2 w-full border border-gray-300 rounded" placeholder="Address" />
                                                                             </div>
-                                                                            <div class="flex-1">
-                                                                                <label for="postcode"
-                                                                                    class="block text-sm font-medium text-gray-700">Post
-                                                                                    code / Zip code</label>
-                                                                                <input type="text" id="postcode"
-                                                                                    name="postcode" value="80400"
-                                                                                    class="mt-1 p-2 w-full border border-gray-300 rounded">
-                                                                            </div>
+                                                                            <!-- Repeat other address fields as needed -->
                                                                         </div>
-                                                                        <div class="flex items-center mt-4">
-                                                                            <input id="update_address" type="checkbox"
-                                                                                name="update_address" checked
-                                                                                class="mr-2">
-                                                                            <label for="update_address"
-                                                                                class="text-sm text-gray-700">Update
-                                                                                the address when moving the pin on the
-                                                                                map.</label>
-                                                                        </div>
+                                                                    </template>
 
-                                                                        <!-- Dismissible message box -->
-                                                                        <div x-data="{ showMessage: true }"
-                                                                            x-show="showMessage"
-                                                                            class="mt-4 bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded relative"
-                                                                            role="alert">
-                                                                            <strong class="font-bold">Note:</strong>
-                                                                            <span class="block sm:inline">Make sure the
-                                                                                pin location is accurate before
-                                                                                continuing.</span>
-                                                                            <span @click="showMessage = false"
-                                                                                class="absolute top-0 bottom-0 right-0 px-4 py-3 cursor-pointer">
-                                                                                <svg class="fill-current h-6 w-6 text-yellow-800"
-                                                                                    role="button"
-                                                                                    xmlns="http://www.w3.org/2000/svg"
-                                                                                    viewBox="0 0 20 20">
-                                                                                    <title>Close</title>
-                                                                                    <path
-                                                                                        d="M14.348 5.652a1 1 0 00-1.414 0L10 8.586 7.066 5.652a1 1 0 10-1.414 1.414L8.586 10l-2.934 2.934a1 1 0 101.414 1.414L10 11.414l2.934 2.934a1 1 0 001.414-1.414L11.414 10l2.934-2.934a1 1 0 000-1.414z" />
-                                                                                </svg>
-                                                                            </span>
-                                                                        </div>
+                                                                </template>
 
-                                                                        <p class="text-sm text-gray-600 mt-2">
-                                                                            Is the red pin location incorrect? Uncheck
-                                                                            the option above and click or press on the
-                                                                            map to move the pin.
-                                                                        </p>
-
-                                                                        <!-- Buttons -->
-                                                                        <div
-                                                                            class="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6">
-                                                                            <button type="button" @click="prevStep"
-                                                                                class="w-full sm:w-auto border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
-                                                                                ←
-                                                                            </button>
-                                                                            <button type="button" @click="nextStep"
-                                                                                class="w-full sm:w-auto px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
-                                                                                Continue
-                                                                            </button>
-                                                                        </div>
-
-
-                                                                    </form>
+                                                                <!-- Navigation buttons -->
+                                                                <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6">
+                                                                    <button type="button" @click="prevStep"
+                                                                        class="w-full sm:w-auto border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
+                                                                        ←
+                                                                    </button>
+                                                                    <button type="button" @click="nextStep"
+                                                                        class="w-full sm:w-auto px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
+                                                                        Continue
+                                                                    </button>
                                                                 </div>
+
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1927,7 +1944,7 @@
                                                                     A channel manager is a third-party tool that lets
                                                                     you manage rates and availability across different
                                                                     sites you might list your place on, including
-                                                                    {{ config('domains.subdomain') }}. If you're already using a channel
+                                                                    Booking.com. If you're already using a channel
                                                                     manager, you can select 'Yes' to connect it to your
                                                                     listing.
                                                                 </p>
@@ -1998,11 +2015,12 @@
 
 
                                                 <!-- Step 5 -->
-                                                <template x-if="step === 6">
+                                                <template x-if="step === 6" >
                                                     <div>
                                                         <section class="mb-8">
-                                                            <h1 class="text-xl text-gray-700 font-bold mb-4">What can
-                                                                guests use at your place?</h1>
+                                                            <h1 class="text-xl text-gray-700 font-bold mb-4">
+                                                                What can guests use at Unit <span x-text="currentUnit"></span>?
+                                                            </h1>
 
                                                             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
@@ -2023,73 +2041,64 @@
                                                                                 <label
                                                                                     class="flex items-center space-x-2">
                                                                                     <input type="checkbox"
-                                                                                        name="property_types[]"
-                                                                                        value="Apartment"
-                                                                                        class="text-blue-500" />
+                                                                                        :name="`facilities_unit_${currentUnit}[]`" :value="'Bar'" x-model="unitFacilities[currentUnit - 1]" />
                                                                                     <span>Bar</span>
                                                                                 </label>
                                                                                 <label
                                                                                     class="flex items-center space-x-2">
                                                                                     <input type="checkbox"
-                                                                                        name="property_types[]"
-                                                                                        value="Villa"
-                                                                                        class="text-blue-500" />
+                                                                                        :name="`facilities_unit_${currentUnit}[]`" :value="'Sauna'" x-model="unitFacilities[currentUnit - 1]" />
                                                                                     <span>Sauna</span>
                                                                                 </label>
                                                                                 <label
                                                                                     class="flex items-center space-x-2">
                                                                                     <input type="checkbox"
-                                                                                        name="property_types[]"
-                                                                                        value="Holiday Home"
-                                                                                        class="text-blue-500" />
+                                                                                        :name="`facilities_unit_${currentUnit}[]`" :value="'Garden'" x-model="unitFacilities[currentUnit - 1]" />
                                                                                     <span>Garden</span>
                                                                                 </label>
                                                                                 <label
                                                                                     class="flex items-center space-x-2">
                                                                                     <input type="checkbox"
-                                                                                        name="property_types[]"
-                                                                                        value="Chalet"
-                                                                                        class="text-blue-500" />
+                                                                                        :name="`facilities_unit_${currentUnit}[]`" 
+                                                                                        :value="'Terrace'" 
+                                                                                        x-model="unitFacilities[currentUnit - 1]" />
                                                                                     <span>Terrace</span>
                                                                                 </label>
                                                                                 <label
                                                                                     class="flex items-center space-x-2">
                                                                                     <input type="checkbox"
-                                                                                        name="property_types[]"
-                                                                                        value="Cottage"
-                                                                                        class="text-blue-500" />
+                                                                                        :name="`facilities_unit_${currentUnit}[]`" 
+                                                                                        :value="'Hot tub/Jacuzzi'" 
+                                                                                        x-model="unitFacilities[currentUnit - 1]" />
                                                                                     <span>Hot tub/Jacuzzi</span>
                                                                                 </label>
                                                                                 <label
                                                                                     class="flex items-center space-x-2">
                                                                                     <input type="checkbox"
-                                                                                        name="property_types[]"
-                                                                                        value="Cabin"
-                                                                                        class="text-blue-500" />
+                                                                                        :name="`facilities_unit_${currentUnit}[]`"
+                                                                                        :value="'Heating'"
+                                                                                        x-model="unitFacilities[currentUnit - 1]" />
                                                                                     <span>Heating</span>
                                                                                 </label>
                                                                                 <label
                                                                                     class="flex items-center space-x-2">
                                                                                     <input type="checkbox"
-                                                                                        name="property_types[]"
-                                                                                        value="Bungalow"
-                                                                                        class="text-blue-500" />
+                                                                                        :name="`facilities_unit_${currentUnit}[]`"
+                                                                                        :value="'WiFi'"
+                                                                                        x-model="unitFacilities[currentUnit - 1]" />
+
                                                                                     <span>Free WiFi</span>
                                                                                 </label>
                                                                                 <label
                                                                                     class="flex items-center space-x-2">
                                                                                     <input type="checkbox"
-                                                                                        name="property_types[]"
-                                                                                        value="Farm Stay"
-                                                                                        class="text-blue-500" />
+                                                                                        :name="`facilities_unit_${currentUnit}[]`" :value="'Air conditioning'" x-model="unitFacilities[currentUnit - 1]" />
                                                                                     <span>Air conditioning</span>
                                                                                 </label>
                                                                                 <label
                                                                                     class="flex items-center space-x-2">
                                                                                     <input type="checkbox"
-                                                                                        name="property_types[]"
-                                                                                        value="Houseboat"
-                                                                                        class="text-blue-500" />
+                                                                                        :name="`facilities_unit_${currentUnit}[]`" :value="'Swimming pool'" x-model="unitFacilities[currentUnit - 1]" />
                                                                                     <span>Swimming pool</span>
                                                                                 </label>
                                                                             </div>
@@ -2159,7 +2168,7 @@
                                                         </section>
                                                     </div>
                                                 </template>
-                                                <!-- Step 5 -->
+                                                <!-- Step 7 -->
                                                 <template x-if="step === 7">
                                                     <div>
                                                         <div class="container mx-auto px-4 py-4 max-w-6xl mb-8">
@@ -2167,7 +2176,7 @@
                                                             <!-- Header -->
                                                             <h2
                                                                 class="text-2xl font-bold mb-4 text-left ml-6 max-w-xl">
-                                                                Services at your property
+                                                                Services at your property <span x-text="currentUnit"></span>
                                                             </h2>
 
                                                             <!-- Sections stacked vertically, aligned with header -->
@@ -2182,15 +2191,18 @@
                                                                     <div class="space-y-2">
                                                                         <label
                                                                             class="flex items-center cursor-pointer">
-                                                                            <input type="radio" name="breakfast"
-                                                                                value="yes" class="mr-2" />
+                                                                            <input type="radio"
+                                                                                :name="`breakfast_unit_${currentUnit}`"
+                                                                                value="yes" class="mr-2"
+                                                                                x-model="unitServices[currentUnit - 1].breakfast" />
                                                                             <span>Yes</span>
                                                                         </label>
                                                                         <label
                                                                             class="flex items-center cursor-pointer">
-                                                                            <input type="radio" name="breakfast"
+                                                                            <input type="radio"
+                                                                                :name="`breakfast_unit_${currentUnit}`"
                                                                                 value="no" class="mr-2"
-                                                                                checked />
+                                                                                x-model="unitServices[currentUnit - 1].breakfast" />
                                                                             <span>No</span>
                                                                         </label>
                                                                     </div>
@@ -2241,13 +2253,13 @@
                                                         </div>
                                                     </div>
                                                 </template>
-                                                <!-- Step 5 -->
+                                                <!-- Step 8 -->
                                                 <template x-if="step === 8">
                                                     <div>
                                                         <div class="container mx-auto px-4 py-8 max-w-6xl">
                                                             <!-- Header -->
                                                             <h2 class="text-2xl font-bold mb-8 text-left">
-                                                                What languages do you or your staff speak?
+                                                                What languages do you or your staff in property <span x-text="currentUnit"></span> speak?
                                                             </h2>
 
                                                             <!-- Language Selection Section -->
@@ -2256,20 +2268,32 @@
                                                                 </h3>
                                                                 <div class="space-y-2">
                                                                     <label class="flex items-center cursor-pointer">
-                                                                        <input type="checkbox" class="mr-2" />
+                                                                        <input type="checkbox" class="mr-2"
+                                                                                :value="'English'"
+                                                                                @change="toggleLanguage('English')"
+                                                                                :checked="unitServices[currentUnit - 1]?.languages?.includes('English')" />
                                                                         <span>English</span>
+                                                                        </label>
+                                                                    <label class="flex items-center cursor-pointer">
+                                                                        <input type="checkbox" class="mr-2"
+                                                                                :value="'Spanish'"
+                                                                                @change="toggleLanguage('Spanish')"
+                                                                                :checked="unitServices[currentUnit - 1]?.languages?.includes('Spanish')" />
+                                                                        <span>Spanish</span>
                                                                     </label>
                                                                     <label class="flex items-center cursor-pointer">
-                                                                        <input type="checkbox" class="mr-2" />
+                                                                        <input type="checkbox" class="mr-2"
+                                                                                :value="'French'"
+                                                                                @change="toggleLanguage('French')"
+                                                                                :checked="unitServices[currentUnit - 1]?.languages?.includes('French')" />
                                                                         <span>French</span>
                                                                     </label>
                                                                     <label class="flex items-center cursor-pointer">
-                                                                        <input type="checkbox" class="mr-2" />
+                                                                        <input type="checkbox" class="mr-2"
+                                                                                :value="'German'"
+                                                                                @change="toggleLanguage('German')"
+                                                                                :checked="unitServices[currentUnit - 1]?.languages?.includes('German')" />
                                                                         <span>German</span>
-                                                                    </label>
-                                                                    <label class="flex items-center cursor-pointer">
-                                                                        <input type="checkbox" class="mr-2" />
-                                                                        <span>Hindi</span>
                                                                     </label>
                                                                 </div>
 
@@ -2343,7 +2367,7 @@
                                                                     ←
                                                                 </button>
 
-                                                                <!-- Continue Button on the right -->
+                                                                <!-- Continue Button n tohe right -->
                                                                 <button type="button" @click="nextStep"
                                                                     class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
                                                                     Continue
@@ -2363,6 +2387,24 @@
                                                                     hideDropdown();
                                                                 }
                                                             }
+
+                                                            
+
+                                                            function selectLanguage(element) {
+                                                                const selected = element.textContent.trim();
+                                                                const unitIndex = Alpine.store('stepForm').currentUnit - 1;
+                                                                const langArray = Alpine.store('stepForm').unitServices[unitIndex].languages;
+
+                                                                if (!langArray.includes(selected)) {
+                                                                    langArray.push(selected);
+                                                                }
+                                                                console.log(`Selected language: ${selected}`);
+
+                                                                // clear input and hide dropdown
+                                                                document.getElementById("languageInput").value = "";
+                                                                hideDropdown();
+                                                                }
+
 
                                                             function toggleDropdown() {
                                                                 const dropdown = document.getElementById("languageDropdown");
@@ -2419,12 +2461,12 @@
                                                         </script>
                                                     </div>
                                                 </template>
-                                                <!-- Step 5 -->
+                                                <!-- Step 9 -->
                                                 <template x-if="step === 9">
                                                     <div>
                                                         <div class="container mx-auto px-4 py-8 max-w-6xl">
                                                             <!-- Header -->
-                                                            <h2 class="text-2xl font-bold mb-8 text-left">House rules
+                                                            <h2 class="text-2xl font-bold mb-8 text-left">House rules of property <span x-text="currentUnit"></span>
                                                             </h2>
 
                                                             <div class="flex flex-col md:flex-row gap-6">
@@ -2437,8 +2479,10 @@
                                                                             class="flex items-center justify-between cursor-pointer">
                                                                             <span>Smoking allowed</span>
                                                                             <div class="relative">
-                                                                                <input type="checkbox"
-                                                                                    class="sr-only peer" />
+                                                                              <input type="checkbox"
+                                                                                class="sr-only peer"
+                                                                                x-model="unitServices[currentUnit - 1].houseRules.smokingAllowed" />
+
                                                                                 <div
                                                                                     class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition">
                                                                                 </div>
@@ -2453,7 +2497,9 @@
                                                                             <span>Children allowed</span>
                                                                             <div class="relative">
                                                                                 <input type="checkbox"
-                                                                                    class="sr-only peer" checked />
+                                                                                    class="sr-only peer"
+                                                                                    x-model="unitServices[currentUnit - 1].houseRules.childrenAllowed" />
+
                                                                                 <div
                                                                                     class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition">
                                                                                 </div>
@@ -2468,7 +2514,9 @@
                                                                             <span>Parties/events allowed</span>
                                                                             <div class="relative">
                                                                                 <input type="checkbox"
-                                                                                    class="sr-only peer" />
+                                                                                    class="sr-only peer"
+                                                                                    x-model="unitServices[currentUnit - 1].houseRules.partiesAllowed" />
+
                                                                                 <div
                                                                                     class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition">
                                                                                 </div>
@@ -2487,22 +2535,20 @@
                                                                         <div class="space-y-2">
                                                                             <label
                                                                                 class="flex items-center cursor-pointer">
-                                                                                <input type="radio" name="pets"
-                                                                                    value="yes" class="mr-2">
+                                                                               <input type="radio" name="pets" value="yes"
+                                                                                    x-model="unitServices[currentUnit - 1].houseRules.petsPolicy" />
                                                                                 <span>Yes</span>
                                                                             </label>
                                                                             <label
                                                                                 class="flex items-center cursor-pointer">
-                                                                                <input type="radio" name="pets"
-                                                                                    value="upon_request"
-                                                                                    class="mr-2">
+                                                                                <input type="radio" name="pets" value="upon_request"
+                                                                                    x-model="unitServices[currentUnit - 1].houseRules.petsPolicy" />
                                                                                 <span>Upon request</span>
                                                                             </label>
                                                                             <label
                                                                                 class="flex items-center cursor-pointer">
-                                                                                <input type="radio" name="pets"
-                                                                                    value="no" class="mr-2"
-                                                                                    checked>
+                                                                               <input type="radio" name="pets" value="no"
+                                                                                    x-model="unitServices[currentUnit - 1].houseRules.petsPolicy" />
                                                                                 <span>No</span>
                                                                             </label>
                                                                         </div>
@@ -2518,13 +2564,15 @@
                                                                             <div class="w-full">
                                                                                 <label
                                                                                     class="block text-sm font-medium mb-1">From</label>
-                                                                                <input type="time" value="15:00"
+                                                                                <input type="time"
+                                                                                    x-model="unitServices[currentUnit - 1].houseRules.checkInFrom"
                                                                                     class="w-full border rounded p-2" />
                                                                             </div>
                                                                             <div class="w-full">
                                                                                 <label
                                                                                     class="block text-sm font-medium mb-1">Until</label>
-                                                                                <input type="time" value="18:00"
+                                                                                <input type="time"
+                                                                                    x-model="unitServices[currentUnit - 1].houseRules.checkInUntil"
                                                                                     class="w-full border rounded p-2" />
                                                                             </div>
                                                                         </div>
@@ -2538,13 +2586,15 @@
                                                                             <div class="w-full">
                                                                                 <label
                                                                                     class="block text-sm font-medium mb-1">From</label>
-                                                                                <input type="time" value="08:00"
+                                                                                <input type="time"
+                                                                                    x-model="unitServices[currentUnit - 1].houseRules.checkOutFrom"
                                                                                     class="w-full border rounded p-2" />
                                                                             </div>
                                                                             <div class="w-full">
                                                                                 <label
                                                                                     class="block text-sm font-medium mb-1">Until</label>
-                                                                                <input type="time" value="11:00"
+                                                                                <input type="time"
+                                                                                    x-model="unitServices[currentUnit - 1].houseRules.checkOutUntil"
                                                                                     class="w-full border rounded p-2" />
                                                                             </div>
                                                                         </div>
@@ -2603,80 +2653,66 @@
                                                     <div>
                                                         <!-- Main Content -->
                                                         <main class="container mx-auto px-4 py-8 max-w-4xl">
-                                                            <h2 class="text-2xl md:text-3xl font-bold mb-6 text-left">
-                                                                Host profile
-                                                            </h2>
+                                                            <h2 class="text-2xl md:text-3xl font-bold mb-6 text-left">Host profile of property <span x-text="currentUnit"></span> </h2>
 
                                                             <div class="bg-white shadow-md rounded-lg p-6 md:p-8">
                                                                 <p class="text-gray-700 mb-4 text-sm md:text-base">
-                                                                    Help your listing stand out by telling potential
-                                                                    guests a bit more about yourself, your property and
-                                                                    your neighbourhood. This information will be shown
-                                                                    on your property page.
+                                                                    Help your listing stand out by telling potential guests a bit more about yourself, your property and your neighbourhood. This information will be shown on your property page.
                                                                 </p>
 
                                                                 <div class="space-y-3">
-                                                                    <label
-                                                                        class="flex items-start sm:items-center cursor-pointer">
-                                                                        <input type="radio" name="profile-info"
-                                                                            value="property"
-                                                                            class="mr-3 mt-1 sm:mt-0">
-                                                                        <span class="text-sm sm:text-base">The
-                                                                            property</span>
+                                                                    <label class="flex items-start sm:items-center cursor-pointer">
+                                                                        <input type="radio" name="profile-info" value="property"
+                                                                            class="mr-3 mt-1 sm:mt-0"
+                                                                            x-model="unitServices[currentUnit - 1].hostProfile">
+                                                                        <span class="text-sm sm:text-base">The property</span>
                                                                     </label>
 
-                                                                    <label
-                                                                        class="flex items-start sm:items-center cursor-pointer">
-                                                                        <input type="radio" name="profile-info"
-                                                                            value="host" class="mr-3 mt-1 sm:mt-0">
-                                                                        <span class="text-sm sm:text-base">The
-                                                                            host</span>
+                                                                    <label class="flex items-start sm:items-center cursor-pointer">
+                                                                        <input type="radio" name="profile-info" value="host"
+                                                                            class="mr-3 mt-1 sm:mt-0"
+                                                                            x-model="unitServices[currentUnit - 1].hostProfile">
+                                                                        <span class="text-sm sm:text-base">The host</span>
                                                                     </label>
 
-                                                                    <label
-                                                                        class="flex items-start sm:items-center cursor-pointer">
-                                                                        <input type="radio" name="profile-info"
-                                                                            value="neighbourhood"
-                                                                            class="mr-3 mt-1 sm:mt-0">
-                                                                        <span class="text-sm sm:text-base">The
-                                                                            neighbourhood</span>
+                                                                    <label class="flex items-start sm:items-center cursor-pointer">
+                                                                        <input type="radio" name="profile-info" value="neighbourhood"
+                                                                            class="mr-3 mt-1 sm:mt-0"
+                                                                            x-model="unitServices[currentUnit - 1].hostProfile">
+                                                                        <span class="text-sm sm:text-base">The neighbourhood</span>
                                                                     </label>
 
-                                                                    <label
-                                                                        class="flex items-start sm:items-center cursor-pointer">
-                                                                        <input type="radio" name="profile-info"
-                                                                            value="later" class="mr-3 mt-1 sm:mt-0"
-                                                                            checked>
-                                                                        <span class="text-sm sm:text-base">None of the
-                                                                            above/I'll add these later</span>
+                                                                    <label class="flex items-start sm:items-center cursor-pointer">
+                                                                        <input type="radio" name="profile-info" value="later"
+                                                                            class="mr-3 mt-1 sm:mt-0"
+                                                                            x-model="unitServices[currentUnit - 1].hostProfile">
+                                                                        <span class="text-sm sm:text-base">None of the above/I'll add these later</span>
                                                                     </label>
                                                                 </div>
                                                             </div>
 
                                                             <!-- Navigation Buttons -->
                                                             <div class="mt-8 flex justify-between">
-                                                                <!-- Back Button on the left -->
                                                                 <button type="button" @click="prevStep"
-                                                                    class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                                                                        class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
                                                                     ←
                                                                 </button>
 
-                                                                <!-- Continue Button on the right -->
                                                                 <button type="button" @click="nextStep"
-                                                                    class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
+                                                                        class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
                                                                     Continue
                                                                 </button>
                                                             </div>
-
                                                         </main>
                                                     </div>
                                                 </template>
+
                                                 <template x-if="step === 11">
                                                     <div>
                                                         <div class="max-w-5xl mx-auto px-4 py-10 space-y-32">
                                                             <section class="mb-8">
                                                                 <h1 class="text-2xl text-gray-700 font-bold mb-4">
-                                                                    What's the name of your place?</h1>
+                                                                    What's the name of your place <span x-text="currentUnit"></span>?</h1>
 
                                                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
@@ -2688,7 +2724,8 @@
                                                                                 class="block text-gray-700">Property
                                                                                 name</label>
                                                                             <input type="text" id="property_name"
-                                                                                name="property_name" value="ccc"
+                                                                                name="property_name"
+                                                                                x-model="formData.propertyName"
                                                                                 class="w-full h-16 border border-gray-300 rounded p-4 mt-3 text-lg focus:outline-none focus:border-blue-500"
                                                                                 placeholder="e.g., Sunset Villa"
                                                                                 required>
@@ -2781,7 +2818,7 @@
                                                                     <!-- Continue Button -->
                                                                     <!-- Continue Button (inside input field container, aligned right) -->
                                                                     <div class="flex justify-end mt-4">
-                                                                        <button type="button" @click="nextStep"
+                                                                        <button type="button" @click="console.log('Saved data:', formData); nextStep()" 
                                                                             class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
                                                                             Continue
                                                                         </button>
@@ -2794,7 +2831,63 @@
                                                     </div>
 
                                                 </template>
-                                                <template x-if="step === 12">
+                                                <template x-if="step === 12 ">
+                                                    <div class="space-y-6">
+                                                        <h3 class="text-lg font-bold">Upload Photos for Unit #<span x-text="currentUnit"></span></h3>
+
+                                                        <!-- Upload Box -->
+                                                        <div
+                                                            class="relative border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center text-center hover:border-blue-400 transition"
+                                                            @dragover.prevent
+                                                            @drop.prevent>
+                                                            <svg class="w-12 h-12 text-blue-400 mb-2" fill="none" stroke="currentColor" stroke-width="1.5"
+                                                                viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                                    d="M3 16.5V18a2.5 2.5 0 002.5 2.5h13a2.5 2.5 0 002.5-2.5v-1.5M16.5 12L12 7.5 7.5 12M12 7.5V18" />
+                                                            </svg>
+
+                                                            <p class="text-gray-600 text-sm">Drag and drop your images here, or</p>
+
+                                                            <label class="mt-2 cursor-pointer inline-block bg-blue-100 hover:bg-blue-200 text-blue-700 px-4 py-2 rounded font-medium">
+                                                                Browse files
+                                                                <input
+                                                                    type="file"
+                                                                    multiple
+                                                                    x-ref="unitPhotoInput"
+                                                                    @change="handleUnitPhotoUpload(currentUnit, $event)"
+                                                                    accept="image/*"
+                                                                    class="hidden" />
+                                                            </label>
+
+                                                            <p class="text-xs text-gray-500 mt-2">Accepted formats: JPG, PNG, WebP. Max size: 5MB each</p>
+                                                        </div>
+
+                                                        <!-- Photo Previews -->
+                                                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-4" x-show="previewUnitPhotos[currentUnit]?.length">
+                                                            <template x-for="(file, index) in previewUnitPhotos[currentUnit]" :key="index">
+                                                                <img :src="file" class="rounded shadow object-cover w-full h-32 border border-gray-300" />
+                                                            </template>
+                                                        </div>
+
+                                                        <!-- Navigation Buttons -->
+                                                        <div class="flex justify-between pt-4">
+                                                            <button type="button"
+                                                                @click="prevStep"
+                                                                class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium px-5 py-2 rounded">
+                                                                ←
+                                                            </button>
+
+                                                            <button
+                                                                type="button"
+                                                                @click="nextStep"
+                                                                class="bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold px-6 py-2 rounded shadow">
+                                                                Continue →
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </template>
+
+                                                <template x-if="step === 13">
                                                     <div>
                                                         <!-- AlpineJS is required -->
                                                         <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
@@ -2922,7 +3015,7 @@
 
                                                     </div>
                                                 </template>
-                                                <template x-if="step === 13">
+                                                <template x-if="step === 14">
                                                     <div>
                                                         <!-- Include Alpine.js -->
                                                         <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
@@ -3024,12 +3117,22 @@
 
                                                     </div>
                                                 </template>
-                                                <template x-if="step === 14">
+                                                <template x-if="step === 15">
                                                     <div>
                                                         <h3 class="text-lg font-bold mb-2">Upload Additional Documents
                                                         </h3>
                                                         <input type="file" multiple
                                                             class="border p-2 rounded w-full" />
+                                                    </div>
+                                                    <div class="flex justify-between mt-8">
+                                                        <button type="button" @click="prevStep"
+                                                            class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                                                            ←
+                                                        </button>
+                                                        <button type="button" @click="nextStep"
+                                                            class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
+                                                            Continue
+                                                        </button>
                                                     </div>
                                                 </template>
                                             </div>
@@ -3050,16 +3153,49 @@
                             function wizard(selectedBoxValue) {
                                 return {
                                     step: 1,
-                                    selectedBox: selectedBoxValue, // Ensure this matches to show this section
+                                    selectedBox: selectedBoxValue,
                                     selected: '',
-                                    sameAddress: '',
+                                    sameAddress: 'yes',
                                     propertyCount: 2,
-                                    totalSteps: 14, // Adjust total steps as needed
-
+                                    totalSteps: 15,
+                                    currentUnit: 1,
+                                    unitPhotos: {},             // Holds all photo arrays per unit
+                                    previewUnitPhotos: {},      // Holds base64 previews per unit
+                                    unitFacilities: [],
+                                    unitServices: [],
                                     previewFiles: [],
+                                    formData: {
+                                        propertyName: '',
+                                        description: '',
+                                        addressForm: {
+                                            address_line_1: '',
+                                            address_line_2: '',
+                                            city: '',
+                                            state: '',
+                                            country: '',
+                                            postal_code: ''
+                                        }
+                                    },
+                                    addRoom() {
 
+
+                                        // Clone the current newRoom and push to rooms
+                                        const roomCopy = JSON.parse(JSON.stringify(this.newRoom));
+                                        this.rooms.push(roomCopy);
+
+                                        // Reset newRoom
+                                        this.newRoom = {
+                                            room_type_id: '',
+                                            name: '',
+                                            price_per_night: 0,
+                                            max_guests: 1,
+                                            bathroom_count: 0,
+                                            size_sq_m: 0,
+                                            beds: {}
+                                        };
+                                    },
                                     handlePreview(event) {
-                                        this.previewFiles = []; // Clear existing previews
+                                        this.previewFiles = [];
                                         const files = event.target.files;
 
                                         for (let i = 0; i < files.length; i++) {
@@ -3126,7 +3262,7 @@
                                     },
 
                                     async nextStep() {
-                                        if (this.step === 1 && this.selected === 'one' || this.selected === 'multiple') {
+                                        if ((this.step === 1 && this.selected === 'one')) {
                                             try {
 
                                                 console.log('Addtress type:', this.step);
@@ -3165,8 +3301,7 @@
                                                     method: 'POST',
                                                     headers: {
                                                         'Content-Type': 'application/json',
-                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                                            .getAttribute('content')
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                                                     },
                                                     body: JSON.stringify({
                                                         title: this.propertyName,
@@ -3222,7 +3357,7 @@
                                                     console.error('Upload error:', error);
                                                     alert('Something went wrong while uploading photos.');
                                                 });
-                                        } else if (this.step === 7 && this.selected === 'one') {
+                                        } else if (this.step === 6 && this.selected === 'one') {
                                             try {
                                                 console.log('Submitting form:', this.addressForm);
 
@@ -3245,7 +3380,7 @@
                                             } catch (e) {
                                                 console.error('Error saving step 2:', e);
                                             }
-                                        } else if (this.step === 9 && this.selected === 'one') {
+                                        } else if (this.step === 8 && this.selected === 'one') {
                                             try {
                                                 // Get all checked amenity IDs
                                                 const selectedAmenities = Array.from(document.querySelectorAll('input[name="amenities[]"]:checked'))
@@ -3274,7 +3409,7 @@
                                             } catch (e) {
                                                 console.error('Error saving amenities:', e);
                                             }
-                                        } else if (this.step === 12 && this.selected === 'one') {
+                                        } else if (this.step === 11 && this.selected === 'one') {
                                             try {
                                                 const smokingAllowed = document.querySelector('#smoking_allowed').checked;
                                                 const petsValue = document.querySelector('input[name="pets_allowed"]:checked')?.value || 'no';
@@ -3308,6 +3443,128 @@
                                             } catch (e) {
                                                 console.error('Error saving policy:', e);
                                             }
+                                        } else if (this.step === 13 && this.selected === 'one') {
+                                            console.log('Saving room details for property ID:', this.propertyId);
+
+                                            if (this.rooms.length === 0) {
+                                                alert('Please add at least one room before continuing.');
+                                                return;
+                                            }
+
+                                            console.log('Saving room details:', {
+                                                rooms: this.rooms
+
+                                            });
+
+
+                                            fetch(`/partner/save-rooms/${this.propertyId}`, {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                    },
+                                                    body: JSON.stringify({
+                                                        property_id: this.propertyId,
+                                                        rooms: this.rooms
+
+                                                    })
+                                                })
+                                                .then(response => response.json())
+                                                .then(result => {
+                                                    if (result.success) {
+                                                        console.log('Room saved:', result);
+                                                        this.step++; // Move to step 15
+                                                    } else {
+                                                        alert(result.message || 'Failed to save room.');
+                                                    }
+                                                })
+                                                .catch(error => {
+                                                    console.error('Error saving room:', error);
+                                                    alert('Something went wrong while saving the room.');
+                                                });
+                                        } else if (this.step === 14 && this.selected === 'one') {
+                                            console.log('Submitting partner verification details for property ID:', this.propertyId);
+                                            const payload = {
+                                                property_id: this.propertyId,
+                                                type: this.type,
+                                                full_name: this.type === 'individual' ? this.individual.full_name : null,
+                                                national_id: this.type === 'individual' ? this.individual.national_id : null,
+                                                company_name: this.type === 'business' ? this.business.company_name : null,
+                                                registration_number: this.type === 'business' ? this.business.registration_number : null,
+                                            };
+
+                                            fetch(`/partner/partner-verification`, {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                    },
+                                                    body: JSON.stringify(payload)
+                                                })
+                                                .then(response => response.json())
+                                                .then(data => {
+                                                    console.log(data);
+                                                    this.step++;
+                                                })
+                                                .catch(error => {
+                                                    console.error('Error:', error);
+                                                });
+                                        } else if (this.step === 4 && this.selected === 'multiple') {
+                                             if (this.sameAddress === 'yes') {
+                                                console.log('Saving same address for all properties with ID:', this.propertyId);
+                                                fetch('/property/save-address-same', {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                    },
+                                                    body: JSON.stringify({
+                                                        property_id: this.propertyId,
+                                                        count: this.propertyCount,
+                                                        address: this.address
+                                                    })
+                                                })
+                                                .then(res => res.json())
+                                                .then(data => {
+                                                    console.log('Saved:', data);
+                                                    this.step++ ;
+                                                });
+                                            } else {
+                                                // Different address for each property
+                                                console.log('Saving multiple addresses for properties with ID:', this.propertyId);
+                                                const allAddresses = Array.from({ length: this.propertyCount }, (_, i) => {
+                                                    const input = document.querySelector(`#property-address-${i}`);
+                                                    return input ? input.value : '';
+                                                });
+
+                                                fetch('/property/save-address-multiple', {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                    },
+                                                    body: JSON.stringify({
+                                                        first_property_id: this.propertyId,
+                                                        addresses: allAddresses
+                                                    })
+                                                })
+                                                .then(res => res.json())
+                                                .then(data => {
+                                                    alert('Addresses saved successfully');
+                                                    console.log('Saved Multiple:', data);
+                                                    this.step++;
+                                                });
+                                            }
+                                        }else if (this.step === 12 && this.selected === 'multiple') {
+                                            if (this.currentUnit < this.propertyCount) {
+                                                console.log('Saving unit services for property ID:', this.propertyId);
+                                                console.log('Property Count:', this.propertyCount);
+                                                console.log(JSON.stringify(this.unitServices, null, 2));
+                                                this.currentUnit++;
+                                                this.step = 6; // Repeat for next unit
+                                            } else {
+                                                this.step++;
+                                            }
                                         } else {
                                             if (this.step === 1 && this.selected === '') return;
 
@@ -3332,37 +3589,6 @@
 
 
 
-                    <!-- Villa -->
-                    <section x-show="selectedBox === 2" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
-                        <h3 class="text-xl font-bold mb-4">Villa Details</h3>
-                        <p>Details related to villa...</p>
-                        <button type="button" @click="step = 2"
-                            class="mt-4 bg-gray-300 px-4 py-2 rounded">Back</button>
-                    </section>
-
-                    <!-- Chalet -->
-                    <section x-show="selectedBox === 1" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
-                        <h3 class="text-xl font-bold mb-4">Chalet Details</h3>
-                        <p>Details related to chalet...</p>
-                        <button type="button" @click="step = 2"
-                            class="mt-4 bg-gray-300 px-4 py-2 rounded">Back</button>
-                    </section>
-
-                    <!-- Holiday Park -->
-                    <section x-show="selectedBox === 6" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
-                        <h3 class="text-xl font-bold mb-4">Holiday Park Details</h3>
-                        <p>Details related to holiday park...</p>
-                        <button type="button" @click="step = 2"
-                            class="mt-4 bg-gray-300 px-4 py-2 rounded">Back</button>
-                    </section>
-
-                    <!-- Aparthotel -->
-                    <section x-show="selectedBox ===5" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
-                        <h3 class="text-xl font-bold mb-4">Aparthotel Details</h3>
-                        <p>Details related to aparthotel...</p>
-                        <button type="button" @click="step = 2"
-                            class="mt-4 bg-gray-300 px-4 py-2 rounded">Back</button>
-                    </section>
                 </div>
             </template>
         </form>

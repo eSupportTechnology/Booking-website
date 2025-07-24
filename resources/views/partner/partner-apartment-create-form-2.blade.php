@@ -18,6 +18,23 @@
       }
     </style>
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <script>
+      // Ensure CSRF token is always sent with fetch/AJAX requests
+      document.addEventListener('DOMContentLoaded', function () {
+        const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        if (window.fetch) {
+          const _fetch = window.fetch;
+          window.fetch = function(resource, config = {}) {
+            config.headers = config.headers || {};
+            // Only add if not already present
+            if (!config.headers['X-CSRF-TOKEN'] && !config.headers['x-csrf-token']) {
+              config.headers['X-CSRF-TOKEN'] = token;
+            }
+            return _fetch(resource, config);
+          };
+        }
+      });
+    </script>
   </head>
   <body class="bg-gray-50 text-gray-800">
     <!-- Header -->
@@ -97,302 +114,684 @@
     <!-- Alpine.js root with merged state and backend logic -->
     <div
       x-data="{
-    // Step navigation
-    step: 1,
-    wizardStep: 1,
-    propertyWizardStep: 1,
-     pricingWizardStep:1,
-    // Backend-connected state
-    propertyId: '{{ $property->id ?? 'new' }}', // Use 'new' if $property->id is not set
-    title: '{{ old('title', $property->title ?? '') }}',
-    address: '{{ old('address', $property->address ?? '') }}',
-    city: '{{ old('city', $property->city ?? '') }}',
-    country: 'Sri Lanka', // <-- Set the default value!
-    zipcode: '{{ old('zipcode', $property->zipcode ?? '') }}',
-    description: '{{ old('description', $property->description ?? '') }}',
-    channelManager: 'yes', // or 'no' as default
-    isLoading: false,
-    // Photo upload state
-    uploadedPhotos: [],
+            // Wizard state// Language selection state (make sure these exist in main scope)
+            selectedLanguages: [],
+            availableLanguages: [],
+            showAdditionalLanguages: false,
+            searchTerm: '',
+            showDropdown: false,
+            filteredLanguages: [],
+          // Step navigation
+          step: 1,
+          wizardStep: 1,
+          propertyWizardStep: 1,
+          pricingWizardStep:1,
+          // Backend-connected state
+          propertyId: '{{ $property->id ?? 'new' }}', // Use 'new' if $property->id is not set
+          title: '{{ old('title', $property->title ?? '') }}',
+          address: '{{ old('address', $property->address ?? '') }}',
+          city: '{{ old('city', $property->city ?? '') }}',
+          country: 'Sri Lanka', // <-- Set the default value!
+          zipcode: '{{ old('zipcode', $property->zipcode ?? '') }}',
+          description: '{{ old('description', $property->description ?? '') }}',
+          channelManager: 'yes', // or 'no' as default
+          isLoading: false,
+          // Property services state
+          breakfastServed: '', // 'yes' or 'no'
+          breakfastIncluded: '', // 'included' or 'extra'
+          breakfastTypes: [],
+          parkingAvailable: '', // 'free', 'paid', 'no'
+          parkingCost: '',
+          parkingCurrency: 'usd',
+          parkingRate: 'per_day',
+          parkingReservation: '', // 'needed', 'not_needed'
+          parkingLocation: '', // 'on_site', 'off_site'
+          parkingType: '', // 'private', 'public'
+          // Language selection state
+          selectedLanguages: [],
+          availableLanguages: [],
+          // Photo upload state
+          uploadedPhotos: [],
 
-    // Room and Bed Management State
-    rooms: {
-        'bedroom1': { name: 'Bedroom 1', twin: 0, full: 1, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 },
-        'livingRoom': { name: 'Living room', twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 },
-        'otherSpaces': { name: 'Other spaces', twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 }
-    },
-    currentEditingRoomId: null, // Tracks which room is currently being edited
-    tempBedCounts: { twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 }, // Temporary state for the modal
-    nextRoomIndex: 2, // For generating unique IDs for new bedrooms (e.g., bedroom2, bedroom3)
-    showBedTypeSelector: false,
-    showAllBedTypesInModal: false, // New state to control showing all bed types in the modal
+          // Room and Bed Management State
+          rooms: {
+              'bedroom1': { name: 'Bedroom 1', twin: 0, full: 1, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 },
+              'livingRoom': { name: 'Living room', twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 },
+              'otherSpaces': { name: 'Other spaces', twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 }
+          },
+          currentEditingRoomId: null, // Tracks which room is currently being edited
+          tempBedCounts: { twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 }, // Temporary state for the modal
+          nextRoomIndex: 2, // For generating unique IDs for new bedrooms (e.g., bedroom2, bedroom3)
+          showBedTypeSelector: false,
+          showAllBedTypesInModal: false, // New state to control showing all bed types in the modal
 
-    // Methods for Room and Bed Management
-    openBedTypeSelector(roomId) {
-        this.currentEditingRoomId = roomId;
-        this.tempBedCounts = { ...this.rooms[roomId] };
-        // Set initial visibility of bed types based on the room
-        if (roomId === 'livingRoom') {
-            this.showAllBedTypesInModal = false; // Start with only sofa bed visible
+          // Methods for Room and Bed Management
+          openBedTypeSelector(roomId) {
+              this.currentEditingRoomId = roomId;
+              this.tempBedCounts = { ...this.rooms[roomId] };
+              // Set initial visibility of bed types based on the room
+              if (roomId === 'livingRoom') {
+                  this.showAllBedTypesInModal = false; // Start with only sofa bed visible
+              } else {
+                  this.showAllBedTypesInModal = true; // Start with all standard beds visible
+              }
+              this.showBedTypeSelector = true;
+          },
+          saveBedTypes() {
+              if (this.currentEditingRoomId) {
+                  // Save the temporary bed counts back to the actual room state
+                  this.rooms[this.currentEditingRoomId] = { ...this.rooms[this.currentEditingRoomId], ...this.tempBedCounts };
+              }
+              this.showBedTypeSelector = false;
+              this.currentEditingRoomId = null; // Clear the editing room
+          },
+          cancelBedTypes() {
+              // Just close the modal without saving changes from tempBedCounts
+              this.showBedTypeSelector = false;
+              this.currentEditingRoomId = null;
+          },
+          addBedroom() {
+              const newRoomId = `bedroom${this.nextRoomIndex++}`;
+              this.rooms[newRoomId] = { name: `Bedroom ${this.nextRoomIndex -1}`, twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 };
+              this.openBedTypeSelector(newRoomId);
+          },
+          getBedSummary(roomId) {
+              const beds = this.rooms[roomId];
+              if (!beds) return '0 beds'; // Handle newly added rooms before they are configured
+
+              const summaryParts = [];
+              if (beds.twin > 0) summaryParts.push(`${beds.twin} twin bed${beds.twin > 1 ? 's' : ''}`);
+              if (beds.full > 0) summaryParts.push(`${beds.full} full bed${beds.full > 1 ? 's' : ''}`);
+              if (beds.queen > 0) summaryParts.push(`${beds.queen} queen bed${beds.queen > 1 ? 's' : ''}`);
+              if (beds.king > 0) summaryParts.push(`${beds.king} king bed${beds.king > 1 ? 's' : ''}`);
+              if (beds.bunk > 0) summaryParts.push(`${beds.bunk} bunk bed${beds.bunk > 1 ? 's' : ''}`);
+              if (beds.sofa > 0) summaryParts.push(`${beds.sofa} sofa bed${beds.sofa > 1 ? 's' : ''}`);
+              if (beds.futon > 0) summaryParts.push(`${beds.futon} futon bed${beds.futon > 1 ? 's' : ''}`);
+
+              return summaryParts.length > 0 ? summaryParts.join(', ') : '0 beds';
+          },
+
+          // Backend methods (simplified, removed actual fetch for this example)
+          async saveName() {
+              if (!this.title.trim()) {
+                  alert('Please enter a property name');
+                  return;
+              }
+              this.isLoading = true;
+              // Simulate API call
+              await new Promise(resolve => setTimeout(resolve, 500));
+              this.isLoading = false;
+              this.wizardStep = 2;
+          },
+          async saveLocation() {
+              if (!this.address.trim() || !this.city.trim() || !this.country.trim()) {
+                  alert('Please fill in all required location fields');
+                  return;
+              }
+              this.isLoading = true;
+              const payload = {
+                  title: this.title,
+                  address: this.address,
+                  apartment: this.apartment || null,
+                  city: this.city,
+                  country: this.country,
+                  zipcode: this.zipcode,
+                  description: this.description,
+                  subtype_id: this.subtype_id || null,
+                  address_type_id: this.address_type_id || null,
+                  channel_manager: this.channelManager,
+                  bedrooms: Object.values(this.rooms).map(room => {
+                      // Add room_type if not present
+                      return {
+                          room_type: room.name === 'Living room' ? 'living_room' : (room.name === 'Other spaces' ? 'other' : 'bedroom'),
+                          name: room.name,
+                          twin: room.twin || 0,
+                          full: room.full || 0,
+                          queen: room.queen || 0,
+                          king: room.king || 0,
+                          bunk: room.bunk || 0,
+                          sofa: room.sofa || 0,
+                          futon: room.futon || 0,
+                      };
+                  }),
+              };
+              console.log('Sending payload to backend:', payload);
+              try {
+                  let res = await fetch(`/partner/property/${this.propertyId}`, {
+                      method: 'PATCH',
+                      headers: {
+                          'Content-Type': 'application/json',
+                          'Accept': 'application/json',
+                          'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                      },
+                      body: JSON.stringify(payload)
+                  });
+                  let data = await res.json();
+                  if (res.ok && data.success) {
+                      this.wizardStep = 3;
+                  } else {
+                      alert('Error: ' + (data.message || 'Could not update location.'));
+                  }
+              } catch (err) {
+                  alert('AJAX error: ' + err.message);
+              } finally {
+                  this.isLoading = false;
+              }
+          },
+          async saveChannelManager() {
+              this.isLoading = true;
+              // Simulate API call
+              await new Promise(resolve => setTimeout(resolve, 500));
+              this.isLoading = false;
+              this.step = 2;
+              this.propertyWizardStep = 1;
+          },
+          savePropertyDetails() {
+            // Add this debug logging
+    console.log('Current wizard step:', this.propertyWizardStep);
+    console.log('Selected languages before save:', this.selectedLanguages);
+          const payload = {
+        guests: this.guests,
+        bathrooms: this.bathrooms,
+        allow_children: this.allowChildren,
+        offer_cribs: this.offerCribs,
+        apartment_size: this.apartmentSize,
+        apartment_unit: this.apartmentUnit,
+        breakfast_served: this.breakfastServed,
+        breakfast_included: this.breakfastIncluded,
+        breakfast_types: this.breakfastTypes,
+        parking_available: this.parkingAvailable,
+        parking_cost: this.parkingCost,
+        parking_currency: this.parkingCurrency,
+        parking_rate: this.parkingRate,
+        parking_reservation: this.parkingReservation,
+        parking_location: this.parkingLocation,
+        parking_type: this.parkingType,
+        languages: this.selectedLanguages,
+        check_in_from: this.checkInFrom,
+        check_in_until: this.checkInUntil,
+        check_out_from: this.checkOutFrom,
+        check_out_until: this.checkOutUntil,
+    };
+    
+    // Log the complete payload
+    console.log('Payload being sent:', payload);
+    
+    this.isLoading = true;
+
+    // Helper to parse JSON safely
+    const parseJsonResponse = async (res, contextLabel) => {
+        const contentType = res.headers.get('content-type') || '';
+        const text = await res.text();
+
+        if (!res.ok) {
+            throw new Error(`HTTP ${res.status}: ${text.substring(0, 300)}`);
+        }
+
+        if (contentType.includes('application/json')) {
+            try {
+                return JSON.parse(text);
+            } catch (e) {
+                console.error(`${contextLabel} - JSON parse error`, text);
+                throw new Error('Failed to parse JSON response from server.');
+            }
         } else {
-            this.showAllBedTypesInModal = true; // Start with all standard beds visible
+            console.error(`${contextLabel} - Expected JSON, got HTML/text:`, text);
+            throw new Error(`Unexpected server response format from ${contextLabel}.`);
         }
-        this.showBedTypeSelector = true;
-    },
-    saveBedTypes() {
-        if (this.currentEditingRoomId) {
-            // Save the temporary bed counts back to the actual room state
-            this.rooms[this.currentEditingRoomId] = { ...this.rooms[this.currentEditingRoomId], ...this.tempBedCounts };
+    };
+
+    // Main fetch
+    fetch(`/partner/property/${this.propertyId}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(res => parseJsonResponse(res, 'property update'))
+    .then(data => {
+        if (data && data.success) {
+            // Only save amenities if on step 2
+            if (this.propertyWizardStep === 2) {
+                return fetch(`/partner/property/${this.propertyId}/amenities`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
+                    },
+                    body: JSON.stringify({ amenities: this.selectedAmenities })
+                })
+                .then(res => parseJsonResponse(res, 'amenities save'))
+                .then(data => {
+                    if (data && data.success) {
+                        this.propertyWizardStep++;
+                    } else {
+                        alert(data.message || 'Could not save amenities.');
+                    }
+                });
+            } else {
+                this.propertyWizardStep++;
+            }
+        } else {
+            throw new Error(data && data.message ? data.message : 'Could not update property details.');
         }
-        this.showBedTypeSelector = false;
-        this.currentEditingRoomId = null; // Clear the editing room
-    },
-    cancelBedTypes() {
-        // Just close the modal without saving changes from tempBedCounts
-        this.showBedTypeSelector = false;
-        this.currentEditingRoomId = null;
-    },
-    addBedroom() {
-        const newRoomId = `bedroom${this.nextRoomIndex++}`;
-        this.rooms[newRoomId] = { name: `Bedroom ${this.nextRoomIndex -1}`, twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 };
-        this.openBedTypeSelector(newRoomId);
-    },
-    getBedSummary(roomId) {
-        const beds = this.rooms[roomId];
-        if (!beds) return '0 beds'; // Handle newly added rooms before they are configured
-
-        const summaryParts = [];
-        if (beds.twin > 0) summaryParts.push(`${beds.twin} twin bed${beds.twin > 1 ? 's' : ''}`);
-        if (beds.full > 0) summaryParts.push(`${beds.full} full bed${beds.full > 1 ? 's' : ''}`);
-        if (beds.queen > 0) summaryParts.push(`${beds.queen} queen bed${beds.queen > 1 ? 's' : ''}`);
-        if (beds.king > 0) summaryParts.push(`${beds.king} king bed${beds.king > 1 ? 's' : ''}`);
-        if (beds.bunk > 0) summaryParts.push(`${beds.bunk} bunk bed${beds.bunk > 1 ? 's' : ''}`);
-        if (beds.sofa > 0) summaryParts.push(`${beds.sofa} sofa bed${beds.sofa > 1 ? 's' : ''}`);
-        if (beds.futon > 0) summaryParts.push(`${beds.futon} futon bed${beds.futon > 1 ? 's' : ''}`);
-
-        return summaryParts.length > 0 ? summaryParts.join(', ') : '0 beds';
-    },
-
-    // Backend methods (simplified, removed actual fetch for this example)
-    async saveName() {
-        if (!this.title.trim()) {
-            alert('Please enter a property name');
-            return;
-        }
-        this.isLoading = true;
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 500));
+    })
+    .catch(err => {
+        alert('Error: ' + err.message);
+        console.error(err);
+    })
+    .finally(() => {
         this.isLoading = false;
-        this.wizardStep = 2;
+    });
+},
+
+          // Photo upload methods
+          isUploading: false,
+          uploadedPhotos: [],
+          hostProfile: {
+        about_property: '',
+        about_host: '',
+        about_neighborhood: '',
+        show_property: false,
+        show_host: false,
+        show_neighborhood: false,
+        none_selected: false,
+        host_name: ''
     },
-    async saveLocation() {
-        if (!this.address.trim() || !this.city.trim() || !this.country.trim()) {
-            alert('Please fill in all required location fields');
-            return;
+      saveHostProfile() {
+    const payload = {
+        property_id: this.propertyId,
+        about_property: this.hostProfile.about_property,
+        about_host: this.hostProfile.about_host,
+        about_neighborhood: this.hostProfile.about_neighborhood,
+        show_property: this.hostProfile.show_property,
+        show_host: this.hostProfile.show_host,
+        show_neighborhood: this.hostProfile.show_neighborhood,
+        none_selected: this.hostProfile.none_selected,
+        host_name: this.hostProfile.host_name,
+    };
+    this.isLoading = true;
+    fetch('/partner/property/' + this.propertyId + '/host-profile', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            this.propertyWizardStep++;
+        } else {
+            alert(data.message || 'Could not save host profile.');
         }
-        this.isLoading = true;
-        const payload = {
-            title: this.title,
-            address: this.address,
-            apartment: this.apartment || null,
-            city: this.city,
-            country: this.country,
-            zipcode: this.zipcode,
-            description: this.description,
-            subtype_id: this.subtype_id || null,
-            address_type_id: this.address_type_id || null,
-            channel_manager: this.channelManager,
-            bedrooms: Object.values(this.rooms).map(room => {
-                // Add room_type if not present
-                return {
-                    room_type: room.name === 'Living room' ? 'living_room' : (room.name === 'Other spaces' ? 'other' : 'bedroom'),
-                    name: room.name,
-                    twin: room.twin || 0,
-                    full: room.full || 0,
-                    queen: room.queen || 0,
-                    king: room.king || 0,
-                    bunk: room.bunk || 0,
-                    sofa: room.sofa || 0,
-                    futon: room.futon || 0,
-                };
-            }),
-        };
-        console.log('Sending payload to backend:', payload);
-        try {
-            let res = await fetch(`/partner/property/${this.propertyId}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
-                },
-                body: JSON.stringify(payload)
+    })
+    .catch(err => {
+        alert('AJAX error: ' + err.message);
+    })
+    .finally(() => {
+        this.isLoading = false;
+    });
+},
+          handleUpload(event) {
+            const files = Array.from(event.target.files).slice(0, 5 - this.uploadedPhotos.length);
+            files.forEach(file => {
+              const url = URL.createObjectURL(file);
+              this.uploadedPhotos.push({ file, url });
             });
-            let data = await res.json();
-            if (res.ok && data.success) {
-                this.wizardStep = 3;
-            } else {
-                alert('Error: ' + (data.message || 'Could not update location.'));
-            }
-        } catch (err) {
-            alert('AJAX error: ' + err.message);
-        } finally {
-            this.isLoading = false;
-        }
-    },
-    async saveChannelManager() {
-        this.isLoading = true;
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 500));
-        this.isLoading = false;
-        this.step = 2;
-        this.propertyWizardStep = 1;
-    },
-    savePropertyDetails() {
-        const payload = {
-            title: this.title,
-            address: this.address,
-            apartment: this.apartment || null,
-            city: this.city,
-            country: this.country,
-            zipcode: this.zipcode,
-            description: this.description,
-            subtype_id: this.subtype_id || null,
-            address_type_id: this.address_type_id || null,
-            channel_manager: this.channelManager,
-            bedrooms: Object.values(this.rooms).map(room => ({
-                room_type: room.name === 'Living room' ? 'living_room' : (room.name === 'Other spaces' ? 'other' : 'bedroom'),
-                name: room.name,
-                twin: room.twin || 0,
-                full: room.full || 0,
-                queen: room.queen || 0,
-                king: room.king || 0,
-                bunk: room.bunk || 0,
-                sofa: room.sofa || 0,
-                futon: room.futon || 0,
-            })),
-            // Additional details for the new table
-            guests: this.guests,
-            bathrooms: this.bathrooms,
-            allow_children: this.allowChildren,
-            offer_cribs: this.offerCribs,
-            apartment_size: this.apartmentSize,
-            apartment_unit: this.apartmentUnit,
-            amenities: this.selectedAmenities,
-        };
-        console.log('Selected amenities:', this.selectedAmenities);
-        console.log('Payload:', payload);
-        this.isLoading = true;
-        fetch(`/partner/property/${this.propertyId}`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
-            },
-            body: JSON.stringify(payload)
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                this.propertyWizardStep++;
-            } else {
-                alert('Error: ' + (data.message || 'Could not update property details.'));
-            }
-        })
-        .catch(err => {
-            alert('AJAX error: ' + err.message);
-        })
-        .finally(() => {
-            this.isLoading = false;
-        });
-    },
-    // Photo upload methods
-    handleUpload(event) {
-      const files = Array.from(event.target.files).slice(0, 5 - this.uploadedPhotos.length);
-      files.forEach(file => {
-        const url = URL.createObjectURL(file);
-        this.uploadedPhotos.push({ file, url });
-      });
-    },
-    handleUploadDrop(event) {
-      const dt = event.dataTransfer;
-      if (!dt) return;
-      const files = Array.from(dt.files).slice(0, 5 - this.uploadedPhotos.length);
-      files.forEach(file => {
-        const url = URL.createObjectURL(file);
-        this.uploadedPhotos.push({ file, url });
-      });
-    },
-    removePhoto(index) {
-      this.uploadedPhotos.splice(index, 1);
-    },
-    guests: 4,
-    bathrooms: 2,
-    allowChildren: 'yes',
-    offerCribs: 'no',
-    apartmentSize: 100,
-    apartmentUnit: 'square meters',
-    saveAdditionalDetails() {
-        const payload = {
-            guests: this.guests,
-            bathrooms: this.bathrooms,
-            allow_children: this.allowChildren,
-            offer_cribs: this.offerCribs,
-            apartment_size: this.apartmentSize,
-            apartment_unit: this.apartmentUnit,
-        };
-        this.isLoading = true;
-        fetch(`/partner/property/${this.propertyId}/additional-details`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
-            },
-            body: JSON.stringify(payload)
-        })
-        .then(async res => {
-            const contentType = res.headers.get('content-type');
-            if (contentType && contentType.includes('application/json')) {
-                return res.json();
-            } else {
-                const text = await res.text();
-                throw new Error('Server did not return JSON: ' + text.substring(0, 200));
-            }
-        })
-        .then(data => {
-            if (data.success) {
-                this.propertyWizardStep++;
-            } else {
-                alert('Error: ' + (data.message || 'Could not update additional details.'));
-            }
-        })
-        .catch(err => {
-            alert('AJAX error: ' + err.message);
-        })
-        .finally(() => {
-            this.isLoading = false;
-        });
-    },
-    selectedAmenities: [],
-    propertyCount: 1,
-    owners: [
-      { firstName: '', address: '', zipCode: '', city: '', country: '' }
-    ],
-    ownershipType: '', // 'individual' or 'business'
-    // For individual
-    individual: { firstName: '', lastName: '', dob: '', altNames: [] },
-    // For business entity
-    business: {
-      businessName: '',
-      tradingName: '',
-      address: '',
-      zipCode: '',
-      city: '',
-      country: '',
-      owners: [
-        { firstName: '', lastName: '', dob: '', altNames: [] }
-      ]
+          },
+          handleUploadDrop(event) {
+            const dt = event.dataTransfer;
+            if (!dt) return;
+            const files = Array.from(dt.files).slice(0, 5 - this.uploadedPhotos.length);
+            files.forEach(file => {
+              const url = URL.createObjectURL(file);
+              this.uploadedPhotos.push({ file, url });
+            });
+          },
+          removePhoto(index) {
+            this.uploadedPhotos.splice(index, 1);
+          },
+          
+          guests: 4,
+          bathrooms: 2,
+          allowChildren: 'yes',
+          offerCribs: 'no',
+          apartmentSize: 100,
+          apartmentUnit: 'square meters',
+          saveAdditionalDetails() {
+              // Check if propertyId is valid
+              if (!this.propertyId || this.propertyId === 'new') {
+                  alert('Property ID is missing. Please refresh the page.');
+                  return;
+              }
+
+              // For step 4 (languages), use dedicated language route
+              if (this.propertyWizardStep === 4) {
+                  console.log('Saving languages for step 4:', this.selectedLanguages);
+                  
+                  const payload = {
+                      languages: this.selectedLanguages
+                  };
+                  
+                  this.isLoading = true;
+                  
+                  fetch(`/partner/property/${this.propertyId}/languages`, {
+                      method: 'POST',
+                      headers: {
+                          'Content-Type': 'application/json',
+                          'Accept': 'application/json',
+                          'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                      },
+                      body: JSON.stringify(payload)
+                  })
+                  .then(async res => {
+                      const data = await res.json();
+                      if (res.ok && data.success) {
+                          console.log('Languages saved successfully:', data);
+                          this.propertyWizardStep++;
+                      } else {
+                          console.error('Language save error:', data);
+                          alert('Error: ' + (data.message || 'Could not save languages.'));
+                      }
+                  })
+                  .catch(err => {
+                      console.error('AJAX error:', err);
+                      alert('AJAX error: ' + err.message);
+                  })
+                  .finally(() => {
+                      this.isLoading = false;
+                  });
+                  
+                  return; // Exit early for language step
+              }
+
+              // For other steps, use the existing logic
+              const payload = {
+                  guests: this.guests,
+                  bathrooms: this.bathrooms,
+                  allow_children: this.allowChildren,
+                  offer_cribs: this.offerCribs,
+                  apartment_size: this.apartmentSize,
+                  apartment_unit: this.apartmentUnit,
+                  breakfast_served: this.breakfastServed,
+                  breakfast_included: this.breakfastIncluded,
+                  breakfast_types: this.breakfastTypes,
+                  parking_available: this.parkingAvailable,
+                  parking_cost: this.parkingCost,
+                  parking_currency: this.parkingCurrency,
+                  parking_rate: this.parkingRate,
+                  parking_reservation: this.parkingReservation,
+                  parking_location: this.parkingLocation,
+                  parking_type: this.parkingType,
+              };
+              this.isLoading = true;
+
+              // If on the services step, POST to /services, otherwise PATCH additional-details
+              if (this.propertyWizardStep === 3) {
+                  fetch(`/partner/property/${this.propertyId}/services`, {
+                      method: 'POST',
+                      headers: {
+                          'Content-Type': 'application/json',
+                          'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                      },
+                      body: JSON.stringify(payload)
+                  })
+                  .then(async res => {
+                      let text = await res.text();
+                      try {
+                          return JSON.parse(text);
+                      } catch (e) {
+                          console.error('Non-JSON response from services POST:', text);
+                          alert('Server error (services save):\n' + text.substring(0, 500));
+                          throw new Error('Non-JSON response from services POST');
+                      }
+                  })
+                  .then(data => {
+                      if (data && data.success) {
+                          this.propertyWizardStep++;
+                      } else {
+                          alert('Error: ' + (data && data.message ? data.message : 'Could not save services.'));
+                      }
+                  })
+                  .catch(err => {
+                      alert('AJAX error: ' + err.message);
+                  })
+                  .finally(() => {
+                      this.isLoading = false;
+                  });
+              } else {
+                  fetch(`/partner/property/${this.propertyId}/additional-details`, {
+                      method: 'PATCH',
+                      headers: {
+                          'Content-Type': 'application/json',
+                          'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                      },
+                      body: JSON.stringify(payload)
+                  })
+                  .then(async res => {
+                      const contentType = res.headers.get('content-type');
+                      if (contentType && contentType.includes('application/json')) {
+                          return res.json();
+                      } else {
+                          const text = await res.text();
+                          throw new Error('Server did not return JSON: ' + text.substring(0, 200));
+                      }
+                  })
+                  .then(data => {
+                      if (data.success) {
+                          this.propertyWizardStep++;
+                      } else {
+                          alert('Error: ' + (data.message || 'Could not update additional details.'));
+                      }
+                  })
+                  .catch(err => {
+                      alert('AJAX error: ' + err.message);
+                  })
+                  .finally(() => {
+                      this.isLoading = false;
+                  });
+              }
+          },
+          selectedAmenities: [],
+          propertyCount: 1,
+          owners: [
+            { firstName: '', address: '', zipCode: '', city: '', country: '' }
+          ],
+          ownershipType: '', // 'individual' or 'business'
+          // For individual
+          individual: { firstName: '', lastName: '', dob: '', altNames: [] },
+          // For business entity
+          business: {
+            businessName: '',
+            tradingName: '',
+            address: '',
+            zipCode: '',
+            city: '',
+            country: '',
+            owners: [
+              { firstName: '', lastName: '', dob: '', altNames: [] }
+            ]
+          },
+          
+async loadLanguages() {
+    try {
+        console.log('Loading languages...');
+        const response = await fetch('/partner/languages');
+        const languages = await response.json();
+        console.log('Languages loaded:', languages);
+        
+        this.availableLanguages = languages;
+        this.filteredLanguages = languages;
+    } catch (error) {
+        console.error('Error loading languages:', error);
     }
-}"
+},
+
+filterLanguages() {
+  if (!this.searchTerm) {
+    this.filteredLanguages = this.availableLanguages;
+  } else {
+    this.filteredLanguages = this.availableLanguages.filter(lang => 
+      lang.name.toLowerCase().includes(this.searchTerm.toLowerCase())
+    );
+  }
+},
+
+selectLanguage(languageId, languageName) {
+    console.log('selectLanguage called with:', { languageId, languageName });
+    console.log('selectedLanguages before:', this.selectedLanguages);
+    
+    if (!this.selectedLanguages.includes(languageId)) {
+        this.selectedLanguages.push(languageId);
+        console.log('Language added. selectedLanguages after:', this.selectedLanguages);
+    } else {
+        console.log('Language already selected');
+    }
+    
+    this.showDropdown = false;
+    this.searchTerm = '';
+    this.filteredLanguages = this.availableLanguages;
+},
+
+removeLanguage(languageId) {
+    console.log('removeLanguage called with:', languageId);
+    console.log('selectedLanguages before removal:', this.selectedLanguages);
+    
+    const index = this.selectedLanguages.indexOf(languageId);
+    if (index > -1) {
+        this.selectedLanguages.splice(index, 1);
+        console.log('Language removed. selectedLanguages after:', this.selectedLanguages);
+    } else {
+        console.log('Language not found in array');
+    }
+},
+
+getLanguageName(languageId) {
+  const language = this.availableLanguages.find(lang => lang.id === languageId);
+  return language ? language.name : '';
+},
+
+isLanguageSelected(languageId) {
+  return this.selectedLanguages.includes(languageId);
+},
+
+toggleAdditionalLanguages() {
+  this.showAdditionalLanguages = !this.showAdditionalLanguages;
+  if (this.showAdditionalLanguages && this.availableLanguages.length === 0) {
+    this.loadLanguages();
+  }
+},
+
+async saveHouseRules() {
+    const payload = {
+        property_id: this.propertyId,
+        smoking_allowed: this.smokingAllowed,
+        parties_allowed: this.partiesAllowed,
+        pets_allowed: this.petsAllowed,
+        pets_fees: this.petsFees,
+        check_in_from: this.checkInFrom,
+        check_in_until: this.checkInUntil,
+        check_out_from: this.checkOutFrom,
+        check_out_until: this.checkOutUntil,
+        cancellation_policy: 'flexible', // or whatever value you want
+    };
+    this.isLoading = true;
+    try {
+        const res = await fetch('/partner/property/' + this.propertyId + '/policy', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+            },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+            this.propertyWizardStep++;
+        } else {
+            alert(data.message || 'Could not save house rules.');
+        }
+    } catch (err) {
+        alert('AJAX error: ' + err.message);
+    } finally {
+        this.isLoading = false;
+    }
+},
+
+
+    smokingAllowed: false,
+    partiesAllowed: false,
+    petsAllowed: 'no',
+    petsFees: 'free',
+    checkInFrom: '15:00',
+    checkInUntil: '18:00',
+    checkOutFrom: '08:00',
+    checkOutUntil: '11:00',
+   pricing: {
+    booking_type: 'instant',
+    price_per_night: '',
+    currency: 'usd',
+    discount_enabled: false,
+    discount_percent: 0,
+},
+hostProfile: {
+    about_property: '',
+    about_host: '',
+    about_neighborhood: '',
+    show_property: false,
+    show_host: false,
+    show_neighborhood: false,
+    none_selected: false,
+    host_name: ''
+},
+savePricing() {
+    const payload = {
+        property_id: this.propertyId,
+        booking_type: this.pricing.booking_type,
+        price_per_night: this.pricing.price_per_night,
+        currency: this.pricing.currency,
+        discount_enabled: this.pricing.discount_enabled,
+        discount_percent: this.pricing.discount_percent,
+    };
+    this.isLoading = true;
+    fetch('/partner/property/' + this.propertyId + '/pricing', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            if (this.pricingWizardStep === 4) { // <-- replace 4 with your last pricing step number
+                this.step = 5; // Move to legal info
+                // Optionally reset pricingWizardStep
+                // this.pricingWizardStep = 1;
+            } else {
+                this.pricingWizardStep++;
+            }
+        } else {
+            alert(data.message || 'Could not save pricing.');
+        }
+    })
+    .catch(err => {
+        alert('AJAX error: ' + err.message);
+    })
+    .finally(() => {
+        this.isLoading = false;
+    });
+},
+      }"
       x-init="console.log('Wizard initialized', { title, address, city, country, zipcode, description })"
     >
       <div x-data="{ step: 1, wizardStep: 1 , propertyWizardStep: 1 }">
@@ -422,9 +821,9 @@
                     </template>
 
                      <!-- Optional checkmark -->
-              <template x-if="index === 1 && propertyWizardStep === 6">
-                <span class="text-green-600">✔️</span>
-              </template>
+                    <template x-if="index === 1 && propertyWizardStep === 6">
+                      <span class="text-green-600">✔️</span>
+                    </template>
                   </div>
                   <!-- 🔵 Progress bar only under "Basic information" when active -->
                   <template x-if="index === 0 && step === 1">
@@ -455,15 +854,15 @@
                   </template>
 
                   <template x-if="index === 3 && step === 4">
-  <div class="flex space-x-1 mt-1 w-35 sm:w-48 md:w-56 lg:w-64 xl:w-72 ml-[-15px] sm:ml-[-25px] md:ml-[-35px]">
-    <template x-for="i in 4">
-      <div
-        :class="pricingWizardStep >= i ? 'bg-blue-600' : 'bg-gray-300'"
-        class="h-1 flex-1 rounded-full">
-      </div>
-    </template>
-  </div>
-</template>
+                    <div class="flex space-x-1 mt-1 w-35 sm:w-48 md:w-56 lg:w-64 xl:w-72 ml-[-15px] sm:ml-[-25px] md:ml-[-35px]">
+                      <template x-for="i in 4">
+                        <div
+                          :class="pricingWizardStep >= i ? 'bg-blue-600' : 'bg-gray-300'"
+                          class="h-1 flex-1 rounded-full">
+                        </div>
+                      </template>
+                    </div>
+                  </template>
                 </div>
               </template>
             </div>
@@ -805,611 +1204,473 @@
           </section>
           <!-- Property Setup Section -->
 
-
- <!-- Property Setup Section -->
+          <!-- Property Setup Section -->
 <section x-show="step === 2">
 
-
+  <!-- Property Setup Step 1: Where can people sleep, guests, bathrooms, children, infants, apartment size/unit -->
   <template x-if="propertyWizardStep === 1">
-   {{-- property-setup.blade.php --}}
-<div class="max-w-xl mx-auto space-y-8 lg:ml-32 px-4 py-6">
+    <div class="max-w-xl mx-auto space-y-8 lg:ml-32 px-4 py-6">
 
-<h2 class="text-2xl font-bold text-gray-900 mt-8">What can guests use at your place?</h2>
-    <!-- Where can people sleep -->
-    <div class="bg-white p-4 rounded-lg shadow space-y-4">
+      <h2 class="text-2xl font-bold text-gray-900 mt-8">What can guests use at your place?</h2>
+      <!-- Where can people sleep -->
+      <div class="bg-white p-4 rounded-lg shadow space-y-4">
         <h2 class="text-lg font-semibold">Where can people sleep?</h2>
+        <div class="flex flex-col gap-4">
+          <template x-for="(room, roomId) in rooms" :key="roomId">
+            <a
+              :href="'/partner/property/apartment/bedrooms/' + propertyId + '/' + roomId"
+              class="block"
+            >
+              <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer flex justify-between items-center">
+                <div>
+                  <p class="text-sm" x-text="room.name"></p>
+                  <p class="text-sm text-gray-600" x-text="getBedSummary(roomId)"></p>
+                </div>
+                <span class="text-xs text-blue-600 hover:underline">Edit</span>
+              </div>
+            </a>
+          </template>
+        </div>
+        <!-- Add Bedroom Button -->
+        <button type="button" @click="addBedroom" class="text-blue-600 hover:underline text-sm flex items-center space-x-1 mt-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+               viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 4v16m8-8H4"/>
+          </svg>
+          <a
+            :href="'/partner/property/apartment/bedrooms/' + propertyId + '/create'"
+            class="text-blue-600 hover:underline text-sm flex items-center space-x-1"
+          >
+            <span>Add Bedroom</span>
+          </a>
+        </button>
+      </div>
 
-      <div class="space-y-4">
-    <div class="border border-gray-300 rounded px-3 py-2 w-96">
-        <p class="text-sm">Bedroom 1</p>
-        <p class="text-sm text-gray-600">1 full bed</p>
-    </div>
-    <div class="border border-gray-300 rounded px-3 py-2 w-96">
-        <p class="text-sm">Living Room</p>
-        <p class="text-sm text-gray-600">1 full bed</p>
-    </div>
-    <div class="border border-gray-300 rounded px-3 py-2 w-96">
-        <p class="text-sm">Other spaces</p>
-        <p class="text-sm text-gray-600">1 full bed</p>
-    </div>
-</div>
+      <!-- Guests and Bathrooms -->
+      <div class="bg-white p-4 rounded-lg shadow space-y-4 w-full max-w-xl">
+        <!-- Guests -->
+        <div>
+          <label class="block text-sm text-gray-800">How many guests can stay?</label>
+          <div class="flex items-center space-x-4 mt-1">
+            <button @click="if (guests > 1) guests--" class="border px-3 py-1 rounded text-base">−</button>
+            <span class="min-w-[2rem] text-center text-gray-700 text-base" x-text="guests"></span>
+            <button @click="guests++" class="border px-3 py-1 rounded text-base">+</button>
+          </div>
+        </div>
+        <!-- Bathrooms -->
+        <div>
+          <label class="block text-sm text-gray-800">How many bathrooms are there?</label>
+          <div class="flex items-center space-x-4 mt-1">
+            <button @click="if (bathrooms > 0) bathrooms--" class="border px-3 py-1 rounded text-base">−</button>
+            <span class="min-w-[2rem] text-center text-gray-700 text-base" x-text="bathrooms"></span>
+            <button @click="bathrooms++" class="border px-3 py-1 rounded text-base">+</button>
+          </div>
+        </div>
+      </div>
 
+      <!-- Children Policy -->
+      <div class="bg-white p-4 rounded-lg shadow space-y-4">
+        <div>
+          <p class="font-medium text-sm">Do you allow children?</p>
+          <label class="mr-4 text-sm">
+            <input type="radio" name="children" value="yes" x-model="allowChildren"> Yes
+          </label>
+          <label class="text-sm">
+            <input type="radio" name="children" value="no" x-model="allowChildren"> No
+          </label>
+        </div>
+        <div>
+          <p class="font-medium text-sm">Do you allow infants?</p>
+          <p class="text-xs text-gray-500">cribs sleep most infants 0–3 years old and are available to guests on request.</p>
+          <label class="mr-4 text-sm">
+            <input type="radio" name="infants" value="yes" x-model="offerCribs"> Yes
+          </label>
+          <label class="text-sm">
+            <input type="radio" name="infants" value="no" x-model="offerCribs"> No
+          </label>
+        </div>
+      </div>
 
+      <!-- Room Size -->
+      <div class="lg:col-span-2 bg-white rounded-lg border border-gray-300 p-4 space-y-4 ">
+        <div class="flex flex-col lg:flex-row gap-4 items-end">
+          <!-- Apartment Size Input -->
+          <div class="w-full lg:w-2/4">
+            <label class="block text-sm text-gray-700 mb-1">How big is this room?</label>
+            <p class="text-xs text-gray-500">Apartment size - optional</p>
+            <input
+              type="number"
+              min="1"
+              step="1"
+              inputmode="numeric"
+              pattern="\d*"
+              x-model="apartmentSize"
+              name="apartment_size"
+              class="w-full border border-gray-300 rounded-md shadow-sm text-sm mt-2 px-2 py-2"
+            >
+          </div>
+          <!-- Size Unit Dropdown -->
+          <div class="w-full lg:w-1/4">
+            <label class="block text-sm text-transparent mb-1">Unit</label>
+            <select x-model="apartmentUnit" class="w-full bg-gray-300 text-black border border-gray-300 rounded-md shadow-sm text-sm mt-2 px-2 py-2">
+              <option value="square meters">square meters</option>
+              <option value="square feet">square feet</option>
+            </select>
+          </div>
+        </div>
+      </div>
 
-        <!-- Add Bedroom Button (navigate to 2nd page) -->
+      <div class="mt-8 flex justify-between">
+        <!-- Back Button on the left -->
         <button
-  type="button"
-  @click="addBedroom"
-  class="text-blue-600 hover:underline text-sm flex items-center space-x-1 mt-2"
->
-  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
-       viewBox="0 0 24 24" stroke="currentColor">
-    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M12 4v16m8-8H4"/>
-  </svg>
-  <span>Add Bedroom</span>
-</button>
+          type="button" @click="propertyWizardStep--"
+          :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
+          class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+          ←
+        </button>
+        <!-- Continue Button on the right -->
+        <button
+          type="button"
+          @click="savePropertyDetails"
+          class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300"
+        >
+          Continue
+        </button>
+      </div>
     </div>
-
-    <!-- Include Alpine.js in your Blade layout if not already -->
-<script src="//unpkg.com/alpinejs" defer></script>
-
-<!-- Guests and Bathrooms -->
-<div x-data="{ guests: 2, bathrooms: 1 }" class="bg-white p-4 rounded-lg shadow space-y-4 w-full max-w-xl">
-    <!-- Guests -->
-    <div>
-        <label class="block text-sm text-gray-800">How many guests can stay?</label>
-        <div class="flex items-center space-x-4 mt-1">
-            <button
-                @click="if (guests > 1) guests--"
-                class="border px-3 py-1 rounded text-base "
-            >−</button>
-            <span class="min-w-[2rem] text-center text-gray-700  text-base" x-text="guests"></span>
-            <button
-                @click="guests++"
-                class="border px-3 py-1 rounded text-base "
-            >+</button>
-        </div>
-    </div>
-
-    <!-- Bathrooms -->
-    <div >
-        <label class="block  text-sm text-gray-800">How many bathrooms are there?</label>
-        <div class="flex items-center space-x-4 mt-1">
-            <button
-                @click="if (bathrooms > 0) bathrooms--"
-                class="border px-3 py-1 rounded text-base"
-            >−</button>
-            <span class="min-w-[2rem] text-center text-gray-700  text-base" x-text="bathrooms"></span>
-            <button
-                @click="bathrooms++"
-                class="border px-3 py-1 rounded text-base"
-            >+</button>
-        </div>
-    </div>
-</div>
-
-
-    <!-- Children Policy -->
-    <div class="bg-white p-4 rounded-lg shadow space-y-4">
-        <div>
-            <p class="font-medium text-sm">Do you allow children?</p>
-            <label class="mr-4 text-sm"><input type="radio" name="children" checked> Yes</label>
-            <label class="text-sm"><input type="radio" name="children"> No</label>
-        </div>
-
-        <div>
-            <p class="font-medium text-sm">Do you allow infants?</p>
-            <p class="text-xs text-gray-500">cribs sleep most infants 0–3 years old and are available to guests on request.</p>
-            <label class="mr-4 text-sm"><input type="radio" name="infants" checked> Yes</label>
-            <label class="text-sm"><input type="radio" name="infants" > No</label>
-        </div>
-    </div>
-
-        <!-- Room Size -->
-<div class="lg:col-span-2 bg-white rounded-lg border border-gray-300 p-4 space-y-4 ">
-  <div class="flex flex-col lg:flex-row gap-4 items-end"> <!-- ensure vertical alignment -->
-
-    <!-- Apartment Size Dropdown -->
-    <div class="w-full lg:w-2/4">
-  <label class="block  text-sm text-gray-700 mb-1">How big is this room?</label>
-  <p class="text-xs text-gray-500 ">Apartment size - optional</p>
-
-<input
-    type="number"
-    min="1"
-    step="1"
-    inputmode="numeric"
-    pattern="\d*"
-    x-model="propertyCount"
-    name="property_count"
-    class="w-full border border-gray-300 rounded-md shadow-sm text-sm mt-2 px-2 py-2"
->
-
-
-
-</div>
-
-    <!-- Size Unit Dropdown -->
-    <div class="w-full lg:w-1/4">
-      <label class="block text-sm text-transparent mb-1">Unit</label> <!-- invisible label for spacing -->
-      <select class="w-full bg-gray-300 text-black border border-gray-300 rounded-md shadow-sm text-sm mt-2  px-2 py-2">
-        <option>square meters</option>
-        <option>square feet</option>
-      </select>
-    </div>
-
-  </div>
-    </div>
-
-    <div class="mt-8 flex justify-between">
-  <!-- Back Button on the left -->
-  <button
-   type="button" @click="propertyWizardStep--"
-        :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-
-      class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
-      ←
-  </button>
-
-  <!-- Continue Button on the right -->
-  <button
-   type="button"  @click="propertyWizardStep++"
-     class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300"
-  >
-    Continue
-  </button>
-</div>
-</div>
-
-</template>
-
-
-
-
-
-
-
-
+  </template>
 
     <template x-if="propertyWizardStep === 2">
-
- <div class="max-w-2xl mx-auto space-y-8 lg:ml-32">
-
-    <!-- Heading -->
-     <h2 class="text-2xl font-bold text-gray-900 mt-8">What can guests use at your place?</h2>
-
-   <!-- Amenities Section Container -->
-<div class="bg-white rounded-lg shadow-sm p-6 space-y-6">
-  @php
-    $amenities = [
-      'Highlights' => ['Private bathroom', 'Sea views', 'Family rooms', 'Airport shuttle', 'Spa and wellness center'],
-      'General' => ['Air conditioning', 'Heating', 'Free WiFi', 'Electric vehicle charging station'],
-      'Cooking and cleaning' => ['Kitchen', 'Microwave', 'Washing machine'],
-      'Entertainment' => ['Flat-screen TV', 'Swimming Pool', 'Hot tub', 'Minibar', 'Sauna'],
-      'Outside and view' => ['Balcony', 'Garden view', 'Terrace', 'View']
-    ];
-  @endphp
-
-  @foreach ($amenities as $category => $items)
-    <div class="space-y-3">
-      <h3 class="text-base font-semibold text-gray-800">{{ $category }}</h3>
-
-      <div class="flex flex-col space-y-2">
-        @foreach ($items as $item)
-          <label class="flex items-center space-x-2 text-gray-700 text-sm">
-            <input type="checkbox" name="amenities[]" value="{{ $item }}" class="form-checkbox h-5 w-5 text-blue-600">
-            <span>{{ $item }}</span>
-          </label>
-        @endforeach
-      </div>
-
-      @if (!$loop->last)
-        <hr class="border-t border-gray-200 mt-4">
-      @endif
-    </div>
-  @endforeach
-</div>
-
-
- <div class="flex justify-between mt-6 ">
-    <!-- Back Button -->
-<button
-  type="button"
- @click="propertyWizardStep--"
-  class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded mb-16">
-  ←
-</button>
-
-
-
-    <!-- Continue Button -->
-   <!-- Continue Button (inside input field container, aligned right) -->
-  <div class="flex justify-end ">
-    <button
-      type="submit"
-    @click="propertyWizardStep++"
-      class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 mb-16">
-      Continue
-    </button>
-  </div>
-
-  </div>
-  </div>
-
-
-    </template>
-
-
-
-
-    <template x-if="propertyWizardStep === 3">
-    <div class="space-y-8 max-w-2xl mx-auto p-4 lg:ml-32">
-
-        <!-- Services at your property -->
-        <h2 class="text-2xl md:text-3xl font-bold text-gray-800">Services at your property</h2>
-
-        <!-- Breakfast Section -->
-        <div class="bg-white shadow rounded-lg p-6 space-y-4 border">
-            <h3 class="text-base font-semibold text-gray-700">Breakfast</h3>
- <hr class="my-6 border-t border-gray-300">
-            <!-- Do you serve guests breakfast -->
-            <div>
-                <p class="font-semibold text-sm text-gray-800 mb-2">Do you serve guests breakfast?</p>
-                <div class="flex flex-col text-sm gap-2">
-    <label><input type="radio" name="serve_breakfast" class="mr-2"> Yes</label>
-    <label><input type="radio" name="serve_breakfast" class="mr-2"> No</label>
-</div>
-
+      <div class="max-w-2xl mx-auto space-y-8 lg:ml-32">
+        <!-- Heading -->
+        <h2 class="text-2xl font-bold text-gray-900 mt-8">What can guests use at your place?</h2>
+        <!-- Amenities Section Container -->
+        <div class="bg-white rounded-lg shadow-sm p-6 space-y-6">
+          @foreach ($groupedAmenities as $category => $items)
+            <div class="space-y-3">
+              <h3 class="text-base font-semibold text-gray-800">{{ $category }}</h3>
+              <div class="flex flex-col space-y-2">
+                @foreach ($items as $amenity)
+                  <label class="flex items-center space-x-2 text-gray-700 text-sm">
+                    <input
+                      type="checkbox"
+                      :value="{{ $amenity->id }}"
+                      x-model="selectedAmenities"
+                      class="form-checkbox h-5 w-5 text-blue-600"
+                    >
+                    <span>{{ $amenity->name }}</span>
+                  </label>
+                @endforeach
+              </div>
+              @if (!$loop->last)
+                <hr class="border-t border-gray-200 mt-4">
+              @endif
             </div>
-
-            <!-- Is breakfast included -->
-            <div>
-                <p class="font-semibold text-sm  text-gray-800 mb-2">Is breakfast included in the price guests pay?</p>
-                <div class="flex flex-col text-sm gap-2">
-                    <label><input type="radio" name="breakfast_included" class="mr-2"> Yes, it's included</label>
-                    <label><input type="radio" name="breakfast_included" class="mr-2"> No, it costs extra</label>
-                </div>
-            </div>
-<hr class="my-6 border-t border-gray-300">
-            <!-- Type of breakfast -->
-          <div x-data="{ selected: [] }">
-  <p class="font-semibold text-sm text-gray-800 mb-2">
-    What type of breakfast do you offer?
-    <span class="text-sm text-gray-500">(Select all that apply)</span>
-  </p>
-
-  <div class="flex flex-wrap gap-2">
-    @foreach(['A la carte', 'American', 'Asian', 'Breakfast to go', 'Buffet', 'Continental', 'Full English/Irish', 'Gluten-Free', 'Halal', 'Italian', 'Kosher', 'Vegan', 'Vegetarian'] as $option)
-      <label
-        :class="selected.includes('{{ $option }}')
-                  ? 'bg-[#3CC0E9] text-white'
-                  : 'border border-gray-300 text-gray-700 hover:bg-gray-200'"
-        class="px-3 py-1 rounded-full text-sm font-medium cursor-pointer transition"
-      >
-        <input type="checkbox" class="hidden"
-               :value="'{{ $option }}'"
-               x-model="selected">
-        {{ $option }}
-      </label>
-    @endforeach
-  </div>
-</div>
-
+          @endforeach
         </div>
-
-        <!-- Parking Section -->
-        <div class="bg-white shadow rounded-lg p-6 space-y-4 border">
-            <h3 class="text-base font-semibold text-gray-700">Parking</h3>
-
-            <hr class="my-6 border-t border-gray-300">
-            <!-- Is parking available -->
-            <div>
-                <p class="text-sm font-semibold text-gray-800 mb-2">Is parking available to guests?</p>
-                               <div class="flex flex-col text-sm gap-2">
-    <label><input type="radio" name="parking_available" class="mr-2"> Yes, free</label>
-                    <label><input type="radio" name="parking_available" class="mr-2"> Yes, paid</label>
-                    <label><input type="radio" name="parking_available" class="mr-2"> No</label>
-</div>
-
-            </div>
-    <hr class="my-6 border-t border-gray-300">
-            <!-- Parking cost -->
-       <div>
-  <p class="text-sm font-semibold text-gray-800 mb-2">How much does parking cost?</p>
-
-  <div class="flex flex-col sm:flex-row items-center gap-4">
-
-    <!-- Input + Currency Select Wrapper -->
-    <div class="relative w-full max-w-xs">
-  <!-- Currency Select -->
-  <select class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-transparent text-gray-700 text-sm pr-1 pl-1 focus:outline-none">
-    <option value="usd">US$</option>
-    <option value="eur">€</option>
-    <option value="gbp">£</option>
-    <option value="lkr">Rs</option>
-  </select>
-
-  <!-- Input Field -->
-  <input
-    type="text"
-    value="120.00"
-    class="w-full border border-gray-400 rounded-md pl-16 pr-2 py-2 text-gray-700 font-semibold focus:ring-2 focus:ring-blue-300 focus:outline-none"
-  />
-</div>
-
-
-    <!-- Rate Select -->
-    <select class="border border-gray-300 rounded px-3 py-2 w-32 text-sm text-gray-700">
-      <option>Per day</option>
-      <option>Per stay</option>
-    </select>
-
-  </div>
-
-
-            </div>
-
-            <!-- Reservation needed -->
-            <div>
-                <p class="font-semibold text-sm text-gray-800 mb-2">Do guests need to reserve a parking spot?</p>
-
-                <div class="flex flex-col text-sm gap-2">
-
-                    <label><input type="radio" name="parking_reservation" class="mr-2"> Reservation needed</label>
-                    <label><input type="radio" name="parking_reservation" class="mr-2">No reservation needed </label>
-</div>
-
-            </div>
-
-            <!-- Parking location -->
-            <div>
-                <p class="font-semibold text-sm text-gray-800 mb-2">Where is the parking located?</p>
-
-                <div class="flex flex-col text-sm gap-2">
-
-                 <label><input type="radio" name="parking_location" class="mr-2"> On site</label>
-                    <label><input type="radio" name="parking_location" class="mr-2"> Off site</label>
-</div>
-
-            </div>
-
-                <div>
-                <p class="font-semibold text-sm text-gray-800 mb-2">What type of parking is it?</p>
-
-                <div class="flex flex-col text-sm gap-2">
-
-                 <label><input type="radio" name="parking_type" class="mr-2">Private</label>
-                    <label><input type="radio" name="parking_type" class="mr-2">Public</label>
-</div>
-
-            </div>
-
-
-        </div>
-<div class="flex justify-between mt-6">
-    <!-- Back Button -->
-<button
-  type="button"
- @click="propertyWizardStep--"
-  class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded mb-16">
-  ←
-</button>
-
-
-
-    <!-- Continue Button -->
-   <!-- Continue Button (inside input field container, aligned right) -->
-  <div class="flex justify-end ">
-    <button
-      type="submit"
-    @click="propertyWizardStep++"
-      class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 mb-16">
-      Continue
-    </button>
-  </div>
-    </div>
-</template>
-
-
-    <template x-if="propertyWizardStep === 4">
-      <div class="max-w-4xl mx-auto space-y-8 lg:ml-32">
-         <div class="container ml-24 px-4 py-8 max-w-2xl">
-    <!-- Header -->
-    <h2 class="text-2xl font-bold mb-8 text-left">
-      What languages do you or your staff speak?
-    </h2>
-
-    <!-- Language Selection Section -->
-    <div class="bg-white shadow-md rounded-lg p-6 mb-8">
-      <h3 class="text-lg  mb-4 font-bold">Select languages</h3>
-      <div class="space-y-2">
-        <label class="flex items-center cursor-pointer">
-          <input type="checkbox" class="mr-2" />
-          <span>English</span>
-        </label>
-        <label class="flex items-center cursor-pointer">
-          <input type="checkbox" class="mr-2" />
-          <span>French</span>
-        </label>
-        <label class="flex items-center cursor-pointer">
-          <input type="checkbox" class="mr-2" />
-          <span>German</span>
-        </label>
-        <label class="flex items-center cursor-pointer">
-          <input type="checkbox" class="mr-2" />
-          <span>Hindi</span>
-        </label>
-      </div>
-
-      <!-- Add Additional Languages -->
-      <div id="additionalLanguagesSection" class="mt-4 hidden relative">
-        <h3 class="text-lg font-medium mb-2 ">Add additional languages</h3>
-
-        <!-- Searchable dropdown container -->
-        <div class="relative w-full max-w-md">
-          <input
-            type="text"
-            id="languageInput"
-            oninput="filterDropdown()"
-            onclick="toggleDropdown()"
-            placeholder="Search languages..."
-            autocomplete="off"
-            class="w-full border rounded p-2 pr-10 cursor-pointer"
-            readonly
-          />
-          <!-- Dropdown arrow -->
+        <div class="flex justify-between mt-6">
+          <!-- Back Button -->
           <button
             type="button"
-            onclick="toggleDropdown()"
-            class="absolute right-2 top-2.5 text-gray-600 hover:text-gray-900 focus:outline-none"
-            tabindex="-1"
-          >
-            ▼
+            @click="propertyWizardStep--"
+            class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded mb-16">
+            ←
           </button>
-
-          <!-- Dropdown list -->
-          <ul
-            id="languageDropdown"
-            class="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded max-h-40 overflow-auto shadow-lg hidden"
-          >
-            <li
-              class="p-2 hover:bg-blue-100 cursor-pointer"
-              onclick="selectLanguage(this)"
-            >Arabic</li>
-            <li
-              class="p-2 hover:bg-blue-100 cursor-pointer"
-              onclick="selectLanguage(this)"
-            >Bulgarian</li>
-            <li
-              class="p-2 hover:bg-blue-100 cursor-pointer"
-              onclick="selectLanguage(this)"
-            >Catalan</li>
-            <li
-              class="p-2 hover:bg-blue-100 cursor-pointer"
-              onclick="selectLanguage(this)"
-            >Chinese</li>
-            <li
-              class="p-2 hover:bg-blue-100 cursor-pointer"
-              onclick="selectLanguage(this)"
-            >Croatian</li>
-            <li
-              class="p-2 hover:bg-blue-100 cursor-pointer"
-              onclick="selectLanguage(this)"
-            >Czech</li>
-            <li
-              class="p-2 hover:bg-blue-100 cursor-pointer"
-              onclick="selectLanguage(this)"
-            >Danish</li>
-            <li
-              class="p-2 hover:bg-blue-100 cursor-pointer"
-              onclick="selectLanguage(this)"
-            >Dutch</li>
-          </ul>
+          <!-- Continue Button -->
+          <div class="flex justify-end">
+            <button
+              type="button"
+              @click="savePropertyDetails"
+              class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 mb-16">
+              Continue
+            </button>
+          </div>
         </div>
-      </div>
-
-      <!-- Toggle Button for Additional Languages -->
-      <a
-        href="#"
-        onclick="event.preventDefault(); toggleAdditionalLanguages();"
-        class="text-blue-500 hover:underline mt-4 block"
-      >
-        Add additional languages
-      </a>
-    </div>
-
-   <!-- Navigation Buttons -->
-<div class="mt-8 flex justify-between">
-  <!-- Back Button on the left -->
-  <button
-   type="button" @click="propertyWizardStep--"
-        :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-
-      class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
-      ←
-  </button>
-
-  <!-- Continue Button on the right -->
-  <button
-   type="button"  @click="propertyWizardStep++"
-     class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300"
-  >
-    Continue
-  </button>
-</div>
-
-  </div>
-
-  <script>
-    function toggleAdditionalLanguages() {
-      const section = document.getElementById("additionalLanguagesSection");
-      section.classList.toggle("hidden");
-      if (!section.classList.contains("hidden")) {
-        document.getElementById("languageInput").focus();
-        showDropdown();
-      } else {
-        hideDropdown();
-      }
-    }
-
-    function toggleDropdown() {
-      const dropdown = document.getElementById("languageDropdown");
-      dropdown.classList.toggle("hidden");
-    }
-
-    function showDropdown() {
-      document.getElementById("languageDropdown").classList.remove("hidden");
-    }
-
-    function hideDropdown() {
-      document.getElementById("languageDropdown").classList.add("hidden");
-    }
-
-    function filterDropdown() {
-      const input = document.getElementById("languageInput");
-      const filter = input.value.toLowerCase();
-      const ul = document.getElementById("languageDropdown");
-      const items = ul.getElementsByTagName("li");
-      ul.classList.remove("hidden");
-      let visibleCount = 0;
-      for (let i = 0; i < items.length; i++) {
-        const txtValue = items[i].textContent || items[i].innerText;
-        if (txtValue.toLowerCase().indexOf(filter) > -1) {
-          items[i].style.display = "";
-          visibleCount++;
-        } else {
-          items[i].style.display = "none";
-        }
-      }
-      // Hide dropdown if no matches
-      if (visibleCount === 0) {
-        ul.classList.add("hidden");
-      }
-    }
-
-    function selectLanguage(element) {
-      const input = document.getElementById("languageInput");
-      input.value = element.textContent;
-      hideDropdown();
-    }
-
-    // Close dropdown when clicking outside
-    document.addEventListener("click", function (event) {
-      const dropdown = document.getElementById("languageDropdown");
-      const input = document.getElementById("languageInput");
-      const container = document.getElementById("additionalLanguagesSection");
-      if (
-        !container.contains(event.target)
-      ) {
-        hideDropdown();
-      }
-    });
-  </script>
-      </div>
       </div>
     </template>
 
+    <template x-if="propertyWizardStep === 3">
+      <div class="space-y-8 max-w-2xl mx-auto p-4 lg:ml-32">
+        <!-- Services at your property -->
+        <h2 class="text-2xl md:text-3xl font-bold text-gray-800">Services at your property</h2>
+        <!-- Breakfast Section -->
+        <div class="bg-white shadow rounded-lg p-6 space-y-4 border">
+          <h3 class="text-base font-semibold text-gray-700">Breakfast</h3>
+          <hr class="my-6 border-t border-gray-300">
+          <!-- Do you serve guests breakfast -->
+          <div>
+            <p class="font-semibold text-sm text-gray-800 mb-2">Do you serve guests breakfast?</p>
+            <div class="flex flex-col text-sm gap-2">
+              <label>
+                <input type="radio" name="serve_breakfast" value="yes" x-model="breakfastServed" class="mr-2"> Yes
+              </label>
+              <label>
+                <input type="radio" name="serve_breakfast" value="no" x-model="breakfastServed" class="mr-2"> No
+              </label>
+            </div>
+          </div>
+          <!-- Is breakfast included -->
+          <div>
+            <p class="font-semibold text-sm text-gray-800 mb-2">Is breakfast included in the price guests pay?</p>
+            <div class="flex flex-col text-sm gap-2">
+              <label>
+                <input type="radio" name="breakfast_included" value="included" x-model="breakfastIncluded" class="mr-2"> Yes, it's included
+              </label>
+              <label>
+                <input type="radio" name="breakfast_included" value="extra" x-model="breakfastIncluded" class="mr-2"> No, it costs extra
+              </label>
+            </div>
+          </div>
+          <hr class="my-6 border-t border-gray-300">
+          <!-- Type of breakfast -->
+          <div>
+            <p class="font-semibold text-sm text-gray-800 mb-2">
+              What type of breakfast do you offer?
+              <span class="text-sm text-gray-500">(Select all that apply)</span>
+            </p>
+            <div class="flex flex-wrap gap-2">
+              @foreach(['A la carte', 'American', 'Asian', 'Breakfast to go', 'Buffet', 'Continental', 'Full English/Irish', 'Gluten-Free', 'Halal', 'Italian', 'Kosher', 'Vegan', 'Vegetarian'] as $option)
+                <label
+                  :class="breakfastTypes && breakfastTypes.includes('{{ $option }}')
+                    ? 'bg-[#3CC0E9] text-white'
+                    : 'border border-gray-300 text-gray-700 hover:bg-gray-200'"
+                  class="px-3 py-1 rounded-full text-sm font-medium cursor-pointer transition"
+                >
+                  <input type="checkbox" class="hidden"
+                         :value="'{{ $option }}'"
+                         x-model="breakfastTypes">
+                  {{ $option }}
+                </label>
+              @endforeach
+            </div>
+          </div>
+        </div>
+        <!-- Parking Section -->
+        <div class="bg-white shadow rounded-lg p-6 space-y-4 border">
+          <h3 class="text-base font-semibold text-gray-700">Parking</h3>
+          <hr class="my-6 border-t border-gray-300">
+          <!-- Is parking available -->
+          <div>
+            <p class="text-sm font-semibold text-gray-800 mb-2">Is parking available to guests?</p>
+            <div class="flex flex-col text-sm gap-2">
+              <label>
+                <input type="radio" name="parking_available" value="free" x-model="parkingAvailable" class="mr-2"> Yes, free
+              </label>
+              <label>
+                <input type="radio" name="parking_available" value="paid" x-model="parkingAvailable" class="mr-2"> Yes, paid
+              </label>
+              <label>
+                <input type="radio" name="parking_available" value="no" x-model="parkingAvailable" class="mr-2"> No
+              </label>
+            </div>
+          </div>
+          <hr class="my-6 border-t border-gray-300">
+          <!-- Parking cost -->
+          <div>
+            <p class="text-sm font-semibold text-gray-800 mb-2">How much does parking cost?</p>
+            <div class="flex flex-col sm:flex-row items-center gap-4">
+              <!-- Input + Currency Select Wrapper -->
+              <div class="relative w-full max-w-xs">
+                <select x-model="parkingCurrency" class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-transparent text-gray-700 text-sm pr-1 pl-1 focus:outline-none">
+                  <option value="usd">US$</option>
+                  <option value="eur">€</option>
+                  <option value="gbp">£</option>
+                  <option value="lkr">Rs</option>
+                </select>
+                <input
+                  type="text"
+                  x-model="parkingCost"
+                  class="w-full border border-gray-400 rounded-md pl-16 pr-2 py-2 text-gray-700 font-semibold focus:ring-2 focus:ring-blue-300 focus:outline-none"
+                />
+              </div>
+              <!-- Rate Select -->
+              <select x-model="parkingRate" class="border border-gray-300 rounded px-3 py-2 w-32 text-sm text-gray-700">
+                <option value="per_day">Per day</option>
+                <option value="per_stay">Per stay</option>
+              </select>
+            </div>
+          </div>
+          <!-- Reservation needed -->
+          <div>
+            <p class="font-semibold text-sm text-gray-800 mb-2">Do guests need to reserve a parking spot?</p>
+            <div class="flex flex-col text-sm gap-2">
+              <label>
+                <input type="radio" name="parking_reservation" value="needed" x-model="parkingReservation" class="mr-2"> Reservation needed
+              </label>
+              <label>
+                <input type="radio" name="parking_reservation" value="not_needed" x-model="parkingReservation" class="mr-2"> No reservation needed
+              </label>
+            </div>
+          </div>
+          <!-- Parking location -->
+          <div>
+            <p class="font-semibold text-sm text-gray-800 mb-2">Where is the parking located?</p>
+            <div class="flex flex-col text-sm gap-2">
+              <label>
+                <input type="radio" name="parking_location" value="on_site" x-model="parkingLocation" class="mr-2"> On site
+              </label>
+              <label>
+                <input type="radio" name="parking_location" value="off_site" x-model="parkingLocation" class="mr-2"> Off site
+              </label>
+            </div>
+          </div>
+          <!-- Parking type -->
+          <div>
+            <p class="font-semibold text-sm text-gray-800 mb-2">What type of parking is it?</p>
+            <div class="flex flex-col text-sm gap-2">
+              <label>
+                <input type="radio" name="parking_type" value="private" x-model="parkingType" class="mr-2"> Private
+              </label>
+              <label>
+                <input type="radio" name="parking_type" value="public" x-model="parkingType" class="mr-2"> Public
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="flex justify-between mt-6">
+          <!-- Back Button -->
+          <button
+            type="button"
+            @click="propertyWizardStep--"
+            class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded mb-16">
+            ←
+          </button>
+          <!-- Continue Button -->
+          <div class="flex justify-end">
+            <button
+              type="button"
+              @click="saveAdditionalDetails"
+              class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 mb-16">
+              Continue
+            </button>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <template x-if="propertyWizardStep === 4">
+  <div class="max-w-4xl mx-auto space-y-8 lg:ml-32" x-init="loadLanguages()">
+    <div class="container ml-24 px-4 py-8 max-w-2xl">
+      <!-- Header -->
+      <h2 class="text-2xl font-bold mb-8 text-left">
+        What languages do you or your staff speak?
+      </h2>
+      <!-- Language Selection Section -->
+      <div class="bg-white shadow-md rounded-lg p-6 mb-8">
+        <h3 class="text-lg mb-4 font-bold">Select languages</h3>
+        
+        <!-- Common Languages (hardcoded for quick selection) -->
+        <div class="space-y-2 mb-4">
+          <template x-for="commonLang in ['English', 'French', 'German', 'Hindi']" :key="commonLang">
+            <label class="flex items-center cursor-pointer">
+              <input 
+                type="checkbox" 
+                class="mr-2" 
+                :value="availableLanguages.find(lang => lang.name === commonLang)?.id"
+                x-model="selectedLanguages" 
+                :disabled="!availableLanguages.find(lang => lang.name === commonLang)"
+              />
+              <span x-text="commonLang"></span>
+            </label>
+          </template>
+        </div>
+
+        <!-- Selected Languages Display -->
+        <template x-if="selectedLanguages.length > 0">
+          <div class="mb-4">
+            <h4 class="text-sm font-semibold text-gray-700 mb-2">Selected languages:</h4>
+            <div class="flex flex-wrap gap-2">
+              <template x-for="langId in selectedLanguages" :key="langId">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800">
+                  <span x-text="getLanguageName(langId)"></span>
+                  <button 
+                    @click="removeLanguage(langId)"
+                    class="ml-2 text-blue-600 hover:text-blue-800"
+                    type="button"
+                  >
+                    ×
+                  </button>
+                </span>
+              </template>
+            </div>
+          </div>
+        </template>
+        
+        <!-- Add Additional Languages -->
+        <div x-show="showAdditionalLanguages" class="mt-4 relative">
+          <h3 class="text-lg font-medium mb-2">Add additional languages</h3>
+          <!-- Searchable dropdown container -->
+          <div class="relative w-full max-w-md">
+            <input
+              type="text"
+              x-model="searchTerm"
+              @input="filterLanguages()"
+              @focus="showDropdown = true"
+              @click="showDropdown = true"
+              placeholder="Search languages..."
+              autocomplete="off"
+              class="w-full border rounded p-2 pr-10 cursor-pointer"
+            />
+            <!-- Dropdown arrow -->
+            <button
+              type="button"
+              @click="showDropdown = !showDropdown"
+              class="absolute right-2 top-2.5 text-gray-600 hover:text-gray-900 focus:outline-none"
+              tabindex="-1"
+            >
+              ▼
+            </button>
+            <!-- Dropdown list -->
+            <ul
+              x-show="showDropdown && filteredLanguages.length > 0"
+              x-transition
+              class="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded max-h-40 overflow-auto shadow-lg"
+              @click.away="showDropdown = false"
+            >
+              <template x-for="language in filteredLanguages" :key="language.id">
+                <li 
+                  @click="selectLanguage(language.id, language.name)"
+                  class="p-2 hover:bg-blue-100 cursor-pointer"
+                  :class="{ 'bg-gray-100 text-gray-500': isLanguageSelected(language.id) }"
+                  x-text="language.name"
+                ></li>
+              </template>
+            </ul>
+          </div>
+        </div>
+        
+        <!-- Toggle Button for Additional Languages -->
+        <button
+          type="button"
+          @click="toggleAdditionalLanguages()"
+          class="text-blue-500 hover:underline mt-4 block"
+        >
+          <span x-text="showAdditionalLanguages ? 'Hide additional languages' : 'Add additional languages'"></span>
+        </button>
+      </div>
+      
+      <!-- Navigation Buttons -->
+      <div class="mt-8 flex justify-between">
+        <!-- Back Button on the left -->
+        <button
+          type="button" @click="propertyWizardStep--"
+          :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
+          class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+          ←
+        </button>
+        <!-- Continue Button on the right -->
+        <button
+          type="button"
+          @click="saveAdditionalDetails"
+          class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300"
+        >
+          Continue
+        </button>
+      </div>
+    </div>
+  </div>
+</template>
   <template x-if="propertyWizardStep === 5">
   <div class="max-w-4xl mx-auto space-y-8 lg:ml-32">
     <div class="container w-full max-w-4xl ml-4 md:ml-24 px-4 py-8">
@@ -1424,7 +1685,7 @@
             <label class="flex items-center justify-between cursor-pointer">
               <span>Smoking allowed</span>
               <div class="relative">
-                <input type="checkbox" class="sr-only peer" />
+                <input type="checkbox" x-model="smokingAllowed" class="sr-only peer" />
                 <div class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition"></div>
                 <div class="absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-4"></div>
               </div>
@@ -1433,7 +1694,7 @@
             <label class="flex items-center justify-between cursor-pointer">
               <span>Parties/events allowed</span>
               <div class="relative">
-                <input type="checkbox" class="sr-only peer" />
+                <input type="checkbox" x-model="partiesAllowed" class="sr-only peer" />
                 <div class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition"></div>
                 <div class="absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-4"></div>
               </div>
@@ -1447,15 +1708,15 @@
             <h3 class="text-base font-semibold mb-2">Do you allow pets?</h3>
             <div class="space-y-2">
               <label class="flex items-center cursor-pointer">
-                <input type="radio" name="pets" value="yes" class="mr-2">
+                <input type="radio" name="pets" value="yes" x-model="petsAllowed" class="mr-2">
                 <span>Yes</span>
               </label>
               <label class="flex items-center cursor-pointer">
-                <input type="radio" name="pets" value="upon_request" class="mr-2">
+                <input type="radio" name="pets" value="upon_request" x-model="petsAllowed" class="mr-2">
                 <span>Upon request</span>
               </label>
               <label class="flex items-center cursor-pointer">
-                <input type="radio" name="pets" value="no" class="mr-2" checked>
+                <input type="radio" name="pets" value="no" x-model="petsAllowed" class="mr-2">
                 <span>No</span>
               </label>
             </div>
@@ -1465,11 +1726,11 @@
             <h3 class="text-base font-semibold mb-2">Are there additional fees for pets?</h3>
             <div class="space-y-2">
               <label class="flex items-center cursor-pointer">
-                <input type="radio" name="pets_fees" value="free" class="mr-2">
+                <input type="radio" name="pets_fees" value="free" x-model="petsFees" class="mr-2">
                 <span>Pets can stay for free</span>
               </label>
               <label class="flex items-center cursor-pointer">
-                <input type="radio" name="pets_fees" value="fees" class="mr-2">
+                <input type="radio" name="pets_fees" value="fees" x-model="petsFees" class="mr-2">
                 <span>Fees may apply</span>
               </label>
             </div>
@@ -1483,11 +1744,11 @@
             <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
               <div class="w-full">
                 <label class="block text-sm font-medium mb-1">From</label>
-                <input type="time" value="15:00" class="w-full border rounded p-2" />
+                <input type="time" x-model="checkInFrom" ... />
               </div>
               <div class="w-full">
                 <label class="block text-sm font-medium mb-1">Until</label>
-                <input type="time" value="18:00" class="w-full border rounded p-2" />
+                <input type="time" x-model="checkInUntil" ... />
               </div>
             </div>
           </div>
@@ -1498,11 +1759,11 @@
             <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
               <div class="w-full">
                 <label class="block text-sm font-medium mb-1">From</label>
-                <input type="time" value="08:00" class="w-full border rounded p-2" />
+                <input type="time" x-model="checkOutFrom" ... />
               </div>
               <div class="w-full">
                 <label class="block text-sm font-medium mb-1">Until</label>
-                <input type="time" value="11:00" class="w-full border rounded p-2" />
+                <input type="time" x-model="checkOutUntil" ... />
               </div>
             </div>
           </div>
@@ -1512,14 +1773,14 @@
   <button
    type="button" @click="propertyWizardStep--"
         :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-
+  
       class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
       ←
   </button>
 
   <!-- Continue Button on the right -->
   <button
-   type="button"  @click="propertyWizardStep++"
+   type="button"  @click="saveHouseRules"
      class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 "
   >
     Continue
@@ -1544,7 +1805,7 @@
             You can easily customise these house rules later and additional house rules can be set on the Policies page of the extranet after you complete registration.
           </p>
 
-
+          
         </div>
       </div>
 
@@ -1565,13 +1826,12 @@
             <!-- The Property Section -->
             <div>
                 <label class="inline-flex items-center space-x-2">
-                    <input type="checkbox" class="form-checkbox text-blue-600">
+                    <input type="checkbox" x-model="hostProfile.show_property" class="form-checkbox text-blue-600">
                     <span class="text-gray-800 font-sm ">The property</span>
                 </label>
-
-                <div class="mt-2">
+                <div class="mt-2" x-show="hostProfile.show_property">
                     <label class="block text-sm font-semibold text-gray-700">About the property</label>
-                    <textarea rows="4" maxlength="1200" placeholder="What makes your place unique? What can guests expect"
+                    <textarea x-model="hostProfile.about_property" rows="4" maxlength="1200" placeholder="What makes your place unique? What can guests expect"
                         class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"></textarea>
                     <p class="text-right text-xs text-gray-500">0/1200</p>
                 </div>
@@ -1580,21 +1840,20 @@
             <!-- The Host Section -->
             <div>
                 <label class="inline-flex items-center space-x-2">
-                    <input type="checkbox" class="form-checkbox text-blue-600">
+                    <input type="checkbox" x-model="hostProfile.show_host" class="form-checkbox text-blue-600">
                     <span class="text-gray-800 font-medium">The host</span>
                 </label>
-
-                <div class="mt-2 space-y-2">
+                <div class="mt-2 space-y-2" x-show="hostProfile.show_host">
                     <div>
                         <label class="block text-sm font-semibold text-gray-700">Host name</label>
-                        <input type="text" maxlength="80"
+                        <input x-model="hostProfile.host_name" type="text" maxlength="80"
                             class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
                         <p class="text-right text-xs text-gray-500">0/80</p>
                     </div>
 
                     <div>
                         <label class="block text-sm font-semibold text-gray-700">About the host</label>
-                        <textarea rows="4" maxlength="1200" placeholder="What are your interests? What do you like about hosting?"
+                        <textarea x-model="hostProfile.about_host" rows="4" maxlength="1200" placeholder="What are your interests? What do you like about hosting?"
                             class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"></textarea>
                         <p class="text-right text-xs text-gray-500">0/1200</p>
                     </div>
@@ -1604,13 +1863,12 @@
             <!-- The Neighborhood Section -->
             <div>
                 <label class="inline-flex items-center space-x-2">
-                    <input type="checkbox" class="form-checkbox text-blue-600">
+                    <input type="checkbox" x-model="hostProfile.show_neighborhood" class="form-checkbox text-blue-600">
                     <span class="text-gray-800 font-medium">The neighborhood</span>
                 </label>
-
-                <div class="mt-2">
+                <div class="mt-2" x-show="hostProfile.show_neighborhood">
                     <label class="block text-sm font-semibold text-gray-700">About the neighborhood</label>
-                    <textarea rows="4" maxlength="1200" placeholder="What's the area like? Are there any attractions nearby?"
+                    <textarea x-model="hostProfile.about_neighborhood" rows="4" maxlength="1200" placeholder="What's the area like? Are there any attractions nearby?"
                         class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"></textarea>
                     <p class="text-right text-xs text-gray-500">0/1200</p>
                 </div>
@@ -1619,7 +1877,7 @@
             <!-- None of the Above Option -->
             <div>
                 <label class="inline-flex items-center space-x-2">
-                    <input type="checkbox" class="form-checkbox text-blue-600">
+                    <input type="checkbox" x-model="hostProfile.none_selected" class="form-checkbox text-blue-600">
                     <span class="text-gray-800 font-medium">None of the above / I'll add these later</span>
                 </label>
             </div>
@@ -1629,14 +1887,14 @@
   <button
    type="button" @click="propertyWizardStep--"
         :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-
+  
       class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
       ←
   </button>
 
   <!-- Continue Button on the right -->
   <button
-   type="button"  @click="propertyWizardStep++"
+   type="button"  @click="saveHostProfile"
      class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 "
   >
     Continue
@@ -1646,17 +1904,17 @@
 </template>
 
 
-
-
 </section>
           <!-- ✅ Step 3: Photos Upload Section -->
           <!-- ✅ Step 3: Photos Upload Section -->
           <!-- ✅ Step 3: Photos Upload Section -->
-          <section
-            x-show="step === 3"
-            class="px-4 py-6 md:px-8 lg:px-16 flex justify-center"
-            x-data="{
+<!-- ...rest of the code... -->
+<section
+  x-show="step === 3"
+  class="px-4 py-6 md:px-8 lg:px-16 flex justify-center"
+  x-data="{
     uploadedPhotos: [],
+    isUploading: false,
     handleUpload(event) {
       const files = Array.from(event.target.files).slice(0, 5 - this.uploadedPhotos.length);
       files.forEach(file => {
@@ -1675,46 +1933,77 @@
     },
     removePhoto(index) {
       this.uploadedPhotos.splice(index, 1);
+    },
+    async uploadPhotosAndContinue() {
+      if (this.uploadedPhotos.length < 3) {
+        alert('Please upload at least 3 photos.');
+        return;
+      }
+      this.isUploading = true;
+      const formData = new FormData();
+      formData.append('property_id', this.propertyId);
+      this.uploadedPhotos.forEach(photo => {
+        formData.append('photos[]', photo.file);
+      });
+      try {
+        const res = await fetch('/partner/property/upload-photos', {
+          method: 'POST',
+          headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+          },
+          body: formData
+        });
+        const data = await res.json();
+        if (data.success) {
+          this.step = 4;
+        } else {
+          alert(data.message || 'Upload failed');
+        }
+      } catch (err) {
+        alert('Upload error: ' + err.message);
+      } finally {
+        this.isUploading = false;
+      }
     }
-}"
+  }"
+>
+  <div class="w-full max-w-6xl">
+    <h2 class="text-xl md:text-2xl font-bold text-black mb-6 text-left mt-12">
+      What does your place look like?
+    </h2>
+    <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6 items-start">
+      <!-- 📸 Photo Upload Area -->
+      <div class="border rounded-lg p-6 bg-white shadow-sm">
+        <p class="font-semibold text-gray-800 mb-2">Upload at least 5 photos of your property.</p>
+          <p class="text-sm text-gray-600 mb-4">
+            The more you upload, the more likely you are to get bookings. You can add more later.
+          </p>
+          <!-- Upload box with drag and drop -->
+          <div
+            class="border border-dashed border-gray-400 rounded-lg p-6 text-center bg-gray-50 mb-6"
+            @dragover.prevent
+            @drop.prevent="handleUploadDrop($event)"
           >
-            <div class="w-full max-w-6xl">
-              <h2 class="text-xl md:text-2xl font-bold text-black mb-6 text-left mt-12">
-                What does your place look like?
-              </h2>
-              <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6 items-start">
-                <!-- 📸 Photo Upload Area -->
-                <div class="border rounded-lg p-6 bg-white shadow-sm">
-                  <p class="font-semibold text-gray-800 mb-2">Upload at least 5 photos of your property.</p>
-                  <p class="text-sm text-gray-600 mb-4">
-                    The more you upload, the more likely you are to get bookings. You can add more later.
-                  </p>
-                  <!-- Upload box with drag and drop -->
-                  <div
-                    class="border border-dashed border-gray-400 rounded-lg p-6 text-center bg-gray-50 mb-6"
-                    @dragover.prevent
-                    @drop.prevent="handleUploadDrop($event)"
-                  >
-                    <div class="mb-4">
-                      <!-- camera SVG -->
-                    </div>
-                    <p class="text-gray-700 font-medium mb-2">Drag and drop or</p>
-                    <label
-                      class="inline-flex items-center gap-2 px-4 py-2 bg-white text-gray-800 border border-gray-800 rounded cursor-pointer hover:bg-gray-50 hover:text-black transition"
-                      for="fileInput"
-                    >
-                      <img src="{{ asset('assets/mdi_camera-outline.svg') }}" alt="Upload" class="w-4 h-4" />
-                      <span>Upload photos</span></label
-                    ><input
-                      id="fileInput"
-                      type="file"
-                      multiple
-                      accept="image/*"
-                      class="hidden"
-                      @change="handleUpload"
-                    />
-                    <p class="text-xs text-gray-500 mt-2">jpg/jpeg or png, maximum 47MB each, max 5 images</p>
-                  </div>
+            <div class="mb-4">
+              <!-- camera SVG -->
+            </div>
+            <p class="text-gray-700 font-medium mb-2">Drag and drop or</p>
+            <label
+              class="inline-flex items-center gap-2 px-4 py-2 bg-white text-gray-800 border border-gray-800 rounded cursor-pointer hover:bg-gray-50 hover:text-black transition"
+              for="fileInput"
+            >
+              <img src="{{ asset('assets/mdi_camera-outline.svg') }}" alt="Upload" class="w-4 h-4" />
+              <span>Upload photos</span></label
+              ><input
+                id="fileInput"
+                type="file"
+                multiple
+                accept="image/*"
+                class="hidden"
+                @change="handleUpload"
+              />
+              <p class="text-xs text-gray-500 mt-2">jpg/jpeg or png, maximum 47MB each, max 5 images</p>
+            </div>
                   <!-- Uploaded photo previews -->
                   <template x-if="uploadedPhotos.length > 0">
                     <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
@@ -1767,11 +2056,13 @@
                   <button
                     @click="step--"
                     class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded"
-                  >
+                    :disabled="isUploading"
+                    >
                     ←
                   </button>
                   <button
-                    :disabled="uploadedPhotos.length < 3"
+                    @click="uploadPhotosAndContinue"
+                    :disabled="uploadedPhotos.length < 3 || isUploading"
                     :class="{
                       'px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700cursor-pointer opacity-100 hover:bg-blue-700':
                         uploadedPhotos.length >= 3,
@@ -1779,7 +2070,8 @@
                     }"
                     class="px-6 py-2 text-white rounded"
                   >
-                    Continue
+                   <span x-show="!isUploading">Continue</span>
+                  <span x-show="isUploading">Uploading...</span>
                   </button>
                 </div>
               </div>
@@ -1804,6 +2096,655 @@
   <template x-if="pricingWizardStep === 4">
       <div class="max-w-xl mx-auto space-y-8 lg:ml-32 px-4 py-6">
   </div>
+  </template>
+</section>
+
+<!-- ✅ Step 4: Pricing and Calendar -->
+<section x-show="step === 4">
+
+  <template x-if="pricingWizardStep === 1">
+  <div class="max-w-2xl mx-auto px-4 py-6 lg:ml-32 space-y-8">
+    <!-- Title -->
+    <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mt-4">
+      How you receive bookings
+    </h2>
+
+    <!-- Info Card -->
+    <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6 space-y-4">
+      <h3 class="text-base font-semibold text-gray-900">
+        We're here to ensure you can receive bookings safely:
+      </h3>
+     <ul class="text-gray-700 space-y-1 text-sm">
+  @php
+    $tickIcon = asset('assets/Vector (42).svg'); // Use consistent and clean SVG
+  @endphp
+
+  @foreach([
+    'Set house rules guests must agree to before they stay',
+    'Request damage deposits for extra security',
+    'Report guest misconduct if something goes wrong',
+    'Receive protection against liability claims from guests and neighbours up to US$1,000,000 for every reservation'
+  ] as $text)
+    <li class="flex items-start">
+      <span class="text-green-600 mr-2 shrink-0">
+        <img src="{{ $tickIcon }}" alt="Tick" class="w-4 h-4" />
+      </span>
+      <span>{{ $text }}</span>
+    </li>
+  @endforeach
+</ul>
+
+
+    </div>
+
+    <!-- Booking Options -->
+    <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6 space-y-4">
+      <h3 class="text-base font-semibold text-gray-900">
+        How can guests book your apartment?
+      </h3>
+      <div class="space-y-2 text-sm">
+        <label class="flex items-center space-x-3">
+          <input type="radio" name="booking_type" class="form-radio text-blue-600" checked value="instant" x-model="pricing.booking_type">
+          <span class="text-gray-800">All guests can book instantly <span class="ml-2 px-2 py-0.5 text-xs bg-green-100 text-green-700 rounded">Recommended</span></span>
+        </label>
+        <label class="flex items-center space-x-3">
+          <input type="radio" name="booking_type" value="request" x-model="pricing.booking_type" class="form-radio text-blue-600">
+          <span class="text-gray-800">All guests will need to request to book</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Continue Button -->
+    <div class="flex justify-between items-center">
+      <button  @click="pricingWizardStep--"      class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
+          ←</button>
+      <button  @click="pricingWizardStep++" class="  px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500">Continue</button>
+    </div>
+  </div>
+</template>
+
+
+
+  <template x-if="pricingWizardStep === 2">
+    <div class="max-w-4xl mx-auto space-y-8 lg:ml-32 px-4 py-6">
+        <div class="max-w-4xl mx-auto px-4 py-8 space-y-6" x-data="{ showTip1: true, showTip2: true }">
+
+      <!-- Title -->
+      <h2 class="text-2xl font-bold text-gray-800">Set the price per night for this room</h2>
+
+      <!-- Price input and Tip 1 in two separate columns -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
+  
+  <!-- Price input card (2/3 width) -->
+  <div class="md:col-span-2 bg-white border rounded-lg p-6 shadow-sm space-y-4">
+    <label class="block font-semibold text-base text-gray-700">How much do you want to charge per night?</label>
+    <div class="relative">
+  <label class="block text-sm text-gray-700 mb-1">Price guests pay</label>
+
+  <!-- Currency Select Dropdown -->
+  <select x-model="pricing.currency" class="absolute left-3 top-1/2 transform -translate-y-1/2 bg-transparent text-gray-700 text-sm pr-1 focus:outline-none border border-gray-300 rounded-md">
+    <option value="usd">US$</option>
+    <option value="eur">€</option>
+    <option value="gbp">£</option>
+    <option value="lkr">Rs</option>
+  </select>
+
+  <!-- Input Field -->
+  <input
+    type="text"
+    x-model="pricing.price_per_night
+    value="120.00"
+    class="w-full border border-gray-400 rounded-md p-2 pl-16 text-gray-700 font-semibold focus:ring-2 focus:ring-blue-300 focus:outline-none"
+  />
+
+  <p class="text-sm text-gray-500 mt-2">Including taxes, commission, and fees</p>
+</div>
+
+
+    <!-- Topic paragraph -->
+    <p class="text-sm text-gray-600 pl-4">
+      <span class="text-gray-500">15.00%</span> Bookintour.com commission
+    </p>
+
+    <!-- Sub-items under topic -->
+    <ul class="text-sm text-gray-600 space-y-1 pl-8">
+      <li><span class="text-green-600 font-semibold">✓</span> 24/7 help in your language</li>
+      <li><span class="text-green-600 font-semibold">✓</span> Save time with automatically confirmed bookings</li>
+      <li><span class="text-green-600 font-semibold">✓</span> We promote your place on Google</li>
+    </ul>
+
+    <p class="text-sm text-gray-800 font-medium border-t pt-3">US$ 30.00 Your earnings (including taxes)</p>
+  </div>
+
+  <!-- Tip Box 1 (1/3 width, independent height) -->
+  <div x-show="showTip1" class="relative bg-white border rounded-lg p-4 shadow-sm text-sm text-gray-700">
+    <button @click="showTip1 = false" class="absolute top-2 right-2 text-gray-500 font-semibold">✕</button>
+    
+    <div class="flex items-center mb-2">
+      <img src="{{ asset('assets/system-uicons_lightbulb-on.svg') }}" alt="Tip Icon" class="w-6 h-6 mr-2">
+      <strong>What if I'm not sure about my price?</strong>
+    </div>
+
+    <p>Don't worry, you can always change it later. You can even set weekend, midweek, and seasonal prices, giving you more control over what you earn.</p>
+  </div>
+
+</div>
+
+      <!-- Discount and Tip 2 -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        
+        <!-- Discount card -->
+        <div class="md:col-span-2 bg-white border rounded-lg p-6 shadow-sm space-y-3">
+          <label class="inline-flex items-center">
+            <input type="checkbox" x-model="pricing.discount_enabled" class="form-checkbox text-blue-600 rounded-md" />
+            <span class="ml-2 font-medium text-gray-700 font-semibold">Get guests' attention with a 20% discount</span>
+          </label>
+          <p class="text-sm text-gray-600">
+            Give 20% off your first 3 bookings or for 90 days, whichever comes first. 
+            <a href="#" class="text-blue-600 underline">Learn more</a>
+          </p>
+          <hr class="my-4">
+          <p class="text-sm text-gray-800">
+            <del class="text-gray-500">US$ 30.00</del> 
+            <span class="text-green-600 font-semibold">US$ 24.00 per night</span>
+          </p>
+        </div>
+
+        <!-- Tip Box 2 (separate column) -->
+        <div x-show="showTip2" class="relative bg-white border rounded-lg p-4 shadow-sm text-sm text-gray-700">
+          <button @click="showTip2 = false" class="absolute top-2 right-3 text-gray-500 font-semibold mb-2">✕</button>
+          <div class="flex items-center mb-2">
+            <img src="{{ asset('assets/material-symbols-light_info-outline.svg') }}" alt="Tip Icon" class="w-6 h-6 mr-2">
+            <strong>Rules for setting up a promotion</strong>
+          </div>
+          <p>
+            Make sure you're giving a genuine discount. It must represent a real discount in line with consumer protection rules. 
+            <a href="#" class="text-blue-600 underline">Learn More</a>
+          </p>
+        </div>
+      </div>
+
+      <!-- Navigation Buttons -->
+      <div class="flex mt-1">
+        <button type="button"
+                @click="step > 1 ? step-- : step"
+                :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
+                class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
+          ←
+        </button>
+        <button type="button"
+                @click="savePricing"
+                class="ml-auto px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300 ml-[402px]">
+          Continue
+        </button>
+      </div>
+
+    </div>
+    </div>
+</template>
+
+
+<template x-if="pricingWizardStep === 3">
+    
+    <div class="px-4 py-8 mt-6 w-full max-w-2xl mx-auto lg:ml-24 space-y-6">
+
+    <!-- Main Title -->
+    <h2 class="text-3xl font-bold text-gray-800">Rate plans</h2>
+
+    <!-- Intro Paragraph -->
+    <div class="bg-white border rounded-lg p-4 shadow-sm">
+      <p class="text-sm text-gray-600">
+        To attract a wider range of guests, we suggest setting up multiple rate plans.
+        The recommended prices and policies for each plan are based on data from properties like yours,
+        but they can be edited now or after you complete registration.
+      </p>
+    </div>
+
+    <h2 class="text-xl font-semibold text-gray-800">Standard rate plan</h2>
+
+    <!-- Rate Plan Card -->
+    <div class="bg-white border rounded-lg p-6 shadow-sm space-y-6 w-full max-w-2xl mx-auto">
+
+      <!-- Cancellation Policy Section -->
+      <div class="space-y-4">
+        <div class="flex justify-between items-start">
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="text-base font-semibold text-gray-700">Cancellation policy</h3>
+              <img src="{{ asset('assets/material-symbols-light_info-outline.svg') }}" alt="Tip Icon" class="w-5 h-5">
+            </div>
+            <p class="text-xs text-gray-500">
+              This policy is set at the property level – any changes made will be applied to all rooms.
+            </p>
+          </div>
+          <a href="{{ route('partner.apartment.pricing.policies') }}">
+         <button @click="$refs.section1.scrollIntoView({ behavior: 'smooth' })"
+        class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">
+  Edit
+</button></a>
+        </div>
+        <hr class="my-4">
+        <ul class="text-gray-900 text-sm space-y-2">
+          <li class="flex items-start gap-2">
+            <img src="{{ asset('assets/teenyicons_tick-circle-outline.svg') }}" alt="Tick" class="w-4 h-4 mt-1">
+            <span>Guests can cancel their bookings for free up to 1 day before their arrival</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <img src="{{ asset('assets/teenyicons_tick-circle-outline.svg') }}" alt="Tick" class="w-4 h-4 mt-1">
+            <span>Guests who cancel within 24 hours will have their cancellation fee waived</span>
+          </li>
+        </ul>
+      </div>
+
+      <hr class="my-4">
+
+      <!-- Price Per Group Size Section -->
+      <div class="space-y-4">
+        <div class="flex justify-between items-center">
+          <div class="flex items-center gap-2">
+            <h3 class="text-base font-semibold text-gray-700">Price per group size</h3>
+            <img src="{{ asset('assets/material-symbols-light_info-outline.svg') }}" alt="Tip Icon" class="w-5 h-5">
+          </div>
+           <a href="{{ route('partner.apartment.price.group') }}">
+          <button class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">Edit</button></a>
+        </div>
+
+        <hr class="my-4">
+<table class="table-auto border-separate border-spacing-x-2 w-full text-left text-gray-700">
+  <tbody>
+    <tr>
+      <td class="py-2 text-sm font-semibold">Occupancy</td>
+      <td class="py-2 text-sm font-semibold">Guests pay</td>
+    </tr>
+    <tr>
+      <td class="py-2">
+        <div class="flex items-center gap-1">
+          <img src="{{ asset('assets/guidance_user-1 (1).svg') }}" alt="User Icon" class="w-5 h-5">
+          <span>x 2</span>
+        </div>
+      </td>
+      <td class="py-2 text-sm">US$ 30.00</td>
+    </tr>
+    <tr>
+      <td class="py-2">
+        <div class="flex items-center gap-1">
+          <img src="{{ asset('assets/guidance_user-1 (1).svg') }}" alt="User Icon" class="w-5 h-5">
+          <span>x 1</span>
+        </div>
+      </td>
+      <td class="py-2 text-sm">US$ 27.00</td>
+    </tr>
+  </tbody>
+</table>
+
+
+      </div>
+
+   
+    </div>
+
+    <h2 class="text-xl font-semibold text-gray-800">Non-refundable rate plan</h2>
+
+    <!-- Second Rate Plan -->
+    <div class="bg-white border rounded-lg p-4 shadow-sm">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <h3 class="text-base font-semibold text-gray-700">Price and cancellation policy</h3>
+          <img src="{{ asset('assets/material-symbols-light_info-outline.svg') }}" alt="Tip Icon" class="w-5 h-5">
+        </div>
+         <a href="{{ route('partner.apartment.refundable.rate') }}">
+        <button class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">Edit</button></a>
+      </div>
+      <hr class="my-4">
+      <ul class="text-gray-900 text-sm space-y-2">
+        <li class="flex items-start gap-2">
+          <img src="{{ asset('assets/teenyicons_tick-circle-outline.svg') }}" alt="Tick" class="w-4 h-4 mt-1">
+          <span>Guests will pay 10% less than the standard rate for a non-refundable rate</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <img src="{{ asset('assets/teenyicons_tick-circle-outline.svg') }}" alt="Tick" class="w-4 h-4 mt-1">
+          <span>Guests can't cancel their bookings for free anytime</span>
+        </li>
+      </ul>
+    </div>
+
+    <h2 class="text-xl font-semibold text-gray-800">Weekly rate plan</h2>
+
+    <!-- Third Rate Plan -->
+    <div class="bg-white border rounded-lg p-4 shadow-sm">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <h3 class="text-base font-semibold text-gray-700">Price and cancellation policy</h3>
+          <img src="{{ asset('assets/material-symbols-light_info-outline.svg') }}" alt="Tip Icon" class="w-5 h-5">
+        </div>
+         <a href="{{ route('partner.apartment.weekly.rate') }}">
+        <button class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">Edit</button></a>
+      </div>
+      <hr class="my-4">
+      <ul class="text-gray-900 text-sm space-y-2">
+        <li class="flex items-start gap-2">
+          <img src="{{ asset('assets/teenyicons_tick-circle-outline.svg') }}" alt="Tick" class="w-4 h-4 mt-1">
+          <span>Guests will pay 15% less than the standard rate when they book for at least 7 nights</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <img src="{{ asset('assets/teenyicons_tick-circle-outline.svg') }}" alt="Tick" class="w-4 h-4 mt-1">
+          <span>Guests can cancel their bookings for free before 18:00 on the day of arrival. The guests will be charged cost of the first night if they cancel after this (based on the standard rate cancellation policy).</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Navigation Buttons -->
+<div class="flex justify-between items-center mt-4">
+  <!-- Back Button -->
+  <button type="button"
+          @click="step > 1 ? step-- : step"
+          :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
+          class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
+    ←
+  </button>
+
+  <!-- Continue Button -->
+  
+  <button       @click="pricingWizardStep++" class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-sky-500 transition w-full sm:w-auto">
+    Continue
+  </button>
+
+
+  </div>
+  </template>
+
+ 
+
+  <template x-if="pricingWizardStep === 4">
+  <div x-data="{
+    checkInOption: 'specific',
+    availabilityOption: '365',
+    syncOption: 'yes',
+    allowLongStay: 'yes',
+    showSyncTip: true,
+    showLongStayTip: true
+}" class="px-4 py-8 mt-6 w-full max-w-2xl mx-auto lg:ml-24 space-y-6">
+
+<h2 class="text-3xl font-bold text-gray-800">Availability</h2>
+    <!-- Check-in Date Selection -->
+<!-- Alpine.js Component -->
+<div x-data="calendarComponent()" class="bg-white p-6 rounded-lg shadow-md space-y-4">
+    <!-- Title -->
+    <p class="text-base font-semibold">When is the first date that guests can check in?</p>
+
+    <!-- Check-in Options -->
+    <div class="flex flex-col sm:flex-row gap-4">
+        <label class="flex items-center space-x-2" >
+            <input type="radio" value="soon" x-model="checkInOption" class="form-radio text-blue-600">
+            <span class="text-sm">As soon as possible</span>
+        </label>
+        <label class="flex items-center space-x-2">
+            <input type="radio" value="specific" x-model="checkInOption" class="form-radio text-blue-600">
+            <span class="text-sm">On a specific date</span>
+        </label>
+    </div>
+
+    <!-- Calendar UI -->
+    <div x-show="checkInOption === 'specific'" class="border rounded-md p-4 bg-white shadow space-y-4">
+        <!-- Navigation Arrows -->
+        <div class="flex justify-between items-center mb-4">
+            <button @click="prevMonthPair"
+        class="text-gray-600 hover:text-black font-bold border border-gray-400 rounded-md p-1">
+    &larr;
+</button>
+
+<button @click="nextMonthPair"
+        class="text-gray-600 hover:text-black font-bold border border-gray-400 rounded-md p-1">
+    &rarr;
+</button>
+
+        </div>
+
+        <!-- Two-Month Calendars Side by Side -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- First Month -->
+            <div>
+                <p class="text-center font-semibold mb-2" x-text="monthNames[month1] + ' ' + year"></p>
+                <div class="grid grid-cols-7 gap-1 text-center text-sm text-gray-700">
+                    <template x-for="day in weekDays" :key="day"><div class="font-bold" x-text="day"></div></template>
+                    <template x-for="n in getStartDay(month1)" :key="'pad1-' + n"><div></div></template>
+                    <template x-for="d in getDaysInMonth(month1)" :key="'d1-' + d">
+                        <div
+                            class="p-2 rounded cursor-pointer hover:bg-blue-100"
+                            :class="(day === d && month1 === selectedMonth) ? 'bg-blue-600 text-white' : ''"
+                            x-text="d"
+                            @click="selectDate(d, month1)">
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Second Month -->
+            <div>
+                <p class="text-center font-semibold mb-2" x-text="monthNames[month2] + ' ' + year"></p>
+                <div class="grid grid-cols-7 gap-1 text-center text-sm text-gray-700">
+                    <template x-for="day in weekDays" :key="day"><div class="font-bold" x-text="day"></div></template>
+                    <template x-for="n in getStartDay(month2)" :key="'pad2-' + n"><div></div></template>
+                    <template x-for="d in getDaysInMonth(month2)" :key="'d2-' + d">
+                        <div
+                            class="p-2 rounded cursor-pointer hover:bg-blue-100"
+                            :class="(day === d && month2 === selectedMonth) ? 'bg-blue-600 text-white' : ''"
+                            x-text="d"
+                            @click="selectDate(d, month2)">
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+<hr class="border-t border-gray-300 my-4">
+
+        <!-- Selected Date -->
+        <p class="text-sm text-gray-600 mt-4">
+            Guests can start booking right away, but the first available check-in date will be
+            <strong x-text="formattedSelectedDate()"></strong>.
+        </p>
+    </div>
+</div>
+
+<!-- Alpine.js Script -->
+<script>
+function calendarComponent() {
+    return {
+        checkInOption: 'soon',
+        year: 2025,
+        month1: 6, // July
+        month2: 7, // August
+        day: null,
+        selectedMonth: null,
+
+        weekDays: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+
+        monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July',
+                     'August', 'September', 'October', 'November', 'December'],
+
+        getDaysInMonth(month) {
+            return new Date(this.year, month + 1, 0).getDate();
+        },
+
+        getStartDay(month) {
+            const date = new Date(this.year, month, 1);
+            return (date.getDay() + 6) % 7; // Start from Monday
+        },
+
+        selectDate(day, month) {
+            this.day = day;
+            this.selectedMonth = month;
+        },
+
+        formattedSelectedDate() {
+            if (this.day !== null && this.selectedMonth !== null) {
+                return `${this.day} ${this.monthNames[this.selectedMonth]} ${this.year}`;
+            }
+            return '';
+        },
+
+        nextMonthPair() {
+            if (this.month2 === 11) {
+                this.month1 = 0;
+                this.month2 = 1;
+                this.year++;
+            } else {
+                this.month1++;
+                this.month2++;
+            }
+        },
+
+        prevMonthPair() {
+            if (this.month1 === 0) {
+                this.month1 = 10;
+                this.month2 = 11;
+                this.year--;
+            } else {
+                this.month1--;
+                this.month2--;
+            }
+        }
+    }
+}
+</script>
+
+
+
+
+    <!-- Availability -->
+    <div class="border rounded-md p-4 bg-white shadow space-y-4">
+        <p class="text-base font-semibold">How would you like to open up dates for booking?</p>
+        <div class="flex flex-col sm:flex-row gap-4">
+            <label class="flex items-center space-x-2">
+                <input type="radio" value="365" x-model="availabilityOption" class="form-radio text-blue-600">
+                <span class="text-sm">Continuously extend my availability to:</span>
+            </label>
+            
+        </div>
+
+        <div x-show="availabilityOption === '365'" class="pl-6">
+            <select class="border border-gray-300 p-2 rounded w-48 text-sm">
+                <option value="365">365 days</option>
+                <option value="180">180 days</option>
+                <option value="90">90 days</option>
+                <option value="60">60 days</option>
+            </select>
+        </div>
+        <label class="flex items-center space-x-2">
+                <input type="radio" value="18months" x-model="availabilityOption" class="form-radio text-blue-600">
+                <span class="text-sm">Only open up the first 18 months</span>
+            </label>
+    </div>
+
+
+
+ <!-- SYNC SECTION -->
+<div class="flex flex-col md:flex-row gap-6">
+  <!-- Left: Main Form (Updated width to max-w-2xl) -->
+  <div class="flex-1">
+    <div class="bg-white p-6 rounded-lg shadow-md space-y-4 max-w-2xl mx-auto"
+         x-data="{ showSyncTip: true, syncOption: 'no', icalUrl: '' }">
+      <p class="text-base font-semibold">Do you want to sync your availability with TripAdvisor?</p>
+      <p class="text-xs text-green-600">
+        You will avoid double bookings by syncing calendars. It will also help you get your property listed on Booking.com and open for bookings 80% faster.
+      </p>
+
+      <div class="space-y-4">
+        <label class="flex items-center space-x-2">
+          <input type="radio" value="yes" x-model="syncOption" class="form-radio text-blue-600">
+          <span class="text-sm">Yes, I'll import unavailable dates from another website</span>
+        </label>
+
+        <div x-show="syncOption === 'yes'" class="space-y-2 border border-gray-300 rounded p-4">
+          <p class="text-sm">Paste your iCal link here</p>
+          <input 
+              type="text" 
+              placeholder="Paste your iCal link here" 
+              x-model="icalUrl"
+              class="border border-gray-300 p-2 rounded w-full"
+          >
+          <button 
+              class="bg-blue-700 text-white px-4 py-1 rounded mt-2"
+              :disabled="!icalUrl.trim()"
+              :class="{ 'opacity-50 cursor-not-allowed': !icalUrl.trim() }"
+          >
+              Import
+          </button>
+          <a href="#" class="text-sm text-blue-600">Where can I find my iCal link?</a>
+        </div>
+
+        <label class="flex items-center space-x-2">
+          <input type="radio" value="no" x-model="syncOption" class="form-radio text-blue-600">
+          <span class="text-sm">No, I won't sync my availability</span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  
+</div>
+
+<!-- LONG STAY SECTION -->
+<div class="flex flex-col md:flex-row gap-6 mt-8">
+  <!-- Left: Main Form (Updated width to max-w-2xl) -->
+  <div class="flex-1">
+    <div class="bg-white p-6 rounded-lg shadow-md space-y-4 max-w-2xl mx-auto"
+         x-data="{ allowLongStay: '', showLongStayTip: true }">
+      <p class="text-base font-semibold">Do you want to allow 30+ night stays?</p>
+      <p class="text-sm text-gray-600">Allowing guests to stay for up to 90 nights can help you fill your calendar and tap into the trend of guests working remotely.</p>
+
+
+      <p class="text-sm font-semibold">Will you accept reservations for stays over 30 nights?</p>
+      <div class="flex flex-col sm:flex-row gap-4">
+         
+        <label class="flex items-center space-x-2">
+          <input type="radio" value="yes" x-model="allowLongStay" class="form-radio text-blue-600">
+          <span>Yes</span>
+        </label>
+        <label class="flex items-center space-x-2">
+          <input type="radio" value="no" x-model="allowLongStay" class="form-radio text-blue-600">
+          <span>No</span>
+        </label>
+      </div>
+
+      <div>
+        <label class="block mb-2 text-sm font-semibold">What's the maximum number of nights you want guests to be able to book?</label>
+        <select class="border border-gray-300 p-2 rounded w-48">
+          <option value="90">90</option>
+          <option value="60">60</option>
+          <option value="45">45</option>
+          <option value="30">30</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  
+</div>
+
+
+     <!-- Navigation Buttons -->
+<div class="flex justify-between items-center mt-4">
+  <!-- Back Button -->
+  <button type="button"
+          @click="pricingWizardStep--"
+          :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
+          class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
+    ←
+  </button>
+
+  <!-- Continue Button -->
+  
+  <button       @click="pricingWizardStep++" class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-sky-500 transition w-full sm:w-auto">
+    Continue
+  </button>
+
+
+  </div>
+</div>
+
+
   </template>
 </section>
 

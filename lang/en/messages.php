@@ -124,6 +124,7 @@ return [
     'welcoming_guests_today' => 'welcoming guests today!',
     'what_can_guests_book' => 'What can guests book?',
     'which_property_category_similar' => 'Which property category are you listing?',
+    'i_dont_see_my_property_type' => 'I don\'t see my property type',
 
     // Partner Apartment Create Form 1
     'how_many_apartments' => 'How many apartments are you listing?',

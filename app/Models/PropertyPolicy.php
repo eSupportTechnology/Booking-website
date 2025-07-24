@@ -8,17 +8,21 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class PropertyPolicy extends Model
 {
     use HasFactory;
+
+    protected $table = 'property_policies';
+    public $timestamps = false;
+    
     protected $fillable = [
         'property_id',
-        'check_in_time',
-        'check_out_time',
+        'cancellation_policy',
+        'check_in_from',
         'check_in_until',
+        'check_out_from',
         'check_out_until',
         'smoking_allowed',
         'pets_allowed',
-        'children_allowed',
-        'party_allowed',
-        'cancellation_policy'
+        'parties_allowed',
+        'pets_fees'
     ];
-    public $timestamps = false;
+
 }

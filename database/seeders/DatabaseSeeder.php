@@ -3,11 +3,15 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use BedTypeSeeder;
+use Database\Seeders\BedTypeSeeder as SeedersBedTypeSeeder;
 use Illuminate\Database\Seeder;
 use Database\Seeders\RolesAndPermissionsSeeder;
 use Database\Seeders\PropertyCategoriesTableSeeder;
 use Database\Seeders\PropertySubcategoriesTableSeeder;
+use Database\Seeders\RoomTypeSeeder as SeedersRoomTypeSeeder;
 use Faker\Provider\ar_EG\Address;
+use RoomTypeSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -23,6 +27,9 @@ class DatabaseSeeder extends Seeder
             AddressTypesTableSeeder::class,
             AmenitiesTableSeeder::class,
             LanguagesTableSeeder::class,
+            SeedersBedTypeSeeder::class,
+            SeedersRoomTypeSeeder::class,
+            LanguageSeeder::class,
         ]);
 
         // Create a test user

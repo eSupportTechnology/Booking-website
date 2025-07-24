@@ -37,9 +37,6 @@ class PropertyAdditionalDetailsDTO extends ValidatedDTO
     protected function casts(): array
     {
         return [
-            // 'guests' => 'integer',
-            // 'bathrooms' => 'integer',
-            // 'apartment_size' => 'integer',
         ];
     }
 }

@@ -14,37 +14,42 @@ class AmenitiesTableSeeder extends Seeder
     public function run(): void
     {
         $amenities = [
-            ['name' => 'Private bathroom',],
-            ['name' => 'Sea views', ],
-            ['name' => 'Family rooms',],
-            ['name' => 'Airport shuttle', ],
-            ['name' => 'Spa and wellness center', ],
+            // Highlights
+            ['name' => 'Private bathroom', 'category' => 'Highlights'],
+            ['name' => 'Sea views', 'category' => 'Highlights'],
+            ['name' => 'Family rooms', 'category' => 'Highlights'],
+            ['name' => 'Airport shuttle', 'category' => 'Highlights'],
+            ['name' => 'Spa and wellness center', 'category' => 'Highlights'],
 
-            ['name' => 'Air conditioning', ],
-            ['name' => 'Heating', ],
-            ['name' => 'Free WiFi', ],
-            ['name' => 'Electric vehicle charging station', ],
+            // General
+            ['name' => 'Air conditioning', 'category' => 'General'],
+            ['name' => 'Heating', 'category' => 'General'],
+            ['name' => 'Free WiFi', 'category' => 'General'],
+            ['name' => 'Electric vehicle charging station', 'category' => 'General'],
 
-            ['name' => 'Kitchen', ],
-            ['name' => 'Microwave',],
-            ['name' => 'Washing machine', ],
+            // Cooking and cleaning
+            ['name' => 'Kitchen', 'category' => 'Cooking and cleaning'],
+            ['name' => 'Microwave', 'category' => 'Cooking and cleaning'],
+            ['name' => 'Washing machine', 'category' => 'Cooking and cleaning'],
 
-            ['name' => 'Flat-screen TV', ],
-            ['name' => 'Swimming Pool',],
-            ['name' => 'Hot tub', ],
-            ['name' => 'Minibar', ],
-            ['name' => 'Sauna', ],
+            // Entertainment
+            ['name' => 'Flat-screen TV', 'category' => 'Entertainment'],
+            ['name' => 'Swimming Pool', 'category' => 'Entertainment'],
+            ['name' => 'Hot tub', 'category' => 'Entertainment'],
+            ['name' => 'Minibar', 'category' => 'Entertainment'],
+            ['name' => 'Sauna', 'category' => 'Entertainment'],
 
-            ['name' => 'Balcony',],
-            ['name' => 'Garden view', ],
-            ['name' => 'Terrace', ],
-            ['name' => 'View',],
-            
+            // Outside and view
+            ['name' => 'Balcony', 'category' => 'Outside and view'],
+            ['name' => 'Garden view', 'category' => 'Outside and view'],
+            ['name' => 'Terrace', 'category' => 'Outside and view'],
+            ['name' => 'View', 'category' => 'Outside and view'],
         ];
 
         foreach ($amenities as $data) {
             Amenity::updateOrCreate(
                 ['name' => $data['name']],
+                ['category' => $data['category']]
             );
         }
     }
