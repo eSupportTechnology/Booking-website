@@ -70,4 +70,9 @@ class Property extends Model
     {
         return $this->hasOne(\App\Models\PropertyHostProfile::class);
     }
+
+    public function pricing()
+    {
+        return $this->hasOne(\App\Models\PropertyPricing::class);
+    }
 }

@@ -670,24 +670,71 @@ class PropertyController extends Controller
 
     public function saveHostProfile(Request $request, Property $property)
     {
-        $validated = $request->validate([
-            'about_property' => 'nullable|string',
-            'about_host' => 'nullable|string',
-            'about_neighborhood' => 'nullable|string',
-            'show_property' => 'boolean',
-            'show_host' => 'boolean',
-            'show_neighborhood' => 'boolean',
-            'none_selected' => 'boolean',
-            'host_name' => 'nullable|string',
+        try {
+            $validated = $request->validate([
+                'property_id' => 'required|exists:properties,id',
+                'about_property' => 'nullable|string|max:1000',
+                'about_host' => 'nullable|string|max:1000',
+                'about_neighborhood' => 'nullable|string|max:1000',
+                'show_property' => 'boolean',
+                'show_host' => 'boolean',
+                'show_neighborhood' => 'boolean',
+                'none_selected' => 'boolean',
+                'host_name' => 'nullable|string|max:255'
+            ]);
+
+            $property->hostProfile()->updateOrCreate(
+                ['property_id' => $property->id],
+                $validated
+            );
+
+            Log::info('Host profile saved successfully', ['property_id' => $property->id, 'data' => $validated]);
+
+            return response()->json(['success' => true, 'message' => 'Host profile saved successfully']);
+        } catch (\Exception $e) {
+            Log::error('Error saving host profile', ['error' => $e->getMessage(), 'property_id' => $property->id]);
+            return response()->json(['success' => false, 'message' => 'Error saving host profile: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function savePricing(Request $request, Property $property)
+    {
+        Log::info('savePricing called', [
+            'property_id' => $property->id,
+            'request_data' => $request->all()
         ]);
-
-        // You can use a new model/table (e.g., PropertyHostProfile) or add these fields to an existing table.
-        // Example for a new model:
-        $property->hostProfile()->updateOrCreate(
-            ['property_id' => $property->id],
-            $validated
-        );
-
-        return response()->json(['success' => true, 'message' => 'Host profile saved']);
+        try {
+            $validated = $request->validate([
+                'property_id' => 'required|exists:properties,id',
+                'booking_type' => 'required|in:instant,request',
+                'price_per_night' => 'nullable|numeric|min:0',
+                'currency' => 'required|in:usd,eur,gbp',
+                'discount_enabled' => 'boolean',
+                'discount_percent' => 'nullable|integer|min:0|max:100'
+            ]);
+            Log::info('savePricing validated data', [
+                'property_id' => $property->id,
+                'validated' => $validated
+            ]);
+            Log::info('Before updateOrCreate', [
+                'property_id' => $property->id
+            ]);
+            $property->pricing()->updateOrCreate(
+                ['property_id' => $property->id],
+                $validated
+            );
+            Log::info('After updateOrCreate', [
+                'property_id' => $property->id
+            ]);
+            Log::info('Pricing saved successfully', ['property_id' => $property->id, 'data' => $validated]);
+            return response()->json(['success' => true, 'message' => 'Pricing saved successfully']);
+        } catch (\Exception $e) {
+            Log::error('Error saving pricing', [
+                'error' => $e->getMessage(),
+                'property_id' => $property->id,
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json(['success' => false, 'message' => 'Error saving pricing: ' . $e->getMessage()], 500);
+        }
     }
 }
