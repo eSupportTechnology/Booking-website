@@ -13,16 +13,16 @@
                         <!-- Logo -->
 
                         @php
-                            $host = config('domains.app_name');
+                        $host = config('domains.app_name');
 
                         @endphp
 
                         <a href="{{ url('/') }}" class="text-2xl font-bold flex items-center">
                             @if ($host == 'BookinTour')
-                                <h1>Bookintour.com</h1>
+                            <h1>Bookintour.com</h1>
                             @elseif ($host == 'Inselor')
-                                <img src="{{ asset('images/inselor-logo.png') }}" alt="Inselor"
-                                    class="h-12 w-auto align-middle" />
+                            <img src="{{ asset('images/inselor-logo.png') }}" alt="Inselor"
+                                class="h-12 w-auto align-middle" />
                             @endif
                         </a>
 
@@ -40,9 +40,9 @@
                 <div class="flex items-center space-x-4 flex-wrap">
                     <!-- Language Button -->
                     @php
-                        $locale = app()->getLocale();
-                        $language = config('languages.' . $locale);
-                        $flag = isset($language['flag']) ? asset($language['flag']) : asset('images/flags/uk.png');
+                    $locale = app()->getLocale();
+                    $language = config('languages.' . $locale);
+                    $flag = isset($language['flag']) ? asset($language['flag']) : asset('images/flags/uk.png');
                     @endphp
 
                     <button id="language-button" type="button"
@@ -73,14 +73,14 @@
                                 <p class="mb-4 text-base text-gray-500 dark:text-gray-400">Suggested for you</p>
                                 <div class="grid grid-cols-2 gap-4">
                                     @foreach (config('languages') as $code => $lang)
-                                        <a href="{{ route('lang.change', ['lang' => $code]) }}">
-                                            <button
-                                                class="flex items-center justify-between p-2 space-x-2 text-base font-normal text-gray-700 rounded-lg hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
-                                                <img src="{{ asset($lang['flag']) }}" alt="{{ $lang['name'] }}"
-                                                    class="h-5 w-5" />
-                                                <span>{{ $lang['name'] }}</span>
-                                            </button>
-                                        </a>
+                                    <a href="{{ route('lang.change', ['lang' => $code]) }}">
+                                        <button
+                                            class="flex items-center justify-between p-2 space-x-2 text-base font-normal text-gray-700 rounded-lg hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
+                                            <img src="{{ asset($lang['flag']) }}" alt="{{ $lang['name'] }}"
+                                                class="h-5 w-5" />
+                                            <span>{{ $lang['name'] }}</span>
+                                        </button>
+                                    </a>
                                     @endforeach
                                 </div>
                             </div>
@@ -88,10 +88,24 @@
                     </div>
 
                     @if (session('partner_name'))
+                    <span class="bg-white text-[#1F8FB2] px-4 py-2 rounded font-bold"
+                        style="font-family: 'Noto Sans', sans-serif;">{{ session('partner_name') }}</span>
+                    <!-- Logout Link -->
+                    <a href="#"
+                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                        class="bg-[#1F8FB2] px-4 py-2 rounded hover:bg-[#29ACD5] text-white font-sans border border-white">
+                        Logout
+                    </a>
+
+                    <!-- Hidden Logout Form -->
+                    <form id="logout-form" action="{{ route('partner.logout') }}" method="POST" class="hidden">
+                        @csrf
+                    </form>
+                    @elseif(Auth::check())
                         <span class="bg-white text-[#1F8FB2] px-4 py-2 rounded font-bold"
-                            style="font-family: 'Noto Sans', sans-serif;">{{ session('partner_name') }}</span>
+                            style="font-family: 'Noto Sans', sans-serif;">{{ Auth::user()->name }}</span>
                         <!-- Logout Link -->
-                        <a href="#"
+                       <a href="#"
                             onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
                             class="bg-[#1F8FB2] px-4 py-2 rounded hover:bg-[#29ACD5] text-white font-sans border border-white">
                             Logout
@@ -99,35 +113,23 @@
 
                         <!-- Hidden Logout Form -->
                         <form id="logout-form" action="{{ route('partner.logout') }}" method="POST" class="hidden">
-                            @csrf
-                        </form>
-                    @elseif(Auth::check())
-                        <span class="bg-white text-[#1F8FB2] px-4 py-2 rounded font-bold"
-                            style="font-family: 'Noto Sans', sans-serif;">{{ Auth::user()->name }}</span>
-                        <!-- Logout Link -->
-                        <form action="{{ route('partner.logout') }}" method="POST">
-                            @csrf
-                            <button type="submit"
-                                class="bg-[#3CC0E9] px-4 py-2 rounded hover:bg-[#29ACD5] text-white font-sans">
-                                Logout
-                            </button>
-
+                           @csrf
                         </form>
                     @else
-                        <a href="#" class="hover:underline font-sans"
-                            style="font-family: 'Noto Sans', sans-serif;">Already a partner?</a>
-                        <a href="#"
-                            class="bg-[#1F8FB2] px-4 py-2 rounded hover:bg-[#29ACD5] text-white font-sans border border-white">Sign
-                            in</a>
+                    <a href="#" class="hover:underline font-sans"
+                        style="font-family: 'Noto Sans', sans-serif;">Already a partner?</a>
+                    <a href="#"
+                        class="bg-[#1F8FB2] px-4 py-2 rounded hover:bg-[#29ACD5] text-white font-sans border border-white">Sign
+                        in</a>
                     @endif
                     <a href="#"
                         class="bg-[#3CC0E9] px-4 py-2 rounded hover:bg-[#29ACD5] text-white font-sans">Help</a>
                 </div>
 
             </div>
-          </div>
+        </div>
 
-        
+
     </section>
 </header>
 
@@ -148,7 +150,7 @@
             </p>
 
             @if (Auth::check())
-                <h2>Welcome, {{ Auth::user()->name }}!</h2>
+            <h2>Welcome, {{ Auth::user()->name }}!</h2>
             @endif
 
         </div>
@@ -175,16 +177,16 @@
             </ul>
 
             @if (Auth::check())
-                <a href="{{ route('partner.property.category') }}"
-                    class="w-full bg-[#3CC0E9] text-white font-semibold py-2 rounded hover:bg-[#2bb3db] transition duration-200 text-center block">
-                    @lang('messages.get_started_now') →
-                </a>
+            <a href="{{ route('partner.property.category') }}"
+                class="w-full bg-[#3CC0E9] text-white font-semibold py-2 rounded hover:bg-[#2bb3db] transition duration-200 text-center block">
+                @lang('messages.get_started_now') →
+            </a>
             @else
-                <button
-                    class="w-full bg-[#3CC0E9] text-white font-semibold py-2 rounded hover:bg-[#2bb3db] transition duration-200">
-                    <a href="{{ url('partner/register/email') }}"
-                        class="block w-full h-full text-white">@lang('messages.get_started_now') →</a>
-                </button>
+            <button
+                class="w-full bg-[#3CC0E9] text-white font-semibold py-2 rounded hover:bg-[#2bb3db] transition duration-200">
+                <a href="{{ url('partner/register/email') }}"
+                    class="block w-full h-full text-white">@lang('messages.get_started_now') →</a>
+            </button>
             @endif
 
             <p class="mt-4 text-sm">
