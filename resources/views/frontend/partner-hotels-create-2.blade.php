@@ -84,133 +84,9 @@
       </div>
     </section>
   </header>
-  <!-- Progress Bar -->
-  <div class="w-full bg-gray-200 h-2">
-    <div class="bg-[#3CC0E9] h-2 transition-all duration-500"
-         :style="'width:' + (step * 100 / 8) + '%'"></div>
-  </div>
 
-  <!-- Step Content Wrapper -->
-  <div x-data>
-
-    <template x-if="step === 1">
-  <div class="relative w-[1200px] h-auto overflow-hidden rounded-lg shadow mx-auto my-10 ">
-    <!-- Google Maps iframe full background -->
-    <iframe
-        class="absolute inset-0 w-full h-full"
-        loading="lazy"
-        src="https://www.google.com/maps?q=La+Grande+Villa+Nuwara+Eliya&output=embed"
-        allowfullscreen>
-    </iframe>
-
-        <!-- Optional overlay for readability -->
-        <div class="absolute inset-0 "></div>
-
-        <!-- Form content centered on map -->
-        <div class="relative z-10 flex items-center justify-start h-auto p-4 mt-[110px]">
-  <div class="bg-white bg-opacity-95 rounded-lg shadow-lg w-full max-w-md p-6 md:p-8 h-auto mb-4">
-                <h2 class="text-2xl font-semibold mb-4 text-gray-800">Where is your property?</h2>
-                <form action="#" method="POST">
-                    <div class="mb-4">
-                        <label for="address" class="block text-sm font-medium text-gray-700">Find your address</label>
-                        <input type="text" id="address" name="address" value="Sri Lanka" class="mt-1 p-2 w-full border border-gray-300 rounded">
-                    </div>
-
-                    <!-- Right Section -->
-                    <div class="flex items-center space-x-4 text-sm font-medium md:ml-auto font-sans">
-                        <!-- Help Icon -->
-                        <a href="/help" title="Help">
-                            <img src="{{ asset('assets/question.svg') }}" alt="Help"
-                                class="w-6 h-6 md:w-7 md:h-7 cursor-pointer" />
-                        </a>
-
-                        <!-- Language Button -->
-                        <button id="language-button" type="button"
-                            class="flex items-center justify-center w-8 h-8 bg-white rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-hidden"
-                            title="Change Language">
-                            <img src="{{ asset('images/uk.png') }}" alt="UK Flag"
-                                class="w-full h-full object-cover rounded-full" />
-                        </button>
-
-                        <!-- Language Modal -->
-                        <div id="language-modal"
-                            class="fixed inset-0 hidden z-50 overflow-y-auto flex items-start justify-center px-4 py-8 bg-black bg-opacity-50">
-                            <div class="relative w-full max-w-md p-6 bg-white rounded-lg shadow">
-                                <!-- Modal Header -->
-                                <div class="flex items-start justify-between">
-                                    <h3 class="text-xl font-semibold text-gray-900">Select your language</h3>
-                                    <button type="button"
-                                        class="close-btn text-gray-400 hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center">
-                                        <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd"
-                                                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                                clip-rule="evenodd" />
-                                        </svg>
-                                        <span class="sr-only">Close modal</span>
-                                    </button>
-                                </div>
-
-                                <!-- Modal Body -->
-                                <div class="mt-4">
-                                    <p class="mb-4 text-base text-gray-500">Suggested for you</p>
-                                    <div class="grid grid-cols-2 gap-4">
-                                        <button class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100">
-                                            <img src="https://flagcdn.com/w40/gb.png" alt="English (UK)"
-                                                class="h-5 w-5" />
-                                            <span>English (UK)</span>
-                                        </button>
-                                        <button class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100">
-                                            <img src="https://flagcdn.com/w40/de.png" alt="Deutsch" class="h-5 w-5" />
-                                            <span>Deutsch</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex items-center mt-4">
-                        <input id="update_address" type="checkbox" name="update_address" checked class="mr-2">
-                        <label for="update_address" class="text-sm text-gray-700">Update the address when moving the pin on the map.</label>
-                    </div>
-                    <!-- Dismissible message box -->
-<div x-data="{ showMessage: true }" x-show="showMessage" class="mt-4 bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded relative" role="alert">
-  <strong class="font-bold">Note:</strong>
-  <span class="block sm:inline">Make sure the pin location is accurate before continuing.</span>
-  <span @click="showMessage = false" class="absolute top-0 bottom-0 right-0 px-4 py-3 cursor-pointer">
-    <svg class="fill-current h-6 w-6 text-yellow-800" role="button" xmlns="http://www.w3.org/2000/svg"
-         viewBox="0 0 20 20"><title>Close</title><path
-        d="M14.348 5.652a1 1 0 00-1.414 0L10 8.586 7.066 5.652a1 1 0 10-1.414 1.414L8.586 10l-2.934 2.934a1 1 0 101.414 1.414L10 11.414l2.934 2.934a1 1 0 001.414-1.414L11.414 10l2.934-2.934a1 1 0 000-1.414z"/></svg>
-  </span>
-</div>
-
-                    <p class="text-sm text-gray-600 mt-2">
-                        Is the red pin location incorrect? Uncheck the option above and click or press on the map to move the pin.
-                    </p>
-                   <div class="flex justify-between mt-6">
-  <!-- Back Button (Left) -->
-   <button type="button"
-           @click="step > 1 ? step-- : step"
-        :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-              class="border border-[#3CC0E9]  text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
-        ←
-      </button>
-
-
-  <!-- Continue Button (Right) -->
-  <button   type="submit"
-      @click="step < 8 ? step++ : step"
-        :class="step === 8 ? 'opacity-50 cursor-not-allowed' : 'bg-[#3CC0E9] hover:bg-sky-500'"
-
-        :disabled="step === 8"
-          class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300">
-    Continue
-  </button>
-</div>
-
-                </form>
-            </div>
-        </section>
-    </header>
+  
+  
     <!-- Progress Bar -->
     <div class="w-full bg-gray-200 h-2">
         <div class="bg-[#3CC0E9] h-2 transition-all duration-500" :style="'width:' + (step * 100 / 8) + '%'"></div>
@@ -404,30 +280,7 @@
             </section>
         </div>
     </template>
-    </div>
-
-    <button type="button"    @click="step > 1 ? step-- : step"
-        :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-              class="border border-[#3CC0E9]  text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
-        ←
-      </button>
-
-
-  <!-- Continue Button (Right) -->
-  <button type="submit"
-          @click="step < 9 ? step++ : step"
-        :class="step === 9 ? 'opacity-50 cursor-not-allowed' : 'bg-[#3CC0E9] hover:bg-sky-500'"
-
-        :disabled="step === 9"
-          class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300">
-    Continue
-  </button>
-</div>
-    </div>
-    </section>
-
-    </div>
-    </template>
+    
 
     <template x-if="step === 3">
         <div>
@@ -602,7 +455,35 @@
             </label>
           </div>
         </div>
+   </div>
+
+    
+</div>
+    </div>
+    </section>
+      <div class="mt-8 flex justify-between max-w-xl ">
+<button type="button"    @click="step > 1 ? step-- : step"
+        :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
+              class="border border-[#3CC0E9]  text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
+        ←
+      </button>
+
+
+  <!-- Continue Button (Right) -->
+  <button type="submit"
+          @click="step < 9 ? step++ : step"
+        :class="step === 9 ? 'opacity-50 cursor-not-allowed' : 'bg-[#3CC0E9] hover:bg-sky-500'"
+
+        :disabled="step === 9"
+          class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300">
+    Continue
+  </button>
+</div>
+    </div>
     </template>
+
+
+
 
     <template x-if="step === 5">
         <div>

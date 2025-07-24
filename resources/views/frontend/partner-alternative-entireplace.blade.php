@@ -33,7 +33,6 @@
                 </template>
             </div>
 
-            <!-- Help Link -->
             <div class="mt-8 text-left">
                 <a href="#" class="flex items-center space-x-2 text-sm text-blue-500 hover:underline">
                     <img src="{{ asset('assets/iconoir_question-mark-circle.svg') }}" class="w-5 h-5" />
@@ -68,9 +67,8 @@
                     <div class="bg-white max-w-2xl w-full p-6 rounded-lg shadow mx-auto mt-16 px-4 md:px-6 lg:px-8 lg:ml-32">
                         <div class="max-w-xl mx-auto p-4 space-y-6">
 
-                            <h2 class="text-2xl font-bold text-center">How many apartments are you listing?</h2>
+                            <h2 class="text-2xl font-bold text-center">How many <span x-text="categoryLabelPlural"></span> are you listing?</h2>
 
-                            <!-- Apartment type options -->
                             <div class="space-y-4">
                                 <label
                                     :class="selected === 'one' ? 'border-blue-600 border-2' : 'border border-gray-300'"
@@ -78,8 +76,8 @@
                                     @click="selected = 'one'">
                                     <div class="flex items-center justify-between">
                                         <div class="flex items-center space-x-4">
-                                            <img src="{{ asset('images/aprt-b.png') }}" alt="One Campsite" class="w-14 h-10" />
-                                            <span class="text-lg text-gray-800">One campsite</span>
+                                            <img src="{{ asset('images/aprt-b.png') }}" alt="One" class="w-14 h-10" />
+                                            <span class="text-lg text-gray-800">One <span x-text="categoryLabel"></span></span>
                                         </div>
                                         <template x-if="selected === 'one'">
                                             <div class="text-blue-600 text-xl font-bold">✔</div>
@@ -94,8 +92,8 @@
                                     @click="selected = 'multiple'">
                                     <div class="flex items-center justify-between">
                                         <div class="flex items-center space-x-4">
-                                            <img src="{{ asset('images/aprt-a.png') }}" alt="Multiple Campsites" class="w-14 h-10" />
-                                            <span class="text-lg text-gray-800">Multiple campsites</span>
+                                            <img src="{{ asset('images/aprt-a.png') }}" alt="Multiple" class="w-14 h-10" />
+                                            <span class="text-lg text-gray-800">Multiple <span x-text="categoryLabelPlural"></span></span>
                                         </div>
                                         <template x-if="selected === 'multiple'">
                                             <div class="text-blue-600 text-xl font-bold">✔</div>
@@ -105,16 +103,15 @@
                                 </label>
                             </div>
 
-                            <!-- Conditional fields for multiple apartments -->
                             <div x-show="selected === 'multiple'" x-transition class="mt-6 space-y-4 bg-gray-50 p-4 rounded">
-                                <h3 class="text-lg font-semibold">Are these properties in the same address or building?</h3>
+                                <h3 class="text-lg font-semibold">Are these <span x-text="categoryLabelPlural"></span> in the same address or building?</h3>
 
                                 <label
                                     :class="sameAddress === 'yes' ? 'border-blue-600 border-2' : 'border border-gray-300'"
                                     class="block rounded p-4 cursor-pointer bg-white" @click="sameAddress = 'yes'">
                                     <div class="flex items-center space-x-4">
                                         <img src="{{ asset('images/accomm_single_address@2x.png') }}" class="w-10 h-10" />
-                                        <span>Yes, these apartments are at the same address or building</span>
+                                        <span>Yes, these <span x-text="categoryLabelPlural"></span> are at the same address or building</span>
                                     </div>
                                 </label>
 
@@ -123,12 +120,12 @@
                                     class="block rounded p-4 cursor-pointer bg-white" @click="sameAddress = 'no'">
                                     <div class="flex items-center space-x-4">
                                         <img src="{{ asset('images/accomm_multiple_address@2x.png') }}" class="w-14 h-10" />
-                                        <span>No, these apartments are at different addresses or buildings</span>
+                                        <span>No, these <span x-text="categoryLabelPlural"></span> are at different addresses or buildings</span>
                                     </div>
                                 </label>
 
                                 <div>
-                                    <label class="block font-medium mb-1">Number of properties</label>
+                                    <label class="block font-medium mb-1">Number of <span x-text="categoryLabelPlural"></span></label>
                                     <input type="number" min="2" x-model="propertyCount" name="property_count"
                                         class="border rounded w-24 p-2" />
                                 </div>
@@ -155,36 +152,85 @@
             <template x-if="step === 2">
                 <div class="space-y-4">
                     <template x-if="selected === 'one'">
-                        <div>
-                            <h3 class="text-xl font-semibold">Details for single campsite</h3>
-                            <label class="block">
-                                <span class="text-gray-700">Location</span>
-                                <input type="text" class="mt-1 w-full border border-gray-300 rounded-md p-3" placeholder="Enter location">
-                            </label>
-                            <label class="block">
-                                <span class="text-gray-700">Description</span>
-                                <textarea class="mt-1 w-full border border-gray-300 rounded-md p-3" rows="4" placeholder="Describe the campsite..."></textarea>
-                            </label>
+<!-- -->
+                         <div class="bg-white max-w-2xl w-full p-6 rounded-lg shadow text-center">
+                    <p class="text-base text-gray-600 mb-8">You're listing:</p>
+
+                    <!-- Icon -->
+                    <div class="flex justify-center mb-8">
+                        <img src="{{ asset('images/tent-big@2x.png') }}" alt="Multiple Apartments"
+                            class="w-16 h-16" />
+                    </div>
+
+                    <!-- Heading -->
+                    <h2 class="text-lg md:text-xl font-bold text-gray-800 mb-8">
+                        One <span x-text="categoryLabel"> in the same location where guests can book an entire apartment
+                    </h2>
+
+                    <!-- Description -->
+                    <p class="text-gray-700 mb-8">Does this sound like your property?</p>
+
+                    <!-- Buttons -->
+                    <template x-if="step === 2">
+                        <div class="space-y-2">
+                            <button @click="step++"
+                                class="w-full bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded">
+                                Continue
+                            </button>
+                            <button @click="step--"
+                                class="w-full border border-[#3CC0E9] text-[#3CC0E9] hover:bg-[#29ACD5]font-semibold py-2 px-4 rounded mb-6">
+                                No, I need to make a change
+                            </button>
                         </div>
                     </template>
 
+                </div>
+
+
+
+
+
+                
+                    </template>
+
                     <template x-if="selected === 'multiple'">
-                        <div>
-                            <h3 class="text-xl font-semibold">Details for multiple campsites</h3>
-                            <label class="block">
-                                <span class="text-gray-700">Main Address</span>
-                                <input type="text" class="mt-1 w-full border border-gray-300 rounded-md p-3" placeholder="Enter main location">
-                            </label>
-                            <label class="block">
-                                <span class="text-gray-700">Common Description</span>
-                                <textarea class="mt-1 w-full border border-gray-300 rounded-md p-3" rows="4" placeholder="Describe all properties..."></textarea>
-                            </label>
-                            <label class="block">
-                                <span class="text-gray-700">Any special instructions?</span>
-                                <input type="text" class="mt-1 w-full border border-gray-300 rounded-md p-3" placeholder="Instructions...">
-                            </label>
+                         <div class="bg-white max-w-2xl w-full p-6 rounded-lg shadow text-center">
+                    <p class="text-base text-gray-600 mb-8">You're listing:</p>
+
+                    <!-- Icon -->
+                    <div class="flex justify-center mb-8">
+                        <img src="{{ asset('images/tent-big@2x.png') }}" alt="Multiple Apartments"
+                            class="w-16 h-16" />
+                    </div>
+
+                    <!-- Heading -->
+                    <h2 class="text-lg md:text-xl font-bold text-gray-800 mb-8">
+                        One <span x-text="categoryLabelPlural"> in the same location where guests can book an entire apartment
+                    </h2>
+
+                    <!-- Description -->
+                    <p class="text-gray-700 mb-8">Does this sound like your property?</p>
+
+                    <!-- Buttons -->
+                    <template x-if="step === 2">
+                        <div class="space-y-2">
+                            <button @click="step++"
+                                class="w-full bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded">
+                                Continue
+                            </button>
+                            <button @click="step--"
+                                class="w-full border border-[#3CC0E9] text-[#3CC0E9] hover:bg-[#29ACD5]font-semibold py-2 px-4 rounded mb-6">
+                                No, I need to make a change
+                            </button>
                         </div>
                     </template>
+
+                </div>
+
+                       
+                    </template>
+
+
                 </div>
             </template>
 
@@ -192,7 +238,6 @@
     </template>
 </div>
 
-<!-- Script -->
 <script>
     function wizardForm() {
         return {
@@ -204,23 +249,30 @@
             categoryOptions: [
                 {
                     value: 'campsite',
-                    label: 'Campsite',
-                    description: 'Accommodation offering cabins or bungalows alongside areas for camping or caravans with shared facilities or recreational activities'
+                    label: 'campsite',
+                    description: 'Accommodation offering cabins or bungalows alongside areas for camping or caravans with shared facilities or recreational activities',
+                    plural: 'campsites'
                 },
                 {
                     value: 'boat',
-                    label: 'Boat',
-                    description: 'Commercial travel accommodation located on a boat'
+                    label: 'boat',
+                    description: 'Commercial travel accommodation located on a boat',
+                    plural: 'boats'
                 },
                 {
                     value: 'luxury_tent',
-                    label: 'Luxury tent',
-                    description: 'Tents with fixed bedding and some services, located in natural surroundings'
+                    label: 'tent',
+                    description: 'Tents with fixed bedding and some services, located in natural surroundings',
+                    plural: 'tents'
                 }
             ],
             get categoryLabel() {
                 const selected = this.categoryOptions.find(opt => opt.value === this.category);
                 return selected ? selected.label : '';
+            },
+            get categoryLabelPlural() {
+                const selected = this.categoryOptions.find(opt => opt.value === this.category);
+                return selected ? selected.plural : '';
             },
             selectCategory(value) {
                 this.category = value;
