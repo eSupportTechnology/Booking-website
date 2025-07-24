@@ -49,20 +49,37 @@ class PropertyController extends Controller
         Log::info('Available amenities', ['amenities' => $amenities]);
         Log::info('Available room types', ['roomTypes' => $roomTypes]);
         Log::info('Available bed types', ['bedTypes' => $bedTypes]);
-        // Check if subcategories are empty
-        if ($subcategories->isEmpty()) {
-            Log::warning('No subcategories found for category ID ' . $categoryId);
-            return redirect()->back()->withErrors(['error' => 'No subcategories found for this category.']);
-        }
+
         switch ($categoryId) {
             case 1:  // Homes
+                if ($subcategories->isEmpty()) {
+                    return redirect()->back()->withErrors(['error' => 'No subcategories found for this category.']);
+                }
                 return view('partner.partner-homes-create-form-1', compact('subcategories', 'categoryId', 'amenities', 'roomTypes', 'bedTypes'));
+
             case 2:  // Apartment
+                // Hardcode subcategories for Apartment
+                $subcategories = collect([
+                    (object)[
+                        'id' => 1,
+                        'category_id' => 2,
+                        'name' => 'One',
+                    ],
+                    (object)[
+                        'id' => 2,
+                        'category_id' => 2,
+                        'name' => 'Multiple',
+                    ],
+                ]);
                 return view('partner.partner-apartment-create-form-1', [
                     'subcategories' => $subcategories,
                     'category' => 'apartment',
                 ]);
+
             case 3:  // Hotel
+                if ($subcategories->isEmpty()) {
+                    return redirect()->back()->withErrors(['error' => 'No subcategories found for this category.']);
+                }
                 return view('partner.partner-hotels-create-1', [
                     'categoryId' => $categoryId,
                     'subcategories' => $subcategories,
