@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
 
+
 Route::get('/login/email', [LoginController::class, 'showEmailForm'])->name('login.email');
 Route::post('/login/email', [LoginController::class, 'storeEmail']);
 
@@ -442,6 +443,20 @@ Route::patch('/partner/property/{property}/additional-details', [PropertyControl
 
 require __DIR__ . '/auth.php';
 
+
+Route::get('/admin/dashboard', function () {
+    return view('frontend.admin.dashboard');
+})->name('admin.dashboard');
+
+
+
+
+
+
+
+
+
+
 Route::get('/partner/apartment/bedrooms/{property}', function ($propertyId) {
     $property = \App\Models\Property::findOrFail($propertyId);
     $bedTypes = \App\Models\BedType::all();
@@ -455,3 +470,4 @@ Route::get('/partner/property/{category}/step3/{property}', function ($category,
 })->name('partner.property.step3');
 
 Route::post('/partner/property/bedroom/{property}', [PropertyController::class, 'saveBedroom'])->name('partner.property.bedroom.store');
+
