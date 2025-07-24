@@ -162,10 +162,7 @@
                             class="w-16 h-16" />
                     </div>
 
-                    <!-- Heading -->
-                    <h2 class="text-lg md:text-xl font-bold text-gray-800 mb-8">
-                        One <span x-text="categoryLabel"> in the same location where guests can book an entire apartment
-                    </h2>
+                    <h2 class="text-lg md:text-xl font-bold text-gray-800 mb-8" x-text="categoryHeadingDescription"></h2>
 
                     <!-- Description -->
                     <p class="text-gray-700 mb-8">Does this sound like your property?</p>
@@ -173,10 +170,11 @@
                     <!-- Buttons -->
                     <template x-if="step === 2">
                         <div class="space-y-2">
-                            <button @click="step++"
-                                class="w-full bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded">
-                                Continue
-                            </button>
+                            <button @click="finalContinue"
+    class="w-full bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded">
+    Continue
+</button>
+
                             <button @click="step--"
                                 class="w-full border border-[#3CC0E9] text-[#3CC0E9] hover:bg-[#29ACD5]font-semibold py-2 px-4 rounded mb-6">
                                 No, I need to make a change
@@ -204,9 +202,7 @@
                     </div>
 
                     <!-- Heading -->
-                    <h2 class="text-lg md:text-xl font-bold text-gray-800 mb-8">
-                        One <span x-text="categoryLabelPlural"> in the same location where guests can book an entire apartment
-                    </h2>
+                     <h2 class="text-lg md:text-xl font-bold text-gray-800 mb-8" x-text="categoryHeadingDescriptionMultiple"></h2>
 
                     <!-- Description -->
                     <p class="text-gray-700 mb-8">Does this sound like your property?</p>
@@ -261,9 +257,9 @@
                 },
                 {
                     value: 'luxury_tent',
-                    label: 'tent',
+                    label: 'luxury tent',
                     description: 'Tents with fixed bedding and some services, located in natural surroundings',
-                    plural: 'tents'
+                    plural: 'luxury tents'
                 }
             ],
             get categoryLabel() {
@@ -274,6 +270,54 @@
                 const selected = this.categoryOptions.find(opt => opt.value === this.category);
                 return selected ? selected.plural : '';
             },
+            get categoryHeadingDescription() {
+              switch (this.category) {
+                case 'campsite':
+                    return 'One campsite where guests can book a room';
+                case 'boat':
+                    return 'One boat where guests can book the entire place';
+                case 'luxury_tent':
+                    return 'One luxury tent where guests can book the entire place';
+                default:
+                    return 'One property in the same location where guests can book an entire apartment';
+              }
+            },
+            get categoryHeadingDescriptionMultiple() {
+              switch (this.category) {
+                 case 'campsite':
+                     return 'Multiple campsites in the same location where guests can book an entire place';
+                 case 'boat':
+                     return 'Multiple boats in the same location where guests can book the entire place';
+                 case 'luxury_tent':
+                     return 'Multiple luxury tents at the same location where guests can book the entire place';
+                 default:
+                     return 'Multiple properties available for guests';
+              }
+            },
+
+            finalContinue() {
+              let route = '';
+    
+              if (this.category === 'boat' && this.selected === 'one') {
+                route = '/partner/boat/one';
+            } else if (this.category === 'boat' && this.selected === 'multiple') {
+                route = '/partner/boat/multiple';
+            } else if (this.category === 'campsite' && this.selected === 'one') {
+                route = '/partner/campsite/one';
+            } else if (this.category === 'campsite' && this.selected === 'multiple') {
+                route = '/partner/campsite/multiple';
+            } else if (this.category === 'luxury_tent' && this.selected === 'one') {
+                route = '/partner/luxury-tent/one';
+            } else if (this.category === 'luxury_tent' && this.selected === 'multiple') {
+                route = '/partner/luxury-tent/multiple';
+            }
+
+            if (route) {
+                window.location.href = route;
+     }
+},
+
+ 
             selectCategory(value) {
                 this.category = value;
             },

@@ -250,6 +250,10 @@ Route::get('/partner-alternative-privateroom', function () {
     return view('frontend.partner-alternative-privateroom');
 })->name('partner.alternative.privateroom');
 
+Route::get('/partner-apartment-multiple', function () {
+    return view('frontend.partner-multiple-apartment');
+})->name('partner.apartment.multiple');
+
 
 Route::get('/partner-hotels-edit', function () {
     return view('frontend.partner-hotels-edit');
