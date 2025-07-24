@@ -2194,7 +2194,8 @@ savePricing() {
   <!-- Input Field -->
   <input
     type="text"
-    x-model="pricing.price_per_night
+    x-model="pricing.price_per_night"
+    name="price_per_night"
     value="120.00"
     class="w-full border border-gray-400 rounded-md p-2 pl-16 text-gray-700 font-semibold focus:ring-2 focus:ring-blue-300 focus:outline-none"
   />
