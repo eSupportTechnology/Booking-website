@@ -12,6 +12,14 @@ use Illuminate\Support\Facades\Auth;
 use App\DTOs\Partner\PropertyStep1DTO;
 use App\DTOs\Partner\PropertyStep2DTO;
 use Illuminate\Support\Facades\Log;
+use App\DTOs\Partner\UploadPropertyPhotosDTO;
+use App\Services\FileUploadService;
+use App\DTOs\Partner\SaveAmenitiesDTO;
+use App\DTOs\Partner\SavePolicyDTO;
+use App\DTOs\Partner\SaveRoomsDTO;
+use App\DTOs\Partner\PartnerVerificationDTO;
+use App\Models\PartnerVerification;
+use App\Models\Room;
 
 class PropertyAction
 {
@@ -159,4 +167,69 @@ class PropertyAction
     {
         $property->amenities()->sync($amenityIds);
     }
+
+    public function uploadPhotos(UploadPropertyPhotosDTO $dto, FileUploadService $fileUploadService): void
+    {
+        $property_type = Property::find($dto->property_id)?->subtype_id ?? 'Property';
+
+        foreach ($dto->photos as $photo) {
+            $fileUploadService->uploadAndSave(
+                file: $photo,
+                fileType: 'image',
+                propertyType: PropertySubtype::find($property_type)?->name ?? 'Property',
+                propertyId: $dto->property_id,
+                directory: 'property_photos'
+            );
+        }
+    }
+
+    public function saveAmenities(Property $property, SaveAmenitiesDTO $dto): void
+    {
+        $property->amenities()->sync($dto->amenities);
+    }
+
+
+    public function savePolicy(Property $property, SavePolicyDTO $dto): void
+    {
+        $property->policies()->updateOrCreate(
+            ['property_id' => $property->id],
+            $dto->toArray()
+        );
+    }
+
+
+
+    public function saveRooms(SaveRoomsDTO $dto): void
+    {
+        foreach ($dto->rooms as $roomData) {
+            $room = Room::create([
+                'property_id' => $dto->property_id,
+                'room_type_id' => $roomData['room_type_id'],
+                'name' => $roomData['name'] ?? null,
+                'price_per_night' => $roomData['price_per_night'] ?? null,
+                'max_guests' => $roomData['max_guests'] ?? null,
+                'bathroom_count' => $roomData['bathroom_count'] ?? null,
+                'size_sq_m' => $roomData['size_sq_m'] ?? null,
+            ]);
+
+            if (!empty($roomData['beds']) && is_array($roomData['beds'])) {
+                foreach ($roomData['beds'] as $bedTypeId => $count) {
+                    if ((int) $count > 0) {
+                        $room->beds()->attach($bedTypeId, ['count' => $count]);
+                    }
+                }
+            }
+        }
+    }
+
+
+    public function partnerVerification(PartnerVerificationDTO $dto): void
+    {
+        PartnerVerification::updateOrCreate(
+            ['property_id' => $dto->property_id],
+            $dto->toArray()
+        );
+    }
+
+
 }
