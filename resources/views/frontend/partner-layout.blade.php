@@ -14,9 +14,9 @@
 
     {{-- Tailwind CSS via Vite --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-
+ 
 </head>
-<body class=" bg-gray-50 text-gray-900" style="font-family: 'Poppins', sans-serif;">
+<body class=" bg-gray-50 text-gray-900" style= "font-family: 'Noto Sans', sans-serif;">
   <!-- Include Header -->
   @include('frontend.partner-header')
 
