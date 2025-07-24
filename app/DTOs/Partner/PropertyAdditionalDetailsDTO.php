@@ -12,6 +12,7 @@ class PropertyAdditionalDetailsDTO extends ValidatedDTO
     public ?string $offer_cribs = null;
     public ?int $apartment_size = null;
     public ?string $apartment_unit = null;
+    public ?array $languages = null; // Add this field
 
     public function rules(): array
     {
@@ -22,6 +23,8 @@ class PropertyAdditionalDetailsDTO extends ValidatedDTO
             'offer_cribs' => ['nullable', 'string'],
             'apartment_size' => ['nullable', 'integer'],
             'apartment_unit' => ['nullable', 'string'],
+            'languages' => ['nullable', 'array'], // Add validation for languages
+            'languages.*' => ['exists:languages,id'], // Validate each language ID
         ];
     }
 
@@ -33,9 +36,7 @@ class PropertyAdditionalDetailsDTO extends ValidatedDTO
     protected function casts(): array
     {
         return [
-            // 'guests' => 'integer',
-            // 'bathrooms' => 'integer',
-            // 'apartment_size' => 'integer',
+            'languages' => 'array', // Cast languages to array
         ];
     }
 }

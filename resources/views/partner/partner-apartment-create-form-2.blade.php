@@ -261,6 +261,7 @@
                       method: 'PATCH',
                       headers: {
                           'Content-Type': 'application/json',
+                          'Accept': 'application/json',
                           'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
                       },
                       body: JSON.stringify(payload)
@@ -286,36 +287,36 @@
               this.propertyWizardStep = 1;
           },
           savePropertyDetails() {
-    const payload = {
-        title: this.title,
-        address: this.address,
-        apartment: this.apartment || null,
-        city: this.city,
-        country: this.country,
-        zipcode: this.zipcode,
-        description: this.description,
-        subtype_id: this.subtype_id || null,
-        address_type_id: this.address_type_id || null,
-        channel_manager: this.channelManager,
-        bedrooms: Object.values(this.rooms).map(room => ({
-            room_type: room.name === 'Living room' ? 'living_room' : (room.name === 'Other spaces' ? 'other' : 'bedroom'),
-            name: room.name,
-            twin: room.twin || 0,
-            full: room.full || 0,
-            queen: room.queen || 0,
-            king: room.king || 0,
-            bunk: room.bunk || 0,
-            sofa: room.sofa || 0,
-            futon: room.futon || 0,
-        })),
+            // Add this debug logging
+    console.log('Current wizard step:', this.propertyWizardStep);
+    console.log('Selected languages before save:', this.selectedLanguages);
+          const payload = {
         guests: this.guests,
         bathrooms: this.bathrooms,
         allow_children: this.allowChildren,
         offer_cribs: this.offerCribs,
         apartment_size: this.apartmentSize,
         apartment_unit: this.apartmentUnit,
+        breakfast_served: this.breakfastServed,
+        breakfast_included: this.breakfastIncluded,
+        breakfast_types: this.breakfastTypes,
+        parking_available: this.parkingAvailable,
+        parking_cost: this.parkingCost,
+        parking_currency: this.parkingCurrency,
+        parking_rate: this.parkingRate,
+        parking_reservation: this.parkingReservation,
+        parking_location: this.parkingLocation,
+        parking_type: this.parkingType,
+        languages: this.selectedLanguages,
+        check_in_from: this.checkInFrom,
+        check_in_until: this.checkInUntil,
+        check_out_from: this.checkOutFrom,
+        check_out_until: this.checkOutUntil,
     };
-
+    
+    // Log the complete payload
+    console.log('Payload being sent:', payload);
+    
     this.isLoading = true;
 
     // Helper to parse JSON safely
@@ -391,6 +392,53 @@
           // Photo upload methods
           isUploading: false,
           uploadedPhotos: [],
+          hostProfile: {
+        about_property: '',
+        about_host: '',
+        about_neighborhood: '',
+        show_property: false,
+        show_host: false,
+        show_neighborhood: false,
+        none_selected: false,
+        host_name: ''
+    },
+      saveHostProfile() {
+    const payload = {
+        property_id: this.propertyId,
+        about_property: this.hostProfile.about_property,
+        about_host: this.hostProfile.about_host,
+        about_neighborhood: this.hostProfile.about_neighborhood,
+        show_property: this.hostProfile.show_property,
+        show_host: this.hostProfile.show_host,
+        show_neighborhood: this.hostProfile.show_neighborhood,
+        none_selected: this.hostProfile.none_selected,
+        host_name: this.hostProfile.host_name,
+    };
+    this.isLoading = true;
+    fetch('/partner/property/' + this.propertyId + '/host-profile', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            this.propertyWizardStep++;
+        } else {
+            alert(data.message || 'Could not save host profile.');
+        }
+    })
+    .catch(err => {
+        alert('AJAX error: ' + err.message);
+    })
+    .finally(() => {
+        this.isLoading = false;
+    });
+},
           handleUpload(event) {
             const files = Array.from(event.target.files).slice(0, 5 - this.uploadedPhotos.length);
             files.forEach(file => {
@@ -418,6 +466,53 @@
           apartmentSize: 100,
           apartmentUnit: 'square meters',
           saveAdditionalDetails() {
+              // Check if propertyId is valid
+              if (!this.propertyId || this.propertyId === 'new') {
+                  alert('Property ID is missing. Please refresh the page.');
+                  return;
+              }
+
+              // For step 4 (languages), use dedicated language route
+              if (this.propertyWizardStep === 4) {
+                  console.log('Saving languages for step 4:', this.selectedLanguages);
+                  
+                  const payload = {
+                      languages: this.selectedLanguages
+                  };
+                  
+                  this.isLoading = true;
+                  
+                  fetch(`/partner/property/${this.propertyId}/languages`, {
+                      method: 'POST',
+                      headers: {
+                          'Content-Type': 'application/json',
+                          'Accept': 'application/json',
+                          'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                      },
+                      body: JSON.stringify(payload)
+                  })
+                  .then(async res => {
+                      const data = await res.json();
+                      if (res.ok && data.success) {
+                          console.log('Languages saved successfully:', data);
+                          this.propertyWizardStep++;
+                      } else {
+                          console.error('Language save error:', data);
+                          alert('Error: ' + (data.message || 'Could not save languages.'));
+                      }
+                  })
+                  .catch(err => {
+                      console.error('AJAX error:', err);
+                      alert('AJAX error: ' + err.message);
+                  })
+                  .finally(() => {
+                      this.isLoading = false;
+                  });
+                  
+                  return; // Exit early for language step
+              }
+
+              // For other steps, use the existing logic
               const payload = {
                   guests: this.guests,
                   bathrooms: this.bathrooms,
@@ -435,7 +530,6 @@
                   parking_reservation: this.parkingReservation,
                   parking_location: this.parkingLocation,
                   parking_type: this.parkingType,
-                  languages: this.selectedLanguages,
               };
               this.isLoading = true;
 
@@ -525,16 +619,19 @@
               { firstName: '', lastName: '', dob: '', altNames: [] }
             ]
           },
-          // Add these methods to your main x-data object (before the closing brace)
+          
 async loadLanguages() {
-  try {
-    const response = await fetch('/partner/languages');
-    const languages = await response.json();
-    this.availableLanguages = languages;
-    this.filteredLanguages = languages;
-  } catch (error) {
-    console.error('Error loading languages:', error);
-  }
+    try {
+        console.log('Loading languages...');
+        const response = await fetch('/partner/languages');
+        const languages = await response.json();
+        console.log('Languages loaded:', languages);
+        
+        this.availableLanguages = languages;
+        this.filteredLanguages = languages;
+    } catch (error) {
+        console.error('Error loading languages:', error);
+    }
 },
 
 filterLanguages() {
@@ -548,19 +645,32 @@ filterLanguages() {
 },
 
 selectLanguage(languageId, languageName) {
-  if (!this.selectedLanguages.includes(languageId)) {
-    this.selectedLanguages.push(languageId);
-  }
-  this.showDropdown = false;
-  this.searchTerm = '';
-  this.filteredLanguages = this.availableLanguages;
+    console.log('selectLanguage called with:', { languageId, languageName });
+    console.log('selectedLanguages before:', this.selectedLanguages);
+    
+    if (!this.selectedLanguages.includes(languageId)) {
+        this.selectedLanguages.push(languageId);
+        console.log('Language added. selectedLanguages after:', this.selectedLanguages);
+    } else {
+        console.log('Language already selected');
+    }
+    
+    this.showDropdown = false;
+    this.searchTerm = '';
+    this.filteredLanguages = this.availableLanguages;
 },
 
 removeLanguage(languageId) {
-  const index = this.selectedLanguages.indexOf(languageId);
-  if (index > -1) {
-    this.selectedLanguages.splice(index, 1);
-  }
+    console.log('removeLanguage called with:', languageId);
+    console.log('selectedLanguages before removal:', this.selectedLanguages);
+    
+    const index = this.selectedLanguages.indexOf(languageId);
+    if (index > -1) {
+        this.selectedLanguages.splice(index, 1);
+        console.log('Language removed. selectedLanguages after:', this.selectedLanguages);
+    } else {
+        console.log('Language not found in array');
+    }
 },
 
 getLanguageName(languageId) {
@@ -577,7 +687,110 @@ toggleAdditionalLanguages() {
   if (this.showAdditionalLanguages && this.availableLanguages.length === 0) {
     this.loadLanguages();
   }
-}
+},
+
+async saveHouseRules() {
+    const payload = {
+        property_id: this.propertyId,
+        smoking_allowed: this.smokingAllowed,
+        parties_allowed: this.partiesAllowed,
+        pets_allowed: this.petsAllowed,
+        pets_fees: this.petsFees,
+        check_in_from: this.checkInFrom,
+        check_in_until: this.checkInUntil,
+        check_out_from: this.checkOutFrom,
+        check_out_until: this.checkOutUntil,
+        cancellation_policy: 'flexible', // or whatever value you want
+    };
+    this.isLoading = true;
+    try {
+        const res = await fetch('/partner/property/' + this.propertyId + '/policy', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+            },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+            this.propertyWizardStep++;
+        } else {
+            alert(data.message || 'Could not save house rules.');
+        }
+    } catch (err) {
+        alert('AJAX error: ' + err.message);
+    } finally {
+        this.isLoading = false;
+    }
+},
+
+
+    smokingAllowed: false,
+    partiesAllowed: false,
+    petsAllowed: 'no',
+    petsFees: 'free',
+    checkInFrom: '15:00',
+    checkInUntil: '18:00',
+    checkOutFrom: '08:00',
+    checkOutUntil: '11:00',
+   pricing: {
+    booking_type: 'instant',
+    price_per_night: '',
+    currency: 'usd',
+    discount_enabled: false,
+    discount_percent: 0,
+},
+hostProfile: {
+    about_property: '',
+    about_host: '',
+    about_neighborhood: '',
+    show_property: false,
+    show_host: false,
+    show_neighborhood: false,
+    none_selected: false,
+    host_name: ''
+},
+savePricing() {
+    const payload = {
+        property_id: this.propertyId,
+        booking_type: this.pricing.booking_type,
+        price_per_night: this.pricing.price_per_night,
+        currency: this.pricing.currency,
+        discount_enabled: this.pricing.discount_enabled,
+        discount_percent: this.pricing.discount_percent,
+    };
+    this.isLoading = true;
+    fetch('/partner/property/' + this.propertyId + '/pricing', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            if (this.pricingWizardStep === 4) { // <-- replace 4 with your last pricing step number
+                this.step = 5; // Move to legal info
+                // Optionally reset pricingWizardStep
+                // this.pricingWizardStep = 1;
+            } else {
+                this.pricingWizardStep++;
+            }
+        } else {
+            alert(data.message || 'Could not save pricing.');
+        }
+    })
+    .catch(err => {
+        alert('AJAX error: ' + err.message);
+    })
+    .finally(() => {
+        this.isLoading = false;
+    });
+},
       }"
       x-init="console.log('Wizard initialized', { title, address, city, country, zipcode, description })"
     >
@@ -992,7 +1205,6 @@ toggleAdditionalLanguages() {
           <!-- Property Setup Section -->
 
           <!-- Property Setup Section -->
-<!-- Property Setup Section -->
 <section x-show="step === 2">
 
   <!-- Property Setup Step 1: Where can people sleep, guests, bathrooms, children, infants, apartment size/unit -->
@@ -1473,7 +1685,7 @@ toggleAdditionalLanguages() {
             <label class="flex items-center justify-between cursor-pointer">
               <span>Smoking allowed</span>
               <div class="relative">
-                <input type="checkbox" class="sr-only peer" />
+                <input type="checkbox" x-model="smokingAllowed" class="sr-only peer" />
                 <div class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition"></div>
                 <div class="absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-4"></div>
               </div>
@@ -1482,7 +1694,7 @@ toggleAdditionalLanguages() {
             <label class="flex items-center justify-between cursor-pointer">
               <span>Parties/events allowed</span>
               <div class="relative">
-                <input type="checkbox" class="sr-only peer" />
+                <input type="checkbox" x-model="partiesAllowed" class="sr-only peer" />
                 <div class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition"></div>
                 <div class="absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-4"></div>
               </div>
@@ -1496,15 +1708,15 @@ toggleAdditionalLanguages() {
             <h3 class="text-base font-semibold mb-2">Do you allow pets?</h3>
             <div class="space-y-2">
               <label class="flex items-center cursor-pointer">
-                <input type="radio" name="pets" value="yes" class="mr-2">
+                <input type="radio" name="pets" value="yes" x-model="petsAllowed" class="mr-2">
                 <span>Yes</span>
               </label>
               <label class="flex items-center cursor-pointer">
-                <input type="radio" name="pets" value="upon_request" class="mr-2">
+                <input type="radio" name="pets" value="upon_request" x-model="petsAllowed" class="mr-2">
                 <span>Upon request</span>
               </label>
               <label class="flex items-center cursor-pointer">
-                <input type="radio" name="pets" value="no" class="mr-2" checked>
+                <input type="radio" name="pets" value="no" x-model="petsAllowed" class="mr-2">
                 <span>No</span>
               </label>
             </div>
@@ -1514,11 +1726,11 @@ toggleAdditionalLanguages() {
             <h3 class="text-base font-semibold mb-2">Are there additional fees for pets?</h3>
             <div class="space-y-2">
               <label class="flex items-center cursor-pointer">
-                <input type="radio" name="pets_fees" value="free" class="mr-2">
+                <input type="radio" name="pets_fees" value="free" x-model="petsFees" class="mr-2">
                 <span>Pets can stay for free</span>
               </label>
               <label class="flex items-center cursor-pointer">
-                <input type="radio" name="pets_fees" value="fees" class="mr-2">
+                <input type="radio" name="pets_fees" value="fees" x-model="petsFees" class="mr-2">
                 <span>Fees may apply</span>
               </label>
             </div>
@@ -1532,11 +1744,11 @@ toggleAdditionalLanguages() {
             <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
               <div class="w-full">
                 <label class="block text-sm font-medium mb-1">From</label>
-                <input type="time" value="15:00" class="w-full border rounded p-2" />
+                <input type="time" x-model="checkInFrom" ... />
               </div>
               <div class="w-full">
                 <label class="block text-sm font-medium mb-1">Until</label>
-                <input type="time" value="18:00" class="w-full border rounded p-2" />
+                <input type="time" x-model="checkInUntil" ... />
               </div>
             </div>
           </div>
@@ -1547,11 +1759,11 @@ toggleAdditionalLanguages() {
             <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
               <div class="w-full">
                 <label class="block text-sm font-medium mb-1">From</label>
-                <input type="time" value="08:00" class="w-full border rounded p-2" />
+                <input type="time" x-model="checkOutFrom" ... />
               </div>
               <div class="w-full">
                 <label class="block text-sm font-medium mb-1">Until</label>
-                <input type="time" value="11:00" class="w-full border rounded p-2" />
+                <input type="time" x-model="checkOutUntil" ... />
               </div>
             </div>
           </div>
@@ -1568,7 +1780,7 @@ toggleAdditionalLanguages() {
 
   <!-- Continue Button on the right -->
   <button
-   type="button"  @click="propertyWizardStep++"
+   type="button"  @click="saveHouseRules"
      class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 "
   >
     Continue
@@ -1614,13 +1826,12 @@ toggleAdditionalLanguages() {
             <!-- The Property Section -->
             <div>
                 <label class="inline-flex items-center space-x-2">
-                    <input type="checkbox" class="form-checkbox text-blue-600">
+                    <input type="checkbox" x-model="hostProfile.show_property" class="form-checkbox text-blue-600">
                     <span class="text-gray-800 font-sm ">The property</span>
                 </label>
-
-                <div class="mt-2">
+                <div class="mt-2" x-show="hostProfile.show_property">
                     <label class="block text-sm font-semibold text-gray-700">About the property</label>
-                    <textarea rows="4" maxlength="1200" placeholder="What makes your place unique? What can guests expect"
+                    <textarea x-model="hostProfile.about_property" rows="4" maxlength="1200" placeholder="What makes your place unique? What can guests expect"
                         class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"></textarea>
                     <p class="text-right text-xs text-gray-500">0/1200</p>
                 </div>
@@ -1629,21 +1840,20 @@ toggleAdditionalLanguages() {
             <!-- The Host Section -->
             <div>
                 <label class="inline-flex items-center space-x-2">
-                    <input type="checkbox" class="form-checkbox text-blue-600">
+                    <input type="checkbox" x-model="hostProfile.show_host" class="form-checkbox text-blue-600">
                     <span class="text-gray-800 font-medium">The host</span>
                 </label>
-
-                <div class="mt-2 space-y-2">
+                <div class="mt-2 space-y-2" x-show="hostProfile.show_host">
                     <div>
                         <label class="block text-sm font-semibold text-gray-700">Host name</label>
-                        <input type="text" maxlength="80"
+                        <input x-model="hostProfile.host_name" type="text" maxlength="80"
                             class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
                         <p class="text-right text-xs text-gray-500">0/80</p>
                     </div>
 
                     <div>
                         <label class="block text-sm font-semibold text-gray-700">About the host</label>
-                        <textarea rows="4" maxlength="1200" placeholder="What are your interests? What do you like about hosting?"
+                        <textarea x-model="hostProfile.about_host" rows="4" maxlength="1200" placeholder="What are your interests? What do you like about hosting?"
                             class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"></textarea>
                         <p class="text-right text-xs text-gray-500">0/1200</p>
                     </div>
@@ -1653,13 +1863,12 @@ toggleAdditionalLanguages() {
             <!-- The Neighborhood Section -->
             <div>
                 <label class="inline-flex items-center space-x-2">
-                    <input type="checkbox" class="form-checkbox text-blue-600">
+                    <input type="checkbox" x-model="hostProfile.show_neighborhood" class="form-checkbox text-blue-600">
                     <span class="text-gray-800 font-medium">The neighborhood</span>
                 </label>
-
-                <div class="mt-2">
+                <div class="mt-2" x-show="hostProfile.show_neighborhood">
                     <label class="block text-sm font-semibold text-gray-700">About the neighborhood</label>
-                    <textarea rows="4" maxlength="1200" placeholder="What's the area like? Are there any attractions nearby?"
+                    <textarea x-model="hostProfile.about_neighborhood" rows="4" maxlength="1200" placeholder="What's the area like? Are there any attractions nearby?"
                         class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"></textarea>
                     <p class="text-right text-xs text-gray-500">0/1200</p>
                 </div>
@@ -1668,7 +1877,7 @@ toggleAdditionalLanguages() {
             <!-- None of the Above Option -->
             <div>
                 <label class="inline-flex items-center space-x-2">
-                    <input type="checkbox" class="form-checkbox text-blue-600">
+                    <input type="checkbox" x-model="hostProfile.none_selected" class="form-checkbox text-blue-600">
                     <span class="text-gray-800 font-medium">None of the above / I'll add these later</span>
                 </label>
             </div>
@@ -1685,7 +1894,7 @@ toggleAdditionalLanguages() {
 
   <!-- Continue Button on the right -->
   <button
-   type="button"  @click="propertyWizardStep++"
+   type="button"  @click="saveHostProfile"
      class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 "
   >
     Continue
@@ -1699,7 +1908,7 @@ toggleAdditionalLanguages() {
           <!-- ✅ Step 3: Photos Upload Section -->
           <!-- ✅ Step 3: Photos Upload Section -->
           <!-- ✅ Step 3: Photos Upload Section -->
-<!-- ...existing code... -->
+<!-- ...rest of the code... -->
 <section
   x-show="step === 3"
   class="px-4 py-6 md:px-8 lg:px-16 flex justify-center"
@@ -1887,6 +2096,655 @@ toggleAdditionalLanguages() {
   <template x-if="pricingWizardStep === 4">
       <div class="max-w-xl mx-auto space-y-8 lg:ml-32 px-4 py-6">
   </div>
+  </template>
+</section>
+
+<!-- ✅ Step 4: Pricing and Calendar -->
+<section x-show="step === 4">
+
+  <template x-if="pricingWizardStep === 1">
+  <div class="max-w-2xl mx-auto px-4 py-6 lg:ml-32 space-y-8">
+    <!-- Title -->
+    <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mt-4">
+      How you receive bookings
+    </h2>
+
+    <!-- Info Card -->
+    <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6 space-y-4">
+      <h3 class="text-base font-semibold text-gray-900">
+        We're here to ensure you can receive bookings safely:
+      </h3>
+     <ul class="text-gray-700 space-y-1 text-sm">
+  @php
+    $tickIcon = asset('assets/Vector (42).svg'); // Use consistent and clean SVG
+  @endphp
+
+  @foreach([
+    'Set house rules guests must agree to before they stay',
+    'Request damage deposits for extra security',
+    'Report guest misconduct if something goes wrong',
+    'Receive protection against liability claims from guests and neighbours up to US$1,000,000 for every reservation'
+  ] as $text)
+    <li class="flex items-start">
+      <span class="text-green-600 mr-2 shrink-0">
+        <img src="{{ $tickIcon }}" alt="Tick" class="w-4 h-4" />
+      </span>
+      <span>{{ $text }}</span>
+    </li>
+  @endforeach
+</ul>
+
+
+    </div>
+
+    <!-- Booking Options -->
+    <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6 space-y-4">
+      <h3 class="text-base font-semibold text-gray-900">
+        How can guests book your apartment?
+      </h3>
+      <div class="space-y-2 text-sm">
+        <label class="flex items-center space-x-3">
+          <input type="radio" name="booking_type" class="form-radio text-blue-600" checked value="instant" x-model="pricing.booking_type">
+          <span class="text-gray-800">All guests can book instantly <span class="ml-2 px-2 py-0.5 text-xs bg-green-100 text-green-700 rounded">Recommended</span></span>
+        </label>
+        <label class="flex items-center space-x-3">
+          <input type="radio" name="booking_type" value="request" x-model="pricing.booking_type" class="form-radio text-blue-600">
+          <span class="text-gray-800">All guests will need to request to book</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Continue Button -->
+    <div class="flex justify-between items-center">
+      <button  @click="pricingWizardStep--"      class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
+          ←</button>
+      <button  @click="pricingWizardStep++" class="  px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500">Continue</button>
+    </div>
+  </div>
+</template>
+
+
+
+  <template x-if="pricingWizardStep === 2">
+    <div class="max-w-4xl mx-auto space-y-8 lg:ml-32 px-4 py-6">
+        <div class="max-w-4xl mx-auto px-4 py-8 space-y-6" x-data="{ showTip1: true, showTip2: true }">
+
+      <!-- Title -->
+      <h2 class="text-2xl font-bold text-gray-800">Set the price per night for this room</h2>
+
+      <!-- Price input and Tip 1 in two separate columns -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
+  
+  <!-- Price input card (2/3 width) -->
+  <div class="md:col-span-2 bg-white border rounded-lg p-6 shadow-sm space-y-4">
+    <label class="block font-semibold text-base text-gray-700">How much do you want to charge per night?</label>
+    <div class="relative">
+  <label class="block text-sm text-gray-700 mb-1">Price guests pay</label>
+
+  <!-- Currency Select Dropdown -->
+  <select x-model="pricing.currency" class="absolute left-3 top-1/2 transform -translate-y-1/2 bg-transparent text-gray-700 text-sm pr-1 focus:outline-none border border-gray-300 rounded-md">
+    <option value="usd">US$</option>
+    <option value="eur">€</option>
+    <option value="gbp">£</option>
+    <option value="lkr">Rs</option>
+  </select>
+
+  <!-- Input Field -->
+  <input
+    type="text"
+    x-model="pricing.price_per_night
+    value="120.00"
+    class="w-full border border-gray-400 rounded-md p-2 pl-16 text-gray-700 font-semibold focus:ring-2 focus:ring-blue-300 focus:outline-none"
+  />
+
+  <p class="text-sm text-gray-500 mt-2">Including taxes, commission, and fees</p>
+</div>
+
+
+    <!-- Topic paragraph -->
+    <p class="text-sm text-gray-600 pl-4">
+      <span class="text-gray-500">15.00%</span> Bookintour.com commission
+    </p>
+
+    <!-- Sub-items under topic -->
+    <ul class="text-sm text-gray-600 space-y-1 pl-8">
+      <li><span class="text-green-600 font-semibold">✓</span> 24/7 help in your language</li>
+      <li><span class="text-green-600 font-semibold">✓</span> Save time with automatically confirmed bookings</li>
+      <li><span class="text-green-600 font-semibold">✓</span> We promote your place on Google</li>
+    </ul>
+
+    <p class="text-sm text-gray-800 font-medium border-t pt-3">US$ 30.00 Your earnings (including taxes)</p>
+  </div>
+
+  <!-- Tip Box 1 (1/3 width, independent height) -->
+  <div x-show="showTip1" class="relative bg-white border rounded-lg p-4 shadow-sm text-sm text-gray-700">
+    <button @click="showTip1 = false" class="absolute top-2 right-2 text-gray-500 font-semibold">✕</button>
+    
+    <div class="flex items-center mb-2">
+      <img src="{{ asset('assets/system-uicons_lightbulb-on.svg') }}" alt="Tip Icon" class="w-6 h-6 mr-2">
+      <strong>What if I'm not sure about my price?</strong>
+    </div>
+
+    <p>Don't worry, you can always change it later. You can even set weekend, midweek, and seasonal prices, giving you more control over what you earn.</p>
+  </div>
+
+</div>
+
+      <!-- Discount and Tip 2 -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        
+        <!-- Discount card -->
+        <div class="md:col-span-2 bg-white border rounded-lg p-6 shadow-sm space-y-3">
+          <label class="inline-flex items-center">
+            <input type="checkbox" x-model="pricing.discount_enabled" class="form-checkbox text-blue-600 rounded-md" />
+            <span class="ml-2 font-medium text-gray-700 font-semibold">Get guests' attention with a 20% discount</span>
+          </label>
+          <p class="text-sm text-gray-600">
+            Give 20% off your first 3 bookings or for 90 days, whichever comes first. 
+            <a href="#" class="text-blue-600 underline">Learn more</a>
+          </p>
+          <hr class="my-4">
+          <p class="text-sm text-gray-800">
+            <del class="text-gray-500">US$ 30.00</del> 
+            <span class="text-green-600 font-semibold">US$ 24.00 per night</span>
+          </p>
+        </div>
+
+        <!-- Tip Box 2 (separate column) -->
+        <div x-show="showTip2" class="relative bg-white border rounded-lg p-4 shadow-sm text-sm text-gray-700">
+          <button @click="showTip2 = false" class="absolute top-2 right-3 text-gray-500 font-semibold mb-2">✕</button>
+          <div class="flex items-center mb-2">
+            <img src="{{ asset('assets/material-symbols-light_info-outline.svg') }}" alt="Tip Icon" class="w-6 h-6 mr-2">
+            <strong>Rules for setting up a promotion</strong>
+          </div>
+          <p>
+            Make sure you're giving a genuine discount. It must represent a real discount in line with consumer protection rules. 
+            <a href="#" class="text-blue-600 underline">Learn More</a>
+          </p>
+        </div>
+      </div>
+
+      <!-- Navigation Buttons -->
+      <div class="flex mt-1">
+        <button type="button"
+                @click="step > 1 ? step-- : step"
+                :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
+                class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
+          ←
+        </button>
+        <button type="button"
+                @click="savePricing"
+                class="ml-auto px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300 ml-[402px]">
+          Continue
+        </button>
+      </div>
+
+    </div>
+    </div>
+</template>
+
+
+<template x-if="pricingWizardStep === 3">
+    
+    <div class="px-4 py-8 mt-6 w-full max-w-2xl mx-auto lg:ml-24 space-y-6">
+
+    <!-- Main Title -->
+    <h2 class="text-3xl font-bold text-gray-800">Rate plans</h2>
+
+    <!-- Intro Paragraph -->
+    <div class="bg-white border rounded-lg p-4 shadow-sm">
+      <p class="text-sm text-gray-600">
+        To attract a wider range of guests, we suggest setting up multiple rate plans.
+        The recommended prices and policies for each plan are based on data from properties like yours,
+        but they can be edited now or after you complete registration.
+      </p>
+    </div>
+
+    <h2 class="text-xl font-semibold text-gray-800">Standard rate plan</h2>
+
+    <!-- Rate Plan Card -->
+    <div class="bg-white border rounded-lg p-6 shadow-sm space-y-6 w-full max-w-2xl mx-auto">
+
+      <!-- Cancellation Policy Section -->
+      <div class="space-y-4">
+        <div class="flex justify-between items-start">
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="text-base font-semibold text-gray-700">Cancellation policy</h3>
+              <img src="{{ asset('assets/material-symbols-light_info-outline.svg') }}" alt="Tip Icon" class="w-5 h-5">
+            </div>
+            <p class="text-xs text-gray-500">
+              This policy is set at the property level – any changes made will be applied to all rooms.
+            </p>
+          </div>
+          <a href="{{ route('partner.apartment.pricing.policies') }}">
+         <button @click="$refs.section1.scrollIntoView({ behavior: 'smooth' })"
+        class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">
+  Edit
+</button></a>
+        </div>
+        <hr class="my-4">
+        <ul class="text-gray-900 text-sm space-y-2">
+          <li class="flex items-start gap-2">
+            <img src="{{ asset('assets/teenyicons_tick-circle-outline.svg') }}" alt="Tick" class="w-4 h-4 mt-1">
+            <span>Guests can cancel their bookings for free up to 1 day before their arrival</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <img src="{{ asset('assets/teenyicons_tick-circle-outline.svg') }}" alt="Tick" class="w-4 h-4 mt-1">
+            <span>Guests who cancel within 24 hours will have their cancellation fee waived</span>
+          </li>
+        </ul>
+      </div>
+
+      <hr class="my-4">
+
+      <!-- Price Per Group Size Section -->
+      <div class="space-y-4">
+        <div class="flex justify-between items-center">
+          <div class="flex items-center gap-2">
+            <h3 class="text-base font-semibold text-gray-700">Price per group size</h3>
+            <img src="{{ asset('assets/material-symbols-light_info-outline.svg') }}" alt="Tip Icon" class="w-5 h-5">
+          </div>
+           <a href="{{ route('partner.apartment.price.group') }}">
+          <button class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">Edit</button></a>
+        </div>
+
+        <hr class="my-4">
+<table class="table-auto border-separate border-spacing-x-2 w-full text-left text-gray-700">
+  <tbody>
+    <tr>
+      <td class="py-2 text-sm font-semibold">Occupancy</td>
+      <td class="py-2 text-sm font-semibold">Guests pay</td>
+    </tr>
+    <tr>
+      <td class="py-2">
+        <div class="flex items-center gap-1">
+          <img src="{{ asset('assets/guidance_user-1 (1).svg') }}" alt="User Icon" class="w-5 h-5">
+          <span>x 2</span>
+        </div>
+      </td>
+      <td class="py-2 text-sm">US$ 30.00</td>
+    </tr>
+    <tr>
+      <td class="py-2">
+        <div class="flex items-center gap-1">
+          <img src="{{ asset('assets/guidance_user-1 (1).svg') }}" alt="User Icon" class="w-5 h-5">
+          <span>x 1</span>
+        </div>
+      </td>
+      <td class="py-2 text-sm">US$ 27.00</td>
+    </tr>
+  </tbody>
+</table>
+
+
+      </div>
+
+   
+    </div>
+
+    <h2 class="text-xl font-semibold text-gray-800">Non-refundable rate plan</h2>
+
+    <!-- Second Rate Plan -->
+    <div class="bg-white border rounded-lg p-4 shadow-sm">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <h3 class="text-base font-semibold text-gray-700">Price and cancellation policy</h3>
+          <img src="{{ asset('assets/material-symbols-light_info-outline.svg') }}" alt="Tip Icon" class="w-5 h-5">
+        </div>
+         <a href="{{ route('partner.apartment.refundable.rate') }}">
+        <button class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">Edit</button></a>
+      </div>
+      <hr class="my-4">
+      <ul class="text-gray-900 text-sm space-y-2">
+        <li class="flex items-start gap-2">
+          <img src="{{ asset('assets/teenyicons_tick-circle-outline.svg') }}" alt="Tick" class="w-4 h-4 mt-1">
+          <span>Guests will pay 10% less than the standard rate for a non-refundable rate</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <img src="{{ asset('assets/teenyicons_tick-circle-outline.svg') }}" alt="Tick" class="w-4 h-4 mt-1">
+          <span>Guests can't cancel their bookings for free anytime</span>
+        </li>
+      </ul>
+    </div>
+
+    <h2 class="text-xl font-semibold text-gray-800">Weekly rate plan</h2>
+
+    <!-- Third Rate Plan -->
+    <div class="bg-white border rounded-lg p-4 shadow-sm">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <h3 class="text-base font-semibold text-gray-700">Price and cancellation policy</h3>
+          <img src="{{ asset('assets/material-symbols-light_info-outline.svg') }}" alt="Tip Icon" class="w-5 h-5">
+        </div>
+         <a href="{{ route('partner.apartment.weekly.rate') }}">
+        <button class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">Edit</button></a>
+      </div>
+      <hr class="my-4">
+      <ul class="text-gray-900 text-sm space-y-2">
+        <li class="flex items-start gap-2">
+          <img src="{{ asset('assets/teenyicons_tick-circle-outline.svg') }}" alt="Tick" class="w-4 h-4 mt-1">
+          <span>Guests will pay 15% less than the standard rate when they book for at least 7 nights</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <img src="{{ asset('assets/teenyicons_tick-circle-outline.svg') }}" alt="Tick" class="w-4 h-4 mt-1">
+          <span>Guests can cancel their bookings for free before 18:00 on the day of arrival. The guests will be charged cost of the first night if they cancel after this (based on the standard rate cancellation policy).</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Navigation Buttons -->
+<div class="flex justify-between items-center mt-4">
+  <!-- Back Button -->
+  <button type="button"
+          @click="step > 1 ? step-- : step"
+          :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
+          class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
+    ←
+  </button>
+
+  <!-- Continue Button -->
+  
+  <button       @click="pricingWizardStep++" class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-sky-500 transition w-full sm:w-auto">
+    Continue
+  </button>
+
+
+  </div>
+  </template>
+
+ 
+
+  <template x-if="pricingWizardStep === 4">
+  <div x-data="{
+    checkInOption: 'specific',
+    availabilityOption: '365',
+    syncOption: 'yes',
+    allowLongStay: 'yes',
+    showSyncTip: true,
+    showLongStayTip: true
+}" class="px-4 py-8 mt-6 w-full max-w-2xl mx-auto lg:ml-24 space-y-6">
+
+<h2 class="text-3xl font-bold text-gray-800">Availability</h2>
+    <!-- Check-in Date Selection -->
+<!-- Alpine.js Component -->
+<div x-data="calendarComponent()" class="bg-white p-6 rounded-lg shadow-md space-y-4">
+    <!-- Title -->
+    <p class="text-base font-semibold">When is the first date that guests can check in?</p>
+
+    <!-- Check-in Options -->
+    <div class="flex flex-col sm:flex-row gap-4">
+        <label class="flex items-center space-x-2" >
+            <input type="radio" value="soon" x-model="checkInOption" class="form-radio text-blue-600">
+            <span class="text-sm">As soon as possible</span>
+        </label>
+        <label class="flex items-center space-x-2">
+            <input type="radio" value="specific" x-model="checkInOption" class="form-radio text-blue-600">
+            <span class="text-sm">On a specific date</span>
+        </label>
+    </div>
+
+    <!-- Calendar UI -->
+    <div x-show="checkInOption === 'specific'" class="border rounded-md p-4 bg-white shadow space-y-4">
+        <!-- Navigation Arrows -->
+        <div class="flex justify-between items-center mb-4">
+            <button @click="prevMonthPair"
+        class="text-gray-600 hover:text-black font-bold border border-gray-400 rounded-md p-1">
+    &larr;
+</button>
+
+<button @click="nextMonthPair"
+        class="text-gray-600 hover:text-black font-bold border border-gray-400 rounded-md p-1">
+    &rarr;
+</button>
+
+        </div>
+
+        <!-- Two-Month Calendars Side by Side -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- First Month -->
+            <div>
+                <p class="text-center font-semibold mb-2" x-text="monthNames[month1] + ' ' + year"></p>
+                <div class="grid grid-cols-7 gap-1 text-center text-sm text-gray-700">
+                    <template x-for="day in weekDays" :key="day"><div class="font-bold" x-text="day"></div></template>
+                    <template x-for="n in getStartDay(month1)" :key="'pad1-' + n"><div></div></template>
+                    <template x-for="d in getDaysInMonth(month1)" :key="'d1-' + d">
+                        <div
+                            class="p-2 rounded cursor-pointer hover:bg-blue-100"
+                            :class="(day === d && month1 === selectedMonth) ? 'bg-blue-600 text-white' : ''"
+                            x-text="d"
+                            @click="selectDate(d, month1)">
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Second Month -->
+            <div>
+                <p class="text-center font-semibold mb-2" x-text="monthNames[month2] + ' ' + year"></p>
+                <div class="grid grid-cols-7 gap-1 text-center text-sm text-gray-700">
+                    <template x-for="day in weekDays" :key="day"><div class="font-bold" x-text="day"></div></template>
+                    <template x-for="n in getStartDay(month2)" :key="'pad2-' + n"><div></div></template>
+                    <template x-for="d in getDaysInMonth(month2)" :key="'d2-' + d">
+                        <div
+                            class="p-2 rounded cursor-pointer hover:bg-blue-100"
+                            :class="(day === d && month2 === selectedMonth) ? 'bg-blue-600 text-white' : ''"
+                            x-text="d"
+                            @click="selectDate(d, month2)">
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+<hr class="border-t border-gray-300 my-4">
+
+        <!-- Selected Date -->
+        <p class="text-sm text-gray-600 mt-4">
+            Guests can start booking right away, but the first available check-in date will be
+            <strong x-text="formattedSelectedDate()"></strong>.
+        </p>
+    </div>
+</div>
+
+<!-- Alpine.js Script -->
+<script>
+function calendarComponent() {
+    return {
+        checkInOption: 'soon',
+        year: 2025,
+        month1: 6, // July
+        month2: 7, // August
+        day: null,
+        selectedMonth: null,
+
+        weekDays: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+
+        monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July',
+                     'August', 'September', 'October', 'November', 'December'],
+
+        getDaysInMonth(month) {
+            return new Date(this.year, month + 1, 0).getDate();
+        },
+
+        getStartDay(month) {
+            const date = new Date(this.year, month, 1);
+            return (date.getDay() + 6) % 7; // Start from Monday
+        },
+
+        selectDate(day, month) {
+            this.day = day;
+            this.selectedMonth = month;
+        },
+
+        formattedSelectedDate() {
+            if (this.day !== null && this.selectedMonth !== null) {
+                return `${this.day} ${this.monthNames[this.selectedMonth]} ${this.year}`;
+            }
+            return '';
+        },
+
+        nextMonthPair() {
+            if (this.month2 === 11) {
+                this.month1 = 0;
+                this.month2 = 1;
+                this.year++;
+            } else {
+                this.month1++;
+                this.month2++;
+            }
+        },
+
+        prevMonthPair() {
+            if (this.month1 === 0) {
+                this.month1 = 10;
+                this.month2 = 11;
+                this.year--;
+            } else {
+                this.month1--;
+                this.month2--;
+            }
+        }
+    }
+}
+</script>
+
+
+
+
+    <!-- Availability -->
+    <div class="border rounded-md p-4 bg-white shadow space-y-4">
+        <p class="text-base font-semibold">How would you like to open up dates for booking?</p>
+        <div class="flex flex-col sm:flex-row gap-4">
+            <label class="flex items-center space-x-2">
+                <input type="radio" value="365" x-model="availabilityOption" class="form-radio text-blue-600">
+                <span class="text-sm">Continuously extend my availability to:</span>
+            </label>
+            
+        </div>
+
+        <div x-show="availabilityOption === '365'" class="pl-6">
+            <select class="border border-gray-300 p-2 rounded w-48 text-sm">
+                <option value="365">365 days</option>
+                <option value="180">180 days</option>
+                <option value="90">90 days</option>
+                <option value="60">60 days</option>
+            </select>
+        </div>
+        <label class="flex items-center space-x-2">
+                <input type="radio" value="18months" x-model="availabilityOption" class="form-radio text-blue-600">
+                <span class="text-sm">Only open up the first 18 months</span>
+            </label>
+    </div>
+
+
+
+ <!-- SYNC SECTION -->
+<div class="flex flex-col md:flex-row gap-6">
+  <!-- Left: Main Form (Updated width to max-w-2xl) -->
+  <div class="flex-1">
+    <div class="bg-white p-6 rounded-lg shadow-md space-y-4 max-w-2xl mx-auto"
+         x-data="{ showSyncTip: true, syncOption: 'no', icalUrl: '' }">
+      <p class="text-base font-semibold">Do you want to sync your availability with TripAdvisor?</p>
+      <p class="text-xs text-green-600">
+        You will avoid double bookings by syncing calendars. It will also help you get your property listed on Booking.com and open for bookings 80% faster.
+      </p>
+
+      <div class="space-y-4">
+        <label class="flex items-center space-x-2">
+          <input type="radio" value="yes" x-model="syncOption" class="form-radio text-blue-600">
+          <span class="text-sm">Yes, I'll import unavailable dates from another website</span>
+        </label>
+
+        <div x-show="syncOption === 'yes'" class="space-y-2 border border-gray-300 rounded p-4">
+          <p class="text-sm">Paste your iCal link here</p>
+          <input 
+              type="text" 
+              placeholder="Paste your iCal link here" 
+              x-model="icalUrl"
+              class="border border-gray-300 p-2 rounded w-full"
+          >
+          <button 
+              class="bg-blue-700 text-white px-4 py-1 rounded mt-2"
+              :disabled="!icalUrl.trim()"
+              :class="{ 'opacity-50 cursor-not-allowed': !icalUrl.trim() }"
+          >
+              Import
+          </button>
+          <a href="#" class="text-sm text-blue-600">Where can I find my iCal link?</a>
+        </div>
+
+        <label class="flex items-center space-x-2">
+          <input type="radio" value="no" x-model="syncOption" class="form-radio text-blue-600">
+          <span class="text-sm">No, I won't sync my availability</span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  
+</div>
+
+<!-- LONG STAY SECTION -->
+<div class="flex flex-col md:flex-row gap-6 mt-8">
+  <!-- Left: Main Form (Updated width to max-w-2xl) -->
+  <div class="flex-1">
+    <div class="bg-white p-6 rounded-lg shadow-md space-y-4 max-w-2xl mx-auto"
+         x-data="{ allowLongStay: '', showLongStayTip: true }">
+      <p class="text-base font-semibold">Do you want to allow 30+ night stays?</p>
+      <p class="text-sm text-gray-600">Allowing guests to stay for up to 90 nights can help you fill your calendar and tap into the trend of guests working remotely.</p>
+
+
+      <p class="text-sm font-semibold">Will you accept reservations for stays over 30 nights?</p>
+      <div class="flex flex-col sm:flex-row gap-4">
+         
+        <label class="flex items-center space-x-2">
+          <input type="radio" value="yes" x-model="allowLongStay" class="form-radio text-blue-600">
+          <span>Yes</span>
+        </label>
+        <label class="flex items-center space-x-2">
+          <input type="radio" value="no" x-model="allowLongStay" class="form-radio text-blue-600">
+          <span>No</span>
+        </label>
+      </div>
+
+      <div>
+        <label class="block mb-2 text-sm font-semibold">What's the maximum number of nights you want guests to be able to book?</label>
+        <select class="border border-gray-300 p-2 rounded w-48">
+          <option value="90">90</option>
+          <option value="60">60</option>
+          <option value="45">45</option>
+          <option value="30">30</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  
+</div>
+
+
+     <!-- Navigation Buttons -->
+<div class="flex justify-between items-center mt-4">
+  <!-- Back Button -->
+  <button type="button"
+          @click="pricingWizardStep--"
+          :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
+          class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
+    ←
+  </button>
+
+  <!-- Continue Button -->
+  
+  <button       @click="pricingWizardStep++" class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-sky-500 transition w-full sm:w-auto">
+    Continue
+  </button>
+
+
+  </div>
+</div>
+
+
   </template>
 </section>
 
