@@ -1346,7 +1346,7 @@
                                                                     <div class="w-full">
                                                                         <label
                                                                             class="block text-sm font-medium mb-1">Until</label>
-                                                                        <input type="time" id="check_out_until" value="18:00"
+                                                                        <input type="time" id="check_in_until" value="18:00"
                                                                             class="w-full border rounded p-2" />
                                                                     </div>
                                                                 </div>
@@ -1360,13 +1360,13 @@
                                                                     <div class="w-full">
                                                                         <label
                                                                             class="block text-sm font-medium mb-1">From</label>
-                                                                        <input type="time" value="08:00"
+                                                                        <input type="time" value="08:00" id="check_out_from"
                                                                             class="w-full border rounded p-2" />
                                                                     </div>
                                                                     <div class="w-full">
                                                                         <label
                                                                             class="block text-sm font-medium mb-1">Until</label>
-                                                                        <input type="time" value="11:00"
+                                                                        <input type="time" value="11:00" id="check_out_until"
                                                                             class="w-full border rounded p-2" />
                                                                     </div>
                                                                 </div>
@@ -1745,8 +1745,8 @@
                                         </template>
 
                                         <!-- Steps for 'multiple' -->
-                                        <template x-if="selected === 'multiple'" 
-                                                x-data="{ 
+                                        <template x-if="selected === 'multiple'"
+                                            x-data="{ 
                                                         currentUnit: 1, unitFacilities: Array.from({ length: propertyCount }, () => []),unitServices: Array.from({ length: 3 }, () => ({ breakfast: '', parking: '',hostprofile: '' ,languages: [], houseRules: {
                                                         smokingAllowed: false,
                                                         childrenAllowed: true,
@@ -1759,6 +1759,7 @@
                                                         }})),
                                                         address: '',
                                                         addresses:[],
+                                                        selectedAmenities: [],
                                                         unitAddresses: Array(propertyCount).fill(''),
                                                         toggleLanguage(lang) {
                                                             const index = this.unitServices[this.currentUnit - 1].languages.indexOf(lang);
@@ -1886,8 +1887,8 @@
                                                                     <!-- Shared address form -->
                                                                     <div>
                                                                         <div class="mb-4">
-                                                                                <label class="block text-sm font-medium text-gray-700">Find your address</label>
-                                                                                <input type="text" x-model="address" class="mt-1 p-2 w-full border border-gray-300 rounded" placeholder="Address" />
+                                                                            <label class="block text-sm font-medium text-gray-700">Find your address</label>
+                                                                            <input type="text" x-model="address" class="mt-1 p-2 w-full border border-gray-300 rounded" placeholder="Address" />
                                                                         </div>
                                                                     </div>
                                                                 </template>
@@ -1901,7 +1902,7 @@
                                                                             <!-- Inline address form -->
                                                                             <div class="mb-4">
                                                                                 <label class="block text-sm font-medium text-gray-700">Find your address</label>
-                                                                                <input type="text" :id="`property-address-${i - 1}`"     x-model="unitAddresses[i - 1]"  class="mt-1 p-2 w-full border border-gray-300 rounded" placeholder="Address" />
+                                                                                <input type="text" :id="`property-address-${i - 1}`" x-model="unitAddresses[i - 1]" class="mt-1 p-2 w-full border border-gray-300 rounded" placeholder="Address" />
                                                                             </div>
                                                                             <!-- Repeat other address fields as needed -->
                                                                         </div>
@@ -2015,7 +2016,7 @@
 
 
                                                 <!-- Step 5 -->
-                                                <template x-if="step === 6" >
+                                                <template x-if="step === 6">
                                                     <div>
                                                         <section class="mb-8">
                                                             <h1 class="text-xl text-gray-700 font-bold mb-4">
@@ -2038,69 +2039,17 @@
                                                                                 Select property type(s)</h3>
                                                                             <div
                                                                                 class="grid grid-cols-1 sm:grid-cols-1 gap-2 text-sm text-gray-700">
-                                                                                <label
-                                                                                    class="flex items-center space-x-2">
+                                                                                @foreach ($amenities as $amenity)
+                                                                                <label class="flex items-center space-x-2">
                                                                                     <input type="checkbox"
-                                                                                        :name="`facilities_unit_${currentUnit}[]`" :value="'Bar'" x-model="unitFacilities[currentUnit - 1]" />
-                                                                                    <span>Bar</span>
+                                                                                        :value="{{ $amenity['id'] }}"
+                                                                                        x-model="selectedAmenities"
+                                                                                        class="text-blue-500" />
+                                                                                    <span>{{ $amenity['name'] }}</span>
                                                                                 </label>
-                                                                                <label
-                                                                                    class="flex items-center space-x-2">
-                                                                                    <input type="checkbox"
-                                                                                        :name="`facilities_unit_${currentUnit}[]`" :value="'Sauna'" x-model="unitFacilities[currentUnit - 1]" />
-                                                                                    <span>Sauna</span>
-                                                                                </label>
-                                                                                <label
-                                                                                    class="flex items-center space-x-2">
-                                                                                    <input type="checkbox"
-                                                                                        :name="`facilities_unit_${currentUnit}[]`" :value="'Garden'" x-model="unitFacilities[currentUnit - 1]" />
-                                                                                    <span>Garden</span>
-                                                                                </label>
-                                                                                <label
-                                                                                    class="flex items-center space-x-2">
-                                                                                    <input type="checkbox"
-                                                                                        :name="`facilities_unit_${currentUnit}[]`" 
-                                                                                        :value="'Terrace'" 
-                                                                                        x-model="unitFacilities[currentUnit - 1]" />
-                                                                                    <span>Terrace</span>
-                                                                                </label>
-                                                                                <label
-                                                                                    class="flex items-center space-x-2">
-                                                                                    <input type="checkbox"
-                                                                                        :name="`facilities_unit_${currentUnit}[]`" 
-                                                                                        :value="'Hot tub/Jacuzzi'" 
-                                                                                        x-model="unitFacilities[currentUnit - 1]" />
-                                                                                    <span>Hot tub/Jacuzzi</span>
-                                                                                </label>
-                                                                                <label
-                                                                                    class="flex items-center space-x-2">
-                                                                                    <input type="checkbox"
-                                                                                        :name="`facilities_unit_${currentUnit}[]`"
-                                                                                        :value="'Heating'"
-                                                                                        x-model="unitFacilities[currentUnit - 1]" />
-                                                                                    <span>Heating</span>
-                                                                                </label>
-                                                                                <label
-                                                                                    class="flex items-center space-x-2">
-                                                                                    <input type="checkbox"
-                                                                                        :name="`facilities_unit_${currentUnit}[]`"
-                                                                                        :value="'WiFi'"
-                                                                                        x-model="unitFacilities[currentUnit - 1]" />
+                                                                                @endforeach
 
-                                                                                    <span>Free WiFi</span>
-                                                                                </label>
-                                                                                <label
-                                                                                    class="flex items-center space-x-2">
-                                                                                    <input type="checkbox"
-                                                                                        :name="`facilities_unit_${currentUnit}[]`" :value="'Air conditioning'" x-model="unitFacilities[currentUnit - 1]" />
-                                                                                    <span>Air conditioning</span>
-                                                                                </label>
-                                                                                <label
-                                                                                    class="flex items-center space-x-2">
-                                                                                    <input type="checkbox"
-                                                                                        :name="`facilities_unit_${currentUnit}[]`" :value="'Swimming pool'" x-model="unitFacilities[currentUnit - 1]" />
-                                                                                    <span>Swimming pool</span>
-                                                                                </label>
+
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -2269,30 +2218,30 @@
                                                                 <div class="space-y-2">
                                                                     <label class="flex items-center cursor-pointer">
                                                                         <input type="checkbox" class="mr-2"
-                                                                                :value="'English'"
-                                                                                @change="toggleLanguage('English')"
-                                                                                :checked="unitServices[currentUnit - 1]?.languages?.includes('English')" />
+                                                                            :value="'English'"
+                                                                            @change="toggleLanguage('English')"
+                                                                            :checked="unitServices[currentUnit - 1]?.languages?.includes('English')" />
                                                                         <span>English</span>
-                                                                        </label>
+                                                                    </label>
                                                                     <label class="flex items-center cursor-pointer">
                                                                         <input type="checkbox" class="mr-2"
-                                                                                :value="'Spanish'"
-                                                                                @change="toggleLanguage('Spanish')"
-                                                                                :checked="unitServices[currentUnit - 1]?.languages?.includes('Spanish')" />
+                                                                            :value="'Spanish'"
+                                                                            @change="toggleLanguage('Spanish')"
+                                                                            :checked="unitServices[currentUnit - 1]?.languages?.includes('Spanish')" />
                                                                         <span>Spanish</span>
                                                                     </label>
                                                                     <label class="flex items-center cursor-pointer">
                                                                         <input type="checkbox" class="mr-2"
-                                                                                :value="'French'"
-                                                                                @change="toggleLanguage('French')"
-                                                                                :checked="unitServices[currentUnit - 1]?.languages?.includes('French')" />
+                                                                            :value="'French'"
+                                                                            @change="toggleLanguage('French')"
+                                                                            :checked="unitServices[currentUnit - 1]?.languages?.includes('French')" />
                                                                         <span>French</span>
                                                                     </label>
                                                                     <label class="flex items-center cursor-pointer">
                                                                         <input type="checkbox" class="mr-2"
-                                                                                :value="'German'"
-                                                                                @change="toggleLanguage('German')"
-                                                                                :checked="unitServices[currentUnit - 1]?.languages?.includes('German')" />
+                                                                            :value="'German'"
+                                                                            @change="toggleLanguage('German')"
+                                                                            :checked="unitServices[currentUnit - 1]?.languages?.includes('German')" />
                                                                         <span>German</span>
                                                                     </label>
                                                                 </div>
@@ -2388,7 +2337,7 @@
                                                                 }
                                                             }
 
-                                                            
+
 
                                                             function selectLanguage(element) {
                                                                 const selected = element.textContent.trim();
@@ -2403,7 +2352,7 @@
                                                                 // clear input and hide dropdown
                                                                 document.getElementById("languageInput").value = "";
                                                                 hideDropdown();
-                                                                }
+                                                            }
 
 
                                                             function toggleDropdown() {
@@ -2479,9 +2428,9 @@
                                                                             class="flex items-center justify-between cursor-pointer">
                                                                             <span>Smoking allowed</span>
                                                                             <div class="relative">
-                                                                              <input type="checkbox"
-                                                                                class="sr-only peer"
-                                                                                x-model="unitServices[currentUnit - 1].houseRules.smokingAllowed" />
+                                                                                <input type="checkbox"
+                                                                                    class="sr-only peer"
+                                                                                    x-model="unitServices[currentUnit - 1].houseRules.smokingAllowed" />
 
                                                                                 <div
                                                                                     class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition">
@@ -2535,7 +2484,7 @@
                                                                         <div class="space-y-2">
                                                                             <label
                                                                                 class="flex items-center cursor-pointer">
-                                                                               <input type="radio" name="pets" value="yes"
+                                                                                <input type="radio" name="pets" value="yes"
                                                                                     x-model="unitServices[currentUnit - 1].houseRules.petsPolicy" />
                                                                                 <span>Yes</span>
                                                                             </label>
@@ -2547,7 +2496,7 @@
                                                                             </label>
                                                                             <label
                                                                                 class="flex items-center cursor-pointer">
-                                                                               <input type="radio" name="pets" value="no"
+                                                                                <input type="radio" name="pets" value="no"
                                                                                     x-model="unitServices[currentUnit - 1].houseRules.petsPolicy" />
                                                                                 <span>No</span>
                                                                             </label>
@@ -2694,12 +2643,12 @@
                                                             <!-- Navigation Buttons -->
                                                             <div class="mt-8 flex justify-between">
                                                                 <button type="button" @click="prevStep"
-                                                                        class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                                                                    class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
                                                                     ←
                                                                 </button>
 
                                                                 <button type="button" @click="nextStep"
-                                                                        class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
+                                                                    class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
                                                                     Continue
                                                                 </button>
                                                             </div>
@@ -2818,7 +2767,7 @@
                                                                     <!-- Continue Button -->
                                                                     <!-- Continue Button (inside input field container, aligned right) -->
                                                                     <div class="flex justify-end mt-4">
-                                                                        <button type="button" @click="console.log('Saved data:', formData); nextStep()" 
+                                                                        <button type="button" @click="console.log('Saved data:', formData); nextStep()"
                                                                             class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
                                                                             Continue
                                                                         </button>
@@ -3159,8 +3108,8 @@
                                     propertyCount: 2,
                                     totalSteps: 15,
                                     currentUnit: 1,
-                                    unitPhotos: {},             // Holds all photo arrays per unit
-                                    previewUnitPhotos: {},      // Holds base64 previews per unit
+                                    unitPhotos: {}, // Holds all photo arrays per unit
+                                    previewUnitPhotos: {}, // Holds base64 previews per unit
                                     unitFacilities: [],
                                     unitServices: [],
                                     previewFiles: [],
@@ -3260,7 +3209,7 @@
                                                 return 'Multiple Holiday parks';
                                         }
                                     },
-
+                                   
                                     async nextStep() {
                                         if ((this.step === 1 && this.selected === 'one')) {
                                             try {
@@ -3390,6 +3339,7 @@
                                                 const response = await fetch(`/partner/property/save-amenities/${this.propertyId}`, {
                                                     method: 'POST',
                                                     headers: {
+                                                        'Content-Type': 'application/json',
                                                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                                                     },
                                                     body: JSON.stringify({
@@ -3413,20 +3363,27 @@
                                             try {
                                                 const smokingAllowed = document.querySelector('#smoking_allowed').checked;
                                                 const petsValue = document.querySelector('input[name="pets_allowed"]:checked')?.value || 'no';
+                                                const partiesAllowed = document.querySelector('#parties_allowed').checked;
 
-                                                const checkInTime = document.querySelector('#check_in_from').value;
-                                                const checkOutTime = document.querySelector('#check_out_until').value;
+                                                const checkInFromTime = document.querySelector('#check_in_from').value;
+                                                const checkInUntilTime = document.querySelector('#check_in_until').value;
+                                                const checkOutFromTime = document.querySelector('#check_out_from').value;
+                                                const checkOutUntilTime = document.querySelector('#check_out_until').value;
 
                                                 const response = await fetch(`/partner/property/save-policy/${this.propertyId}`, {
                                                     method: 'POST',
                                                     headers: {
+                                                        'Content-Type': 'application/json',
                                                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                                                     },
                                                     body: JSON.stringify({
                                                         smoking_allowed: smokingAllowed,
-                                                        pets_allowed: petsValue !== 'no', // convert to boolean
-                                                        check_in_time: checkInTime,
-                                                        check_out_time: checkOutTime,
+                                                        parties_allowed: partiesAllowed,
+                                                        pets_allowed: petsValue , // convert to boolean
+                                                        check_in_from: checkInFromTime,
+                                                        check_in_until: checkInUntilTime,
+                                                        check_out_from: checkOutFromTime,
+                                                        check_out_until: checkOutUntilTime,
                                                         cancellation_policy: 'flexible', // hardcoded for now; you can make this dynamic
                                                         property_id: this.propertyId
                                                     }),
@@ -3510,9 +3467,95 @@
                                                     console.error('Error:', error);
                                                 });
                                         } else if (this.step === 4 && this.selected === 'multiple') {
-                                             if (this.sameAddress === 'yes') {
+                                            if (this.sameAddress === 'yes') {
                                                 console.log('Saving same address for all properties with ID:', this.propertyId);
                                                 fetch('/property/save-address-same', {
+                                                        method: 'POST',
+                                                        headers: {
+                                                            'Content-Type': 'application/json',
+                                                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                        },
+                                                        body: JSON.stringify({
+                                                            property_id: this.propertyId,
+                                                            count: this.propertyCount,
+                                                            address: this.address
+                                                        })
+                                                    })
+                                                    .then(res => res.json())
+                                                    .then(data => {
+                                                        console.log('Saved:', data);
+                                                        this.step++;
+                                                    });
+                                            } else {
+                                                // Different address for each property
+                                                console.log('Saving multiple addresses for properties with ID:', this.propertyId);
+                                                const allAddresses = Array.from({
+                                                    length: this.propertyCount
+                                                }, (_, i) => {
+                                                    const input = document.querySelector(`#property-address-${i}`);
+                                                    return input ? input.value : '';
+                                                });
+
+                                                fetch('/property/save-address-multiple', {
+                                                        method: 'POST',
+                                                        headers: {
+                                                            'Content-Type': 'application/json',
+                                                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                        },
+                                                        body: JSON.stringify({
+                                                            first_property_id: this.propertyId,
+                                                            addresses: allAddresses
+                                                        })
+                                                    })
+                                                    .then(res => res.json())
+                                                    .then(data => {
+                                                        alert('Addresses saved successfully');
+                                                        console.log('Saved Multiple:', data);
+                                                        this.step++;
+                                                    });
+                                            }
+                                        } else if (this.step === 6 && this.selected === 'multiple') {
+                                            console.log('Saving amenities for property ID:', this.propertyId);
+                                            console.log('currentUnit:', this.currentUnit);
+                                            console.log('propertyCount:', this.propertyCount);
+                                            if (this.currentUnit < this.propertyCount) {
+                                                const currentPropertyId = this.propertyId + this.currentUnit-1;
+
+                                                console.log('Saving amenities for unit:', this.currentUnit);
+
+                                                fetch(`/save-amenities/${currentPropertyId}`, {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                    },
+                                                    body: JSON.stringify({
+                                                        property_id: currentPropertyId,
+                                                        amenities: this.selectedAmenities
+                                                    })
+                                                })
+                                                .then(response => response.json())
+                                                .then(data => {
+                                                    if (data.success) {
+                                                        console.log("Amenities saved for property " + currentPropertyId);
+                                                        this.currentUnit++;
+                                                        this.step--;                                                     
+                                                    } 
+                                                    else {
+                                                        console.error("Error:", data.message);
+                                                        alert("Failed to save amenities.");
+                                                    }
+                                                })
+                                                .catch(error => {
+                                                    console.error("Fetch error:", error);
+                                                });
+
+                                                // Repeat for next unit
+                                            }       
+                                            else {
+                                                console.log('Saving amenities for last unit:', this.currentUnit);
+                                                const currentPropertyId = this.propertyId +1;
+                                                fetch(`/save-amenities/${currentPropertyId}`, {
                                                     method: 'POST',
                                                     headers: {
                                                         'Content-Type': 'application/json',
@@ -3520,48 +3563,28 @@
                                                     },
                                                     body: JSON.stringify({
                                                         property_id: this.propertyId,
-                                                        count: this.propertyCount,
-                                                        address: this.address
+                                                        amenities: this.selectedAmenities
                                                     })
                                                 })
-                                                .then(res => res.json())
+                                                .then(response => response.json())
                                                 .then(data => {
-                                                    console.log('Saved:', data);
-                                                    this.step++ ;
-                                                });
-                                            } else {
-                                                // Different address for each property
-                                                console.log('Saving multiple addresses for properties with ID:', this.propertyId);
-                                                const allAddresses = Array.from({ length: this.propertyCount }, (_, i) => {
-                                                    const input = document.querySelector(`#property-address-${i}`);
-                                                    return input ? input.value : '';
-                                                });
-
-                                                fetch('/property/save-address-multiple', {
-                                                    method: 'POST',
-                                                    headers: {
-                                                        'Content-Type': 'application/json',
-                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                                                    },
-                                                    body: JSON.stringify({
-                                                        first_property_id: this.propertyId,
-                                                        addresses: allAddresses
-                                                    })
+                                                    if (data.success) {
+                                                        console.log("Amenities saved for property " +currentPropertyId);
+                                                        this.step++;
+                                                    } else {
+                                                        console.error("Error:", data.message);
+                                                        alert("Failed to save amenities.");
+                                                    }
                                                 })
-                                                .then(res => res.json())
-                                                .then(data => {
-                                                    alert('Addresses saved successfully');
-                                                    console.log('Saved Multiple:', data);
-                                                    this.step++;
+                                                .catch(error => {
+                                                    console.error("Fetch error:", error);
                                                 });
                                             }
-                                        }else if (this.step === 12 && this.selected === 'multiple') {
+                                        } else if (this.step === 12 && this.selected === 'multiple') {
                                             if (this.currentUnit < this.propertyCount) {
-                                                console.log('Saving unit services for property ID:', this.propertyId);
-                                                console.log('Property Count:', this.propertyCount);
-                                                console.log(JSON.stringify(this.unitServices, null, 2));
+                                               
                                                 this.currentUnit++;
-                                                this.step = 6; // Repeat for next unit
+                                                this.step = 7; // Repeat for next unit
                                             } else {
                                                 this.step++;
                                             }

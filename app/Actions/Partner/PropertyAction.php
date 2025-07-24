@@ -12,6 +12,10 @@ use Illuminate\Support\Facades\Auth;
 use App\DTOs\Partner\PropertyStep1DTO;
 use App\DTOs\Partner\PropertyStep2DTO;
 use Illuminate\Support\Facades\Log;
+use App\DTOs\Partner\UploadPropertyPhotosDTO;
+use App\Services\FileUploadService;
+use App\DTOs\Partner\SaveAmenitiesDTO;
+use App\DTOs\Partner\SavePolicyDTO;
 
 class PropertyAction
 {
@@ -159,4 +163,34 @@ class PropertyAction
     {
         $property->amenities()->sync($amenityIds);
     }
+
+    public function uploadPhotos(UploadPropertyPhotosDTO $dto, FileUploadService $fileUploadService): void
+    {
+        $property_type = Property::find($dto->property_id)?->subtype_id ?? 'Property';
+
+        foreach ($dto->photos as $photo) {
+            $fileUploadService->uploadAndSave(
+                file: $photo,
+                fileType: 'image',
+                propertyType: PropertySubtype::find($property_type)?->name ?? 'Property',
+                propertyId: $dto->property_id,
+                directory: 'property_photos'
+            );
+        }
+    }
+
+    public function saveAmenities(Property $property, SaveAmenitiesDTO $dto): void
+    {
+        $property->amenities()->sync($dto->amenities);
+    }
+
+
+    public function savePolicy(Property $property, SavePolicyDTO $dto): void
+    {
+        $property->policies()->updateOrCreate(
+            ['property_id' => $property->id],
+            $dto->toArray()
+        );
+    }
+
 }

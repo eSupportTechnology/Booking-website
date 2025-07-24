@@ -369,7 +369,7 @@ Route::prefix('partner')->group(function () {
     Route::get('/languages', [\App\Http\Controllers\PropertyController::class, 'getLanguages'])->name('partner.languages.get');
     Route::post('/property/save-additional-details', [PropertyController::class, 'saveAdditionalDetails'])->name('partner.property.save-additional-details');
 });
-
+Route::post('/save-amenities/{property}', [PropertyController::class, 'saveAmenities']);
 Route::post('/property/save-address-same', [PropertyController::class, 'saveAddressSame']);
 Route::post('/property/save-address-multiple', [PropertyController::class, 'saveAddressMultiple']);
 Route::get('/partner/login', [LoginController::class, 'show'])->name('partner.login');
