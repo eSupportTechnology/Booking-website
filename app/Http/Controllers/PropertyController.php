@@ -23,9 +23,11 @@ use App\DTOs\Partner\SavePolicyDTO;
 use App\DTOs\Partner\SaveRoomsDTO;
 use App\DTOs\Partner\UploadPropertyPhotosDTO;
 use App\DTOs\Partner\PartnerVerificationDTO;
+use App\DTOs\Partner\SaveAddressSameDTO;
 use App\Models\Room;
 use App\Models\PartnerVerification;
 use App\Models\Language;
+use Faker\Provider\ar_EG\Address;
 
 class PropertyController extends Controller
 {
@@ -527,32 +529,14 @@ class PropertyController extends Controller
         }
     }
 
-    public function saveAddressSame(Request $request)
+    public function saveAddressSame(Request $request, PropertyAction $propertyAction)
     {
         try {
-            Log::info('saveAddressSame called', [
-                'request' => $request->all(),
-            ]);
-            $validated = $request->validate([
-                'property_id' => 'required|exists:properties,id',
-                'count' => 'required|integer|min:1',
-                'address' => 'required|string|max:255',
-            ]);
+            Log::info('saveAddressSame called', ['request' => $request->all()]);
 
-            $existingProperty = Property::findOrFail($validated['property_id']);
-            Property::findOrFail($validated['property_id'])->update([
-                'address' => $validated['address'],
-            ]);
+            $dto = SaveAddressSameDTO::fromRequest($request);
 
-            for ($i = 1; $i < $validated['count']; $i++) {
-                Property::create([
-                    'user_id' => Auth::id(),
-                    'category_id' => $existingProperty->category_id,
-                    'subcategory_id' => $existingProperty->subcategory_id,
-                    'subtype_id' => $existingProperty->subtype_id,
-                    'address' => $validated['address'],
-                ]);
-            }
+            $propertyAction->saveSameAddress($dto);
 
             return response()->json([
                 'success' => true,
