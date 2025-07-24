@@ -132,6 +132,7 @@
           address: '{{ old('address', $property->address ?? '') }}',
           city: '{{ old('city', $property->city ?? '') }}',
           country: 'Sri Lanka', // <-- Set the default value!
+          apartment: '',
           zipcode: '{{ old('zipcode', $property->zipcode ?? '') }}',
           description: '{{ old('description', $property->description ?? '') }}',
           channelManager: 'yes', // or 'no' as default
@@ -232,7 +233,7 @@
               const payload = {
                   title: this.title,
                   address: this.address,
-                  apartment: this.apartment || null,
+                  apartment:  null,
                   city: this.city,
                   country: this.country,
                   zipcode: this.zipcode,
@@ -1019,6 +1020,7 @@ savePricing() {
                           id="apartment"
                           name="apartment"
                           x-model="apartment"
+                          placeholder="Apartment or floor number (optional)"
                           class="mt-1 p-2 w-full border border-gray-300 rounded"
                         />
                       </div>
@@ -2192,7 +2194,8 @@ savePricing() {
   <!-- Input Field -->
   <input
     type="text"
-    x-model="pricing.price_per_night
+    x-model="pricing.price_per_night"
+    name="price_per_night"
     value="120.00"
     class="w-full border border-gray-400 rounded-md p-2 pl-16 text-gray-700 font-semibold focus:ring-2 focus:ring-blue-300 focus:outline-none"
   />
