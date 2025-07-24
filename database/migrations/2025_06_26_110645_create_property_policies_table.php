@@ -11,10 +11,14 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('property_id')->constrained('properties');
             $table->enum('cancellation_policy', ['flexible', 'moderate', 'strict']);
-            $table->time('check_in_time');
-            $table->time('check_out_time');
+            $table->time('check_in_from');
+            $table->time('check_in_until');
+            $table->time('check_out_from');
+            $table->time('check_out_until');
             $table->boolean('smoking_allowed')->default(false);
-            $table->boolean('pets_allowed')->default(false);
+            $table->boolean('parties_allowed')->default(false);
+            $table->string('pets_allowed')->nullable();
+            $table->string('pets_fees')->nullable();
         });
     }
 

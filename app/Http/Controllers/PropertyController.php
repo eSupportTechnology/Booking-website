@@ -222,7 +222,7 @@ class PropertyController extends Controller
         Log::info('updatePartial called', ['request' => $request->all(), 'property_id' => $property->id]);
         try {
             $dataToUpdate = $request->except(['bedrooms']); // Exclude bedrooms from the main property update if they are handled separately
-    
+
             // Update additional details if they exist in the request
             if ($request->hasAny(['guests', 'bathrooms', 'allow_children', 'offer_cribs', 'apartment_size', 'apartment_unit'])) {
                 $additionalDetailsData = [
@@ -233,12 +233,12 @@ class PropertyController extends Controller
                     'apartment_size' => $request->input('apartment_size'),
                     'apartment_unit' => $request->input('apartment_unit'),
                 ];
-    
+
                 $property->additionalDetails()->updateOrCreate(
                     ['property_id' => $property->id],
                     $additionalDetailsData
                 );
-    
+
                 // Remove these keys from dataToUpdate to avoid errors in the action
                 unset(
                     $dataToUpdate['guests'],
@@ -249,7 +249,7 @@ class PropertyController extends Controller
                     $dataToUpdate['apartment_unit']
                 );
             }
-    
+
             $bedrooms = $request->has('bedrooms') && is_array($request->bedrooms) ? $request->bedrooms : null;
             $updatedProperty = $action->updatePropertyPartial($property, $dataToUpdate, $bedrooms);
             Log::info('Property after update', $updatedProperty->toArray());
@@ -358,24 +358,56 @@ class PropertyController extends Controller
     }
 
 
-    public function savePolicy(Request $request, \App\Models\Property $property)
+    public function savePolicy(Request $request, Property $property)
     {
-        $data = json_decode($request->getContent(), true);
-        Log::info('Raw request data for policy', $data);
-        $validated = validator($data, [
-            'check_in_time' => 'required|date_format:H:i',
-            'check_out_time' => 'required|date_format:H:i',
-            'smoking_allowed' => 'required|boolean',
-            'pets_allowed' => 'required|boolean',
-            'cancellation_policy' => 'required|in:flexible,moderate,strict'
-        ])->validate();
+        // Log the incoming request data
+        Log::info('savePolicy called', [
+            'property_id' => $property->id,
+            'request' => $request->all(),
+        ]);
 
-        $property->policies()->updateOrCreate(
-            ['property_id' => $property->id],
-            $validated
-        );
+        try {
+            $validated = $request->validate([
+                'smoking_allowed' => 'required|boolean',
+                'parties_allowed' => 'required|boolean',
+                'pets_allowed' => 'required|string',
+                'pets_fees' => 'required|string',
+                'check_in_from' => 'required',
+                'check_in_until' => 'required',
+                'check_out_from' => 'required',
+                'check_out_until' => 'required',
+                'cancellation_policy' => 'required|in:flexible,moderate,strict',
+            ]);
 
-        return response()->json(['success' => true]);
+            // Log the validated data
+            Log::info('savePolicy validated', $validated);
+
+            $policy = $property->policies()->updateOrCreate(
+                ['property_id' => $property->id],
+                [
+                    'smoking_allowed' => $validated['smoking_allowed'],
+                    'parties_allowed' => $validated['parties_allowed'],
+                    'pets_allowed' => $validated['pets_allowed'],
+                    'pets_fees' => $validated['pets_fees'],
+                    'check_in_from' => $validated['check_in_from'],
+                    'check_in_until' => $validated['check_in_until'],
+                    'check_out_from' => $validated['check_out_from'],
+                    'check_out_until' => $validated['check_out_until'],
+                    'cancellation_policy' => $validated['cancellation_policy'],
+                ]
+            );
+
+            // Log the policy after save
+            Log::info('savePolicy policy after save', $policy->toArray());
+
+            return response()->json(['success' => true, 'message' => 'Policy saved']);
+        } catch (\Exception $e) {
+            Log::error('savePolicy error', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
     }
 
     public function saveRooms(Request $request)
@@ -436,19 +468,19 @@ class PropertyController extends Controller
                 'company_name' => 'nullable|string',
                 'registration_number' => 'nullable|string',
             ]);
-    
+
             PartnerVerification::updateOrCreate(
                 ['property_id' => $validated['property_id']],
                 $validated
             );
-    
+
             return response()->json(['message' => 'Partner verification saved successfully']);
         } catch (\Exception $e) {
             Log::error('Error saving partner verification', [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
-            return response()->json(['error' => $e ->getMessage()], 500);
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
@@ -458,9 +490,8 @@ class PropertyController extends Controller
         return view('partner.partner-apartments-bedrooms', [
             'propertyId' => $property,
         ]);
-        
     }
-    
+
     public function saveBedroom(Request $request, Property $property)
     {
         $validated = $request->validate([
@@ -568,6 +599,142 @@ class PropertyController extends Controller
                 'success' => false,
                 'message' => $e->getMessage()
             ], 500);
+        }
+    }
+
+    public function saveAddressSame(Request $request)
+    {
+        try {
+            Log::info('saveAddressSame called', [
+                'request' => $request->all(),
+            ]);
+            $validated = $request->validate([
+                'property_id' => 'required|exists:properties,id',
+                'count' => 'required|integer|min:1',
+                'address' => 'required|string|max:255',
+            ]);
+
+            $existingProperty = Property::findOrFail($validated['property_id']);
+            Property::findOrFail($validated['property_id'])->update([
+                'address' => $validated['address'],
+            ]);
+
+            for ($i = 1; $i < $validated['count']; $i++) {
+                Property::create([
+                    'user_id' => Auth::id(),
+                    'category_id' => $existingProperty->category_id,
+                    'subcategory_id' => $existingProperty->subcategory_id,
+                    'subtype_id' => $existingProperty->subtype_id,
+                    'address' => $validated['address'],
+                ]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Address saved successfully.',
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error saving same address', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function saveAddressMultiple(Request $request)
+    {
+        $validated = $request->validate([
+            'first_property_id' => 'required|exists:properties,id',
+            'addresses' => 'required|array',
+        ]);
+
+        $addresses = $validated['addresses'];
+
+        Property::findOrFail($validated['first_property_id'])->update([
+            'address' => $addresses[0]
+        ]);
+
+        for ($i = 1; $i < count($addresses); $i++) {
+            Property::create([
+                'address' => $addresses[$i],
+                'category_id' => session('category_id'),
+                'subcategory_id' => session('subcategory_id'),
+                'apartment_type' => session('apartment_type'),
+                // other required fields...
+            ]);
+        }
+
+        return response()->json(['message' => 'Multiple addresses saved']);
+    }
+
+    public function saveHostProfile(Request $request, Property $property)
+    {
+        try {
+            $validated = $request->validate([
+                'property_id' => 'required|exists:properties,id',
+                'about_property' => 'nullable|string|max:1000',
+                'about_host' => 'nullable|string|max:1000',
+                'about_neighborhood' => 'nullable|string|max:1000',
+                'show_property' => 'boolean',
+                'show_host' => 'boolean',
+                'show_neighborhood' => 'boolean',
+                'none_selected' => 'boolean',
+                'host_name' => 'nullable|string|max:255'
+            ]);
+
+            $property->hostProfile()->updateOrCreate(
+                ['property_id' => $property->id],
+                $validated
+            );
+
+            Log::info('Host profile saved successfully', ['property_id' => $property->id, 'data' => $validated]);
+
+            return response()->json(['success' => true, 'message' => 'Host profile saved successfully']);
+        } catch (\Exception $e) {
+            Log::error('Error saving host profile', ['error' => $e->getMessage(), 'property_id' => $property->id]);
+            return response()->json(['success' => false, 'message' => 'Error saving host profile: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function savePricing(Request $request, Property $property)
+    {
+        Log::info('savePricing called', [
+            'property_id' => $property->id,
+            'request_data' => $request->all()
+        ]);
+        try {
+            $validated = $request->validate([
+                'property_id' => 'required|exists:properties,id',
+                'booking_type' => 'required|in:instant,request',
+                'price_per_night' => 'nullable|numeric|min:0',
+                'currency' => 'required|in:usd,eur,gbp',
+                'discount_enabled' => 'boolean',
+                'discount_percent' => 'nullable|integer|min:0|max:100'
+            ]);
+            Log::info('savePricing validated data', [
+                'property_id' => $property->id,
+                'validated' => $validated
+            ]);
+            Log::info('Before updateOrCreate', [
+                'property_id' => $property->id
+            ]);
+            $property->pricing()->updateOrCreate(
+                ['property_id' => $property->id],
+                $validated
+            );
+            Log::info('After updateOrCreate', [
+                'property_id' => $property->id
+            ]);
+            Log::info('Pricing saved successfully', ['property_id' => $property->id, 'data' => $validated]);
+            return response()->json(['success' => true, 'message' => 'Pricing saved successfully']);
+        } catch (\Exception $e) {
+            Log::error('Error saving pricing', [
+                'error' => $e->getMessage(),
+                'property_id' => $property->id,
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json(['success' => false, 'message' => 'Error saving pricing: ' . $e->getMessage()], 500);
         }
     }
 }
