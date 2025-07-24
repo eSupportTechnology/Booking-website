@@ -257,89 +257,83 @@
                                                     </div>
     </template>
     <template x-if="step === 3">
-      <div>
-                                                        <div class="max-w-5xl mx-auto px-4 py-8">
-                                                            <h1 class="text-2xl font-bold mb-4 mt-4">Connect to a
-                                                                channel manager</h1>
+     <div>
+            <section class="mb-12" x-data="{ channelManager: 'yes' }">
+                <div class="max-w-5xl mx-auto px-4 py-8">
+                    <h1 class="text-2xl font-bold mb-4 mt-4">Connect to a channel manager</h1>
 
-                                                            <!-- Question Section -->
-                                                            <div
-                                                                class="bg-white p-4 max-w-2xl border border-gray-200 rounded mb-8">
-                                                                <h2 class="text-lg font-semibold mb-2">
-                                                                    Do you want to connect this listing to your channel
-                                                                    manager?
-                                                                </h2>
-                                                                <p class="text-gray-700 mb-6">
-                                                                    A channel manager is a third-party tool that lets
-                                                                    you manage rates and availability across different
-                                                                    sites you might list your place on, including
-                                                                    {{ config('domains.subdomain') }}. If you're already using a channel
-                                                                    manager, you can select 'Yes' to connect it to your
-                                                                    listing.
-                                                                </p>
+                    <!-- Question Section -->
+                    <div class="bg-white p-4 max-w-2xl border border-gray-200 rounded mb-8">
+                        <h2 class="text-lg font-semibold mb-2">
+                            Do you want to connect this listing to your channel manager?
+                        </h2>
+                        <p class="text-gray-700 mb-6">
+                            A channel manager is a third-party tool that lets you manage rates and availability across
+                            different sites you might list your place on, including {{ config('domains.subdomain') }}. If you're already using
+                            a channel manager, you can select 'Yes' to connect it to your listing.
+                        </p>
 
-                                                                <!-- Radio Buttons -->
-                                                                <div
-                                                                    class="bg-white p-4 border border-gray-200 rounded mb-8 space-y-4">
-                                                                    <!-- Yes Option -->
-                                                                    <div>
-                                                                        <input type="radio" id="yes"
-                                                                            name="channel_manager" value="yes"
-                                                                            class="mr-2" x-model="channelManager">
-                                                                        <label for="yes" class="text-gray-700">
-                                                                            Yes, I will connect this listing to my
-                                                                            channel manager
-                                                                        </label>
-                                                                    </div>
 
-                                                                    <!-- Tooltip only if Yes is selected -->
-                                                                    <div x-show="channelManager === 'yes'"
-                                                                        x-transition>
-                                                                        <div
-                                                                            class="bg-red-100 border border-red-300 rounded p-2 mt-2">
-                                                                            <div
-                                                                                class="flex items-start text-sm text-red-700 space-x-2">
-                                                                                <img src="{{ asset('assets/material-symbols-light_info-outline (2).svg') }}"
-                                                                                    alt="Help"
-                                                                                    class="w-5 h-5 md:w-6 md:h-6 mt-1" />
-                                                                                <p>
-                                                                                    Select 'Yes' only if you are already
-                                                                                    using a channel manager.
-                                                                                    You'll be able to connect your
-                                                                                    channel manager after your
-                                                                                    registration is complete – please
-                                                                                    continue to the next step.
-                                                                                </p>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
+                        <!-- Radio Buttons -->
+                        <div class="bg-white p-4 border border-gray-200 rounded mb-8 space-y-4">
+                            <!-- Yes Option -->
+                            <div>
+                                <input type="radio" id="yes" name="channel_manager" value="yes"
+                                    class="mr-2" x-model="channelManager">
+                                <label for="yes" class="text-gray-700">
+                                    Yes, I will connect this listing to my channel manager
+                                </label>
+                            </div>
 
-                                                                    <!-- No Option -->
-                                                                    <div>
-                                                                        <input type="radio" id="no"
-                                                                            name="channel_manager" value="no"
-                                                                            class="mr-2" x-model="channelManager">
-                                                                        <label for="no" class="text-gray-700">
-                                                                            No, I won't be using a channel manager at
-                                                                            this time
-                                                                        </label>
-                                                                    </div>
-                                                                </div>
+                            <!-- Tooltip only if Yes is selected -->
+                            <div x-show="channelManager === 'yes'" x-transition>
+                                <div class="bg-red-100 border border-red-300 rounded p-2">
+                                    <div class="flex items-start text-sm text-red-700 space-x-2">
+                                        <!-- Inline icon -->
+                                        <img src="{{ asset('assets/material-symbols-light_info-outline (2).svg') }}"
+                                            alt="Help" class="w-5 h-5 md:w-6 md:h-6 mt-1" />
 
-                                                                <!-- Buttons -->
-                                                                <div class="flex justify-between mt-6">
-                                                                    <button type="button"  @click="step = Math.max(step - 1, 1)"
-                                                                        class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
-                                                                        ←
-                                                                    </button>
-                                                                    <button type="button"     @click="step = Math.min(step + 1, 13)"
-                                                                        class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
-                                                                        Continue
-                                                                    </button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                        <!-- Text block -->
+                                        <p>
+                                            Select 'Yes' only if you are already using a channel manager.
+                                            You'll be able to connect your channel manager after your registration is
+                                            complete – please continue to the next step.
+                                        </p>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <!-- No Option -->
+                            <div>
+                                <input type="radio" id="no" name="channel_manager" value="no"
+                                    class="mr-2" x-model="channelManager">
+                                <label for="no" class="text-gray-700">
+                                    No, I won't be using a channel manager at this time
+                                </label>
+                            </div>
+                        </div>
+                        <div class="flex justify-between mt-6">
+                            <!-- Back Button (Left) -->
+
+                            <button type="button" @click="step = Math.max(step - 1, 1)"
+                                :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
+                                class="border border-[#3CC0E9]  text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
+                                ←
+                            </button>
+
+
+                            <!-- Continue Button (Right) -->
+                            <button type="submit"  @click="step = Math.min(step + 1, 13)"
+                                :class="step === 9 ? 'opacity-50 cursor-not-allowed' : 'bg-[#3CC0E9] hover:bg-sky-500'"
+                                :disabled="step === 9"
+                                class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300">
+                                Continue
+                            </button>
+                        </div>
+                    </div>
+            </section>
+        </div>
 </template>
 <template x-if="step === 4">
    <div>
@@ -494,7 +488,7 @@
                                                                     ←
                                                                 </button>
                                                                 <button type="button"     @click="step = Math.min(step + 1, 13)"
-                                                                    class="px-4 py-3 bg-[#3CC0E9] font-semibold  text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ml-[290px]">
+                                                                    class="px-4 py-3 bg-[#3CC0E9] font-semibold  text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ml-[330px]">
                                                                     Continue
                                                                 </button>
                                                             </div>
@@ -503,86 +497,199 @@
                                                     </div>
 </template>
 <template x-if="step === 5">
-      <div>
-                                                        <div class="container mx-auto px-4 py-4 max-w-6xl mb-8">
+    <div x-data="{
+            servesBreakfast: false,
+            breakfastIncluded: '',
+            selectedBreakfasts: [],
+            breakfastPrice: '',
+            breakfastOptions: ['À la carte', 'American', 'Asian', 'Breakfast to go', 'Buffet', 'Continental', 'Full English/Irish', 'Gluten-free', 'Halal', 'Italian', 'Kosher', 'Vegan', 'Vegetarian'],
+            toggleBreakfastOption(option) {
+                if (this.selectedBreakfasts.includes(option)) {
+                    this.selectedBreakfasts = this.selectedBreakfasts.filter(o => o !== option);
+                } else {
+                    this.selectedBreakfasts.push(option);
+                }
+            }
+        }"
+        class="container mx-auto px-4 py-4 max-w-6xl mb-8">
 
-                                                            <!-- Header -->
-                                                            <h2
-                                                                class="text-2xl font-bold mb-4 text-left ml-6 max-w-xl">
-                                                                Services at your property
-                                                            </h2>
+        <!-- Header -->
+        <h2 class="text-2xl font-bold mb-4 text-left ml-6 max-w-xl">
+            Services at your property
+        </h2>
 
-                                                            <!-- Sections stacked vertically, aligned with header -->
-                                                            <div class="max-w-xl ml-6 flex flex-col space-y-8">
-                                                                <!-- Breakfast Section -->
-                                                                <div class="bg-white shadow-md rounded-lg p-6">
-                                                                    <h3 class="text-lg  mb-4 font-bold">Breakfast</h3>
-                                                                    <hr class="border-gray-300 mb-4" />
-                                                                    <p class="text-gray-700 mb-2 font-bold text-base">
-                                                                        Do you serve guests breakfast?
-                                                                    </p>
-                                                                    <div class="space-y-2">
-                                                                        <label
-                                                                            class="flex items-center cursor-pointer">
-                                                                            <input type="radio" name="breakfast"
-                                                                                value="yes" class="mr-2" />
-                                                                            <span>Yes</span>
-                                                                        </label>
-                                                                        <label
-                                                                            class="flex items-center cursor-pointer">
-                                                                            <input type="radio" name="breakfast"
-                                                                                value="no" class="mr-2"
-                                                                                checked />
-                                                                            <span>No</span>
-                                                                        </label>
-                                                                    </div>
-                                                                </div>
+        <!-- Sections stacked vertically -->
+        <div class="max-w-xl ml-6 flex flex-col space-y-8">
 
-                                                                <!-- Parking Section -->
-                                                                <div class="bg-white shadow-md rounded-lg p-6">
-                                                                    <h3 class="text-lg  mb-4 font-bold">Parking</h3>
-                                                                    <hr class="border-gray-300 mb-4" />
-                                                                    <p class="text-gray-700 mb-2 font-bold">
-                                                                        Is parking available to guests?
-                                                                    </p>
-                                                                    <div class="space-y-2">
-                                                                        <label
-                                                                            class="flex items-center cursor-pointer">
-                                                                            <input type="radio" name="parking"
-                                                                                value="free" class="mr-2" />
-                                                                            <span>Yes, free</span>
-                                                                        </label>
-                                                                        <label
-                                                                            class="flex items-center cursor-pointer">
-                                                                            <input type="radio" name="parking"
-                                                                                value="paid" class="mr-2" />
-                                                                            <span>Yes, paid</span>
-                                                                        </label>
-                                                                        <label
-                                                                            class="flex items-center cursor-pointer">
-                                                                            <input type="radio" name="parking"
-                                                                                value="no" class="mr-2"
-                                                                                checked />
-                                                                            <span>No</span>
-                                                                        </label>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
+            <!-- Breakfast Section -->
+            <div class="bg-white shadow-md rounded-lg p-6">
+                <h3 class="text-lg mb-4 font-bold">Breakfast</h3>
+                <hr class="border-gray-300 mb-4" />
 
-                                                            <!-- Navigation Buttons below sections -->
-                                                            <div class="mt-8 flex justify-between max-w-xl ml-6">
-                                                                <button type="button"  @click="step = Math.max(step - 1, 1)"
-                                                                    class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
-                                                                    ←
-                                                                </button>
-                                                                <button type="button"     @click="step = Math.min(step + 1, 13)"
-                                                                    class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
-                                                                    Continue
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                <!-- Serve breakfast -->
+                <p class="text-gray-700 mb-2 font-bold text-base">
+                    Do you serve guests breakfast?
+                </p>
+                <div class="space-y-2">
+                    <label class="flex items-center cursor-pointer">
+                        <input type="radio" name="breakfast" value="yes" class="mr-2"
+                            @click="servesBreakfast = true" />
+                        <span>Yes</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer">
+                        <input type="radio" name="breakfast" value="no" class="mr-2"
+                            checked @click="servesBreakfast = false; breakfastIncluded=''; selectedBreakfasts=[]; breakfastPrice=''" />
+                        <span>No</span>
+                    </label>
+                </div>
+
+                <!-- Include in price -->
+                <div x-show="servesBreakfast" x-transition class="mt-6">
+                    <p class="text-gray-700 mb-2 font-bold text-base">
+                        Is breakfast included in the price guests pay?
+                    </p>
+                    <div class="space-y-2">
+                        <label class="flex items-center cursor-pointer">
+                            <input type="radio" name="breakfast_included" value="included" class="mr-2"
+                                @click="breakfastIncluded = 'included'" />
+                            <span>Yes, it's included</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="radio" name="breakfast_included" value="extra" class="mr-2"
+                                @click="breakfastIncluded = 'extra'" />
+                            <span>No, it costs extra</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Breakfast price -->
+                <div x-show="servesBreakfast && breakfastIncluded === 'extra'" x-transition class="mt-6">
+                    <p class="text-gray-700 mb-2 font-bold text-base">
+                        Breakfast price per person, per day
+                    </p>
+                    <input type="text" x-model="breakfastPrice"
+                        class="border border-gray-300 px-3 py-2 rounded w-full mb-1" placeholder="US$" />
+                    <p class="text-sm text-gray-500">Including all fees and taxes</p>
+                </div>
+
+                <!-- Type of breakfast -->
+                <div x-show="servesBreakfast" x-transition class="mt-6">
+                    <p class="text-gray-700 mb-2 font-bold text-base">
+                        What type of breakfast do you offer?
+                    </p>
+                    <p class="text-sm text-gray-500 mb-2">Select all that apply</p>
+                    <div class="flex flex-wrap gap-2">
+                        <template x-for="option in breakfastOptions" :key="option">
+                            <button type="button"
+                                @click="toggleBreakfastOption(option)"
+                                :class="selectedBreakfasts.includes(option) ? 'bg-blue-100 border-blue-500 text-blue-700' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
+                                class="border px-3 py-1 rounded-full text-sm flex items-center space-x-1 transition">
+                                <span x-text="option"></span>
+                                <template x-if="selectedBreakfasts.includes(option)">
+                                    <span class="ml-1 font-bold text-lg leading-none">×</span>
+                                </template>
+                            </button>
+                        </template>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Parking Section -->
+<div x-data="{ parking: 'no' }" class="container bg-white mx-auto px-4 py-4 max-w-6xl mb-8">
+    <h3 class="text-lg mb-4 font-bold">Parking</h3>
+    <hr class="border-gray-300 mb-4" />
+
+    <!-- Main Question -->
+    <p class="text-gray-700 mb-2 font-bold">
+        Is parking available to guests?
+    </p>
+    <div class="space-y-2 mb-4">
+        <label class="flex items-center cursor-pointer">
+            <input type="radio" name="parking" value="free" x-model="parking" class="mr-2" />
+            <span>Yes, free</span>
+        </label>
+        <label class="flex items-center cursor-pointer">
+            <input type="radio" name="parking" value="paid" x-model="parking" class="mr-2" />
+            <span>Yes, paid</span>
+        </label>
+        <label class="flex items-center cursor-pointer">
+            <input type="radio" name="parking" value="no" x-model="parking" class="mr-2" />
+            <span>No</span>
+        </label>
+    </div>
+
+    <!-- Extra Fields for Free or Paid Parking -->
+    <div x-show="parking === 'free' || parking === 'paid'" x-transition class="space-y-4">
+        <!-- Reservation Needed -->
+        <div>
+            <p class="text-gray-700 font-semibold mb-1">Do they need to reserve a parking spot?</p>
+            <div class="space-y-2">
+                <label class="flex items-center">
+                    <input type="radio" name="reservation_needed" value="yes" class="mr-2" />
+                    <span>Reservation needed</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="reservation_needed" value="no" class="mr-2" />
+                    <span>No reservation needed</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Parking Location -->
+        <div>
+            <p class="text-gray-700 font-semibold mb-1">Where is the parking located?</p>
+            <div class="space-y-2">
+                <label class="flex items-center">
+                    <input type="radio" name="location" value="on_site" class="mr-2" />
+                    <span>On site</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="location" value="off_site" class="mr-2" />
+                    <span>Off site</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Parking Type -->
+        <div>
+            <p class="text-gray-700 font-semibold mb-1">What type of parking is it?</p>
+            <div class="space-y-2">
+                <label class="flex items-center">
+                    <input type="radio" name="type" value="private" class="mr-2" />
+                    <span>Private</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="type" value="public" class="mr-2" />
+                    <span>Public</span>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Paid Parking - Cost Input -->
+    <div x-show="parking === 'paid'" x-transition class="mt-4">
+        <label class="block text-gray-700 font-semibold mb-1">How much does parking cost?</label>
+        <input type="text" name="cost" placeholder="e.g., $10 per day" class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+    </div>
+</div>
+
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="mt-8 flex justify-between max-w-xl ml-6">
+            <button type="button" @click="step = Math.max(step - 1, 1)"
+                class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                ←
+            </button>
+            <button type="button" @click="step = Math.min(step + 1, 13)"
+                class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
+                Continue
+            </button>
+        </div>
+    </div>
 </template>
+
+
 <template x-if="step === 6">
    <div>
                                                         <div class="container mx-auto px-4 py-8 max-w-6xl">
@@ -930,7 +1037,7 @@
                                                                     ←
                                                                 </button>
                                                                 <button type="button"     @click="step = Math.min(step + 1, 13)"
-                                                                    class="px-6 h-12 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ml-[250px]">
+                                                                    class="px-6 h-12 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ml-[285px]">
                                                                     Continue
                                                                 </button>
                                                             </div>
@@ -938,76 +1045,94 @@
                                                     </div>
 </template>
 <template x-if="step === 8">
-      <div>
-                                                        <!-- Main Content -->
-                                                        <main class="container mx-auto px-4 py-8 max-w-4xl">
-                                                            <h2 class="text-2xl md:text-3xl font-bold mb-6 text-left">
-                                                                Host profile
-                                                            </h2>
+      <div class="max-w-2xl mx-auto space-y-8 px-4 sm:px-6 lg:px-8 lg:ml-32 py-6">
+       <h2 class="text-2xl font-bold mb-8 text-left">Host Profile</h2>
+        <div class="bg-white shadow-md rounded-lg p-4 space-y-6">
+            <h2 class="text-base text-gray-800">
+                Help your listing stand out by telling potential guests a little more about yourself, your property, and your neighborhood. This info will appear on your property page.
+            </h2>
 
-                                                            <div class="bg-white shadow-md rounded-lg p-6 md:p-8">
-                                                                <p class="text-gray-700 mb-4 text-sm md:text-base">
-                                                                    Help your listing stand out by telling potential
-                                                                    guests a bit more about yourself, your property and
-                                                                    your neighbourhood. This information will be shown
-                                                                    on your property page.
-                                                                </p>
+            <!-- The Property Section -->
+            <div>
+                <label class="inline-flex items-center space-x-2">
+                    <input type="checkbox" class="form-checkbox text-blue-600">
+                    <span class="text-gray-800 font-sm ">The property</span>
+                </label>
 
-                                                                <div class="space-y-3">
-                                                                    <label
-                                                                        class="flex items-start sm:items-center cursor-pointer">
-                                                                        <input type="radio" name="profile-info"
-                                                                            value="property"
-                                                                            class="mr-3 mt-1 sm:mt-0">
-                                                                        <span class="text-sm sm:text-base">The
-                                                                            property</span>
-                                                                    </label>
+                <div class="mt-2">
+                    <label class="block text-sm font-semibold text-gray-700">About the property</label>
+                    <textarea rows="4" maxlength="1200" placeholder="What makes your place unique? What can guests expect"
+                        class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"></textarea>
+                    <p class="text-right text-xs text-gray-500">0/1200</p>
+                </div>
+            </div>
 
-                                                                    <label
-                                                                        class="flex items-start sm:items-center cursor-pointer">
-                                                                        <input type="radio" name="profile-info"
-                                                                            value="host" class="mr-3 mt-1 sm:mt-0">
-                                                                        <span class="text-sm sm:text-base">The
-                                                                            host</span>
-                                                                    </label>
+            <!-- The Host Section -->
+            <div>
+                <label class="inline-flex items-center space-x-2">
+                    <input type="checkbox" class="form-checkbox text-blue-600">
+                    <span class="text-gray-800 font-medium">The host</span>
+                </label>
 
-                                                                    <label
-                                                                        class="flex items-start sm:items-center cursor-pointer">
-                                                                        <input type="radio" name="profile-info"
-                                                                            value="neighbourhood"
-                                                                            class="mr-3 mt-1 sm:mt-0">
-                                                                        <span class="text-sm sm:text-base">The
-                                                                            neighbourhood</span>
-                                                                    </label>
+                <div class="mt-2 space-y-2">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700">Host name</label>
+                        <input type="text" maxlength="80"
+                            class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
+                        <p class="text-right text-xs text-gray-500">0/80</p>
+                    </div>
 
-                                                                    <label
-                                                                        class="flex items-start sm:items-center cursor-pointer">
-                                                                        <input type="radio" name="profile-info"
-                                                                            value="later" class="mr-3 mt-1 sm:mt-0"
-                                                                            checked>
-                                                                        <span class="text-sm sm:text-base">None of the
-                                                                            above/I'll add these later</span>
-                                                                    </label>
-                                                                </div>
-                                                            </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700">About the host</label>
+                        <textarea rows="4" maxlength="1200" placeholder="What are your interests? What do you like about hosting?"
+                            class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"></textarea>
+                        <p class="text-right text-xs text-gray-500">0/1200</p>
+                    </div>
+                </div>
+            </div>
 
-                                                            <!-- Navigation Buttons -->
-                                                            <div class="mt-8 flex justify-between">
-                                                                <!-- Back Button on the left -->
-                                                                <button type="button"  @click="step = Math.max(step - 1, 1)"
-                                                                    class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
-                                                                    ←
-                                                                </button>
+            <!-- The Neighborhood Section -->
+            <div>
+                <label class="inline-flex items-center space-x-2">
+                    <input type="checkbox" class="form-checkbox text-blue-600">
+                    <span class="text-gray-800 font-medium">The neighborhood</span>
+                </label>
 
-                                                                <!-- Continue Button on the right -->
-                                                                <button type="button"     @click="step = Math.min(step + 1, 13)"
-                                                                    class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
-                                                                    Continue
-                                                                </button>
-                                                            </div>
+                <div class="mt-2">
+                    <label class="block text-sm font-semibold text-gray-700">About the neighborhood</label>
+                    <textarea rows="4" maxlength="1200" placeholder="What's the area like? Are there any attractions nearby?"
+                        class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"></textarea>
+                    <p class="text-right text-xs text-gray-500">0/1200</p>
+                </div>
+            </div>
 
-                                                        </main>
-                                                    </div>
+            <!-- None of the Above Option -->
+            <div>
+                <label class="inline-flex items-center space-x-2">
+                    <input type="checkbox" class="form-checkbox text-blue-600">
+                    <span class="text-gray-800 font-medium">None of the above / I'll add these later</span>
+                </label>
+            </div>
+        </div>
+        <div class="mt-12 flex justify-between">
+  <!-- Back Button on the left -->
+  <button
+   type="button" @click="step = Math.max(step - 1, 1)"
+        :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
+  
+      class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+      ←
+  </button>
+
+  <!-- Continue Button on the right -->
+  <button
+   type="button"  @click="step = Math.min(step + 1, 13)"
+     class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 "
+  >
+    Continue
+  </button>
+</div>
+    </div>
 </template>
 <template x-if="step === 9">
    <div>
@@ -1462,19 +1587,53 @@
 
         <template x-if="step === 12">
             <div>
-    <h1>Availability></h1>
-    <!-- Navigation -->
-            <div class="flex justify-between pt-4">
-                <button  @click="step = Math.max(step - 1, 1)"
-                    class="flex items-center border border-[#3CC0E9] rounded text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12">
+    <div class="max-w-2xl mx-auto px-4 py-8 space-y-6">
+    <h1 class="text-3xl font-bold text-gray-900">Availability</h1>
 
-                    ←
-                </button>
-                <button     @click="step = Math.min(step + 1, 13)"
-                    class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition ">
-                    Continue
-                </button>
+    <div class="bg-white shadow-md rounded-lg p-6 space-y-4">
+        <h2 class="text-lg font-semibold">Do you want to allow 30+ night stays?</h2>
+        <p class="text-sm text-gray-600">
+            Allowing guests to stay for up to 90 nights can help you fill your calendar
+            and tap into the trend of guests working remotely.
+        </p>
+
+        <div>
+            <p class="font-semibold text-gray-800">Will you accept reservations for stays over 30 nights?</p>
+            <div class="flex items-center space-x-6 mt-2">
+                <label class="inline-flex items-center space-x-2">
+                    <input type="radio" name="allow_long_stays" value="yes" class="form-radio text-blue-500">
+                    <span>Yes</span>
+                </label>
+                <label class="inline-flex items-center space-x-2">
+                    <input type="radio" name="allow_long_stays" value="no" class="form-radio text-blue-500">
+                    <span>No</span>
+                </label>
             </div>
+        </div>
+
+        <div>
+            <label for="max_nights" class="block font-semibold text-gray-800 mt-4 mb-2">
+                What's the maximum number of nights you want guests to be able to book?
+            </label>
+            <input type="number" id="max_nights" name="max_nights"
+                   class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                   placeholder="90" min="31" max="90" />
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="flex justify-between pt-4">
+        <button @click="step = Math.max(step - 1, 1)"
+                class="flex items-center border border-[#3CC0E9] text-[#3CC0E9] hover:bg-blue-50 font-semibold px-4 h-12 rounded">
+            ←
+        </button>
+        <button @click="step = Math.min(step + 1, 13)"
+                class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition">
+            Continue
+        </button>
+    </div>
+</div>
+
             </div>
 </template>
                                                         </template>
