@@ -18,6 +18,11 @@ use App\Models\PropertySubtype;
 use App\Services\FileUploadService;
 use App\DTOs\Partner\AccommodationDetailsDTO;
 use App\Actions\Partner\StoreAccommodationDetailsAction;
+use App\DTOs\Partner\SaveAmenitiesDTO;
+use App\DTOs\Partner\SavePolicyDTO;
+use App\DTOs\Partner\SaveRoomsDTO;
+use App\DTOs\Partner\UploadPropertyPhotosDTO;
+use App\DTOs\Partner\PartnerVerificationDTO;
 use App\Models\Room;
 use App\Models\PartnerVerification;
 use App\Models\Language;
@@ -49,20 +54,37 @@ class PropertyController extends Controller
         Log::info('Available amenities', ['amenities' => $amenities]);
         Log::info('Available room types', ['roomTypes' => $roomTypes]);
         Log::info('Available bed types', ['bedTypes' => $bedTypes]);
-        // Check if subcategories are empty
-        if ($subcategories->isEmpty()) {
-            Log::warning('No subcategories found for category ID ' . $categoryId);
-            return redirect()->back()->withErrors(['error' => 'No subcategories found for this category.']);
-        }
+
         switch ($categoryId) {
             case 1:  // Homes
+                if ($subcategories->isEmpty()) {
+                    return redirect()->back()->withErrors(['error' => 'No subcategories found for this category.']);
+                }
                 return view('partner.partner-homes-create-form-1', compact('subcategories', 'categoryId', 'amenities', 'roomTypes', 'bedTypes'));
+
             case 2:  // Apartment
+                // Hardcode subcategories for Apartment
+                $subcategories = collect([
+                    (object)[
+                        'id' => 1,
+                        'category_id' => 2,
+                        'name' => 'One',
+                    ],
+                    (object)[
+                        'id' => 2,
+                        'category_id' => 2,
+                        'name' => 'Multiple',
+                    ],
+                ]);
                 return view('partner.partner-apartment-create-form-1', [
                     'subcategories' => $subcategories,
                     'category' => 'apartment',
                 ]);
+
             case 3:  // Hotel
+                if ($subcategories->isEmpty()) {
+                    return redirect()->back()->withErrors(['error' => 'No subcategories found for this category.']);
+                }
                 return view('partner.partner-hotels-create-1', [
                     'categoryId' => $categoryId,
                     'subcategories' => $subcategories,
@@ -165,22 +187,11 @@ class PropertyController extends Controller
     public function storeStep2(Request $request,  $propertyId, PropertyAction $action)
     {
         Log::info('storeStep2 called', $request->all());
-        // die('storeStep2 called');
-        Log::info('storeStep2 called', [
-            'request' => $request->all(),
-            'session' => session()->all(),
-            'user_id' => Auth::check() ? Auth::id() : null,
-        ]);
-        Log::info('storeStep2 called', [
-            'request' => $request->all(),
-            'session' => session()->all(),
-            'user_id' => Auth::check() ? Auth::id() : null,
-        ]);
+
 
         try {
             $property = Property::findOrFail($request->input('property_id', $propertyId));
 
-            // ✅ Only update address_type_id if that’s all we got
             if ($request->has('address_type_id') && count($request->all()) === 2) {
                 $property->update([
                     'address_type_id' => $request->input('address_type_id')
@@ -193,7 +204,6 @@ class PropertyController extends Controller
                 ]);
             }
 
-            // Normal full step 2 flow
             $dto = PropertyStep2DTO::fromRequest($request);
             $updatedProperty = $action->updatePropertyStep2($property, $dto);
 
@@ -260,42 +270,28 @@ class PropertyController extends Controller
         }
     }
 
-    public function uploadPhotos(Request $request, FileUploadService $fileUploadService)
-    {
-        $request->validate([
-            'property_id' => 'required|exists:properties,id',
-            'photos.*' => 'required|image|mimes:jpg,jpeg,png,webp|max:5120', // 5MB max
-        ]);
 
-        $property_type = Property::find($request->input('property_id'))?->subtype_id ?? 'Property';
-        foreach ($request->file('photos') as $photo) {
-            $fileUploadService->uploadAndSave(
-                file: $photo,
-                fileType: 'image',
-                propertyType: PropertySubtype::find($property_type)?->name ?? 'Property',
-                propertyId: $request->property_id,
-                directory: 'property_photos'
-            );
-        }
+    public function uploadPhotos(
+        UploadPropertyPhotosDTO $dto,
+        FileUploadService $fileUploadService,
+        PropertyAction $propertyAction
+    ) {
+        $propertyAction->uploadPhotos($dto, $fileUploadService);
 
         return response()->json(['success' => true]);
     }
 
-    public function updateAdditionalDetails(
-        Request $request,
-        Property $property,
-        UpdatePropertyAdditionalDetailsAction $action
-    ) {
+
+    public function updateAdditionalDetails(Request $request, Property $property, UpdatePropertyAdditionalDetailsAction $action)
+    {
         $dto = PropertyAdditionalDetailsDTO::fromRequest($request);
 
         $action->execute($property, $dto);
 
-        return response()->json(['success' => true]);
+        return response()->json(['success' => true, 'message' => 'Amenities saved successfully.']);
     }
 
-    /**
-     * Store accommodation, business entity, individual, and alt name details.
-     */
+
     public function storeAccommodationDetails(Request $request, StoreAccommodationDetailsAction $action)
     {
         Log::info('storeAccommodationDetails called', [
@@ -336,69 +332,37 @@ class PropertyController extends Controller
     }
 
 
-    public function saveAmenities(Request $request, Property $property = null)
+    public function saveAmenities(Request $request, Property $property, PropertyAction $propertyAction)
     {
         Log::info('saveAmenities called', [
-            'property_id' => $property ? $property->id : null,
+            'property_id' => $property->id,
             'request' => $request->all(),
         ]);
+        $dto = SaveAmenitiesDTO::fromRequest($request);
 
-        if (!$property) {
-            return response()->json(['success' => false, 'message' => 'Property not found.'], 404);
-        }
+        $propertyAction->saveAmenities($property, $dto);
 
-        $data = $request->validate([
-            'amenities' => 'required|array',
-            'amenities.*' => 'exists:amenities,id',
-        ]);
-
-        $property->amenities()->sync($data['amenities']);
-
-        return response()->json(['success' => true, 'message' => 'Amenities saved successfully.']);
+        return response()->json(['success' => true]);
     }
 
 
-    public function savePolicy(Request $request, Property $property)
+
+
+
+
+    public function savePolicy(Request $request, Property $property, PropertyAction $propertyAction)
     {
-        // Log the incoming request data
         Log::info('savePolicy called', [
             'property_id' => $property->id,
             'request' => $request->all(),
         ]);
 
         try {
-            $validated = $request->validate([
-                'smoking_allowed' => 'required|boolean',
-                'parties_allowed' => 'required|boolean',
-                'pets_allowed' => 'required|string',
-                'pets_fees' => 'required|string',
-                'check_in_from' => 'required',
-                'check_in_until' => 'required',
-                'check_out_from' => 'required',
-                'check_out_until' => 'required',
-                'cancellation_policy' => 'required|in:flexible,moderate,strict',
-            ]);
+            $dto = SavePolicyDTO::fromRequest($request);
 
-            // Log the validated data
-            Log::info('savePolicy validated', $validated);
+            Log::info('savePolicy validated', $dto->toArray());
 
-            $policy = $property->policies()->updateOrCreate(
-                ['property_id' => $property->id],
-                [
-                    'smoking_allowed' => $validated['smoking_allowed'],
-                    'parties_allowed' => $validated['parties_allowed'],
-                    'pets_allowed' => $validated['pets_allowed'],
-                    'pets_fees' => $validated['pets_fees'],
-                    'check_in_from' => $validated['check_in_from'],
-                    'check_in_until' => $validated['check_in_until'],
-                    'check_out_from' => $validated['check_out_from'],
-                    'check_out_until' => $validated['check_out_until'],
-                    'cancellation_policy' => $validated['cancellation_policy'],
-                ]
-            );
-
-            // Log the policy after save
-            Log::info('savePolicy policy after save', $policy->toArray());
+            $propertyAction->savePolicy($property, $dto);
 
             return response()->json(['success' => true, 'message' => 'Policy saved']);
         } catch (\Exception $e) {
@@ -410,44 +374,17 @@ class PropertyController extends Controller
         }
     }
 
-    public function saveRooms(Request $request)
+    public function saveRooms(Request $request, PropertyAction $propertyAction)
     {
         try {
-            $validated = $request->validate([
-                'property_id' => 'required|exists:properties,id',
-                'rooms' => 'required|array|min:1',
-                'rooms.*.room_type_id' => 'required|exists:room_types,id',
-                'rooms.*.name' => 'nullable|string',
-                'rooms.*.price_per_night' => 'nullable|numeric',
-                'rooms.*.max_guests' => 'nullable|integer',
-                'rooms.*.bathroom_count' => 'nullable|integer',
-                'rooms.*.size_sq_m' => 'nullable|numeric',
-                'rooms.*.beds' => 'nullable|array',
-            ]);
+            $dto = SaveRoomsDTO::fromRequest($request);
 
-            Log::info('Validated room data', $validated);
-            foreach ($validated['rooms'] as $roomData) {
-                $room = Room::create([
-                    'property_id' => $validated['property_id'],
-                    'room_type_id' => $roomData['room_type_id'],
-                    'name' => $roomData['name'],
-                    'price_per_night' => $roomData['price_per_night'],
-                    'max_guests' => $roomData['max_guests'],
-                    'bathroom_count' => $roomData['bathroom_count'],
-                    'size_sq_m' => $roomData['size_sq_m'],
-                ]);
+            Log::info('Validated room data', $dto->toArray());
 
-                if (!empty($roomData['beds'])) {
-                    foreach ($roomData['beds'] as $bedTypeId => $count) {
-                        if ((int)$count > 0) {
-                            $room->beds()->attach($bedTypeId, ['count' => $count]);
-                        }
-                    }
-                }
-            }
+            $propertyAction->saveRooms($dto);
 
             return response()->json(['success' => 'success']);
-        } catch (\Exception  $e) {
+        } catch (\Exception $e) {
             Log::error('Error saving rooms', [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
@@ -456,24 +393,12 @@ class PropertyController extends Controller
         }
     }
 
-
-    public function storePartnerVerification(Request $request)
+    public function storePartnerVerification(Request $request, PropertyAction $propertyAction)
     {
         try {
-            $validated = $request->validate([
-                'property_id' => 'required|exists:properties,id',
-                'type' => 'required|in:individual,business',
-                'full_name' => 'nullable|string',
-                'national_id' => 'nullable|string',
-                'company_name' => 'nullable|string',
-                'registration_number' => 'nullable|string',
-            ]);
+            $dto = PartnerVerificationDTO::fromRequest($request);
 
-            PartnerVerification::updateOrCreate(
-                ['property_id' => $validated['property_id']],
-                $validated
-            );
-
+            $propertyAction->partnerVerification($dto);
             return response()->json(['message' => 'Partner verification saved successfully']);
         } catch (\Exception $e) {
             Log::error('Error saving partner verification', [
