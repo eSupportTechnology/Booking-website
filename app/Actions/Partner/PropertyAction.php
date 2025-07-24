@@ -16,6 +16,10 @@ use App\DTOs\Partner\UploadPropertyPhotosDTO;
 use App\Services\FileUploadService;
 use App\DTOs\Partner\SaveAmenitiesDTO;
 use App\DTOs\Partner\SavePolicyDTO;
+use App\DTOs\Partner\SaveRoomsDTO;
+use App\DTOs\Partner\PartnerVerificationDTO;
+use App\Models\PartnerVerification;
+use App\Models\Room;
 
 class PropertyAction
 {
@@ -192,5 +196,40 @@ class PropertyAction
             $dto->toArray()
         );
     }
+
+
+
+    public function saveRooms(SaveRoomsDTO $dto): void
+    {
+        foreach ($dto->rooms as $roomData) {
+            $room = Room::create([
+                'property_id' => $dto->property_id,
+                'room_type_id' => $roomData['room_type_id'],
+                'name' => $roomData['name'] ?? null,
+                'price_per_night' => $roomData['price_per_night'] ?? null,
+                'max_guests' => $roomData['max_guests'] ?? null,
+                'bathroom_count' => $roomData['bathroom_count'] ?? null,
+                'size_sq_m' => $roomData['size_sq_m'] ?? null,
+            ]);
+
+            if (!empty($roomData['beds']) && is_array($roomData['beds'])) {
+                foreach ($roomData['beds'] as $bedTypeId => $count) {
+                    if ((int) $count > 0) {
+                        $room->beds()->attach($bedTypeId, ['count' => $count]);
+                    }
+                }
+            }
+        }
+    }
+
+
+    public function partnerVerification(PartnerVerificationDTO $dto): void
+    {
+        PartnerVerification::updateOrCreate(
+            ['property_id' => $dto->property_id],
+            $dto->toArray()
+        );
+    }
+
 
 }

@@ -3461,7 +3461,9 @@
                                                 .then(response => response.json())
                                                 .then(data => {
                                                     console.log(data);
-                                                    this.step++;
+                                                    alert('Partner verification details saved successfully');
+                                                    window.location.href = '/partner/list-your-property';
+                                                    
                                                 })
                                                 .catch(error => {
                                                     console.error('Error:', error);

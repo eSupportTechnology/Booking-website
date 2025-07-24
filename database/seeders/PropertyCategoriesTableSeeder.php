@@ -14,8 +14,8 @@ class PropertyCategoriesTableSeeder extends Seeder
     public function run(): void
     {
         $categories = [
-            'Homes',
             'Apartment',
+            'Homes',
             'Hotel, B&Bs, and more',
             'Alternative places',
         ];

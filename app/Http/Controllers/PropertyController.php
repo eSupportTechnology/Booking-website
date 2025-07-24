@@ -20,7 +20,9 @@ use App\DTOs\Partner\AccommodationDetailsDTO;
 use App\Actions\Partner\StoreAccommodationDetailsAction;
 use App\DTOs\Partner\SaveAmenitiesDTO;
 use App\DTOs\Partner\SavePolicyDTO;
+use App\DTOs\Partner\SaveRoomsDTO;
 use App\DTOs\Partner\UploadPropertyPhotosDTO;
+use App\DTOs\Partner\PartnerVerificationDTO;
 use App\Models\Room;
 use App\Models\PartnerVerification;
 use App\Models\Language;
@@ -372,44 +374,17 @@ class PropertyController extends Controller
         }
     }
 
-    public function saveRooms(Request $request)
+    public function saveRooms(Request $request, PropertyAction $propertyAction)
     {
         try {
-            $validated = $request->validate([
-                'property_id' => 'required|exists:properties,id',
-                'rooms' => 'required|array|min:1',
-                'rooms.*.room_type_id' => 'required|exists:room_types,id',
-                'rooms.*.name' => 'nullable|string',
-                'rooms.*.price_per_night' => 'nullable|numeric',
-                'rooms.*.max_guests' => 'nullable|integer',
-                'rooms.*.bathroom_count' => 'nullable|integer',
-                'rooms.*.size_sq_m' => 'nullable|numeric',
-                'rooms.*.beds' => 'nullable|array',
-            ]);
+            $dto = SaveRoomsDTO::fromRequest($request);
 
-            Log::info('Validated room data', $validated);
-            foreach ($validated['rooms'] as $roomData) {
-                $room = Room::create([
-                    'property_id' => $validated['property_id'],
-                    'room_type_id' => $roomData['room_type_id'],
-                    'name' => $roomData['name'],
-                    'price_per_night' => $roomData['price_per_night'],
-                    'max_guests' => $roomData['max_guests'],
-                    'bathroom_count' => $roomData['bathroom_count'],
-                    'size_sq_m' => $roomData['size_sq_m'],
-                ]);
+            Log::info('Validated room data', $dto->toArray());
 
-                if (!empty($roomData['beds'])) {
-                    foreach ($roomData['beds'] as $bedTypeId => $count) {
-                        if ((int)$count > 0) {
-                            $room->beds()->attach($bedTypeId, ['count' => $count]);
-                        }
-                    }
-                }
-            }
+            $propertyAction->saveRooms($dto);
 
             return response()->json(['success' => 'success']);
-        } catch (\Exception  $e) {
+        } catch (\Exception $e) {
             Log::error('Error saving rooms', [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
@@ -418,24 +393,12 @@ class PropertyController extends Controller
         }
     }
 
-
-    public function storePartnerVerification(Request $request)
+    public function storePartnerVerification(Request $request, PropertyAction $propertyAction)
     {
         try {
-            $validated = $request->validate([
-                'property_id' => 'required|exists:properties,id',
-                'type' => 'required|in:individual,business',
-                'full_name' => 'nullable|string',
-                'national_id' => 'nullable|string',
-                'company_name' => 'nullable|string',
-                'registration_number' => 'nullable|string',
-            ]);
+            $dto = PartnerVerificationDTO::fromRequest($request);
 
-            PartnerVerification::updateOrCreate(
-                ['property_id' => $validated['property_id']],
-                $validated
-            );
-
+            $propertyAction->partnerVerification($dto);
             return response()->json(['message' => 'Partner verification saved successfully']);
         } catch (\Exception $e) {
             Log::error('Error saving partner verification', [
