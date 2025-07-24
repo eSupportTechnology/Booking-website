@@ -836,7 +836,7 @@
                                             <span>Parties/events allowed</span>
                                             <div class="relative">
                                                 <input type="checkbox" class="sr-only peer"
-                                                    x-model="property.party_allowed" />
+                                                    x-model="property.parties_allowed" />
                                                 <div
                                                     class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition">
                                                 </div>
@@ -852,18 +852,38 @@
                                     <div class="mt-6">
                                         <h3 class="text-base font-semibold mb-2">Do you allow pets?</h3>
                                         <div class="space-y-2">
-                                            <label class="flex items-center justify-between cursor-pointer">
-                                                <span>Pets allowed</span>
-                                                <div class="relative">
-                                                    <input type="checkbox" class="sr-only peer"
-                                                        x-model="property.pets_allowed" />
-                                                    <div
-                                                        class="w-8 h-4 bg-gray-300 rounded-full peer-checked:bg-blue-500 transition">
-                                                    </div>
-                                                    <div
-                                                        class="absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-4">
-                                                    </div>
-                                                </div>
+                                            <label class="flex items-center cursor-pointer">
+                                                <input type="radio" name="pets_allowed" value="yes"
+                                                    x-model="property.pets_allowed" class="mr-2">
+                                                <span>Yes</span>
+                                            </label>
+                                            <label class="flex items-center cursor-pointer">
+                                                <input type="radio" name="pets_allowed" value="upon_request"
+                                                    x-model="property.pets_allowed" class="mr-2">
+                                                <span>Upon request</span>
+                                            </label>
+                                            <label class="flex items-center cursor-pointer">
+                                                <input type="radio" name="pets_allowed" value="no"
+                                                    x-model="property.pets_allowed" class="mr-2">
+                                                <span>No</span>
+                                            </label>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="mt-6">
+                                        <h3 class="text-base font-semibold mb-2">Are there additional fees for pets?
+                                        </h3>
+                                        <div class="space-y-2">
+                                            <label class="flex items-center cursor-pointer">
+                                                <input type="radio" name="pets_fees" value="free"
+                                                    x-model="pets_fees" class="mr-2">
+                                                <span>Pets can stay for free</span>
+                                            </label>
+                                            <label class="flex items-center cursor-pointer">
+                                                <input type="radio" name="pets_fees" value="fees"
+                                                    x-model="pets_fees" class="mr-2">
+                                                <span>Fees may apply</span>
                                             </label>
                                         </div>
                                     </div>
@@ -886,7 +906,7 @@
                                         <div class="flex space-x-4">
                                             <div class="w-full">
                                                 <label class="block text-sm font-medium mb-1">From</label>
-                                                <input type="time" value="15:00" x-model="property.check_in_time"
+                                                <input type="time" value="15:00" x-model="property.check_in_from"
                                                     class="w-full border rounded p-2" />
                                             </div>
                                             <div class="w-full">
@@ -905,7 +925,7 @@
                                             <div class="w-full">
                                                 <label class="block text-sm font-medium mb-1">From</label>
                                                 <input type="time" value="08:00"
-                                                    x-model="property.check_out_time"
+                                                    x-model="property.check_out_from"
                                                     class="w-full border rounded p-2" />
                                             </div>
                                             <div class="w-full">
@@ -1085,11 +1105,12 @@
                     parking: 'no',
                     smoking_allowed: false,
                     children_allowed: false,
-                    party_allowed: false,
-                    pets_allowed: false,
-                    check_in_time: '15:00',
+                    parties_allowed: false,
+                    pets_allowed: '',
+                    pets_fees: 'free',
+                    check_in_from: '15:00',
                     check_in_until: '18:00',
-                    check_out_time: '08:00',
+                    check_out_from: '08:00',
                     check_out_until: '11:00',
                     cancellation_policy: 'flexible',
 
@@ -1307,6 +1328,7 @@
                         const response = await fetch(`/partner/property/save-amenities/${this.propertyId}`, {
                             method: 'POST',
                             headers: {
+                                'Content-Type': 'application/json',
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
                                     'content')
                             },
@@ -1366,6 +1388,7 @@
                         const response = await fetch(`/partner/property/save-languages/${this.propertyId}`, {
                             method: 'POST',
                             headers: {
+                                'Content-Type': 'application/json',
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
                                     'content')
                             },
@@ -1390,6 +1413,13 @@
 
                 async submitStep11() {
                     try {
+                        // Validate pets_allowed
+                        const validPets = ['yes', 'no', 'upon_request'];
+                        if (!validPets.includes(this.property.pets_allowed)) {
+                            alert('Please select a valid pet policy.');
+                            return;
+                        }
+
                         const response = await fetch(`/partner/property/save-policy/${this.propertyId}`, {
                             method: 'POST',
                             headers: {
@@ -1408,11 +1438,12 @@
                             this.propertyId = data.propertyId;
                         }
 
-                        this.step = 12; // Go to next step
+                        this.step = 12;
                     } catch (error) {
                         console.error('Step 11 save failed:', error);
                     }
                 },
+
 
                 async submitStep12() {
                     try {

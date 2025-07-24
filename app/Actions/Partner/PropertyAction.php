@@ -19,6 +19,7 @@ use App\DTOs\Partner\SaveAmenitiesDTO;
 use App\DTOs\Partner\SavePolicyDTO;
 use App\DTOs\Partner\SaveRoomsDTO;
 use App\DTOs\Partner\PartnerVerificationDTO;
+use App\DTOs\Partner\SaveLanguagesDTO;
 use App\Models\PartnerVerification;
 use App\Models\Room;
 
@@ -209,6 +210,11 @@ class PropertyAction
     {
         $property->amenities()->sync($dto->amenities);
     }
+
+    public function saveLanguages(Property $property, SaveLanguagesDTO $dto): void
+{
+    $property->languages()->sync($dto->languages);
+}
 
 
     public function savePolicy(Property $property, SavePolicyDTO $dto): void

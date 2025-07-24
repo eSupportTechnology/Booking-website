@@ -11,7 +11,7 @@ class PropertyPolicy extends Model
 
     protected $table = 'property_policies';
     public $timestamps = false;
-    
+
     protected $fillable = [
         'property_id',
         'cancellation_policy',
@@ -22,7 +22,8 @@ class PropertyPolicy extends Model
         'smoking_allowed',
         'pets_allowed',
         'parties_allowed',
-        'pets_fees'
+        'pets_fees',
+        'children_allowed'
     ];
 
 }

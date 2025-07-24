@@ -11,10 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('property_languages', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('property_id')->constrained('properties');
-            $table->foreignId('language_id')->constrained('languages');
+        Schema::table('property_policies', function (Blueprint $table) {
+            $table->boolean('children_allowed')->default(false);
         });
     }
 
@@ -23,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('property_languages');
+        Schema::table('property_policies', function (Blueprint $table) {
+            $table->dropColumn('children_allowed');
+        });
     }
 };
