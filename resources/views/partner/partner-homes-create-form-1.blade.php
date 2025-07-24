@@ -2216,34 +2216,18 @@
                                                                 <h3 class="text-lg  mb-4 font-bold">Select languages
                                                                 </h3>
                                                                 <div class="space-y-2">
-                                                                    <label class="flex items-center cursor-pointer">
-                                                                        <input type="checkbox" class="mr-2"
-                                                                            :value="'English'"
-                                                                            @change="toggleLanguage('English')"
-                                                                            :checked="unitServices[currentUnit - 1]?.languages?.includes('English')" />
-                                                                        <span>English</span>
-                                                                    </label>
-                                                                    <label class="flex items-center cursor-pointer">
-                                                                        <input type="checkbox" class="mr-2"
-                                                                            :value="'Spanish'"
-                                                                            @change="toggleLanguage('Spanish')"
-                                                                            :checked="unitServices[currentUnit - 1]?.languages?.includes('Spanish')" />
-                                                                        <span>Spanish</span>
-                                                                    </label>
-                                                                    <label class="flex items-center cursor-pointer">
-                                                                        <input type="checkbox" class="mr-2"
-                                                                            :value="'French'"
-                                                                            @change="toggleLanguage('French')"
-                                                                            :checked="unitServices[currentUnit - 1]?.languages?.includes('French')" />
-                                                                        <span>French</span>
-                                                                    </label>
-                                                                    <label class="flex items-center cursor-pointer">
-                                                                        <input type="checkbox" class="mr-2"
-                                                                            :value="'German'"
-                                                                            @change="toggleLanguage('German')"
-                                                                            :checked="unitServices[currentUnit - 1]?.languages?.includes('German')" />
-                                                                        <span>German</span>
-                                                                    </label>
+                                                                    @foreach ($languages as $lang)
+                                                                        <label class="flex items-center cursor-pointer">
+                                                                            <input type="checkbox" class="mr-2"
+                                                                                value="{{ $lang['name'] }}"
+                                                                                @change="toggleLanguage('{{ $lang['name'] }}')"
+                                                                                x-model="unitServices[currentUnit - 1].languages"
+                                                                                :checked="unitServices[currentUnit - 1]?.languages?.includes('{{ $lang['name'] }}')" />
+                                                                            <span>{{ $lang['name'] }}</span>
+                                                                        </label>
+                                                                    @endforeach
+
+
                                                                 </div>
 
                                                                 <!-- Add Additional Languages -->
@@ -3209,6 +3193,8 @@
                                                 return 'Multiple Holiday parks';
                                         }
                                     },
+                                  
+
                                    
                                     async nextStep() {
                                         if ((this.step === 1 && this.selected === 'one')) {
@@ -3572,6 +3558,7 @@
                                                 .then(data => {
                                                     if (data.success) {
                                                         console.log("Amenities saved for property " +currentPropertyId);
+                                                        this.currentUnit=1;
                                                         this.step++;
                                                     } else {
                                                         console.error("Error:", data.message);
@@ -3582,7 +3569,57 @@
                                                     console.error("Fetch error:", error);
                                                 });
                                             }
-                                        } else if (this.step === 12 && this.selected === 'multiple') {
+                                        }else if (this.step === 9 && this.selected === 'multiple') {
+    console.log('Saving policy for property ID:', this.propertyId);
+    console.log('currentUnit:', this.currentUnit);
+    console.log('propertyCount:', this.propertyCount);
+
+    const currentPropertyId = this.propertyId + this.currentUnit - 1;
+    const houseRules = this.unitServices[this.currentUnit - 1].houseRules;
+
+    fetch(`/partner/property/save-policy/${currentPropertyId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify({
+            property_id: currentPropertyId,
+            smoking_allowed: houseRules.smokingAllowed,
+            children_allowed: houseRules.childrenAllowed,
+            parties_allowed: houseRules.partiesAllowed,
+            pets_allowed: houseRules.petsPolicy,
+            check_in_from: houseRules.checkInFrom,
+            check_in_until: houseRules.checkInUntil,
+            check_out_from: houseRules.checkOutFrom,
+            check_out_until: houseRules.checkOutUntil,
+        })
+
+
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log("Policy saved for property " + currentPropertyId);
+            
+            if (this.currentUnit < this.propertyCount) {
+                this.currentUnit++;
+                this.step--; // stay on the same step to show next unit's form
+            } else {
+                this.currentUnit = 1;
+                this.step++; // move to next step
+            }
+        } else {
+            console.error("Error:", data.message);
+            alert("Failed to save policy.");
+        }
+    })
+    .catch(error => {
+        console.error("Fetch error:", error);
+    });
+}
+ 
+                                        else if (this.step === 12 && this.selected === 'multiple') {
                                             if (this.currentUnit < this.propertyCount) {
                                                
                                                 this.currentUnit++;

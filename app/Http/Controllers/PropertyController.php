@@ -52,6 +52,7 @@ class PropertyController extends Controller
         $amenities = $action->getAmenities();
         $roomTypes = $action->getRoomTypes();
         $bedTypes = $action->getBedTypes();
+        $languages = $action->getLanguages();
         Log::info('Fetching subcategories for category ID: ' . $categoryId, ['subcategories' => $subcategories]);
         Log::info('Available amenities', ['amenities' => $amenities]);
         Log::info('Available room types', ['roomTypes' => $roomTypes]);
@@ -62,7 +63,7 @@ class PropertyController extends Controller
                 if ($subcategories->isEmpty()) {
                     return redirect()->back()->withErrors(['error' => 'No subcategories found for this category.']);
                 }
-                return view('partner.partner-homes-create-form-1', compact('subcategories', 'categoryId', 'amenities', 'roomTypes', 'bedTypes'));
+                return view('partner.partner-homes-create-form-1', compact('subcategories', 'categoryId', 'amenities', 'roomTypes', 'bedTypes', 'languages'));
 
             case 2:  // Apartment
                 // Hardcode subcategories for Apartment

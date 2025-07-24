@@ -372,6 +372,7 @@ Route::prefix('partner')->group(function () {
 Route::post('/save-amenities/{property}', [PropertyController::class, 'saveAmenities']);
 Route::post('/property/save-address-same', [PropertyController::class, 'saveAddressSame']);
 Route::post('/property/save-address-multiple', [PropertyController::class, 'saveAddressMultiple']);
+Route::post('/save-languages/{property}', [PropertyController::class, 'saveLanguages']);
 Route::get('/partner/login', [LoginController::class, 'show'])->name('partner.login');
 Route::post('/partner/login', [LoginController::class, 'login'])->name('partner.login.submit');
 

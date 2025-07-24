@@ -49,7 +49,16 @@ class PropertyAction
             ];
         });
     }
-
+    
+    public function getLanguages(): Collection
+    {
+        return \App\Models\Language::all()->map(function ($language) {
+            return [
+                'id' => $language->id,
+                'name' => $language->name,
+            ];
+        });
+    }
     public function getRoomTypes(): Collection
     {
         return \App\Models\RoomType::all()->map(function ($roomType) {
