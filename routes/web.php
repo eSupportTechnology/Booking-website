@@ -270,6 +270,11 @@ Route::get('/partner-homes-rooms', function () {
     return view('frontend.partner-homes-rooms');
 })->name('partner.homes.rooms');
 
+Route::get('/partner-homes-edit', function () {
+    return view('frontend.partner-homes-edit');
+})->name('partner.homes.edit');
+
+
 
 Route::get('/partner-hotels-edit', function () {
     return view('frontend.partner-hotels-edit');

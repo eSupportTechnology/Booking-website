@@ -853,7 +853,7 @@
                 ←
             </button>
             <button type="button" @click="step = Math.min(step + 1, 13)"
-                class="px-6 h-12 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ml-[285px]">
+                class="px-6 h-12 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ml-[395px]">
                 Continue
             </button>
         </div>
@@ -988,7 +988,7 @@
                                 can add more.</p>
                         </div>
                     </div>
-                    <a href="{{ route('partner.hotels.rooms') }}"
+                    <a href="{{ route('partner.homes.rooms') }}"
                         class=" bg-sky-400 border border-sky-400 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-sky-500">
                         Add room
                     </a>
