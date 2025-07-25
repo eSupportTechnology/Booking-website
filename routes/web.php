@@ -441,3 +441,7 @@ Route::get('/partner/apartment/pricing/cancel-policies', function() {
 Route::get('/partner/apartment/weekly-rate', function() {
     return view('partner.partner-apartment-weekly-rate');
 })->name('partner.apartment.weekly.rate');
+
+Route::get('/partner/partner-multiple-apartment', function () {
+    return view('partner.partner-multiple-apartment');
+})->name('partner.multiple.apartment');
