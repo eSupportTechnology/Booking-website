@@ -29,7 +29,7 @@
     </script>
 </head>
 <body class="font-inter bg-gradient-to-br from-darkBlueStart via-darkBlueMid to-darkBlueStart min-h-screen flex text-darkText">
-    <nav class="text-white fixed w-full z-50 shadow">
+    <nav class="text-white fixed w-full z-50 shadow-xl">
         <div class="max-w-full mx-auto px-4">
             <div class="flex justify-between h-16 items-center">
 
