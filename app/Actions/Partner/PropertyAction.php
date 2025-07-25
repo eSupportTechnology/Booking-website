@@ -2,6 +2,7 @@
 
 namespace App\Actions\Partner;
 
+use App\DTOs\Partner\AddressSameDTO;
 use App\DTOs\Partner\PropertyDTO;
 use App\Models\Property;
 use App\Models\PropertyCategory;
@@ -20,8 +21,10 @@ use App\DTOs\Partner\SavePolicyDTO;
 use App\DTOs\Partner\SaveRoomsDTO;
 use App\DTOs\Partner\PartnerVerificationDTO;
 use App\DTOs\Partner\SaveLanguagesDTO;
+use App\DTOs\Partner\SaveAddressSameDTO;
 use App\Models\PartnerVerification;
 use App\Models\Room;
+use Faker\Provider\ar_EG\Address;
 
 class PropertyAction
 {
@@ -51,7 +54,7 @@ class PropertyAction
 
     public function getLanguages(): Collection
     {
-        return Languages::all()->map(function ($language) {
+        return \App\Models\Language::all()->map(function ($language) {
             return [
                 'id' => $language->id,
                 'name' => $language->name,
@@ -260,4 +263,26 @@ class PropertyAction
     }
 
 
+    public function saveSameAddress(SaveAddressSameDTO $dto): void
+    {
+        $existingProperty = Property::findOrFail($dto->property_id);
+
+        // Update the address of the given property
+        $existingProperty->update([
+            'address' => $dto->address,
+            'address_type_id' => 2, // Keep the same address type
+        ]);
+
+        // Create new properties with the same address
+        for ($i = 1; $i < $dto->count; $i++) {
+            Property::create([
+                'user_id' => Auth::id(),
+                'category_id' => $existingProperty->category_id,
+                'subcategory_id' => $existingProperty->subcategory_id,
+                'subtype_id' => $existingProperty->subtype_id,
+                'address' => $dto->address,
+                'address_type_id' => 2, // Same address type
+            ]);
+        }
+    }
 }

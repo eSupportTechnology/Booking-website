@@ -2216,34 +2216,18 @@
                                                                 <h3 class="text-lg  mb-4 font-bold">Select languages
                                                                 </h3>
                                                                 <div class="space-y-2">
-                                                                    <label class="flex items-center cursor-pointer">
-                                                                        <input type="checkbox" class="mr-2"
-                                                                            :value="'English'"
-                                                                            @change="toggleLanguage('English')"
-                                                                            :checked="unitServices[currentUnit - 1]?.languages?.includes('English')" />
-                                                                        <span>English</span>
-                                                                    </label>
-                                                                    <label class="flex items-center cursor-pointer">
-                                                                        <input type="checkbox" class="mr-2"
-                                                                            :value="'Spanish'"
-                                                                            @change="toggleLanguage('Spanish')"
-                                                                            :checked="unitServices[currentUnit - 1]?.languages?.includes('Spanish')" />
-                                                                        <span>Spanish</span>
-                                                                    </label>
-                                                                    <label class="flex items-center cursor-pointer">
-                                                                        <input type="checkbox" class="mr-2"
-                                                                            :value="'French'"
-                                                                            @change="toggleLanguage('French')"
-                                                                            :checked="unitServices[currentUnit - 1]?.languages?.includes('French')" />
-                                                                        <span>French</span>
-                                                                    </label>
-                                                                    <label class="flex items-center cursor-pointer">
-                                                                        <input type="checkbox" class="mr-2"
-                                                                            :value="'German'"
-                                                                            @change="toggleLanguage('German')"
-                                                                            :checked="unitServices[currentUnit - 1]?.languages?.includes('German')" />
-                                                                        <span>German</span>
-                                                                    </label>
+                                                                    @foreach ($languages as $lang)
+                                                                        <label class="flex items-center cursor-pointer">
+                                                                            <input type="checkbox" class="mr-2"
+                                                                                value="{{ $lang['name'] }}"
+                                                                                @change="toggleLanguage('{{ $lang['name'] }}')"
+                                                                                x-model="unitServices[currentUnit - 1].languages"
+                                                                                :checked="unitServices[currentUnit - 1]?.languages?.includes('{{ $lang['name'] }}')" />
+                                                                            <span>{{ $lang['name'] }}</span>
+                                                                        </label>
+                                                                    @endforeach
+
+
                                                                 </div>
 
                                                                 <!-- Add Additional Languages -->
@@ -2767,7 +2751,7 @@
                                                                     <!-- Continue Button -->
                                                                     <!-- Continue Button (inside input field container, aligned right) -->
                                                                     <div class="flex justify-end mt-4">
-                                                                        <button type="button" @click="console.log('Saved data:', formData); nextStep()"
+                                                                        <button type="button" @click="nextStep()"
                                                                             class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
                                                                             Continue
                                                                         </button>
@@ -3209,6 +3193,8 @@
                                                 return 'Multiple Holiday parks';
                                         }
                                     },
+                                  
+
                                    
                                     async nextStep() {
                                         if ((this.step === 1 && this.selected === 'one')) {
@@ -3572,6 +3558,7 @@
                                                 .then(data => {
                                                     if (data.success) {
                                                         console.log("Amenities saved for property " +currentPropertyId);
+                                                        this.currentUnit=1;
                                                         this.step++;
                                                     } else {
                                                         console.error("Error:", data.message);
@@ -3582,13 +3569,172 @@
                                                     console.error("Fetch error:", error);
                                                 });
                                             }
-                                        } else if (this.step === 12 && this.selected === 'multiple') {
+                                        }else if (this.step === 9 && this.selected === 'multiple') {
+                                            console.log('Saving policy for property ID:', this.propertyId);
+                                            console.log('currentUnit:', this.currentUnit);
+                                            console.log('propertyCount:', this.propertyCount);
+
+                                            const currentPropertyId = this.propertyId + this.currentUnit - 1;
+                                            const houseRules = this.unitServices[this.currentUnit - 1].houseRules;
+
+                                            fetch(`/partner/property/save-policy/${currentPropertyId}`, {
+                                                method: 'POST',
+                                                headers: {
+                                                    'Content-Type': 'application/json',
+                                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                },
+                                                body: JSON.stringify({
+                                                    property_id: currentPropertyId,
+                                                    smoking_allowed: houseRules.smokingAllowed,
+                                                    children_allowed: houseRules.childrenAllowed,
+                                                    parties_allowed: houseRules.partiesAllowed,
+                                                    pets_allowed: houseRules.petsPolicy,
+                                                    check_in_from: houseRules.checkInFrom,
+                                                    check_in_until: houseRules.checkInUntil,
+                                                    check_out_from: houseRules.checkOutFrom,
+                                                    check_out_until: houseRules.checkOutUntil,
+                                                })
+
+
+                                            })
+                                            .then(response => response.json())
+                                            .then(data => {
+                                                if (data.success) {
+                                                    console.log("Policy saved for property " + currentPropertyId);
+                                                    
+                                                    if (this.currentUnit < this.propertyCount) {
+                                                        this.currentUnit++;
+                                                        this.step--; // stay on the same step to show next unit's form
+                                                    } else {
+                                                        this.currentUnit = 1;
+                                                        this.step++; // move to next step
+                                                    }
+                                                } else {
+                                                    console.error("Error:", data.message);
+                                                    alert("Failed to save policy.");
+                                                }
+                                            })
+                                            .catch(error => {
+                                                console.error("Fetch error:", error);
+                                            });
+                                        }else if (this.step === 10 && this.selected === 'multiple') {
+                                            const currentPropertyId = this.propertyId + this.currentUnit - 1;
+                                            const hostProfile = this.unitServices[this.currentUnit - 1].hostProfile;
+
+                                            // Prepare default boolean values based on selected option
+                                            let show_property = false;
+                                            let show_host = false;
+                                            let show_neighborhood = false;
+                                            let none_selected = false;
+
+                                            switch (hostProfile) {
+                                                case 'property':
+                                                    show_property = true;
+                                                    break;
+                                                case 'host':
+                                                    show_host = true;
+                                                    break;
+                                                case 'neighbourhood':
+                                                    show_neighborhood = true;
+                                                    break;
+                                                case 'later':
+                                                default:
+                                                    none_selected = true;
+                                                    break;
+                                            }
+
+                                            fetch(`/partner/property/${currentPropertyId}/host-profile`, {
+                                                method: 'POST',
+                                                headers: {
+                                                    'Content-Type': 'application/json',
+                                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                },
+                                                body: JSON.stringify({
+                                                    property_id: currentPropertyId,
+                                                    show_property: show_property,
+                                                    show_host: show_host,
+                                                    show_neighborhood: show_neighborhood,
+                                                    none_selected: none_selected
+                                                })
+                                            })
+                                            .then(response => response.json())
+                                            .then(data => {
+                                                if (data.success) {
+                                                    console.log(`Host profile saved for property ${currentPropertyId}`);
+                                                    if (this.currentUnit < this.propertyCount) {
+                                                        this.currentUnit++;
+                                                    } else {
+                                                        this.currentUnit = 1;
+                                                        this.step++; // move to next step
+                                                    }
+                                                } else {
+                                                    console.error("Error saving host profile:", data.message);
+                                                    alert("Failed to save host profile.");
+                                                }
+                                            })
+                                            .catch(error => {
+                                                console.error("Fetch error:", error);
+                                            });
+                                        }else if (this.step === 11 && this.selected === 'multiple') {
+                                                const currentPropertyId = this.propertyId + this.currentUnit - 1;
+                                                const title = this.formData.propertyName;
+
+                                                fetch(`/property/${currentPropertyId}/update-title`, {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                    },
+                                                    body: JSON.stringify({ title: title })
+                                                })
+                                                .then(response => response.json())
+                                                .then(data => {
+                                                    if (data.success) {
+                                                        console.log(`Title updated for property ${currentPropertyId}: ${title}`);
+
+                                                        if (this.currentUnit < this.propertyCount) {
+                                                            this.currentUnit++;
+                                                            // Stay on step 11 for next property
+                                                        } else {
+                                                            this.currentUnit = 1;
+                                                            this.step++; // Proceed to step 12
+                                                        }
+                                                    } else {
+                                                        console.error('Error saving title:', data);
+                                                        alert('Failed to save title.');
+                                                    }
+                                                })
+                                                .catch(error => {
+                                                    console.error('Fetch error:', error);
+                                                });
+                                            }
+
+                                        else if (this.step === 12 && this.selected === 'multiple') {
+                                            const currentPropertyId = this.propertyId + this.currentUnit - 1;
+                                            const files = this.$refs.unitPhotoInput.files;
+                                            if (files.length > 0) {
+                                                const formData = new FormData();
+                                                formData.append('property_id', currentPropertyId);
+                                                formData.append('unit_number', this.currentUnit);
+
+                                                for (let file of files) {
+                                                    formData.append('photos[]', file);
+                                                }
+
+                                                await fetch('/partner/property/upload-photos', {
+                                                    method: 'POST',
+                                                    body: formData,
+                                                    headers: {
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                                                    }
+                                                });
+                                            }
+
                                             if (this.currentUnit < this.propertyCount) {
-                                               
                                                 this.currentUnit++;
-                                                this.step = 7; // Repeat for next unit
                                             } else {
                                                 this.step++;
+                                                this.currentUnit = 1;
                                             }
                                         } else {
                                             if (this.step === 1 && this.selected === '') return;

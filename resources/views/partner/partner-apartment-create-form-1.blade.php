@@ -220,14 +220,21 @@
                                     class="border rounded w-24 p-2" />
                             </div>
                         </div>
-                        <!-- Navigation Buttons -->
+                        <!-- Navigation Buttons for Step 1 -->
                         <template x-if="step === 1">
                             <div class="flex items-center justify-between pt-4">
                                 <button type="button" @click="step--"
                                     class="border border-[#3CC0E9]  text-blue-600 hover:bg-[#29ACD5] font-semibold py-2 px-4 rounded">
                                     ←
                                 </button>
-                                <button type="button" @click="if(selected) step = 2"
+                                <button type="button"
+                                    @click="
+                                        if(selected === 'One') {
+                                            step = 2;
+                                        } else if(selected === 'Multiple') {
+                                            step = 3;
+                                        }
+                                    "
                                     class=" font-semibold py-3 px-8 rounded  bg-[#3CC0E9] hover:bg-[#29ACD5] text-white"
                                     :class="!selected ? 'opacity-50 cursor-not-allowed' : ''">
                                     Continue
@@ -239,8 +246,41 @@
             </div>
             <!--Main Step 1 End-->
 
-            <!-- Main Step 2 Start -->
-            <div x-show="step === 2" x-cloak>
+            <!-- Confirmation Step for ONE Apartment (Step 2) -->
+            <div x-show="step === 2 && selected === 'One'" x-cloak>
+                <div class="bg-white max-w-2xl w-full p-6 rounded-lg shadow text-center">
+                    <p class="text-base text-gray-600 mb-8">You're listing:</p>
+
+                    <!-- Icon -->
+                    <div class="flex justify-center mb-8">
+                        <img src="{{ asset('images/aprt-b.png') }}" alt="One Apartment"
+                            class="w-16 h-16" />
+                    </div>
+
+                    <!-- Heading -->
+                    <h2 class="text-lg md:text-xl font-bold text-gray-800 mb-8">
+                        One apartment where guests can book the entire apartment
+                    </h2>
+
+                    <!-- Description -->
+                    <p class="text-gray-700 mb-8">Does this sound like your property?</p>
+
+                    <!-- Buttons -->
+                    <div class="space-y-2">
+                        <button type="button" @click="step = 4"
+                            class="w-full bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded">
+                            Continue
+                        </button>
+                        <button type="button" @click="step = 1"
+                            class="w-full border border-[#3CC0E9] text-[#3CC0E9] hover:bg-[#29ACD5] font-semibold py-2 px-4 rounded mb-6">
+                            No, I need to make a change
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Confirmation Step for MULTIPLE Apartments (Step 3) -->
+            <div x-show="step === 3 && selected === 'Multiple'" x-cloak>
                 <div class="bg-white max-w-2xl w-full p-6 rounded-lg shadow text-center">
                     <p class="text-base text-gray-600 mb-8">You're listing:</p>
 
@@ -252,32 +292,30 @@
 
                     <!-- Heading -->
                     <h2 class="text-lg md:text-xl font-bold text-gray-800 mb-8">
-                        Multiple apartments in the same location where guests can book an entire apartment
+                        <span x-text="sameAddress === 'yes' ? 'Multiple apartments in the same location' : 'Multiple apartments in different locations'"></span>
+                        where guests can book an entire apartment
                     </h2>
 
                     <!-- Description -->
                     <p class="text-gray-700 mb-8">Does this sound like your property?</p>
 
                     <!-- Buttons -->
-                    <template x-if="step === 2">
-                        <div class="space-y-2">
-                            <button @click="step = 3"
-                                class="w-full bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded">
-                                Continue
-                            </button>
-                            <button @click="step = 1"
-                                class="w-full border border-[#3CC0E9] text-[#3CC0E9] hover:bg-[#29ACD5] font-semibold py-2 px-4 rounded mb-6">
-                                No, I need to make a change
-                            </button>
-                        </div>
-                    </template>
-
+                    <div class="space-y-2">
+                        <button type="button"
+                            @click="window.location.href = '/partner/partner-multiple-apartment'"
+                            class="w-full bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded">
+                            Continue
+                        </button>
+                        <button type="button" @click="step = 1"
+                            class="w-full border border-[#3CC0E9] text-[#3CC0E9] hover:bg-[#29ACD5] font-semibold py-2 px-4 rounded mb-6">
+                            No, I need to make a change
+                        </button>
+                    </div>
                 </div>
             </div>
-            <!--Main Step 2 -End-->
 
-            <!-- Main Step 3 (Where else is your property listed?)-->
-            <div x-show="step === 3" x-cloak>
+            <!-- Main Step 4 (Where else is your property listed? - For ONE apartment)-->
+            <div x-show="step === 4" x-cloak>
                 <div x-data="{
                     selectedChannels: [],
                     get showImportSection() {
@@ -352,53 +390,24 @@
                     </div>
 
                     <!-- Navigation Buttons -->
-                    <template x-if="step === 3">
-                        <div class="flex items-center justify-between pt-4">
-                            <button type="button" @click="step--"
-                                class="border border-[#3CC0E9] text-blue-600 hover:bg-[#29ACD5] font-semibold py-2 px-4 rounded  ">
-                                ←
-                            </button>
-                            <button type="submit" :disabled="selectedChannels.length === 0"
-                                :class="selectedChannels.length === 0 ?
-                                    'bg-gray-300 text-gray-600 cursor-not-allowed' :
-                                    'bg-[#3CC0E9] hover:bg-[#29ACD5] text-white cursor-pointer'"
-                                class="font-semibold py-3 px-6 rounded transition duration-200">
-                                Continue
-                            </button>
-
-                        </div>
-                    </template>
+                    <div class="flex items-center justify-between pt-4">
+                        <button type="button" @click="step = 2"
+                            class="border border-[#3CC0E9] text-blue-600 hover:bg-[#29ACD5] font-semibold py-2 px-4 rounded">
+                            ←
+                        </button>
+                        <button type="submit" :disabled="selectedChannels.length === 0"
+                            :class="selectedChannels.length === 0 ?
+                                'bg-gray-300 text-gray-600 cursor-not-allowed' :
+                                'bg-[#3CC0E9] hover:bg-[#29ACD5] text-white cursor-pointer'"
+                            class="font-semibold py-3 px-6 rounded transition duration-200">
+                            Continue
+                        </button>
+                    </div>
                 </div>
             </div>
-            <!--Main Step 3 End-->
+            <!--Main Step 4 End-->
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    </div>
-    </form>
+        </form>
     </div>
 </body>
 
