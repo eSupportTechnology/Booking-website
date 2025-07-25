@@ -250,6 +250,10 @@ Route::get('/partner-alternative-privateroom', function () {
     return view('frontend.partner-alternative-privateroom');
 })->name('partner.alternative.privateroom');
 
+Route::get('/partner-apartment-multiple', function () {
+    return view('frontend.partner-multiple-apartment');
+})->name('partner.apartment.multiple');
+
 
 Route::get('/partner-hotels-edit', function () {
     return view('frontend.partner-hotels-edit');
@@ -438,6 +442,9 @@ Route::post('/property/{property}/update-title', [PropertyController::class, 'up
 Route::patch('/partner/property/{property}/additional-details', [PropertyController::class, 'updateAdditionalDetails'])
     ->name('partner.property.update.additional-details');
 
+
+
+
 require __DIR__ . '/auth.php';
 
 
@@ -452,6 +459,11 @@ Route::get('/admin/dashboard', function () {
 
 
 
+
+
+Route::get('/customer-myAccount', function () {
+    return view('frontend.customer-myAccount');
+})->name('account.myAccount');
 
 
 Route::get('/partner/apartment/bedrooms/{property}', function ($propertyId) {
