@@ -453,6 +453,23 @@ Route::get('/admin/dashboard', function () {
 })->name('admin.dashboard');
 
 
+Route::get('/admin/customers', function () {
+    return view('frontend.admin.customers');
+})->name('admin.customers');
+
+Route::get('/admin/customer-view', function () {
+    return view('frontend.admin.customer-view');
+});
+
+
+
+
+
+
+
+
+
+
 
 
 

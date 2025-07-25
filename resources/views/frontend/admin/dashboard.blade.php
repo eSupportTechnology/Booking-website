@@ -6,14 +6,14 @@
     <!-- Header -->
     <div class="flex justify-between items-center">
         <h1 class="text-3xl font-semibold text-gray-800">Welcome back, Admin 👋</h1>
-        <button class="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700 transition">
+        <button class="text-white px-4 py-2 rounded shadow hover:opacity-90 transition" style="background-color: #1F8FB2;">
             Add New Booking
         </button>
     </div>
 
     <!-- Statistics Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div class="bg-white p-6 rounded-lg shadow border-l-4 border-blue-500">
+        <div class="bg-white p-6 rounded-lg shadow border-l-4" style="border-color: #1F8FB2;">
             <h2 class="text-sm text-gray-500">Total Bookings</h2>
             <p class="text-2xl font-bold text-gray-800">1,250</p>
         </div>
@@ -56,7 +56,7 @@
                             <span class="bg-green-100 text-green-700 text-xs font-medium px-2 py-1 rounded">Confirmed</span>
                         </td>
                         <td class="px-4 py-2 text-right">
-                            <button class="text-blue-600 hover:underline">View</button>
+                            <button class="hover:underline" style="color: #1F8FB2;">View</button>
                         </td>
                     </tr>
                 </tbody>
@@ -75,8 +75,8 @@
         <div class="bg-white p-6 rounded-lg shadow">
             <h3 class="text-lg font-semibold mb-2">Quick Actions</h3>
             <div class="flex flex-col space-y-2">
-                <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">Add Property</button>
-                <button class="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600 transition">Manage Users</button>
+                <button class="text-white px-4 py-2 rounded hover:opacity-90 transition" style="background-color: #1F8FB2;">Add Property</button>
+                <button class="text-white px-4 py-2 rounded hover:opacity-90 transition" style="background-color: #3CC0E9;">Manage Users</button>
                 <button class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 transition">Review Reports</button>
             </div>
         </div>
@@ -92,13 +92,13 @@
     </div>
 </div>
 
-<!--  Enhanced Chart Script -->
+<!--  Chart Script -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     const ctx = document.getElementById('bookingChart').getContext('2d');
 
     const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-    gradient.addColorStop(0, 'rgba(59, 130, 246, 0.5)');
+    gradient.addColorStop(0, 'rgba(31, 143, 178, 0.5)');
     gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
 
     new Chart(ctx, {
@@ -111,17 +111,17 @@
                     data: [120, 150, 180, 140, 200, 170, 250],
                     fill: true,
                     backgroundColor: gradient,
-                    borderColor: 'rgba(59, 130, 246, 1)',
+                    borderColor: '#1F8FB2',
                     tension: 0.4,
                     borderWidth: 3,
-                    pointBackgroundColor: '#2563eb',
+                    pointBackgroundColor: '#1F8FB2',
                     pointRadius: 4
                 },
                 {
                     label: 'Cancellations',
                     data: [20, 30, 15, 25, 18, 22, 10],
                     fill: false,
-                    borderColor: 'rgba(239, 68, 68, 1)',
+                    borderColor: '#ef4444',
                     borderWidth: 2,
                     tension: 0.4,
                     pointBackgroundColor: '#ef4444',
@@ -142,7 +142,7 @@
                     backgroundColor: '#111827',
                     titleColor: '#fff',
                     bodyColor: '#d1d5db',
-                    borderColor: '#2563eb',
+                    borderColor: '#1F8FB2',
                     borderWidth: 1
                 }
             },
