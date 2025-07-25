@@ -1760,6 +1760,9 @@
                                                         address: '',
                                                         addresses:[],
                                                         selectedAmenities: [],
+                                                        type: '',
+                                                        individual: { name: '', id: '' },
+                                                        business: { company_name: '', reg_no: '' },
                                                         unitAddresses: Array(propertyCount).fill(''),
                                                         toggleLanguage(lang) {
                                                             const index = this.unitServices[this.currentUnit - 1].languages.indexOf(lang);
@@ -2766,7 +2769,7 @@
                                                 </template>
                                                 <template x-if="step === 12 ">
                                                     <div class="space-y-6">
-                                                        <h3 class="text-lg font-bold">Upload Photos for Unit #<span x-text="currentUnit"></span></h3>
+                                                        <h3 class="text-lg font-bold">Upload Photos for Unit <span x-text="currentUnit"></span></h3>
 
                                                         <!-- Upload Box -->
                                                         <div
@@ -2957,7 +2960,7 @@
                                                             class="px-4 py-8 max-w-3xl mx-auto space-y-6">
 
                                                             <h1 class="text-2xl sm:text-3xl font-semibold">Partner
-                                                                verification</h1>
+                                                                verification for <span x-text="currentUnit"></span> </h1>
 
                                                             <!-- Instruction + Select Box -->
                                                             <div
@@ -2991,15 +2994,15 @@
                                                                     <div>
                                                                         <label class="block text-sm text-gray-700">Full
                                                                             Name</label>
-                                                                        <input type="text"
+                                                                        <input type="text" x-model="individual.name" 
                                                                             class="w-full mt-1 border rounded px-3 py-2"
                                                                             placeholder="Enter your full name">
                                                                     </div>
                                                                     <div>
                                                                         <label
-                                                                            class="block text-sm text-gray-700">National
+                                                                            class="block text-sm text-gray-700" >National
                                                                             ID or Passport</label>
-                                                                        <input type="text"
+                                                                        <input type="text" x-model="individual.id"
                                                                             class="w-full mt-1 border rounded px-3 py-2"
                                                                             placeholder="Enter ID number">
                                                                     </div>
@@ -3014,17 +3017,17 @@
                                                                 <div class="space-y-4">
                                                                     <div>
                                                                         <label
-                                                                            class="block text-sm text-gray-700">Company
+                                                                            class="block text-sm text-gray-700" >Company
                                                                             Name</label>
-                                                                        <input type="text"
+                                                                        <input type="text" x-model="business.company_name"
                                                                             class="w-full mt-1 border rounded px-3 py-2"
                                                                             placeholder="Enter company name">
                                                                     </div>
                                                                     <div>
                                                                         <label
-                                                                            class="block text-sm text-gray-700">Business
+                                                                            class="block text-sm text-gray-700" >Business
                                                                             Registration Number</label>
-                                                                        <input type="text"
+                                                                        <input type="text" x-model="business.reg_no"
                                                                             class="w-full mt-1 border rounded px-3 py-2"
                                                                             placeholder="Enter registration number">
                                                                     </div>
@@ -3736,7 +3739,38 @@
                                                 this.step++;
                                                 this.currentUnit = 1;
                                             }
-                                        } else {
+                                        }else if (this.step === 14) {
+    const currentPropertyId = this.propertyId + this.currentUnit - 1;
+
+    const formData = new FormData();
+    formData.append('property_id', currentPropertyId);
+    formData.append('type', this.type);
+
+    if (this.type === 'individual') {
+        formData.append('full_name', this.individual.name);
+        formData.append('national_id', this.individual.id);
+    } else if (this.type === 'business') {
+        formData.append('company_name', this.business.company_name);
+        formData.append('registration_number', this.business.reg_no);
+    }
+
+    await fetch('/partner/partner-verification', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+        }
+    });
+
+    if (this.currentUnit < this.propertyCount) {
+        this.currentUnit++;
+    } else {
+        this.step++;
+        this.currentUnit = 1;
+    }
+}
+
+                                         else {
                                             if (this.step === 1 && this.selected === '') return;
 
                                             if (this.step < this.totalSteps) {

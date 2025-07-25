@@ -397,6 +397,9 @@ class PropertyController extends Controller
     public function storePartnerVerification(Request $request, PropertyAction $propertyAction)
     {
         try {
+            Log::info('storePartnerVerification called', [
+                'request' => $request->all(),
+            ]);
             $dto = PartnerVerificationDTO::fromRequest($request);
 
             $propertyAction->partnerVerification($dto);
