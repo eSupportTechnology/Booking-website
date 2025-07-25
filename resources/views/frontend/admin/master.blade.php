@@ -12,7 +12,7 @@
 <body class="bg-blue-50 text-gray-800">
 
   <!-- Top Navbar -->
-  <nav class="bg-blue-600 text-white fixed w-full z-50 shadow">
+  <nav class="bg-[#1F8FB2] text-white fixed w-full z-50 shadow">
     <div class="max-w-full mx-auto px-4">
       <div class="flex justify-between h-16 items-center">
 
@@ -26,13 +26,14 @@
         </div>
 
         <!-- Center: Search -->
-        <div class="hidden md:flex">
-          <input
-            type="text"
-            placeholder="Search..."
-            class="px-3 py-1 rounded bg-blue-500 placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-yellow-300 text-sm"
-          />
-        </div>
+       <div class="hidden md:flex">
+         <input
+           type="text"
+           placeholder="Search..."
+           class="px-3 py-1 rounded bg-[#3CC0E9] placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-yellow-300 text-sm"
+         />
+       </div>
+
 
         <!-- Right: Notifications + Profile -->
         <div class="flex items-center space-x-4">
@@ -77,7 +78,7 @@
       <!-- Branding -->
       <div class="mb-6 flex items-center space-x-3 px-4 py-3">
           @if ($appName === 'BookinTour')
-              <h1 class="text-xl font-bold text-blue-600">{{ $domain }}</h1>
+              <h1 class="text-xl font-bold text-bg-[#1F8FB2]">{{ $domain }}</h1>
           @elseif ($appName === 'Inselor')
               <img src="{{ asset('images/inselor-logo.png') }}" alt="Inselor" class="h-12 w-auto align-middle" />
           @else
@@ -89,9 +90,10 @@
 
         <!-- MAIN SECTION -->
         <div>
-          <a href="#" class="flex items-center px-4 py-2 rounded hover:bg-blue-200 transition font-bold text-blue-900">
-            <i class="fas fa-tachometer-alt mr-3 text-blue-600 text-lg"></i> Dashboard
+          <a href="{{ route('admin.dashboard') }}" class="flex items-center px-4 py-2 rounded hover:bg-blue-200 transition font-bold text-blue-900">
+            <i class="fas fa-tachometer-alt mr-3 text-bg-[#1F8FB2] text-lg"></i> Dashboard
           </a>
+
         </div>
 
         <!-- USERS SECTION -->
@@ -101,13 +103,13 @@
             class="w-full flex justify-between items-center px-4 py-2 rounded hover:bg-blue-200 transition focus:outline-none font-bold text-blue-900"
           >
             <div class="flex items-center">
-              <i class="fas fa-users mr-3 text-blue-600 text-lg"></i>
+              <i class="fas fa-users mr-3 text-bg-[#1F8FB2] text-lg"></i>
               <span>Users</span>
             </div>
             <i :class="openUsers ? 'fa-chevron-up' : 'fa-chevron-down'" class="fas text-xs"></i>
           </button>
           <div x-show="openUsers" x-collapse class="ml-8 mt-2 space-y-1 border-l border-blue-300 pl-4">
-            <a href="#" class="block py-1 hover:text-blue-700 font-semibold">Create Customer</a>
+            <a href="{{ route('admin.customers') }}" class="block py-1 hover:text-blue-700 font-semibold">Create Customer</a>
             <a href="#" class="block py-1 hover:text-blue-700 font-semibold">Partners</a>
           </div>
         </div>
@@ -119,7 +121,7 @@
             class="w-full flex justify-between items-center px-4 py-2 rounded hover:bg-blue-200 transition focus:outline-none font-bold text-blue-900"
           >
             <div class="flex items-center">
-              <i class="fas fa-building mr-3 text-blue-600 text-lg"></i> <span>Property</span>
+              <i class="fas fa-building mr-3 text-bg-[#1F8FB2] text-lg"></i> <span>Property</span>
             </div>
             <i :class="openProperty ? 'fa-chevron-up' : 'fa-chevron-down'" class="fas text-xs"></i>
           </button>
@@ -135,7 +137,7 @@
         <!-- SETTINGS -->
         <div>
           <a href="#" class="flex items-center px-4 py-2 rounded hover:bg-blue-200 transition text-blue-800 font-bold text-base">
-            <i class="fas fa-cog mr-3 text-blue-600 text-lg"></i> Settings
+            <i class="fas fa-cog mr-3 text-bg-[#1F8FB2] text-lg"></i> Settings
           </a>
         </div>
 

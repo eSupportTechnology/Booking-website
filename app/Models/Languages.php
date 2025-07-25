@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
-class Amenity extends Model
+class Languages extends Model
 {
     use HasFactory;
     protected $fillable = ['name', 'category'];
@@ -13,7 +13,6 @@ class Amenity extends Model
 
     public function properties()
 {
-    return $this->belongsToMany(Property::class, 'property_amenity', 'amenity_id', 'property_id');
+    return $this->belongsToMany(Property::class, 'property_languages', 'language_id', 'property_id');
 }
-
 }

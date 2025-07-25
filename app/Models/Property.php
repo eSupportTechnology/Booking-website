@@ -23,7 +23,9 @@ class Property extends Model
         'latitude',
         'longitude',
         'channel_manager',
-        'status'
+        'status',
+        'stars',
+        'group',
     ];
     public function photos()
     {
@@ -35,8 +37,12 @@ class Property extends Model
     }
     public function amenities()
     {
-        return $this->belongsToMany(Amenity::class, 'property_amenity');
+        return $this->belongsToMany(Amenity::class, 'property_amenity', 'property_id', 'amenity_id');
     }
+    // public function languages()
+    // {
+    //     return $this->belongsToMany(Languages::class, 'property_languages', 'property_id', 'language_id');
+    // }
     public function bedrooms()
     {
         return $this->hasMany(PropertyBedroom::class);
@@ -63,7 +69,7 @@ class Property extends Model
 
     public function languages()
     {
-        return $this->belongsToMany(Language::class, 'property_language');
+        return $this->belongsToMany(Language::class, 'property_language', 'property_id', 'language_id');
     }
 
     public function hostProfile()

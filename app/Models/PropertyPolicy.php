@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class PropertyPolicy extends Model
 {
     use HasFactory;
+
+    protected $table = 'property_policies';
+    public $timestamps = false;
+
     protected $fillable = [
         'property_id',
         'cancellation_policy',
@@ -18,8 +22,8 @@ class PropertyPolicy extends Model
         'smoking_allowed',
         'pets_allowed',
         'parties_allowed',
-        'pets_fees'
+        'pets_fees',
+        'children_allowed'
     ];
-    protected $table = 'property_policies';
-    public $timestamps = false;
+
 }

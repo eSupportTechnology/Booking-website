@@ -250,6 +250,10 @@ Route::get('/partner-alternative-privateroom', function () {
     return view('frontend.partner-alternative-privateroom');
 })->name('partner.alternative.privateroom');
 
+Route::get('/partner-apartment-multiple', function () {
+    return view('frontend.partner-multiple-apartment');
+})->name('partner.apartment.multiple');
+
 
 Route::get('/partner-hotels-edit', function () {
     return view('frontend.partner-hotels-edit');
@@ -290,6 +294,7 @@ Route::get('/airport-taxis', function () {
 Route::prefix('partner')->group(function () {
     Route::get('/property_category', [PropertyController::class, 'categories'])->name('partner.property.category');
     Route::get('/property_subcategory/{id}', [PropertyController::class, 'subcategories'])->name('partner.property.subcategory');
+    Route::get('/hotels/rooms/{id}', [PropertyController::class, 'rooms'])->name('partner.hotels.room');
     Route::get('/property_subtype/{id}', [PropertyController::class, 'subtypes'])->name('partner.property.subtype');
     Route::post('/property/register', [PropertyController::class, 'register'])->name('partner.property.register');
     // Show Step 1 form
@@ -383,6 +388,7 @@ Route::prefix('partner')->group(function () {
     Route::post('/property/upload-photos', [PropertyController::class, 'uploadPhotos']);
     Route::post('/property/save-amenities/{property}', [PropertyController::class, 'saveAmenities']);
     Route::post('/property/save-policy/{property}', [PropertyController::class, 'savePolicy']);
+    Route::post('/property/save-languages/{property}', [PropertyController::class, 'saveLanguages']);
     Route::post('/save-rooms/{property}', [PropertyController::class, 'saveRooms']);
     Route::post('/partner-verification', [PropertyController::class, 'storePartnerVerification']);
 
@@ -402,9 +408,10 @@ Route::prefix('partner')->group(function () {
     Route::get('/languages', [\App\Http\Controllers\PropertyController::class, 'getLanguages'])->name('partner.languages.get');
     Route::post('/property/save-additional-details', [PropertyController::class, 'saveAdditionalDetails'])->name('partner.property.save-additional-details');
 });
-
+Route::post('/save-amenities/{property}', [PropertyController::class, 'saveAmenities']);
 Route::post('/property/save-address-same', [PropertyController::class, 'saveAddressSame']);
 Route::post('/property/save-address-multiple', [PropertyController::class, 'saveAddressMultiple']);
+Route::post('/save-languages/{property}', [PropertyController::class, 'saveLanguages']);
 Route::get('/partner/login', [LoginController::class, 'show'])->name('partner.login');
 Route::post('/partner/login', [LoginController::class, 'login'])->name('partner.login.submit');
 
@@ -446,22 +453,27 @@ Route::get('/admin/dashboard', function () {
 })->name('admin.dashboard');
 
 
-// Admin Routes for Property
-Route::get('/admin/apartments', function () {
-    return view('frontend.admin.apartments');
-})->name('admin.apartments');
+Route::get('/admin/customers', function () {
+    return view('frontend.admin.customers');
+})->name('admin.customers');
 
-Route::get('/admin/homes', function () {
-    return view('frontend.admin.homes');
-})->name('admin.homes');
+Route::get('/admin/customer-view', function () {
+    return view('frontend.admin.customer-view');
+});
 
-Route::get('/admin/hotels', function () {
-    return view('frontend.admin.hotels');
-})->name('admin.hotels');
 
-Route::get('/admin/alternative-places', function () {
-    return view('frontend.admin.alternative-places');
-})->name('admin.alternative.places');
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -507,3 +519,7 @@ Route::get('/partner/apartment/pricing/cancel-policies', function() {
 Route::get('/partner/apartment/weekly-rate', function() {
     return view('partner.partner-apartment-weekly-rate');
 })->name('partner.apartment.weekly.rate');
+
+Route::get('/partner/partner-multiple-apartment', function () {
+    return view('partner.partner-multiple-apartment');
+})->name('partner.multiple.apartment');
