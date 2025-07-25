@@ -55,23 +55,28 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100 text-xs sm:text-sm">
-                        {{-- Dummy Data for Hotels --}}
                         <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-2 sm:px-4 py-3 sm:py-4 font-medium text-gray-900">#201</td>
-                            <td class="px-2 sm:px-4 py-3 sm:py-4 text-gray-700">Global Stays Inc.</td>
+                            <td class="px-2 sm:px-4 py-3 sm:py-4 font-medium text-gray-900">#101</td>
+                            <td class="px-2 sm:px-4 py-3 sm:py-4 text-gray-700">Jane Doe</td>
                             <td class="px-2 sm:px-4 py-3 sm:py-4 text-gray-700">
-                                <div class="font-medium text-[#3CC0E9]">Grand Hyatt New York</div>
+                                <div class="font-medium text-[#3CC0E9]">Forest Cabin</div> {{-- Place Name --}}
                             </td>
-                            <td class="px-2 sm:px-4 py-3 sm:py-4 text-gray-700">New York, USA</td>
+                            <td class="px-2 sm:px-4 py-3 sm:py-4 text-gray-700">Mountain Retreat, CO</td> {{-- Location --}}
+                            {{-- <td class="px-2 sm:px-4 py-3 sm:py-4 text-gray-700">2</td> --}}
                             <td class="px-2 sm:px-4 py-3 sm:py-4">
-                                <img src="https://placehold.co/40x40/E0E0E0/333333?text=Hotel1" alt="Grand Hyatt" class="w-10 h-10 rounded-md object-cover">
+                                <img src="/images/A.jpg" alt="Forest Cabin" class="w-10 h-10 rounded-md object-cover">
                             </td>
-                            <td class="px-2 sm:px-4 py-3 sm:py-4 text-gray-700">Jul 22, 2025</td>
+                            <td class="px-2 sm:px-4 py-3 sm:py-4 text-gray-700">Jul 24, 2025</td>
                             <td class="px-2 sm:px-4 py-3 sm:py-4">
-                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-medium bg-green-100 text-green-800">
-                                    <span class="w-1 h-1 mr-1.5 rounded-full bg-green-800"></span>
-                                    Active
-                                </span>
+                                <div class="relative">
+                                    <select onchange="handleStatusChange(this, '101')" {{-- Replace '101' with dynamic ID --}}
+                                            class="appearance-none bg-green-100 text-green-800 font-medium text-[10px] sm:text-xs rounded-full pl-6 pr-4 py-0.5 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#3CC0E9] transition">
+                                        <option value="Available" selected class="bg-green-100 text-green-800">Available</option>
+                                        <option value="Pending" class="bg-yellow-100 text-yellow-800">Pending</option>
+                                        <option value="Unavailable" class="bg-red-100 text-red-800">Unavailable</option>
+                                    </select>
+                                    <span class="absolute top-1/2 left-2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-green-800 pointer-events-none status-dot"></span>
+                                </div>
                             </td>
                             <td class="px-2 sm:px-4 py-3 sm:py-4">
                                 <div class="flex items-center space-x-3">
@@ -90,56 +95,28 @@
                                 </div>
                             </td>
                         </tr>
+                        {{-- Add more rows for testing search --}}
                         <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-2 sm:px-4 py-3 sm:py-4 font-medium text-gray-900">#202</td>
-                            <td class="px-2 sm:px-4 py-3 sm:py-4 text-gray-700">Travel Corp</td>
+                            <td class="px-2 sm:px-4 py-3 sm:py-4 font-medium text-gray-900">#102</td>
+                            <td class="px-2 sm:px-4 py-3 sm:py-4 text-gray-700">Traveler's Nook</td>
                             <td class="px-2 sm:px-4 py-3 sm:py-4 text-gray-700">
-                                <div class="font-medium text-[#3CC0E9]">The Plaza Hotel</div>
+                                <div class="font-medium text-[#3CC0E9]">Desert Glamping</div>
                             </td>
-                            <td class="px-2 sm:px-4 py-3 sm:py-4 text-gray-700">London, UK</td>
+                            <td class="px-2 sm:px-4 py-3 sm:py-4 text-gray-700">Mojave, CA</td>
                             <td class="px-2 sm:px-4 py-3 sm:py-4">
-                                <img src="https://placehold.co/40x40/D0D0D0/444444?text=Hotel2" alt="The Plaza" class="w-10 h-10 rounded-md object-cover">
+                                <img src="https://placehold.co/40x40/FF0000/FFFFFF?text=B" alt="Desert Glamping" class="w-10 h-10 rounded-md object-cover">
                             </td>
-                            <td class="px-2 sm:px-4 py-3 sm:py-4 text-gray-700">Jul 19, 2025</td>
+                            <td class="px-2 sm:px-4 py-3 sm:py-4 text-gray-700">Jul 20, 2025</td>
                             <td class="px-2 sm:px-4 py-3 sm:py-4">
-                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-medium bg-red-100 text-red-800">
-                                    <span class="w-1 h-1 mr-1.5 rounded-full bg-red-800"></span>
-                                    Inactive
-                                </span>
-                            </td>
-                            <td class="px-2 sm:px-4 py-3 sm:py-4">
-                                <div class="flex items-center space-x-3">
-                                    <button class="text-[#3CC0E9] hover:text-[#3CC0E9]/80 text-[10px] sm:text-xs font-medium inline-flex items-center">
-                                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                        </svg>
-                                        Edit
-                                    </button>
-                                    <button class="text-red-600 hover:text-red-800 text-[10px] sm:text-xs font-medium inline-flex items-center">
-                                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                        </svg>
-                                        Delete
-                                    </button>
+                                <div class="relative">
+                                    <select onchange="handleStatusChange(this, '101')" {{-- Replace '101' with dynamic ID --}}
+                                            class="appearance-none bg-green-100 text-green-800 font-medium text-[10px] sm:text-xs rounded-full pl-6 pr-4 py-0.5 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#3CC0E9] transition">
+                                        <option value="Available" selected class="bg-green-100 text-green-800">Available</option>
+                                        <option value="Pending" class="bg-yellow-100 text-yellow-800">Pending</option>
+                                        <option value="Unavailable" class="bg-red-100 text-red-800">Unavailable</option>
+                                    </select>
+                                    <span class="absolute top-1/2 left-2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-green-800 pointer-events-none status-dot"></span>
                                 </div>
-                            </td>
-                        </tr>
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-2 sm:px-4 py-3 sm:py-4 font-medium text-gray-900">#203</td>
-                            <td class="px-2 sm:px-4 py-3 sm:py-4 text-gray-700">Luxury Resorts LLC</td>
-                            <td class="px-2 sm:px-4 py-3 sm:py-4 text-gray-700">
-                                <div class="font-medium text-[#3CC0E9]">Beachfront Paradise</div>
-                            </td>
-                            <td class="px-2 sm:px-4 py-3 sm:py-4 text-gray-700">Maldives</td>
-                            <td class="px-2 sm:px-4 py-3 sm:py-4">
-                                <img src="https://placehold.co/40x40/B0B0B0/555555?text=Hotel3" alt="Beachfront Paradise" class="w-10 h-10 rounded-md object-cover">
-                            </td>
-                            <td class="px-2 sm:px-4 py-3 sm:py-4 text-gray-700">Jul 15, 2025</td>
-                            <td class="px-2 sm:px-4 py-3 sm:py-4">
-                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-medium bg-yellow-100 text-yellow-800">
-                                    <span class="w-1 h-1 mr-1.5 rounded-full bg-yellow-800"></span>
-                                    Pending
-                                </span>
                             </td>
                             <td class="px-2 sm:px-4 py-3 sm:py-4">
                                 <div class="flex items-center space-x-3">
@@ -214,10 +191,48 @@
         </div>
     </div>
 </section>
+
+
 <script>
+    // Status change handler
+    function handleStatusChange(selectEl, id) {
+        const value = selectEl.value;
+        const wrapper = selectEl.parentElement;
+        const dot = wrapper.querySelector('.status-dot');
+
+        // Reset classes
+        selectEl.className = 'appearance-none font-medium text-[10px] sm:text-xs rounded-full pl-6 pr-4 py-0.5 transition focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#3CC0E9]';
+        dot.className = 'absolute top-1/2 left-2 -translate-y-1/2 w-1.5 h-1.5 rounded-full status-dot';
+
+        // Apply styling
+        switch (value) {
+            case 'Available':
+                selectEl.classList.add('bg-green-100', 'text-green-800');
+                dot.classList.add('bg-green-800');
+                break;
+            case 'Pending':
+                selectEl.classList.add('bg-yellow-100', 'text-yellow-800');
+                dot.classList.add('bg-yellow-800');
+                break;
+            case 'Unavailable':
+                selectEl.classList.add('bg-red-100', 'text-red-800');
+                dot.classList.add('bg-red-800');
+                break;
+        }
+
+        // Optional: Save via AJAX
+        console.log(`Changed status of ID ${id} to ${value}`);
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
+        // Initialize status selects
+        document.querySelectorAll('select[onchange^="handleStatusChange"]').forEach(select => {
+            handleStatusChange(select, select.getAttribute('onchange').split(',')[1]?.replace(/[^0-9]/g, ''));
+        });
+
+        // Search functionality
         const searchInput = document.getElementById('hotelSearchInput');
-        const table = document.getElementById('hotelsTable'); // Corrected: Added ID to the table
+        const table = document.getElementById('hotelsTable');
         const rows = table.querySelectorAll('tbody tr');
 
         searchInput.addEventListener('input', function(event) {

@@ -68,10 +68,15 @@
                             </td>
                             <td class="px-2 sm:px-4 py-3 sm:py-4 text-gray-700">Jul 24, 2025</td>
                             <td class="px-2 sm:px-4 py-3 sm:py-4">
-                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-medium bg-green-100 text-green-800">
-                                    <span class="w-1 h-1 mr-1.5 rounded-full bg-green-800"></span>
-                                    Available
-                                </span>
+                                <div class="relative">
+                                    <select onchange="handleStatusChange(this, '101')" {{-- Replace '101' with dynamic ID --}}
+                                            class="appearance-none bg-green-100 text-green-800 font-medium text-[10px] sm:text-xs rounded-full pl-6 pr-4 py-0.5 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#3CC0E9] transition">
+                                        <option value="Available" selected class="bg-green-100 text-green-800">Available</option>
+                                        <option value="Pending" class="bg-yellow-100 text-yellow-800">Pending</option>
+                                        <option value="Unavailable" class="bg-red-100 text-red-800">Unavailable</option>
+                                    </select>
+                                    <span class="absolute top-1/2 left-2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-green-800 pointer-events-none status-dot"></span>
+                                </div>
                             </td>
                             <td class="px-2 sm:px-4 py-3 sm:py-4">
                                 <div class="flex items-center space-x-3">
@@ -103,10 +108,15 @@
                             </td>
                             <td class="px-2 sm:px-4 py-3 sm:py-4 text-gray-700">Jul 20, 2025</td>
                             <td class="px-2 sm:px-4 py-3 sm:py-4">
-                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-medium bg-yellow-100 text-yellow-800">
-                                    <span class="w-1 h-1 mr-1.5 rounded-full bg-yellow-800"></span>
-                                    Pending
-                                </span>
+                                <div class="relative">
+                                    <select onchange="handleStatusChange(this, '101')" {{-- Replace '101' with dynamic ID --}}
+                                            class="appearance-none bg-green-100 text-green-800 font-medium text-[10px] sm:text-xs rounded-full pl-6 pr-4 py-0.5 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#3CC0E9] transition">
+                                        <option value="Available" selected class="bg-green-100 text-green-800">Available</option>
+                                        <option value="Pending" class="bg-yellow-100 text-yellow-800">Pending</option>
+                                        <option value="Unavailable" class="bg-red-100 text-red-800">Unavailable</option>
+                                    </select>
+                                    <span class="absolute top-1/2 left-2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-green-800 pointer-events-none status-dot"></span>
+                                </div>
                             </td>
                             <td class="px-2 sm:px-4 py-3 sm:py-4">
                                 <div class="flex items-center space-x-3">
@@ -137,10 +147,15 @@
                             </td>
                             <td class="px-2 sm:px-4 py-3 sm:py-4 text-gray-700">Jul 18, 2025</td>
                             <td class="px-2 sm:px-4 py-3 sm:py-4">
-                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-medium bg-red-100 text-red-800">
-                                    <span class="w-1 h-1 mr-1.5 rounded-full bg-red-800"></span>
-                                    Unavailable
-                                </span>
+                                <div class="relative">
+                                    <select onchange="handleStatusChange(this, '101')" {{-- Replace '101' with dynamic ID --}}
+                                            class="appearance-none bg-green-100 text-green-800 font-medium text-[10px] sm:text-xs rounded-full pl-6 pr-4 py-0.5 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#3CC0E9] transition">
+                                        <option value="Available" selected class="bg-green-100 text-green-800">Available</option>
+                                        <option value="Pending" class="bg-yellow-100 text-yellow-800">Pending</option>
+                                        <option value="Unavailable" class="bg-red-100 text-red-800">Unavailable</option>
+                                    </select>
+                                    <span class="absolute top-1/2 left-2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-green-800 pointer-events-none status-dot"></span>
+                                </div>
                             </td>
                             <td class="px-2 sm:px-4 py-3 sm:py-4">
                                 <div class="flex items-center space-x-3">
@@ -216,7 +231,38 @@
     </div>
 </section>
 
+<!-- serach JS -->
 <script>
+    // Status change handler
+    function handleStatusChange(selectEl, id) {
+        const value = selectEl.value;
+        const wrapper = selectEl.parentElement;
+        const dot = wrapper.querySelector('.status-dot');
+
+        // Reset classes
+        selectEl.className = 'appearance-none font-medium text-[10px] sm:text-xs rounded-full pl-6 pr-4 py-0.5 transition focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#3CC0E9]';
+        dot.className = 'absolute top-1/2 left-2 -translate-y-1/2 w-1.5 h-1.5 rounded-full status-dot';
+
+        // Apply styling
+        switch (value) {
+            case 'Available':
+                selectEl.classList.add('bg-green-100', 'text-green-800');
+                dot.classList.add('bg-green-800');
+                break;
+            case 'Pending':
+                selectEl.classList.add('bg-yellow-100', 'text-yellow-800');
+                dot.classList.add('bg-yellow-800');
+                break;
+            case 'Unavailable':
+                selectEl.classList.add('bg-red-100', 'text-red-800');
+                dot.classList.add('bg-red-800');
+                break;
+        }
+
+        // Optional: Save via AJAX
+        console.log(`Changed status of ID ${id} to ${value}`);
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         const searchInput = document.getElementById('apartmentSearchInput');
         const table = document.getElementById('apartmentsTable');
@@ -247,4 +293,5 @@
         });
     });
 </script>
+
 @endsection
