@@ -462,8 +462,6 @@ Route::get('/admin/customer-view', function () {
 });
 
 
-
-
 // Admin Routes for Property
 Route::get('/admin/apartments', function () {
     return view('frontend.admin.apartments');
@@ -480,6 +478,20 @@ Route::get('/admin/hotels', function () {
 Route::get('/admin/alternative-places', function () {
     return view('frontend.admin.alternative-places');
 })->name('admin.alternative.places');
+
+
+// Admin Routes Login Registration Forgot Password
+Route::get('/admin/login', function () {
+    return view('frontend.admin.login');
+})->name('admin.login');
+
+Route::get('/admin/Registration', function () {
+    return view('frontend.admin.Registration');
+})->name('admin.Registration');
+
+Route::get('/admin/ForgotPassword', function () {
+    return view('frontend.admin.ForgotPassword');
+})->name('admin.ForgotPassword');
 
 
 
