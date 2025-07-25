@@ -97,8 +97,6 @@ class PropertyController extends Controller
             default:
                 abort(404);
         }
-        Log::info('Subcategories fetched for category ID ' . $categoryId, ['subcategories' => $subcategories]);
-        return view('partner.partner-homes-create-form-1', compact('subcategories', 'categoryId'));
     }
 
 
