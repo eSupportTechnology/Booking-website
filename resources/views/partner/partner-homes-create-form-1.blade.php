@@ -3676,46 +3676,65 @@
                                                 console.error("Fetch error:", error);
                                             });
                                         }else if (this.step === 11 && this.selected === 'multiple') {
-    const currentPropertyId = this.propertyId + this.currentUnit - 1;
-    const title = this.formData.propertyName;
+                                                const currentPropertyId = this.propertyId + this.currentUnit - 1;
+                                                const title = this.formData.propertyName;
 
-    fetch(`/property/${currentPropertyId}/update-title`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        },
-        body: JSON.stringify({ title: title })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            console.log(`Title updated for property ${currentPropertyId}: ${title}`);
+                                                fetch(`/property/${currentPropertyId}/update-title`, {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                    },
+                                                    body: JSON.stringify({ title: title })
+                                                })
+                                                .then(response => response.json())
+                                                .then(data => {
+                                                    if (data.success) {
+                                                        console.log(`Title updated for property ${currentPropertyId}: ${title}`);
 
-            if (this.currentUnit < this.propertyCount) {
-                this.currentUnit++;
-                // Stay on step 11 for next property
-            } else {
-                this.currentUnit = 1;
-                this.step++; // Proceed to step 12
-            }
-        } else {
-            console.error('Error saving title:', data);
-            alert('Failed to save title.');
-        }
-    })
-    .catch(error => {
-        console.error('Fetch error:', error);
-    });
-}
+                                                        if (this.currentUnit < this.propertyCount) {
+                                                            this.currentUnit++;
+                                                            // Stay on step 11 for next property
+                                                        } else {
+                                                            this.currentUnit = 1;
+                                                            this.step++; // Proceed to step 12
+                                                        }
+                                                    } else {
+                                                        console.error('Error saving title:', data);
+                                                        alert('Failed to save title.');
+                                                    }
+                                                })
+                                                .catch(error => {
+                                                    console.error('Fetch error:', error);
+                                                });
+                                            }
 
                                         else if (this.step === 12 && this.selected === 'multiple') {
+                                            const currentPropertyId = this.propertyId + this.currentUnit - 1;
+                                            const files = this.$refs.unitPhotoInput.files;
+                                            if (files.length > 0) {
+                                                const formData = new FormData();
+                                                formData.append('property_id', currentPropertyId);
+                                                formData.append('unit_number', this.currentUnit);
+
+                                                for (let file of files) {
+                                                    formData.append('photos[]', file);
+                                                }
+
+                                                await fetch('/partner/property/upload-photos', {
+                                                    method: 'POST',
+                                                    body: formData,
+                                                    headers: {
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                                                    }
+                                                });
+                                            }
+
                                             if (this.currentUnit < this.propertyCount) {
-                                               
                                                 this.currentUnit++;
-                                                this.step = 7; // Repeat for next unit
                                             } else {
                                                 this.step++;
+                                                this.currentUnit = 1;
                                             }
                                         } else {
                                             if (this.step === 1 && this.selected === '') return;
