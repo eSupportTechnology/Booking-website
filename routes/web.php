@@ -368,11 +368,11 @@ Route::prefix('partner')->group(function () {
     Route::post('/property/{property}/languages', [\App\Http\Controllers\PropertyController::class, 'saveLanguages'])->name('partner.property.languages.store');
     Route::get('/languages', [\App\Http\Controllers\PropertyController::class, 'getLanguages'])->name('partner.languages.get');
     Route::post('/property/save-additional-details', [PropertyController::class, 'saveAdditionalDetails'])->name('partner.property.save-additional-details');
+    Route::post('/save-languages/{property}', [PropertyController::class, 'saveLanguages']);
 });
 Route::post('/save-amenities/{property}', [PropertyController::class, 'saveAmenities']);
 Route::post('/property/save-address-same', [PropertyController::class, 'saveAddressSame']);
 Route::post('/property/save-address-multiple', [PropertyController::class, 'saveAddressMultiple']);
-Route::post('/save-languages/{property}', [PropertyController::class, 'saveLanguages']);
 Route::get('/partner/login', [LoginController::class, 'show'])->name('partner.login');
 Route::post('/partner/login', [LoginController::class, 'login'])->name('partner.login.submit');
 
@@ -426,19 +426,19 @@ Route::post('/partner/property/{property}/host-profile', [PropertyController::cl
 Route::post('/partner/property/{property}/pricing', [PropertyController::class, 'savePricing']);
 
 // Apartment pricing-related routes
-Route::get('/partner/apartment/non-refundable-rate', function() {
+Route::get('/partner/apartment/non-refundable-rate', function () {
     return view('partner.partner-apartment-non-refundable-rate');
 })->name('partner.apartment.refundable.rate');
 
-Route::get('/partner/apartment/price/group', function() {
+Route::get('/partner/apartment/price/group', function () {
     return view('partner.partner-apartment-priceper-group');
 })->name('partner.apartment.price.group');
 
-Route::get('/partner/apartment/pricing/cancel-policies', function() {
+Route::get('/partner/apartment/pricing/cancel-policies', function () {
     return view('partner.partner-apartment-pricing-cancel-policies');
 })->name('partner.apartment.pricing.policies');
 
-Route::get('/partner/apartment/weekly-rate', function() {
+Route::get('/partner/apartment/weekly-rate', function () {
     return view('partner.partner-apartment-weekly-rate');
 })->name('partner.apartment.weekly.rate');
 
