@@ -12,7 +12,7 @@
      <!-- Full-width Progress Bar (just under header) -->
     <div class="w-full bg-gray-200 h-2 ">
     <div class="bg-[#3CC0E9] h-2 transition-all duration-500"
-         :style="'width:' + (step * 100 / 8) + '%'">
+         :style="'width:' + (step * 100 / 9) + '%'">
     </div>
 </div>
     <!-- Step 1 -->
@@ -118,10 +118,88 @@
     <!--end basic info step 2-->
 
     </template>
-
-
-
 <template x-if="step === 2">
+   <div>
+            <section class="mb-12" x-data="{ channelManager: 'yes' }">
+                <div class="max-w-5xl mx-auto px-4 py-8">
+                    <h1 class="text-2xl font-bold mb-4 mt-4">Connect to a channel manager</h1>
+
+                    <!-- Question Section -->
+                    <div class="bg-white p-4 max-w-2xl border border-gray-200 rounded mb-8">
+                        <h2 class="text-lg font-semibold mb-2">
+                            Do you want to connect this listing to your channel manager?
+                        </h2>
+                        <p class="text-gray-700 mb-6">
+                            A channel manager is a third-party tool that lets you manage rates and availability across
+                            different sites you might list your place on, including {{ config('domains.subdomain') }}. If you're already using
+                            a channel manager, you can select 'Yes' to connect it to your listing.
+                        </p>
+
+
+                        <!-- Radio Buttons -->
+                        <div class="bg-white p-4 border border-gray-200 rounded mb-8 space-y-4">
+                            <!-- Yes Option -->
+                            <div>
+                                <input type="radio" id="yes" name="channel_manager" value="yes"
+                                    class="mr-2" x-model="channelManager">
+                                <label for="yes" class="text-gray-700">
+                                    Yes, I will connect this listing to my channel manager
+                                </label>
+                            </div>
+
+                            <!-- Tooltip only if Yes is selected -->
+                            <div x-show="channelManager === 'yes'" x-transition>
+                                <div class="bg-red-100 border border-red-300 rounded p-2">
+                                    <div class="flex items-start text-sm text-red-700 space-x-2">
+                                        <!-- Inline icon -->
+                                        <img src="{{ asset('assets/material-symbols-light_info-outline (2).svg') }}"
+                                            alt="Help" class="w-5 h-5 md:w-6 md:h-6 mt-1" />
+
+                                        <!-- Text block -->
+                                        <p>
+                                            Select 'Yes' only if you are already using a channel manager.
+                                            You'll be able to connect your channel manager after your registration is
+                                            complete – please continue to the next step.
+                                        </p>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <!-- No Option -->
+                            <div>
+                                <input type="radio" id="no" name="channel_manager" value="no"
+                                    class="mr-2" x-model="channelManager">
+                                <label for="no" class="text-gray-700">
+                                    No, I won't be using a channel manager at this time
+                                </label>
+                            </div>
+                        </div>
+                        <div class="flex justify-between mt-6">
+                            <!-- Back Button (Left) -->
+
+                            <button type="button" @click="step = Math.max(step - 1, 1)"
+                                :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
+                                class="border border-[#3CC0E9]  text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
+                                ←
+                            </button>
+
+
+                            <!-- Continue Button (Right) -->
+                            <button type="submit"  @click="step = Math.min(step + 1, 13)"
+                                :class="step === 9 ? 'opacity-50 cursor-not-allowed' : 'bg-[#3CC0E9] hover:bg-sky-500'"
+                                :disabled="step === 9"
+                                class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300">
+                                Continue
+                            </button>
+                        </div>
+                    </div>
+            </section>
+        </div>
+</template>
+
+
+<template x-if="step === 3">
     <div class="max-w-4xl  lg:ml-24 mx-auto px-4 py-10">
         <!-- Heading -->
         <h1 class="text-3xl font-bold text-gray-900 mb-6">
@@ -173,7 +251,7 @@
 
     
 
-    <template x-if="step === 3">
+    <template x-if="step === 4">
         <div class="max-w-4xl mx-auto lg:ml-24 px-4 py-10">
             <section class="mb-8">
                 <h1 class="text-xl text-gray-700 font-bold mb-4">What can guests use at your place?</h1>
@@ -338,7 +416,7 @@
                                                     </div>
     </template>
 
-    <template x-if="step === 4">
+    <template x-if="step === 5">
          <div x-data="{
             servesBreakfast: false,
             breakfastIncluded: '',
@@ -534,7 +612,7 @@
 
 
 
-    <template x-if="step === 5">
+    <template x-if="step === 6">
         <div>
                                                         <div class="container mx-auto px-4 py-8 max-w-2xl lg:ml-24">
                                                             <!-- Header -->
@@ -712,7 +790,7 @@
                                                     </div>
     </template>
 
-    <template x-if="step === 6">
+    <template x-if="step === 7">
        <div>
     <div class="container mx-auto px-4 py-8 max-w-4xl lg:ml-24" x-data="{ petPolicy: 'no' }">
         <!-- Header -->
@@ -862,7 +940,7 @@
 
     </template>
 
-    <template x-if="step === 7">
+    <template x-if="step === 8">
      <div x-data="{
     showProperty: false,
     showHost: false,
@@ -957,7 +1035,7 @@
 
     </template>
 
-    <template x-if="step === 8">
+    <template x-if="step === 9">
         <div class="mt-16">
             <div class="max-w-3xl mx-auto p-4 space-y-4 ">
 
@@ -1006,7 +1084,7 @@
                                 expect.</p>
                         </div>
                     </div>
-                    <a href="{{ route('partner.hotels.photos') }}"
+                    <a href="{{ route('partner.homes.images') }}"
                         class="border border-sky-400 text-sky-400 text-sm font-semibold px-4 py-2 rounded hover:bg-sky-50">
                         Add Photos
                     </a>
@@ -1025,7 +1103,7 @@
                                 bookings.</p>
                         </div>
                     </div>
-                    <a href="{{ route('partner.hotels.payments') }}"
+                    <a href="{{ route('partner.homes.payments') }}"
                         class=" bg-sky-400 border border-sky-400 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-sky-500">
                         Add final details
                     </a>
@@ -1036,14 +1114,7 @@
     </template>
 
 
-    <template x-if="step === 9">
-        <div>
-            <h2 class="text-xl font-bold mb-4">Step 9: Review & Submit</h2>
-            <p class="text-sm text-gray-600 mb-4">Review your details before submission.</p>
-            <button
-                class="mt-4 bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded font-semibold">Submit</button>
-        </div>
-    </template>
+    
 
 
   </div>

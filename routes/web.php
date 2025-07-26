@@ -274,6 +274,14 @@ Route::get('/partner-homes-edit', function () {
     return view('frontend.partner-homes-edit');
 })->name('partner.homes.edit');
 
+Route::get('/partner-homes-payments', function () {
+    return view('frontend.partner-homes-payments');
+})->name('partner.homes.payments');
+
+Route::get('/partner-homes-images', function () {
+    return view('frontend.partner-homes-images');
+})->name('partner.homes.images');
+
 
 
 Route::get('/partner-hotels-edit', function () {

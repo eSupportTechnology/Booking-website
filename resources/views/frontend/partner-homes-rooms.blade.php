@@ -1144,7 +1144,7 @@
                     </button>
 
                     <!-- Continue Button -->
-                    <a href="{{ route('partner.hotels.edit') }}">
+                    <a href="{{ route('partner.homes.edit') }}">
                         <button
                             class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-sky-500 transition w-full sm:w-auto">
                             Continue
