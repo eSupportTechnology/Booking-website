@@ -23,6 +23,7 @@ use App\DTOs\Partner\SavePolicyDTO;
 use App\DTOs\Partner\SaveRoomsDTO;
 use App\DTOs\Partner\UploadPropertyPhotosDTO;
 use App\DTOs\Partner\PartnerVerificationDTO;
+use App\DTOs\Partner\SaveLanguagesDTO;
 use App\DTOs\Partner\SaveAddressSameDTO;
 use App\Models\Room;
 use App\Models\PartnerVerification;
@@ -57,6 +58,7 @@ class PropertyController extends Controller
         Log::info('Available amenities', ['amenities' => $amenities]);
         Log::info('Available room types', ['roomTypes' => $roomTypes]);
         Log::info('Available bed types', ['bedTypes' => $bedTypes]);
+        Log::info('Available languages', ['languages' => $languages]);
 
         switch ($categoryId) {
             case 1:  // Homes
@@ -89,6 +91,10 @@ class PropertyController extends Controller
                     return redirect()->back()->withErrors(['error' => 'No subcategories found for this category.']);
                 }
                 return view('partner.partner-hotels-create-1', [
+                    'amenities' => $amenities,
+                    'languages' => $languages,
+                    'roomTypes' => $roomTypes,
+                    'bedTypes' => $bedTypes,
                     'categoryId' => $categoryId,
                     'subcategories' => $subcategories,
                     'category' => 'hotel',
@@ -98,6 +104,38 @@ class PropertyController extends Controller
                 abort(404);
         }
     }
+
+    public function rooms($categoryId, PropertyAction $action)
+    {
+       $subcategories = $action->getPropertiesByCategory($categoryId);
+        $amenities = $action->getAmenities();
+        $roomTypes = $action->getRoomTypes();
+        $bedTypes = $action->getBedTypes();
+        $languages = $action->getLanguages();
+
+         switch ($categoryId) {
+            case 3:  // Hotel
+                if ($subcategories->isEmpty()) {
+                    return redirect()->back()->withErrors(['error' => 'No subcategories found for this category.']);
+                }
+                return view('partner.partner-hotels-rooms', [
+                    'amenities' => $amenities,
+                    'languages' => $languages,
+                    'roomTypes' => $roomTypes,
+                    'bedTypes' => $bedTypes,
+                    'categoryId' => $categoryId,
+                    'subcategories' => $subcategories,
+                    'category' => 'hotel',
+                ]);
+
+            default:
+                abort(404);
+        }
+        Log::info('Subcategories fetched for category ID ' . $categoryId, ['subcategories' => $subcategories]);
+        return view('partner.partner-homes-create-form-1', compact('subcategories', 'categoryId'));
+    }
+
+
 
 
     public function subtypes($subcategoryId, PropertyAction $action)
@@ -459,38 +497,34 @@ class PropertyController extends Controller
     /**
      * Save selected languages for a property
      */
-    public function saveLanguages(Request $request, Property $property)
-    {
-        Log::info('saveLanguages called', [
-            'property_id' => $property->id,
-            'request' => $request->all(),
+    public function saveLanguages(Request $request, Property $property, PropertyAction $propertyAction)
+{
+    Log::info('saveLanguages called', [
+        'property_id' => $property->id,
+        'request' => $request->all(),
+    ]);
+
+    try {
+        $dto = SaveLanguagesDTO::fromRequest($request);
+        $propertyAction->saveLanguages($property, $dto);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Languages saved successfully.',
+            'selected_languages' => $property->languages()->pluck('name')->toArray()
+        ]);
+    } catch (\Exception $e) {
+        Log::error('Error saving languages', [
+            'message' => $e->getMessage(),
+            'trace' => $e->getTraceAsString(),
         ]);
 
-        try {
-            $validated = $request->validate([
-                'languages' => 'required|array',
-                'languages.*' => 'exists:languages,id',
-            ]);
-
-            // Sync the languages with the property
-            $property->languages()->sync($validated['languages']);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Languages saved successfully.',
-                'selected_languages' => $property->languages()->pluck('name')->toArray()
-            ]);
-        } catch (\Exception $e) {
-            Log::error('Error saving languages', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage()
-            ], 500);
-        }
+        return response()->json([
+            'success' => false,
+            'message' => $e->getMessage()
+        ], 500);
     }
+}
 
     /**
      * Save additional details including languages (for the saveAdditionalDetails method)

@@ -25,6 +25,9 @@ class PropertyStep2DTO extends ValidatedDTO
     public ?int $apartment_size = null;
     public ?string $apartment_unit = null;
     public ?array $amenities = null;
+    public ?string $stars = null;
+    public ?string $group = null;
+    public ?array $languages = null;
 
 
 
@@ -51,6 +54,10 @@ class PropertyStep2DTO extends ValidatedDTO
             'apartment_unit' => ['nullable', 'string'],
             'amenities' => ['nullable', 'array'],
             'amenities.*' => ['integer', 'exists:amenities,id'],
+            'stars' => ['nullable', 'string', 'in:N/A,1,2,3,4,5'],
+            'group' => ['nullable', 'string', 'in:yes,no'],
+            'languages' => ['nullable', 'array'],
+            'languages.*' => ['integer', 'exists:languages,id'],
         ];
     }
 
@@ -63,6 +70,8 @@ class PropertyStep2DTO extends ValidatedDTO
     protected function casts(): array
     {
         return [
+            // 'stars' => 'string',
+            // 'group' => 'string',
             // 'title' => 'string',
             // 'address' => 'string',
             // 'city' => 'string',

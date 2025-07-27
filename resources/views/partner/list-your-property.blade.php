@@ -102,17 +102,19 @@
                         @csrf
                     </form>
                     @elseif(Auth::check())
-                    <span class="bg-white text-[#1F8FB2] px-4 py-2 rounded font-bold"
-                        style="font-family: 'Noto Sans', sans-serif;">{{ Auth::user()->name }}</span>
-                    <!-- Logout Link -->
-                    <form action="{{ route('partner.logout') }}" method="POST">
-                        @csrf
-                        <button type="submit"
-                            class="bg-[#3CC0E9] px-4 py-2 rounded hover:bg-[#29ACD5] text-white font-sans">
+                        <span class="bg-white text-[#1F8FB2] px-4 py-2 rounded font-bold"
+                            style="font-family: 'Noto Sans', sans-serif;">{{ Auth::user()->name }}</span>
+                        <!-- Logout Link -->
+                       <a href="#"
+                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                            class="bg-[#1F8FB2] px-4 py-2 rounded hover:bg-[#29ACD5] text-white font-sans border border-white">
                             Logout
-                        </button>
+                        </a>
 
-                    </form>
+                        <!-- Hidden Logout Form -->
+                        <form id="logout-form" action="{{ route('partner.logout') }}" method="POST" class="hidden">
+                           @csrf
+                        </form>
                     @else
                     <a href="#" class="hover:underline font-sans"
                         style="font-family: 'Noto Sans', sans-serif;">Already a partner?</a>
@@ -127,7 +129,7 @@
             </div>
         </div>
 
-      
+
     </section>
 </header>
 

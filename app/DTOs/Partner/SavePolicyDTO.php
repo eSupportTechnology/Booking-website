@@ -7,6 +7,7 @@ use WendellAdriel\ValidatedDTO\ValidatedDTO;
 class SavePolicyDTO extends ValidatedDTO
 {
     public bool $smoking_allowed;
+    public bool $children_allowed;
     public bool $parties_allowed;
     public string $pets_allowed;
     public string $pets_fees;
@@ -20,8 +21,9 @@ class SavePolicyDTO extends ValidatedDTO
     {
         return [
             'smoking_allowed' => ['required', 'boolean'],
+            'children_allowed' => ['required', 'boolean'],
             'parties_allowed' => ['required', 'boolean'],
-            'pets_allowed' => ['required', 'string'],
+            'pets_allowed' => ['required', 'in:yes,upon_request,no'],
             'pets_fees' => [ 'string'],
             'check_in_from' => ['required'],
             'check_in_until' => ['required'],
@@ -34,7 +36,7 @@ class SavePolicyDTO extends ValidatedDTO
     protected function casts(): array
     {
         return [
-           
+
         ];
     }
 

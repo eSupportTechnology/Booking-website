@@ -12,6 +12,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use App\DTOs\Partner\PropertyStep1DTO;
 use App\DTOs\Partner\PropertyStep2DTO;
+use App\Models\Languages;
 use Illuminate\Support\Facades\Log;
 use App\DTOs\Partner\UploadPropertyPhotosDTO;
 use App\Services\FileUploadService;
@@ -19,6 +20,7 @@ use App\DTOs\Partner\SaveAmenitiesDTO;
 use App\DTOs\Partner\SavePolicyDTO;
 use App\DTOs\Partner\SaveRoomsDTO;
 use App\DTOs\Partner\PartnerVerificationDTO;
+use App\DTOs\Partner\SaveLanguagesDTO;
 use App\DTOs\Partner\SaveAddressSameDTO;
 use App\Models\PartnerVerification;
 use App\Models\Room;
@@ -49,7 +51,7 @@ class PropertyAction
             ];
         });
     }
-    
+
     public function getLanguages(): Collection
     {
         return \App\Models\Language::all()->map(function ($language) {
@@ -59,6 +61,7 @@ class PropertyAction
             ];
         });
     }
+
     public function getRoomTypes(): Collection
     {
         return \App\Models\RoomType::all()->map(function ($roomType) {
@@ -109,6 +112,8 @@ class PropertyAction
             'subtype_id' => $dto->subtype_id,
             'address_type_id' => $dto->address_type_id,
             'channel_manager' => $dto->channel_manager,
+            'stars' => $dto->stars,
+            'group' => $dto->group,
         ], fn($value) => !is_null($value)));
 
         // Save bedrooms if provided
@@ -134,11 +139,18 @@ class PropertyAction
         );
 
         Log::info('Amenities array in DTO:', ['amenities' => $dto->amenities]);
+        Log::info('Languages array in DTO:', ['languages' => $dto->languages]);
         if (!empty($dto->amenities)) {
             $property->amenities()->sync($dto->amenities);
             Log::info('Amenities synced to property', ['property_id' => $property->id, 'amenity_ids' => $dto->amenities]);
         } else {
             Log::info('No amenities to sync for property', ['property_id' => $property->id]);
+        }
+        if (!empty($dto->languages)) {
+            $property->languages()->sync($dto->languages);
+            Log::info('Languages synced to property', ['property_id' => $property->id, 'language_ids' => $dto->languages]);
+        } else {
+            Log::info('No languages to sync for property', ['property_id' => $property->id]);
         }
 
         return $property;
@@ -155,6 +167,8 @@ class PropertyAction
             'zipcode',
             'channel_manager',
             'description',
+            'stars',
+            'group',
         ];
         $property->update(array_intersect_key($data, array_flip($fields)));
 
@@ -199,6 +213,11 @@ class PropertyAction
     {
         $property->amenities()->sync($dto->amenities);
     }
+
+    public function saveLanguages(Property $property, SaveLanguagesDTO $dto): void
+{
+    $property->languages()->sync($dto->languages);
+}
 
 
     public function savePolicy(Property $property, SavePolicyDTO $dto): void
