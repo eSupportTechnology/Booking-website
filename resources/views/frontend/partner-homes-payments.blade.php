@@ -566,7 +566,7 @@
 
                     ←
                 </button>
-                <a href="{{ route('partner.hotels.edit') }}">
+                <a href="{{ route('partner.homes.edit') }}">
                     <button @click="step++"
                         class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition ">
                         Continue
