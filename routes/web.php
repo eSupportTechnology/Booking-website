@@ -254,6 +254,11 @@ Route::get('/partner-apartment-multiple', function () {
     return view('frontend.partner-multiple-apartment');
 })->name('partner.apartment.multiple');
 
+
+Route::get('/partner-apartment-multiple-2', function () {
+    return view('frontend.partner-apartments-multiple-2');
+})->name('partner.apartment.multiple.2');
+
 Route::get('/partner-homes-form2', function () {
     return view('frontend.partner-homes-form-2');
 })->name('partner.homes.form.2');
@@ -282,7 +287,9 @@ Route::get('/partner-homes-images', function () {
     return view('frontend.partner-homes-images');
 })->name('partner.homes.images');
 
-
+Route::get('/partner-apartments-final', function () {
+    return view('frontend.partner-apartment-final-step');
+})->name('partner.apartments.final');
 
 Route::get('/partner-hotels-edit', function () {
     return view('frontend.partner-hotels-edit');
