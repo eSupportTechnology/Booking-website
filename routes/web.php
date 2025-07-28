@@ -461,6 +461,13 @@ Route::get('/admin/settings', function () {
     return view('frontend.admin.settings');
 })->name('admin.settings');
 
+Route::get('/partner-home-final-steps', function () {
+    return view('frontend.partner-home-final-steps');
+})->name('frontend.partner-home-final-steps');
+
+
+
+
 
 
 
