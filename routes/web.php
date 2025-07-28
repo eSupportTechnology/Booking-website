@@ -181,13 +181,13 @@ Route::get('/partner-apartment-livingroom', function () {
     return view('frontend.partner-apartments-livingroom');
 })->name('partner.apartment.livingroom');
 
-Route::get('/partner-apartment-price-group', function () {
-    return view('frontend.partner-apartment-priceper-group');
-})->name('partner.apartment.price.group');
+// Route::get('/partner-apartment-price-group', function () {
+//     return view('frontend.partner-apartment-priceper-group');
+// })->name('partner.apartment.price.group');
 
-Route::get('/partner-apartment-weekly-rate', function () {
-    return view('frontend.partner-apartment-weekly-rate');
-})->name('partner.apartment.weekly.rate');
+// Route::get('/partner-apartment-weekly-rate', function () {
+//     return view('frontend.partner-apartment-weekly-rate');
+// })->name('partner.apartment.weekly.rate');
 
 Route::get('/partner-apartment-refundable-rate', function () {
     return view('frontend.partner-apartment-non-refundable-rate');
@@ -197,9 +197,9 @@ Route::get('/open-booking', function () {
     return view('frontend.open-booking');
 })->name('open.booking');
 
-Route::get('/partner-apartment-pricing-policies', function () {
-    return view('frontend.partner-apartment-pricing-cancel-policies');
-})->name('partner.apartment.pricing.policies');
+// Route::get('/partner-apartment-pricing-policies', function () {
+//     return view('frontend.partner-apartment-pricing-cancel-policies');
+// })->name('partner.apartment.pricing.policies');
 
 Route::get('/customer-profile-create', function () {
     return view('frontend.customer-profile-create');
@@ -541,7 +541,7 @@ Route::post('/partner/property/{property}/address-type', [PropertyController::cl
 // Apartment pricing-related routes
 Route::get('/partner/apartment/non-refundable-rate', function () {
     return view('partner.partner-apartment-non-refundable-rate');
-})->name('partner.apartment.refundable.rate');
+})->name('partner.apartment.non.refundable.rate');
 
 Route::get('/partner/apartment/price/group', function () {
     return view('partner.partner-apartment-priceper-group');

@@ -2395,7 +2395,7 @@ savePricing() {
           <h3 class="text-base font-semibold text-gray-700">Price and cancellation policy</h3>
           <img src="{{ asset('assets/material-symbols-light_info-outline.svg') }}" alt="Tip Icon" class="w-5 h-5">
         </div>
-         <a href="{{ route('partner.apartment.refundable.rate') }}">
+         <a href="{{ route('partner.apartment.non.refundable.rate') }}">
         <button class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">Edit</button></a>
       </div>
       <hr class="my-4">
