@@ -374,15 +374,23 @@ class PropertyController extends Controller
 
     public function saveAmenities(Request $request, Property $property, PropertyAction $propertyAction)
     {
-        Log::info('saveAmenities called', [
-            'property_id' => $property->id,
-            'request' => $request->all(),
-        ]);
-        $dto = SaveAmenitiesDTO::fromRequest($request);
-
-        $propertyAction->saveAmenities($property, $dto);
-
-        return response()->json(['success' => true]);
+        try {
+            Log::info('saveAmenities called', [
+                'property_id' => $property->id,
+                'request' => $request->all(),
+            ]);
+            $dto = SaveAmenitiesDTO::fromRequest($request);
+            Log::info('saveAmenities validated', $dto->toArray());
+            $propertyAction->saveAmenities($property, $dto);
+    
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            Log::error('saveAmenities error', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+           return response()->json(['error' => $e ->getMessage()], 500);
+        }
     }
 
 
@@ -696,12 +704,14 @@ class PropertyController extends Controller
         return view('partner.partner-homes-form-2', compact('property', 'property_subtype'));
     }
 
-    public function showPrivateHomesSingle(Request $request)
+    public function showPrivateHomesSingle(Request $request, PropertyAction $action)
     {
         $propertyId = $request->input('propertyId');
         $subtypeId = $request->input('subtypeId');
+        $amenities = $action->getAmenities();
 
-        return view('partner.partner-homes-single', compact('propertyId', 'subtypeId'));
+
+        return view('partner.partner-homes-single', compact('propertyId', 'subtypeId', 'amenities'));
     }
 
     public function showPrivateHomesMultiple(Request $request)

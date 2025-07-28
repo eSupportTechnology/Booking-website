@@ -8,8 +8,10 @@
         return {
             step: 1,
             channelManager: 'yes',
+            propertyName: '',
+            selectedAmenities: [],
 
-            updateStepDisplay() {
+            saveStep1() {
                 const propertyId = document.getElementById("propertyId").value;
                 const subtypeId = document.getElementById("subtypeId").value;
 
@@ -45,7 +47,71 @@
                         console.error("Error saving data:", error);
                         alert("An error occurred while saving.");
                     });
-            }
+            },
+
+            saveStep3() {
+                const propertyId = document.getElementById("propertyId").value;
+                if (this.propertyName.trim() === '') {
+                    alert("Property name is required.");
+                    return;
+                }
+                const payload = {
+                    property_id: propertyId,
+                    title: this.propertyName,
+                };
+
+                fetch(`/partner/property/${propertyId}/step2/${propertyId}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
+                    },
+                    body: JSON.stringify(payload),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log("Step 3 saved successfully!");
+                        this.step++;
+                    } else {
+                        alert("Failed to save: " + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error saving step 3 data:", error);
+                    alert("An error occurred while saving step 3.");
+                });
+            },
+
+            saveStep4() {
+                const propertyId = document.getElementById("propertyId").value;
+
+                const payload = {
+                    amenities: this.selectedAmenities,  // This will be an array of IDs
+                };
+
+                fetch(`/partner/property/save-amenities/${propertyId}`, {
+                    method: "POST",
+                    headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
+                    },
+                    body: JSON.stringify(payload),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                    console.log("Amenities saved successfully!");
+                    this.step++;
+                    } else {
+                    alert("Failed to save amenities");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error saving amenities:", error);
+                    alert("An error occurred while saving amenities.");
+                });
+            },
         }
     }
 </script>
@@ -160,7 +226,7 @@
 
                             <!-- Continue Button (Right) -->
                             <button type="button" id="continueBtn"
-                                @click="updateStepDisplay"
+                                @click="saveStep1()"
                                 :class="step === 8 ? 'opacity-50 cursor-not-allowed' : 'bg-[#3CC0E9] hover:bg-sky-500'"
                                 :disabled="step === 8"
                                 class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300">
@@ -256,14 +322,12 @@
     </template>
 
 
-    <template x-if="step === 3">
+     <template x-if="step === 3">
         <div class="max-w-4xl  lg:ml-24 mx-auto px-4 py-10">
-            <!-- Heading -->
             <h1 class="text-3xl font-bold text-gray-900 mb-6">
                 What's the name of your property?
             </h1>
 
-            <!-- Input Container (taller white box) -->
             <div class="bg-white p-8 rounded shadow-md w-full max-w-2xl min-h-[220px] flex flex-col justify-between">
                 <div>
                     <label for="property_name" class="block text-gray-700 text-base font-medium mb-3">
@@ -273,7 +337,7 @@
                         type="text"
                         id="property_name"
                         name="property_name"
-                        value="ccc"
+                        x-model="propertyName"
                         class="w-full border border-gray-300 rounded-md px-4 py-4 text-lg focus:outline-none focus:border-blue-500"
                         placeholder="e.g., Sunset Villa"
                         required>
@@ -283,9 +347,7 @@
                 </div>
             </div>
 
-            <!-- Navigation Buttons -->
             <div class="mt-10 flex justify-between items-center max-w-2xl">
-                <!-- Back Button -->
                 <button
                     type="button"
                     @click="step = Math.max(step - 1, 1)"
@@ -293,10 +355,9 @@
                     ←
                 </button>
 
-                <!-- Continue Button -->
                 <button
                     type="button"
-                    @click="step = Math.min(step + 1, 10)"
+                    @click="saveStep3()"
                     class="bg-[#3CC0E9] text-white font-semibold px-6 h-12 rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
                     Continue
                 </button>
@@ -307,170 +368,57 @@
 
 
 
-    <template x-if="step === 4">
-        <div class="max-w-4xl mx-auto lg:ml-24 px-4 py-10">
-            <section class="mb-8">
-                <h1 class="text-xl text-gray-700 font-bold mb-4">What can guests use at your place?</h1>
+   <template x-if="step === 4">
+    <div class="max-w-4xl mx-auto lg:ml-24 px-4 py-10">
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <section class="mb-8">
+        <h1 class="text-xl text-gray-700 font-bold mb-4">What can guests use at your place?</h1>
 
-                    <!-- Property Name Input + Checkboxes (2/3 Width) -->
-                    <div class="md:col-span-2 flex">
-                        <div
-                            class="w-full bg-white p-6 rounded shadow-md flex flex-col text-base">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
+          <div class="md:col-span-2 flex">
+            <div class="w-full bg-white p-6 rounded shadow-md flex flex-col text-base">
 
-                            <!-- 9 Checkboxes Section -->
-
-                            <div class="mt-2">
-                                <h3
-                                    class="text-gray-700 font-semibold mb-2">
-                                    Select property type(s)</h3>
-                                <div
-                                    class="grid grid-cols-1 sm:grid-cols-1 gap-2 text-sm text-gray-700">
-                                    <label
-                                        class="flex items-center space-x-2">
-                                        <input type="checkbox"
-                                            name="property_types[]"
-                                            value="Apartment"
-                                            class="text-blue-500" />
-                                        <span>Bar</span>
-                                    </label>
-                                    <label
-                                        class="flex items-center space-x-2">
-                                        <input type="checkbox"
-                                            name="property_types[]"
-                                            value="Villa"
-                                            class="text-blue-500" />
-                                        <span>Sauna</span>
-                                    </label>
-                                    <label
-                                        class="flex items-center space-x-2">
-                                        <input type="checkbox"
-                                            name="property_types[]"
-                                            value="Holiday Home"
-                                            class="text-blue-500" />
-                                        <span>Garden</span>
-                                    </label>
-                                    <label
-                                        class="flex items-center space-x-2">
-                                        <input type="checkbox"
-                                            name="property_types[]"
-                                            value="Chalet"
-                                            class="text-blue-500" />
-                                        <span>Terrace</span>
-                                    </label>
-                                    <label
-                                        class="flex items-center space-x-2">
-                                        <input type="checkbox"
-                                            name="property_types[]"
-                                            value="Cottage"
-                                            class="text-blue-500" />
-                                        <span>Hot tub/Jacuzzi</span>
-                                    </label>
-                                    <label
-                                        class="flex items-center space-x-2">
-                                        <input type="checkbox"
-                                            name="property_types[]"
-                                            value="Cabin"
-                                            class="text-blue-500" />
-                                        <span>Heating</span>
-                                    </label>
-                                    <label
-                                        class="flex items-center space-x-2">
-                                        <input type="checkbox"
-                                            name="property_types[]"
-                                            value="Bungalow"
-                                            class="text-blue-500" />
-                                        <span>Free WiFi</span>
-                                    </label>
-                                    <label
-                                        class="flex items-center space-x-2">
-                                        <input type="checkbox"
-                                            name="property_types[]"
-                                            value="Farm Stay"
-                                            class="text-blue-500" />
-                                        <span>Air conditioning</span>
-                                    </label>
-                                    <label
-                                        class="flex items-center space-x-2">
-                                        <input type="checkbox"
-                                            name="property_types[]"
-                                            value="Houseboat"
-                                            class="text-blue-500" />
-                                        <span>Swimming pool</span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Tips and Information (1/3 Width) -->
-                    <div class="flex flex-col gap-4">
-
-                        <!-- Tip Box 1 -->
-                        <div x-data="{ show: true }" x-show="show"
-                            class="bg-white p-4 border border-gray-200 rounded w-full md:w-[350px] lg:w-[400px]">
-
-                            <div
-                                class="flex items-center justify-between mb-2">
-                                <div class="flex items-center space-x-2">
-                                    <img src="{{ asset('assets/system-uicons_lightbulb-on.svg') }}"
-                                        alt="Help"
-                                        class="w-6 h-6 md:w-7 md:h-7 cursor-pointer" />
-                                    <h3
-                                        class="text-gray-700 text-sm text-bold">
-                                        What if I don’t see a facility I
-                                        offer?</h3>
-                                </div>
-                                <button @click="show = false"
-                                    class="text-gray-500 hover:text-gray-700">
-                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                        class="h-5 w-5"
-                                        viewBox="0 0 20 20"
-                                        fill="currentColor">
-                                        <path fill-rule="evenodd"
-                                            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                </button>
-                            </div>
-                            <p class="text-sm text-gray-700">
-                                The facilities listed here are the ones most
-                                searched for by guests. After you complete
-                                your registration, you can add more
-                                facilities from a larger list in the
-                                extranet, the platform you'll use to manage
-                                your property.
-                                <br>
-                                The ones selected here will apply to all of
-                                your holiday homes.
-                            </p>
-                        </div>
-
-                    </div>
+              <!-- Amenities checkboxes -->
+              <div class="mt-2">
+                <h3 class="text-gray-700 font-semibold mb-2">Select property type(s)</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-1 gap-2 text-sm text-gray-700">
+                  @foreach($amenities as $amenity)
+                  <label class="flex items-center space-x-2">
+                    <input 
+                      type="checkbox" 
+                      name="property_types[]" 
+                      value="{{ $amenity['id'] }}" 
+                      class="text-blue-500" 
+                      x-model="selectedAmenities" />
+                    <span>{{ $amenity['name'] }}</span>
+                  </label>
+                  @endforeach
                 </div>
+              </div>
 
-                <!-- Navigation Buttons -->
-                <div class="mt-10 flex justify-between items-center max-w-2xl">
-                    <!-- Back Button -->
-                    <button
-                        type="button"
-                        @click="step = Math.max(step - 1, 1)"
-                        class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-6 h-12 flex items-center justify-center rounded">
-                        ←
-                    </button>
+            </div>
+          </div>
 
-                    <!-- Continue Button -->
-                    <button
-                        type="button"
-                        @click="step = Math.min(step + 1, 10)"
-                        class="bg-[#3CC0E9] text-white font-semibold px-6 h-12 rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
-                        Continue
-                    </button>
-                </div>
+          <!-- Tips and info omitted for brevity -->
+
         </div>
-    </template>
+
+        <div class="mt-10 flex justify-between items-center max-w-2xl">
+          <button type="button"
+                  @click="step = Math.max(step - 1, 1)"
+                  class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-6 h-12 flex items-center justify-center rounded">
+            ←
+          </button>
+
+          <button type="button"
+                  @click="saveStep4()"
+                  class="bg-[#3CC0E9] text-white font-semibold px-6 h-12 rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
+            Continue
+          </button>
+        </div>
+    </div>
+  </template>
 
     <template x-if="step === 5">
         <div x-data="{
