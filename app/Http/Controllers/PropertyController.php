@@ -743,16 +743,24 @@ class PropertyController extends Controller
 
 
 
-    public function showHomesForm2($id)
+    public function showHomesForm2($id,$subtype)
     {
-        Log::info('showHomesForm2 called', ['id' => $id]);
-        $property = Property::findOrFail($id);
-        Log::info('Property found', ['property_id' => $property->id]);
-        $property_subtype = PropertySubtype::findOrFail($property->subtype_id);
-        Log::info('Property subtype found', ['subtype_id' => $property_subtype->id, 'name' => $property_subtype->name]);
-
-        // Return the view with the property data
-        return view('partner.partner-homes-form-2', compact('property', 'property_subtype'));
+        try {
+            Log::info('showHomesForm2 called', ['id' => $id]);
+            $property = Property::findOrFail($id);
+            Log::info('Property found', ['property_id' => $property->id]);
+            $property_subtype = PropertySubtype::findOrFail($subtype);
+            Log::info('Property subtype found', ['subtype_id' => $property_subtype->id, 'name' => $property_subtype->name]);
+    
+            // Return the view with the property data
+            return view('partner.partner-homes-form-2', compact('property', 'property_subtype'));
+        } catch (\Exception $e ) {
+            Log::error('Error in showHomesForm2', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
     public function showPrivateHomesSingle(Request $request, PropertyAction $action)

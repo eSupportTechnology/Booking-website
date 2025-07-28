@@ -20,6 +20,10 @@
             parkingLocation: '',
             parkingType: '',
             parkingCost: '',
+            showProperty: false,
+            showHost: false,
+            showNeighborhood: false,
+            showNone: false,
 
             toggleBreakfastOption(option) {
                 if (this.selectedBreakfasts.includes(option)) {
@@ -200,6 +204,107 @@
                         console.error("AJAX error:", error);
                         alert("Request failed.");
                     });
+            },
+
+            async saveStep7() {
+                const propertyId = document.getElementById('propertyId').value;
+
+                
+                const smokingAllowed = document.getElementById('smokingAllowed').checked;
+                const childrenAllowed = document.getElementById('childrenAllowed').checked;
+                const partiesAllowed = document.getElementById('partiesAllowed').checked;
+
+                const petOptions = document.querySelectorAll('input[name="pets"]');
+                let petsAllowed = 'no';
+                petOptions.forEach(option => {
+                    if (option.checked) petsAllowed = option.value;
+                });
+
+                let petsFees = "0";
+                if (petsAllowed !== 'no') {
+                    const feeOptions = document.querySelectorAll('input[name="pet_charges"]');
+                    feeOptions.forEach(option => {
+                        if (option.checked) petsFees = option.value;
+                    });
+                }
+
+                const checkInFrom = document.getElementById('checkInFrom').value;
+                const checkInUntil = document.getElementById('checkInUntil').value;
+                const checkOutFrom = document.getElementById('checkOutFrom').value;
+                const checkOutUntil = document.getElementById('checkOutUntil').value;
+
+                const payload = {
+                    smoking_allowed: smokingAllowed,
+                    children_allowed: childrenAllowed,
+                    parties_allowed: partiesAllowed,
+                    pets_allowed: petsAllowed,
+                    pets_fees: petsFees,
+                    check_in_from: checkInFrom,
+                    check_in_until: checkInUntil,
+                    check_out_from: checkOutFrom,
+                    check_out_until: checkOutUntil,
+                    cancellation_policy: "flexible" // You can wire this to a select/dropdown later
+                };
+
+                try {
+                    const response = await fetch(`/partner/property/save-policy/${propertyId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const data = await response.json();
+                    if (data.success) {
+                        console.log('Policy saved:', data);
+                        this.step++;
+                    } else {
+                        console.error('Error:', data.message);
+                    }
+                } catch (error) {
+                    console.error('Fetch error:', error);
+                }
+            },
+
+            async saveStep8() {
+                const propertyId = document.getElementById('propertyId').value;
+
+                const payload = {
+                    property_id: propertyId,
+                    show_property: this.showProperty,
+                    show_host: this.showHost,
+                    show_neighborhood: this.showNeighborhood,
+                    none_selected: this.showNone,
+                    about_property: this.$refs.about_property?.value || '',
+                    host_name: this.$refs.host_name?.value || '',
+                    about_host: this.$refs.about_host?.value || '',
+                    about_neighborhood: this.$refs.about_neighborhood?.value || '',
+                };
+
+                try {
+                    const response = await fetch(`/partner/property/${propertyId}/host-profile`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        },
+                        body: JSON.stringify(payload),
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        console.log('✅ Host profile saved:', result.message);
+                        // Optionally move to next step
+                        this.step = Math.min(this.step + 1, 13);
+                    } else {
+                        console.error('❌ Save failed:', result.message);
+                    }
+                } catch (error) {
+                    console.error('❌ Error submitting host profile:', error);
+                }
             }
 
 
@@ -879,7 +984,7 @@
                             <label class="flex items-center justify-between cursor-pointer">
                                 <span>Smoking allowed</span>
                                 <div class="relative">
-                                    <input type="checkbox" class="sr-only peer" />
+                                    <input type="checkbox" id="smokingAllowed" class="sr-only peer" />
                                     <div class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition"></div>
                                     <div class="absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-4"></div>
                                 </div>
@@ -888,7 +993,7 @@
                             <label class="flex items-center justify-between cursor-pointer">
                                 <span>Children allowed</span>
                                 <div class="relative">
-                                    <input type="checkbox" class="sr-only peer" checked />
+                                    <input type="checkbox" id="childrenAllowed" class="sr-only peer" checked />
                                     <div class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition"></div>
                                     <div class="absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-4"></div>
                                 </div>
@@ -897,7 +1002,7 @@
                             <label class="flex items-center justify-between cursor-pointer">
                                 <span>Parties/events allowed</span>
                                 <div class="relative">
-                                    <input type="checkbox" class="sr-only peer" />
+                                    <input type="checkbox" id="partiesAllowed" class="sr-only peer" />
                                     <div class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition"></div>
                                     <div class="absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-4"></div>
                                 </div>
@@ -946,11 +1051,11 @@
                             <div class="flex space-x-4">
                                 <div class="w-full">
                                     <label class="block text-sm font-medium mb-1">From</label>
-                                    <input type="time" value="15:00" class="w-full border rounded p-2" />
+                                    <input type="time" id="checkInFrom" value="15:00" class="w-full border rounded p-2" />
                                 </div>
                                 <div class="w-full">
                                     <label class="block text-sm font-medium mb-1">Until</label>
-                                    <input type="time" value="18:00" class="w-full border rounded p-2" />
+                                    <input type="time" id="checkInUntil" value="18:00" class="w-full border rounded p-2" />
                                 </div>
                             </div>
                         </div>
@@ -961,11 +1066,11 @@
                             <div class="flex space-x-4">
                                 <div class="w-full">
                                     <label class="block text-sm font-medium mb-1">From</label>
-                                    <input type="time" value="08:00" class="w-full border rounded p-2" />
+                                    <input type="time" id="checkOutFrom" value="08:00" class="w-full border rounded p-2" />
                                 </div>
                                 <div class="w-full">
                                     <label class="block text-sm font-medium mb-1">Until</label>
-                                    <input type="time" value="11:00" class="w-full border rounded p-2" />
+                                    <input type="time" id="checkOutUntil" value="11:00" class="w-full border rounded p-2" />
                                 </div>
                             </div>
                         </div>
@@ -1005,7 +1110,7 @@
                         class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
                         ←
                     </button>
-                    <button type="button" @click="step = Math.min(step + 1, 13)"
+                    <button type="button" @click="saveStep7()"
                         class="px-6 h-12 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ml-[395px]">
                         Continue
                     </button>
@@ -1016,12 +1121,8 @@
     </template>
 
     <template x-if="step === 8">
-        <div x-data="{
-        showProperty: false,
-        showHost: false,
-        showNeighborhood: false,
-        showNone: false,
-    }" class="max-w-2xl mx-auto space-y-8 px-4 sm:px-6 lg:px-8 lg:ml-32 py-6">
+        <div 
+            class="max-w-2xl mx-auto space-y-8 px-4 sm:px-6 lg:px-8 lg:ml-32 py-6">
 
             <h2 class="text-2xl font-bold mb-8 text-left">Host Profile</h2>
 
@@ -1039,7 +1140,7 @@
 
                     <div x-show="showProperty" x-transition class="mt-2">
                         <label class="block text-sm font-semibold text-gray-700">About the property</label>
-                        <textarea rows="4" maxlength="1200" placeholder="What makes your place unique? What can guests expect?"
+                        <textarea rows="4" maxlength="1200" x-ref="about_property" placeholder="What makes your place unique? What can guests expect?"
                             class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"></textarea>
                         <p class="text-right text-xs text-gray-500">0/1200</p>
                     </div>
@@ -1055,14 +1156,14 @@
                     <div x-show="showHost" x-transition class="mt-2 space-y-2">
                         <div>
                             <label class="block text-sm font-semibold text-gray-700">Host name</label>
-                            <input type="text" maxlength="80"
+                            <input type="text" maxlength="80"  x-ref="host_name" 
                                 class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
                             <p class="text-right text-xs text-gray-500">0/80</p>
                         </div>
 
                         <div>
                             <label class="block text-sm font-semibold text-gray-700">About the host</label>
-                            <textarea rows="4" maxlength="1200" placeholder="What are your interests? What do you like about hosting?"
+                            <textarea rows="4" maxlength="1200" placeholder="What are your interests? What do you like about hosting?" x-ref="about_host"
                                 class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"></textarea>
                             <p class="text-right text-xs text-gray-500">0/1200</p>
                         </div>
@@ -1078,7 +1179,7 @@
 
                     <div x-show="showNeighborhood" x-transition class="mt-2">
                         <label class="block text-sm font-semibold text-gray-700">About the neighborhood</label>
-                        <textarea rows="4" maxlength="1200" placeholder="What's the area like? Are there any attractions nearby?"
+                        <textarea rows="4" maxlength="1200" placeholder="What's the area like? Are there any attractions nearby?" x-ref="about_neighborhood"
                             class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"></textarea>
                         <p class="text-right text-xs text-gray-500">0/1200</p>
                     </div>
@@ -1101,7 +1202,7 @@
                     ←
                 </button>
 
-                <button type="button" @click="step = Math.min(step + 1, 13)"
+                <button type="button" @click="saveStep8()"
                     class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
                     Continue
                 </button>

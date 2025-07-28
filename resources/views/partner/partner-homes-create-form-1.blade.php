@@ -221,8 +221,9 @@
                     async submitStep2() {
                         if (!this.selectedBox || !this.propertyId) return;
                         if (this.selectedBox > 6) {
-                             window.location.href = `http://127.0.0.1:8000/partner-homes-form2/${propertyId}`;
-                            
+                            window.location.href = `/partner-homes-form2/${propertyId}/${this.selectedBox}`
+                                        
+                                  
                         }
                         const response = await fetch(`/partner/property/${this.selectedBox}/step2/${this.propertyId}`, {
                             method: 'POST',

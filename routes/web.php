@@ -254,7 +254,7 @@ Route::get('/partner-apartment-multiple', function () {
     return view('frontend.partner-multiple-apartment');
 })->name('partner.apartment.multiple');
 
-Route::get('/partner-homes-form2/{id}', [PropertyController::class, 'showHomesForm2'])->name('partner.homes.form.2');
+Route::get('/partner-homes-form2/{id}/{subtype}', [PropertyController::class, 'showHomesForm2'])->name('partner.homes.form.2');
 
 
 Route::post('/partner-homes-single', [PropertyController::class, 'showPrivateHomesSingle'])->name('partner.homes.single');
