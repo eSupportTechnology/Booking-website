@@ -22,7 +22,9 @@ use App\DTOs\Partner\SaveRoomsDTO;
 use App\DTOs\Partner\PartnerVerificationDTO;
 use App\DTOs\Partner\SaveLanguagesDTO;
 use App\DTOs\Partner\SaveAddressSameDTO;
+use App\DTOs\Partner\PropertyServiceDTO;
 use App\Models\PartnerVerification;
+use App\Models\PropertyService;
 use App\Models\Room;
 use Faker\Provider\ar_EG\Address;
 
@@ -308,6 +310,14 @@ class PropertyAction
         }
     }
 
+     public function saveService(PropertyServiceDTO $dto): void
+    {
+         PropertyService::updateOrCreate(
+            ['property_id' => $dto->property_id],
+            $dto->toArray()
+        );
+    }
+
     public function getSpecificAmenities(): Collection
     {
         // Get specific amenities by name that are used in the multiple apartment form
@@ -325,7 +335,7 @@ class PropertyAction
         
         $amenities = \App\Models\Amenity::whereIn('name', $amenityNames)->get();
         
-        \Log::info('getSpecificAmenities called', [
+        Log::info('getSpecificAmenities called', [
             'requested_names' => $amenityNames,
             'found_amenities' => $amenities->toArray()
         ]);

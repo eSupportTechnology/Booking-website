@@ -26,6 +26,7 @@ use App\DTOs\Partner\UploadPropertyPhotosDTO;
 use App\DTOs\Partner\PartnerVerificationDTO;
 use App\DTOs\Partner\SaveLanguagesDTO;
 use App\DTOs\Partner\SaveAddressSameDTO;
+use App\DTOs\Partner\PropertyServiceDTO;
 use App\Models\Room;
 use App\Models\PartnerVerification;
 use App\Models\Language;
@@ -401,26 +402,18 @@ class PropertyController extends Controller
                 'request' => $request->all(),
             ]);
         
-        try {
-                $dto = SaveAmenitiesDTO::fromRequest($request);
+              $dto = SaveAmenitiesDTO::fromRequest($request);
             Log::info('SaveAmenitiesDTO created:', ['amenities' => $dto->amenities]);
             Log::info('saveAmenities validated', $dto->toArray());
-                $propertyAction->saveAmenities($property, $dto);
-    
-                return response()->json(['success' => true, 'message' => 'Amenities saved successfully']);
-        } catch (\Exception $e) {
-            Log::error('Error saving amenities:', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
-        }
+            $propertyAction->saveAmenities($property, $dto);
+
+            return response()->json(['success' => true]);
         } catch (\Exception $e) {
             Log::error('saveAmenities error', [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
-           return response()->json(['error' => $e ->getMessage()], 500);
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
@@ -767,9 +760,9 @@ class PropertyController extends Controller
         $propertyId = $request->input('propertyId');
         $subtypeId = $request->input('subtypeId');
         $amenities = $action->getAmenities();
+        $languages = $action->getLanguages();
 
-
-        return view('partner.partner-homes-single', compact('propertyId', 'subtypeId', 'amenities'));
+        return view('partner.partner-homes-single', compact('propertyId', 'subtypeId', 'amenities', 'languages'));
     }
 
     public function showPrivateHomesMultiple(Request $request)
@@ -778,5 +771,24 @@ class PropertyController extends Controller
         $subtypeId = $request->input('subtypeId');
 
         return view('partner.partner-homes-multiple', compact('propertyId', 'subtypeId'));
+    }
+
+    public function saveServices(Request $request, $propertyId)
+    {
+        try {
+            Log::info('saveServices called', [
+                'property_id' => $propertyId,
+                'request' => $request->all(),
+            ]);
+
+            $dto = PropertyServiceDTO::fromRequest($request);
+
+            (new PropertyAction())->saveService($dto);
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            Log::error('Error saving property services', ['error' => $e->getMessage()]);
+            return response()->json(['success' => false, 'message' => 'Error saving property services']);
+        }
     }
 }

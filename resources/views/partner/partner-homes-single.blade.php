@@ -4,12 +4,30 @@
 
 @section('content')
 <script>
+
     function stepForm() {
         return {
             step: 1,
             channelManager: 'yes',
             propertyName: '',
             selectedAmenities: [],
+            servesBreakfast: false,
+            breakfastIncluded: '',
+            selectedBreakfasts: [],
+            breakfastPrice: '',
+            breakfastOptions: [],
+            parkingReservation: '',
+            parkingLocation: '',
+            parkingType: '',
+            parkingCost: '',
+
+            toggleBreakfastOption(option) {
+                if (this.selectedBreakfasts.includes(option)) {
+                    this.selectedBreakfasts = this.selectedBreakfasts.filter(o => o !== option);
+                } else {
+                    this.selectedBreakfasts.push(option);
+                }
+            },
 
             saveStep1() {
                 const propertyId = document.getElementById("propertyId").value;
@@ -61,57 +79,130 @@
                 };
 
                 fetch(`/partner/property/${propertyId}/step2/${propertyId}`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
-                    },
-                    body: JSON.stringify(payload),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        console.log("Step 3 saved successfully!");
-                        this.step++;
-                    } else {
-                        alert("Failed to save: " + data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error("Error saving step 3 data:", error);
-                    alert("An error occurred while saving step 3.");
-                });
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
+                        },
+                        body: JSON.stringify(payload),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            console.log("Step 3 saved successfully!");
+                            this.step++;
+                        } else {
+                            alert("Failed to save: " + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error saving step 3 data:", error);
+                        alert("An error occurred while saving step 3.");
+                    });
             },
 
             saveStep4() {
                 const propertyId = document.getElementById("propertyId").value;
 
                 const payload = {
-                    amenities: this.selectedAmenities,  // This will be an array of IDs
+                    amenities: this.selectedAmenities, // This will be an array of IDs
                 };
 
                 fetch(`/partner/property/save-amenities/${propertyId}`, {
-                    method: "POST",
-                    headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
-                    },
-                    body: JSON.stringify(payload),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                    console.log("Amenities saved successfully!");
-                    this.step++;
-                    } else {
-                    alert("Failed to save amenities");
-                    }
-                })
-                .catch(error => {
-                    console.error("Error saving amenities:", error);
-                    alert("An error occurred while saving amenities.");
-                });
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
+                        },
+                        body: JSON.stringify(payload),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            console.log("Amenities saved successfully!");
+                            this.step++;
+                        } else {
+                            alert("Failed to save amenities");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error saving amenities:", error);
+                        alert("An error occurred while saving amenities.");
+                    });
             },
+
+            async saveStep5() {
+                const propertyId = document.getElementById('propertyId').value;
+                const payload = {
+                    property_id: parseInt(document.getElementById('propertyId').value),
+                    serve_breakfast: this.servesBreakfast === 'yes' ? true : false,
+                    breakfast_included: this.breakfastIncluded === 'included' ? true : false,
+                    breakfast_type: this.selectedBreakfasts.join(','),
+                    parking_available: document.querySelector('input[name="parking"]:checked')?.value === 'no' ? false : true,
+                    parking_cost: document.querySelector('input[name="parking"]:checked')?.value === 'paid' ? document.getElementById('parking_cost').value : 0,
+                    parking_cost_unit: this.parking === 'paid' ? 'per_day' : null,
+                    parking_reservation: document.querySelector('input[name="reservation_needed"]:checked')?.value === 'yes',
+                    parking_location: document.querySelector('input[name="location"]:checked')?.value || null,
+                    parking_type: document.querySelector('input[name="type"]:checked')?.value || null
+                };
+
+                try {
+                    const response = await fetch(`/partner/property/save-services/${propertyId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const result = await response.json();
+                    if (result.success) {
+                        console.log("✅ Services saved");
+                        this.step++;
+                    } else {
+                        console.error("❌ Failed to save services:", result.message);
+                    }
+                } catch (error) {
+                    console.error("❌ Error saving services:", error);
+                }
+            },
+
+            saveStep6() {
+                const selectedLanguages = [];
+                const propertyId = document.getElementById('propertyId').value;
+                document.querySelectorAll('.language-checkbox:checked').forEach((checkbox) => {
+                    selectedLanguages.push(checkbox.value);
+                });
+
+                fetch(`/partner/property/save-languages/${propertyId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: JSON.stringify({
+                            property_id: propertyId,
+                            languages: selectedLanguages
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            console.log("Languages saved:", data.selected_languages);
+                            this.step++;
+                        } else {
+                            console.error("Error saving languages:", data.message);
+                            alert("Error saving languages.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("AJAX error:", error);
+                        alert("Request failed.");
+                    });
+            }
+
+
         }
     }
 </script>
@@ -322,7 +413,7 @@
     </template>
 
 
-     <template x-if="step === 3">
+    <template x-if="step === 3">
         <div class="max-w-4xl  lg:ml-24 mx-auto px-4 py-10">
             <h1 class="text-3xl font-bold text-gray-900 mb-6">
                 What's the name of your property?
@@ -368,73 +459,60 @@
 
 
 
-   <template x-if="step === 4">
-    <div class="max-w-4xl mx-auto lg:ml-24 px-4 py-10">
+    <template x-if="step === 4">
+        <div class="max-w-4xl mx-auto lg:ml-24 px-4 py-10">
 
-      <section class="mb-8">
-        <h1 class="text-xl text-gray-700 font-bold mb-4">What can guests use at your place?</h1>
+            <section class="mb-8">
+                <h1 class="text-xl text-gray-700 font-bold mb-4">What can guests use at your place?</h1>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-          <div class="md:col-span-2 flex">
-            <div class="w-full bg-white p-6 rounded shadow-md flex flex-col text-base">
+                    <div class="md:col-span-2 flex">
+                        <div class="w-full bg-white p-6 rounded shadow-md flex flex-col text-base">
 
-              <!-- Amenities checkboxes -->
-              <div class="mt-2">
-                <h3 class="text-gray-700 font-semibold mb-2">Select property type(s)</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-1 gap-2 text-sm text-gray-700">
-                  @foreach($amenities as $amenity)
-                  <label class="flex items-center space-x-2">
-                    <input 
-                      type="checkbox" 
-                      name="property_types[]" 
-                      value="{{ $amenity['id'] }}" 
-                      class="text-blue-500" 
-                      x-model="selectedAmenities" />
-                    <span>{{ $amenity['name'] }}</span>
-                  </label>
-                  @endforeach
+                            <!-- Amenities checkboxes -->
+                            <div class="mt-2">
+                                <h3 class="text-gray-700 font-semibold mb-2">Select property type(s)</h3>
+                                <div class="grid grid-cols-1 sm:grid-cols-1 gap-2 text-sm text-gray-700">
+                                    @foreach($amenities as $amenity)
+                                    <label class="flex items-center space-x-2">
+                                        <input
+                                            type="checkbox"
+                                            name="property_types[]"
+                                            value="{{ $amenity['id'] }}"
+                                            class="text-blue-500"
+                                            x-model="selectedAmenities" />
+                                        <span>{{ $amenity['name'] }}</span>
+                                    </label>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Tips and info omitted for brevity -->
+
                 </div>
-              </div>
 
-            </div>
-          </div>
+                <div class="mt-10 flex justify-between items-center max-w-2xl">
+                    <button type="button"
+                        @click="step = Math.max(step - 1, 1)"
+                        class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-6 h-12 flex items-center justify-center rounded">
+                        ←
+                    </button>
 
-          <!-- Tips and info omitted for brevity -->
-
+                    <button type="button"
+                        @click="saveStep4()"
+                        class="bg-[#3CC0E9] text-white font-semibold px-6 h-12 rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
+                        Continue
+                    </button>
+                </div>
         </div>
-
-        <div class="mt-10 flex justify-between items-center max-w-2xl">
-          <button type="button"
-                  @click="step = Math.max(step - 1, 1)"
-                  class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-6 h-12 flex items-center justify-center rounded">
-            ←
-          </button>
-
-          <button type="button"
-                  @click="saveStep4()"
-                  class="bg-[#3CC0E9] text-white font-semibold px-6 h-12 rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
-            Continue
-          </button>
-        </div>
-    </div>
-  </template>
+    </template>
 
     <template x-if="step === 5">
-        <div x-data="{
-            servesBreakfast: false,
-            breakfastIncluded: '',
-            selectedBreakfasts: [],
-            breakfastPrice: '',
-            breakfastOptions: ['À la carte', 'American', 'Asian', 'Breakfast to go', 'Buffet', 'Continental', 'Full English/Irish', 'Gluten-free', 'Halal', 'Italian', 'Kosher', 'Vegan', 'Vegetarian'],
-            toggleBreakfastOption(option) {
-                if (this.selectedBreakfasts.includes(option)) {
-                    this.selectedBreakfasts = this.selectedBreakfasts.filter(o => o !== option);
-                } else {
-                    this.selectedBreakfasts.push(option);
-                }
-            }
-        }"
+        <div
             class="container mx-auto px-4 py-4 max-w-6xl mb-8">
 
             <!-- Header -->
@@ -456,12 +534,12 @@
                     </p>
                     <div class="space-y-2">
                         <label class="flex items-center cursor-pointer">
-                            <input type="radio" name="breakfast" value="yes" class="mr-2"
+                            <input type="radio" name="breakfast" x-model="servesBreakfast" value="yes" class="mr-2"
                                 @click="servesBreakfast = true" />
                             <span>Yes</span>
                         </label>
                         <label class="flex items-center cursor-pointer">
-                            <input type="radio" name="breakfast" value="no" class="mr-2"
+                            <input type="radio" name="breakfast" x-model="servesBreakfast" value="no" class="mr-2"
                                 checked @click="servesBreakfast = false; breakfastIncluded=''; selectedBreakfasts=[]; breakfastPrice=''" />
                             <span>No</span>
                         </label>
@@ -474,12 +552,12 @@
                         </p>
                         <div class="space-y-2">
                             <label class="flex items-center cursor-pointer">
-                                <input type="radio" name="breakfast_included" value="included" class="mr-2"
+                                <input type="radio" name="breakfast_included" x-model="breakfastIncluded" value="included" class="mr-2"
                                     @click="breakfastIncluded = 'included'" />
                                 <span>Yes, it's included</span>
                             </label>
                             <label class="flex items-center cursor-pointer">
-                                <input type="radio" name="breakfast_included" value="extra" class="mr-2"
+                                <input type="radio" name="breakfast_included" x-model="breakfastIncluded" value="extra" class="mr-2"
                                     @click="breakfastIncluded = 'extra'" />
                                 <span>No, it costs extra</span>
                             </label>
@@ -529,15 +607,15 @@
                     </p>
                     <div class="space-y-2 mb-4">
                         <label class="flex items-center cursor-pointer">
-                            <input type="radio" name="parking" value="free" x-model="parking" class="mr-2" />
+                            <input type="radio" name="parking" id="free-parking" value="free" x-model="parking" class="mr-2" />
                             <span>Yes, free</span>
                         </label>
                         <label class="flex items-center cursor-pointer">
-                            <input type="radio" name="parking" value="paid" x-model="parking" class="mr-2" />
+                            <input type="radio" name="parking" id="paid-parking" value="paid" x-model="parking" class="mr-2" />
                             <span>Yes, paid</span>
                         </label>
                         <label class="flex items-center cursor-pointer">
-                            <input type="radio" name="parking" value="no" x-model="parking" class="mr-2" />
+                            <input type="radio" name="parking" id="no-parking" value="no" x-model="parking" class="mr-2" />
                             <span>No</span>
                         </label>
                     </div>
@@ -593,7 +671,7 @@
                     <!-- Paid Parking - Cost Input -->
                     <div x-show="parking === 'paid'" x-transition class="mt-4">
                         <label class="block text-gray-700 font-semibold mb-1">How much does parking cost?</label>
-                        <input type="text" name="cost" placeholder="e.g., $10 per day" class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+                        <input type="text" name="cost" id="parking_cost" x-model="parkingCost" placeholder="e.g., $10 per day" class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
                     </div>
                 </div>
 
@@ -605,7 +683,7 @@
                     class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
                     ←
                 </button>
-                <button type="button" @click="step = Math.min(step + 1, 13)"
+                <button type="button" @click="saveStep5()"
                     class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
                     Continue
                 </button>
@@ -629,22 +707,15 @@
                     <h3 class="text-lg  mb-4 font-bold">Select languages
                     </h3>
                     <div class="space-y-2">
+                        @foreach ($languages as $lang)
                         <label class="flex items-center cursor-pointer">
-                            <input type="checkbox" class="mr-2" />
-                            <span>English</span>
+                            <input type="checkbox"
+                                class="mr-2 language-checkbox"
+                                :value="'{{ $lang['id'] }}'" />
+                            <span>{{ $lang['name'] }}</span>
                         </label>
-                        <label class="flex items-center cursor-pointer">
-                            <input type="checkbox" class="mr-2" />
-                            <span>French</span>
-                        </label>
-                        <label class="flex items-center cursor-pointer">
-                            <input type="checkbox" class="mr-2" />
-                            <span>German</span>
-                        </label>
-                        <label class="flex items-center cursor-pointer">
-                            <input type="checkbox" class="mr-2" />
-                            <span>Hindi</span>
-                        </label>
+                        @endforeach
+
                     </div>
 
                     <!-- Add Additional Languages -->
@@ -718,7 +789,7 @@
                     </button>
 
                     <!-- Continue Button on the right -->
-                    <button type="button" @click="step = Math.min(step + 1, 13)"
+                    <button type="button" @click="saveStep6()"
                         class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
                         Continue
                     </button>
