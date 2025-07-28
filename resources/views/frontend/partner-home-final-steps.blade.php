@@ -9,7 +9,8 @@
 <!-- intl-tel-input CSS -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.1.1/build/css/intlTelInput.css" />
 
-<div x-data="{ listingType: 'individual' }" class="max-w-4xl mx-auto p-8 bg-white mt-10 rounded shadow space-y-10">
+<div x-data="{ listingType: 'individual' }" class="max-w-2xl lg:ml-24 p-8 bg-white mt-10 rounded shadow space-y-10">
+
 
     <h2 class="text-xl font-semibold text-gray-700">Are you listing the property as a business or an individual?</h2>
 
