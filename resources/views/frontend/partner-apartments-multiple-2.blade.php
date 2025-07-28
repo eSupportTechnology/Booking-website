@@ -142,7 +142,7 @@
 
     <!-- Step 2 -->
   <template x-if="step === 2">
-    <div class="max-w-3xl mx-auto px-4 space-y-8">
+    <div class="max-w-2xl mx-auto lg:ml-32 px-4 space-y-8">
 
         <!-- Heading -->
         <h2 class="text-2xl font-bold text-gray-900 mt-10">
