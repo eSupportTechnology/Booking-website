@@ -4,9 +4,9 @@
 <div class="space-y-6">
 
     <!-- Header -->
-    <div class="flex justify-between items-center">
-        <h1 class="text-3xl font-semibold text-gray-800">Welcome back, Admin 👋</h1>
-        <button class="text-white px-4 py-2 rounded shadow hover:opacity-90 transition" style="background-color: #1F8FB2;">
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+        <h1 class="text-xl sm:text-2xl lg:text-3xl font-semibold text-gray-800">Welcome back, Admin 👋</h1>
+        <button class="text-white px-4 py-2 rounded shadow hover:opacity-90 transition w-full sm:w-auto" style="background-color: #1F8FB2;">
             Add New Booking
         </button>
     </div>
@@ -32,57 +32,59 @@
     </div>
 
     <!-- Recent Bookings Table -->
-    <div class="bg-white p-6 rounded-lg shadow">
+    <div class="bg-white p-6 rounded-lg shadow overflow-x-auto">
         <h2 class="text-lg font-semibold text-gray-700 mb-4">Recent Bookings</h2>
-        <div class="overflow-x-auto">
-            <table class="min-w-full table-auto text-sm text-gray-700">
-                <thead>
-                    <tr class="bg-gray-100 text-left">
-                        <th class="px-4 py-2">Booking ID</th>
-                        <th class="px-4 py-2">Customer</th>
-                        <th class="px-4 py-2">Property</th>
-                        <th class="px-4 py-2">Date</th>
-                        <th class="px-4 py-2">Status</th>
-                        <th class="px-4 py-2 text-right">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="border-b hover:bg-gray-50">
-                        <td class="px-4 py-2">BK10234</td>
-                        <td class="px-4 py-2">John Doe</td>
-                        <td class="px-4 py-2">Ocean View Hotel</td>
-                        <td class="px-4 py-2">2025-07-20</td>
-                        <td class="px-4 py-2">
-                            <span class="bg-green-100 text-green-700 text-xs font-medium px-2 py-1 rounded">Confirmed</span>
-                        </td>
-                        <td class="px-4 py-2 text-right">
-                            <button class="hover:underline" style="color: #1F8FB2;">View</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+        <table class="min-w-full text-xs sm:text-sm table-auto text-gray-700">
+            <thead>
+                <tr class="bg-gray-100 text-left">
+                    <th class="px-2 sm:px-4 py-2">Booking ID</th>
+                    <th class="px-2 sm:px-4 py-2">Customer</th>
+                    <th class="px-2 sm:px-4 py-2">Property</th>
+                    <th class="px-2 sm:px-4 py-2">Date</th>
+                    <th class="px-2 sm:px-4 py-2">Status</th>
+                    <th class="px-2 sm:px-4 py-2 text-right">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="border-b hover:bg-gray-50">
+                    <td class="px-2 sm:px-4 py-2">BK10234</td>
+                    <td class="px-2 sm:px-4 py-2">John Doe</td>
+                    <td class="px-2 sm:px-4 py-2">Ocean View Hotel</td>
+                    <td class="px-2 sm:px-4 py-2">2025-07-20</td>
+                    <td class="px-2 sm:px-4 py-2">
+                        <span class="bg-green-100 text-green-700 text-xs font-medium px-2 py-1 rounded">Confirmed</span>
+                    </td>
+                    <td class="px-2 sm:px-4 py-2 text-right">
+                        <button class="hover:underline" style="color: #1F8FB2;">View</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 
-    <!--  Chart Section -->
-    <div class="bg-white p-6 rounded-lg shadow">
-        <h2 class="text-lg font-semibold text-gray-700 mb-4">Monthly Bookings Overview</h2>
-        <canvas id="bookingChart" height="40"></canvas>
+<!-- Chart Section -->
+<div class="bg-white p-6 rounded-lg shadow">
+    <h2 class="text-lg font-semibold text-gray-700 mb-4">Monthly Bookings Overview</h2>
+    <div class="relative w-full overflow-x-auto" style="height: 220px;">
+        <canvas id="bookingChart" class="w-full h-full"></canvas>
     </div>
+</div>
 
-    <!-- Quick Actions -->
+
+
+    <!-- Quick Actions & Notifications -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="bg-white p-6 rounded-lg shadow">
-            <h3 class="text-lg font-semibold mb-2">Quick Actions</h3>
-            <div class="flex flex-col space-y-2">
+            <h3 class="text-lg font-semibold mb-3">Quick Actions</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <button class="text-white px-4 py-2 rounded hover:opacity-90 transition" style="background-color: #1F8FB2;">Add Property</button>
                 <button class="text-white px-4 py-2 rounded hover:opacity-90 transition" style="background-color: #3CC0E9;">Manage Users</button>
-                <button class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 transition">Review Reports</button>
+                <button class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 transition col-span-full sm:col-span-2">Review Reports</button>
             </div>
         </div>
 
         <div class="bg-white p-6 rounded-lg shadow">
-            <h3 class="text-lg font-semibold mb-2">Notifications</h3>
+            <h3 class="text-lg font-semibold mb-3">Notifications</h3>
             <ul class="list-disc list-inside text-gray-700 space-y-1">
                 <li>3 new bookings today.</li>
                 <li>Partner contract expiring soon.</li>
@@ -92,7 +94,7 @@
     </div>
 </div>
 
-<!--  Chart Script -->
+<!-- Chart Script -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     const ctx = document.getElementById('bookingChart').getContext('2d');
@@ -131,6 +133,7 @@
         },
         options: {
             responsive: true,
+                maintainAspectRatio: false,
             plugins: {
                 legend: {
                     labels: {

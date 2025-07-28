@@ -461,6 +461,19 @@ Route::get('/admin/customer-view', function () {
     return view('frontend.admin.customer-view');
 });
 
+Route::get('/admin/partners', function () {
+    return view('frontend.admin.partners');
+})->name('admin.partners');
+
+Route::get('/admin/partner-view', function () {
+    return view('frontend.admin.partner-view');
+})->name('admin.partner-view');
+
+Route::get('/admin/settings', function () {
+    return view('frontend.admin.settings');
+})->name('admin.settings');
+
+
 
 // Admin Routes for Property
 Route::get('/admin/apartments', function () {
