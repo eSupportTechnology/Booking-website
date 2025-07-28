@@ -63,11 +63,13 @@ class Kernel extends HttpKernel
         'signed' => \App\Http\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        'admin' => \App\Http\Middleware\AdminMiddleware::class,
+        //'admin' => \App\Http\Middleware\AdminMiddleware::class,
         'ensure.partner' => \App\Http\Middleware\EnsurePartner::class,
     ];
 
     protected $middlewareAliases = [
         'ensure.partner' => \App\Http\Middleware\EnsurePartner::class,
+        'admin' => \App\Http\Middleware\AdminMiddleware::class,
+
     ];
 }

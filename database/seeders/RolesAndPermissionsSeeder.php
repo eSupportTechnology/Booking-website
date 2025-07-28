@@ -15,6 +15,24 @@ class RolesAndPermissionsSeeder extends Seeder
         // Create roles
         $customer = Role::updateOrCreate(['name' => 'customer']);
         $partner = Role::updateOrCreate(['name' => 'partner']);
+        $admin = Role::updateOrCreate(['name' => 'admin']);
+        $superAdmin = Role::updateOrCreate(['name' => 'super-admin']);
 
+        // Create permissions
+        $permissions = [
+            'manage-users',
+            'manage-properties',
+            'manage-bookings',
+            'view-dashboard',
+            'manage-admins'
+        ];
+
+        foreach ($permissions as $permission) {
+            Permission::updateOrCreate(['name' => $permission]);
+        }
+
+        // Assign permissions to roles
+        $admin->givePermissionTo(['manage-users', 'manage-properties', 'manage-bookings', 'view-dashboard']);
+        $superAdmin->givePermissionTo(Permission::all());
     }
 }

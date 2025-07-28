@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             RolesAndPermissionsSeeder::class,
+            SuperAdminSeeder::class,
             PropertyCategoriesTableSeeder::class,
             // PropertySubcategoriesTableSeeder::class,
             PropertySubcategorySeeder::class,

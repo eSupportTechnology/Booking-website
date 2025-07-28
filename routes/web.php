@@ -448,50 +448,46 @@ Route::patch('/partner/property/{property}/additional-details', [PropertyControl
 require __DIR__ . '/auth.php';
 
 
-Route::get('/admin/dashboard', function () {
-    return view('frontend.admin.dashboard');
-})->name('admin.dashboard');
+// Admin Authentication Routes
+Route::prefix('admin')->name('admin.')->group(function () {
+    // Guest routes
+    Route::middleware('guest')->group(function () {
+        Route::get('/login', [\App\Http\Controllers\Admin\AuthController::class, 'showLogin'])->name('login');
+        Route::post('/login', [\App\Http\Controllers\Admin\AuthController::class, 'login'])->name('login');
+        Route::get('/register', [\App\Http\Controllers\Admin\AuthController::class, 'showRegister'])->name('register');
+        Route::post('/register', [\App\Http\Controllers\Admin\AuthController::class, 'register'])->name('register');
+        Route::get('/forgot-password', [\App\Http\Controllers\Admin\AuthController::class, 'showForgotPassword'])->name('forgot-password');
+        Route::post('/forgot-password', [\App\Http\Controllers\Admin\AuthController::class, 'forgotPassword'])->name('forgot-password');
+    });
 
+    // Protected admin routes
+    Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->group(function () {
+        Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
+        Route::post('/logout', [\App\Http\Controllers\Admin\AuthController::class, 'logout'])->name('logout');
 
-Route::get('/admin/customers', function () {
-    return view('frontend.admin.customers');
-})->name('admin.customers');
+        // Property management
+        Route::get('/apartments', function () {
+            return view('admin.apartments');
+        })->name('apartments');
+        Route::get('/homes', function () {
+            return view('admin.homes');
+        })->name('homes');
+        Route::get('/hotels', function () {
+            return view('admin.hotels');
+        })->name('hotels');
+        Route::get('/alternative-places', function () {
+            return view('admin.alternative-places');
+        })->name('alternative.places');
 
-Route::get('/admin/customer-view', function () {
-    return view('frontend.admin.customer-view');
+        // Customer management
+        Route::get('/customers', function () {
+            return view('admin.customers');
+        })->name('customers');
+        Route::get('/customer-view', function () {
+            return view('admin.customer-view');
+        })->name('customer.view');
+    });
 });
-
-
-// Admin Routes for Property
-Route::get('/admin/apartments', function () {
-    return view('frontend.admin.apartments');
-})->name('admin.apartments');
-
-Route::get('/admin/homes', function () {
-    return view('frontend.admin.homes');
-})->name('admin.homes');
-
-Route::get('/admin/hotels', function () {
-    return view('frontend.admin.hotels');
-})->name('admin.hotels');
-
-Route::get('/admin/alternative-places', function () {
-    return view('frontend.admin.alternative-places');
-})->name('admin.alternative.places');
-
-
-// Admin Routes Login Registration Forgot Password
-Route::get('/admin/login', function () {
-    return view('frontend.admin.login');
-})->name('admin.login');
-
-Route::get('/admin/Registration', function () {
-    return view('frontend.admin.Registration');
-})->name('admin.Registration');
-
-Route::get('/admin/ForgotPassword', function () {
-    return view('frontend.admin.ForgotPassword');
-})->name('admin.ForgotPassword');
 
 
 
