@@ -342,7 +342,11 @@ Route::prefix('partner')->group(function () {
     Route::get('/register/email', [PartnerRegistrationController::class, 'createEmail'])->name('partner.register.email.form');
 
     Route::get('/property-apartment-2', function () {
-        return view('partner.partner-apartment-create-form-2');
+        return view('partner.partner-apartment-create-form-2', [
+            'property' => null,
+            'category' => 'apartment',
+            'groupedAmenities' => []
+        ]);
     })->name('partner.property.apartment.2');
     Route::get('/property-apartment-1', [\App\Http\Controllers\PropertyController::class, 'apartmentSubcategories'])->name('partner.property.apartment.1');
     // Handle email registration POST
@@ -531,6 +535,8 @@ Route::post('/partner/property/{property}/policy', [\App\Http\Controllers\Proper
 Route::post('/partner/property/{property}/host-profile', [PropertyController::class, 'saveHostProfile']);
 
 Route::post('/partner/property/{property}/pricing', [PropertyController::class, 'savePricing']);
+Route::post('/partner/property/{property}/address-type', [PropertyController::class, 'saveAddressType']);
+
 
 // Apartment pricing-related routes
 Route::get('/partner/apartment/non-refundable-rate', function () {
@@ -549,6 +555,12 @@ Route::get('/partner/apartment/weekly-rate', function () {
     return view('partner.partner-apartment-weekly-rate');
 })->name('partner.apartment.weekly.rate');
 
-Route::get('/partner/partner-multiple-apartment', function () {
-    return view('partner.partner-multiple-apartment');
+
+Route::get('/partner/partner-multiple-apartment/{property}', function ($property) {
+    $property = \App\Models\Property::findOrFail($property);
+    return view('partner.partner-multiple-apartment', compact('property'));
 })->name('partner.multiple.apartment');
+
+Route::get('/partner/multiple-apartment', function () {
+    return view('partner.partner-multiple-apartment');
+})->name('partner.multiple.apartment.initial');

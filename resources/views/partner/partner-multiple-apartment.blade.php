@@ -1,9 +1,162 @@
 <!DOCTYPE html>
-<html lang="en" x-data="{ step: 1, selectedBox: null }" xmlns:x-bind="http://www.w3.org/1999/xlink">
+<html lang="en"     x-data="{ 
+    step: 1, 
+    selectedBox: null,
+    // Languages
+    selectedLanguages: [],
+    availableLanguages: [],
+    showAdditionalLanguages: false,
+    searchTerm: '',
+    showDropdown: false,
+    filteredLanguages: [],
+    
+    // House Rules
+    smokingAllowed: false,
+    partiesAllowed: false,
+    petsAllowed: 'no',
+    petsFees: '',
+    checkInFrom: '15:00',
+    checkInUntil: '18:00',
+    checkOutFrom: '08:00',
+    checkOutUntil: '11:00',
+    
+    // Host Profile
+    hostProfile: {
+        about_property: '',
+        about_host: '',
+        about_neighborhood: '',
+        show_property: false,
+        show_host: false,
+        show_neighborhood: false,
+        none_selected: false,
+        host_name: ''
+    },
+    
+    // Pricing
+    pricing: {
+        booking_type: 'instant',
+        price_per_night: '',
+        currency: 'USD',
+        discount_enabled: false,
+        discount_percent: ''
+    },
+    
+    // Methods
+    async saveLanguages() {
+        try {
+            const propertyId = @json($property->id ?? 'new');
+            const response = await fetch(`/partner/property/${propertyId}/languages`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    languages: this.selectedLanguages
+                })
+            });
+            
+            if (response.ok) {
+                console.log('Languages saved successfully');
+                this.step = Math.min(this.step + 1, 13);
+            } else {
+                console.error('Failed to save languages');
+            }
+        } catch (error) {
+            console.error('Error saving languages:', error);
+        }
+    },
+    
+    async saveHouseRules() {
+        try {
+            const propertyId = @json($property->id ?? 'new');
+            const response = await fetch(`/partner/property/${propertyId}/policy`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    smoking_allowed: this.smokingAllowed,
+                    parties_allowed: this.partiesAllowed,
+                    pets_allowed: this.petsAllowed,
+                    pets_fees: this.petsFees,
+                    check_in_from: this.checkInFrom,
+                    check_in_until: this.checkInUntil,
+                    check_out_from: this.checkOutFrom,
+                    check_out_until: this.checkOutUntil,
+                    cancellation_policy: 'flexible'
+                })
+            });
+            
+            if (response.ok) {
+                console.log('House rules saved successfully');
+                this.step = Math.min(this.step + 1, 13);
+            } else {
+                console.error('Failed to save house rules');
+            }
+        } catch (error) {
+            console.error('Error saving house rules:', error);
+        }
+    },
+    
+    async saveHostProfile() {
+        try {
+            const propertyId = @json($property->id ?? 'new');
+            const response = await fetch(`/partner/property/${propertyId}/host-profile`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                },
+                body: JSON.stringify(this.hostProfile)
+            });
+            
+            if (response.ok) {
+                console.log('Host profile saved successfully');
+                this.step = Math.min(this.step + 1, 13);
+            } else {
+                console.error('Failed to save host profile');
+            }
+        } catch (error) {
+            console.error('Error saving host profile:', error);
+        }
+    },
+    
+    async savePricing() {
+        try {
+            const propertyId = @json($property->id ?? 'new');
+            const response = await fetch(`/partner/property/${propertyId}/pricing`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                },
+                body: JSON.stringify(this.pricing)
+            });
+            
+            if (response.ok) {
+                console.log('Pricing saved successfully');
+                this.step = Math.min(this.step + 1, 13);
+            } else {
+                console.error('Failed to save pricing');
+            }
+        } catch (error) {
+            console.error('Error saving pricing:', error);
+        }
+    },
+    
+
+}" xmlns:x-bind="http://www.w3.org/1999/xlink">
 
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>create homes</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
@@ -100,18 +253,16 @@
 
     
 
-    <!-- Step 1 -->
+    <!-- Step 1 - Welcome -->
     <template x-if="step === 1">
           <div>
                                                         <!-- Main Content -->
                                                         <div class="max-w-xl ml-4 mr-auto">
                                                             <!-- White Box -->
                                                             <div class="bg-white shadow-md  p-6 text-left">
-                                                                <p class=" text-base text-gray-700">
-                                                                    Great, since your holiday homes are located at the
-                                                                    same address there should be some things that apply
-                                                                    to all of them. Let's start filling in those general
-                                                                    settings.
+                                                                <h2 class="text-2xl font-bold mb-4">Multiple Apartments</h2>
+                                                                <p class=" text-base text-gray-700 mb-6">
+                                                                    Great! Since your multiple apartments are at the same address, let's start filling in the general settings that apply to all of them.
                                                                 </p>
                                                             </div>
 
@@ -449,7 +600,7 @@
                                                                                     class="w-6 h-6 md:w-7 md:h-7 cursor-pointer" />
                                                                                 <h3
                                                                                     class="text-gray-700 text-sm text-bold">
-                                                                                    What if I don’t see a facility I
+                                                                                    What if I don't see a facility I
                                                                                     offer?</h3>
                                                                             </div>
                                                                             <button @click="show = false"
@@ -704,19 +855,19 @@
                                                                 </h3>
                                                                 <div class="space-y-2">
                                                                     <label class="flex items-center cursor-pointer">
-                                                                        <input type="checkbox" class="mr-2" />
+                                                                        <input type="checkbox" x-model="selectedLanguages" value="English" class="mr-2" />
                                                                         <span>English</span>
                                                                     </label>
                                                                     <label class="flex items-center cursor-pointer">
-                                                                        <input type="checkbox" class="mr-2" />
+                                                                        <input type="checkbox" x-model="selectedLanguages" value="French" class="mr-2" />
                                                                         <span>French</span>
                                                                     </label>
                                                                     <label class="flex items-center cursor-pointer">
-                                                                        <input type="checkbox" class="mr-2" />
+                                                                        <input type="checkbox" x-model="selectedLanguages" value="German" class="mr-2" />
                                                                         <span>German</span>
                                                                     </label>
                                                                     <label class="flex items-center cursor-pointer">
-                                                                        <input type="checkbox" class="mr-2" />
+                                                                        <input type="checkbox" x-model="selectedLanguages" value="Hindi" class="mr-2" />
                                                                         <span>Hindi</span>
                                                                     </label>
                                                                 </div>
@@ -792,7 +943,7 @@
                                                                 </button>
 
                                                                 <!-- Continue Button on the right -->
-                                                                <button type="button"    @click="step = Math.min(step + 1, 13)"
+                                                                <button type="button"    @click="saveLanguages()"
                                                                     class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
                                                                     Continue
                                                                 </button>
@@ -885,6 +1036,7 @@
                                                                             <span>Smoking allowed</span>
                                                                             <div class="relative">
                                                                                 <input type="checkbox"
+                                                                                    x-model="smokingAllowed"
                                                                                     class="sr-only peer" />
                                                                                 <div
                                                                                     class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition">
@@ -915,6 +1067,7 @@
                                                                             <span>Parties/events allowed</span>
                                                                             <div class="relative">
                                                                                 <input type="checkbox"
+                                                                                    x-model="partiesAllowed"
                                                                                     class="sr-only peer" />
                                                                                 <div
                                                                                     class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition">
@@ -935,20 +1088,20 @@
                                                                             <label
                                                                                 class="flex items-center cursor-pointer">
                                                                                 <input type="radio" name="pets"
-                                                                                    value="yes" class="mr-2">
+                                                                                    value="yes" x-model="petsAllowed" class="mr-2">
                                                                                 <span>Yes</span>
                                                                             </label>
                                                                             <label
                                                                                 class="flex items-center cursor-pointer">
                                                                                 <input type="radio" name="pets"
                                                                                     value="upon_request"
-                                                                                    class="mr-2">
+                                                                                    x-model="petsAllowed" class="mr-2">
                                                                                 <span>Upon request</span>
                                                                             </label>
                                                                             <label
                                                                                 class="flex items-center cursor-pointer">
                                                                                 <input type="radio" name="pets"
-                                                                                    value="no" class="mr-2"
+                                                                                    value="no" x-model="petsAllowed" class="mr-2"
                                                                                     checked>
                                                                                 <span>No</span>
                                                                             </label>
@@ -965,13 +1118,13 @@
                                                                             <div class="w-full">
                                                                                 <label
                                                                                     class="block text-sm font-medium mb-1">From</label>
-                                                                                <input type="time" value="15:00"
+                                                                                <input type="time" x-model="checkInFrom"
                                                                                     class="w-full border rounded p-2" />
                                                                             </div>
                                                                             <div class="w-full">
                                                                                 <label
                                                                                     class="block text-sm font-medium mb-1">Until</label>
-                                                                                <input type="time" value="18:00"
+                                                                                <input type="time" x-model="checkInUntil"
                                                                                     class="w-full border rounded p-2" />
                                                                             </div>
                                                                         </div>
@@ -985,13 +1138,13 @@
                                                                             <div class="w-full">
                                                                                 <label
                                                                                     class="block text-sm font-medium mb-1">From</label>
-                                                                                <input type="time" value="08:00"
+                                                                                <input type="time" x-model="checkOutFrom"
                                                                                     class="w-full border rounded p-2" />
                                                                             </div>
                                                                             <div class="w-full">
                                                                                 <label
                                                                                     class="block text-sm font-medium mb-1">Until</label>
-                                                                                <input type="time" value="11:00"
+                                                                                <input type="time" x-model="checkOutUntil"
                                                                                     class="w-full border rounded p-2" />
                                                                             </div>
                                                                         </div>
@@ -1036,7 +1189,7 @@
                                                                     class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
                                                                     ←
                                                                 </button>
-                                                                <button type="button"     @click="step = Math.min(step + 1, 13)"
+                                                                <button type="button"     @click="saveHouseRules()"
                                                                     class="px-6 h-12 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ml-[285px]">
                                                                     Continue
                                                                 </button>
@@ -1055,13 +1208,14 @@
             <!-- The Property Section -->
             <div>
                 <label class="inline-flex items-center space-x-2">
-                    <input type="checkbox" class="form-checkbox text-blue-600">
+                    <input type="checkbox" x-model="hostProfile.show_property" class="form-checkbox text-blue-600">
                     <span class="text-gray-800 font-sm ">The property</span>
                 </label>
 
-                <div class="mt-2">
+                <div class="mt-2" x-show="hostProfile.show_property">
                     <label class="block text-sm font-semibold text-gray-700">About the property</label>
                     <textarea rows="4" maxlength="1200" placeholder="What makes your place unique? What can guests expect"
+                        x-model="hostProfile.about_property"
                         class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"></textarea>
                     <p class="text-right text-xs text-gray-500">0/1200</p>
                 </div>
@@ -1070,14 +1224,15 @@
             <!-- The Host Section -->
             <div>
                 <label class="inline-flex items-center space-x-2">
-                    <input type="checkbox" class="form-checkbox text-blue-600">
+                    <input type="checkbox" x-model="hostProfile.show_host" class="form-checkbox text-blue-600">
                     <span class="text-gray-800 font-medium">The host</span>
                 </label>
 
-                <div class="mt-2 space-y-2">
+                <div class="mt-2 space-y-2" x-show="hostProfile.show_host">
                     <div>
                         <label class="block text-sm font-semibold text-gray-700">Host name</label>
                         <input type="text" maxlength="80"
+                            x-model="hostProfile.host_name"
                             class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
                         <p class="text-right text-xs text-gray-500">0/80</p>
                     </div>
@@ -1085,6 +1240,7 @@
                     <div>
                         <label class="block text-sm font-semibold text-gray-700">About the host</label>
                         <textarea rows="4" maxlength="1200" placeholder="What are your interests? What do you like about hosting?"
+                            x-model="hostProfile.about_host"
                             class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"></textarea>
                         <p class="text-right text-xs text-gray-500">0/1200</p>
                     </div>
@@ -1094,13 +1250,14 @@
             <!-- The Neighborhood Section -->
             <div>
                 <label class="inline-flex items-center space-x-2">
-                    <input type="checkbox" class="form-checkbox text-blue-600">
+                    <input type="checkbox" x-model="hostProfile.show_neighborhood" class="form-checkbox text-blue-600">
                     <span class="text-gray-800 font-medium">The neighborhood</span>
                 </label>
 
-                <div class="mt-2">
+                <div class="mt-2" x-show="hostProfile.show_neighborhood">
                     <label class="block text-sm font-semibold text-gray-700">About the neighborhood</label>
                     <textarea rows="4" maxlength="1200" placeholder="What's the area like? Are there any attractions nearby?"
+                        x-model="hostProfile.about_neighborhood"
                         class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"></textarea>
                     <p class="text-right text-xs text-gray-500">0/1200</p>
                 </div>
@@ -1109,7 +1266,7 @@
             <!-- None of the Above Option -->
             <div>
                 <label class="inline-flex items-center space-x-2">
-                    <input type="checkbox" class="form-checkbox text-blue-600">
+                    <input type="checkbox" x-model="hostProfile.none_selected" class="form-checkbox text-blue-600">
                     <span class="text-gray-800 font-medium">None of the above / I'll add these later</span>
                 </label>
             </div>
@@ -1126,7 +1283,7 @@
 
   <!-- Continue Button on the right -->
   <button
-   type="button"  @click="step = Math.min(step + 1, 13)"
+   type="button"  @click="saveHostProfile()"
      class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 "
   >
     Continue
@@ -1269,7 +1426,7 @@
 
                                                             <!-- Safety Info Box -->
                                                             <div class="bg-white border rounded-lg p-6 shadow-sm">
-                                                                <h2 class="font-semibold mb-4">We’re here to ensure you
+                                                                <h2 class="font-semibold mb-4">We're here to ensure you
                                                                     can receive bookings safely:</h2>
                                                                 <ul class="space-y-2 text-gray-700">
                                                                     <li class="flex items-start"><span
@@ -1339,7 +1496,7 @@
                                                                                         will be able to find your
                                                                                         holiday home and send a booking
                                                                                         request</li>
-                                                                                    <li>You’ll have 24 hours to accept
+                                                                                    <li>You'll have 24 hours to accept
                                                                                         or decline the request</li>
                                                                                     <li>Guests will have 24 hours to
                                                                                         finish their booking and confirm
@@ -1358,7 +1515,7 @@
                                                                             Properties that require Request to book have
                                                                             fewer confirmed bookings and a longer time
                                                                             until their first booking. They also require
-                                                                            more operational workload, as you’ll need to
+                                                                            more operational workload, as you'll need to
                                                                             respond to each request.
                                                                         </p>
                                                                     </div>

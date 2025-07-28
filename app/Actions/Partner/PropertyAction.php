@@ -95,6 +95,10 @@ class PropertyAction
 
     public function createPropertyStep1(PropertyStep1DTO $dto)
     {
+        Log::info('createPropertyStep1 called', [
+            'dto_data' => $dto->toArray(),
+            'address_type_id' => $dto->address_type_id,
+        ]);
         return \App\Models\Property::create($dto->toArray());
     }
 

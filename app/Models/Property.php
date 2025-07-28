@@ -81,4 +81,9 @@ class Property extends Model
     {
         return $this->hasOne(\App\Models\PropertyPricing::class);
     }
+
+    public function addressType()
+    {
+        return $this->belongsTo(AddressType::class);
+    }
 }

@@ -170,6 +170,7 @@ class PropertyController extends Controller
             'request' => $request->all(),
             'session' => session()->all(),
             'partner_id' => $request->input('partner_id'),
+            'address_type_id' => $request->input('address_type_id'),
         ]);
 
         $category = $request->input('category_id');
