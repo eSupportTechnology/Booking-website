@@ -122,8 +122,9 @@
         <!-- Add CSRF token meta tag -->
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <form method="POST" action="{{ route('partner.property.step1.store', ['category' => $category]) }}"
+        <form method="POST" action="{{ route('partner.property.step1.store_new') }}"
             class=" p-6 rounded-lg  space-y-6" enctype="multipart/form-data"             @submit="
+                console.log('Form submit event triggered');
                 // Ensure addressTypeId is set correctly before submission
                 if (selected === 'One') {
                     addressTypeId = 1;
@@ -135,6 +136,50 @@
                     }
                 }
                 console.log('Form submission - selected:', selected, 'sameAddress:', sameAddress, 'addressTypeId:', addressTypeId);
+                console.log('Form action:', event.target.action);
+                console.log('Form data being submitted:', {
+                    categoryId: categoryId,
+                    subcategoryId: subcategoryId,
+                    propertyCount: propertyCount,
+                    addressTypeId: addressTypeId,
+                    selectedChannels: selectedChannels
+                });
+                
+                // For multiple apartments with same address, we need to handle the redirect after form submission
+                console.log('Checking condition - selected:', selected, 'sameAddress:', sameAddress);
+                console.log('Condition result:', selected === 'Multiple' && sameAddress === 'yes');
+                
+                if (selected === 'Multiple' && sameAddress === 'yes') {
+                    console.log('AJAX submission triggered');
+                    // Prevent default form submission and handle it manually
+                    event.preventDefault();
+                    
+                    // Submit form via AJAX
+                    const formData = new FormData(event.target);
+                    fetch(event.target.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
+                            'Accept': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Form submission response:', data);
+                        if (data.success) {
+                            // Redirect to multiple apartment form with property ID
+                            console.log('Redirecting to multiple apartment form with property ID:', data.property_id);
+                            window.location.href = '/partner/partner-multiple-apartment/' + data.property_id;
+                        } else {
+                            alert('Error: ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred while saving the property.');
+                    });
+                }
             ">
             @csrf
 
@@ -313,8 +358,12 @@
 
                     <!-- Buttons -->
                     <div class="space-y-2">
-                        <button type="button"
-                            @click="sameAddress === 'yes' ? window.location.href = '/partner/multiple-apartment' : step = 4"
+                        <button type="submit" x-show="sameAddress === 'yes'"
+                            class="w-full bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded">
+                            Continue
+                        </button>
+                        <button type="button" x-show="sameAddress === 'no'"
+                            @click="step = 4"
                             class="w-full bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded">
                             Continue
                         </button>

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use App\DTOs\Partner\PropertyStep1DTO;
 use App\DTOs\Partner\PropertyStep2DTO;
+
 use Illuminate\Support\Facades\DB;
 use App\Models\PropertyCategory;
 use App\DTOs\Partner\PropertyAdditionalDetailsDTO;
@@ -156,7 +157,23 @@ class PropertyController extends Controller
     {
         switch ($category) {
             case 'apartment':
-                return view('partner.partner-apartment-create-form-1');
+                // Hardcode subcategories for Apartment
+                $subcategories = collect([
+                    (object)[
+                        'id' => 1,
+                        'category_id' => 2,
+                        'name' => 'One',
+                    ],
+                    (object)[
+                        'id' => 2,
+                        'category_id' => 2,
+                        'name' => 'Multiple',
+                    ],
+                ]);
+                return view('partner.partner-apartment-create-form-1', [
+                    'subcategories' => $subcategories,
+                    'category' => 'apartment',
+                ]);
             case 'home':
                 return view('partner.partner-home-create-form-1');
             default:
@@ -171,6 +188,10 @@ class PropertyController extends Controller
             'session' => session()->all(),
             'partner_id' => $request->input('partner_id'),
             'address_type_id' => $request->input('address_type_id'),
+            'expects_json' => $request->expectsJson(),
+            'is_ajax' => $request->ajax(),
+            'method' => $request->method(),
+            'url' => $request->url(),
         ]);
 
         $category = $request->input('category_id');
@@ -379,11 +400,21 @@ class PropertyController extends Controller
                 'property_id' => $property->id,
                 'request' => $request->all(),
             ]);
-            $dto = SaveAmenitiesDTO::fromRequest($request);
+        
+        try {
+                $dto = SaveAmenitiesDTO::fromRequest($request);
+            Log::info('SaveAmenitiesDTO created:', ['amenities' => $dto->amenities]);
             Log::info('saveAmenities validated', $dto->toArray());
-            $propertyAction->saveAmenities($property, $dto);
+                $propertyAction->saveAmenities($property, $dto);
     
-            return response()->json(['success' => true]);
+                return response()->json(['success' => true, 'message' => 'Amenities saved successfully']);
+        } catch (\Exception $e) {
+            Log::error('Error saving amenities:', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
         } catch (\Exception $e) {
             Log::error('saveAmenities error', [
                 'message' => $e->getMessage(),
@@ -492,6 +523,31 @@ class PropertyController extends Controller
         $room->beds()->sync($bedData);
 
         return response()->json(['success' => true, 'message' => 'Bedroom saved successfully.']);
+    }
+
+    public function showMultipleApartmentForm($property = null, PropertyAction $action)
+    {
+        Log::info('showMultipleApartmentForm called', [
+            'property_param' => $property,
+            'property_type' => gettype($property)
+        ]);
+        
+        // If property is a numeric ID, fetch the property, otherwise set to null
+        if ($property && is_numeric($property)) {
+            $property = \App\Models\Property::find($property);
+        } else {
+            $property = null;
+        }
+        
+        $amenities = $action->getSpecificAmenities();
+        
+        Log::info('showMultipleApartmentForm returning', [
+            'property_id' => $property ? $property->id : null,
+            'amenities_count' => $amenities->count(),
+            'amenities' => $amenities->toArray()
+        ]);
+        
+        return view('partner.partner-multiple-apartment', compact('property', 'amenities'));
     }
 
     /**
@@ -691,6 +747,8 @@ class PropertyController extends Controller
             return response()->json(['success' => false, 'message' => 'Error saving pricing: ' . $e->getMessage()], 500);
         }
     }
+
+
 
     public function showHomesForm2($id)
     {

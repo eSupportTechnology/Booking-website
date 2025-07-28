@@ -99,7 +99,15 @@ class PropertyAction
             'dto_data' => $dto->toArray(),
             'address_type_id' => $dto->address_type_id,
         ]);
-        return \App\Models\Property::create($dto->toArray());
+        
+        $property = \App\Models\Property::create($dto->toArray());
+        
+        Log::info('Property created successfully', [
+            'property_id' => $property->id,
+            'property_data' => $property->toArray(),
+        ]);
+        
+        return $property;
     }
 
     public function updatePropertyStep2(Property $property, PropertyStep2DTO $dto)
@@ -215,7 +223,17 @@ class PropertyAction
 
     public function saveAmenities(Property $property, SaveAmenitiesDTO $dto): void
     {
+        Log::info('PropertyAction::saveAmenities called', [
+            'property_id' => $property->id,
+            'amenities' => $dto->amenities
+        ]);
+        
         $property->amenities()->sync($dto->amenities);
+        
+        Log::info('Amenities synced successfully', [
+            'property_id' => $property->id,
+            'amenity_count' => count($dto->amenities)
+        ]);
     }
 
     public function saveLanguages(Property $property, SaveLanguagesDTO $dto): void
@@ -289,4 +307,36 @@ class PropertyAction
             ]);
         }
     }
+
+    public function getSpecificAmenities(): Collection
+    {
+        // Get specific amenities by name that are used in the multiple apartment form
+        $amenityNames = [
+            'Sauna', 
+            'Garden view',
+            'Terrace',
+            'Hot tub',
+            'Heating',
+            'Free WiFi',
+            'Air conditioning',
+            'Swimming Pool',
+            'Minibar'
+        ];
+        
+        $amenities = \App\Models\Amenity::whereIn('name', $amenityNames)->get();
+        
+        \Log::info('getSpecificAmenities called', [
+            'requested_names' => $amenityNames,
+            'found_amenities' => $amenities->toArray()
+        ]);
+        
+        return $amenities->map(function ($amenity) {
+            return [
+                'id' => $amenity->id,
+                'name' => $amenity->name,
+            ];
+        });
+    }
+
+
 }

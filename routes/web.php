@@ -533,6 +533,7 @@ Route::post('/partner/property/{property}/pricing', [PropertyController::class, 
 Route::post('/partner/property/{property}/address-type', [PropertyController::class, 'saveAddressType']);
 
 
+
 // Apartment pricing-related routes
 Route::get('/partner/apartment/non-refundable-rate', function () {
     return view('partner.partner-apartment-non-refundable-rate');
@@ -551,11 +552,6 @@ Route::get('/partner/apartment/weekly-rate', function () {
 })->name('partner.apartment.weekly.rate');
 
 
-Route::get('/partner/partner-multiple-apartment/{property}', function ($property) {
-    $property = \App\Models\Property::findOrFail($property);
-    return view('partner.partner-multiple-apartment', compact('property'));
-})->name('partner.multiple.apartment');
+Route::get('/partner/partner-multiple-apartment/{property}', [PropertyController::class, 'showMultipleApartmentForm'])->name('partner.multiple.apartment');
 
-Route::get('/partner/multiple-apartment', function () {
-    return view('partner.partner-multiple-apartment');
-})->name('partner.multiple.apartment.initial');
+Route::get('/partner/multiple-apartment', [PropertyController::class, 'showMultipleApartmentForm'])->name('partner.multiple.apartment.initial');

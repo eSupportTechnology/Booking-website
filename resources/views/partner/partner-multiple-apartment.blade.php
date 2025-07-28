@@ -1,7 +1,13 @@
+@php
+    $amenities = $amenities ?? [];
+@endphp
 <!DOCTYPE html>
 <html lang="en"     x-data="{ 
     step: 1, 
     selectedBox: null,
+    // Amenities
+    selectedAmenities: [],
+    
     // Languages
     selectedLanguages: [],
     availableLanguages: [],
@@ -41,7 +47,54 @@
         discount_percent: ''
     },
     
+    // Address data
+    addressData: {
+        address: 'Sri Lanka',
+        apartment: 'aaa',
+        country: 'Sri Lanka',
+        city: 'a',
+        postcode: '80400',
+        update_address: true
+    },
+    
+    // Channel manager data
+    channelManager: 'yes',
+    
     // Methods
+    async saveAddress() {
+        try {
+            const propertyId = @json($property->id ?? 'new');
+            const response = await fetch(`/partner/property/${propertyId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    address: this.addressData.address,
+                    city: this.addressData.city,
+                    country: this.addressData.country,
+                    apartment: this.addressData.apartment,
+                    zipcode: this.addressData.postcode
+                })
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Address saved successfully:', data);
+                this.step = Math.min(this.step + 1, 13);
+            } else {
+                console.error('Failed to save address');
+                const errorData = await response.json();
+                alert('Error: ' + (errorData.message || 'Failed to save address'));
+            }
+        } catch (error) {
+            console.error('Error saving address:', error);
+            alert('An error occurred while saving the address.');
+        }
+    },
+    
     async saveLanguages() {
         try {
             const propertyId = @json($property->id ?? 'new');
@@ -150,6 +203,64 @@
         }
     },
     
+    async saveChannelManager() {
+        try {
+            const propertyId = @json($property->id ?? 'new');
+            const response = await fetch(`/partner/property/${propertyId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    channel_manager: this.channelManager
+                })
+            });
+            
+            if (response.ok) {
+                console.log('Channel manager saved successfully');
+                this.step = Math.min(this.step + 1, 13);
+            } else {
+                console.error('Failed to save channel manager');
+                const errorData = await response.json();
+                alert('Error: ' + (errorData.message || 'Failed to save channel manager'));
+            }
+        } catch (error) {
+            console.error('Error saving channel manager:', error);
+            alert('An error occurred while saving the channel manager.');
+        }
+    },
+    
+    async saveAmenities() {
+        try {
+            const propertyId = @json($property->id ?? 'new');
+            const response = await fetch(`/partner/property/${propertyId}/amenities`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    amenities: this.selectedAmenities
+                })
+            });
+            
+            if (response.ok) {
+                console.log('Amenities saved successfully');
+                this.step = Math.min(this.step + 1, 13);
+            } else {
+                console.error('Failed to save amenities');
+                const errorData = await response.json();
+                alert('Error: ' + (errorData.message || 'Failed to save amenities'));
+            }
+        } catch (error) {
+            console.error('Error saving amenities:', error);
+            alert('An error occurred while saving the amenities.');
+        }
+    },
+    
 
 }" xmlns:x-bind="http://www.w3.org/1999/xlink">
 
@@ -157,7 +268,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>create homes</title>
+    <title>Create Multiple Apartments</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <!-- Google Fonts -->
@@ -307,13 +418,13 @@
                                                                     <h2
                                                                         class="text-2xl font-semibold mb-4 text-gray-800">
                                                                         Where is your property?</h2>
-                                                                    <form>
+                                                                    <form @submit.prevent="saveAddress()">
                                                                         <div class="mb-4">
                                                                             <label for="address"
                                                                                 class="block text-sm font-medium text-gray-700">Find
                                                                                 your address</label>
                                                                             <input type="text" id="address"
-                                                                                name="address" value="Sri Lanka"
+                                                                                name="address" x-model="addressData.address"
                                                                                 class="mt-1 p-2 w-full border border-gray-300 rounded">
                                                                         </div>
                                                                         <div class="mb-4">
@@ -321,15 +432,16 @@
                                                                                 class="block text-sm font-medium text-gray-700">Apartment
                                                                                 or floor number (optional)</label>
                                                                             <input type="text" id="apartment"
-                                                                                name="apartment" value="aaa"
+                                                                                name="apartment" x-model="addressData.apartment"
                                                                                 class="mt-1 p-2 w-full border border-gray-300 rounded">
                                                                         </div>
                                                                         <div class="mb-4">
                                                                             <label for="country"
                                                                                 class="block text-sm font-medium text-gray-700">Country/region</label>
                                                                             <select id="country" name="country"
+                                                                                x-model="addressData.country"
                                                                                 class="mt-1 p-2 w-full border border-gray-300 rounded">
-                                                                                <option selected>Sri Lanka</option>
+                                                                                <option value="Sri Lanka" selected>Sri Lanka</option>
                                                                             </select>
                                                                         </div>
                                                                         <div class="flex flex-col md:flex-row gap-4">
@@ -337,7 +449,7 @@
                                                                                 <label for="city"
                                                                                     class="block text-sm font-medium text-gray-700">City</label>
                                                                                 <input type="text" id="city"
-                                                                                    name="city" value="a"
+                                                                                    name="city" x-model="addressData.city"
                                                                                     class="mt-1 p-2 w-full border border-gray-300 rounded">
                                                                             </div>
                                                                             <div class="flex-1">
@@ -345,13 +457,13 @@
                                                                                     class="block text-sm font-medium text-gray-700">Post
                                                                                     code / Zip code</label>
                                                                                 <input type="text" id="postcode"
-                                                                                    name="postcode" value="80400"
+                                                                                    name="postcode" x-model="addressData.postcode"
                                                                                     class="mt-1 p-2 w-full border border-gray-300 rounded">
                                                                             </div>
                                                                         </div>
                                                                         <div class="flex items-center mt-4">
                                                                             <input id="update_address" type="checkbox"
-                                                                                name="update_address" checked
+                                                                                name="update_address" x-model="addressData.update_address"
                                                                                 class="mr-2">
                                                                             <label for="update_address"
                                                                                 class="text-sm text-gray-700">Update
@@ -394,7 +506,7 @@
                                                                                 class="w-full sm:w-auto border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
                                                                                 ←
                                                                             </button>
-                                                                            <button type="button"     @click="step = Math.min(step + 1, 13)"
+                                                                            <button type="submit"
                                                                                 class="w-full sm:w-auto px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
                                                                                 Continue
                                                                             </button>
@@ -475,7 +587,7 @@
 
 
                             <!-- Continue Button (Right) -->
-                            <button type="submit"  @click="step = Math.min(step + 1, 13)"
+                            <button type="button"  @click="saveChannelManager()"
                                 :class="step === 9 ? 'opacity-50 cursor-not-allowed' : 'bg-[#3CC0E9] hover:bg-sky-500'"
                                 :disabled="step === 9"
                                 class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300">
@@ -500,86 +612,25 @@
                                                                         class="w-full bg-white p-6 rounded shadow-md flex flex-col text-base">
 
 
-                                                                        <!-- 9 Checkboxes Section -->
+                                                                        <!-- Amenities Checkboxes Section -->
 
                                                                         <div class="mt-2">
                                                                             <h3
                                                                                 class="text-gray-700 font-semibold mb-2">
-                                                                                Select property type(s)</h3>
+                                                                                Select amenities</h3>
                                                                             <div
                                                                                 class="grid grid-cols-1 sm:grid-cols-1 gap-2 text-sm text-gray-700">
+                                                                                @foreach($amenities as $amenity)
                                                                                 <label
                                                                                     class="flex items-center space-x-2">
                                                                                     <input type="checkbox"
-                                                                                        name="property_types[]"
-                                                                                        value="Apartment"
+                                                                                        name="amenities[]"
+                                                                                        value="{{ $amenity['id'] }}"
+                                                                                        x-model="selectedAmenities"
                                                                                         class="text-blue-500" />
-                                                                                    <span>Bar</span>
+                                                                                    <span>{{ $amenity['name'] }}</span>
                                                                                 </label>
-                                                                                <label
-                                                                                    class="flex items-center space-x-2">
-                                                                                    <input type="checkbox"
-                                                                                        name="property_types[]"
-                                                                                        value="Villa"
-                                                                                        class="text-blue-500" />
-                                                                                    <span>Sauna</span>
-                                                                                </label>
-                                                                                <label
-                                                                                    class="flex items-center space-x-2">
-                                                                                    <input type="checkbox"
-                                                                                        name="property_types[]"
-                                                                                        value="Holiday Home"
-                                                                                        class="text-blue-500" />
-                                                                                    <span>Garden</span>
-                                                                                </label>
-                                                                                <label
-                                                                                    class="flex items-center space-x-2">
-                                                                                    <input type="checkbox"
-                                                                                        name="property_types[]"
-                                                                                        value="Chalet"
-                                                                                        class="text-blue-500" />
-                                                                                    <span>Terrace</span>
-                                                                                </label>
-                                                                                <label
-                                                                                    class="flex items-center space-x-2">
-                                                                                    <input type="checkbox"
-                                                                                        name="property_types[]"
-                                                                                        value="Cottage"
-                                                                                        class="text-blue-500" />
-                                                                                    <span>Hot tub/Jacuzzi</span>
-                                                                                </label>
-                                                                                <label
-                                                                                    class="flex items-center space-x-2">
-                                                                                    <input type="checkbox"
-                                                                                        name="property_types[]"
-                                                                                        value="Cabin"
-                                                                                        class="text-blue-500" />
-                                                                                    <span>Heating</span>
-                                                                                </label>
-                                                                                <label
-                                                                                    class="flex items-center space-x-2">
-                                                                                    <input type="checkbox"
-                                                                                        name="property_types[]"
-                                                                                        value="Bungalow"
-                                                                                        class="text-blue-500" />
-                                                                                    <span>Free WiFi</span>
-                                                                                </label>
-                                                                                <label
-                                                                                    class="flex items-center space-x-2">
-                                                                                    <input type="checkbox"
-                                                                                        name="property_types[]"
-                                                                                        value="Farm Stay"
-                                                                                        class="text-blue-500" />
-                                                                                    <span>Air conditioning</span>
-                                                                                </label>
-                                                                                <label
-                                                                                    class="flex items-center space-x-2">
-                                                                                    <input type="checkbox"
-                                                                                        name="property_types[]"
-                                                                                        value="Houseboat"
-                                                                                        class="text-blue-500" />
-                                                                                    <span>Swimming pool</span>
-                                                                                </label>
+                                                                                @endforeach
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -624,7 +675,7 @@
                                                                             your property.
                                                                             <br>
                                                                             The ones selected here will apply to all of
-                                                                            your holiday homes.
+                                                                            your apartments.
                                                                         </p>
                                                                     </div>
 
@@ -638,7 +689,7 @@
                                                                     class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
                                                                     ←
                                                                 </button>
-                                                                <button type="button"     @click="step = Math.min(step + 1, 13)"
+                                                                <button type="button"     @click="saveAmenities()"
                                                                     class="px-4 py-3 bg-[#3CC0E9] font-semibold  text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ml-[330px]">
                                                                     Continue
                                                                 </button>
