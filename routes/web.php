@@ -254,32 +254,31 @@ Route::get('/partner-apartment-multiple', function () {
     return view('frontend.partner-multiple-apartment');
 })->name('partner.apartment.multiple');
 
-Route::get('/partner-homes-form2', function () {
-    return view('frontend.partner-homes-form-2');
-})->name('partner.homes.form.2');
+Route::get('/partner-homes-form2/{id}', [PropertyController::class, 'showHomesForm2'])->name('partner.homes.form.2');
+
 
 Route::get('/partner-homes-single', function () {
-    return view('frontend.partner-homes-single');
+    return view('partner.partner-homes-single');
 })->name('partner.homes.single');
 
 Route::get('/partner-homes-multiple', function () {
-    return view('frontend.partner-homes-multiple');
+    return view('partner.partner-homes-multiple');
 })->name('partner.homes.multiple');
 
 Route::get('/partner-homes-rooms', function () {
-    return view('frontend.partner-homes-rooms');
+    return view('partner.partner-homes-rooms');
 })->name('partner.homes.rooms');
 
 Route::get('/partner-homes-edit', function () {
-    return view('frontend.partner-homes-edit');
+    return view('partner.partner-homes-edit');
 })->name('partner.homes.edit');
 
 Route::get('/partner-homes-payments', function () {
-    return view('frontend.partner-homes-payments');
+    return view('partner.partner-homes-payments');
 })->name('partner.homes.payments');
 
 Route::get('/partner-homes-images', function () {
-    return view('frontend.partner-homes-images');
+    return view('partner.partner-homes-images');
 })->name('partner.homes.images');
 
 

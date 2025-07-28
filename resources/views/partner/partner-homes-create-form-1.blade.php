@@ -97,7 +97,7 @@
     </header>
 
     <!-- Start Form -->
-<div class="max-w-6xl p-4 ml-14 bg-gray-100" x-data="{ propertyId: null, selected: '',  propertyName: '',description: '',availableLanguages: {{ Js::from($languages) }} }">
+    <div class="max-w-6xl p-4 ml-14 bg-gray-100" x-data="{ propertyId: null, selected: '',  propertyName: '',description: '',availableLanguages: {{ Js::from($languages) }} }">
 
         <!-- Step 1: Main Form Step -->
         <form class="p-6 rounded-lg space-y-6" @submit.prevent>
@@ -220,7 +220,10 @@
                 x-data="{
                     async submitStep2() {
                         if (!this.selectedBox || !this.propertyId) return;
-
+                        if (this.selectedBox > 6) {
+                             window.location.href = `http://127.0.0.1:8000/partner-homes-form2/${propertyId}`;
+                            
+                        }
                         const response = await fetch(`/partner/property/${this.selectedBox}/step2/${this.propertyId}`, {
                             method: 'POST',
                             headers: {
@@ -1080,22 +1083,17 @@
                                                         <h3 class="text-lg  mb-4 font-bold">Select languages
                                                         </h3>
                                                         <div class="space-y-2">
+                                                            @foreach ($languages as $lang)
                                                             <label class="flex items-center cursor-pointer">
-                                                                <input type="checkbox" class="mr-2" />
-                                                                <span>English</span>
+                                                                <input type="checkbox"
+                                                                    class="mr-2"
+                                                                    :value="'{{ $lang['id'] }}'"
+                                                                    />
+                                                                <span>{{ $lang['name'] }}</span>
                                                             </label>
-                                                            <label class="flex items-center cursor-pointer">
-                                                                <input type="checkbox" class="mr-2" />
-                                                                <span>French</span>
-                                                            </label>
-                                                            <label class="flex items-center cursor-pointer">
-                                                                <input type="checkbox" class="mr-2" />
-                                                                <span>German</span>
-                                                            </label>
-                                                            <label class="flex items-center cursor-pointer">
-                                                                <input type="checkbox" class="mr-2" />
-                                                                <span>Hindi</span>
-                                                            </label>
+                                                            @endforeach
+
+
                                                         </div>
 
                                                         <!-- Add Additional Languages -->
@@ -2965,7 +2963,7 @@
 
                                                 <template x-if="step === 13 "
 
-                                                        x-init="
+                                                    x-init="
                                                         roomTypes = @js($roomTypes);
                                                         bedTypes = @js($bedTypes)
                                                     ">
@@ -3478,11 +3476,44 @@
                                             } catch (e) {
                                                 console.error('Error saving amenities:', e);
                                             }
-                                        } else if (this.step === 11 && this.selected === 'one') {
+                                        }else if (this.step === 10 && this.selected === 'one') {
+                                            try {
+                                                // Get all selected languages (checked checkboxes)
+                                                const selectedLanguages = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
+                                                    .map(input => input.value);
+
+                                                console.log('Selected languages:', selectedLanguages);
+
+                                                const response = await fetch(`/partner/save-languages/${this.propertyId}`, {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                    },
+                                                    body: JSON.stringify({
+                                                        languages: selectedLanguages,
+                                                        property_id: this.propertyId
+                                                    })
+                                                });
+
+                                                const result = await response.json();
+
+                                                if (result.success) {
+                                                    console.log('Languages saved:', result);
+                                                    this.step++; // go to next step
+                                                } else {
+                                                    alert('Failed to save languages: ' + result.message);
+                                                }
+                                            } catch (e) {
+                                                console.error('Error saving languages:', e);
+                                            }
+                                        }
+                                        else if (this.step === 11 && this.selected === 'one') {
                                             try {
                                                 const smokingAllowed = document.querySelector('#smoking_allowed').checked;
                                                 const petsValue = document.querySelector('input[name="pets_allowed"]:checked')?.value || 'no';
                                                 const partiesAllowed = document.querySelector('#parties_allowed').checked;
+                                                const childrenAllowed = document.querySelector('#children_allowed').checked;
 
                                                 const checkInFromTime = document.querySelector('#check_in_from').value;
                                                 const checkInUntilTime = document.querySelector('#check_in_until').value;
@@ -3498,12 +3529,13 @@
                                                     body: JSON.stringify({
                                                         smoking_allowed: smokingAllowed,
                                                         parties_allowed: partiesAllowed,
-                                                        pets_allowed: petsValue, // convert to boolean
+                                                        pets_allowed: petsValue, 
+                                                        children_allowed: childrenAllowed,
                                                         check_in_from: checkInFromTime,
                                                         check_in_until: checkInUntilTime,
                                                         check_out_from: checkOutFromTime,
                                                         check_out_until: checkOutUntilTime,
-                                                        cancellation_policy: 'flexible', // hardcoded for now; you can make this dynamic
+                                                        cancellation_policy: 'flexible', 
                                                         property_id: this.propertyId
                                                     }),
                                                 });
@@ -3518,6 +3550,44 @@
                                                 }
                                             } catch (e) {
                                                 console.error('Error saving policy:', e);
+                                            }
+                                        }else if (this.step === 12 && this.selected === 'one') {
+                                            try {
+                                                // Read selected radio value
+                                                const selectedValue = document.querySelector('input[name="profile-info"]:checked')?.value;
+
+                                                // Initialize flags
+                                                const show_property = selectedValue === 'property';
+                                                const show_host = selectedValue === 'host';
+                                                const show_neighborhood = selectedValue === 'neighbourhood';
+                                                const none_selected = selectedValue === 'later';
+
+                                                // POST the values
+                                                const response = await fetch(`/partner/property/${this.propertyId}/host-profile`, {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                    },
+                                                    body: JSON.stringify({
+                                                        property_id: this.propertyId,
+                                                        show_property,
+                                                        show_host,
+                                                        show_neighborhood,
+                                                        none_selected
+                                                    })
+                                                });
+
+                                                const result = await response.json();
+
+                                                if (result.success) {
+                                                    console.log('Host profile saved:', result);
+                                                    this.step++; // go to next step
+                                                } else {
+                                                    alert('Failed to save host profile: ' + result.message);
+                                                }
+                                            } catch (e) {
+                                                console.error('Error saving host profile:', e);
                                             }
                                         } else if (this.step === 13 && this.selected === 'one') {
                                             console.log('Saving room details for property ID:', this.propertyId);
@@ -3701,47 +3771,45 @@
                                                     });
                                             }
                                         } else if (this.step === 8 && this.selected === 'multiple') {
-    const currentPropertyId = this.propertyId + this.currentUnit - 1;
-    const selectedLanguages = this.unitServices[this.currentUnit - 1].languages || [];
-                                        
-    // Replace language names with corresponding language IDs
-    const languageIds = selectedLanguages.map(lang => {
-        const langEntry = this.availableLanguages.find(l => l.name === lang);
-        return langEntry ? langEntry.id : null;
-    }).filter(id => id !== null);
+                                            const currentPropertyId = this.propertyId + this.currentUnit - 1;
+                                            const selectedLanguages = this.unitServices[this.currentUnit - 1].languages || [];
 
-    fetch(`/partner/save-languages/${currentPropertyId}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        },
-        body: JSON.stringify({
-            languages: languageIds
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            console.log(`Languages saved for property ${currentPropertyId}:`, data.selected_languages);
+                                            // Replace language names with corresponding language IDs
+                                            const languageIds = selectedLanguages.map(lang => {
+                                                const langEntry = this.availableLanguages.find(l => l.name === lang);
+                                                return langEntry ? langEntry.id : null;
+                                            }).filter(id => id !== null);
 
-            if (this.currentUnit < this.propertyCount) {
-                this.currentUnit++;
-            } else {
-                this.currentUnit = 1;
-                this.step++;
-            }
-        } else {
-            console.error('Error saving languages:', data.message);
-            alert('Failed to save languages.');
-        }
-    })
-    .catch(error => {
-        console.error('Fetch error:', error);
-    });
-}
+                                            fetch(`/partner/save-languages/${currentPropertyId}`, {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                    },
+                                                    body: JSON.stringify({
+                                                        languages: languageIds
+                                                    })
+                                                })
+                                                .then(response => response.json())
+                                                .then(data => {
+                                                    if (data.success) {
+                                                        console.log(`Languages saved for property ${currentPropertyId}:`, data.selected_languages);
 
-                                        else if (this.step === 9 && this.selected === 'multiple') {
+                                                        if (this.currentUnit < this.propertyCount) {
+                                                            this.currentUnit++;
+                                                        } else {
+                                                            this.step++;
+                                                            this.currentUnit = 1;
+                                                        }
+                                                    } else {
+                                                        console.error('Error saving languages:', data.message);
+                                                        alert('Failed to save languages.');
+                                                    }
+                                                })
+                                                .catch(error => {
+                                                    console.error('Fetch error:', error);
+                                                });
+                                        } else if (this.step === 9 && this.selected === 'multiple') {
                                             console.log('Saving policy for property ID:', this.propertyId);
                                             console.log('currentUnit:', this.currentUnit);
                                             console.log('propertyCount:', this.propertyCount);
@@ -3776,7 +3844,6 @@
 
                                                         if (this.currentUnit < this.propertyCount) {
                                                             this.currentUnit++;
-                                                            this.step--; // stay on the same step to show next unit's form
                                                         } else {
                                                             this.currentUnit = 1;
                                                             this.step++; // move to next step
@@ -4018,7 +4085,6 @@
                             }
                         </script>
                     </section>
-
 
 
                 </div>

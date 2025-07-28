@@ -107,13 +107,13 @@ class PropertyController extends Controller
 
     public function rooms($categoryId, PropertyAction $action)
     {
-       $subcategories = $action->getPropertiesByCategory($categoryId);
+        $subcategories = $action->getPropertiesByCategory($categoryId);
         $amenities = $action->getAmenities();
         $roomTypes = $action->getRoomTypes();
         $bedTypes = $action->getBedTypes();
         $languages = $action->getLanguages();
 
-         switch ($categoryId) {
+        switch ($categoryId) {
             case 3:  // Hotel
                 if ($subcategories->isEmpty()) {
                     return redirect()->back()->withErrors(['error' => 'No subcategories found for this category.']);
@@ -499,33 +499,33 @@ class PropertyController extends Controller
      * Save selected languages for a property
      */
     public function saveLanguages(Request $request, Property $property, PropertyAction $propertyAction)
-{
-    Log::info('saveLanguages called', [
-        'property_id' => $property->id,
-        'request' => $request->all(),
-    ]);
-
-    try {
-        $dto = SaveLanguagesDTO::fromRequest($request);
-        $propertyAction->saveLanguages($property, $dto);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Languages saved successfully.',
-            'selected_languages' => $property->languages()->pluck('name')->toArray()
-        ]);
-    } catch (\Exception $e) {
-        Log::error('Error saving languages', [
-            'message' => $e->getMessage(),
-            'trace' => $e->getTraceAsString(),
+    {
+        Log::info('saveLanguages called', [
+            'property_id' => $property->id,
+            'request' => $request->all(),
         ]);
 
-        return response()->json([
-            'success' => false,
-            'message' => $e->getMessage()
-        ], 500);
+        try {
+            $dto = SaveLanguagesDTO::fromRequest($request);
+            $propertyAction->saveLanguages($property, $dto);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Languages saved successfully.',
+                'selected_languages' => $property->languages()->pluck('name')->toArray()
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error saving languages', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
-}
 
     /**
      * Save additional details including languages (for the saveAdditionalDetails method)
@@ -682,5 +682,17 @@ class PropertyController extends Controller
             ]);
             return response()->json(['success' => false, 'message' => 'Error saving pricing: ' . $e->getMessage()], 500);
         }
+    }
+
+    public function showHomesForm2($id)
+    {
+        Log::info('showHomesForm2 called', ['id' => $id]);
+        $property = Property::findOrFail($id);
+        Log::info('Property found', ['property_id' => $property->id]);
+        $property_subtype = PropertySubtype::findOrFail($property->subtype_id);
+        Log::info('Property subtype found', ['subtype_id' => $property_subtype->id, 'name' => $property_subtype->name]);
+
+        // Return the view with the property data
+        return view('partner.partner-homes-form-2', compact('property', 'property_subtype'));
     }
 }
