@@ -257,13 +257,9 @@ Route::get('/partner-apartment-multiple', function () {
 Route::get('/partner-homes-form2/{id}', [PropertyController::class, 'showHomesForm2'])->name('partner.homes.form.2');
 
 
-Route::get('/partner-homes-single', function () {
-    return view('partner.partner-homes-single');
-})->name('partner.homes.single');
+Route::post('/partner-homes-single', [PropertyController::class, 'showPrivateHomesSingle'])->name('partner.homes.single');
+Route::post('/partner-homes-multiple', [PropertyController::class, 'showPrivateHomesMultiple'])->name('partner.homes.multiple');
 
-Route::get('/partner-homes-multiple', function () {
-    return view('partner.partner-homes-multiple');
-})->name('partner.homes.multiple');
 
 Route::get('/partner-homes-rooms', function () {
     return view('partner.partner-homes-rooms');

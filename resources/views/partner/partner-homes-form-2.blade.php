@@ -4,31 +4,72 @@
 
 @section('content')
 
-<div x-data="{
-    step: 1,
-    selected: '',
-    sameAddress: 'yes',
-    propertyCount: 2,
-    apartmentType: '',
-    subtypeName: '{{ $property_subtype->name }}',
+<div x-data="
+    {
+        step: 1,
+        selected: '',
+        sameAddress: 'yes',
+        propertyCount: 2,
+        apartmentType: '',
+        propertyId: '{{ $property->id }}',
+        subtypeName: '{{ $property_subtype->name }}',
+        subtypeId: '{{ $property_subtype->id }}',
 
-    continueFromStep1() {
-        if (!this.selected) {
-            alert('Please select an option.');
-            return;
-        }
-        this.apartmentType = this.selected;
-        this.step++;
-    },
+        continueFromStep1() {
+            if (!this.selected) {
+                alert('Please select an option.');
+                return;
+            }
 
-    continueFromStep2() {
-        if (this.apartmentType === 'one') {
-            window.location.href = '{{ route('partner.homes.single') }}';
-        } else if (this.apartmentType === 'multiple') {
-            window.location.href = '{{ route('partner.homes.multiple') }}';
+            const addressTypeId = this.selected === 'one' ? 1 : 2;
+
+            fetch(`/partner/property/{{ $property->category_id }}/step2/{{ $property->id }}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                },
+                body: JSON.stringify({
+                    address_type_id: addressTypeId,
+                    property_id: {{ $property->id }},
+                }),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to save address type');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Saved address_type:', data);
+                this.apartmentType = this.selected;
+                this.step++;
+            })
+            .catch(error => {
+                console.error(error);
+                alert('Something went wrong while saving address type');
+            });
         }
-    }
-}" class="container mx-auto  px-4 sm:px-6 lg:px-8 py-10">
+        ,
+
+        continueFromStep2() {
+            console.log('Continuing from step 2 with apartment type:', this.apartmentType);
+            console.log('Property ID:', this.propertyId);
+            console.log('Subtype ID:', this.subtypeId);
+            
+            this.$refs.form.action = this.apartmentType === 'one'
+                ? '{{ route('partner.homes.single') }}'
+                : '{{ route('partner.homes.multiple') }}';
+            this.$refs.form.submit();
+        }
+
+    }"
+    class="container mx-auto  px-4 sm:px-6 lg:px-8 py-10">
+    <form id="homesForm" method="POST" action="" x-ref="form">
+        @csrf
+        <input type="hidden" name="propertyId" :value="propertyId">
+        <input type="hidden" name="subtypeId" :value="subtypeId">
+    </form>
 
     <!-- Step 1 -->
     <div x-show="step === 1" x-cloak class="max-w-2xl lg:ml-16 mt-12 mx-auto bg-white p-6 rounded-lg shadow">
@@ -108,7 +149,7 @@
 
                     <!-- Heading -->
                     <h2 class="text-lg md:text-xl font-bold text-gray-800 mb-8">
-                        One guest house where guests can book a room
+                        One <span x-text="subtypeName.toLowerCase()"></span> where guests can book a room
                     </h2>
 
                     <!-- Description -->
@@ -142,7 +183,7 @@
 
                     <!-- Heading -->
                     <h2 class="text-lg md:text-xl font-bold text-gray-800 mb-8">
-                        Multiple guest houses where guests can book a room
+                        Multiple <span x-text="subtypeName.toLowerCase()"></span> where guests can book a room
                     </h2>
 
                     <!-- Description -->

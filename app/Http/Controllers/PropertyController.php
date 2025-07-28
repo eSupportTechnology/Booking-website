@@ -695,4 +695,20 @@ class PropertyController extends Controller
         // Return the view with the property data
         return view('partner.partner-homes-form-2', compact('property', 'property_subtype'));
     }
+
+    public function showPrivateHomesSingle(Request $request)
+    {
+        $propertyId = $request->input('propertyId');
+        $subtypeId = $request->input('subtypeId');
+
+        return view('partner.partner-homes-single', compact('propertyId', 'subtypeId'));
+    }
+
+    public function showPrivateHomesMultiple(Request $request)
+    {
+        $propertyId = $request->input('propertyId');
+        $subtypeId = $request->input('subtypeId');
+
+        return view('partner.partner-homes-multiple', compact('propertyId', 'subtypeId'));
+    }
 }
