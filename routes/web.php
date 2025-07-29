@@ -256,6 +256,14 @@ Route::get('/partner-apartment-multiple', function () {
 
 Route::get('/partner-homes-form2/{id}/{subtype}', [PropertyController::class, 'showHomesForm2'])->name('partner.homes.form.2');
 
+Route::get('/partner-apartment-multiple-2', function () {
+    return view('frontend.partner-apartments-multiple-2');
+})->name('partner.apartment.multiple.2');
+
+Route::get('/partner-homes-form2', function () {
+    return view('frontend.partner-homes-form-2');
+})->name('partner.homes.form.2');
+
 
 Route::post('/partner-homes-single', [PropertyController::class, 'showPrivateHomesSingle'])->name('partner.homes.single');
 Route::post('/partner-homes-multiple', [PropertyController::class, 'showPrivateHomesMultiple'])->name('partner.homes.multiple');
@@ -269,7 +277,9 @@ Route::get('/partner-homes-payments/{id}', [PropertyController::class, 'showPriv
 
 Route::get('/partner-homes-images/{id}',[PropertyController::class, 'showPrivateHomesImages'])->name('partner.homes.images');
 
-
+Route::get('/partner-apartments-final', function () {
+    return view('frontend.partner-apartment-final-step');
+})->name('partner.apartments.final');
 
 Route::get('/partner-hotels-edit', function () {
     return view('frontend.partner-hotels-edit');

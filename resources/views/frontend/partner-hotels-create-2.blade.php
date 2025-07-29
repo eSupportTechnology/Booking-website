@@ -283,82 +283,68 @@
     
 
     <template x-if="step === 3">
-        <div>
-            <div class="max-w-2xl ml-40 px-4 py-8  bg-white  rounded shadow mt-10">
-                <h1 class="text-2xl font-bold mb-6">Tell us about your hotel</h1>
+    <div x-data="{ groupAnswer: 'no' }">
+        <div class="max-w-2xl ml-40 px-4 py-8 bg-white rounded shadow mt-10">
+            <h1 class="text-2xl font-bold mb-6">Tell us about your hotel</h1>
 
-                <!-- Hotel Name -->
-                <div class="mb-6">
-                    <label class="block font-medium text-gray-800 mb-1" for="hotelName">What's the name of your
-                        hotel?</label>
-                    <input type="text" id="hotelName" placeholder="Property name"
-                        class="w-full border rounded px-4 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-200" />
-                    <p class="text-xs text-gray-500 mt-1">This name will be seen by guests when they search for a place
-                        to stay.</p>
-                </div>
+            <!-- Hotel Name -->
+            <div class="mb-6">
+                <label class="block font-medium text-gray-800 mb-1" for="hotelName">What's the name of your hotel?</label>
+                <input type="text" id="hotelName" placeholder="Property name"
+                    class="w-full border rounded px-4 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-200" />
+                <p class="text-xs text-gray-500 mt-1">This name will be seen by guests when they search for a place to stay.</p>
+            </div>
 
-                <hr class="my-6" />
+            <hr class="my-6" />
 
-                <!-- Star Rating -->
-                <div class="mb-6">
-                    <label class="block font-medium text-gray-800 mb-2">What is the star rating of your hotel?</label>
-                    <div class="space-y-2 text-sm text-gray-700">
-                        <label class="flex items-center gap-2">
-                            <input type="radio" name="stars" checked />
-                            N/A
-                        </label>
-                        <label class="flex items-center gap-2">
-                            <input type="radio" name="stars" />
-                            1 star <span class="text-yellow-400">★</span>
-                        </label>
-                        <label class="flex items-center gap-2">
-                            <input type="radio" name="stars" />
-                            2 stars <span class="text-yellow-400">★★</span>
-                        </label>
-                        <label class="flex items-center gap-2">
-                            <input type="radio" name="stars" />
-                            3 stars <span class="text-yellow-400">★★★</span>
-                        </label>
-                        <label class="flex items-center gap-2">
-                            <input type="radio" name="stars" />
-                            4 stars <span class="text-yellow-400">★★★★</span>
-                        </label>
-                        <label class="flex items-center gap-2">
-                            <input type="radio" name="stars" />
-                            5 stars <span class="text-yellow-400">★★★★★</span>
-                        </label>
-                    </div>
-                </div>
-
-                <hr class="my-6" />
-
-                <!-- Management Question -->
-                <div class="mb-6">
-                    <label class="block font-medium text-gray-800 mb-2">Are you a property management company or part
-                        of a group or chain?</label>
-                    <div class="space-y-2 text-sm text-gray-700">
-                        <label class="flex items-center gap-2">
-                            <input type="radio" name="group" />
-                            Yes
-                        </label>
-                        <label class="flex items-center gap-2">
-                            <input type="radio" name="group" checked />
-                            No
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Navigation -->
-                <div class="flex justify-between items-center mt-8">
-                    <button type="submit" @click="step < 9 ? step-- : step"
-                        class="border border-[#3CC0E9]  text-blue-600  hover:bg-blue-50 font-semibold py-2 px-4 rounded">←</button>
-                    <button type="submit" @click="step < 9 ? step++ : step"
-                        class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300">Continue</button>
+            <!-- Star Rating -->
+            <div class="mb-6">
+                <label class="block font-medium text-gray-800 mb-2">What is the star rating of your hotel?</label>
+                <div class="space-y-2 text-sm text-gray-700">
+                    <label class="flex items-center gap-2"><input type="radio" name="stars" checked /> N/A</label>
+                    <label class="flex items-center gap-2"><input type="radio" name="stars" /> 1 star <span class="text-yellow-400">★</span></label>
+                    <label class="flex items-center gap-2"><input type="radio" name="stars" /> 2 stars <span class="text-yellow-400">★★</span></label>
+                    <label class="flex items-center gap-2"><input type="radio" name="stars" /> 3 stars <span class="text-yellow-400">★★★</span></label>
+                    <label class="flex items-center gap-2"><input type="radio" name="stars" /> 4 stars <span class="text-yellow-400">★★★★</span></label>
+                    <label class="flex items-center gap-2"><input type="radio" name="stars" /> 5 stars <span class="text-yellow-400">★★★★★</span></label>
                 </div>
             </div>
 
+            <hr class="my-6" />
+
+            <!-- Management Question -->
+            <div class="mb-6">
+                <label class="block font-medium text-gray-800 mb-2">Are you a property management company or part of a group or chain?</label>
+                <div class="space-y-2 text-sm text-gray-700">
+                    <label class="flex items-center gap-2">
+                        <input type="radio" name="group" value="yes" x-model="groupAnswer" />
+                        Yes
+                    </label>
+                    <label class="flex items-center gap-2">
+                        <input type="radio" name="group" value="no" x-model="groupAnswer" checked />
+                        No
+                    </label>
+                </div>
+            </div>
+
+            <!-- Conditionally Displayed Company/Group Field -->
+            <div class="mb-6" x-show="groupAnswer === 'yes'" x-transition>
+                <label class="block font-medium text-gray-800 mb-1" for="companyName">Name of company, group or chain</label>
+                <input type="text" id="companyName" placeholder="Company / Group Name"
+                    class="w-full border rounded px-4 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-200" />
+            </div>
+
+            <!-- Navigation -->
+            <div class="flex justify-between items-center mt-8">
+                <button type="button" @click="step--"
+                    class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">←</button>
+                <button type="button" @click="step++"
+                    class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300">Continue</button>
+            </div>
         </div>
-    </template>
+    </div>
+</template>
+
 
     <template x-if="step === 4">
         <div class="max-w-4xl ml-40 px-4 py-8    mt-10">
@@ -486,539 +472,525 @@
 
 
     <template x-if="step === 5">
-        <div>
-            <div>
-                <div class="container mx-auto px-4 py-4 max-w-6xl mb-8">
+           <div x-data="{
+            servesBreakfast: false,
+            breakfastIncluded: '',
+            selectedBreakfasts: [],
+            breakfastPrice: '',
+            breakfastOptions: ['À la carte', 'American', 'Asian', 'Breakfast to go', 'Buffet', 'Continental', 'Full English/Irish', 'Gluten-free', 'Halal', 'Italian', 'Kosher', 'Vegan', 'Vegetarian'],
+            toggleBreakfastOption(option) {
+                if (this.selectedBreakfasts.includes(option)) {
+                    this.selectedBreakfasts = this.selectedBreakfasts.filter(o => o !== option);
+                } else {
+                    this.selectedBreakfasts.push(option);
+                }
+            }
+        }"
+        class="container mx-auto px-4 py-4 max-w-6xl mb-8">
 
-                    <!-- Header -->
-                    <h2 class="text-2xl font-bold mb-4 text-left ml-6 max-w-xl">
-                        Services at your property
-                    </h2>
+        <!-- Header -->
+        <h2 class="text-2xl font-bold mb-4 text-left ml-6 max-w-xl">
+            Services at your property
+        </h2>
 
-                    <!-- Sections stacked vertically, aligned with header -->
-                    <div class="max-w-xl ml-6 flex flex-col space-y-8">
-                        <!-- Breakfast Section -->
-                        <div class="bg-white shadow-md rounded-lg p-6">
-                            <h3 class="text-lg  mb-4 font-bold">Breakfast</h3>
-                            <hr class="border-gray-300 mb-4" />
-                            <p class="text-gray-700 mb-2 font-bold text-base">
-                                Do you serve guests breakfast?
-                            </p>
-                            <div class="space-y-2">
-                                <label class="flex items-center cursor-pointer">
-                                    <input type="radio" name="breakfast" value="yes" class="mr-2" />
-                                    <span>Yes</span>
-                                </label>
-                                <label class="flex items-center cursor-pointer">
-                                    <input type="radio" name="breakfast" value="no" class="mr-2" checked />
-                                    <span>No</span>
-                                </label>
-                            </div>
-                        </div>
+        <!-- Sections stacked vertically -->
+        <div class="max-w-xl ml-6 flex flex-col space-y-8">
 
-                        <!-- Parking Section -->
-                        <div class="bg-white shadow-md rounded-lg p-6">
-                            <h3 class="text-lg  mb-4 font-bold">Parking</h3>
-                            <hr class="border-gray-300 mb-4" />
-                            <p class="text-gray-700 mb-2 font-bold">
-                                Is parking available to guests?
-                            </p>
-                            <div class="space-y-2">
-                                <label class="flex items-center cursor-pointer">
-                                    <input type="radio" name="parking" value="free" class="mr-2" />
-                                    <span>Yes, free</span>
-                                </label>
-                                <label class="flex items-center cursor-pointer">
-                                    <input type="radio" name="parking" value="paid" class="mr-2" />
-                                    <span>Yes, paid</span>
-                                </label>
-                                <label class="flex items-center cursor-pointer">
-                                    <input type="radio" name="parking" value="no" class="mr-2" checked />
-                                    <span>No</span>
-                                </label>
-                            </div>
-                        </div>
+            <!-- Breakfast Section -->
+            <div class="bg-white shadow-md rounded-lg p-6">
+                <h3 class="text-lg mb-4 font-bold">Breakfast</h3>
+                <hr class="border-gray-300 mb-4" />
+
+                <!-- Serve breakfast -->
+                <p class="text-gray-700 mb-2 font-bold text-base">
+                    Do you serve guests breakfast?
+                </p>
+                <div class="space-y-2">
+                    <label class="flex items-center cursor-pointer">
+                        <input type="radio" name="breakfast" value="yes" class="mr-2"
+                            @click="servesBreakfast = true" />
+                        <span>Yes</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer">
+                        <input type="radio" name="breakfast" value="no" class="mr-2"
+                            checked @click="servesBreakfast = false; breakfastIncluded=''; selectedBreakfasts=[]; breakfastPrice=''" />
+                        <span>No</span>
+                    </label>
+                </div>
+
+                <!-- Include in price -->
+                <div x-show="servesBreakfast" x-transition class="mt-6">
+                    <p class="text-gray-700 mb-2 font-bold text-base">
+                        Is breakfast included in the price guests pay?
+                    </p>
+                    <div class="space-y-2">
+                        <label class="flex items-center cursor-pointer">
+                            <input type="radio" name="breakfast_included" value="included" class="mr-2"
+                                @click="breakfastIncluded = 'included'" />
+                            <span>Yes, it's included</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="radio" name="breakfast_included" value="extra" class="mr-2"
+                                @click="breakfastIncluded = 'extra'" />
+                            <span>No, it costs extra</span>
+                        </label>
                     </div>
+                </div>
 
-                    <!-- Navigation Buttons below sections -->
-                    <div class="mt-8 flex justify-between max-w-xl ml-6">
-                        <button type="button" @click="step > 1 ? step-- : step"
-                            :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-                            class="border border-[#3CC0E9] text-blue-600  hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
-                            ←
-                        </button>
-                        <button type="button" @click="step > 1 ? step++ : step"
-                            class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300">
-                            Continue
-                        </button>
+                <!-- Breakfast price -->
+                <div x-show="servesBreakfast && breakfastIncluded === 'extra'" x-transition class="mt-6">
+                    <p class="text-gray-700 mb-2 font-bold text-base">
+                        Breakfast price per person, per day
+                    </p>
+                    <input type="text" x-model="breakfastPrice"
+                        class="border border-gray-300 px-3 py-2 rounded w-full mb-1" placeholder="US$" />
+                    <p class="text-sm text-gray-500">Including all fees and taxes</p>
+                </div>
+
+                <!-- Type of breakfast -->
+                <div x-show="servesBreakfast" x-transition class="mt-6">
+                    <p class="text-gray-700 mb-2 font-bold text-base">
+                        What type of breakfast do you offer?
+                    </p>
+                    <p class="text-sm text-gray-500 mb-2">Select all that apply</p>
+                    <div class="flex flex-wrap gap-2">
+                        <template x-for="option in breakfastOptions" :key="option">
+                            <button type="button"
+                                @click="toggleBreakfastOption(option)"
+                                :class="selectedBreakfasts.includes(option) ? 'bg-blue-100 border-blue-500 text-blue-700' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
+                                class="border px-3 py-1 rounded-full text-sm flex items-center space-x-1 transition">
+                                <span x-text="option"></span>
+                                <template x-if="selectedBreakfasts.includes(option)">
+                                    <span class="ml-1 font-bold text-lg leading-none">×</span>
+                                </template>
+                            </button>
+                        </template>
                     </div>
                 </div>
             </div>
+
+            <!-- Parking Section -->
+<div x-data="{ parking: 'no' }" class="container bg-white shadow rounded-lg mx-auto p-6 max-w-6xl mb-8">
+    <h3 class="text-lg mb-4 font-bold">Parking</h3>
+    <hr class="border-gray-300 mb-4" />
+
+    <!-- Main Question -->
+    <p class="text-gray-700 mb-2 font-bold">
+        Is parking available to guests?
+    </p>
+    <div class="space-y-2 mb-4">
+        <label class="flex items-center cursor-pointer">
+            <input type="radio" name="parking" value="free" x-model="parking" class="mr-2" />
+            <span>Yes, free</span>
+        </label>
+        <label class="flex items-center cursor-pointer">
+            <input type="radio" name="parking" value="paid" x-model="parking" class="mr-2" />
+            <span>Yes, paid</span>
+        </label>
+        <label class="flex items-center cursor-pointer">
+            <input type="radio" name="parking" value="no" x-model="parking" class="mr-2" />
+            <span>No</span>
+        </label>
+    </div>
+
+    <!-- Extra Fields for Free or Paid Parking -->
+    <div x-show="parking === 'free' || parking === 'paid'" x-transition class="space-y-4">
+        <!-- Reservation Needed -->
+        <div>
+            <p class="text-gray-700 font-semibold mb-1">Do they need to reserve a parking spot?</p>
+            <div class="space-y-2">
+                <label class="flex items-center">
+                    <input type="radio" name="reservation_needed" value="yes" class="mr-2" />
+                    <span>Reservation needed</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="reservation_needed" value="no" class="mr-2" />
+                    <span>No reservation needed</span>
+                </label>
+            </div>
         </div>
+
+        <!-- Parking Location -->
+        <div>
+            <p class="text-gray-700 font-semibold mb-1">Where is the parking located?</p>
+            <div class="space-y-2">
+                <label class="flex items-center">
+                    <input type="radio" name="location" value="on_site" class="mr-2" />
+                    <span>On site</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="location" value="off_site" class="mr-2" />
+                    <span>Off site</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Parking Type -->
+        <div>
+            <p class="text-gray-700 font-semibold mb-1">What type of parking is it?</p>
+            <div class="space-y-2">
+                <label class="flex items-center">
+                    <input type="radio" name="type" value="private" class="mr-2" />
+                    <span>Private</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="type" value="public" class="mr-2" />
+                    <span>Public</span>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Paid Parking - Cost Input -->
+   <div x-show="parking === 'paid'" x-transition class="mt-4">
+    <label class="block text-gray-700 font-semibold mb-1">How much does parking cost?</label>
+    
+    <div class="flex gap-2">
+        <!-- Cost Input -->
+        <input type="text" name="cost" placeholder="e.g., 10$" 
+               class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+        
+        <!-- Unit Selection -->
+        <select name="cost_unit" class="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+            <option value="per_day">per day</option>
+            <option value="per_hour">per hour</option>
+            <option value="per_stay">per stay</option>
+        </select>
+    </div>
+</div>
+
+</div>
+
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="mt-8 flex justify-between max-w-xl ml-6">
+            <button type="button" @click="step > 1 ? step-- : step"
+                class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                ←
+            </button>
+            <button type="button" @click="step > 1 ? step++ : step"
+                class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
+                Continue
+            </button>
+        </div>
+    </div>
     </template>
 
     <template x-if="step === 6">
-        <div>
-            <div class="container ml-32 px-4 py-8 max-w-2xl">
-                <!-- Header -->
-                <h2 class="text-2xl font-bold mb-8 text-left">
-                    What languages do you or your staff speak?
-                </h2>
+       <div>
+                                                        <div class="container mx-auto px-4 py-8 max-w-2xl lg:ml-24">
+                                                            <!-- Header -->
+                                                            <h2 class="text-2xl font-bold mb-8 text-left">
+                                                                What languages do you or your staff speak?
+                                                            </h2>
 
-                <!-- Language Selection Section -->
-                <div class="bg-white shadow-md rounded-lg p-6 mb-8">
-                    <h3 class="text-lg  mb-4 font-bold">Select languages</h3>
-                    <div class="space-y-2">
-                        <label class="flex items-center cursor-pointer">
-                            <input type="checkbox" class="mr-2" />
-                            <span>English</span>
-                        </label>
-                        <label class="flex items-center cursor-pointer">
-                            <input type="checkbox" class="mr-2" />
-                            <span>French</span>
-                        </label>
-                        <label class="flex items-center cursor-pointer">
-                            <input type="checkbox" class="mr-2" />
-                            <span>German</span>
-                        </label>
-                        <label class="flex items-center cursor-pointer">
-                            <input type="checkbox" class="mr-2" />
-                            <span>Hindi</span>
-                        </label>
-                    </div>
+                                                            <!-- Language Selection Section -->
+                                                            <div class="bg-white shadow-md rounded-lg p-6 mb-8">
+                                                                <h3 class="text-lg  mb-4 font-bold">Select languages
+                                                                </h3>
+                                                                <div class="space-y-2">
+                                                                    <label class="flex items-center cursor-pointer">
+                                                                        <input type="checkbox" class="mr-2" />
+                                                                        <span>English</span>
+                                                                    </label>
+                                                                    <label class="flex items-center cursor-pointer">
+                                                                        <input type="checkbox" class="mr-2" />
+                                                                        <span>French</span>
+                                                                    </label>
+                                                                    <label class="flex items-center cursor-pointer">
+                                                                        <input type="checkbox" class="mr-2" />
+                                                                        <span>German</span>
+                                                                    </label>
+                                                                    <label class="flex items-center cursor-pointer">
+                                                                        <input type="checkbox" class="mr-2" />
+                                                                        <span>Hindi</span>
+                                                                    </label>
+                                                                </div>
 
-      <!-- Add Additional Languages -->
-      <div id="additionalLanguagesSection" class="mt-4 hidden relative">
-        <h3 class="text-lg font-medium mb-2 ">Add additional languages</h3>
+                                                                <!-- Add Additional Languages -->
+                                                                <div id="additionalLanguagesSection"
+                                                                    class="mt-4 hidden relative">
+                                                                    <h3 class="text-lg font-medium mb-2 ">Add
+                                                                        additional languages</h3>
 
-        <!-- Searchable dropdown container -->
-        <div class="relative w-full max-w-md">
-          <input
-            type="text"
-            id="languageInput"
-            oninput="filterDropdown()"
-            onclick="toggleDropdown()"
-            placeholder="Search languages..."
-            autocomplete="off"
-            class="w-full border rounded p-2 pr-10 cursor-pointer"
-            readonly
-          />
-          <!-- Dropdown arrow -->
-          <button
-            type="button"
-            onclick="toggleDropdown()"
-            class="absolute right-2 top-2.5 text-gray-600 hover:text-gray-900 focus:outline-none"
-            tabindex="-1"
-          >
-            ▼
-          </button>
+                                                                    <!-- Searchable dropdown container -->
+                                                                    <div class="relative w-full max-w-md">
+                                                                        <input type="text" id="languageInput"
+                                                                            oninput="filterDropdown()"
+                                                                            onclick="toggleDropdown()"
+                                                                            placeholder="Search languages..."
+                                                                            autocomplete="off"
+                                                                            class="w-full border rounded p-2 pr-10 cursor-pointer"
+                                                                            readonly />
+                                                                        <!-- Dropdown arrow -->
+                                                                        <button type="button"
+                                                                            onclick="toggleDropdown()"
+                                                                            class="absolute right-2 top-2.5 text-gray-600 hover:text-gray-900 focus:outline-none"
+                                                                            tabindex="-1">
+                                                                            ▼
+                                                                        </button>
 
-                        <!-- Searchable dropdown container -->
-                        <div class="relative w-full max-w-md">
-                            <input type="text" id="languageInput" oninput="filterDropdown()"
-                                onclick="toggleDropdown()" placeholder="Search languages..." autocomplete="off"
-                                class="w-full border rounded p-2 pr-10 cursor-pointer" readonly />
-                            <!-- Dropdown arrow -->
-                            <button type="button" onclick="toggleDropdown()"
-                                class="absolute right-2 top-2.5 text-gray-600 hover:text-gray-900 focus:outline-none"
-                                tabindex="-1">
-                                ▼
-                            </button>
+                                                                        <!-- Dropdown list -->
+                                                                        <ul id="languageDropdown"
+                                                                            class="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded max-h-40 overflow-auto shadow-lg hidden">
+                                                                            <li class="p-2 hover:bg-blue-100 cursor-pointer"
+                                                                                onclick="selectLanguage(this)">Arabic
+                                                                            </li>
+                                                                            <li class="p-2 hover:bg-blue-100 cursor-pointer"
+                                                                                onclick="selectLanguage(this)">
+                                                                                Bulgarian</li>
+                                                                            <li class="p-2 hover:bg-blue-100 cursor-pointer"
+                                                                                onclick="selectLanguage(this)">Catalan
+                                                                            </li>
+                                                                            <li class="p-2 hover:bg-blue-100 cursor-pointer"
+                                                                                onclick="selectLanguage(this)">Chinese
+                                                                            </li>
+                                                                            <li class="p-2 hover:bg-blue-100 cursor-pointer"
+                                                                                onclick="selectLanguage(this)">Croatian
+                                                                            </li>
+                                                                            <li class="p-2 hover:bg-blue-100 cursor-pointer"
+                                                                                onclick="selectLanguage(this)">Czech
+                                                                            </li>
+                                                                            <li class="p-2 hover:bg-blue-100 cursor-pointer"
+                                                                                onclick="selectLanguage(this)">Danish
+                                                                            </li>
+                                                                            <li class="p-2 hover:bg-blue-100 cursor-pointer"
+                                                                                onclick="selectLanguage(this)">Dutch
+                                                                            </li>
+                                                                        </ul>
+                                                                    </div>
+                                                                </div>
 
-                            <!-- Dropdown list -->
-                            <ul id="languageDropdown"
-                                class="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded max-h-40 overflow-auto shadow-lg hidden">
-                                <li class="p-2 hover:bg-blue-100 cursor-pointer" onclick="selectLanguage(this)">Arabic
-                                </li>
-                                <li class="p-2 hover:bg-blue-100 cursor-pointer" onclick="selectLanguage(this)">
-                                    Bulgarian</li>
-                                <li class="p-2 hover:bg-blue-100 cursor-pointer" onclick="selectLanguage(this)">
-                                    Catalan</li>
-                                <li class="p-2 hover:bg-blue-100 cursor-pointer" onclick="selectLanguage(this)">
-                                    Chinese</li>
-                                <li class="p-2 hover:bg-blue-100 cursor-pointer" onclick="selectLanguage(this)">
-                                    Croatian</li>
-                                <li class="p-2 hover:bg-blue-100 cursor-pointer" onclick="selectLanguage(this)">Czech
-                                </li>
-                                <li class="p-2 hover:bg-blue-100 cursor-pointer" onclick="selectLanguage(this)">Danish
-                                </li>
-                                <li class="p-2 hover:bg-blue-100 cursor-pointer" onclick="selectLanguage(this)">Dutch
-                                </li>
-                            </ul>
+                                                                <!-- Toggle Button for Additional Languages -->
+                                                                <a href="#"
+                                                                    onclick="event.preventDefault(); toggleAdditionalLanguages();"
+                                                                    class="text-blue-500 hover:underline mt-4 block">
+                                                                    Add additional languages
+                                                                </a>
+                                                            </div>
+
+                                                            <!-- Navigation Buttons -->
+                                                            <div class="mt-8 flex justify-between">
+                                                                <!-- Back Button on the left -->
+                                                                <button type="button"  @click="step = Math.max(step - 1, 1)"
+                                                                    class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                                                                    ←
+                                                                </button>
+
+                                                                <!-- Continue Button on the right -->
+                                                                <button type="button"    @click="step = Math.min(step + 1, 13)"
+                                                                    class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
+                                                                    Continue
+                                                                </button>
+                                                            </div>
+
+                                                        </div>
+
+                                                        <script>
+                                                            function toggleAdditionalLanguages() {
+                                                                const section = document.getElementById("additionalLanguagesSection");
+                                                                section.classList.toggle("hidden");
+                                                                if (!section.classList.contains("hidden")) {
+                                                                    document.getElementById("languageInput").focus();
+                                                                    showDropdown();
+                                                                } else {
+                                                                    hideDropdown();
+                                                                }
+                                                            }
+
+                                                            function toggleDropdown() {
+                                                                const dropdown = document.getElementById("languageDropdown");
+                                                                dropdown.classList.toggle("hidden");
+                                                            }
+
+                                                            function showDropdown() {
+                                                                document.getElementById("languageDropdown").classList.remove("hidden");
+                                                            }
+
+                                                            function hideDropdown() {
+                                                                document.getElementById("languageDropdown").classList.add("hidden");
+                                                            }
+
+                                                            function filterDropdown() {
+                                                                const input = document.getElementById("languageInput");
+                                                                const filter = input.value.toLowerCase();
+                                                                const ul = document.getElementById("languageDropdown");
+                                                                const items = ul.getElementsByTagName("li");
+                                                                ul.classList.remove("hidden");
+                                                                let visibleCount = 0;
+                                                                for (let i = 0; i < items.length; i++) {
+                                                                    const txtValue = items[i].textContent || items[i].innerText;
+                                                                    if (txtValue.toLowerCase().indexOf(filter) > -1) {
+                                                                        items[i].style.display = "";
+                                                                        visibleCount++;
+                                                                    } else {
+                                                                        items[i].style.display = "none";
+                                                                    }
+                                                                }
+                                                                // Hide dropdown if no matches
+                                                                if (visibleCount === 0) {
+                                                                    ul.classList.add("hidden");
+                                                                }
+                                                            }
+
+                                                            function selectLanguage(element) {
+                                                                const input = document.getElementById("languageInput");
+                                                                input.value = element.textContent;
+                                                                hideDropdown();
+                                                            }
+
+                                                            // Close dropdown when clicking outside
+                                                            document.addEventListener("click", function(event) {
+                                                                const dropdown = document.getElementById("languageDropdown");
+                                                                const input = document.getElementById("languageInput");
+                                                                const container = document.getElementById("additionalLanguagesSection");
+                                                                if (
+                                                                    !container.contains(event.target)
+                                                                ) {
+                                                                    hideDropdown();
+                                                                }
+                                                            });
+                                                        </script>
+                                                    </div>
+    </template>
+
+   <template x-if="step === 7">
+    <div>
+        <div class="container mx-auto px-4 py-8 max-w-4xl lg:ml-24" x-data="{ petPolicy: 'no' }">
+            <!-- Header -->
+            <h2 class="text-2xl font-bold mb-8 text-left">House rules</h2>
+
+            <div class="flex flex-col md:flex-row gap-6">
+                <!-- Left Section -->
+                <div class="bg-white shadow-md rounded-lg p-6 w-full md:w-2/3">
+
+                    <!-- Check-in -->
+                    <div class="mt-6">
+                        <h3 class="text-base font-semibold mb-4">What are your check-in and check-out times?</h3>
+                        <h3 class="text-base font-semibold mb-2">Check in</h3>
+                        <div class="flex space-x-4">
+                            <div class="w-full">
+                                <label class="block text-sm font-medium mb-1">From</label>
+                                <input type="time" value="15:00" class="w-full border rounded p-2" />
+                            </div>
+                            <div class="w-full">
+                                <label class="block text-sm font-medium mb-1">Until</label>
+                                <input type="time" value="18:00" class="w-full border rounded p-2" />
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Toggle Button for Additional Languages -->
-                    <a href="#" onclick="event.preventDefault(); toggleAdditionalLanguages();"
-                        class="text-blue-500 hover:underline mt-4 block">
-                        Add additional languages
-                    </a>
-                </div>
+                    <!-- Check-out -->
+                    <div class="mt-6">
+                        <h3 class="text-base font-semibold mb-2">Check out</h3>
+                        <div class="flex space-x-4">
+                            <div class="w-full">
+                                <label class="block text-sm font-medium mb-1">From</label>
+                                <input type="time" value="08:00" class="w-full border rounded p-2" />
+                            </div>
+                            <div class="w-full">
+                                <label class="block text-sm font-medium mb-1">Until</label>
+                                <input type="time" value="11:00" class="w-full border rounded p-2" />
+                            </div>
+                        </div>
+                    </div>
 
-                <!-- Navigation Buttons -->
-                <div class="mt-8 flex justify-between">
-                    <!-- Back Button on the left -->
-                    <button type="button" @click="step > 1 ? step-- : step"
-                        :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-                        class="border border-[#3CC0E9] text-blue-600  hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
-                        ←
-                    </button>
-
-                    <!-- Continue Button on the right -->
-                    <button type="button" @click="step > 1 ? step++ : step"
-                        class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300">
-                        Continue
-                    </button>
-                </div>
-
-            </div>
-
-            <script>
-                function toggleAdditionalLanguages() {
-                    const section = document.getElementById("additionalLanguagesSection");
-                    section.classList.toggle("hidden");
-                    if (!section.classList.contains("hidden")) {
-                        document.getElementById("languageInput").focus();
-                        showDropdown();
-                    } else {
-                        hideDropdown();
-                    }
-                }
-
-                function toggleDropdown() {
-                    const dropdown = document.getElementById("languageDropdown");
-                    dropdown.classList.toggle("hidden");
-                }
-
-                function showDropdown() {
-                    document.getElementById("languageDropdown").classList.remove("hidden");
-                }
-
-                function hideDropdown() {
-                    document.getElementById("languageDropdown").classList.add("hidden");
-                }
-
-                function filterDropdown() {
-                    const input = document.getElementById("languageInput");
-                    const filter = input.value.toLowerCase();
-                    const ul = document.getElementById("languageDropdown");
-                    const items = ul.getElementsByTagName("li");
-                    ul.classList.remove("hidden");
-                    let visibleCount = 0;
-                    for (let i = 0; i < items.length; i++) {
-                        const txtValue = items[i].textContent || items[i].innerText;
-                        if (txtValue.toLowerCase().indexOf(filter) > -1) {
-                            items[i].style.display = "";
-                            visibleCount++;
-                        } else {
-                            items[i].style.display = "none";
-                        }
-                    }
-                    // Hide dropdown if no matches
-                    if (visibleCount === 0) {
-                        ul.classList.add("hidden");
-                    }
-                }
-
-                function selectLanguage(element) {
-                    const input = document.getElementById("languageInput");
-                    input.value = element.textContent;
-                    hideDropdown();
-                }
-
-                // Close dropdown when clicking outside
-                document.addEventListener("click", function(event) {
-                    const dropdown = document.getElementById("languageDropdown");
-                    const input = document.getElementById("languageInput");
-                    const container = document.getElementById("additionalLanguagesSection");
-                    if (
-                        !container.contains(event.target)
-                    ) {
-                        hideDropdown();
-                    }
-                });
-            </script>
-        </div>
-      </div>
-
-      <!-- Toggle Button for Additional Languages -->
-      <a
-        href="#"
-        onclick="event.preventDefault(); toggleAdditionalLanguages();"
-        class="text-blue-500 hover:underline mt-4 block"
-      >
-        Add additional languages
-      </a>
+                    <hr class="my-6 border-t border-gray-300">
+<!-- Allow Children Section -->
+<div class="mb-6">
+    <label class="block font-semibold text-base text-gray-800 mb-2">Do you allow children?</label>
+    <div class="space-y-2 text-sm text-gray-700">
+        <label class="flex items-center gap-2">
+            <input type="radio" name="allowChildren" value="yes" />
+            Yes
+        </label>
+        <label class="flex items-center gap-2">
+            <input type="radio" name="allowChildren" value="no" />
+            No
+        </label>
     </div>
-
-   <!-- Navigation Buttons -->
-<div class="mt-8 flex justify-between">
-  <!-- Back Button on the left -->
-  <button
-   type="button"  @click="step > 1 ? step-- : step"
-        :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-
-      class="border border-[#3CC0E9] text-blue-600  hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
-      ←
-  </button>
-
-  <!-- Continue Button on the right -->
-  <button
-   type="button"  @click="step > 1 ? step++ : step"
-     class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300"
-  >
-    Continue
-  </button>
 </div>
 
-  </div>
-
-  <script>
-    function toggleAdditionalLanguages() {
-      const section = document.getElementById("additionalLanguagesSection");
-      section.classList.toggle("hidden");
-      if (!section.classList.contains("hidden")) {
-        document.getElementById("languageInput").focus();
-        showDropdown();
-      } else {
-        hideDropdown();
-      }
-    }
-
-    function toggleDropdown() {
-      const dropdown = document.getElementById("languageDropdown");
-      dropdown.classList.toggle("hidden");
-    }
-
-    function showDropdown() {
-      document.getElementById("languageDropdown").classList.remove("hidden");
-    }
-
-    function hideDropdown() {
-      document.getElementById("languageDropdown").classList.add("hidden");
-    }
-
-    function filterDropdown() {
-      const input = document.getElementById("languageInput");
-      const filter = input.value.toLowerCase();
-      const ul = document.getElementById("languageDropdown");
-      const items = ul.getElementsByTagName("li");
-      ul.classList.remove("hidden");
-      let visibleCount = 0;
-      for (let i = 0; i < items.length; i++) {
-        const txtValue = items[i].textContent || items[i].innerText;
-        if (txtValue.toLowerCase().indexOf(filter) > -1) {
-          items[i].style.display = "";
-          visibleCount++;
-        } else {
-          items[i].style.display = "none";
-        }
-      }
-      // Hide dropdown if no matches
-      if (visibleCount === 0) {
-        ul.classList.add("hidden");
-      }
-    }
-
-    function selectLanguage(element) {
-      const input = document.getElementById("languageInput");
-      input.value = element.textContent;
-      hideDropdown();
-    }
-
-    // Close dropdown when clicking outside
-    document.addEventListener("click", function (event) {
-      const dropdown = document.getElementById("languageDropdown");
-      const input = document.getElementById("languageInput");
-      const container = document.getElementById("additionalLanguagesSection");
-      if (
-        !container.contains(event.target)
-      ) {
-        hideDropdown();
-      }
-    });
-  </script>
-      </div>
-    </template>
-
-    <template x-if="step === 7">
-        <div>
-            <div class="container ml-32 px-4 py-8 max-w-4xl">
-                <!-- Header -->
-                <h2 class="text-2xl font-bold mb-8 text-left">House rules</h2>
-
-                <div class="flex flex-col md:flex-row gap-6">
-                    <!-- Left Section -->
-                    <div class="bg-white shadow-md rounded-lg p-6 w-full md:w-2/3">
-                        <!-- Toggle Switches -->
-                        <div class="space-y-4">
-                            <label class="flex items-center justify-between cursor-pointer">
-                                <span>Smoking allowed</span>
-                                <div class="relative">
-                                    <input type="checkbox" class="sr-only peer" />
-                                    <div
-                                        class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition">
-                                    </div>
-                                    <div
-                                        class="absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-4">
-                                    </div>
-                                </div>
+                    <!-- Pet Policy -->
+                    <div class="mt-6">
+                        <h3 class="text-base font-semibold mb-2">Do you allow pets?</h3>
+                        <div class="space-y-2">
+                            <label class="flex items-center cursor-pointer">
+                                <input type="radio" name="pets" value="yes" x-model="petPolicy" class="mr-2">
+                                <span>Yes</span>
                             </label>
-
-                            <label class="flex items-center justify-between cursor-pointer">
-                                <span>Children allowed</span>
-                                <div class="relative">
-                                    <input type="checkbox" class="sr-only peer" checked />
-                                    <div
-                                        class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition">
-                                    </div>
-                                    <div
-                                        class="absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-4">
-                                    </div>
-                                </div>
+                            <label class="flex items-center cursor-pointer">
+                                <input type="radio" name="pets" value="upon_request" x-model="petPolicy" class="mr-2">
+                                <span>Upon request</span>
                             </label>
-
-                            <label class="flex items-center justify-between cursor-pointer">
-                                <span>Parties/events allowed</span>
-                                <div class="relative">
-                                    <input type="checkbox" class="sr-only peer" />
-                                    <div
-                                        class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition">
-                                    </div>
-                                    <div
-                                        class="absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-4">
-                                    </div>
-                                </div>
+                            <label class="flex items-center cursor-pointer">
+                                <input type="radio" name="pets" value="no" x-model="petPolicy" class="mr-2">
+                                <span>No</span>
                             </label>
                         </div>
-
-                        <hr class="my-6 border-t border-gray-300">
-                        <!-- Pet Policy -->
-                        <div class="mt-6">
-                            <h3 class="text-base font-semibold mb-2">Do you allow pets?</h3>
-                            <div class="space-y-2">
-                                <label class="flex items-center cursor-pointer">
-                                    <input type="radio" name="pets" value="yes" class="mr-2">
-                                    <span>Yes</span>
-                                </label>
-                                <label class="flex items-center cursor-pointer">
-                                    <input type="radio" name="pets" value="upon_request" class="mr-2">
-                                    <span>Upon request</span>
-                                </label>
-                                <label class="flex items-center cursor-pointer">
-                                    <input type="radio" name="pets" value="no" class="mr-2" checked>
-                                    <span>No</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <hr class="my-6 border-t border-gray-300">
-
-                        <!-- Check-in -->
-                        <div class="mt-6">
-                            <h3 class="text-base font-semibold mb-2">Check in</h3>
-                            <div class="flex space-x-4">
-                                <div class="w-full">
-                                    <label class="block text-sm font-medium mb-1">From</label>
-                                    <input type="time" value="15:00" class="w-full border rounded p-2" />
-                                </div>
-                                <div class="w-full">
-                                    <label class="block text-sm font-medium mb-1">Until</label>
-                                    <input type="time" value="18:00" class="w-full border rounded p-2" />
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Check-out -->
-                        <div class="mt-6">
-                            <h3 class="text-base font-semibold mb-2">Check out</h3>
-                            <div class="flex space-x-4">
-                                <div class="w-full">
-                                    <label class="block text-sm font-medium mb-1">From</label>
-                                    <input type="time" value="08:00" class="w-full border rounded p-2" />
-                                </div>
-                                <div class="w-full">
-                                    <label class="block text-sm font-medium mb-1">Until</label>
-                                    <input type="time" value="11:00" class="w-full border rounded p-2" />
-                                </div>
-                            </div>
+                           
+                        <!-- Conditional Field -->
+                        <div x-show="petPolicy === 'yes' || petPolicy === 'upon_request'" x-transition class="mt-4 space-y-2">
+                            <label class="block text-base font-semibold mb-1">Are there additional charges for pets?</label>
+                            <label class="flex items-center cursor-pointer">
+                                <input type="radio" name="pet_charges" value="free" class="mr-2">
+                                <span>Pets can stay for free</span>
+                            </label>
+                            <label class="flex items-center cursor-pointer">
+                                <input type="radio" name="pet_charges" value="charges_apply" class="mr-2">
+                                <span>Charges may apply</span>
+                            </label>
                         </div>
                     </div>
 
-                    <!-- Right Section: Tip Box -->
-                    <div x-data="{ show: true }" x-show="show"
-                        class="bg-white shadow-md rounded-lg p-6 w-full h-[300px] md:w-1/3 relative">
-                        <div class="flex justify-between items-start">
-                            <div class="flex items-center space-x-2">
-                                <img src="{{ asset('assets/system-uicons_lightbulb-on.svg') }}" alt="Help"
-                                    class="w-6 h-6 md:w-7 md:h-7 cursor-pointer" />
-                                <h3 class="text-gray-800 font-semibold text-base">What if my house rules change?</h3>
-                            </div>
-                            <button @click="show = false" class="text-gray-400 hover:text-gray-600">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
-                                    fill="currentColor">
-                                    <path fill-rule="evenodd"
-                                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                            </button>
+               
+
+                </div>
+
+                <!-- Right Section: Tip Box -->
+                <div x-data="{ show: true }" x-show="show"
+                     class="bg-white shadow-md rounded-lg p-6 w-full h-[300px] md:w-1/3 relative">
+                    <div class="flex justify-between items-start">
+                        <div class="flex items-center space-x-2">
+                            <img src="{{ asset('assets/system-uicons_lightbulb-on.svg') }}"
+                                 alt="Help"
+                                 class="w-6 h-6 md:w-7 md:h-7 cursor-pointer" />
+                            <h3 class="text-gray-800 font-semibold text-base">
+                                What if my house rules change?</h3>
                         </div>
-                        <p class="text-sm text-gray-700 mt-3">
-                            You can easily customise these house rules later and additional house rules can be set on
-                            the Policies page of the extranet after you complete registration.
-                        </p>
+                        <button @click="show = false" class="text-gray-400 hover:text-gray-600">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 class="h-5 w-5" viewBox="0 0 20 20"
+                                 fill="currentColor">
+                                <path fill-rule="evenodd"
+                                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                      clip-rule="evenodd" />
+                            </svg>
+                        </button>
                     </div>
-                </div>
-
-                <!-- Navigation Buttons -->
-                <div class="mt-8 flex ">
-                    <button type="button" @click="step > 1 ? step-- : step"
-                        :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-                        class="border border-[#3CC0E9] text-blue-600  hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
-                        ←
-                    </button>
-                    <button type="button" @click="step > 1 ? step++ : step"
-                        class="px-6 h-12 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300 ml-[395px]">
-                        Continue
-                    </button>
+                    <p class="text-sm text-gray-700 mt-3">
+                        You can easily customise these house rules later and additional house rules can be set on the
+                        Policies page of the extranet after you complete registration.
+                    </p>
                 </div>
             </div>
-        </div>
 
-        <!-- Right Section: Tip Box -->
-        <div x-data="{ show: true }" x-show="show" class="bg-white shadow-md rounded-lg p-6 w-full h-[300px] md:w-1/3 relative">
-          <div class="flex justify-between items-start">
-            <div class="flex items-center space-x-2">
-              <img src="{{ asset('assets/system-uicons_lightbulb-on.svg') }}" alt="Help" class="w-6 h-6 md:w-7 md:h-7 cursor-pointer" />
-              <h3 class="text-gray-800 font-semibold text-base">What if my house rules change?</h3>
+            <!-- Navigation Buttons -->
+            <div class="mt-8 flex">
+                <button type="button" @click="step = Math.max(step - 1, 1)"
+                        class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                    ←
+                </button>
+                <button type="button" @click="step = Math.min(step + 1, 13)"
+                        class="px-6 h-12 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ml-[395px]">
+                    Continue
+                </button>
             </div>
-            <button @click="show = false" class="text-gray-400 hover:text-gray-600">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-              </svg>
-            </button>
-          </div>
-          <p class="text-sm text-gray-700 mt-3">
-            You can easily customise these house rules later and additional house rules can be set on the Policies page of the extranet after you complete registration.
-          </p>
         </div>
-      </div>
-
-      <!-- Navigation Buttons -->
-      <div class="mt-8 flex ">
-        <button type="button" @click="step > 1 ? step-- : step"
-        :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-          class="border border-[#3CC0E9] text-blue-600  hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
-          ←
-        </button>
-        <button   type="button"  @click="step > 1 ? step++ : step"
-          class="px-6 h-12 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300 ml-[395px]">
-          Continue
-        </button>
-      </div>
     </div>
-  </div>
-    </template>
+</template>
+
 
     <template x-if="step === 8">
         <div class="mt-16">
