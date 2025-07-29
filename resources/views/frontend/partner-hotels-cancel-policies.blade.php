@@ -14,45 +14,32 @@
     <div x-data="{ selectedDay: '1', showTip: true, isOn: true, penaltyOption: 'first-night' }" class="lg:flex lg:space-x-8">
         <!-- Left Side -->
         <div class="max-w-xl w-full space-y-8">
-            <div class="bg-white p-6 rounded-lg shadow-md space-y-6">
+            <div class="bg-white p-6 rounded-lg shadow-md ">
 
                 <!-- Alert Message -->
-                <div>
-                    <template x-if="selectedDay !== '1'">
-                        <div class="space-y-4">
-                            <div class="bg-orange-50 border-l-4 border-orange-400 text-orange-800 text-sm p-4">
-                                <p>
-                                    Allow guests to cancel up to 
-                                 1 day before arrival to increase your chances of getting bookings.
-                                </p>
-                            </div>
+          
 
-                            <div class="text-sm text-gray-700 border-l-4 border-blue-500 bg-blue-50 p-4">
-                                <p>
-                                    Guests love flexibility – free cancellation rates are generally the most booked rates on our site. 
-                                    Get your first booking sooner by allowing guests to cancel up to five days before check-in.
-                                </p>
-                            </div>
-                        </div>
-                    </template>
-                </div>
+
+
 
                 <!-- 💥 NEW SECTION: Free Cancellation Window -->
-                <div class="pt-4">
-                    <p class="font-semibold text-base text-gray-800 mb-2">
+                <div class="pt-2">
+                   <p class="font-semibold text-sm text-gray-800 mb-4">
                         When can the guests cancel their bookings for free?
                     </p>
                     <select x-model="selectedDay" class="w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200 px-3 py-2 text-sm text-gray-700">
-                        <option value="1">Up to 1 day before arrival</option>
-                        <option value="3">Up to 3 days before arrival</option>
-                        <option value="5">Up to 5 days before arrival</option>
-                        <option value="7">Up to 7 days before arrival</option>
+                        <option value="1">Before 18:00 on the day of arrival</option>
+                        <option value="3">Up to 1 day before the day of arrival</option>
+                        <option value="5">Up to 2 days before the day of arrival</option>
+                        <option value="7">Up to 3 days before the day of arrival</option>
+                        <option value="14">Up to 7 days before the day of arrival</option>
+                        <option value="30">Up to 14 days before the day of arrival</option>
                     </select>
                 </div>
 
                 <!-- Penalty Section -->
                 <div class="pt-4">
-                    <p class="font-semibold text-base text-gray-800 mb-2">
+                    <p class="font-semibold text-sm text-gray-800 mb-2">
                         How much are your guests charged if they cancel after the cancellation window (up to 1 day before the day of arrival)?
                     </p>
 
@@ -70,7 +57,7 @@
 
                 <!-- Toggle Section -->
                 <div class="pt-4">
-                    <p class="font-semibold text-base text-gray-800 mb-2">Protection against accidental bookings</p>
+                     <p class="font-semibold text-sm text-gray-800 mb-2">Protection against accidental bookings</p>
 
                     <div class="flex items-center gap-2">
                         <button 

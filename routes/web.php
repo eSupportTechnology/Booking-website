@@ -287,6 +287,20 @@ Route::get('/partner-hotels-cancel-policies', function () {
     return view('frontend.partner-hotels-cancel-policies');
 })->name('partner.hotels.cancel.policies');
 
+Route::get('/partner-hotels-priceper-group', function () {
+    return view('frontend.partner-hotels-price-per-group');
+})->name('partner.hotels.price.per.group');
+
+Route::get('/partner-hotels-weekly-rate', function () {
+    return view('frontend.partner-hotels-weekly-rate');
+})->name('partner.hotels.weekly.rate');
+
+Route::get('/partner-hotels-non-refundable-rate', function () {
+    return view('frontend.partner-hotels-non-refundable');
+})->name('partner.hotels.non.refundable.rate');
+
+
+
 // Route::get('/email-verify', function () {
 //     return view('frontend.verify-email');
 // })->name('email.verify');

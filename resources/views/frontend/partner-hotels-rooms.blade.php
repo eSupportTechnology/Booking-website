@@ -1039,7 +1039,7 @@
                                   
                             </div>
                             
-   <a href="{{ route('partner.apartment.pricing.policies') }}">
+   <a href="{{ route('partner.hotels.cancel.policies') }}">
                             
                             <button @click="$refs.section1.scrollIntoView({ behavior: 'smooth' })"
                                 class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">
@@ -1073,7 +1073,7 @@
                            
                             </div>
 
-   <a href="{{ route('partner.apartment.price.group') }}">
+   <a href="{{ route('partner.hotels.price.per.group') }}">
     <button class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">
         Edit
     </button>
@@ -1130,7 +1130,7 @@
                             <img src="{{ asset('assets/material-symbols-light_info-outline.svg') }}" alt="Tip Icon"
                                 class="w-5 h-5">
                         </div>
-                        <a href="{{ route('partner.apartment.refundable.rate') }}">
+                        <a href="{{ route('partner.hotels.non.refundable.rate') }}">
                         <button
                             class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">Edit</button></a>
                     </div>
@@ -1159,7 +1159,7 @@
                             <img src="{{ asset('assets/material-symbols-light_info-outline.svg') }}" alt="Tip Icon"
                                 class="w-5 h-5">
                         </div>
-                          <a href="{{ route('partner.apartment.weekly.rate') }}">
+                          <a href="{{ route('partner.hotels.weekly.rate') }}">
                         <button
                             class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">Edit</button></a>
                     </div>
