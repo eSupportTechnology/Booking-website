@@ -106,137 +106,202 @@
 
     <!-- Step 1 -->
     <template x-if="step === 1">
-        <div class="px-4 py-8 mt-6 w-full max-w-2xl mx-auto lg:ml-24 space-y-6">
+    <div class="px-4 py-8 mt-6 w-full max-w-2xl mx-auto lg:ml-24 space-y-6" x-data="{ paymentMethod: 'credit' }">
 
-            <!-- Title -->
-            <h2 class="text-3xl font-bold text-gray-800">Payments</h2>
+        <!-- Title -->
+        <h2 class="text-3xl font-bold text-gray-800">Payments</h2>
 
-            <!-- Guest Payment Options -->
-            <div class="bg-white p-6 rounded-lg shadow-sm border space-y-3">
-                <h3 class="font-semibold text-lg text-gray-900">How can your guests pay for their stay?</h3>
+        <!-- Guest Payment Options -->
+        <div class="bg-white p-6 rounded-lg shadow-sm border space-y-3">
+            <h3 class="font-semibold text-lg text-gray-900">How can your guests pay for their stay?</h3>
+
+            <div class="flex flex-col space-y-2 pt-2">
+                <!-- Online Payment Option -->
+                <label class="flex items-start space-x-2">
+                    <input
+                        type="radio"
+                        name="payment_method"
+                        class="form-radio text-sky-600 w-6 h-6 mt-1"
+                        value="online"
+                        x-model="paymentMethod"
+                    />
+                    <span class="text-sm text-gray-700">
+                        Online, when they make a reservation, {{ config('domains.domain') }} will facilitate your
+                        guests’ payments with the payments by {{ config('domains.app_name') }} service.
+                    </span>
+                </label>
 
 
-                <div class="flex flex-col space-y-2 pt-2">
-                    <label class="flex items-center space-x-2">
-                        <input type="radio" name="payment_method" class="form-radio text-sky-600 w-6 h-6" />
-                        <span class="text-sm text-gray-700">
-                            Online, when they make a reservation, {{ config('domains.domain') }} will facilitate your
-                            guests’ payments with the payments by {{ config('domains.app_name') }} service.
-                        </span>
-                    </label>
+                <!-- Show Only When "Online" is Selected -->
+      <div x-show="paymentMethod === 'online'" class="bg-blue-50 p-4 rounded-lg border border-blue-300 space-y-2 text-sm text-gray-800 ml-4">
+    <ul class="list-disc list-inside space-y-1">
+        <li>Fewer cancellations</li>
+        <li>Fraud and card protection</li>
+        <li>More payment options for your guests</li>
+    </ul>
+</div>
 
-                    <label class="flex items-center space-x-2">
-                        <input type="radio" name="payment_method" class="form-radio text-sky-600 w-4 h-4" checked />
-                        <span class="text-sm text-gray-700">By credit, at my property</span>
-                    </label>
-                </div>
 
+                <!-- Credit at Property Option -->
+                <label class="flex items-center space-x-2">
+                    <input
+                        type="radio"
+                        name="payment_method"
+                        class="form-radio text-sky-600 w-4 h-4"
+                        value="credit"
+                        x-model="paymentMethod"
+                        checked
+                    />
+                    <span class="text-sm text-gray-700">By credit, at my property</span>
+                </label>
             </div>
-
-            <!-- Info on how Bookintour.com handles payment -->
-            <div class="bg-white p-6 rounded-lg shadow-sm border space-y-4">
-                <h3 class="font-semibold text-lg text-gray-900">How payment by {{ config('domains.domain') }} works</h3>
-                <ul class="list-decimal list-inside text-sm text-gray-700 space-y-2">
-                    <li>
-                        <span class="font-sm font-semibold">Your guest pays</span> through
-                        {{ config('domains.domain') }} with more options like PayPal, WeChat Pay and AliPay.
-                    </li>
-                    <li>
-                        <span class="font-sm font-semibold">We facilitate your guest’s payment</span> You don’t have to
-                        deal with fraud, chargebacks or invalid cards.
-                    </li>
-                    <li>
-                        <span class="font-sm font-semibold">{{ config('domains.domain') }} sends payouts to you.</span>
-                        You’ll receive a bank transfer by the 15th of each month that covers all bookings with a
-                        check-out in the previous month.
-                    </li>
-                </ul>
-            </div>
-
-            <!-- Continue Button -->
-            <div class="flex justify-between items-center pt-4">
-                <a href="{{ route('partner.hotels.edit') }}">
-                    <button @click="step--"
-                        class="flex items-center border border-[#3CC0E9] rounded text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12">
-
-                        ←
-                    </button></a>
-                <button @click="step++"
-                    class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition ">
-                    Continue
-                </button>
-            </div>
-
         </div>
-    </template>
+
+        
+
+        <!-- Info on how Bookintour.com handles payment -->
+        <div class="bg-white p-6 rounded-lg shadow-sm border space-y-4">
+            <h3 class="font-semibold text-lg text-gray-900">How payment by {{ config('domains.domain') }} works</h3>
+            <ul class="list-decimal list-inside text-sm text-gray-700 space-y-2">
+                <li>
+                    <span class="font-sm font-semibold">Your guest pays</span> through
+                    {{ config('domains.domain') }} with more options like PayPal, WeChat Pay and AliPay.
+                </li>
+                <li>
+                    <span class="font-sm font-semibold">We facilitate your guest’s payment</span> You don’t have to
+                    deal with fraud, chargebacks or invalid cards.
+                </li>
+                <li>
+                    <span class="font-sm font-semibold">{{ config('domains.domain') }} sends payouts to you.</span>
+                    You’ll receive a bank transfer by the 15th of each month that covers all bookings with a
+                    check-out in the previous month.
+                </li>
+            </ul>
+        </div>
+
+        <!-- Continue Button -->
+        <div class="flex justify-between items-center pt-4">
+            <a href="{{ route('partner.hotels.edit') }}">
+                <button @click="step--"
+                    class="flex items-center border border-[#3CC0E9] rounded text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12">
+                    ←
+                </button>
+            </a>
+            <button @click="step++"
+                class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition ">
+                Continue
+            </button>
+        </div>
+    </div>
+</template>
 
 
     <!-- Step X - Invoicing -->
     <template x-if="step === 2">
-        <div class="px-4 py-8 mt-6 w-full max-w-2xl mx-auto lg:ml-24 space-y-6">
+         <div class="px-4 py-8 mt-6 w-full max-w-2xl mx-auto lg:ml-24 space-y-6" x-data="{ invoiceName: 'user', sameAddress: 'yes' }">
 
-            <!-- Heading -->
-            <h2 class="text-3xl font-bold text-gray-800">Invoicing</h2>
+        <!-- Heading -->
+        <h2 class="text-3xl font-bold text-gray-800">Invoicing</h2>
 
-            <!-- Invoicing Options -->
-            <div class="bg-white p-6 rounded-lg shadow-sm border space-y-4 text-sm text-gray-700">
-                <p class="text-base text-gray-800">
-                    At the beginning of each month we will send you an invoice for all complete bookings in the previous
-                    month.
-                </p>
+        <!-- Invoicing Options -->
+        <div class="bg-white p-6 rounded-lg shadow-sm border space-y-4 text-sm text-gray-700">
+            
+<!-- Invoice Name Section -->
+<div>
+    <h3 class="font-semibold text-gray-900 mb-2">What name should be on the Invoice?</h3>
+    <div class="space-y-4">
+        <label class="flex items-center space-x-2">
+            <input type="radio" name="invoice_name" value="user" x-model="invoiceName" class="form-radio text-sky-600">
+            <span>Dinidu Dananjaya</span>
+        </label>
+        <label class="flex items-center space-x-2">
+            <input type="radio" name="invoice_name" value="property" x-model="invoiceName" class="form-radio text-sky-600">
+            <span>My Property</span>
+        </label>
+        <label class="flex items-center space-x-2">
+            <input type="radio" name="invoice_name" value="other" x-model="invoiceName" class="form-radio text-sky-600">
+            <span>Legal company name (please specify)</span>
+        </label>
 
-                <!-- Invoice Name Section -->
-                <div>
-                    <h3 class="font-semibold text-gray-900 mb-2">What name should be on the Invoice?</h3>
-                    <div class="space-y-2">
-                        <label class="flex items-center space-x-2">
-                            <input type="radio" name="invoice_name" class="form-radio text-sky-600" checked>
-                            <span>Dinidu Dananjaya</span>
-                        </label>
-                        <label class="flex items-center space-x-2">
-                            <input type="radio" name="invoice_name" class="form-radio text-sky-600">
-                            <span>home</span>
-                        </label>
-                        <label class="flex items-center space-x-2">
-                            <input type="radio" name="invoice_name" class="form-radio text-sky-600">
-                            <span>Legal company name (Please specify)</span>
-                        </label>
-                    </div>
-                </div>
+        <!-- Show input field for legal company name if 'other' is selected -->
+        <div x-show="invoiceName === 'other'" class="mt-4 space-y-2">
+            <label class="block font-semibold text-gray-800">Legal company name</label>
+            <input type="text" x-model="legalCompanyName"  class="w-full border px-4 py-2 rounded" />
+            <!-- Hidden field to include in form submission -->
+            <input type="hidden" name="legal_company_name" :value="legalCompanyName">
+        </div>
+    </div>
+</div>
 
-                <hr class="my-4">
 
+            <template x-if="invoiceName === 'user' || invoiceName === 'other'">
                 <!-- Same Address Section -->
                 <div>
-                    <h3 class="font-semibold text-gray-900 mb-2">Does this recipient have the same address as your
-                        property?</h3>
+                    <hr class="my-4">
+                    <h3 class="font-semibold text-gray-900 mb-2">Does this recipient have the same address as your property?</h3>
                     <div class="space-y-2">
                         <label class="flex items-center space-x-2">
-                            <input type="radio" name="same_address" class="form-radio text-sky-600" checked>
+                            <input type="radio" name="same_address" value="yes" x-model="sameAddress" class="form-radio text-sky-600">
                             <span>Yes</span>
                         </label>
                         <label class="flex items-center space-x-2">
-                            <input type="radio" name="same_address" class="form-radio text-sky-600">
+                            <input type="radio" name="same_address" value="no" x-model="sameAddress" class="form-radio text-sky-600">
                             <span>No</span>
                         </label>
                     </div>
+
+                    <!-- Address Fields if "No" is selected -->
+                    <div class="mt-4 space-y-4" x-show="sameAddress === 'no'">
+                        <p class="font-medium text-gray-800 mb-1">Please provide invoice recipient’s address</p>
+    <!-- Country/region (disabled, from backend later) -->
+    <div>
+        <label class="block font-medium text-gray-800 mb-1">Country/region</label>
+        <input type="text" value="Sri Lanka" disabled
+            class="w-full border px-4 py-2 rounded bg-gray-100 text-gray-500 cursor-not-allowed" />
+    </div>
+
+    <!-- Street Address -->
+    <div>
+        <label class="block font-medium text-gray-800 mb-1">Street Address</label>
+        <input type="text" placeholder="Street Address" class="w-full border px-4 py-2 rounded" />
+    </div>
+
+    <!-- City -->
+    <div>
+        <label class="block font-medium text-gray-800 mb-1">City</label>
+        <input type="text" placeholder="City" class="w-full border px-4 py-2 rounded" />
+    </div>
+
+    <!-- Address line 1 -->
+    <div>
+        <label class="block font-medium text-gray-800 mb-1">Address line 1</label>
+        <input type="text" placeholder="Address line 1" class="w-full border px-4 py-2 rounded" />
+    </div>
+
+    <!-- Postcode -->
+    <div>
+        <label class="block font-medium text-gray-800 mb-1">Postcode</label>
+        <input type="text" placeholder="Postcode" class="w-full border px-4 py-2 rounded" />
+    </div>
+</div>
+
                 </div>
-            </div>
-
-            <!-- Navigation Buttons -->
-            <div class="flex justify-between pt-4">
-                <button @click="step--"
-                    class="flex items-center border border-[#3CC0E9] rounded text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12">
-
-                    ←
-                </button>
-                <button @click="step++"
-                    class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition ">
-                    Continue
-                </button>
-            </div>
-
+            </template>
         </div>
+
+        <!-- Navigation Buttons -->
+        <div class="flex justify-between pt-4">
+            <button @click="step--"
+                class="flex items-center border border-[#3CC0E9] rounded text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12">
+                ←
+            </button>
+            <button @click="step++"
+                class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition ">
+                Continue
+            </button>
+        </div>
+
+    </div>
     </template>
 
 

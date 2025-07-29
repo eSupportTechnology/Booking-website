@@ -295,6 +295,10 @@ Route::get('/partner-hotels-edit', function () {
     return view('frontend.partner-hotels-edit');
 })->name('partner.hotels.edit');
 
+Route::get('/partner-hotels-cancel-policies', function () {
+    return view('frontend.partner-hotels-cancel-policies');
+})->name('partner.hotels.cancel.policies');
+
 // Route::get('/email-verify', function () {
 //     return view('frontend.verify-email');
 // })->name('email.verify');
