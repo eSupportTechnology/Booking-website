@@ -36,7 +36,7 @@ Route::get('/login', [LoginController::class, 'show'])->name('login');
 //     return view('frontend.login');
 // });
 
-Route::get('change', [LanguageController::class, 'change'])->name('lang.change');
+Route::post('change-language', [LanguageController::class, 'change'])->name('lang.change');
 
 Route::prefix('customer')->group(function () {
     Route::get('/login', [CustomerAuthController::class, 'showLoginForm'])->name('customer.login');
@@ -470,57 +470,55 @@ Route::patch('/partner/property/{property}/additional-details', [PropertyControl
 require __DIR__ . '/auth.php';
 
 
-// Admin Authentication Routes
+// Management Portal Routes
 Route::prefix('admin')->name('admin.')->group(function () {
     // Guest routes
     Route::middleware('guest')->group(function () {
-        Route::get('/login', [\App\Http\Controllers\Admin\AuthController::class, 'showLogin'])->name('login');
-        Route::post('/login', [\App\Http\Controllers\Admin\AuthController::class, 'login'])->name('login');
-        Route::get('/register', [\App\Http\Controllers\Admin\AuthController::class, 'showRegister'])->name('register');
-        Route::post('/register', [\App\Http\Controllers\Admin\AuthController::class, 'register'])->name('register');
-        Route::get('/forgot-password', [\App\Http\Controllers\Admin\AuthController::class, 'showForgotPassword'])->name('forgot-password');
-        Route::post('/forgot-password', [\App\Http\Controllers\Admin\AdminPasswordResetLinkController::class, 'store'])->name('password.email');
-        Route::get('/reset-password/{token}', function ($token) {
-            return view('admin.reset-password', [
+        Route::get('/admin-login', [\App\Http\Controllers\Admin\AuthController::class, 'showLogin'])->name('login');
+        Route::post('/admin-login', [\App\Http\Controllers\Admin\AuthController::class, 'login'])->name('login');
+        Route::get('/admin-registration', [\App\Http\Controllers\Admin\AuthController::class, 'showRegister'])->name('register');
+        Route::post('/admin-registration', [\App\Http\Controllers\Admin\AuthController::class, 'register'])->name('register');
+        Route::get('/admin-forgot-password', [\App\Http\Controllers\Admin\AuthController::class, 'showForgotPassword'])->name('forgot-password');
+        Route::post('/admin-forgot-password', [\App\Http\Controllers\Admin\AdminPasswordResetLinkController::class, 'store'])->name('password.email');
+        Route::get('/admin-reset-password/{token}', function ($token) {
+            return view('admin.admin-reset-password', [
                 'token' => $token,
                 'email' => request('email')
             ]);
         })->name('password.reset');
-        Route::post('/reset-password', [\App\Http\Controllers\Admin\AdminNewPasswordController::class, 'store'])->name('password.store');
+        Route::post('/admin-reset-password', [\App\Http\Controllers\Admin\AdminNewPasswordController::class, 'store'])->name('password.store');
     });
 
-    // Protected admin routes
-    Route::middleware(['auth:admin', \App\Http\Middleware\AdminMiddleware::class])->group(function () {
-        Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
-        Route::post('/logout', [\App\Http\Controllers\Admin\AuthController::class, 'logout'])->name('logout');
+        // Protected admin routes
+        Route::middleware(['auth:admin', \App\Http\Middleware\AdminMiddleware::class])->group(function () {
+        Route::get('/center', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
+        Route::post('/exit', [\App\Http\Controllers\Admin\AuthController::class, 'logout'])->name('logout');
 
         // Property management
-        Route::get('/apartments', function () {
-            return view('admin.apartments');
+        Route::get('/units', function () {
+            return view('admin.admin-apartments');
         })->name('apartments');
-        Route::get('/homes', function () {
-            return view('admin.homes');
+        Route::get('/residences', function () {
+            return view('admin.admin-homes');
         })->name('homes');
-        Route::get('/hotels', function () {
-            return view('admin.hotels');
+        Route::get('/venues', function () {
+            return view('admin.admin-hotels');
         })->name('hotels');
-        Route::get('/alternative-places', function () {
-            return view('admin.alternative-places');
+        Route::get('/unique-stays', function () {
+            return view('admin.admin-alternative-places');
         })->name('alternative.places');
 
         // Customer management
-        Route::get('/customers', function () {
-            return view('admin.customers');
+        Route::get('/accounts', function () {
+            return view('admin.admin-customers');
         })->name('customers');
-        Route::get('/customer-view', function () {
-            return view('admin.customer-view');
-        })->name('customer.view');
-        
+        Route::post('/account-details', [\App\Http\Controllers\Admin\CustomerViewController::class, 'show'])->name('customer.view');
+
         // Super admin only routes
         Route::middleware(\App\Http\Middleware\SuperAdminMiddleware::class)->group(function () {
-            Route::get('/approvals', [\App\Http\Controllers\Admin\AdminApprovalController::class, 'index'])->name('approvals.index');
-            Route::post('/approvals/{admin}/approve', [\App\Http\Controllers\Admin\AdminApprovalController::class, 'approve'])->name('approvals.approve');
-            Route::post('/approvals/{admin}/reject', [\App\Http\Controllers\Admin\AdminApprovalController::class, 'reject'])->name('approvals.reject');
+            Route::get('/pending', [\App\Http\Controllers\Admin\AdminApprovalController::class, 'index'])->name('approvals.index');
+            Route::post('/pending/{admin}/approve', [\App\Http\Controllers\Admin\AdminApprovalController::class, 'approve'])->name('approvals.approve');
+            Route::post('/pending/{admin}/reject', [\App\Http\Controllers\Admin\AdminApprovalController::class, 'reject'])->name('approvals.reject');
         });
     });
 });
