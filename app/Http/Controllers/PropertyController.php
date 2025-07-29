@@ -30,6 +30,7 @@ use App\DTOs\Partner\SaveAddressSameDTO;
 use App\DTOs\Partner\PropertyServiceDTO;
 use App\DTOs\Partner\SaveServicesDTO;
 use App\DTOs\Partner\SaveHouseRulesDTO;
+use App\DTOs\SaveAvailabilitySettingsDTO;
 use App\Models\Room;
 use App\Models\PartnerVerification;
 use App\Models\Language;
@@ -903,6 +904,25 @@ class PropertyController extends Controller
         }
     }
 
+    public function saveAvailabilitySettings(Request $request, Property $property, PropertyAction $propertyAction)
+    {
+        Log::info('saveAvailabilitySettings called', [
+            'property_id' => $property->id,
+            'request' => $request->all(),
+        ]);
+
+        try {
+            $dto = SaveAvailabilitySettingsDTO::fromRequest($request);
+            $propertyAction->saveAvailabilitySettings($property, $dto);
+            return response()->json(['success' => true, 'message' => 'Availability settings saved successfully']);
+        } catch (\Exception $e) {
+            Log::error('Error saving availability settings', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return response()->json(['success' => false, 'message' => 'Error saving availability settings: ' . $e->getMessage()], 500);
+        }
+    }
 
     public function showPrivateHomesRooms($propertyId)
     {

@@ -1779,32 +1779,66 @@
         </div>
                                                         </template>
 
-        <template x-if="step === 12">
-            <div>
-    <div class="max-w-2xl mx-auto px-4 py-8 space-y-6">
-    <h1 class="text-3xl font-bold text-gray-900">Availability</h1>
+                                                        <template x-if="step === 12">
+    <div x-data="{ allowLongStays: null, showTip: true, availabilityOption: '365' }">
+        <div class="max-w-2xl mx-auto px-4 py-8 space-y-6">
+            <h1 class="text-3xl font-bold text-gray-900">Availability</h1>
 
-    <div class="bg-white shadow-md rounded-lg p-6 space-y-4">
-        <h2 class="text-lg font-semibold">Do you want to allow 30+ night stays?</h2>
-        <p class="text-sm text-gray-600">
-            Allowing guests to stay for up to 90 nights can help you fill your calendar
-            and tap into the trend of guests working remotely.
-        </p>
+            <!-- Availability Options -->
+            <div class="bg-white shadow-md rounded-lg p-6 space-y-4">
+                <h2 class="text-lg font-semibold">How would you like to open up dates for booking?</h2>
+                <div class="space-y-3">
+                    <label class="flex items-center space-x-3">
+                        <input type="radio" name="availability_mode" value="continuous"
+                               class="form-radio text-blue-500"
+                               checked>
+                        <span>Continuously extend my availability to:</span>
+                        <select x-model="availabilityOption"
+                                class="ml-2 border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300">
+                            <option value="30">30 days</option>
+                            <option value="90">90 days</option>
+                            <option value="180">180 days</option>
+                            <option value="365">365 days</option>
+                        </select>
+                    </label>
 
-        <div>
-            <p class="font-semibold text-gray-800">Will you accept reservations for stays over 30 nights?</p>
-            <div class="flex items-center space-x-6 mt-2">
-                <label class="inline-flex items-center space-x-2">
-                    <input type="radio" name="allow_long_stays" value="yes" class="form-radio text-blue-500">
-                    <span>Yes</span>
-                </label>
-                <label class="inline-flex items-center space-x-2">
-                    <input type="radio" name="allow_long_stays" value="no" class="form-radio text-blue-500">
-                    <span>No</span>
-                </label>
+                    <label class="flex items-center space-x-3">
+                        <input type="radio" name="availability_mode" value="18months"
+                               class="form-radio text-blue-500">
+                        <span>Only open up the first 18 months</span>
+                    </label>
+                </div>
             </div>
-        </div>
 
+            <!-- Stay Options + Tip Box in horizontal layout -->
+            <div class="md:flex md:space-x-6">
+                <!-- 30+ Night Stays Section -->
+              <!-- 30+ Night Stays Section -->
+<div class="bg-white shadow-md rounded-lg p-6 space-y-4 flex-1 max-w-full">
+    <h2 class="text-lg font-semibold">Do you want to allow 30+ night stays?</h2>
+    <p class="text-sm text-gray-600">
+        Allowing guests to stay for up to 90 nights can help you fill your calendar
+        and tap into the trend of guests working remotely.
+    </p>
+
+    <div>
+        <p class="font-semibold text-gray-800">Will you accept reservations for stays over 30 nights?</p>
+        <div class="flex items-center space-x-6 mt-2">
+            <label class="inline-flex items-center space-x-2">
+                <input type="radio" name="allow_long_stays" value="yes" class="form-radio text-blue-500"
+                       @click="allowLongStays = true">
+                <span>Yes</span>
+            </label>
+            <label class="inline-flex items-center space-x-2">
+                <input type="radio" name="allow_long_stays" value="no" class="form-radio text-blue-500"
+                       @click="allowLongStays = false">
+                <span>No</span>
+            </label>
+        </div>
+    </div>
+
+    <!-- Conditional max nights input -->
+    <template x-if="allowLongStays">
         <div>
             <label for="max_nights" class="block font-semibold text-gray-800 mt-4 mb-2">
                 What's the maximum number of nights you want guests to be able to book?
@@ -1813,24 +1847,43 @@
                    class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-300"
                    placeholder="90" min="31" max="90" />
         </div>
-    </div>
+    </template>
 
-    <!-- Navigation -->
-    <div class="flex justify-between pt-4">
-        <button @click="step = Math.max(step - 1, 1)"
-                class="flex items-center border border-[#3CC0E9] text-[#3CC0E9] hover:bg-blue-50 font-semibold px-4 h-12 rounded">
-            ←
-        </button>
-        <button @click="step = Math.min(step + 1, 13)"
-                class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition">
-            Continue
-        </button>
-    </div>
+    <!-- Tip Box (Now inside this section) -->
+    <template x-if="showTip">
+        <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 mt-4 relative">
+            <button @click="showTip = false"
+                    class="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-xl font-bold">&times;</button>
+            <div class="flex items-start space-x-3">
+              
+
+                <!-- Tip Content -->
+                <div class="text-sm text-gray-700">
+                    <p class="font-semibold mb-1">What if I want to change my selection later on?</p>
+                    <p>Your selection here isn’t final. You can always change it by heading to the Policies section after you’ve registered.</p>
+                    <a href="#" class="text-blue-600 hover:underline mt-1 inline-block">Read more about 30+ night stays</a>
+                </div>
+            </div>
+        </div>
+    </template>
 </div>
 
             </div>
-</template>
-                                                        </template>
+
+            <!-- Navigation -->
+            <div class="flex justify-between pt-4">
+                <button @click="step = Math.max(step - 1, 1)"
+                        class="flex items-center border border-[#3CC0E9] text-[#3CC0E9] hover:bg-blue-50 font-semibold px-4 h-12 rounded">
+                    ←
+                </button>
+                <button @click="handleContinue()"
+                        class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition">
+                    Continue
+                </button>
+            </div>
+        </div>
+    </div>
+</template>                                          </template>
 <template x-if="step === 13">
       <div>
                                                         <!-- Main Content -->
@@ -2141,6 +2194,9 @@ You will be able to add more apartments or duplicate this one when you finish fi
                                         console.error('Could not find step 7 element');
                                         alpineData.step = Math.min(alpineData.step + 1, 13);
                                     }
+                                } else if (alpineData.step === 12 && propertyId) {
+                                    console.log('Saving availability settings on step 12');
+                                    saveAvailabilitySettingsFromStep12(alpineData);
                                 } else {
                                     // Proceed to next step immediately for other steps
                                     alpineData.step = Math.min(alpineData.step + 1, 13);
@@ -2243,6 +2299,56 @@ You will be able to add more apartments or duplicate this one when you finish fi
                                     }
                                 } catch (error) {
                                     console.error('Error saving house rules:', error);
+                                }
+                            }
+
+                            // Function to save availability settings from step 12
+                            async function saveAvailabilitySettingsFromStep12(alpineData) {
+                                try {
+                                    const propertyId = {{ $property->id ?? 'null' }};
+                                    console.log('saveAvailabilitySettingsFromStep12 called with propertyId:', propertyId);
+                                    
+                                    // Get the step 12 data
+                                    const step12Element = document.querySelector('[x-data*="allowLongStays"]');
+                                    if (!step12Element) {
+                                        console.error('Could not find step 12 element');
+                                        return;
+                                    }
+                                    
+                                    const step12Data = Alpine.$data(step12Element);
+                                    console.log('Step 12 data found:', step12Data);
+                                    
+                                    const availabilityData = {
+                                        property_id: propertyId,
+                                        availability_mode: step12Data.availabilityOption === '18months' ? '18months' : 'continuous',
+                                        availability_days: parseInt(step12Data.availabilityOption),
+                                        allow_long_stays: step12Data.allowLongStays,
+                                        max_nights: step12Data.allowLongStays ? document.getElementById('max_nights')?.value : null,
+                                        sync_tripadvisor: false // Default to false for now
+                                    };
+                                    
+                                    console.log('Availability data to be sent:', availabilityData);
+                                    
+                                    const response = await fetch(`/partner/property/${propertyId}/availability-settings`, {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'Accept': 'application/json',
+                                            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                                        },
+                                        body: JSON.stringify(availabilityData)
+                                    });
+                                    
+                                    if (response.ok) {
+                                        console.log('Availability settings saved successfully');
+                                        alpineData.step = Math.min(alpineData.step + 1, 13);
+                                    } else {
+                                        console.error('Failed to save availability settings');
+                                        const errorData = await response.json();
+                                        console.error('Error details:', errorData);
+                                    }
+                                } catch (error) {
+                                    console.error('Error saving availability settings:', error);
                                 }
                             }
 

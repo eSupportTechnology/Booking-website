@@ -5,7 +5,7 @@ use WendellAdriel\ValidatedDTO\ValidatedDTO;
 
 class PartnerVerificationDTO extends ValidatedDTO
 {
-    public  $property_id;
+    public int $property_id;
     public string $type;
     public ?string $full_name;
     public ?string $national_id;

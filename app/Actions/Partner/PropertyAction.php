@@ -25,9 +25,14 @@ use App\DTOs\Partner\SaveAddressSameDTO;
 use App\DTOs\Partner\PropertyServiceDTO;
 use App\DTOs\Partner\SaveServicesDTO;
 use App\DTOs\Partner\SaveHouseRulesDTO;
+use App\DTOs\SaveAvailabilitySettingsDTO;
 use App\Models\PartnerVerification;
 use App\Models\PropertyService;
 use App\Models\Room;
+use App\Models\Accommodation;
+use App\Models\Individual;
+use App\Models\BusinessEntity;
+use App\Models\PropertyAvailabilitySetting;
 
 use Faker\Provider\ar_EG\Address;
 
@@ -283,10 +288,98 @@ class PropertyAction
 
     public function partnerVerification(PartnerVerificationDTO $dto): void
     {
-        PartnerVerification::updateOrCreate(
+        Log::info('PropertyAction::partnerVerification called', [
+            'property_id' => $dto->property_id,
+            'type' => $dto->type,
+            'dto_data' => $dto->toArray()
+        ]);
+
+        // Create or update accommodation record
+        $accommodation = Accommodation::updateOrCreate(
             ['property_id' => $dto->property_id],
-            $dto->toArray()
+            [
+                'property_id' => $dto->property_id,
+                'ownership_type' => $dto->type === 'individual' ? 'individual' : 'business_entity'
+            ]
         );
+
+        if ($dto->type === 'individual') {
+            // Handle individual verification
+            $individual = Individual::updateOrCreate(
+                ['accommodation_id' => $accommodation->id],
+                [
+                    'accommodation_id' => $accommodation->id,
+                    'first_name' => $dto->full_name ? explode(' ', $dto->full_name)[0] : null,
+                    'last_name' => $dto->full_name ? (explode(' ', $dto->full_name)[1] ?? '') : null,
+                    'date_of_birth' => $dto->national_id, // Using national_id as DOB for now
+                ]
+            );
+
+            Log::info('Individual verification saved', [
+                'accommodation_id' => $accommodation->id,
+                'individual_id' => $individual->id,
+                'individual_data' => $individual->toArray()
+            ]);
+        } else {
+            // Handle business entity verification
+            $businessEntity = BusinessEntity::updateOrCreate(
+                ['accommodation_id' => $accommodation->id],
+                [
+                    'accommodation_id' => $accommodation->id,
+                    'business_name' => $dto->company_name,
+                    'trading_name' => null, // Could be added to DTO if needed
+                    'address' => null, // Could be added to DTO if needed
+                    'zip_code' => null, // Could be added to DTO if needed
+                    'city' => null, // Could be added to DTO if needed
+                    'country' => null, // Could be added to DTO if needed
+                ]
+            );
+
+            Log::info('Business entity verification saved', [
+                'accommodation_id' => $accommodation->id,
+                'business_entity_id' => $businessEntity->id,
+                'business_entity_data' => $businessEntity->toArray()
+            ]);
+        }
+
+        Log::info('Partner verification completed successfully', [
+            'property_id' => $dto->property_id,
+            'accommodation_id' => $accommodation->id
+        ]);
+    }
+
+    public function saveAvailabilitySettings(Property $property, SaveAvailabilitySettingsDTO $dto): void
+    {
+        Log::info('PropertyAction::saveAvailabilitySettings called', [
+            'property_id' => $property->id,
+            'dto_data' => $dto->toArray()
+        ]);
+
+        // Prepare the data for saving
+        $availabilityData = [
+            'property_id' => $property->id,
+            'availability_mode' => $dto->availability_mode,
+            'availability_days' => $dto->availability_days,
+            'allow_long_stays' => $dto->allow_long_stays,
+            'max_nights' => $dto->max_nights,
+            'sync_tripadvisor' => $dto->sync_tripadvisor,
+        ];
+
+        // Remove null values
+        $availabilityData = array_filter($availabilityData, function($value) {
+            return $value !== null;
+        });
+
+        // Update or create the property availability settings
+        PropertyAvailabilitySetting::updateOrCreate(
+            ['property_id' => $property->id],
+            $availabilityData
+        );
+
+        Log::info('Availability settings saved successfully', [
+            'property_id' => $property->id,
+            'availability_data' => $availabilityData
+        ]);
     }
 
 
