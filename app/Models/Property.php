@@ -26,6 +26,8 @@ class Property extends Model
         'status',
         'stars',
         'group',
+        'payment_method',
+        'invoicing_info',
     ];
     public function photos()
     {

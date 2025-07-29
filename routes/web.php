@@ -269,13 +269,10 @@ Route::post('/partner-homes-single', [PropertyController::class, 'showPrivateHom
 Route::post('/partner-homes-multiple', [PropertyController::class, 'showPrivateHomesMultiple'])->name('partner.homes.multiple');
 
 
-Route::get('/partner-homes-rooms/{id}',[PropertyController::class, 'showPrivateHomesRooms'])->name('partner.homes.rooms');
-
+Route::get('/partner-homes-rooms/{id}', [PropertyController::class, 'showPrivateHomesRooms'])->name('partner.homes.rooms');
 Route::get('/partner-homes-edit/{id}', [PropertyController::class, 'showPrivateHomesEdit'])->name('partner.homes.edit');
-
 Route::get('/partner-homes-payments/{id}', [PropertyController::class, 'showPrivateHomesPayments'])->name('partner.homes.payments');
-
-Route::get('/partner-homes-images/{id}',[PropertyController::class, 'showPrivateHomesImages'])->name('partner.homes.images');
+Route::get('/partner-homes-images/{id}', [PropertyController::class, 'showPrivateHomesImages'])->name('partner.homes.images');
 
 Route::get('/partner-apartments-final', function () {
     return view('frontend.partner-apartment-final-step');
@@ -444,6 +441,8 @@ Route::prefix('partner')->group(function () {
     Route::post('/property/save-additional-details', [PropertyController::class, 'saveAdditionalDetails'])->name('partner.property.save-additional-details');
     Route::post('/property/save-services/{property}', [PropertyController::class, 'saveServices']);
     Route::post('/save-languages/{property}', [PropertyController::class, 'saveLanguages']);
+    Route::post('/property/save-payment-method', [PropertyController::class, 'savePaymentMethod'])->name('partner.property.savePaymentMethod');
+    Route::post('/property/save-invoicing/{property}', [PropertyController::class, 'saveInvoicing'])->name('partner.property.saveInvoicing');
 });
 Route::post('/save-amenities/{property}', [PropertyController::class, 'saveAmenities']);
 Route::post('/property/save-address-same', [PropertyController::class, 'saveAddressSame']);

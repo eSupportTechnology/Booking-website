@@ -20,6 +20,7 @@ use App\Models\PropertySubtype;
 use App\Services\FileUploadService;
 use App\DTOs\Partner\AccommodationDetailsDTO;
 use App\Actions\Partner\StoreAccommodationDetailsAction;
+use App\DTOs\Partner\SavePaymentMethodDTO;
 use App\DTOs\Partner\SaveAmenitiesDTO;
 use App\DTOs\Partner\SavePolicyDTO;
 use App\DTOs\Partner\SaveRoomsDTO;
@@ -41,6 +42,7 @@ use App\Actions\Partner\SaveBedroomAction;
 use App\Actions\Partner\SaveAdditionalDetailsAction;
 use App\Actions\Partner\SaveAddressMultipleAction;
 use App\Actions\Partner\SavePricingAction;
+use App\DTOs\Partner\SaveInvoicingDTO;
 use App\Models\Room;
 use App\Models\PartnerVerification;
 use App\Models\Language;
@@ -415,23 +417,24 @@ class PropertyController extends Controller
                 'property_id' => $property->id,
                 'request' => $request->all(),
             ]);
-        
-              
-        try {
-            $dto = SaveAmenitiesDTO::fromRequest($request);
-            Log::info('SaveAmenitiesDTO created:', ['amenities' => $dto->amenities]);
-            Log::info('saveAmenities validated', $dto->toArray());            Log::info('SaveAmenitiesDTO created:', ['amenities' => $dto->amenities]);
+
+
+            try {
+                $dto = SaveAmenitiesDTO::fromRequest($request);
+                Log::info('SaveAmenitiesDTO created:', ['amenities' => $dto->amenities]);
+                Log::info('saveAmenities validated', $dto->toArray());
+                Log::info('SaveAmenitiesDTO created:', ['amenities' => $dto->amenities]);
 
                 $propertyAction->saveAmenities($property, $dto);
 
                 return response()->json(['success' => true, 'message' => 'Amenities saved successfully']);
-        } catch (\Exception $e) {
-            Log::error('Error saving amenities:', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
-        }
+            } catch (\Exception $e) {
+                Log::error('Error saving amenities:', [
+                    'message' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ]);
+                return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            }
         } catch (\Exception $e) {
             Log::error('saveAmenities error', [
                 'message' => $e->getMessage(),
@@ -539,17 +542,17 @@ class PropertyController extends Controller
             'property_param' => $property,
             'property_type' => gettype($property)
         ]);
-        
+
         // If property is a numeric ID, fetch the property, otherwise set to null
         if ($property && is_numeric($property)) {
             $property = \App\Models\Property::find($property);
         } else {
             $property = null;
         }
-        
+
         $amenities = $action->getAmenities();
         $languages = $action->getLanguages();
-        
+
         Log::info('showMultipleApartmentForm returning', [
             'property_id' => $property ? $property->id : null,
             'amenities_count' => $amenities->count(),
@@ -557,7 +560,7 @@ class PropertyController extends Controller
             'languages_count' => $languages->count(),
             'languages' => $languages->toArray()
         ]);
-        
+
         return view('partner.partner-multiple-apartment', compact('property', 'amenities', 'languages'));
     }
 
@@ -726,7 +729,7 @@ class PropertyController extends Controller
 
 
 
-    public function showHomesForm2($id,$subtype)
+    public function showHomesForm2($id, $subtype)
     {
         try {
             Log::info('showHomesForm2 called', ['id' => $id]);
@@ -734,10 +737,10 @@ class PropertyController extends Controller
             Log::info('Property found', ['property_id' => $property->id]);
             $property_subtype = PropertySubtype::findOrFail($subtype);
             Log::info('Property subtype found', ['subtype_id' => $property_subtype->id, 'name' => $property_subtype->name]);
-    
+
             // Return the view with the property data
             return view('partner.partner-homes-form-2', compact('property', 'property_subtype'));
-        } catch (\Exception $e ) {
+        } catch (\Exception $e) {
             Log::error('Error in showHomesForm2', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
@@ -779,7 +782,7 @@ class PropertyController extends Controller
             Log::info('DTO created successfully', [
                 'dto_data' => $dto->toArray()
             ]);
-            
+
             $propertyAction->saveServices($property, $dto);
 
             return response()->json([
@@ -816,12 +819,12 @@ class PropertyController extends Controller
                 'json' => $request->json()->all(),
                 'input' => $request->input(),
             ]);
-            
+
             $dto = SaveHouseRulesDTO::fromRequest($request);
             Log::info('DTO created successfully', [
                 'dto_data' => $dto->toArray()
             ]);
-            
+
             $propertyAction->saveHouseRules($property, $dto);
 
             return response()->json([
@@ -865,13 +868,13 @@ class PropertyController extends Controller
 
     public function showPrivateHomesRooms($propertyId)
     {
-       $property = Property::findOrFail($propertyId);
+        $property = Property::findOrFail($propertyId);
         return view('partner.partner-homes-rooms', compact('property'));
     }
 
     public function showPrivateHomesImages($propertyId)
     {
-       $property = Property::findOrFail($propertyId);
+        $property = Property::findOrFail($propertyId);
         return view('partner.partner-homes-images', compact('property'));
     }
 
@@ -887,5 +890,43 @@ class PropertyController extends Controller
         return view('partner.partner-homes-edit', compact('property'));
     }
 
+    public function savePaymentMethod(Request $request, PropertyAction $action)
+    {
+        try {
+            $dto = SavePaymentMethodDTO::fromRequest($request);
+            $action->savePaymentMethod($dto);
 
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            report($e);
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function saveInvoicing(Request $request,  $propertyId, PropertyAction $action)
+    {
+        try {
+            Log::info('saveInvoicing called', [
+                'property_id' => $propertyId,
+                'request' => $request->all(),
+                'request_method' => $request->method(),
+                'content_type' => $request->header('Content-Type'),
+                'url' => $request->url(),
+            ]);
+            $dto = SaveInvoicingDTO::fromRequest($request);
+            $property = Property::findOrFail($propertyId);
+            $action->saveInvoicing($property, $dto);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Invoicing info saved successfully.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error saving invoicing info.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
 }

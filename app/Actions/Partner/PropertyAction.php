@@ -2,6 +2,7 @@
 
 namespace App\Actions\Partner;
 
+use App\DTOs\Partner\SavePaymentMethodDTO;
 use App\DTOs\Partner\AddressSameDTO;
 use App\DTOs\Partner\PropertyDTO;
 use App\Models\Property;
@@ -25,6 +26,7 @@ use App\DTOs\Partner\SaveAddressSameDTO;
 use App\DTOs\Partner\PropertyServiceDTO;
 use App\DTOs\Partner\SaveServicesDTO;
 use App\DTOs\Partner\SaveHouseRulesDTO;
+use App\DTOs\Partner\SaveInvoicingDTO;
 use App\DTOs\SaveAvailabilitySettingsDTO;
 use App\Models\PartnerVerification;
 use App\Models\PropertyService;
@@ -109,14 +111,14 @@ class PropertyAction
             'dto_data' => $dto->toArray(),
             'address_type_id' => $dto->address_type_id,
         ]);
-        
+
         $property = \App\Models\Property::create($dto->toArray());
-        
+
         Log::info('Property created successfully', [
             'property_id' => $property->id,
             'property_data' => $property->toArray(),
         ]);
-        
+
         return $property;
     }
 
@@ -237,9 +239,9 @@ class PropertyAction
             'property_id' => $property->id,
             'amenities' => $dto->amenities
         ]);
-        
+
         $property->amenities()->sync($dto->amenities);
-        
+
         Log::info('Amenities synced successfully', [
             'property_id' => $property->id,
             'amenity_count' => count($dto->amenities)
@@ -247,9 +249,9 @@ class PropertyAction
     }
 
     public function saveLanguages(Property $property, SaveLanguagesDTO $dto): void
-{
-    $property->languages()->sync($dto->languages);
-}
+    {
+        $property->languages()->sync($dto->languages);
+    }
 
 
     public function savePolicy(Property $property, SavePolicyDTO $dto): void
@@ -427,7 +429,7 @@ class PropertyAction
         ];
 
         // Remove null values
-        $serviceData = array_filter($serviceData, function($value) {
+        $serviceData = array_filter($serviceData, function ($value) {
             return $value !== null;
         });
 
@@ -464,7 +466,7 @@ class PropertyAction
         ];
 
         // Remove null values
-        $policyData = array_filter($policyData, function($value) {
+        $policyData = array_filter($policyData, function ($value) {
             return $value !== null;
         });
 
@@ -492,5 +494,19 @@ class PropertyAction
             return (bool) $value;
         }
         return false;
+    }
+    public function savePaymentMethod(SavePaymentMethodDTO $dto): void
+    {
+        $property = Property::findOrFail($dto->property_id);
+        $property->payment_method = $dto->payment_method;
+        $property->save();
+    }
+
+
+    public function saveInvoicing(Property $property, SaveInvoicingDTO $dto): void
+    {
+        $property->update([
+            'invoicing_info' => $dto->toArray(),
+        ]);
     }
 }
