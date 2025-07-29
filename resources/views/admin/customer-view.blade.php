@@ -1,4 +1,4 @@
-@extends('frontend.admin.master')
+@extends('admin.master')
 
 @section('content')
 <div class="p-6 bg-[#1F8FB2] rounded shadow space-y-8">

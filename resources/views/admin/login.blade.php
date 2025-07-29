@@ -8,12 +8,12 @@
     <form method="POST" action="{{ route('admin.login') }}">
         @csrf
         <div class="relative w-full mb-4">
-            <input type="email" id="email" name="email" value="{{ old('email') }}"
+            <input type="text" id="username" name="username" value="{{ old('username') }}"
                 class="peer w-full px-3 pt-5 pb-2 placeholder-transparent border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm"
-                placeholder="Email" required />
-            <label for="email"
+                placeholder="Username" required />
+            <label for="username"
                 class="absolute left-3 top-2.5 text-gray-500 text-xs transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-2.5 peer-focus:text-xs peer-focus:text-darkBlueStart">
-                Email
+                Username
             </label>
         </div>
         <div class="relative w-full mb-4">

@@ -4,10 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Actions\Admin\LoginAction;
 use App\Actions\Admin\RegisterAction;
-use App\Actions\Admin\ForgotPasswordAction;
 use App\DTOs\Admin\LoginDTO;
 use App\DTOs\Admin\RegisterDTO;
-use App\DTOs\Admin\ForgotPasswordDTO;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -24,17 +22,10 @@ class AuthController extends Controller
         $dto = LoginDTO::fromRequest($request);
 
         if ($action->execute($dto)) {
-            $user = Auth::user();
-
-            if (!$user->hasRole(['admin', 'super-admin'])) {
-                Auth::logout();
-                return back()->withErrors(['email' => 'Unauthorized access.']);
-            }
-
             return redirect()->route('admin.dashboard');
         }
 
-        return back()->withErrors(['email' => 'Invalid credentials.']);
+        return back()->withErrors(['username' => 'Invalid credentials or account not approved.']);
     }
 
     public function showRegister()
@@ -45,9 +36,9 @@ class AuthController extends Controller
     public function register(Request $request, RegisterAction $action)
     {
         $dto = RegisterDTO::fromRequest($request);
-        $user = $action->execute($dto);
+        $admin = $action->execute($dto);
 
-        return redirect()->route('admin.login')->with('status', 'Registration successful! Please login.');
+        return redirect()->route('admin.login')->with('status', 'Registration submitted! Please wait for super admin approval.');
     }
 
     public function showForgotPassword()
@@ -55,19 +46,14 @@ class AuthController extends Controller
         return view('admin.ForgotPassword');
     }
 
-    public function forgotPassword(Request $request, ForgotPasswordAction $action)
+    public function forgotPassword(Request $request)
     {
-        $dto = ForgotPasswordDTO::fromRequest($request);
-        $status = $action->execute($dto);
-
-        return $status === 'passwords.sent'
-            ? back()->with('status', 'Password reset link sent!')
-            : back()->withErrors(['email' => 'Unable to send reset link.']);
+        return redirect()->route('admin.forgot-password');
     }
 
     public function logout()
     {
-        Auth::logout();
+        Auth::guard('admin')->logout();
         return redirect()->route('admin.login');
     }
 }

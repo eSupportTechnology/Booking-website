@@ -6,12 +6,12 @@ use WendellAdriel\ValidatedDTO\ValidatedDTO;
 
 class ForgotPasswordDTO extends ValidatedDTO
 {
-    public string $email;
+    public string $username;
 
     protected function rules(): array
     {
         return [
-            'email' => 'required|email|exists:users,email'
+            'username' => 'required|string|exists:admins,username'
         ];
     }
 

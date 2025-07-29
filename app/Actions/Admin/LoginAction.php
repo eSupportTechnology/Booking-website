@@ -9,9 +9,10 @@ class LoginAction
 {
     public function execute(LoginDTO $dto): bool
     {
-        return Auth::attempt([
-            'email' => $dto->email,
-            'password' => $dto->password
+        return Auth::guard('admin')->attempt([
+            'username' => $dto->username,
+            'password' => $dto->password,
+            'status' => 'approved'
         ], $dto->remember);
     }
 }

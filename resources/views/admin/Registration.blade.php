@@ -8,12 +8,12 @@
     <form method="POST" action="{{ route('admin.register') }}">
         @csrf
         <div class="relative w-full mb-4">
-            <input type="text" id="name" name="name" value="{{ old('name') }}"
+            <input type="text" id="username" name="username" value="{{ old('username') }}"
                 class="peer w-full px-3 pt-5 pb-2 placeholder-transparent border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#63CDED] text-sm"
-                placeholder="Name" required />
-            <label for="name"
+                placeholder="Username" required />
+            <label for="username"
                 class="absolute left-3 top-2.5 text-gray-500 text-xs transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-2.5 peer-focus:text-xs peer-focus:text-[#1F8FB2]">
-                Name
+                Username
             </label>
         </div>
         <div class="relative w-full mb-4">
@@ -33,7 +33,7 @@
                 class="absolute left-3 top-2.5 text-gray-500 text-xs transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-2.5 peer-focus:text-xs peer-focus:text-[#1F8FB2]">
                 Password
             </label>
-            <button type="button" id="togglePassword" 
+            <button type="button" id="togglePassword"
                 class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none">
                 <svg id="eyeIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -43,7 +43,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round"
                         d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.974 9.974 0 012.204-3.592m3.125-2.325A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.542 7a9.971 9.971 0 01-4.157 5.236M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                     <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M3 3l18 18" />    
+                        d="M3 3l18 18" />
                 </svg>
             </button>
         </div>
@@ -55,7 +55,7 @@
                 class="absolute left-3 top-2.5 text-gray-500 text-xs transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-2.5 peer-focus:text-xs peer-focus:text-[#1F8FB2]">
                 Confirm Password
             </label>
-            <button type="button" id="toggleConfirmPassword" 
+            <button type="button" id="toggleConfirmPassword"
                 class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none">
                 <svg id="eyeIconConfirm" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -113,14 +113,14 @@
     document.addEventListener('DOMContentLoaded', function() {
         // Password field toggle
         const togglePassword = document.getElementById('togglePassword');
-        const passwordInput = document.getElementById('regPassword');
+        const passwordInput = document.getElementById('password');
         const eyeIcon = document.getElementById('eyeIcon');
         const eyeSlashIcon = document.getElementById('eyeSlashIcon');
 
         togglePassword.addEventListener('click', function() {
             const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordInput.setAttribute('type', type);
-            
+
             if (type === 'text') {
                 eyeIcon.classList.add('hidden');
                 eyeSlashIcon.classList.remove('hidden');
@@ -139,7 +139,7 @@
         toggleConfirmPassword.addEventListener('click', function() {
             const type = confirmPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
             confirmPasswordInput.setAttribute('type', type);
-            
+
             if (type === 'text') {
                 eyeIconConfirm.classList.add('hidden');
                 eyeSlashIconConfirm.classList.remove('hidden');

@@ -1,14 +1,25 @@
-@extends('frontend.admin.master')
+@extends('admin.master')
 
 @section('content')
 <div class="space-y-6">
 
+    {{-- <!-- Breadcrumb -->
+    <nav class="flex mb-4" aria-label="Breadcrumb">
+        <ol class="inline-flex items-center space-x-1 md:space-x-3">
+            <li class="inline-flex items-center">
+                <a href="{{ route('admin.dashboard') }}" class="text-gray-700 hover:text-blue-600">
+                    <i class="fas fa-home mr-1"></i> Dashboard
+                </a>
+            </li>
+        </ol>
+    </nav> --}}
+
     <!-- Header -->
     <div class="flex justify-between items-center">
-        <h1 class="text-3xl font-semibold text-gray-800">Welcome back, Admin 👋</h1>
-        <button class="text-white px-4 py-2 rounded shadow hover:opacity-90 transition" style="background-color: #1F8FB2;">
-            Add New Booking
-        </button>
+        <h1 class="text-3xl font-semibold text-gray-800">Welcome back, <b>{{ Auth::guard('admin')->user()->username }} </b>👋</h1>
+        <a href="{{ route('admin.customers') }}" class="text-white px-4 py-2 rounded shadow hover:opacity-90 transition" style="background-color: #1F8FB2;">
+            Manage Customers
+        </a>
     </div>
 
     <!-- Statistics Cards -->
@@ -56,7 +67,7 @@
                             <span class="bg-green-100 text-green-700 text-xs font-medium px-2 py-1 rounded">Confirmed</span>
                         </td>
                         <td class="px-4 py-2 text-right">
-                            <button class="hover:underline" style="color: #1F8FB2;">View</button>
+                            <a href="{{ route('admin.customers') }}" class="hover:underline" style="color: #1F8FB2;">View</a>
                         </td>
                     </tr>
                 </tbody>
@@ -75,9 +86,11 @@
         <div class="bg-white p-6 rounded-lg shadow">
             <h3 class="text-lg font-semibold mb-2">Quick Actions</h3>
             <div class="flex flex-col space-y-2">
-                <button class="text-white px-4 py-2 rounded hover:opacity-90 transition" style="background-color: #1F8FB2;">Add Property</button>
-                <button class="text-white px-4 py-2 rounded hover:opacity-90 transition" style="background-color: #3CC0E9;">Manage Users</button>
-                <button class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 transition">Review Reports</button>
+                <a href="{{ route('admin.apartments') }}" class="text-center text-white px-4 py-2 rounded hover:opacity-90 transition" style="background-color: #1F8FB2;">Manage Properties</a>
+                <a href="{{ route('admin.customers') }}" class="text-center text-white px-4 py-2 rounded hover:opacity-90 transition" style="background-color: #3CC0E9;">Manage Users</a>
+                @if(Auth::guard('admin')->user()->hasRole('super-admin'))
+                <a href="{{ route('admin.approvals.index') }}" class="text-center bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 transition">Pending Admins</a>
+                @endif
             </div>
         </div>
 

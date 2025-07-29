@@ -46,13 +46,16 @@
           <div class="relative group">
             <button class="text-white flex items-center space-x-1">
               <i class="fas fa-user-circle text-lg"></i>
-              <span class="text-sm">Admin</span>
+              <span class="text-sm">{{ Auth::guard('admin')->user()->username }}</span>
             </button>
             <div class="absolute right-0 mt-2 bg-white text-black shadow-lg rounded hidden group-hover:block min-w-[150px] z-50">
               <a href="#" class="block px-4 py-2 hover:bg-gray-100">Profile</a>
               <a href="#" class="block px-4 py-2 hover:bg-gray-100">Settings</a>
               <div class="border-t"></div>
-              <a href="#" class="block px-4 py-2 text-red-600 hover:bg-gray-100">Logout</a>
+              <form method="POST" action="{{ route('admin.logout') }}">
+                @csrf
+                <button type="submit" class="block w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100">Logout</button>
+              </form>
             </div>
           </div>
         </div>
@@ -134,6 +137,15 @@
 
         </div>
 
+        @if(Auth::guard('admin')->user()->hasRole('super-admin'))
+        <!-- ADMIN MANAGEMENT -->
+        <div>
+          <a href="{{ route('admin.approvals.index') }}" class="flex items-center px-4 py-2 rounded hover:bg-blue-200 transition text-blue-800 font-bold text-base">
+            <i class="fas fa-user-shield mr-3 text-bg-[#1F8FB2] text-lg"></i> Pending Admins
+          </a>
+        </div>
+        @endif
+
         <!-- SETTINGS -->
         <div>
           <a href="#" class="flex items-center px-4 py-2 rounded hover:bg-blue-200 transition text-blue-800 font-bold text-base">
@@ -143,10 +155,13 @@
 
         <!-- LOGOUT -->
         <div>
-          <a href="#"
-            class="flex items-center justify-center px-4 py-3 rounded-lg bg-red-600 hover:bg-red-700 text-white font-bold text-base shadow-md transition duration-200">
-            <i class="fas fa-sign-out-alt mr-2 text-lg"></i> LOGOUT
-          </a>
+          <form method="POST" action="{{ route('admin.logout') }}">
+            @csrf
+            <button type="submit"
+              class="w-full flex items-center justify-center px-4 py-3 rounded-lg bg-red-600 hover:bg-red-700 text-white font-bold text-base shadow-md transition duration-200">
+              <i class="fas fa-sign-out-alt mr-2 text-lg"></i> LOGOUT
+            </button>
+          </form>
         </div>
 
       </nav>

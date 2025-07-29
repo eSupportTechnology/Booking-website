@@ -42,7 +42,7 @@ return [
         ],
         'admin' => [
             'driver' => 'session',
-            'provider' => 'users',
+            'provider' => 'admins',
         ],
         'customer' => [
         'driver' => 'session',
@@ -82,6 +82,11 @@ return [
         'model' => App\Models\Traveler::class,
     ],
 
+        'admins' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Admin::class,
+        ],
+
         // 'users' => [
         //     'driver' => 'database',
         //     'table' => 'users',
@@ -115,7 +120,7 @@ return [
             'throttle' => 60,
         ],
         'admins' => [
-            'provider' => 'users',
+            'provider' => 'admins',
             'table' => 'admin_password_reset_tokens',
             'expire' => 60,
             'throttle' => 60,

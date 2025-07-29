@@ -1,10 +1,27 @@
-@extends('frontend.admin.master')
+@extends('admin.master')
 @section('title', 'Apartment Listings')
 @section('content')
 
 <section class="min-h-screen p-4 bg-white rounded-lg shadow-lg">
 
     <div class="space-y-6 p-4">
+
+        <!-- Breadcrumb -->
+        <nav class="flex mb-4" aria-label="Breadcrumb">
+            <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                <li class="inline-flex items-center">
+                    <a href="{{ route('admin.dashboard') }}" class="text-gray-700 hover:text-blue-600">
+                        <i class="fas fa-home mr-1"></i> Dashboard
+                    </a>
+                </li>
+                <li>
+                    <div class="flex items-center">
+                        <i class="fas fa-chevron-right text-gray-400 mx-2"></i>
+                        <span class="text-gray-500">Apartments</span>
+                    </div>
+                </li>
+            </ol>
+        </nav>
 
         <!-- Title -->
         <h1 class="text-lg sm:text-2xl md:text-3xl font-bold text-gray-800 mb-3 sm:mb-6">Apartment Listings</h1>
@@ -27,9 +44,9 @@
 
             <!-- Add New Apartment Button -->
             <div class="w-full sm:w-auto">
-                <button class="w-full sm:w-auto bg-[#3CC0E9] hover:bg-[#3CC0E9]/80 text-white font-medium text-xs sm:text-sm py-1.5 px-3 rounded-md shadow transition">
+                <a href="{{ route('admin.dashboard') }}" class="w-full sm:w-auto bg-[#3CC0E9] hover:bg-[#3CC0E9]/80 text-white font-medium text-xs sm:text-sm py-1.5 px-3 rounded-md shadow transition inline-block text-center">
                     + Add New Apartment
-                </button>
+                </a>
             </div>
         </div>
 

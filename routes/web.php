@@ -457,11 +457,18 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/register', [\App\Http\Controllers\Admin\AuthController::class, 'showRegister'])->name('register');
         Route::post('/register', [\App\Http\Controllers\Admin\AuthController::class, 'register'])->name('register');
         Route::get('/forgot-password', [\App\Http\Controllers\Admin\AuthController::class, 'showForgotPassword'])->name('forgot-password');
-        Route::post('/forgot-password', [\App\Http\Controllers\Admin\AuthController::class, 'forgotPassword'])->name('forgot-password');
+        Route::post('/forgot-password', [\App\Http\Controllers\Admin\AdminPasswordResetLinkController::class, 'store'])->name('password.email');
+        Route::get('/reset-password/{token}', function ($token) {
+            return view('admin.reset-password', [
+                'token' => $token,
+                'email' => request('email')
+            ]);
+        })->name('password.reset');
+        Route::post('/reset-password', [\App\Http\Controllers\Admin\AdminNewPasswordController::class, 'store'])->name('password.store');
     });
 
     // Protected admin routes
-    Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->group(function () {
+    Route::middleware(['auth:admin', \App\Http\Middleware\AdminMiddleware::class])->group(function () {
         Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
         Route::post('/logout', [\App\Http\Controllers\Admin\AuthController::class, 'logout'])->name('logout');
 
@@ -486,6 +493,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/customer-view', function () {
             return view('admin.customer-view');
         })->name('customer.view');
+        
+        // Super admin only routes
+        Route::middleware(\App\Http\Middleware\SuperAdminMiddleware::class)->group(function () {
+            Route::get('/approvals', [\App\Http\Controllers\Admin\AdminApprovalController::class, 'index'])->name('approvals.index');
+            Route::post('/approvals/{admin}/approve', [\App\Http\Controllers\Admin\AdminApprovalController::class, 'approve'])->name('approvals.approve');
+            Route::post('/approvals/{admin}/reject', [\App\Http\Controllers\Admin\AdminApprovalController::class, 'reject'])->name('approvals.reject');
+        });
     });
 });
 

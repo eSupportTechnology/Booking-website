@@ -3,22 +3,23 @@
 namespace App\Actions\Admin;
 
 use App\DTOs\Admin\RegisterDTO;
-use App\Models\User;
+use App\Models\Admin;
 use Illuminate\Support\Facades\Hash;
 
 class RegisterAction
 {
-    public function execute(RegisterDTO $dto): User
+    public function execute(RegisterDTO $dto): Admin
     {
-        $user = User::create([
-            'name' => $dto->name,
+        $admin = Admin::create([
+            'username' => $dto->username,
             'email' => $dto->email,
             'password' => Hash::make($dto->password),
+            'status' => 'pending',
             'email_verified_at' => now()
         ]);
 
-        $user->assignRole('admin');
+        $admin->assignRole('admin');
 
-        return $user;
+        return $admin;
     }
 }
