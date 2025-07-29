@@ -36,7 +36,9 @@ class SavePolicyDTO extends ValidatedDTO
     protected function casts(): array
     {
         return [
-
+            // 'smoking_allowed' => 'boolean',
+            // 'children_allowed' => 'boolean',
+            // 'parties_allowed' => 'boolean',
         ];
     }
 
