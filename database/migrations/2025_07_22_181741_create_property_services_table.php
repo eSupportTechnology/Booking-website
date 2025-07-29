@@ -17,6 +17,7 @@ return new class extends Migration
             $table->boolean('serve_breakfast')->nullable();
             $table->string('breakfast_included')->nullable();
             $table->json('breakfast_type')->nullable();
+            $table->string('breakfast_price')->nullable();
             $table->string('parking_available')->nullable();
             $table->decimal('parking_cost', 8, 2)->nullable();
             $table->string('parking_cost_unit')->nullable();

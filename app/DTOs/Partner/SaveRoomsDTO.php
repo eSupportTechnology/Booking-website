@@ -5,7 +5,7 @@ use WendellAdriel\ValidatedDTO\ValidatedDTO;
 
 class SaveRoomsDTO extends ValidatedDTO
 {
-    public int $property_id;
+    public  $property_id;
     public array $rooms;
 
     public function rules(): array

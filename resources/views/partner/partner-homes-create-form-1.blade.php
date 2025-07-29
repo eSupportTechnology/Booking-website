@@ -97,7 +97,7 @@
     </header>
 
     <!-- Start Form -->
-    <div class="max-w-6xl p-4 ml-14 bg-gray-100" x-data="{ propertyId: null, selected: '',  propertyName: '',description: ''}">
+    <div class="max-w-6xl p-4 ml-14 bg-gray-100" x-data="{ propertyId: null, selected: '',  propertyName: '',description: '',availableLanguages: {{ Js::from($languages) }} }">
 
         <!-- Step 1: Main Form Step -->
         <form class="p-6 rounded-lg space-y-6" @submit.prevent>
@@ -220,7 +220,11 @@
                 x-data="{
                     async submitStep2() {
                         if (!this.selectedBox || !this.propertyId) return;
-
+                        if (this.selectedBox > 6) {
+                            window.location.href = `/partner-homes-form2/${propertyId}/${this.selectedBox}`
+                                        
+                                  
+                        }
                         const response = await fetch(`/partner/property/${this.selectedBox}/step2/${this.propertyId}`, {
                             method: 'POST',
                             headers: {
@@ -1080,22 +1084,17 @@
                                                         <h3 class="text-lg  mb-4 font-bold">Select languages
                                                         </h3>
                                                         <div class="space-y-2">
+                                                            @foreach ($languages as $lang)
                                                             <label class="flex items-center cursor-pointer">
-                                                                <input type="checkbox" class="mr-2" />
-                                                                <span>English</span>
+                                                                <input type="checkbox"
+                                                                    class="mr-2"
+                                                                    :value="'{{ $lang['id'] }}'"
+                                                                    />
+                                                                <span>{{ $lang['name'] }}</span>
                                                             </label>
-                                                            <label class="flex items-center cursor-pointer">
-                                                                <input type="checkbox" class="mr-2" />
-                                                                <span>French</span>
-                                                            </label>
-                                                            <label class="flex items-center cursor-pointer">
-                                                                <input type="checkbox" class="mr-2" />
-                                                                <span>German</span>
-                                                            </label>
-                                                            <label class="flex items-center cursor-pointer">
-                                                                <input type="checkbox" class="mr-2" />
-                                                                <span>Hindi</span>
-                                                            </label>
+                                                            @endforeach
+
+
                                                         </div>
 
                                                         <!-- Add Additional Languages -->
@@ -1760,6 +1759,21 @@
                                                         address: '',
                                                         addresses:[],
                                                         selectedAmenities: [],
+                                                        type: '',
+                                                        individual: { name: '', id: '' },
+                                                        business: { company_name: '', reg_no: '' },
+                                                        newRoom: {
+                                                            room_type_id: '',
+                                                            name: '',
+                                                            price_per_night: 0,
+                                                            max_guests: 1,
+                                                            bathroom_count: 0,
+                                                            size_sq_m: 0,
+                                                            beds: {}
+                                                        },
+                                                        rooms: [],
+                                                        roomTypes: [],
+                                                        bedTypes: [],
                                                         unitAddresses: Array(propertyCount).fill(''),
                                                         toggleLanguage(lang) {
                                                             const index = this.unitServices[this.currentUnit - 1].languages.indexOf(lang);
@@ -2217,14 +2231,13 @@
                                                                 </h3>
                                                                 <div class="space-y-2">
                                                                     @foreach ($languages as $lang)
-                                                                        <label class="flex items-center cursor-pointer">
-                                                                            <input type="checkbox" class="mr-2"
-                                                                                value="{{ $lang['name'] }}"
-                                                                                @change="toggleLanguage('{{ $lang['name'] }}')"
-                                                                                x-model="unitServices[currentUnit - 1].languages"
-                                                                                :checked="unitServices[currentUnit - 1]?.languages?.includes('{{ $lang['name'] }}')" />
-                                                                            <span>{{ $lang['name'] }}</span>
-                                                                        </label>
+                                                                    <label class="flex items-center cursor-pointer">
+                                                                        <input type="checkbox"
+                                                                            class="mr-2"
+                                                                            :value="'{{ $lang['name'] }}'"
+                                                                            x-model="unitServices[currentUnit - 1].languages" />
+                                                                        <span>{{ $lang['name'] }}</span>
+                                                                    </label>
                                                                     @endforeach
 
 
@@ -2766,7 +2779,7 @@
                                                 </template>
                                                 <template x-if="step === 12 ">
                                                     <div class="space-y-6">
-                                                        <h3 class="text-lg font-bold">Upload Photos for Unit #<span x-text="currentUnit"></span></h3>
+                                                        <h3 class="text-lg font-bold">Upload Photos for Unit <span x-text="currentUnit"></span></h3>
 
                                                         <!-- Upload Box -->
                                                         <div
@@ -2820,7 +2833,7 @@
                                                     </div>
                                                 </template>
 
-                                                <template x-if="step === 13">
+                                                <template x-if="step === 15">
                                                     <div>
                                                         <!-- AlpineJS is required -->
                                                         <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
@@ -2829,7 +2842,7 @@
                                                             class="px-4 py-8 max-w-4xl mx-auto space-y-6">
 
                                                             <h1 class="text-2xl sm:text-3xl font-semibold">How you
-                                                                receive bookings</h1>
+                                                                receive bookings for Unit <span x-text="currentUnit"></span></h1>
 
                                                             <!-- Safety Info Box -->
                                                             <div class="bg-white border rounded-lg p-6 shadow-sm">
@@ -2948,6 +2961,123 @@
 
                                                     </div>
                                                 </template>
+
+                                                <template x-if="step === 13 "
+
+                                                    x-init="
+                                                        roomTypes = @js($roomTypes);
+                                                        bedTypes = @js($bedTypes)
+                                                    ">
+                                                    <div>
+                                                        <!-- Main Content -->
+                                                        <main class="container mx-auto px-4 py-8 max-w-4xl">
+                                                            <h2 class="text-2xl md:text-3xl font-bold mb-6 text-left">
+                                                                Room Details for Unit <span x-text="currentUnit"></span>
+                                                            </h2>
+
+                                                            <div class="bg-white shadow-md rounded-lg p-6 md:p-8 space-y-6">
+
+                                                                <p class="text-gray-700 text-sm md:text-base">
+                                                                    Add information about each room in your property. Include room type, number of guests it can host,
+                                                                    price, and bed configuration.
+                                                                </p>
+
+                                                                <!-- Room Type -->
+                                                                <div>
+                                                                    <label class="block text-sm font-medium text-gray-700 mb-1">Room Type</label>
+                                                                    <select x-model="newRoom.room_type_id" class="w-full border rounded px-3 py-2">
+                                                                        <template x-for="type in roomTypes" :key="type.id">
+                                                                            <option :value="type.id" x-text="type.name"></option>
+                                                                        </template>
+                                                                    </select>
+                                                                </div>
+
+                                                                <!-- Room Name -->
+                                                                <div>
+                                                                    <label class="block text-sm font-medium text-gray-700 mb-1">Room Name</label>
+                                                                    <input type="text" x-model="newRoom.name"
+                                                                        class="w-full border border-gray-300 rounded px-3 py-2" placeholder="E.g. Master Bedroom" />
+                                                                </div>
+
+                                                                <!-- Price -->
+                                                                <div>
+                                                                    <label class="block text-sm font-medium text-gray-700 mb-1">Price per Night (LKR)</label>
+                                                                    <input type="number" x-model="newRoom.price_per_night" min="0" step="0.01"
+                                                                        class="w-full border border-gray-300 rounded px-3 py-2" />
+                                                                </div>
+
+                                                                <!-- Max Guests -->
+                                                                <div>
+                                                                    <label class="block text-sm font-medium text-gray-700 mb-1">Max Guests</label>
+                                                                    <input type="number" x-model="newRoom.max_guests" min="1"
+                                                                        class="w-full border border-gray-300 rounded px-3 py-2" />
+                                                                </div>
+
+                                                                <!-- Bathroom Count -->
+                                                                <div>
+                                                                    <label class="block text-sm font-medium text-gray-700 mb-1">Bathroom Count</label>
+                                                                    <input type="number" x-model="newRoom.bathroom_count" min="0"
+                                                                        class="w-full border border-gray-300 rounded px-3 py-2" />
+                                                                </div>
+
+                                                                <!-- Size -->
+                                                                <div>
+                                                                    <label class="block text-sm font-medium text-gray-700 mb-1">Size (sq. meters)</label>
+                                                                    <input type="number" x-model="newRoom.size_sq_m" min="0"
+                                                                        class="w-full border border-gray-300 rounded px-3 py-2" />
+                                                                </div>
+
+                                                                <!-- Bed Types -->
+                                                                <div>
+                                                                    <label class="block text-sm font-medium text-gray-700 mb-1">Beds</label>
+                                                                    <template x-for="(bedType, index) in bedTypes" :key="bedType.id">
+                                                                        <div class="flex items-center mb-2">
+                                                                            <label class="w-1/2 text-gray-600 text-sm" x-text="bedType.name"></label>
+                                                                            <input type="number" min="0"
+                                                                                class="w-1/2 border border-gray-300 rounded px-3 py-1 ml-2"
+                                                                                @input="newRoom.beds[bedType.id] = +$event.target.value" />
+
+                                                                        </div>
+                                                                    </template>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Navigation Buttons -->
+                                                            <div class="mt-8 flex justify-between">
+                                                                <button type="button" @click="prevStep"
+                                                                    class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                                                                    ←
+                                                                </button>
+                                                                <button type="button" @click="addRoom"
+                                                                    class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                                                                    + Add Room
+                                                                </button>
+                                                                <button type="button" @click="nextStep"
+                                                                    class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
+                                                                    Save Room & Continue
+                                                                </button>
+                                                            </div>
+
+                                                            <div class="mt-6 border-t pt-4">
+                                                                <h3 class="font-semibold mb-2">Added Rooms:</h3>
+                                                                <template x-for="(room, index) in rooms" :key="index">
+                                                                    <div class="border p-2 rounded mb-2 bg-gray-50">
+                                                                        <p><strong>Name:</strong> <span x-text="room.name"></span></p>
+                                                                        <p><strong>Type:</strong> <span x-text="roomTypes.find(rt => rt.id == room.room_type_id)?.name"></span></p>
+                                                                        <p><strong>Price:</strong> Rs. <span x-text="room.price_per_night"></span></p>
+
+                                                                        <button
+                                                                            @click="if(confirm('Are you sure you want to remove this room?')) rooms.splice(index, 1)"
+                                                                            class="ml-4 bg-red-100 hover:bg-red-200 text-red-700 font-semibold px-3 py-1 rounded">
+                                                                            ✕ Remove
+                                                                        </button>
+                                                                    </div>
+                                                                </template>
+                                                            </div>
+
+                                                        </main>
+                                                    </div>
+                                                </template>
                                                 <template x-if="step === 14">
                                                     <div>
                                                         <!-- Include Alpine.js -->
@@ -2957,7 +3087,7 @@
                                                             class="px-4 py-8 max-w-3xl mx-auto space-y-6">
 
                                                             <h1 class="text-2xl sm:text-3xl font-semibold">Partner
-                                                                verification</h1>
+                                                                verification for <span x-text="currentUnit"></span> </h1>
 
                                                             <!-- Instruction + Select Box -->
                                                             <div
@@ -2991,7 +3121,7 @@
                                                                     <div>
                                                                         <label class="block text-sm text-gray-700">Full
                                                                             Name</label>
-                                                                        <input type="text"
+                                                                        <input type="text" x-model="individual.name"
                                                                             class="w-full mt-1 border rounded px-3 py-2"
                                                                             placeholder="Enter your full name">
                                                                     </div>
@@ -2999,7 +3129,7 @@
                                                                         <label
                                                                             class="block text-sm text-gray-700">National
                                                                             ID or Passport</label>
-                                                                        <input type="text"
+                                                                        <input type="text" x-model="individual.id"
                                                                             class="w-full mt-1 border rounded px-3 py-2"
                                                                             placeholder="Enter ID number">
                                                                     </div>
@@ -3016,7 +3146,7 @@
                                                                         <label
                                                                             class="block text-sm text-gray-700">Company
                                                                             Name</label>
-                                                                        <input type="text"
+                                                                        <input type="text" x-model="business.company_name"
                                                                             class="w-full mt-1 border rounded px-3 py-2"
                                                                             placeholder="Enter company name">
                                                                     </div>
@@ -3024,7 +3154,7 @@
                                                                         <label
                                                                             class="block text-sm text-gray-700">Business
                                                                             Registration Number</label>
-                                                                        <input type="text"
+                                                                        <input type="text" x-model="business.reg_no"
                                                                             class="w-full mt-1 border rounded px-3 py-2"
                                                                             placeholder="Enter registration number">
                                                                     </div>
@@ -3050,23 +3180,25 @@
 
                                                     </div>
                                                 </template>
-                                                <template x-if="step === 15">
+                                                <template x-if="step === 16 ">
                                                     <div>
                                                         <h3 class="text-lg font-bold mb-2">Upload Additional Documents
                                                         </h3>
                                                         <input type="file" multiple
                                                             class="border p-2 rounded w-full" />
+
+                                                        <div class="flex justify-between mt-8">
+                                                            <button type="button" @click="prevStep"
+                                                                class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                                                                ←
+                                                            </button>
+                                                            <button type="button" @click="nextStep"
+                                                                class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
+                                                                Continue
+                                                            </button>
+                                                        </div>
                                                     </div>
-                                                    <div class="flex justify-between mt-8">
-                                                        <button type="button" @click="prevStep"
-                                                            class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
-                                                            ←
-                                                        </button>
-                                                        <button type="button" @click="nextStep"
-                                                            class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
-                                                            Continue
-                                                        </button>
-                                                    </div>
+
                                                 </template>
                                             </div>
                                         </template>
@@ -3090,7 +3222,7 @@
                                     selected: '',
                                     sameAddress: 'yes',
                                     propertyCount: 2,
-                                    totalSteps: 15,
+                                    totalSteps: 16,
                                     currentUnit: 1,
                                     unitPhotos: {}, // Holds all photo arrays per unit
                                     previewUnitPhotos: {}, // Holds base64 previews per unit
@@ -3193,9 +3325,9 @@
                                                 return 'Multiple Holiday parks';
                                         }
                                     },
-                                  
 
-                                   
+
+
                                     async nextStep() {
                                         if ((this.step === 1 && this.selected === 'one')) {
                                             try {
@@ -3345,11 +3477,44 @@
                                             } catch (e) {
                                                 console.error('Error saving amenities:', e);
                                             }
-                                        } else if (this.step === 11 && this.selected === 'one') {
+                                        }else if (this.step === 10 && this.selected === 'one') {
+                                            try {
+                                                // Get all selected languages (checked checkboxes)
+                                                const selectedLanguages = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
+                                                    .map(input => input.value);
+
+                                                console.log('Selected languages:', selectedLanguages);
+
+                                                const response = await fetch(`/partner/save-languages/${this.propertyId}`, {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                    },
+                                                    body: JSON.stringify({
+                                                        languages: selectedLanguages,
+                                                        property_id: this.propertyId
+                                                    })
+                                                });
+
+                                                const result = await response.json();
+
+                                                if (result.success) {
+                                                    console.log('Languages saved:', result);
+                                                    this.step++; // go to next step
+                                                } else {
+                                                    alert('Failed to save languages: ' + result.message);
+                                                }
+                                            } catch (e) {
+                                                console.error('Error saving languages:', e);
+                                            }
+                                        }
+                                        else if (this.step === 11 && this.selected === 'one') {
                                             try {
                                                 const smokingAllowed = document.querySelector('#smoking_allowed').checked;
                                                 const petsValue = document.querySelector('input[name="pets_allowed"]:checked')?.value || 'no';
                                                 const partiesAllowed = document.querySelector('#parties_allowed').checked;
+                                                const childrenAllowed = document.querySelector('#children_allowed').checked;
 
                                                 const checkInFromTime = document.querySelector('#check_in_from').value;
                                                 const checkInUntilTime = document.querySelector('#check_in_until').value;
@@ -3365,12 +3530,13 @@
                                                     body: JSON.stringify({
                                                         smoking_allowed: smokingAllowed,
                                                         parties_allowed: partiesAllowed,
-                                                        pets_allowed: petsValue , // convert to boolean
+                                                        pets_allowed: petsValue, 
+                                                        children_allowed: childrenAllowed,
                                                         check_in_from: checkInFromTime,
                                                         check_in_until: checkInUntilTime,
                                                         check_out_from: checkOutFromTime,
                                                         check_out_until: checkOutUntilTime,
-                                                        cancellation_policy: 'flexible', // hardcoded for now; you can make this dynamic
+                                                        cancellation_policy: 'flexible', 
                                                         property_id: this.propertyId
                                                     }),
                                                 });
@@ -3385,6 +3551,44 @@
                                                 }
                                             } catch (e) {
                                                 console.error('Error saving policy:', e);
+                                            }
+                                        }else if (this.step === 12 && this.selected === 'one') {
+                                            try {
+                                                // Read selected radio value
+                                                const selectedValue = document.querySelector('input[name="profile-info"]:checked')?.value;
+
+                                                // Initialize flags
+                                                const show_property = selectedValue === 'property';
+                                                const show_host = selectedValue === 'host';
+                                                const show_neighborhood = selectedValue === 'neighbourhood';
+                                                const none_selected = selectedValue === 'later';
+
+                                                // POST the values
+                                                const response = await fetch(`/partner/property/${this.propertyId}/host-profile`, {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                    },
+                                                    body: JSON.stringify({
+                                                        property_id: this.propertyId,
+                                                        show_property,
+                                                        show_host,
+                                                        show_neighborhood,
+                                                        none_selected
+                                                    })
+                                                });
+
+                                                const result = await response.json();
+
+                                                if (result.success) {
+                                                    console.log('Host profile saved:', result);
+                                                    this.step++; // go to next step
+                                                } else {
+                                                    alert('Failed to save host profile: ' + result.message);
+                                                }
+                                            } catch (e) {
+                                                console.error('Error saving host profile:', e);
                                             }
                                         } else if (this.step === 13 && this.selected === 'one') {
                                             console.log('Saving room details for property ID:', this.propertyId);
@@ -3449,7 +3653,7 @@
                                                     console.log(data);
                                                     alert('Partner verification details saved successfully');
                                                     window.location.href = '/partner/list-your-property';
-                                                    
+
                                                 })
                                                 .catch(error => {
                                                     console.error('Error:', error);
@@ -3507,69 +3711,106 @@
                                             console.log('currentUnit:', this.currentUnit);
                                             console.log('propertyCount:', this.propertyCount);
                                             if (this.currentUnit < this.propertyCount) {
-                                                const currentPropertyId = this.propertyId + this.currentUnit-1;
+                                                const currentPropertyId = this.propertyId + this.currentUnit - 1;
 
                                                 console.log('Saving amenities for unit:', this.currentUnit);
 
                                                 fetch(`/save-amenities/${currentPropertyId}`, {
-                                                    method: 'POST',
-                                                    headers: {
-                                                        'Content-Type': 'application/json',
-                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                                                    },
-                                                    body: JSON.stringify({
-                                                        property_id: currentPropertyId,
-                                                        amenities: this.selectedAmenities
+                                                        method: 'POST',
+                                                        headers: {
+                                                            'Content-Type': 'application/json',
+                                                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                        },
+                                                        body: JSON.stringify({
+                                                            property_id: currentPropertyId,
+                                                            amenities: this.selectedAmenities
+                                                        })
                                                     })
-                                                })
-                                                .then(response => response.json())
-                                                .then(data => {
-                                                    if (data.success) {
-                                                        console.log("Amenities saved for property " + currentPropertyId);
-                                                        this.currentUnit++;
-                                                        this.step--;                                                     
-                                                    } 
-                                                    else {
-                                                        console.error("Error:", data.message);
-                                                        alert("Failed to save amenities.");
-                                                    }
-                                                })
-                                                .catch(error => {
-                                                    console.error("Fetch error:", error);
-                                                });
+                                                    .then(response => response.json())
+                                                    .then(data => {
+                                                        if (data.success) {
+                                                            console.log("Amenities saved for property " + currentPropertyId);
+                                                            this.currentUnit++;
+                                                            this.step--;
+                                                        } else {
+                                                            console.error("Error:", data.message);
+                                                            alert("Failed to save amenities.");
+                                                        }
+                                                    })
+                                                    .catch(error => {
+                                                        console.error("Fetch error:", error);
+                                                    });
 
                                                 // Repeat for next unit
-                                            }       
-                                            else {
+                                            } else {
                                                 console.log('Saving amenities for last unit:', this.currentUnit);
-                                                const currentPropertyId = this.propertyId +1;
+                                                const currentPropertyId = this.propertyId + 1;
                                                 fetch(`/save-amenities/${currentPropertyId}`, {
+                                                        method: 'POST',
+                                                        headers: {
+                                                            'Content-Type': 'application/json',
+                                                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                        },
+                                                        body: JSON.stringify({
+                                                            property_id: this.propertyId,
+                                                            amenities: this.selectedAmenities
+                                                        })
+                                                    })
+                                                    .then(response => response.json())
+                                                    .then(data => {
+                                                        if (data.success) {
+                                                            console.log("Amenities saved for property " + currentPropertyId);
+                                                            this.currentUnit = 1;
+                                                            this.step++;
+                                                        } else {
+                                                            console.error("Error:", data.message);
+                                                            alert("Failed to save amenities.");
+                                                        }
+                                                    })
+                                                    .catch(error => {
+                                                        console.error("Fetch error:", error);
+                                                    });
+                                            }
+                                        } else if (this.step === 8 && this.selected === 'multiple') {
+                                            const currentPropertyId = this.propertyId + this.currentUnit - 1;
+                                            const selectedLanguages = this.unitServices[this.currentUnit - 1].languages || [];
+
+                                            // Replace language names with corresponding language IDs
+                                            const languageIds = selectedLanguages.map(lang => {
+                                                const langEntry = this.availableLanguages.find(l => l.name === lang);
+                                                return langEntry ? langEntry.id : null;
+                                            }).filter(id => id !== null);
+
+                                            fetch(`/partner/save-languages/${currentPropertyId}`, {
                                                     method: 'POST',
                                                     headers: {
                                                         'Content-Type': 'application/json',
                                                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                                                     },
                                                     body: JSON.stringify({
-                                                        property_id: this.propertyId,
-                                                        amenities: this.selectedAmenities
+                                                        languages: languageIds
                                                     })
                                                 })
                                                 .then(response => response.json())
                                                 .then(data => {
                                                     if (data.success) {
-                                                        console.log("Amenities saved for property " +currentPropertyId);
-                                                        this.currentUnit=1;
-                                                        this.step++;
+                                                        console.log(`Languages saved for property ${currentPropertyId}:`, data.selected_languages);
+
+                                                        if (this.currentUnit < this.propertyCount) {
+                                                            this.currentUnit++;
+                                                        } else {
+                                                            this.step++;
+                                                            this.currentUnit = 1;
+                                                        }
                                                     } else {
-                                                        console.error("Error:", data.message);
-                                                        alert("Failed to save amenities.");
+                                                        console.error('Error saving languages:', data.message);
+                                                        alert('Failed to save languages.');
                                                     }
                                                 })
                                                 .catch(error => {
-                                                    console.error("Fetch error:", error);
+                                                    console.error('Fetch error:', error);
                                                 });
-                                            }
-                                        }else if (this.step === 9 && this.selected === 'multiple') {
+                                        } else if (this.step === 9 && this.selected === 'multiple') {
                                             console.log('Saving policy for property ID:', this.propertyId);
                                             console.log('currentUnit:', this.currentUnit);
                                             console.log('propertyCount:', this.propertyCount);
@@ -3578,46 +3819,45 @@
                                             const houseRules = this.unitServices[this.currentUnit - 1].houseRules;
 
                                             fetch(`/partner/property/save-policy/${currentPropertyId}`, {
-                                                method: 'POST',
-                                                headers: {
-                                                    'Content-Type': 'application/json',
-                                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                                                },
-                                                body: JSON.stringify({
-                                                    property_id: currentPropertyId,
-                                                    smoking_allowed: houseRules.smokingAllowed,
-                                                    children_allowed: houseRules.childrenAllowed,
-                                                    parties_allowed: houseRules.partiesAllowed,
-                                                    pets_allowed: houseRules.petsPolicy,
-                                                    check_in_from: houseRules.checkInFrom,
-                                                    check_in_until: houseRules.checkInUntil,
-                                                    check_out_from: houseRules.checkOutFrom,
-                                                    check_out_until: houseRules.checkOutUntil,
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                    },
+                                                    body: JSON.stringify({
+                                                        property_id: currentPropertyId,
+                                                        smoking_allowed: houseRules.smokingAllowed,
+                                                        children_allowed: houseRules.childrenAllowed,
+                                                        parties_allowed: houseRules.partiesAllowed,
+                                                        pets_allowed: houseRules.petsPolicy,
+                                                        check_in_from: houseRules.checkInFrom,
+                                                        check_in_until: houseRules.checkInUntil,
+                                                        check_out_from: houseRules.checkOutFrom,
+                                                        check_out_until: houseRules.checkOutUntil,
+                                                    })
+
+
                                                 })
+                                                .then(response => response.json())
+                                                .then(data => {
+                                                    if (data.success) {
+                                                        console.log("Policy saved for property " + currentPropertyId);
 
-
-                                            })
-                                            .then(response => response.json())
-                                            .then(data => {
-                                                if (data.success) {
-                                                    console.log("Policy saved for property " + currentPropertyId);
-                                                    
-                                                    if (this.currentUnit < this.propertyCount) {
-                                                        this.currentUnit++;
-                                                        this.step--; // stay on the same step to show next unit's form
+                                                        if (this.currentUnit < this.propertyCount) {
+                                                            this.currentUnit++;
+                                                        } else {
+                                                            this.currentUnit = 1;
+                                                            this.step++; // move to next step
+                                                        }
                                                     } else {
-                                                        this.currentUnit = 1;
-                                                        this.step++; // move to next step
+                                                        console.error("Error:", data.message);
+                                                        alert("Failed to save policy.");
                                                     }
-                                                } else {
-                                                    console.error("Error:", data.message);
-                                                    alert("Failed to save policy.");
-                                                }
-                                            })
-                                            .catch(error => {
-                                                console.error("Fetch error:", error);
-                                            });
-                                        }else if (this.step === 10 && this.selected === 'multiple') {
+                                                })
+                                                .catch(error => {
+                                                    console.error("Fetch error:", error);
+                                                });
+                                        } else if (this.step === 10 && this.selected === 'multiple') {
                                             const currentPropertyId = this.propertyId + this.currentUnit - 1;
                                             const hostProfile = this.unitServices[this.currentUnit - 1].hostProfile;
 
@@ -3644,48 +3884,50 @@
                                             }
 
                                             fetch(`/partner/property/${currentPropertyId}/host-profile`, {
-                                                method: 'POST',
-                                                headers: {
-                                                    'Content-Type': 'application/json',
-                                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                                                },
-                                                body: JSON.stringify({
-                                                    property_id: currentPropertyId,
-                                                    show_property: show_property,
-                                                    show_host: show_host,
-                                                    show_neighborhood: show_neighborhood,
-                                                    none_selected: none_selected
-                                                })
-                                            })
-                                            .then(response => response.json())
-                                            .then(data => {
-                                                if (data.success) {
-                                                    console.log(`Host profile saved for property ${currentPropertyId}`);
-                                                    if (this.currentUnit < this.propertyCount) {
-                                                        this.currentUnit++;
-                                                    } else {
-                                                        this.currentUnit = 1;
-                                                        this.step++; // move to next step
-                                                    }
-                                                } else {
-                                                    console.error("Error saving host profile:", data.message);
-                                                    alert("Failed to save host profile.");
-                                                }
-                                            })
-                                            .catch(error => {
-                                                console.error("Fetch error:", error);
-                                            });
-                                        }else if (this.step === 11 && this.selected === 'multiple') {
-                                                const currentPropertyId = this.propertyId + this.currentUnit - 1;
-                                                const title = this.formData.propertyName;
-
-                                                fetch(`/property/${currentPropertyId}/update-title`, {
                                                     method: 'POST',
                                                     headers: {
                                                         'Content-Type': 'application/json',
                                                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                                                     },
-                                                    body: JSON.stringify({ title: title })
+                                                    body: JSON.stringify({
+                                                        property_id: currentPropertyId,
+                                                        show_property: show_property,
+                                                        show_host: show_host,
+                                                        show_neighborhood: show_neighborhood,
+                                                        none_selected: none_selected
+                                                    })
+                                                })
+                                                .then(response => response.json())
+                                                .then(data => {
+                                                    if (data.success) {
+                                                        console.log(`Host profile saved for property ${currentPropertyId}`);
+                                                        if (this.currentUnit < this.propertyCount) {
+                                                            this.currentUnit++;
+                                                        } else {
+                                                            this.currentUnit = 1;
+                                                            this.step++; // move to next step
+                                                        }
+                                                    } else {
+                                                        console.error("Error saving host profile:", data.message);
+                                                        alert("Failed to save host profile.");
+                                                    }
+                                                })
+                                                .catch(error => {
+                                                    console.error("Fetch error:", error);
+                                                });
+                                        } else if (this.step === 11 && this.selected === 'multiple') {
+                                            const currentPropertyId = this.propertyId + this.currentUnit - 1;
+                                            const title = this.formData.propertyName;
+
+                                            fetch(`/property/${currentPropertyId}/update-title`, {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                    },
+                                                    body: JSON.stringify({
+                                                        title: title
+                                                    })
                                                 })
                                                 .then(response => response.json())
                                                 .then(data => {
@@ -3707,9 +3949,7 @@
                                                 .catch(error => {
                                                     console.error('Fetch error:', error);
                                                 });
-                                            }
-
-                                        else if (this.step === 12 && this.selected === 'multiple') {
+                                        } else if (this.step === 12 && this.selected === 'multiple') {
                                             const currentPropertyId = this.propertyId + this.currentUnit - 1;
                                             const files = this.$refs.unitPhotoInput.files;
                                             if (files.length > 0) {
@@ -3729,6 +3969,95 @@
                                                     }
                                                 });
                                             }
+
+                                            if (this.currentUnit < this.propertyCount) {
+                                                this.currentUnit++;
+                                            } else {
+                                                this.step++;
+                                                this.currentUnit = 1;
+                                            }
+                                        } else if (this.step === 13 && this.selected === 'multiple') {
+                                            const currentPropertyId = this.propertyId + this.currentUnit - 1;
+
+                                            if (this.rooms.length === 0) {
+                                                alert('Please add at least one room before continuing.');
+                                                return;
+                                            }
+
+                                            const formData = new FormData();
+                                            formData.append('property_id', parseInt(currentPropertyId));
+                                            formData.append('unit_number', this.currentUnit);
+
+                                            this.rooms.forEach((room, index) => {
+                                                formData.append(`rooms[${index}][room_type_id]`, parseInt(room.room_type_id));
+                                                formData.append(`rooms[${index}][name]`, room.name);
+                                                formData.append(`rooms[${index}][price_per_night]`, parseFloat(room.price_per_night));
+                                                formData.append(`rooms[${index}][max_guests]`, parseInt(room.max_guests));
+                                                formData.append(`rooms[${index}][bathroom_count]`, parseInt(room.bathroom_count)); // ✅ fix
+                                                formData.append(`rooms[${index}][size_sq_m]`, parseFloat(room.size_sq_m));
+
+                                                if (room.beds) {
+                                                    Object.keys(room.beds).forEach((bedTypeId) => {
+                                                        formData.append(`rooms[${index}][beds][${bedTypeId}]`, parseInt(room.beds[bedTypeId]));
+                                                    });
+                                                }
+                                            });
+
+
+                                            await fetch(`/partner/save-rooms/${currentPropertyId}`, {
+                                                method: 'POST',
+                                                body: formData,
+                                                headers: {
+                                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                                                }
+                                            });
+
+                                            // Move to next unit or step
+                                            if (this.currentUnit < this.propertyCount) {
+                                                this.currentUnit++;
+                                            } else {
+                                                this.step++;
+                                                this.currentUnit = 1;
+                                            }
+
+                                            // Reset room data for next unit
+                                            this.rooms = [];
+                                        } else if (this.step === 14 && this.selected === 'multiple') {
+                                            const currentPropertyId = this.propertyId + this.currentUnit - 1;
+
+                                            const formData = new FormData();
+                                            formData.append('property_id', currentPropertyId);
+                                            formData.append('type', this.type);
+
+                                            if (this.type === 'individual') {
+                                                formData.append('full_name', this.individual.name);
+                                                formData.append('national_id', this.individual.id);
+                                            } else if (this.type === 'business') {
+                                                formData.append('company_name', this.business.company_name);
+                                                formData.append('registration_number', this.business.reg_no);
+                                            }
+
+                                            await fetch('/partner/partner-verification', {
+                                                    method: 'POST',
+                                                    body: formData,
+                                                    headers: {
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                                                    }
+                                                })
+                                                .then(response => response.json())
+                                                .then(data => {
+                                                    if (data.success) {
+                                                        console.log('Partner verification details saved:', data)
+                                                        window.location.href = '/partner/list-your-property';
+
+                                                    } else {
+                                                        alert('Failed to save partner verification details: ' + data.message)
+                                                    }
+                                                })
+                                                .catch(error => {
+                                                    console.error('Error saving partner verification details:', error)
+                                                    alert('Something went wrong while saving partner verification details.')
+                                                });
 
                                             if (this.currentUnit < this.propertyCount) {
                                                 this.currentUnit++;
@@ -3757,7 +4086,6 @@
                             }
                         </script>
                     </section>
-
 
 
                 </div>
