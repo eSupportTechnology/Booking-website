@@ -410,7 +410,10 @@ Route::prefix('partner')->group(function () {
     Route::post('/property/save-policy/{property}', [PropertyController::class, 'savePolicy']);
     Route::post('/property/save-languages/{property}', [PropertyController::class, 'saveLanguages']);
     Route::post('/save-rooms/{property}', [PropertyController::class, 'saveRooms']);
+    Route::post('/store-verification', [PropertyController::class, 'storePartnerVerification']);
     Route::post('/partner-verification', [PropertyController::class, 'storePartnerVerification']);
+    Route::post('/partner/property/{property}/partner-verification', [PropertyController::class, 'storePartnerVerification']);
+    Route::post('/partner/property/{property}/verification', [PropertyController::class, 'storePartnerVerification']);
 
     // Store accommodation, business entity, individual, and alt name details
     Route::post('/accommodation/store', [PropertyController::class, 'storeAccommodationDetails'])->name('partner.accommodation.store');

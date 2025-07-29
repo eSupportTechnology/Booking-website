@@ -711,6 +711,12 @@ class PropertyController extends Controller
 
             Log::info('Validation passed', ['validated_data' => $validated]);
 
+            // Update the property title with the host name
+            if (!empty($validated['host_name'])) {
+                $property->update(['title' => $validated['host_name']]);
+                Log::info('Property title updated', ['property_id' => $property->id, 'title' => $validated['host_name']]);
+            }
+
             $property->hostProfile()->updateOrCreate(
                 ['property_id' => $property->id],
                 $validated
@@ -742,7 +748,7 @@ class PropertyController extends Controller
                 'property_id' => 'required|exists:properties,id',
                 'booking_type' => 'required|in:instant,request',
                 'price_per_night' => 'nullable|numeric|min:0',
-                'currency' => 'required|in:usd,eur,gbp',
+                'currency' => 'nullable|in:usd,eur,gbp',
                 'discount_enabled' => 'boolean',
                 'discount_percent' => 'nullable|integer|min:0|max:100'
             ]);
@@ -750,6 +756,12 @@ class PropertyController extends Controller
                 'property_id' => $property->id,
                 'validated' => $validated
             ]);
+            
+            // Set default currency if not provided
+            if (!isset($validated['currency'])) {
+                $validated['currency'] = 'usd';
+            }
+            
             Log::info('Before updateOrCreate', [
                 'property_id' => $property->id
             ]);

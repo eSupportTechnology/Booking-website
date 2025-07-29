@@ -61,6 +61,69 @@
     channelManager: 'yes',
     
     // Methods
+    async savePropertyName() {
+        try {
+            const propertyId = @json($property->id ?? 'new');
+            const propertyName = document.getElementById('property_name').value;
+            
+            const response = await fetch(`/property/${propertyId}/update-title`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    title: propertyName
+                })
+            });
+            
+            if (response.ok) {
+                console.log('Property name saved successfully');
+                this.step = Math.min(this.step + 1, 13);
+            } else {
+                console.error('Failed to save property name');
+                const errorData = await response.json();
+                console.error('Error details:', errorData);
+            }
+        } catch (error) {
+            console.error('Error saving property name:', error);
+        }
+    },
+
+    async saveBookingOption() {
+        try {
+            const propertyId = @json($property->id ?? 'new');
+            const response = await fetch(`/partner/property/${propertyId}/pricing`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    property_id: propertyId,
+                    booking_type: this.bookingOption
+                })
+            });
+            
+            if (response.ok) {
+                console.log('Booking option saved successfully');
+                this.step = Math.min(this.step + 1, 13);
+            } else {
+                console.error('Failed to save booking option');
+                const errorData = await response.json();
+                console.error('Error details:', errorData);
+            }
+        } catch (error) {
+            console.error('Error saving booking option:', error);
+        }
+    },
+
+    savePartnerVerification() {
+        savePartnerVerificationFromStep11(this);
+    },
+
     async saveAddress() {
         try {
             const propertyId = @json($property->id ?? 'new');
@@ -1432,7 +1495,7 @@
                                                                     <!-- Continue Button -->
                                                                     <!-- Continue Button (inside input field container, aligned right) -->
                                                                     <div class="flex justify-end mt-4">
-                                                                        <button type="submit"     @click="step = Math.min(step + 1, 13)"
+                                                                        <button type="submit"     @click="savePropertyName()"
                                                                             class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
                                                                             Continue
                                                                         </button>
@@ -1562,7 +1625,7 @@
                                                                 </button>
 
                                                                 <!-- Continue Button on the right -->
-                                                                <button type="button"     @click="step = Math.min(step + 1, 13)"
+                                                                <button type="button"     @click="saveBookingOption()"
                                                                     class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
                                                                     Continue
                                                                 </button>
@@ -1573,7 +1636,7 @@
                                                     </div>
 </template>
 <template x-if="step === 11">
-     <div class="px-4 py-8 mt-6 w-full max-w-2xl mx-auto lg:ml-24 space-y-6" x-data="{ ownershipType: '', owners: [{ firstName: '', lastName: '', dob: '' }] }">
+     <div class="px-4 py-8 mt-6 w-full max-w-2xl mx-auto lg:ml-24 space-y-6" x-data="{ ownershipType: '', individual: { firstName: '', lastName: '', dob: '', altNames: [] }, business: { businessName: '', tradingName: '', address: '', zipCode: '', city: '', country: '', owners: [{ firstName: '', lastName: '', dob: '', altNames: [] }] } }">
 
             <h2 class="text-3xl font-bold text-gray-800">Partner verification</h2>
 
@@ -1597,164 +1660,107 @@
             </div>
 
             <!-- Individual Form -->
-            <div x-show="ownershipType === 'individual'" x-transition class="bg-white p-6 rounded-lg  space-y-4">
-
+            <div x-show="ownershipType === 'individual'" x-transition class="bg-white p-6 rounded-lg space-y-4">
                 <p class="text-sm text-gray-800">
-                    Please provide the full names and dates of birth of all individuals who own 25% or more of the
-                    accommodation.
+                    Please provide the full names and dates of birth of the individual who owns the accommodation.
                 </p>
-
-                <!-- Owner Input Blocks -->
-                <template x-for="(owner, index) in owners" :key="index">
-                    <div class="border p-4 rounded-lg space-y-4 bg-white">
-                        <div>
-                            <label class="block  text-sm font-semibold text-gray-600">First Name</label>
-                            <input type="text" x-model="owner.firstName" placeholder="First Name"
-                                class="w-full p-2 border rounded text-sm" />
-                        </div>
-
-                        <div>
-                            <label class="block  text-sm font-semibold text-gray-600">Last Name</label>
-                            <input type="text" x-model="owner.lastName" placeholder="Last Name"
-                                class="w-full p-2 border rounded text-sm" />
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-600 mb-2">Date of Birth</label>
-                            <input type="date" x-model="owner.dob"
-                                class="w-full p-2 border rounded text-sm focus:outline-none focus:ring-2 focus:ring-sky-200" />
-                        </div>
-
-                        <div x-show="owners.length > 1" class="text-right">
-                            <button @click="owners.splice(index, 1)" class="text-red-600 text-sm hover:underline">
-                                Remove
-                            </button>
-                        </div>
+                <div class="border p-4 rounded-lg space-y-4 bg-white">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600">First Name</label>
+                        <input type="text" x-model="individual.firstName" placeholder="First Name" class="w-full p-2 border rounded text-sm" />
                     </div>
-                </template>
-
-                <!-- Add Another Owner -->
-                <div>
-                    <button @click="owners.push({ firstName: '', lastName: '', dob: '' })" type="button"
-                        class="text-sky-600 text-sm font-medium hover:underline mt-2">
-                        + Add another
-                    </button>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600">Last Name</label>
+                        <input type="text" x-model="individual.lastName" placeholder="Last Name" class="w-full p-2 border rounded text-sm" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-2">Date of Birth</label>
+                        <input type="date" x-model="individual.dob" class="w-full p-2 border rounded text-sm focus:outline-none focus:ring-2 focus:ring-sky-200" />
+                    </div>
+                    <!-- Alt names if needed -->
+                    <div>
+                        <label class="block font-semibold text-sm text-gray-600">
+                            If the owner goes by an alternative name or names, please provide those details.
+                            <span class="text-gray-500">- (Optional)</span>
+                        </label>
+                        <input type="text" x-model="individual.altNames[0]" class="w-full p-2 border rounded text-sm" />
+                    </div>
                 </div>
-                <!-- Single Optional Field Outside Loop -->
-                <div>
-                    <label class="block font-semibold text-sm text-gray-600">
-                        If any owners go by an alternative name or names, please provide those details.
-                        <span class="text-gray-500">- (Optional)</span>
-                    </label>
-                    <input type="text" class="w-full p-2 border rounded text-sm" />
-                </div>
-
-
             </div>
 
             <!-- Business Form -->
-            <div x-show="ownershipType === 'business'" x-transition
-                class="bg-white p-6 rounded-lg shadow border space-y-4">
-
-
+            <div x-show="ownershipType === 'business'" x-transition class="bg-white p-6 rounded-lg shadow border space-y-4">
                 <div class="border p-4 rounded-lg space-y-4 bg-white">
-
                     <div>
-                        <label class="block  text-sm font-semibold text-gray-600">Full name of business entity</label>
-                        <input type="text" x-model="owner.firstName" placeholder="First Name"
-                            class="w-full p-2 border rounded text-sm" />
-                    </div>
-
-                    <div>
-                        <label class="block  text-sm font-semibold text-gray-600">Address of business entity</label>
-                        <input type="text" x-model="owner.address" placeholder="Address"
-                            class="w-full p-2 border rounded text-sm" />
-                    </div>
-
-                    <div>
-                        <label class="block  text-sm font-semibold text-gray-600">Zip Code</label>
-                        <input type="text" x-model="owner.zipCode" placeholder="Zip Code"
-                            class="w-full p-2 border rounded text-sm" />
+                        <label class="block text-sm font-semibold text-gray-600">Full name of business entity</label>
+                        <input type="text" x-model="business.businessName" placeholder="Business Name" class="w-full p-2 border rounded text-sm" />
                     </div>
                     <div>
-                        <label class="block  text-sm font-semibold text-gray-600">City</label>
-                        <input type="text" x-model="owner.city" placeholder="City"
-                            class="w-full p-2 border rounded text-sm" />
+                        <label class="block text-sm font-semibold text-gray-600">Trading Name (optional)</label>
+                        <input type="text" x-model="business.tradingName" placeholder="Trading Name" class="w-full p-2 border rounded text-sm" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600">Address of business entity</label>
+                        <input type="text" x-model="business.address" placeholder="Address" class="w-full p-2 border rounded text-sm" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600">Zip Code</label>
+                        <input type="text" x-model="business.zipCode" placeholder="Zip Code" class="w-full p-2 border rounded text-sm" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600">City</label>
+                        <input type="text" x-model="business.city" placeholder="City" class="w-full p-2 border rounded text-sm" />
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-gray-600">Country</label>
-                        <select x-model="owner.country" class="w-full p-2 border rounded text-sm">
+                        <select x-model="business.country" class="w-full p-2 border rounded text-sm">
                             <option value="">Select a country</option>
                             <option value="Sri Lanka">Sri Lanka</option>
                             <option value="India">India</option>
                             <option value="United States">United States</option>
                             <option value="United Kingdom">United Kingdom</option>
                             <option value="Australia">Australia</option>
-                            <!-- Add more countries as needed -->
                         </select>
                     </div>
-
-
-
                     <div>
                         <label class="block font-semibold text-sm text-gray-600">
-                            If the company operates under a different name (e.g. "trading as" name) in relation to the
-                            accommodation, please provide those details.
+                            If the company operates under a different name (e.g. "trading as" name) in relation to the accommodation, please provide those details.
                             <span class="text-gray-500">- (Optional)</span>
                         </label>
-                        <input type="text" class="w-full p-2 border rounded text-sm" />
+                        <input type="text" x-model="business.tradingName" class="w-full p-2 border rounded text-sm" />
                     </div>
-
-
-
                 </div>
                 <p class="text-sm text-gray-800">
-                    Please provide the full names and dates of birth of all individuals who own 25% or more of the
-                    accommodation.
+                    Please provide the full names and dates of birth of all individuals who own 25% or more of the accommodation.
                 </p>
-                <!-- Owner Input Blocks -->
-                <template x-for="(owner, index) in owners" :key="index">
+                <template x-for="(owner, index) in business.owners" :key="index">
                     <div class="border p-4 rounded-lg space-y-4 bg-white">
                         <div>
-                            <label class="block  text-sm font-semibold text-gray-600">First Name</label>
-                            <input type="text" x-model="owner.firstName" placeholder="First Name"
-                                class="w-full p-2 border rounded text-sm" />
+                            <label class="block text-sm font-semibold text-gray-600">First Name</label>
+                            <input type="text" x-model="owner.firstName" placeholder="First Name" class="w-full p-2 border rounded text-sm" />
                         </div>
-
                         <div>
-                            <label class="block  text-sm font-semibold text-gray-600">Last Name</label>
-                            <input type="text" x-model="owner.lastName" placeholder="Last Name"
-                                class="w-full p-2 border rounded text-sm" />
+                            <label class="block text-sm font-semibold text-gray-600">Last Name</label>
+                            <input type="text" x-model="owner.lastName" placeholder="Last Name" class="w-full p-2 border rounded text-sm" />
                         </div>
-
                         <div>
                             <label class="block text-sm font-semibold text-gray-600 mb-2">Date of Birth</label>
-                            <input type="date" x-model="owner.dob"
-                                class="w-full p-2 border rounded text-sm focus:outline-none focus:ring-2 focus:ring-sky-200" />
+                            <input type="date" x-model="owner.dob" class="w-full p-2 border rounded text-sm focus:outline-none focus:ring-2 focus:ring-sky-200" />
                         </div>
-
-                        <div x-show="owners.length > 1" class="text-right">
-                            <button @click="owners.splice(index, 1)" class="text-red-600 text-sm hover:underline">
-                                Remove
-                            </button>
+                        <div>
+                            <label class="block font-semibold text-sm text-gray-600">
+                                If any owners go by an alternative name or names, please provide those details.
+                                <span class="text-gray-500">- (Optional)</span>
+                            </label>
+                            <input type="text" x-model="owner.altNames[0]" class="w-full p-2 border rounded text-sm" />
+                        </div>
+                        <div x-show="business.owners.length > 1" class="text-right">
+                            <button @click="business.owners.splice(index, 1)" type="button" class="text-red-600 text-sm hover:underline">Remove</button>
                         </div>
                     </div>
                 </template>
-
-                <!-- Add Another Owner -->
                 <div>
-                    <button @click="owners.push({ firstName: '', lastName: '', dob: '' })" type="button"
-                        class="text-sky-600 text-sm font-medium hover:underline mt-2">
-                        + Add another
-                    </button>
-                </div>
-                <!-- Single Optional Field Outside Loop -->
-                <div>
-                    <label class="block font-semibold text-sm text-gray-600">
-                        If any owners go by an alternative name or names, please provide those details.
-                        <span class="text-gray-500">- (Optional)</span>
-                    </label>
-                    <input type="text" class="w-full p-2 border rounded text-sm" />
+                    <button @click="business.owners.push({ firstName: '', lastName: '', dob: '', altNames: [] })" type="button" class="text-sky-600 text-sm font-medium hover:underline mt-2">+ Add another owner</button>
                 </div>
             </div>
 
@@ -1765,7 +1771,7 @@
 
                     ←
                 </button>
-                <button     @click="step = Math.min(step + 1, 13)"
+                <button     @click="savePartnerVerification()"
                     class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition ">
                     Continue
                 </button>
@@ -2237,6 +2243,61 @@ You will be able to add more apartments or duplicate this one when you finish fi
                                     }
                                 } catch (error) {
                                     console.error('Error saving house rules:', error);
+                                }
+                            }
+
+                            // Function to save partner verification from step 11
+                            async function savePartnerVerificationFromStep11(alpineData) {
+                                try {
+                                    const propertyId = {{ $property->id ?? 'null' }};
+                                    
+                                    // Get the step 11 data
+                                    const step11Element = document.querySelector('[x-data*="ownershipType"]');
+                                    if (!step11Element) {
+                                        console.error('Could not find step 11 element');
+                                        return;
+                                    }
+                                    
+                                    const step11Data = Alpine.$data(step11Element);
+                                    let verificationData = {
+                                        property_id: propertyId,
+                                        type: step11Data.ownershipType
+                                    };
+                                    
+                                    if (step11Data.ownershipType === 'individual') {
+                                        // For individual, use individual data
+                                        if (step11Data.individual) {
+                                            verificationData.full_name = `${step11Data.individual.firstName} ${step11Data.individual.lastName}`.trim();
+                                            verificationData.national_id = step11Data.individual.dob; // Using DOB as national_id for now
+                                        }
+                                    } else if (step11Data.ownershipType === 'business') {
+                                        // For business, use business data
+                                        if (step11Data.business) {
+                                            verificationData.company_name = step11Data.business.businessName;
+                                            verificationData.registration_number = step11Data.business.address; // Using address as registration_number for now
+                                        }
+                                    }
+                                    
+                                    const response = await fetch(`/partner/store-verification`, {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'Accept': 'application/json',
+                                            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                                        },
+                                        body: JSON.stringify(verificationData)
+                                    });
+                                    
+                                    if (response.ok) {
+                                        console.log('Partner verification saved successfully');
+                                        alpineData.step = Math.min(alpineData.step + 1, 13);
+                                    } else {
+                                        console.error('Failed to save partner verification');
+                                        const errorData = await response.json();
+                                        console.error('Error details:', errorData);
+                                    }
+                                } catch (error) {
+                                    console.error('Error saving partner verification:', error);
                                 }
                             }
 
