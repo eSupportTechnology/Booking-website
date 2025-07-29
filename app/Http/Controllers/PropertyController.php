@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use App\DTOs\Partner\PropertyStep1DTO;
 use App\DTOs\Partner\PropertyStep2DTO;
+
+
 use Illuminate\Support\Facades\DB;
 use App\Models\PropertyCategory;
 use App\DTOs\Partner\PropertyAdditionalDetailsDTO;
@@ -25,6 +27,9 @@ use App\DTOs\Partner\UploadPropertyPhotosDTO;
 use App\DTOs\Partner\PartnerVerificationDTO;
 use App\DTOs\Partner\SaveLanguagesDTO;
 use App\DTOs\Partner\SaveAddressSameDTO;
+use App\DTOs\Partner\PropertyServiceDTO;
+use App\DTOs\Partner\SaveServicesDTO;
+use App\DTOs\Partner\SaveHouseRulesDTO;
 use App\Models\Room;
 use App\Models\PartnerVerification;
 use App\Models\Language;
@@ -107,13 +112,13 @@ class PropertyController extends Controller
 
     public function rooms($categoryId, PropertyAction $action)
     {
-       $subcategories = $action->getPropertiesByCategory($categoryId);
+        $subcategories = $action->getPropertiesByCategory($categoryId);
         $amenities = $action->getAmenities();
         $roomTypes = $action->getRoomTypes();
         $bedTypes = $action->getBedTypes();
         $languages = $action->getLanguages();
 
-         switch ($categoryId) {
+        switch ($categoryId) {
             case 3:  // Hotel
                 if ($subcategories->isEmpty()) {
                     return redirect()->back()->withErrors(['error' => 'No subcategories found for this category.']);
@@ -156,7 +161,23 @@ class PropertyController extends Controller
     {
         switch ($category) {
             case 'apartment':
-                return view('partner.partner-apartment-create-form-1');
+                // Hardcode subcategories for Apartment
+                $subcategories = collect([
+                    (object)[
+                        'id' => 1,
+                        'category_id' => 2,
+                        'name' => 'One',
+                    ],
+                    (object)[
+                        'id' => 2,
+                        'category_id' => 2,
+                        'name' => 'Multiple',
+                    ],
+                ]);
+                return view('partner.partner-apartment-create-form-1', [
+                    'subcategories' => $subcategories,
+                    'category' => 'apartment',
+                ]);
             case 'home':
                 return view('partner.partner-home-create-form-1');
             default:
@@ -170,6 +191,11 @@ class PropertyController extends Controller
             'request' => $request->all(),
             'session' => session()->all(),
             'partner_id' => $request->input('partner_id'),
+            'address_type_id' => $request->input('address_type_id'),
+            'expects_json' => $request->expectsJson(),
+            'is_ajax' => $request->ajax(),
+            'method' => $request->method(),
+            'url' => $request->url(),
         ]);
 
         $category = $request->input('category_id');
@@ -373,15 +399,35 @@ class PropertyController extends Controller
 
     public function saveAmenities(Request $request, Property $property, PropertyAction $propertyAction)
     {
-        Log::info('saveAmenities called', [
-            'property_id' => $property->id,
-            'request' => $request->all(),
-        ]);
-        $dto = SaveAmenitiesDTO::fromRequest($request);
+        try {
+            Log::info('saveAmenities called', [
+                'property_id' => $property->id,
+                'request' => $request->all(),
+            ]);
+        
+              
+        try {
+            $dto = SaveAmenitiesDTO::fromRequest($request);
+            Log::info('SaveAmenitiesDTO created:', ['amenities' => $dto->amenities]);
+            Log::info('saveAmenities validated', $dto->toArray());            Log::info('SaveAmenitiesDTO created:', ['amenities' => $dto->amenities]);
 
-        $propertyAction->saveAmenities($property, $dto);
+                $propertyAction->saveAmenities($property, $dto);
 
-        return response()->json(['success' => true]);
+                return response()->json(['success' => true, 'message' => 'Amenities saved successfully']);
+        } catch (\Exception $e) {
+            Log::error('Error saving amenities:', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+        } catch (\Exception $e) {
+            Log::error('saveAmenities error', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
 
@@ -435,6 +481,9 @@ class PropertyController extends Controller
     public function storePartnerVerification(Request $request, PropertyAction $propertyAction)
     {
         try {
+            Log::info('storePartnerVerification called', [
+                'request' => $request->all(),
+            ]);
             $dto = PartnerVerificationDTO::fromRequest($request);
 
             $propertyAction->partnerVerification($dto);
@@ -482,6 +531,34 @@ class PropertyController extends Controller
         return response()->json(['success' => true, 'message' => 'Bedroom saved successfully.']);
     }
 
+    public function showMultipleApartmentForm($property = null, PropertyAction $action)
+    {
+        Log::info('showMultipleApartmentForm called', [
+            'property_param' => $property,
+            'property_type' => gettype($property)
+        ]);
+        
+        // If property is a numeric ID, fetch the property, otherwise set to null
+        if ($property && is_numeric($property)) {
+            $property = \App\Models\Property::find($property);
+        } else {
+            $property = null;
+        }
+        
+        $amenities = $action->getAmenities();
+        $languages = $action->getLanguages();
+        
+        Log::info('showMultipleApartmentForm returning', [
+            'property_id' => $property ? $property->id : null,
+            'amenities_count' => $amenities->count(),
+            'amenities' => $amenities->toArray(),
+            'languages_count' => $languages->count(),
+            'languages' => $languages->toArray()
+        ]);
+        
+        return view('partner.partner-multiple-apartment', compact('property', 'amenities', 'languages'));
+    }
+
     /**
      * Get all available languages for the dropdown
      */
@@ -495,33 +572,33 @@ class PropertyController extends Controller
      * Save selected languages for a property
      */
     public function saveLanguages(Request $request, Property $property, PropertyAction $propertyAction)
-{
-    Log::info('saveLanguages called', [
-        'property_id' => $property->id,
-        'request' => $request->all(),
-    ]);
-
-    try {
-        $dto = SaveLanguagesDTO::fromRequest($request);
-        $propertyAction->saveLanguages($property, $dto);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Languages saved successfully.',
-            'selected_languages' => $property->languages()->pluck('name')->toArray()
-        ]);
-    } catch (\Exception $e) {
-        Log::error('Error saving languages', [
-            'message' => $e->getMessage(),
-            'trace' => $e->getTraceAsString(),
+    {
+        Log::info('saveLanguages called', [
+            'property_id' => $property->id,
+            'request' => $request->all(),
         ]);
 
-        return response()->json([
-            'success' => false,
-            'message' => $e->getMessage()
-        ], 500);
+        try {
+            $dto = SaveLanguagesDTO::fromRequest($request);
+            $propertyAction->saveLanguages($property, $dto);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Languages saved successfully.',
+                'selected_languages' => $property->languages()->pluck('name')->toArray()
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error saving languages', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
-}
 
     /**
      * Save additional details including languages (for the saveAdditionalDetails method)
@@ -612,6 +689,13 @@ class PropertyController extends Controller
 
     public function saveHostProfile(Request $request, Property $property)
     {
+        Log::info('saveHostProfile called', [
+            'property_id' => $property->id,
+            'request_data' => $request->all(),
+            'request_method' => $request->method(),
+            'content_type' => $request->header('Content-Type')
+        ]);
+
         try {
             $validated = $request->validate([
                 'property_id' => 'required|exists:properties,id',
@@ -625,6 +709,8 @@ class PropertyController extends Controller
                 'host_name' => 'nullable|string|max:255'
             ]);
 
+            Log::info('Validation passed', ['validated_data' => $validated]);
+
             $property->hostProfile()->updateOrCreate(
                 ['property_id' => $property->id],
                 $validated
@@ -634,7 +720,13 @@ class PropertyController extends Controller
 
             return response()->json(['success' => true, 'message' => 'Host profile saved successfully']);
         } catch (\Exception $e) {
-            Log::error('Error saving host profile', ['error' => $e->getMessage(), 'property_id' => $property->id]);
+            Log::error('Error saving host profile', [
+                'error' => $e->getMessage(),
+                'property_id' => $property->id,
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
             return response()->json(['success' => false, 'message' => 'Error saving host profile: ' . $e->getMessage()], 500);
         }
     }
@@ -679,4 +771,150 @@ class PropertyController extends Controller
             return response()->json(['success' => false, 'message' => 'Error saving pricing: ' . $e->getMessage()], 500);
         }
     }
+
+
+
+    public function showHomesForm2($id,$subtype)
+    {
+        try {
+            Log::info('showHomesForm2 called', ['id' => $id]);
+            $property = Property::findOrFail($id);
+            Log::info('Property found', ['property_id' => $property->id]);
+            $property_subtype = PropertySubtype::findOrFail($subtype);
+            Log::info('Property subtype found', ['subtype_id' => $property_subtype->id, 'name' => $property_subtype->name]);
+    
+            // Return the view with the property data
+            return view('partner.partner-homes-form-2', compact('property', 'property_subtype'));
+        } catch (\Exception $e ) {
+            Log::error('Error in showHomesForm2', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function showPrivateHomesSingle(Request $request, PropertyAction $action)
+    {
+        $propertyId = $request->input('propertyId');
+        $subtypeId = $request->input('subtypeId');
+        $amenities = $action->getAmenities();
+        $languages = $action->getLanguages();
+
+        return view('partner.partner-homes-single', compact('propertyId', 'subtypeId', 'amenities', 'languages'));
+    }
+
+    public function showPrivateHomesMultiple(Request $request)
+    {
+        $propertyId = $request->input('propertyId');
+        $subtypeId = $request->input('subtypeId');
+
+        return view('partner.partner-homes-multiple', compact('propertyId', 'subtypeId'));
+    }
+
+    public function saveServices(Request $request, Property $property, PropertyAction $propertyAction)
+    {
+        Log::info('saveServices called', [
+            'property_id' => $property->id,
+            'request' => $request->all(),
+            'request_method' => $request->method(),
+            'content_type' => $request->header('Content-Type'),
+            'url' => $request->url(),
+        ]);
+
+        try {
+            $dto = SaveServicesDTO::fromRequest($request);
+            Log::info('DTO created successfully', [
+                'dto_data' => $dto->toArray()
+            ]);
+            
+            $propertyAction->saveServices($property, $dto);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Services saved successfully.',
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error saving services', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function saveHouseRules(Request $request, Property $property, PropertyAction $propertyAction)
+    {
+        Log::info('saveHouseRules called', [
+            'property_id' => $property->id,
+            'request' => $request->all(),
+            'request_method' => $request->method(),
+            'content_type' => $request->header('Content-Type'),
+            'url' => $request->url(),
+        ]);
+
+        try {
+            // Log the raw request data
+            Log::info('Raw request data', [
+                'all' => $request->all(),
+                'json' => $request->json()->all(),
+                'input' => $request->input(),
+            ]);
+            
+            $dto = SaveHouseRulesDTO::fromRequest($request);
+            Log::info('DTO created successfully', [
+                'dto_data' => $dto->toArray()
+            ]);
+            
+            $propertyAction->saveHouseRules($property, $dto);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'House rules saved successfully.',
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error saving house rules', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
+    public function showPrivateHomesRooms($propertyId)
+    {
+       $property = Property::findOrFail($propertyId);
+        return view('partner.partner-homes-rooms', compact('property'));
+    }
+
+    public function showPrivateHomesImages($propertyId)
+    {
+       $property = Property::findOrFail($propertyId);
+        return view('partner.partner-homes-images', compact('property'));
+    }
+
+    public function showPrivateHomesPayments($propertyId)
+    {
+        $property = Property::findOrFail($propertyId);
+        return view('partner.partner-homes-payments', compact('property'));
+    }
+
+    public function showPrivateHomesEdit($propertyId)
+    {
+        $property = Property::findOrFail($propertyId);
+        return view('partner.partner-homes-edit', compact('property'));
+    }
+
+
 }

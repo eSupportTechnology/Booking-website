@@ -30,8 +30,65 @@
         <!-- Add CSRF token meta tag -->
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <form method="POST" action="{{ route('partner.property.step1.store', ['category' => $category]) }}"
-            class=" p-6 rounded-lg  space-y-6" enctype="multipart/form-data">
+        <form method="POST" action="{{ route('partner.property.step1.store_new') }}"
+            class=" p-6 rounded-lg  space-y-6" enctype="multipart/form-data"             @submit="
+                console.log('Form submit event triggered');
+                // Ensure addressTypeId is set correctly before submission
+                if (selected === 'One') {
+                    addressTypeId = 1;
+                } else if (selected === 'Multiple') {
+                    if (sameAddress === 'no') {
+                        addressTypeId = 3;
+                    } else {
+                        addressTypeId = 2;
+                    }
+                }
+                console.log('Form submission - selected:', selected, 'sameAddress:', sameAddress, 'addressTypeId:', addressTypeId);
+                console.log('Form action:', event.target.action);
+                console.log('Form data being submitted:', {
+                    categoryId: categoryId,
+                    subcategoryId: subcategoryId,
+                    propertyCount: propertyCount,
+                    addressTypeId: addressTypeId,
+                    selectedChannels: selectedChannels
+                });
+                
+                // For multiple apartments with same address, we need to handle the redirect after form submission
+                console.log('Checking condition - selected:', selected, 'sameAddress:', sameAddress);
+                console.log('Condition result:', selected === 'Multiple' && sameAddress === 'yes');
+                
+                if (selected === 'Multiple' && sameAddress === 'yes') {
+                    console.log('AJAX submission triggered');
+                    // Prevent default form submission and handle it manually
+                    event.preventDefault();
+                    
+                    // Submit form via AJAX
+                    const formData = new FormData(event.target);
+                    fetch(event.target.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
+                            'Accept': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Form submission response:', data);
+                        if (data.success) {
+                            // Redirect to multiple apartment form with property ID
+                            console.log('Redirecting to multiple apartment form with property ID:', data.property_id);
+                            window.location.href = '/partner/partner-multiple-apartment/' + data.property_id;
+                        } else {
+                            alert('Error: ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred while saving the property.');
+                    });
+                }
+            ">
             @csrf
 
             <!-- Hidden fields for DTO data -->
@@ -65,7 +122,7 @@
                                     :class="selected === '{{ $subcategory->name }}' ? 'border-blue-600 border-2' :
                                         'border border-gray-300'"
                                     class="block rounded p-4 cursor-pointer transition bg-white"
-                                    @click="selected = '{{ $subcategory->name }}'; subcategoryId = {{ $subcategory->id }}; categoryId = {{ $subcategory->category_id ?? 'null' }}">
+                                    @click="selected = '{{ $subcategory->name }}'; subcategoryId = {{ $subcategory->id }}; categoryId = {{ $subcategory->category_id ?? 'null' }}; addressTypeId = {{ $subcategory->name === 'One' ? 1 : 2 }}">
                                     <div class="flex items-center justify-between">
                                         <div class="flex items-center space-x-4">
                                             @if ($subcategory->name === 'One')
@@ -100,7 +157,7 @@
                             <label
                                 :class="sameAddress === 'yes' ? 'border-blue-600 border-2' : 'border border-gray-300'"
                                 class="block rounded p-4 cursor-pointer bg-white"
-                                @click="sameAddress = 'yes'; addressTypeId = 1">
+                                @click="sameAddress = 'yes'; addressTypeId = 2">
                                 <div class="flex items-center space-x-4">
                                     <img src="{{ asset('images/accomm_single_address@2x.png') }}"
                                         alt="Multiple Apartments" class="w-10 h-10" />
@@ -112,7 +169,7 @@
                             <label
                                 :class="sameAddress === 'no' ? 'border-blue-600 border-2' : 'border border-gray-300'"
                                 class="block rounded p-4 cursor-pointer bg-white"
-                                @click="sameAddress = 'no'; addressTypeId = 2">
+                                @click="sameAddress = 'no'; addressTypeId = 3">
                                 <div class="flex items-center space-x-4">
                                     <img src="{{ asset('images/accomm_multiple_address@2x.png') }}"
                                         alt="Multiple Apartments" class="w-14 h-10" />
@@ -209,8 +266,12 @@
 
                     <!-- Buttons -->
                     <div class="space-y-2">
-                        <button type="button"
-                            @click="window.location.href = '/partner/partner-multiple-apartment'"
+                        <button type="submit" x-show="sameAddress === 'yes'"
+                            class="w-full bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded">
+                            Continue
+                        </button>
+                        <button type="button" x-show="sameAddress === 'no'"
+                            @click="step = 4"
                             class="w-full bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded">
                             Continue
                         </button>
@@ -232,11 +293,11 @@
                 }" class="bg-white max-w-xl w-full p-6 rounded-lg shadow space-y-6">
 
                     <!-- Title -->
-                    <h2 class="text-2xl font-bold text-gray-900">Where else is your property listed?</h2>
+                    <h2 class="text-2xl font-bold text-gray-900" x-text="selected === 'Multiple' && sameAddress === 'no' ? 'Where else are your properties listed?' : 'Where else is your property listed?'"></h2>
 
                     <!-- Info -->
                     <p class="text-sm text-gray-700">
-                        If your property is listed on Airbnb or Vrbo, you can speed up registration by importing it
+                        <span x-text="selected === 'Multiple' && sameAddress === 'no' ? 'If your properties are listed on Airbnb or Vrbo, you can speed up registration by importing them' : 'If your property is listed on Airbnb or Vrbo, you can speed up registration by importing it'"></span>
                         directly to {{ config('domains.subdomain') }}.
                     </p>
 
@@ -266,7 +327,7 @@
                             :class="{ 'text-gray-900': !selectedChannels.length }">
                             <input type="checkbox" value="None" x-model="selectedChannels"
                                 class="form-checkbox h-5 w-5 text-blue-600" :disabled="selectedChannels.length > 0">
-                            <span>My property isn't listed on any other websites</span>
+                            <span x-text="selected === 'Multiple' && sameAddress === 'no' ? 'My properties aren\'t listed on any other websites' : 'My property isn\'t listed on any other websites'"></span>
                         </label>
                     </div>
 
@@ -274,8 +335,7 @@
                     <div x-show="showImportSection" x-transition class="border-t pt-6 space-y-4">
                         <h3 class="font-semibold text-gray-800">Import property details from Airbnb or Vrbo</h3>
 
-                        <label class="block text-sm font-medium text-gray-700">Paste the link to your Airbnb or Vrbo
-                            listing</label>
+                        <label class="block text-sm font-medium text-gray-700" x-text="selected === 'Multiple' && sameAddress === 'no' ? 'Paste the links to your Airbnb or Vrbo listings' : 'Paste the link to your Airbnb or Vrbo listing'"></label>
                         <div x-data="{ url: '' }" class="flex gap-2">
                             <input type="url" x-model="url" :disabled="true"
                                 class="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring focus:border-blue-400"
@@ -292,14 +352,14 @@
                             Example links:<br>
                             https://www.airbnb.com/rooms/xxxxxxx<br>
                             https://www.vrbo.com/xxxxxx
+                            <span x-show="selected === 'Multiple' && sameAddress === 'no'"><br><em>Note: You can add multiple property links during the next steps.</em></span>
                         </p>
-                        <a href="#" class="text-blue-600 text-sm hover:underline">Where can I find this
-                            link?</a>
+                        <a href="#" class="text-blue-600 text-sm hover:underline" x-text="selected === 'Multiple' && sameAddress === 'no' ? 'Where can I find these links?' : 'Where can I find this link?'"></a>
                     </div>
 
                     <!-- Navigation Buttons -->
                     <div class="flex items-center justify-between pt-4">
-                        <button type="button" @click="step = 2"
+                        <button type="button" @click="selected === 'Multiple' && sameAddress === 'no' ? step = 3 : step = 2"
                             class="border border-[#3CC0E9] text-blue-600 hover:bg-[#29ACD5] font-semibold py-2 px-4 rounded">
                             ←
                         </button>
@@ -314,6 +374,8 @@
                 </div>
             </div>
             <!--Main Step 4 End-->
+
+
 
         </form>
     </div>

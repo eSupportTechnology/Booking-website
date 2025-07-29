@@ -120,7 +120,7 @@
                     <!-- Done Button -->
                     <div class="mt-4 text-right">
                         <button @click="open = false"
-                            class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">
+                            class="bg-[#3CC0E9] text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">
                             Done
                         </button>
                     </div>
@@ -198,7 +198,7 @@
 
                     <!-- Done Button -->
                     <button type="button" @click="open = false"
-                        class="block w-full text-center bg-white border border-blue-600 text-blue-600 font-semibold py-2 rounded hover:bg-blue-50">
+                        class="block w-full text-center bg-white border border-[#3CC0E9] text-[#3CC0E9] font-semibold py-2 rounded hover:bg-[#3CC0E9]/10">
                         Done
                     </button>
                 </div>
@@ -224,7 +224,7 @@
     <section class="py-6 bg-white">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             Home > Nuwara Elliya > Search Results
-            <div class="border-b sticky top-0 bg-white z-50">
+            <div class="border-b sticky top-0 bg-white">
                 <div
                     class="max-w-6xl mx-auto flex space-x-6 overflow-x-auto text-sm md:text-base whitespace-nowrap px-4 py-2">
                     <a href="#overview" class="scroll-link">Overview</a>
@@ -259,7 +259,7 @@
                         @endfor
                     </div>
                     <div class="flex items-center text-gray-600 text-sm">
-                        <svg class="w-5 h-5 mr-1 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-5 h-5 mr-1 text-[#3CC0E9]" fill="currentColor" viewBox="0 0 24 24">
                             <path
                                 d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z" />
                         </svg>
@@ -270,16 +270,27 @@
                 <!-- Right: Actions -->
                 <div class="flex flex-col items-start sm:items-end space-y-2">
                     <div class="flex items-center gap-4">
+                        <!-- Heart Icon with click functionality -->
+                        <div x-data="{ isLiked: false }" class="cursor-pointer">
+                            <svg @click="isLiked = !isLiked" class="w-6 h-6 transition-colors duration-200"
+                                :class="isLiked ? 'text-red-500 fill-current' : 'text-blue-400 hover:text-blue-600'"
+                                :fill="isLiked ? 'currentColor' : 'none'"
+                                stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                            </svg>
+                        </div>
+                        <!-- Share Icon -->
                         <svg class="w-6 h-6 text-blue-400 hover:text-blue-600 cursor-pointer" fill="none"
                             stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
                         </svg>
-                        <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md shadow">
+                        <button class="bg-[#3CC0E9] hover:bg-sky-600 text-white font-bold py-2 px-4 rounded-md shadow">
                             Reserve
                         </button>
                     </div>
-                    <div class="flex items-center text-blue-400 text-sm">
+                    <div class="flex items-center text-[#3CC0E9] text-sm">
                         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2"
                             viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -376,7 +387,7 @@
                                     <h2 class="text-lg font-semibold text-gray-800">Superb</h2>
                                     <p class="text-sm text-gray-500">939 reviews</p>
                                 </div>
-                                <div class="bg-blue-500 text-white text-sm font-semibold px-2 py-1 rounded">8.6</div>
+                                <div class="bg-[#3CC0E9] text-white text-sm font-semibold px-2 py-1 rounded">8.6</div>
                             </div>
 
                             <!-- Review Text -->
@@ -416,7 +427,7 @@
                                     src="https://www.google.com/maps?q=La+Grande+Villa+Nuwara+Eliya&output=embed"
                                     frameborder="0" allowfullscreen aria-hidden="false" tabindex="0"></iframe>
                                 <button
-                                    class="absolute bottom-2 left-2 bg-blue-500 hover:bg-blue-600 text-white text-sm px-3 py-1 rounded-md shadow">
+                                    class="absolute bottom-2 left-2 bg-[#3CC0E9] hover:bg-[#3CC0E9]/80 text-white text-sm px-3 py-1 rounded-md shadow">
                                     Show on map
                                 </button>
                             </div>
@@ -430,7 +441,7 @@
         <!-- Modal -->
         <div id="galleryModal"
             class="fixed inset-0 z-50 bg-black/90 flex items-center justify-center hidden px-4 py-6 sm:px-8 sm:py-10">
-            
+
             <!-- Close Button -->
             <button onclick="closeGalleryModal()"
                 class="absolute top-4 right-4 sm:top-8 sm:right-8 text-white text-3xl sm:text-4xl hover:scale-110 transition">
@@ -812,10 +823,10 @@
                                 <!-- Tabs -->
                                 <nav class="flex border-b border-gray-200 mb-4">
                                     <button @click.prevent="activeTab = 'check'"
-                                        :class="activeTab === 'check' ? 'border-blue-600 text-blue-600' : 'text-gray-500'"
+                                        :class="activeTab === 'check' ? 'border-[#3CC0E9] text-[#3CC0E9]' : 'text-gray-500'"
                                         class="px-4 py-2 border-b-2 font-semibold">Check-in / Check-out</button>
                                     <button @click.prevent="activeTab = 'flexible'"
-                                        :class="activeTab === 'flexible' ? 'border-blue-600 text-blue-600' : 'text-gray-500'"
+                                        :class="activeTab === 'flexible' ? 'border-[#3CC0E9] text-[#3CC0E9]' : 'text-gray-500'"
                                         class="px-4 py-2 border-b-2 font-semibold">Flexible dates</button>
                                 </nav>
 
@@ -925,7 +936,7 @@
 
                                 <p class="text-xs text-gray-500">
                                     Assistance animals aren’t considered pets.<br>
-                                    <a href="#" class="text-blue-600 underline">Read more</a>
+                                    <a href="#" class="text-[#3CC0E9] underline">Read more</a>
                                 </p>
 
                                 <!-- Done -->
@@ -1185,7 +1196,7 @@
                     Read all reviews
                 </a>
             </div>
-        
+
             <!-- Host Information -->
             <div class="pt-6 mt-10">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-4 mb-6">
@@ -1277,7 +1288,7 @@
         </div>
     </section>
 
-    <section id="fineprint" class="min-h-screen bg-gray-50">
+    <section id="fineprint" class="min-h-screen bg-white">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <!-- Fine Print -->
             <div class="mb-10 space-y-6">
@@ -1370,6 +1381,10 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </section>
+    <section class="bg-white">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <!-- TAGS -->
             <div class="mt-10">
                 <div class="text-xs sm:text-sm text-gray-700 flex flex-wrap items-center justify-center gap-x-1 gap-y-1 leading-relaxed">
@@ -1399,6 +1414,7 @@
                     <span>Discover monthly stays</span>
                 </div>
             </div>
+        </div>
     </section>
     <script>
         document.addEventListener('DOMContentLoaded', function() {

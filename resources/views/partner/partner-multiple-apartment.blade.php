@@ -1,10 +1,247 @@
+@php
+    $amenities = $amenities ?? [];
+@endphp
 <!DOCTYPE html>
-<html lang="en" x-data="{ step: 1, selectedBox: null }" xmlns:x-bind="http://www.w3.org/1999/xlink">
+<html lang="en"     x-data="{ 
+    step: 1, 
+    selectedBox: null,
+    // Amenities
+    selectedAmenities: [],
+    
+    // Languages
+    selectedLanguages: [],
+    availableLanguages: [],
+    showAdditionalLanguages: false,
+    searchTerm: '',
+    showDropdown: false,
+    filteredLanguages: [],
+    
+    // House Rules
+    smokingAllowed: false,
+    partiesAllowed: false,
+    petsAllowed: 'no',
+    petsFees: '',
+    checkInFrom: '15:00',
+    checkInUntil: '18:00',
+    checkOutFrom: '08:00',
+    checkOutUntil: '11:00',
+    
+    // Host Profile
+    hostProfile: {
+        about_property: '',
+        about_host: '',
+        about_neighborhood: '',
+        show_property: false,
+        show_host: false,
+        show_neighborhood: false,
+        none_selected: false,
+        host_name: ''
+    },
+    
+    // Pricing
+    pricing: {
+        booking_type: 'instant',
+        price_per_night: '',
+        currency: 'USD',
+        discount_enabled: false,
+        discount_percent: ''
+    },
+    
+    // Address data
+    addressData: {
+        address: 'Sri Lanka',
+        apartment: 'aaa',
+        country: 'Sri Lanka',
+        city: 'a',
+        postcode: '80400',
+        update_address: true
+    },
+    
+    // Channel manager data
+    channelManager: 'yes',
+    
+    // Methods
+    async saveAddress() {
+        try {
+            const propertyId = @json($property->id ?? 'new');
+            const response = await fetch(`/partner/property/${propertyId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    address: this.addressData.address,
+                    city: this.addressData.city,
+                    country: this.addressData.country,
+                    apartment: this.addressData.apartment,
+                    zipcode: this.addressData.postcode
+                })
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Address saved successfully:', data);
+                this.step = Math.min(this.step + 1, 13);
+            } else {
+                console.error('Failed to save address');
+                const errorData = await response.json();
+                alert('Error: ' + (errorData.message || 'Failed to save address'));
+            }
+        } catch (error) {
+            console.error('Error saving address:', error);
+            alert('An error occurred while saving the address.');
+        }
+    },
+    
+    async saveLanguages() {
+        try {
+            const propertyId = @json($property->id ?? 'new');
+            const response = await fetch(`/partner/property/${propertyId}/languages`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    languages: this.selectedLanguages
+                })
+            });
+            
+            if (response.ok) {
+                console.log('Languages saved successfully');
+                this.step = Math.min(this.step + 1, 13);
+            } else {
+                console.error('Failed to save languages');
+            }
+        } catch (error) {
+            console.error('Error saving languages:', error);
+        }
+    },
+    
+
+    
+    async saveHostProfile() {
+        try {
+            const propertyId = @json($property->id ?? 'new');
+            const response = await fetch(`/partner/property/${propertyId}/host-profile`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    ...this.hostProfile,
+                    property_id: propertyId
+                })
+            });
+            
+            if (response.ok) {
+                console.log('Host profile saved successfully');
+                this.step = Math.min(this.step + 1, 13);
+            } else {
+                console.error('Failed to save host profile');
+                const errorData = await response.json();
+                console.error('Error details:', errorData);
+            }
+        } catch (error) {
+            console.error('Error saving host profile:', error);
+        }
+    },
+    
+    async savePricing() {
+        try {
+            const propertyId = @json($property->id ?? 'new');
+            const response = await fetch(`/partner/property/${propertyId}/pricing`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                },
+                body: JSON.stringify(this.pricing)
+            });
+            
+            if (response.ok) {
+                console.log('Pricing saved successfully');
+                this.step = Math.min(this.step + 1, 13);
+            } else {
+                console.error('Failed to save pricing');
+            }
+        } catch (error) {
+            console.error('Error saving pricing:', error);
+        }
+    },
+    
+    async saveChannelManager() {
+        try {
+            const propertyId = @json($property->id ?? 'new');
+            const response = await fetch(`/partner/property/${propertyId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    channel_manager: this.channelManager
+                })
+            });
+            
+            if (response.ok) {
+                console.log('Channel manager saved successfully');
+                this.step = Math.min(this.step + 1, 13);
+            } else {
+                console.error('Failed to save channel manager');
+                const errorData = await response.json();
+                alert('Error: ' + (errorData.message || 'Failed to save channel manager'));
+            }
+        } catch (error) {
+            console.error('Error saving channel manager:', error);
+            alert('An error occurred while saving the channel manager.');
+        }
+    },
+    
+    async saveAmenities() {
+        try {
+            const propertyId = @json($property->id ?? 'new');
+            const response = await fetch(`/partner/property/${propertyId}/amenities`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    amenities: this.selectedAmenities
+                })
+            });
+            
+            if (response.ok) {
+                console.log('Amenities saved successfully');
+                this.step = Math.min(this.step + 1, 13);
+            } else {
+                console.error('Failed to save amenities');
+                const errorData = await response.json();
+                alert('Error: ' + (errorData.message || 'Failed to save amenities'));
+            }
+        } catch (error) {
+            console.error('Error saving amenities:', error);
+            alert('An error occurred while saving the amenities.');
+        }
+    },
+    
+
+}" xmlns:x-bind="http://www.w3.org/1999/xlink">
 
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>create homes</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Create Multiple Apartments</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <!-- Google Fonts -->
@@ -96,22 +333,34 @@
         </section>
     </header>
 <!-- Blade + Alpine.js + Tailwind CSS -->
-<div x-data="{ step: 1 }" class="max-w-3xl mx-auto lg:ml-32 px-4 py-8 space-y-6">
+<div x-data="{ 
+    step: 1,
+    selectedLanguages: [],
+    languages: window.languagesData || [],
+    getLanguageName(id) {
+        const language = this.languages.find(lang => lang.id == id);
+        return language ? language.name : 'Unknown';
+    },
+    removeLanguage(id) {
+        this.selectedLanguages = this.selectedLanguages.filter(langId => langId != id);
+    },
+        handleContinue() {
+        handleContinueLogic(this);
+    }
+}" class="max-w-3xl mx-auto lg:ml-32 px-4 py-8 space-y-6">
 
     
 
-    <!-- Step 1 -->
+    <!-- Step 1 - Welcome -->
     <template x-if="step === 1">
           <div>
                                                         <!-- Main Content -->
                                                         <div class="max-w-xl ml-4 mr-auto">
                                                             <!-- White Box -->
                                                             <div class="bg-white shadow-md  p-6 text-left">
-                                                                <p class=" text-base text-gray-700">
-                                                                    Great, since your holiday homes are located at the
-                                                                    same address there should be some things that apply
-                                                                    to all of them. Let's start filling in those general
-                                                                    settings.
+                                                                <h2 class="text-2xl font-bold mb-4">Multiple Apartments</h2>
+                                                                <p class=" text-base text-gray-700 mb-6">
+                                                                    Great! Since your multiple apartments are at the same address, let's start filling in the general settings that apply to all of them.
                                                                 </p>
                                                             </div>
 
@@ -156,13 +405,13 @@
                                                                     <h2
                                                                         class="text-2xl font-semibold mb-4 text-gray-800">
                                                                         Where is your property?</h2>
-                                                                    <form>
+                                                                    <form @submit.prevent="saveAddress()">
                                                                         <div class="mb-4">
                                                                             <label for="address"
                                                                                 class="block text-sm font-medium text-gray-700">Find
                                                                                 your address</label>
                                                                             <input type="text" id="address"
-                                                                                name="address" value="Sri Lanka"
+                                                                                name="address" x-model="addressData.address"
                                                                                 class="mt-1 p-2 w-full border border-gray-300 rounded">
                                                                         </div>
                                                                         <div class="mb-4">
@@ -170,15 +419,16 @@
                                                                                 class="block text-sm font-medium text-gray-700">Apartment
                                                                                 or floor number (optional)</label>
                                                                             <input type="text" id="apartment"
-                                                                                name="apartment" value="aaa"
+                                                                                name="apartment" x-model="addressData.apartment"
                                                                                 class="mt-1 p-2 w-full border border-gray-300 rounded">
                                                                         </div>
                                                                         <div class="mb-4">
                                                                             <label for="country"
                                                                                 class="block text-sm font-medium text-gray-700">Country/region</label>
                                                                             <select id="country" name="country"
+                                                                                x-model="addressData.country"
                                                                                 class="mt-1 p-2 w-full border border-gray-300 rounded">
-                                                                                <option selected>Sri Lanka</option>
+                                                                                <option value="Sri Lanka" selected>Sri Lanka</option>
                                                                             </select>
                                                                         </div>
                                                                         <div class="flex flex-col md:flex-row gap-4">
@@ -186,7 +436,7 @@
                                                                                 <label for="city"
                                                                                     class="block text-sm font-medium text-gray-700">City</label>
                                                                                 <input type="text" id="city"
-                                                                                    name="city" value="a"
+                                                                                    name="city" x-model="addressData.city"
                                                                                     class="mt-1 p-2 w-full border border-gray-300 rounded">
                                                                             </div>
                                                                             <div class="flex-1">
@@ -194,13 +444,13 @@
                                                                                     class="block text-sm font-medium text-gray-700">Post
                                                                                     code / Zip code</label>
                                                                                 <input type="text" id="postcode"
-                                                                                    name="postcode" value="80400"
+                                                                                    name="postcode" x-model="addressData.postcode"
                                                                                     class="mt-1 p-2 w-full border border-gray-300 rounded">
                                                                             </div>
                                                                         </div>
                                                                         <div class="flex items-center mt-4">
                                                                             <input id="update_address" type="checkbox"
-                                                                                name="update_address" checked
+                                                                                name="update_address" x-model="addressData.update_address"
                                                                                 class="mr-2">
                                                                             <label for="update_address"
                                                                                 class="text-sm text-gray-700">Update
@@ -243,7 +493,7 @@
                                                                                 class="w-full sm:w-auto border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
                                                                                 ←
                                                                             </button>
-                                                                            <button type="button"     @click="step = Math.min(step + 1, 13)"
+                                                                            <button type="submit"
                                                                                 class="w-full sm:w-auto px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
                                                                                 Continue
                                                                             </button>
@@ -324,7 +574,7 @@
 
 
                             <!-- Continue Button (Right) -->
-                            <button type="submit"  @click="step = Math.min(step + 1, 13)"
+                            <button type="button"  @click="saveChannelManager()"
                                 :class="step === 9 ? 'opacity-50 cursor-not-allowed' : 'bg-[#3CC0E9] hover:bg-sky-500'"
                                 :disabled="step === 9"
                                 class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300">
@@ -349,86 +599,25 @@
                                                                         class="w-full bg-white p-6 rounded shadow-md flex flex-col text-base">
 
 
-                                                                        <!-- 9 Checkboxes Section -->
+                                                                        <!-- Amenities Checkboxes Section -->
 
                                                                         <div class="mt-2">
                                                                             <h3
                                                                                 class="text-gray-700 font-semibold mb-2">
-                                                                                Select property type(s)</h3>
+                                                                                Select amenities</h3>
                                                                             <div
                                                                                 class="grid grid-cols-1 sm:grid-cols-1 gap-2 text-sm text-gray-700">
+                                                                                @foreach($amenities as $amenity)
                                                                                 <label
                                                                                     class="flex items-center space-x-2">
                                                                                     <input type="checkbox"
-                                                                                        name="property_types[]"
-                                                                                        value="Apartment"
+                                                                                        name="amenities[]"
+                                                                                        value="{{ $amenity['id'] }}"
+                                                                                        x-model="selectedAmenities"
                                                                                         class="text-blue-500" />
-                                                                                    <span>Bar</span>
+                                                                                    <span>{{ $amenity['name'] }}</span>
                                                                                 </label>
-                                                                                <label
-                                                                                    class="flex items-center space-x-2">
-                                                                                    <input type="checkbox"
-                                                                                        name="property_types[]"
-                                                                                        value="Villa"
-                                                                                        class="text-blue-500" />
-                                                                                    <span>Sauna</span>
-                                                                                </label>
-                                                                                <label
-                                                                                    class="flex items-center space-x-2">
-                                                                                    <input type="checkbox"
-                                                                                        name="property_types[]"
-                                                                                        value="Holiday Home"
-                                                                                        class="text-blue-500" />
-                                                                                    <span>Garden</span>
-                                                                                </label>
-                                                                                <label
-                                                                                    class="flex items-center space-x-2">
-                                                                                    <input type="checkbox"
-                                                                                        name="property_types[]"
-                                                                                        value="Chalet"
-                                                                                        class="text-blue-500" />
-                                                                                    <span>Terrace</span>
-                                                                                </label>
-                                                                                <label
-                                                                                    class="flex items-center space-x-2">
-                                                                                    <input type="checkbox"
-                                                                                        name="property_types[]"
-                                                                                        value="Cottage"
-                                                                                        class="text-blue-500" />
-                                                                                    <span>Hot tub/Jacuzzi</span>
-                                                                                </label>
-                                                                                <label
-                                                                                    class="flex items-center space-x-2">
-                                                                                    <input type="checkbox"
-                                                                                        name="property_types[]"
-                                                                                        value="Cabin"
-                                                                                        class="text-blue-500" />
-                                                                                    <span>Heating</span>
-                                                                                </label>
-                                                                                <label
-                                                                                    class="flex items-center space-x-2">
-                                                                                    <input type="checkbox"
-                                                                                        name="property_types[]"
-                                                                                        value="Bungalow"
-                                                                                        class="text-blue-500" />
-                                                                                    <span>Free WiFi</span>
-                                                                                </label>
-                                                                                <label
-                                                                                    class="flex items-center space-x-2">
-                                                                                    <input type="checkbox"
-                                                                                        name="property_types[]"
-                                                                                        value="Farm Stay"
-                                                                                        class="text-blue-500" />
-                                                                                    <span>Air conditioning</span>
-                                                                                </label>
-                                                                                <label
-                                                                                    class="flex items-center space-x-2">
-                                                                                    <input type="checkbox"
-                                                                                        name="property_types[]"
-                                                                                        value="Houseboat"
-                                                                                        class="text-blue-500" />
-                                                                                    <span>Swimming pool</span>
-                                                                                </label>
+                                                                                @endforeach
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -449,7 +638,7 @@
                                                                                     class="w-6 h-6 md:w-7 md:h-7 cursor-pointer" />
                                                                                 <h3
                                                                                     class="text-gray-700 text-sm text-bold">
-                                                                                    What if I don’t see a facility I
+                                                                                    What if I don't see a facility I
                                                                                     offer?</h3>
                                                                             </div>
                                                                             <button @click="show = false"
@@ -473,7 +662,7 @@
                                                                             your property.
                                                                             <br>
                                                                             The ones selected here will apply to all of
-                                                                            your holiday homes.
+                                                                            your apartments.
                                                                         </p>
                                                                     </div>
 
@@ -487,7 +676,7 @@
                                                                     class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
                                                                     ←
                                                                 </button>
-                                                                <button type="button"     @click="step = Math.min(step + 1, 13)"
+                                                                <button type="button"     @click="saveAmenities()"
                                                                     class="px-4 py-3 bg-[#3CC0E9] font-semibold  text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ml-[330px]">
                                                                     Continue
                                                                 </button>
@@ -681,7 +870,7 @@
                 class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
                 ←
             </button>
-            <button type="button" @click="step = Math.min(step + 1, 13)"
+            <button type="button" @click="handleContinue()"
                 class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
                 Continue
             </button>
@@ -703,22 +892,29 @@
                                                                 <h3 class="text-lg  mb-4 font-bold">Select languages
                                                                 </h3>
                                                                 <div class="space-y-2">
-                                                                    <label class="flex items-center cursor-pointer">
-                                                                        <input type="checkbox" class="mr-2" />
-                                                                        <span>English</span>
-                                                                    </label>
-                                                                    <label class="flex items-center cursor-pointer">
-                                                                        <input type="checkbox" class="mr-2" />
-                                                                        <span>French</span>
-                                                                    </label>
-                                                                    <label class="flex items-center cursor-pointer">
-                                                                        <input type="checkbox" class="mr-2" />
-                                                                        <span>German</span>
-                                                                    </label>
-                                                                    <label class="flex items-center cursor-pointer">
-                                                                        <input type="checkbox" class="mr-2" />
-                                                                        <span>Hindi</span>
-                                                                    </label>
+                                                                    <!-- Main Languages -->
+                                                                    @php
+                                                                        $mainLanguages = ['English', 'French', 'German', 'Hindi', 'Spanish', 'Italian'];
+                                                                        $mainLanguageIds = [];
+                                                                        $additionalLanguages = [];
+                                                                        
+                                                                        foreach($languages as $language) {
+                                                                            if (in_array($language['name'], $mainLanguages)) {
+                                                                                $mainLanguageIds[] = $language['id'];
+                                                                            } else {
+                                                                                $additionalLanguages[] = $language;
+                                                                            }
+                                                                        }
+                                                                    @endphp
+                                                                    
+                                                                    @foreach($languages as $language)
+                                                                        @if(in_array($language['name'], $mainLanguages))
+                                                                        <label class="flex items-center cursor-pointer">
+                                                                            <input type="checkbox" x-model="selectedLanguages" value="{{ $language['id'] }}" class="mr-2" />
+                                                                            <span>{{ $language['name'] }}</span>
+                                                                        </label>
+                                                                        @endif
+                                                                    @endforeach
                                                                 </div>
 
                                                                 <!-- Add Additional Languages -->
@@ -747,30 +943,14 @@
                                                                         <!-- Dropdown list -->
                                                                         <ul id="languageDropdown"
                                                                             class="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded max-h-40 overflow-auto shadow-lg hidden">
+                                                                            @foreach($additionalLanguages as $language)
                                                                             <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                                                onclick="selectLanguage(this)">Arabic
+                                                                                onclick="selectLanguage(this, {{ $language['id'] }}, '{{ $language['name'] }}')"
+                                                                                data-id="{{ $language['id'] }}"
+                                                                                data-name="{{ $language['name'] }}">
+                                                                                {{ $language['name'] }}
                                                                             </li>
-                                                                            <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                                                onclick="selectLanguage(this)">
-                                                                                Bulgarian</li>
-                                                                            <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                                                onclick="selectLanguage(this)">Catalan
-                                                                            </li>
-                                                                            <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                                                onclick="selectLanguage(this)">Chinese
-                                                                            </li>
-                                                                            <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                                                onclick="selectLanguage(this)">Croatian
-                                                                            </li>
-                                                                            <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                                                onclick="selectLanguage(this)">Czech
-                                                                            </li>
-                                                                            <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                                                onclick="selectLanguage(this)">Danish
-                                                                            </li>
-                                                                            <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                                                onclick="selectLanguage(this)">Dutch
-                                                                            </li>
+                                                                            @endforeach
                                                                         </ul>
                                                                     </div>
                                                                 </div>
@@ -781,6 +961,21 @@
                                                                     class="text-blue-500 hover:underline mt-4 block">
                                                                     Add additional languages
                                                                 </a>
+                                                                
+                                                                <!-- Selected Additional Languages Display -->
+                                                                <div x-show="selectedLanguages.length > 0" class="mt-4">
+                                                                    <h4 class="text-sm font-medium text-gray-700 mb-2">Selected Additional Languages:</h4>
+                                                                    <div class="flex flex-wrap gap-2">
+                                                                        <template x-for="langId in selectedLanguages" :key="langId">
+                                                                            <template x-if="!['1', '2', '3', '4', '5', '6'].includes(langId.toString())">
+                                                                                <div class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm flex items-center">
+                                                                                    <span x-text="getLanguageName(langId)"></span>
+                                                                                    <button @click="removeLanguage(langId)" class="ml-1 text-blue-600 hover:text-blue-800">×</button>
+                                                                                </div>
+                                                                            </template>
+                                                                        </template>
+                                                                    </div>
+                                                                </div>
                                                             </div>
 
                                                             <!-- Navigation Buttons -->
@@ -792,7 +987,7 @@
                                                                 </button>
 
                                                                 <!-- Continue Button on the right -->
-                                                                <button type="button"    @click="step = Math.min(step + 1, 13)"
+                                                                <button type="button"    @click="saveLanguages()"
                                                                     class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
                                                                     Continue
                                                                 </button>
@@ -801,6 +996,10 @@
                                                         </div>
 
                                                         <script>
+                                                            // Set languages data globally
+                                                            window.languagesData = {{ Js::from($languages) }};
+                                                            
+
                                                             function toggleAdditionalLanguages() {
                                                                 const section = document.getElementById("additionalLanguagesSection");
                                                                 section.classList.toggle("hidden");
@@ -847,10 +1046,18 @@
                                                                 }
                                                             }
 
-                                                            function selectLanguage(element) {
+                                                            function selectLanguage(element, languageId, languageName) {
                                                                 const input = document.getElementById("languageInput");
-                                                                input.value = element.textContent;
+                                                                input.value = languageName;
                                                                 hideDropdown();
+                                                                
+                                                                // Add the language to selectedLanguages if not already selected
+                                                                const mainData = Alpine.$data(document.querySelector('[x-data*="step"]'));
+                                                                if (mainData && !mainData.selectedLanguages.includes(languageId)) {
+                                                                    mainData.selectedLanguages.push(languageId);
+                                                                    console.log('Language added:', languageName, 'ID:', languageId);
+                                                                    console.log('Selected languages:', mainData.selectedLanguages);
+                                                                }
                                                             }
 
                                                             // Close dropdown when clicking outside
@@ -859,7 +1066,7 @@
                                                                 const input = document.getElementById("languageInput");
                                                                 const container = document.getElementById("additionalLanguagesSection");
                                                                 if (
-                                                                    !container.contains(event.target)
+                                                                    container && !container.contains(event.target)
                                                                 ) {
                                                                     hideDropdown();
                                                                 }
@@ -867,182 +1074,159 @@
                                                         </script>
                                                     </div>
 </template>
-<template x-if="step === 7">
-     <div>
-                                                        <div class="container mx-auto px-4 py-8 max-w-6xl">
-                                                            <!-- Header -->
-                                                            <h2 class="text-2xl font-bold mb-8 text-left">House rules
-                                                            </h2>
+    <template x-if="step === 7">
+     <div x-data="{ 
+         petPolicy: 'no',
+         smokingAllowed: false,
+         childrenAllowed: true,
+         partiesAllowed: false,
+         petsFees: null,
+         checkInFrom: '15:00',
+         checkInUntil: '18:00',
+         checkOutFrom: '08:00',
+         checkOutUntil: '11:00',
+         
+         saveHouseRules() {
+             saveHouseRulesFromStep7(this);
+         }
+     }">
+        <div class="container mx-auto px-4 py-8 max-w-6xl">
+            <!-- Header -->
+            <h2 class="text-2xl font-bold mb-8 text-left">House rules</h2>
 
-                                                            <div class="flex flex-col md:flex-row gap-6">
-                                                                <!-- Left Section -->
-                                                                <div
-                                                                    class="bg-white shadow-md rounded-lg p-6 w-full md:w-2/3">
-                                                                    <!-- Toggle Switches -->
-                                                                    <div class="space-y-4">
-                                                                        <label
-                                                                            class="flex items-center justify-between cursor-pointer">
-                                                                            <span>Smoking allowed</span>
-                                                                            <div class="relative">
-                                                                                <input type="checkbox"
-                                                                                    class="sr-only peer" />
-                                                                                <div
-                                                                                    class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition">
-                                                                                </div>
-                                                                                <div
-                                                                                    class="absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-4">
-                                                                                </div>
-                                                                            </div>
-                                                                        </label>
+            <div class="flex flex-col md:flex-row gap-6">
+                <!-- Left Section -->
+                <div class="bg-white shadow-md rounded-lg p-6 w-full md:w-2/3">
+                    <!-- Toggle Switches -->
+                    <div class="space-y-4">
+                                                 <label class="flex items-center justify-between cursor-pointer">
+                             <span>Smoking allowed</span>
+                             <div class="relative">
+                                 <input type="checkbox" x-model="smokingAllowed" class="sr-only peer" />
+                                 <div class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition"></div>
+                                 <div class="absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-4"></div>
+                             </div>
+                         </label>
 
-                                                                        <label
-                                                                            class="flex items-center justify-between cursor-pointer">
-                                                                            <span>Children allowed</span>
-                                                                            <div class="relative">
-                                                                                <input type="checkbox"
-                                                                                    class="sr-only peer" checked />
-                                                                                <div
-                                                                                    class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition">
-                                                                                </div>
-                                                                                <div
-                                                                                    class="absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-4">
-                                                                                </div>
-                                                                            </div>
-                                                                        </label>
+                                                 <label class="flex items-center justify-between cursor-pointer">
+                             <span>Children allowed</span>
+                             <div class="relative">
+                                 <input type="checkbox" x-model="childrenAllowed" class="sr-only peer" />
+                                 <div class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition"></div>
+                                 <div class="absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-4"></div>
+                             </div>
+                         </label>
 
-                                                                        <label
-                                                                            class="flex items-center justify-between cursor-pointer">
-                                                                            <span>Parties/events allowed</span>
-                                                                            <div class="relative">
-                                                                                <input type="checkbox"
-                                                                                    class="sr-only peer" />
-                                                                                <div
-                                                                                    class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition">
-                                                                                </div>
-                                                                                <div
-                                                                                    class="absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-4">
-                                                                                </div>
-                                                                            </div>
-                                                                        </label>
-                                                                    </div>
+                                                 <label class="flex items-center justify-between cursor-pointer">
+                             <span>Parties/events allowed</span>
+                             <div class="relative">
+                                 <input type="checkbox" x-model="partiesAllowed" class="sr-only peer" />
+                                 <div class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition"></div>
+                                 <div class="absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-4"></div>
+                             </div>
+                         </label>
+                    </div>
 
-                                                                    <hr class="my-6 border-t border-gray-300">
-                                                                    <!-- Pet Policy -->
-                                                                    <div class="mt-6">
-                                                                        <h3 class="text-base font-semibold mb-2">Do you
-                                                                            allow pets?</h3>
-                                                                        <div class="space-y-2">
-                                                                            <label
-                                                                                class="flex items-center cursor-pointer">
-                                                                                <input type="radio" name="pets"
-                                                                                    value="yes" class="mr-2">
-                                                                                <span>Yes</span>
-                                                                            </label>
-                                                                            <label
-                                                                                class="flex items-center cursor-pointer">
-                                                                                <input type="radio" name="pets"
-                                                                                    value="upon_request"
-                                                                                    class="mr-2">
-                                                                                <span>Upon request</span>
-                                                                            </label>
-                                                                            <label
-                                                                                class="flex items-center cursor-pointer">
-                                                                                <input type="radio" name="pets"
-                                                                                    value="no" class="mr-2"
-                                                                                    checked>
-                                                                                <span>No</span>
-                                                                            </label>
-                                                                        </div>
-                                                                    </div>
+                    <hr class="my-6 border-t border-gray-300">
 
-                                                                    <hr class="my-6 border-t border-gray-300">
+                    <!-- Pet Policy -->
+                    <div class="mt-6">
+                        <h3 class="text-base font-semibold mb-2">Do you allow pets?</h3>
+                        <div class="space-y-2">
+                            <label class="flex items-center cursor-pointer">
+                                <input type="radio" name="pets" value="yes" class="mr-2" @click="petPolicy = 'yes'">
+                                <span>Yes</span>
+                            </label>
+                            <label class="flex items-center cursor-pointer">
+                                <input type="radio" name="pets" value="upon_request" class="mr-2" @click="petPolicy = 'upon_request'">
+                                <span>Upon request</span>
+                            </label>
+                            <label class="flex items-center cursor-pointer">
+                                <input type="radio" name="pets" value="no" class="mr-2" @click="petPolicy = 'no'" checked>
+                                <span>No</span>
+                            </label>
+                        </div>
 
-                                                                    <!-- Check-in -->
-                                                                    <div class="mt-6">
-                                                                        <h3 class="text-base font-semibold mb-2">Check
-                                                                            in</h3>
-                                                                        <div class="flex space-x-4">
-                                                                            <div class="w-full">
-                                                                                <label
-                                                                                    class="block text-sm font-medium mb-1">From</label>
-                                                                                <input type="time" value="15:00"
-                                                                                    class="w-full border rounded p-2" />
-                                                                            </div>
-                                                                            <div class="w-full">
-                                                                                <label
-                                                                                    class="block text-sm font-medium mb-1">Until</label>
-                                                                                <input type="time" value="18:00"
-                                                                                    class="w-full border rounded p-2" />
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
+                        <!-- Additional Charges for Pets -->
+                        <template x-if="petPolicy === 'yes' || petPolicy === 'upon_request'">
+                            <div class="mt-4">
+                                <h4 class="text-sm font-semibold mb-2">Are there additional charges for pets?</h4>
+                                                                 <label class="flex items-center cursor-pointer mb-1">
+                                     <input type="radio" name="pets_fees" value="free" x-model="petsFees" class="mr-2">
+                                     <span>Pets can stay for free</span>
+                                 </label>
+                                 <label class="flex items-center cursor-pointer">
+                                     <input type="radio" name="pets_fees" value="charges" x-model="petsFees" class="mr-2">
+                                     <span>Charges may apply</span>
+                                 </label>
+                            </div>
+                        </template>
+                    </div>
 
-                                                                    <!-- Check-out -->
-                                                                    <div class="mt-6">
-                                                                        <h3 class="text-base font-semibold mb-2">Check
-                                                                            out</h3>
-                                                                        <div class="flex space-x-4">
-                                                                            <div class="w-full">
-                                                                                <label
-                                                                                    class="block text-sm font-medium mb-1">From</label>
-                                                                                <input type="time" value="08:00"
-                                                                                    class="w-full border rounded p-2" />
-                                                                            </div>
-                                                                            <div class="w-full">
-                                                                                <label
-                                                                                    class="block text-sm font-medium mb-1">Until</label>
-                                                                                <input type="time" value="11:00"
-                                                                                    class="w-full border rounded p-2" />
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
+                    <hr class="my-6 border-t border-gray-300">
 
-                                                                <!-- Right Section: Tip Box -->
-                                                                <div x-data="{ show: true }" x-show="show"
-                                                                    class="bg-white shadow-md rounded-lg p-6 w-full h-[300px] md:w-1/3 relative">
-                                                                    <div class="flex justify-between items-start">
-                                                                        <div class="flex items-center space-x-2">
-                                                                            <img src="{{ asset('assets/system-uicons_lightbulb-on.svg') }}"
-                                                                                alt="Help"
-                                                                                class="w-6 h-6 md:w-7 md:h-7 cursor-pointer" />
-                                                                            <h3
-                                                                                class="text-gray-800 font-semibold text-base">
-                                                                                What if my house rules change?</h3>
-                                                                        </div>
-                                                                        <button @click="show = false"
-                                                                            class="text-gray-400 hover:text-gray-600">
-                                                                            <svg xmlns="http://www.w3.org/2000/svg"
-                                                                                class="h-5 w-5" viewBox="0 0 20 20"
-                                                                                fill="currentColor">
-                                                                                <path fill-rule="evenodd"
-                                                                                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                                                                    clip-rule="evenodd" />
-                                                                            </svg>
-                                                                        </button>
-                                                                    </div>
-                                                                    <p class="text-sm text-gray-700 mt-3">
-                                                                        You can easily customise these house rules later
-                                                                        and additional house rules can be set on the
-                                                                        Policies page of the extranet after you complete
-                                                                        registration.
-                                                                    </p>
-                                                                </div>
-                                                            </div>
+                    <!-- Check-in -->
+                    <div class="mt-6">
+                        <h3 class="text-base font-semibold mb-2">Check in</h3>
+                        <div class="flex space-x-4">
+                            <div class="w-full">
+                                <label class="block text-sm font-medium mb-1">From</label>
+                                <input type="time" x-model="checkInFrom" class="w-full border rounded p-2" />
+                            </div>
+                            <div class="w-full">
+                                <label class="block text-sm font-medium mb-1">Until</label>
+                                <input type="time" x-model="checkInUntil" class="w-full border rounded p-2" />
+                            </div>
+                        </div>
+                    </div>
 
-                                                            <!-- Navigation Buttons -->
-                                                            <div class="mt-8 flex ">
-                                                                <button type="button"  @click="step = Math.max(step - 1, 1)"
-                                                                    class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
-                                                                    ←
-                                                                </button>
-                                                                <button type="button"     @click="step = Math.min(step + 1, 13)"
-                                                                    class="px-6 h-12 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ml-[285px]">
-                                                                    Continue
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                    <!-- Check-out -->
+                    <div class="mt-6">
+                        <h3 class="text-base font-semibold mb-2">Check out</h3>
+                        <div class="flex space-x-4">
+                            <div class="w-full">
+                                <label class="block text-sm font-medium mb-1">From</label>
+                                <input type="time" x-model="checkOutFrom" class="w-full border rounded p-2" />
+                            </div>
+                            <div class="w-full">
+                                <label class="block text-sm font-medium mb-1">Until</label>
+                                <input type="time" x-model="checkOutUntil" class="w-full border rounded p-2" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Section: Tip Box -->
+                <div x-data="{ show: true }" x-show="show" class="bg-white shadow-md rounded-lg p-6 w-full h-[300px] md:w-1/3 relative">
+                    <div class="flex justify-between items-start">
+                        <div class="flex items-center space-x-2">
+                            <img src="{{ asset('assets/system-uicons_lightbulb-on.svg') }}" alt="Help" class="w-6 h-6 md:w-7 md:h-7 cursor-pointer" />
+                            <h3 class="text-gray-800 font-semibold text-base">
+                                What if my house rules change?</h3>
+                        </div>
+                        <button @click="show = false" class="text-gray-400 hover:text-gray-600">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    </div>
+                    <p class="text-sm text-gray-700 mt-3">
+                        You can easily customise these house rules later and additional house rules can be set on the Policies page of the extranet after you complete registration.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="mt-8 flex">
+                <button type="button" @click="step = Math.max(step - 1, 1)" class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                    ←
+                </button>
+                <button type="button" @click="handleContinue()" class="px-6 h-12 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ml-[285px]">
+                    Continue
+                </button>
+            </div>
+        </div>
+    </div>
 </template>
 <template x-if="step === 8">
       <div class="max-w-2xl mx-auto space-y-8 px-4 sm:px-6 lg:px-8 lg:ml-32 py-6">
@@ -1055,13 +1239,14 @@
             <!-- The Property Section -->
             <div>
                 <label class="inline-flex items-center space-x-2">
-                    <input type="checkbox" class="form-checkbox text-blue-600">
+                    <input type="checkbox" x-model="hostProfile.show_property" class="form-checkbox text-blue-600">
                     <span class="text-gray-800 font-sm ">The property</span>
                 </label>
 
-                <div class="mt-2">
+                <div class="mt-2" x-show="hostProfile.show_property">
                     <label class="block text-sm font-semibold text-gray-700">About the property</label>
                     <textarea rows="4" maxlength="1200" placeholder="What makes your place unique? What can guests expect"
+                        x-model="hostProfile.about_property"
                         class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"></textarea>
                     <p class="text-right text-xs text-gray-500">0/1200</p>
                 </div>
@@ -1070,14 +1255,15 @@
             <!-- The Host Section -->
             <div>
                 <label class="inline-flex items-center space-x-2">
-                    <input type="checkbox" class="form-checkbox text-blue-600">
+                    <input type="checkbox" x-model="hostProfile.show_host" class="form-checkbox text-blue-600">
                     <span class="text-gray-800 font-medium">The host</span>
                 </label>
 
-                <div class="mt-2 space-y-2">
+                <div class="mt-2 space-y-2" x-show="hostProfile.show_host">
                     <div>
                         <label class="block text-sm font-semibold text-gray-700">Host name</label>
                         <input type="text" maxlength="80"
+                            x-model="hostProfile.host_name"
                             class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
                         <p class="text-right text-xs text-gray-500">0/80</p>
                     </div>
@@ -1085,6 +1271,7 @@
                     <div>
                         <label class="block text-sm font-semibold text-gray-700">About the host</label>
                         <textarea rows="4" maxlength="1200" placeholder="What are your interests? What do you like about hosting?"
+                            x-model="hostProfile.about_host"
                             class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"></textarea>
                         <p class="text-right text-xs text-gray-500">0/1200</p>
                     </div>
@@ -1094,13 +1281,14 @@
             <!-- The Neighborhood Section -->
             <div>
                 <label class="inline-flex items-center space-x-2">
-                    <input type="checkbox" class="form-checkbox text-blue-600">
+                    <input type="checkbox" x-model="hostProfile.show_neighborhood" class="form-checkbox text-blue-600">
                     <span class="text-gray-800 font-medium">The neighborhood</span>
                 </label>
 
-                <div class="mt-2">
+                <div class="mt-2" x-show="hostProfile.show_neighborhood">
                     <label class="block text-sm font-semibold text-gray-700">About the neighborhood</label>
                     <textarea rows="4" maxlength="1200" placeholder="What's the area like? Are there any attractions nearby?"
+                        x-model="hostProfile.about_neighborhood"
                         class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"></textarea>
                     <p class="text-right text-xs text-gray-500">0/1200</p>
                 </div>
@@ -1109,7 +1297,7 @@
             <!-- None of the Above Option -->
             <div>
                 <label class="inline-flex items-center space-x-2">
-                    <input type="checkbox" class="form-checkbox text-blue-600">
+                    <input type="checkbox" x-model="hostProfile.none_selected" class="form-checkbox text-blue-600">
                     <span class="text-gray-800 font-medium">None of the above / I'll add these later</span>
                 </label>
             </div>
@@ -1126,7 +1314,7 @@
 
   <!-- Continue Button on the right -->
   <button
-   type="button"  @click="step = Math.min(step + 1, 13)"
+   type="button"  @click="saveHostProfile()"
      class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 "
   >
     Continue
@@ -1269,7 +1457,7 @@
 
                                                             <!-- Safety Info Box -->
                                                             <div class="bg-white border rounded-lg p-6 shadow-sm">
-                                                                <h2 class="font-semibold mb-4">We’re here to ensure you
+                                                                <h2 class="font-semibold mb-4">We're here to ensure you
                                                                     can receive bookings safely:</h2>
                                                                 <ul class="space-y-2 text-gray-700">
                                                                     <li class="flex items-start"><span
@@ -1339,7 +1527,7 @@
                                                                                         will be able to find your
                                                                                         holiday home and send a booking
                                                                                         request</li>
-                                                                                    <li>You’ll have 24 hours to accept
+                                                                                    <li>You'll have 24 hours to accept
                                                                                         or decline the request</li>
                                                                                     <li>Guests will have 24 hours to
                                                                                         finish their booking and confirm
@@ -1358,7 +1546,7 @@
                                                                             Properties that require Request to book have
                                                                             fewer confirmed bookings and a longer time
                                                                             until their first booking. They also require
-                                                                            more operational workload, as you’ll need to
+                                                                            more operational workload, as you'll need to
                                                                             respond to each request.
                                                                         </p>
                                                                     </div>
@@ -1668,4 +1856,392 @@ You will be able to add more apartments or duplicate this one when you finish fi
 
 
                         </body>
+
+                        <script>
+                            // Function to save languages data
+                            function saveLanguages(propertyId) {
+                                return new Promise((resolve, reject) => {
+                                    console.log('saveLanguages called with propertyId:', propertyId);
+                                    
+                                    // Get Alpine.js data from the main component
+                                    const mainData = Alpine.$data(document.querySelector('[x-data*="step"]'));
+                                    console.log('Main Alpine data:', mainData);
+                                    
+                                    if (!mainData) {
+                                        console.error('Could not find Alpine.js data');
+                                        reject('Could not find Alpine.js data');
+                                        return;
+                                    }
+
+                                    const languagesData = {
+                                        languages: mainData.selectedLanguages || []
+                                    };
+
+                                    console.log('Languages data to be sent:', languagesData);
+
+                                    // Get CSRF token
+                                    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                                    console.log('CSRF token:', csrfToken);
+
+                                    // Send data to backend
+                                    fetch(`/partner/property/${propertyId}/languages`, {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'X-CSRF-TOKEN': csrfToken
+                                        },
+                                        body: JSON.stringify(languagesData)
+                                    })
+                                    .then(response => {
+                                        console.log('Response status:', response.status);
+                                        return response.json();
+                                    })
+                                    .then(data => {
+                                        console.log('Response data:', data);
+                                        if (data.success) {
+                                            console.log('Languages saved successfully');
+                                            resolve('Languages saved successfully!');
+                                        } else {
+                                            console.error('Error saving languages:', data.message);
+                                            reject('Error saving languages: ' + data.message);
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('Fetch error:', error);
+                                        reject('Error saving languages: ' + error.message);
+                                    });
+                                });
+                            }
+
+                            // Function to save house rules data
+                            function saveHouseRules(propertyId) {
+                                return new Promise((resolve, reject) => {
+                                    console.log('saveHouseRules called with propertyId:', propertyId);
+                                    
+                                    // Get Alpine.js data from the step 7 template
+                                    const step7Element = document.querySelector('[x-data*="petPolicy"]');
+                                    console.log('Step 7 element found:', step7Element);
+                                    
+                                    if (!step7Element) {
+                                        console.error('Could not find Alpine.js element for step 7');
+                                        reject('Could not find Alpine.js element for step 7');
+                                        return;
+                                    }
+                                    
+                                    const step7Data = Alpine.$data(step7Element);
+                                    console.log('Step 7 Alpine data:', step7Data);
+                                    
+                                    if (!step7Data) {
+                                        console.error('Could not find Alpine.js data for step 7');
+                                        reject('Could not find Alpine.js data for step 7');
+                                        return;
+                                    }
+
+                                    // Get form data from Alpine.js data
+                                    const smokingAllowed = step7Data.smokingAllowed || false;
+                                    const childrenAllowed = step7Data.childrenAllowed || true;
+                                    const partiesAllowed = step7Data.partiesAllowed || false;
+                                    const petsAllowed = step7Data.petPolicy || 'no';
+                                    const petsFees = step7Data.petsFees || null;
+                                    const checkInFrom = step7Data.checkInFrom || '15:00';
+                                    const checkInUntil = step7Data.checkInUntil || '18:00';
+                                    const checkOutFrom = step7Data.checkOutFrom || '08:00';
+                                    const checkOutUntil = step7Data.checkOutUntil || '11:00';
+
+                                    const houseRulesData = {
+                                        smoking_allowed: smokingAllowed,
+                                        children_allowed: childrenAllowed,
+                                        parties_allowed: partiesAllowed,
+                                        pets_allowed: petsAllowed,
+                                        pets_fees: petsFees,
+                                        check_in_from: checkInFrom,
+                                        check_in_until: checkInUntil,
+                                        check_out_from: checkOutFrom,
+                                        check_out_until: checkOutUntil
+                                    };
+
+                                    console.log('House rules data to be sent:', houseRulesData);
+                                    console.log('Step 7 Alpine data:', step7Data);
+                                    console.log('smokingAllowed:', smokingAllowed);
+                                    console.log('childrenAllowed:', childrenAllowed);
+                                    console.log('partiesAllowed:', partiesAllowed);
+                                    console.log('petsAllowed:', petsAllowed);
+                                    console.log('petsFees:', petsFees);
+
+                                    // Get CSRF token
+                                    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                                    console.log('CSRF token:', csrfToken);
+
+                                    // Send data to backend
+                                    fetch(`/partner/property/${propertyId}/house-rules`, {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'X-CSRF-TOKEN': csrfToken
+                                        },
+                                        body: JSON.stringify(houseRulesData)
+                                    })
+                                    .then(response => {
+                                        console.log('Response status:', response.status);
+                                        return response.json();
+                                    })
+                                    .then(data => {
+                                        console.log('Response data:', data);
+                                        if (data.success) {
+                                            console.log('House rules saved successfully');
+                                            resolve('House rules saved successfully!');
+                                        } else {
+                                            console.error('Error saving house rules:', data.message);
+                                            reject('Error saving house rules: ' + data.message);
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('Fetch error:', error);
+                                        reject('Error saving house rules: ' + error.message);
+                                    });
+                                });
+                            }
+
+                            // Function to save services data
+                            function saveServices(propertyId) {
+                                return new Promise((resolve, reject) => {
+                                    console.log('saveServices called with propertyId:', propertyId);
+                                    
+                                    // Get Alpine.js data from the step 5 template
+                                    const step5Element = document.querySelector('[x-data*="servesBreakfast"]');
+                                    console.log('Step 5 element found:', step5Element);
+                                    
+                                    if (!step5Element) {
+                                        console.error('Could not find Alpine.js element for step 5');
+                                        reject('Could not find Alpine.js element for step 5');
+                                        return;
+                                    }
+                                    
+                                    // Get Alpine.js data using the correct method
+                                    const step5Data = Alpine.$data(step5Element);
+                                    console.log('Step 5 Alpine data:', step5Data);
+                                    
+                                    if (!step5Data) {
+                                        console.error('Could not find Alpine.js data for step 5');
+                                        reject('Could not find Alpine.js data for step 5');
+                                        return;
+                                    }
+
+                                    // Get parking data from DOM
+                                    const parkingAvailable = document.querySelector('input[name="parking"]:checked')?.value || 'no';
+                                    const parkingCost = document.querySelector('input[name="cost"]')?.value || null;
+                                    const parkingReservation = document.querySelector('input[name="reservation_needed"]:checked')?.value || null;
+                                    const parkingLocation = document.querySelector('input[name="location"]:checked')?.value || null;
+                                    const parkingType = document.querySelector('input[name="type"]:checked')?.value || null;
+
+                                    // Convert boolean for servesBreakfast
+                                    const servesBreakfast = step5Data.servesBreakfast === true || step5Data.servesBreakfast === 'true';
+
+                                    const servicesData = {
+                                        serve_breakfast: servesBreakfast,
+                                        breakfast_included: step5Data.breakfastIncluded || null,
+                                        breakfast_type: step5Data.selectedBreakfasts || [],
+                                        breakfast_price: step5Data.breakfastPrice || null,
+                                        parking_available: parkingAvailable,
+                                        parking_cost: parkingCost,
+                                        parking_reservation: parkingReservation,
+                                        parking_location: parkingLocation,
+                                        parking_type: parkingType
+                                    };
+
+                                    console.log('Services data to be sent:', servicesData);
+                                    console.log('Raw Alpine data:', step5Data);
+                                    console.log('servesBreakfast type:', typeof step5Data.servesBreakfast);
+                                    console.log('servesBreakfast value:', step5Data.servesBreakfast);
+
+                                    // Get CSRF token
+                                    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                                    console.log('CSRF token:', csrfToken);
+
+                                    // Send data to backend
+                                    fetch(`/partner/property/${propertyId}/services`, {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'X-CSRF-TOKEN': csrfToken
+                                        },
+                                        body: JSON.stringify(servicesData)
+                                    })
+                                    .then(response => {
+                                        console.log('Response status:', response.status);
+                                        return response.json();
+                                    })
+                                    .then(data => {
+                                        console.log('Response data:', data);
+                                        if (data.success) {
+                                            console.log('Services saved successfully');
+                                            resolve('Services saved successfully!');
+                                        } else {
+                                            console.error('Error saving services:', data.message);
+                                            reject('Error saving services: ' + data.message);
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('Fetch error:', error);
+                                        reject('Error saving services: ' + error.message);
+                                    });
+                                });
+                            }
+
+                            // Function to handle continue logic
+                            function handleContinueLogic(alpineData) {
+                                alert('handleContinue called on step ' + alpineData.step);
+                                console.log('=== handleContinue called ===');
+                                console.log('Current step:', alpineData.step);
+                                const propertyId = {{ $property->id ?? 'null' }};
+                                console.log('Property ID:', propertyId);
+                                console.log('handleContinue called, step:', alpineData.step, 'propertyId:', propertyId);
+                                
+                                if (alpineData.step === 5 && propertyId) {
+                                    console.log('Saving services on step 5');
+                                    saveServices(propertyId)
+                                        .then(result => {
+                                            console.log('Services saved:', result);
+                                            alpineData.step = Math.min(alpineData.step + 1, 13);
+                                        })
+                                        .catch(error => {
+                                            console.error('Error saving services:', error);
+                                            alert('Error saving services: ' + error);
+                                        });
+                                } else if (alpineData.step === 6 && propertyId) {
+                                    console.log('Saving languages on step 6');
+                                    saveLanguages(propertyId)
+                                        .then(result => {
+                                            console.log('Languages saved:', result);
+                                            alpineData.step = Math.min(alpineData.step + 1, 13);
+                                        })
+                                        .catch(error => {
+                                            console.error('Error saving languages:', error);
+                                            alert('Error saving languages: ' + error);
+                                        });
+                                } else if (alpineData.step === 7 && propertyId) {
+                                    console.log('Saving house rules on step 7');
+                                    // Call the step 7's saveHouseRules function
+                                    const step7Element = document.querySelector('[x-data*="petPolicy"]');
+                                    if (step7Element) {
+                                        const step7Data = Alpine.$data(step7Element);
+                                        if (step7Data && step7Data.saveHouseRules) {
+                                            step7Data.saveHouseRules();
+                                        } else {
+                                            console.error('Could not find step 7 saveHouseRules function');
+                                            alpineData.step = Math.min(alpineData.step + 1, 13);
+                                        }
+                                    } else {
+                                        console.error('Could not find step 7 element');
+                                        alpineData.step = Math.min(alpineData.step + 1, 13);
+                                    }
+                                } else {
+                                    // Proceed to next step immediately for other steps
+                                    alpineData.step = Math.min(alpineData.step + 1, 13);
+                                }
+                            }
+
+                            // Function to save house rules from step 7
+                            async function saveHouseRulesFromStep7(step7Data) {
+                                try {
+                                    const propertyId = {{ $property->id ?? 'null' }};
+                                    const response = await fetch(`/partner/property/${propertyId}/house-rules`, {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'Accept': 'application/json',
+                                            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                                        },
+                                        body: JSON.stringify({
+                                            smoking_allowed: step7Data.smokingAllowed,
+                                            children_allowed: step7Data.childrenAllowed,
+                                            parties_allowed: step7Data.partiesAllowed,
+                                            pets_allowed: step7Data.petPolicy,
+                                            pets_fees: step7Data.petsFees,
+                                            check_in_from: step7Data.checkInFrom,
+                                            check_in_until: step7Data.checkInUntil,
+                                            check_out_from: step7Data.checkOutFrom,
+                                            check_out_until: step7Data.checkOutUntil
+                                        })
+                                    });
+                                    
+                                    console.log('Sending data:', {
+                                        smoking_allowed: step7Data.smokingAllowed,
+                                        children_allowed: step7Data.childrenAllowed,
+                                        parties_allowed: step7Data.partiesAllowed,
+                                        pets_allowed: step7Data.petPolicy,
+                                        pets_fees: step7Data.petsFees,
+                                        check_in_from: step7Data.checkInFrom,
+                                        check_in_until: step7Data.checkInUntil,
+                                        check_out_from: step7Data.checkOutFrom,
+                                        check_out_until: step7Data.checkOutUntil
+                                    });
+                                    
+                                    if (response.ok) {
+                                        console.log('House rules saved successfully');
+                                        
+                                        // Try multiple approaches to find and update the step
+                                        let stepUpdated = false;
+                                        
+                                        // Approach 1: Look for the main container with step data
+                                        // Try to find the element that contains the step variable and also has the handleContinue function
+                                        const mainContainer = document.querySelector('[x-data*="handleContinue"]');
+                                        if (mainContainer) {
+                                            const mainData = Alpine.$data(mainContainer);
+                                            if (mainData && typeof mainData.step !== 'undefined') {
+                                                console.log('Found main container with step:', mainData.step);
+                                                // Only update if we're actually on step 7
+                                                if (mainData.step === 7) {
+                                                    mainData.step = Math.min(mainData.step + 1, 13);
+                                                    console.log('Step updated to:', mainData.step);
+                                                    stepUpdated = true;
+                                                } else {
+                                                    console.log('Found step data but not on step 7, current step:', mainData.step);
+                                                }
+                                            }
+                                        }
+                                        
+                                        // Approach 2: If first approach failed, try to find any element with step
+                                        if (!stepUpdated) {
+                                            const allElements = document.querySelectorAll('[x-data]');
+                                            for (let element of allElements) {
+                                                const data = Alpine.$data(element);
+                                                if (data && typeof data.step !== 'undefined') {
+                                                    console.log('Found step data in fallback element, step:', data.step);
+                                                    // Only update if we're actually on step 7
+                                                    if (data.step === 7) {
+                                                        data.step = Math.min(data.step + 1, 13);
+                                                        console.log('Step updated to:', data.step);
+                                                        stepUpdated = true;
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        
+                                        // Approach 3: If still not found, try to trigger the continue button
+                                        if (!stepUpdated) {
+                                            console.log('Trying to trigger continue button');
+                                            const continueButton = document.querySelector('[x-on\\:click*="handleContinue"]');
+                                            if (continueButton) {
+                                                continueButton.click();
+                                                stepUpdated = true;
+                                            }
+                                        }
+                                        
+                                        if (!stepUpdated) {
+                                            console.error('Could not update step - all approaches failed');
+                                        }
+                                    } else {
+                                        console.error('Failed to save house rules');
+                                    }
+                                } catch (error) {
+                                    console.error('Error saving house rules:', error);
+                                }
+                            }
+
+
+
+
+                        </script>
                         </html>
