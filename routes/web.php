@@ -466,6 +466,9 @@ Route::get('/partner-home-final-steps', function () {
 })->name('frontend.partner-home-final-steps');
 
 
+Route::get('/apartment/final', function () {
+    return view('frontend.partner-apartment-final');
+})->name('partner.apartment.final');
 
 
 
