@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->time('check_out_until');
             $table->boolean('smoking_allowed')->default(false);
             $table->boolean('parties_allowed')->default(false);
+            $table->boolean('children_allowed')->default(false);
             $table->string('pets_allowed')->nullable();
             $table->string('pets_fees')->nullable();
         });

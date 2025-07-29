@@ -128,7 +128,7 @@
                             <img src="{{ asset('images/accomm_single_home@2x (1).png') }}" alt="One Apartment"
                                 class="w-8 h-8" />
                             <div>
-                                <span class="text-base font-bold text-gray-800">Entire place</span>
+                                <span class="text-base font-bold text-gray-800">Entire placwwwe</span>
                                 <p class="text-xs text-gray-800">
                                     Guests are able to use the entire place and do not have to share this with the host
                                     or other guests.

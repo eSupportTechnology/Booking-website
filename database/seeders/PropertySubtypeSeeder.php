@@ -16,6 +16,12 @@ class PropertySubtypeSeeder extends Seeder
             ['subcategory_id' => 1, 'name' => 'Holiday Home'],
             ['subcategory_id' => 1, 'name' => 'Apart Hotel'],
             ['subcategory_id' => 1, 'name' => 'Holiday Park'],
+            ['subcategory_id' => 2, 'name' => 'Guest house'],
+            ['subcategory_id' => 2, 'name' => 'Bed and breakfast'],
+            ['subcategory_id' => 2, 'name' => 'Homestay'],
+            ['subcategory_id' => 2, 'name' => 'Country house '],
+            ['subcategory_id' => 2, 'name' => 'Apart Hotel'],
+            ['subcategory_id' => 2, 'name' => 'Farm stay'],
         ];
 
         foreach ($subtypes as $subtype) {

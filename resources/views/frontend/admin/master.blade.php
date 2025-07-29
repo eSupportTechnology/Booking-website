@@ -126,11 +126,12 @@
             <i :class="openProperty ? 'fa-chevron-up' : 'fa-chevron-down'" class="fas text-xs"></i>
           </button>
           <div x-show="openProperty" x-collapse class="ml-8 mt-2 space-y-1 border-l border-blue-300 pl-4">
-            <a href="#" class="block py-1 hover:text-blue-700 font-semibold">Apartments</a>
-            <a href="#" class="block py-1 hover:text-blue-700 font-semibold">Homes</a>
-            <a href="#" class="block py-1 hover:text-blue-700 font-semibold">Hotels</a>
-            <a href="#" class="block py-1 hover:text-blue-700 font-semibold">Alternative Places</a>
-          </div>
+            <a href="{{ route('admin.apartments') }}" class="block py-1 hover:text-blue-700 font-semibold">Apartments</a>
+            <a href="{{ route('admin.homes') }}" class="block py-1 hover:text-blue-700 font-semibold">Homes</a>
+            <a href="{{ route('admin.hotels') }}" class="block py-1 hover:text-blue-700 font-semibold">Hotels</a>
+            <a href="{{ route('admin.alternative.places') }}" class="block py-1 hover:text-blue-700 font-semibold">Alternative Places</a>
+        </div>
+
         </div>
 
         <!-- SETTINGS -->
