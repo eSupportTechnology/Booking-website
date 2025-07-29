@@ -182,8 +182,9 @@
                 const result = await response.json();
                 if (result.success) {
                     alert("Photos uploaded successfully!");
-                    window.location.href = "{{ url('/partner-homes-edit/' . $property->id) }}";
-                } else {
+                    window.location.href = "{{ url('/partner-homes-edit/' . $property->id) }}?uploaded=true";
+                }
+                else {
                     alert("Upload failed.");
                 }
             } catch (error) {
