@@ -307,21 +307,23 @@ class PropertyAction
 
         if ($dto->type === 'individual') {
             // Handle individual verification
-            $individual = Individual::updateOrCreate(
-                ['accommodation_id' => $accommodation->id],
-                [
-                    'accommodation_id' => $accommodation->id,
-                    'first_name' => $dto->full_name ? explode(' ', $dto->full_name)[0] : null,
-                    'last_name' => $dto->full_name ? (explode(' ', $dto->full_name)[1] ?? '') : null,
-                    'date_of_birth' => $dto->national_id, // Using national_id as DOB for now
-                ]
-            );
+            foreach ($dto->owners as $owner) {
+                $individual = Individual::updateOrCreate(
+                    [
+                        'accommodation_id' => $accommodation->id,
+                        'first_name' => $owner['first_name'],
+                        'last_name' => $owner['last_name'],
+                    ],
+                    [
+                        'date_of_birth' => $owner['dob'],
+                    ]
+                );
 
-            Log::info('Individual verification saved', [
-                'accommodation_id' => $accommodation->id,
-                'individual_id' => $individual->id,
-                'individual_data' => $individual->toArray()
-            ]);
+                Log::info('Saved individual owner', [
+                    'individual_id' => $individual->id,
+                    'owner_data' => $individual->toArray()
+                ]);
+            }
         } else {
             // Handle business entity verification
             $businessEntity = BusinessEntity::updateOrCreate(
@@ -329,13 +331,31 @@ class PropertyAction
                 [
                     'accommodation_id' => $accommodation->id,
                     'business_name' => $dto->company_name,
-                    'trading_name' => null, // Could be added to DTO if needed
-                    'address' => null, // Could be added to DTO if needed
-                    'zip_code' => null, // Could be added to DTO if needed
-                    'city' => null, // Could be added to DTO if needed
-                    'country' => null, // Could be added to DTO if needed
+                    'trading_name' => $dto->trading_name, // Could be added to DTO if needed
+                    'address' => $dto->address, // Could be added to DTO if needed
+                    'zip_code' => $dto->zip_code, // Could be added to DTO if needed
+                    'city' => $dto->city, // Could be added to DTO if needed
+                    'country' => $dto->country, // Could be added to DTO if needed
                 ]
             );
+            foreach ($dto->owners as $owner) {
+                $individual = Individual::updateOrCreate(
+                    [
+                        'accommodation_id' => $accommodation->id,
+                        'first_name' => $owner['first_name'],
+                        'last_name' => $owner['last_name'],
+                    ],
+                    [
+                        'date_of_birth' => $owner['dob'],
+                    ]
+                );
+
+                Log::info('Saved individual owner', [
+                    'individual_id' => $individual->id,
+                    'owner_data' => $individual->toArray()
+                ]);
+            }
+
 
             Log::info('Business entity verification saved', [
                 'accommodation_id' => $accommodation->id,
@@ -368,7 +388,7 @@ class PropertyAction
         ];
 
         // Remove null values
-        $availabilityData = array_filter($availabilityData, function($value) {
+        $availabilityData = array_filter($availabilityData, function ($value) {
             return $value !== null;
         });
 

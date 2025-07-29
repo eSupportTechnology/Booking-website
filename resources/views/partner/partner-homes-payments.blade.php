@@ -22,6 +22,20 @@
             paymentMethod: 'online', // Default payment method
             invoiceName: 'user',
             sameAddress: 'yes',
+            ownershipType: '',
+            owners: [{ firstName: '', lastName: '', dob: '' }],
+            optionalAltNames: '',
+            owner: {
+                firstName: '',
+                lastName: '',
+                dob: '',
+                address: '',
+                zipCode: '',
+                city: '',
+                country: ''
+            },
+            companyName: '',
+            registrationNumber: '',
 
             saveStep1: async function() {
 
@@ -108,6 +122,61 @@
                 } catch (error) {
                     console.error(error);
                     alert('An error occurred while saving invoicing details.');
+                }
+            },
+
+            async saveStep3() {
+                const propertyId = document.getElementById('propertyId').value;
+                const ownershipType = this.ownershipType;
+                const formData = new FormData();
+
+                formData.append('property_id', propertyId);
+                formData.append('type', ownershipType);
+
+                if (ownershipType === 'individual') {
+                    this.owners.forEach((owner, index) => {
+                        formData.append(`owners[${index}][first_name]`, owner.firstName);
+                        formData.append(`owners[${index}][last_name]`, owner.lastName);
+                        formData.append(`owners[${index}][dob]`, owner.dob);
+                    });
+                }
+
+                if (ownershipType === 'business') {
+                    formData.append('company_name', this.owner?.firstName || '');
+                    formData.append('registration_number', ''); // optional or add a field later
+
+                    // These are required in your backend (based on DB error)
+                    formData.append('address', this.owner?.address || 'Test Address');
+                    formData.append('zip_code', this.owner?.zipCode || '10000');
+                    formData.append('city', this.owner?.city || 'Colombo');
+                    formData.append('country', this.owner?.country || 'Sri Lanka');
+
+                     this.owners.forEach((owner, index) => {
+                        formData.append(`owners[${index}][first_name]`, owner.firstName);
+                        formData.append(`owners[${index}][last_name]`, owner.lastName);
+                        formData.append(`owners[${index}][dob]`, owner.dob);
+                    });
+                }
+
+                try {
+                    const response = await fetch('/partner/partner-verification', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        },
+                        body: formData,
+                    });
+
+                    const result = await response.json();
+                    if (response.ok) {
+                        this.step++;
+                    } else {
+                        alert('Failed to save verification data.');
+                        console.error(result);
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert('An error occurred while saving partner verification.');
                 }
             }
 
@@ -416,7 +485,7 @@
 
     <!-- Step X - Partner Verification -->
     <template x-if="step === 3">
-        <div class="px-4 py-8 mt-6 w-full max-w-2xl mx-auto lg:ml-24 space-y-6" x-data="{ ownershipType: '', owners: [{ firstName: '', lastName: '', dob: '' }] }">
+        <div class="px-4 py-8 mt-6 w-full max-w-2xl mx-auto lg:ml-24 space-y-6" >
 
             <h2 class="text-3xl font-bold text-gray-800">Partner verification</h2>
 
@@ -608,7 +677,7 @@
 
                     ←
                 </button>
-                <button @click="step++"
+                <button @click="saveStep3()"
                     class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition ">
                     Continue
                 </button>
