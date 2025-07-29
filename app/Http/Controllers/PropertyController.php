@@ -689,6 +689,13 @@ class PropertyController extends Controller
 
     public function saveHostProfile(Request $request, Property $property)
     {
+        Log::info('saveHostProfile called', [
+            'property_id' => $property->id,
+            'request_data' => $request->all(),
+            'request_method' => $request->method(),
+            'content_type' => $request->header('Content-Type')
+        ]);
+
         try {
             $validated = $request->validate([
                 'property_id' => 'required|exists:properties,id',
@@ -702,6 +709,8 @@ class PropertyController extends Controller
                 'host_name' => 'nullable|string|max:255'
             ]);
 
+            Log::info('Validation passed', ['validated_data' => $validated]);
+
             $property->hostProfile()->updateOrCreate(
                 ['property_id' => $property->id],
                 $validated
@@ -711,7 +720,13 @@ class PropertyController extends Controller
 
             return response()->json(['success' => true, 'message' => 'Host profile saved successfully']);
         } catch (\Exception $e) {
-            Log::error('Error saving host profile', ['error' => $e->getMessage(), 'property_id' => $property->id]);
+            Log::error('Error saving host profile', [
+                'error' => $e->getMessage(),
+                'property_id' => $property->id,
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
             return response()->json(['success' => false, 'message' => 'Error saving host profile: ' . $e->getMessage()], 500);
         }
     }

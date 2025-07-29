@@ -133,7 +133,10 @@
                     'Accept': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
                 },
-                body: JSON.stringify(this.hostProfile)
+                body: JSON.stringify({
+                    ...this.hostProfile,
+                    property_id: propertyId
+                })
             });
             
             if (response.ok) {
@@ -141,6 +144,8 @@
                 this.step = Math.min(this.step + 1, 13);
             } else {
                 console.error('Failed to save host profile');
+                const errorData = await response.json();
+                console.error('Error details:', errorData);
             }
         } catch (error) {
             console.error('Error saving host profile:', error);
