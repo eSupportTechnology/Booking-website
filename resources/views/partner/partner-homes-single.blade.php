@@ -300,7 +300,7 @@
                     if (result.success) {
                         console.log('✅ Host profile saved:', result.message);
                         // Optionally move to next step
-                        this.step = Math.min(this.step + 1, 13);
+                        window.location.href = "{{ url('/partner-homes-edit/' . $propertyId) }}?details=true";                    
                     } else {
                         console.error('❌ Save failed:', result.message);
                     }
