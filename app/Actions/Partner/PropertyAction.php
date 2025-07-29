@@ -23,9 +23,12 @@ use App\DTOs\Partner\PartnerVerificationDTO;
 use App\DTOs\Partner\SaveLanguagesDTO;
 use App\DTOs\Partner\SaveAddressSameDTO;
 use App\DTOs\Partner\PropertyServiceDTO;
+use App\DTOs\Partner\SaveServicesDTO;
+use App\DTOs\Partner\SaveHouseRulesDTO;
 use App\Models\PartnerVerification;
 use App\Models\PropertyService;
 use App\Models\Room;
+
 use Faker\Provider\ar_EG\Address;
 
 class PropertyAction
@@ -310,43 +313,91 @@ class PropertyAction
         }
     }
 
-     public function saveService(PropertyServiceDTO $dto): void
+    public function saveServices(Property $property, SaveServicesDTO $dto): void
     {
-         PropertyService::updateOrCreate(
-            ['property_id' => $dto->property_id],
-            $dto->toArray()
-        );
-    }
-
-    public function getSpecificAmenities(): Collection
-    {
-        // Get specific amenities by name that are used in the multiple apartment form
-        $amenityNames = [
-            'Sauna', 
-            'Garden view',
-            'Terrace',
-            'Hot tub',
-            'Heating',
-            'Free WiFi',
-            'Air conditioning',
-            'Swimming Pool',
-            'Minibar'
-        ];
-        
-        $amenities = \App\Models\Amenity::whereIn('name', $amenityNames)->get();
-        
-        Log::info('getSpecificAmenities called', [
-            'requested_names' => $amenityNames,
-            'found_amenities' => $amenities->toArray()
+        Log::info('PropertyAction::saveServices called', [
+            'property_id' => $property->id,
+            'dto_data' => $dto->toArray()
         ]);
-        
-        return $amenities->map(function ($amenity) {
-            return [
-                'id' => $amenity->id,
-                'name' => $amenity->name,
-            ];
+
+        // Prepare the data for saving
+        $serviceData = [
+            'serve_breakfast' => filter_var($dto->serve_breakfast, FILTER_VALIDATE_BOOLEAN),
+            'breakfast_included' => $dto->breakfast_included,
+            'breakfast_type' => $dto->breakfast_type,
+            'breakfast_price' => $dto->breakfast_price,
+            'parking_available' => $dto->parking_available,
+            'parking_cost' => $dto->parking_cost,
+            'parking_reservation' => $dto->parking_reservation,
+            'parking_location' => $dto->parking_location,
+            'parking_type' => $dto->parking_type,
+        ];
+
+        // Remove null values
+        $serviceData = array_filter($serviceData, function($value) {
+            return $value !== null;
         });
+
+        // Update or create the property service
+        $property->services()->updateOrCreate(
+            ['property_id' => $property->id],
+            $serviceData
+        );
+
+        Log::info('Services saved successfully', [
+            'property_id' => $property->id,
+            'service_data' => $serviceData
+        ]);
     }
 
+    public function saveHouseRules(Property $property, SaveHouseRulesDTO $dto): void
+    {
+        Log::info('PropertyAction::saveHouseRules called', [
+            'property_id' => $property->id,
+            'dto_data' => $dto->toArray()
+        ]);
 
+        // Prepare the data for saving to property_policies table
+        $policyData = [
+            'smoking_allowed' => $this->convertToBoolean($dto->smoking_allowed),
+            'children_allowed' => $this->convertToBoolean($dto->children_allowed),
+            'parties_allowed' => $this->convertToBoolean($dto->parties_allowed),
+            'pets_allowed' => $dto->pets_allowed,
+            'pets_fees' => $dto->pets_fees,
+            'check_in_from' => $dto->check_in_from,
+            'check_in_until' => $dto->check_in_until,
+            'check_out_from' => $dto->check_out_from,
+            'check_out_until' => $dto->check_out_until,
+        ];
+
+        // Remove null values
+        $policyData = array_filter($policyData, function($value) {
+            return $value !== null;
+        });
+
+        // Update or create the property policies
+        $property->policies()->updateOrCreate(
+            ['property_id' => $property->id],
+            $policyData
+        );
+
+        Log::info('House rules saved successfully to property_policies', [
+            'property_id' => $property->id,
+            'policy_data' => $policyData
+        ]);
+    }
+
+    private function convertToBoolean($value): bool
+    {
+        if (is_bool($value)) {
+            return $value;
+        }
+        if (is_string($value)) {
+            return in_array(strtolower($value), ['true', '1', 'yes', 'on']);
+        }
+        if (is_numeric($value)) {
+            return (bool) $value;
+        }
+        return false;
+    }
 }

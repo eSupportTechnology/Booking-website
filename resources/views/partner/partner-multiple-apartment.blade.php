@@ -121,39 +121,7 @@
         }
     },
     
-    async saveHouseRules() {
-        try {
-            const propertyId = @json($property->id ?? 'new');
-            const response = await fetch(`/partner/property/${propertyId}/policy`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
-                },
-                body: JSON.stringify({
-                    smoking_allowed: this.smokingAllowed,
-                    parties_allowed: this.partiesAllowed,
-                    pets_allowed: this.petsAllowed,
-                    pets_fees: this.petsFees,
-                    check_in_from: this.checkInFrom,
-                    check_in_until: this.checkInUntil,
-                    check_out_from: this.checkOutFrom,
-                    check_out_until: this.checkOutUntil,
-                    cancellation_policy: 'flexible'
-                })
-            });
-            
-            if (response.ok) {
-                console.log('House rules saved successfully');
-                this.step = Math.min(this.step + 1, 13);
-            } else {
-                console.error('Failed to save house rules');
-            }
-        } catch (error) {
-            console.error('Error saving house rules:', error);
-        }
-    },
+
     
     async saveHostProfile() {
         try {
@@ -360,7 +328,21 @@
         </section>
     </header>
 <!-- Blade + Alpine.js + Tailwind CSS -->
-<div x-data="{ step: 1 }" class="max-w-3xl mx-auto lg:ml-32 px-4 py-8 space-y-6">
+<div x-data="{ 
+    step: 1,
+    selectedLanguages: [],
+    languages: window.languagesData || [],
+    getLanguageName(id) {
+        const language = this.languages.find(lang => lang.id == id);
+        return language ? language.name : 'Unknown';
+    },
+    removeLanguage(id) {
+        this.selectedLanguages = this.selectedLanguages.filter(langId => langId != id);
+    },
+        handleContinue() {
+        handleContinueLogic(this);
+    }
+}" class="max-w-3xl mx-auto lg:ml-32 px-4 py-8 space-y-6">
 
     
 
@@ -883,7 +865,7 @@
                 class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
                 ←
             </button>
-            <button type="button" @click="step = Math.min(step + 1, 13)"
+            <button type="button" @click="handleContinue()"
                 class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
                 Continue
             </button>
@@ -905,22 +887,29 @@
                                                                 <h3 class="text-lg  mb-4 font-bold">Select languages
                                                                 </h3>
                                                                 <div class="space-y-2">
-                                                                    <label class="flex items-center cursor-pointer">
-                                                                        <input type="checkbox" x-model="selectedLanguages" value="English" class="mr-2" />
-                                                                        <span>English</span>
-                                                                    </label>
-                                                                    <label class="flex items-center cursor-pointer">
-                                                                        <input type="checkbox" x-model="selectedLanguages" value="French" class="mr-2" />
-                                                                        <span>French</span>
-                                                                    </label>
-                                                                    <label class="flex items-center cursor-pointer">
-                                                                        <input type="checkbox" x-model="selectedLanguages" value="German" class="mr-2" />
-                                                                        <span>German</span>
-                                                                    </label>
-                                                                    <label class="flex items-center cursor-pointer">
-                                                                        <input type="checkbox" x-model="selectedLanguages" value="Hindi" class="mr-2" />
-                                                                        <span>Hindi</span>
-                                                                    </label>
+                                                                    <!-- Main Languages -->
+                                                                    @php
+                                                                        $mainLanguages = ['English', 'French', 'German', 'Hindi', 'Spanish', 'Italian'];
+                                                                        $mainLanguageIds = [];
+                                                                        $additionalLanguages = [];
+                                                                        
+                                                                        foreach($languages as $language) {
+                                                                            if (in_array($language['name'], $mainLanguages)) {
+                                                                                $mainLanguageIds[] = $language['id'];
+                                                                            } else {
+                                                                                $additionalLanguages[] = $language;
+                                                                            }
+                                                                        }
+                                                                    @endphp
+                                                                    
+                                                                    @foreach($languages as $language)
+                                                                        @if(in_array($language['name'], $mainLanguages))
+                                                                        <label class="flex items-center cursor-pointer">
+                                                                            <input type="checkbox" x-model="selectedLanguages" value="{{ $language['id'] }}" class="mr-2" />
+                                                                            <span>{{ $language['name'] }}</span>
+                                                                        </label>
+                                                                        @endif
+                                                                    @endforeach
                                                                 </div>
 
                                                                 <!-- Add Additional Languages -->
@@ -949,30 +938,14 @@
                                                                         <!-- Dropdown list -->
                                                                         <ul id="languageDropdown"
                                                                             class="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded max-h-40 overflow-auto shadow-lg hidden">
+                                                                            @foreach($additionalLanguages as $language)
                                                                             <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                                                onclick="selectLanguage(this)">Arabic
+                                                                                onclick="selectLanguage(this, {{ $language['id'] }}, '{{ $language['name'] }}')"
+                                                                                data-id="{{ $language['id'] }}"
+                                                                                data-name="{{ $language['name'] }}">
+                                                                                {{ $language['name'] }}
                                                                             </li>
-                                                                            <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                                                onclick="selectLanguage(this)">
-                                                                                Bulgarian</li>
-                                                                            <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                                                onclick="selectLanguage(this)">Catalan
-                                                                            </li>
-                                                                            <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                                                onclick="selectLanguage(this)">Chinese
-                                                                            </li>
-                                                                            <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                                                onclick="selectLanguage(this)">Croatian
-                                                                            </li>
-                                                                            <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                                                onclick="selectLanguage(this)">Czech
-                                                                            </li>
-                                                                            <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                                                onclick="selectLanguage(this)">Danish
-                                                                            </li>
-                                                                            <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                                                onclick="selectLanguage(this)">Dutch
-                                                                            </li>
+                                                                            @endforeach
                                                                         </ul>
                                                                     </div>
                                                                 </div>
@@ -983,6 +956,21 @@
                                                                     class="text-blue-500 hover:underline mt-4 block">
                                                                     Add additional languages
                                                                 </a>
+                                                                
+                                                                <!-- Selected Additional Languages Display -->
+                                                                <div x-show="selectedLanguages.length > 0" class="mt-4">
+                                                                    <h4 class="text-sm font-medium text-gray-700 mb-2">Selected Additional Languages:</h4>
+                                                                    <div class="flex flex-wrap gap-2">
+                                                                        <template x-for="langId in selectedLanguages" :key="langId">
+                                                                            <template x-if="!['1', '2', '3', '4', '5', '6'].includes(langId.toString())">
+                                                                                <div class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm flex items-center">
+                                                                                    <span x-text="getLanguageName(langId)"></span>
+                                                                                    <button @click="removeLanguage(langId)" class="ml-1 text-blue-600 hover:text-blue-800">×</button>
+                                                                                </div>
+                                                                            </template>
+                                                                        </template>
+                                                                    </div>
+                                                                </div>
                                                             </div>
 
                                                             <!-- Navigation Buttons -->
@@ -1003,6 +991,10 @@
                                                         </div>
 
                                                         <script>
+                                                            // Set languages data globally
+                                                            window.languagesData = {{ Js::from($languages) }};
+                                                            
+
                                                             function toggleAdditionalLanguages() {
                                                                 const section = document.getElementById("additionalLanguagesSection");
                                                                 section.classList.toggle("hidden");
@@ -1049,10 +1041,18 @@
                                                                 }
                                                             }
 
-                                                            function selectLanguage(element) {
+                                                            function selectLanguage(element, languageId, languageName) {
                                                                 const input = document.getElementById("languageInput");
-                                                                input.value = element.textContent;
+                                                                input.value = languageName;
                                                                 hideDropdown();
+                                                                
+                                                                // Add the language to selectedLanguages if not already selected
+                                                                const mainData = Alpine.$data(document.querySelector('[x-data*="step"]'));
+                                                                if (mainData && !mainData.selectedLanguages.includes(languageId)) {
+                                                                    mainData.selectedLanguages.push(languageId);
+                                                                    console.log('Language added:', languageName, 'ID:', languageId);
+                                                                    console.log('Selected languages:', mainData.selectedLanguages);
+                                                                }
                                                             }
 
                                                             // Close dropdown when clicking outside
@@ -1061,7 +1061,7 @@
                                                                 const input = document.getElementById("languageInput");
                                                                 const container = document.getElementById("additionalLanguagesSection");
                                                                 if (
-                                                                    !container.contains(event.target)
+                                                                    container && !container.contains(event.target)
                                                                 ) {
                                                                     hideDropdown();
                                                                 }
@@ -1069,184 +1069,159 @@
                                                         </script>
                                                     </div>
 </template>
-<template x-if="step === 7">
-     <div>
-                                                        <div class="container mx-auto px-4 py-8 max-w-6xl">
-                                                            <!-- Header -->
-                                                            <h2 class="text-2xl font-bold mb-8 text-left">House rules
-                                                            </h2>
+    <template x-if="step === 7">
+     <div x-data="{ 
+         petPolicy: 'no',
+         smokingAllowed: false,
+         childrenAllowed: true,
+         partiesAllowed: false,
+         petsFees: null,
+         checkInFrom: '15:00',
+         checkInUntil: '18:00',
+         checkOutFrom: '08:00',
+         checkOutUntil: '11:00',
+         
+         saveHouseRules() {
+             saveHouseRulesFromStep7(this);
+         }
+     }">
+        <div class="container mx-auto px-4 py-8 max-w-6xl">
+            <!-- Header -->
+            <h2 class="text-2xl font-bold mb-8 text-left">House rules</h2>
 
-                                                            <div class="flex flex-col md:flex-row gap-6">
-                                                                <!-- Left Section -->
-                                                                <div
-                                                                    class="bg-white shadow-md rounded-lg p-6 w-full md:w-2/3">
-                                                                    <!-- Toggle Switches -->
-                                                                    <div class="space-y-4">
-                                                                        <label
-                                                                            class="flex items-center justify-between cursor-pointer">
-                                                                            <span>Smoking allowed</span>
-                                                                            <div class="relative">
-                                                                                <input type="checkbox"
-                                                                                    x-model="smokingAllowed"
-                                                                                    class="sr-only peer" />
-                                                                                <div
-                                                                                    class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition">
-                                                                                </div>
-                                                                                <div
-                                                                                    class="absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-4">
-                                                                                </div>
-                                                                            </div>
-                                                                        </label>
+            <div class="flex flex-col md:flex-row gap-6">
+                <!-- Left Section -->
+                <div class="bg-white shadow-md rounded-lg p-6 w-full md:w-2/3">
+                    <!-- Toggle Switches -->
+                    <div class="space-y-4">
+                                                 <label class="flex items-center justify-between cursor-pointer">
+                             <span>Smoking allowed</span>
+                             <div class="relative">
+                                 <input type="checkbox" x-model="smokingAllowed" class="sr-only peer" />
+                                 <div class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition"></div>
+                                 <div class="absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-4"></div>
+                             </div>
+                         </label>
 
-                                                                        <label
-                                                                            class="flex items-center justify-between cursor-pointer">
-                                                                            <span>Children allowed</span>
-                                                                            <div class="relative">
-                                                                                <input type="checkbox"
-                                                                                    class="sr-only peer" checked />
-                                                                                <div
-                                                                                    class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition">
-                                                                                </div>
-                                                                                <div
-                                                                                    class="absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-4">
-                                                                                </div>
-                                                                            </div>
-                                                                        </label>
+                                                 <label class="flex items-center justify-between cursor-pointer">
+                             <span>Children allowed</span>
+                             <div class="relative">
+                                 <input type="checkbox" x-model="childrenAllowed" class="sr-only peer" />
+                                 <div class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition"></div>
+                                 <div class="absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-4"></div>
+                             </div>
+                         </label>
 
-                                                                        <label
-                                                                            class="flex items-center justify-between cursor-pointer">
-                                                                            <span>Parties/events allowed</span>
-                                                                            <div class="relative">
-                                                                                <input type="checkbox"
-                                                                                    x-model="partiesAllowed"
-                                                                                    class="sr-only peer" />
-                                                                                <div
-                                                                                    class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition">
-                                                                                </div>
-                                                                                <div
-                                                                                    class="absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-4">
-                                                                                </div>
-                                                                            </div>
-                                                                        </label>
-                                                                    </div>
+                                                 <label class="flex items-center justify-between cursor-pointer">
+                             <span>Parties/events allowed</span>
+                             <div class="relative">
+                                 <input type="checkbox" x-model="partiesAllowed" class="sr-only peer" />
+                                 <div class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition"></div>
+                                 <div class="absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-4"></div>
+                             </div>
+                         </label>
+                    </div>
 
-                                                                    <hr class="my-6 border-t border-gray-300">
-                                                                    <!-- Pet Policy -->
-                                                                    <div class="mt-6">
-                                                                        <h3 class="text-base font-semibold mb-2">Do you
-                                                                            allow pets?</h3>
-                                                                        <div class="space-y-2">
-                                                                            <label
-                                                                                class="flex items-center cursor-pointer">
-                                                                                <input type="radio" name="pets"
-                                                                                    value="yes" x-model="petsAllowed" class="mr-2">
-                                                                                <span>Yes</span>
-                                                                            </label>
-                                                                            <label
-                                                                                class="flex items-center cursor-pointer">
-                                                                                <input type="radio" name="pets"
-                                                                                    value="upon_request"
-                                                                                    x-model="petsAllowed" class="mr-2">
-                                                                                <span>Upon request</span>
-                                                                            </label>
-                                                                            <label
-                                                                                class="flex items-center cursor-pointer">
-                                                                                <input type="radio" name="pets"
-                                                                                    value="no" x-model="petsAllowed" class="mr-2"
-                                                                                    checked>
-                                                                                <span>No</span>
-                                                                            </label>
-                                                                        </div>
-                                                                    </div>
+                    <hr class="my-6 border-t border-gray-300">
 
-                                                                    <hr class="my-6 border-t border-gray-300">
+                    <!-- Pet Policy -->
+                    <div class="mt-6">
+                        <h3 class="text-base font-semibold mb-2">Do you allow pets?</h3>
+                        <div class="space-y-2">
+                            <label class="flex items-center cursor-pointer">
+                                <input type="radio" name="pets" value="yes" class="mr-2" @click="petPolicy = 'yes'">
+                                <span>Yes</span>
+                            </label>
+                            <label class="flex items-center cursor-pointer">
+                                <input type="radio" name="pets" value="upon_request" class="mr-2" @click="petPolicy = 'upon_request'">
+                                <span>Upon request</span>
+                            </label>
+                            <label class="flex items-center cursor-pointer">
+                                <input type="radio" name="pets" value="no" class="mr-2" @click="petPolicy = 'no'" checked>
+                                <span>No</span>
+                            </label>
+                        </div>
 
-                                                                    <!-- Check-in -->
-                                                                    <div class="mt-6">
-                                                                        <h3 class="text-base font-semibold mb-2">Check
-                                                                            in</h3>
-                                                                        <div class="flex space-x-4">
-                                                                            <div class="w-full">
-                                                                                <label
-                                                                                    class="block text-sm font-medium mb-1">From</label>
-                                                                                <input type="time" x-model="checkInFrom"
-                                                                                    class="w-full border rounded p-2" />
-                                                                            </div>
-                                                                            <div class="w-full">
-                                                                                <label
-                                                                                    class="block text-sm font-medium mb-1">Until</label>
-                                                                                <input type="time" x-model="checkInUntil"
-                                                                                    class="w-full border rounded p-2" />
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
+                        <!-- Additional Charges for Pets -->
+                        <template x-if="petPolicy === 'yes' || petPolicy === 'upon_request'">
+                            <div class="mt-4">
+                                <h4 class="text-sm font-semibold mb-2">Are there additional charges for pets?</h4>
+                                                                 <label class="flex items-center cursor-pointer mb-1">
+                                     <input type="radio" name="pets_fees" value="free" x-model="petsFees" class="mr-2">
+                                     <span>Pets can stay for free</span>
+                                 </label>
+                                 <label class="flex items-center cursor-pointer">
+                                     <input type="radio" name="pets_fees" value="charges" x-model="petsFees" class="mr-2">
+                                     <span>Charges may apply</span>
+                                 </label>
+                            </div>
+                        </template>
+                    </div>
 
-                                                                    <!-- Check-out -->
-                                                                    <div class="mt-6">
-                                                                        <h3 class="text-base font-semibold mb-2">Check
-                                                                            out</h3>
-                                                                        <div class="flex space-x-4">
-                                                                            <div class="w-full">
-                                                                                <label
-                                                                                    class="block text-sm font-medium mb-1">From</label>
-                                                                                <input type="time" x-model="checkOutFrom"
-                                                                                    class="w-full border rounded p-2" />
-                                                                            </div>
-                                                                            <div class="w-full">
-                                                                                <label
-                                                                                    class="block text-sm font-medium mb-1">Until</label>
-                                                                                <input type="time" x-model="checkOutUntil"
-                                                                                    class="w-full border rounded p-2" />
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
+                    <hr class="my-6 border-t border-gray-300">
 
-                                                                <!-- Right Section: Tip Box -->
-                                                                <div x-data="{ show: true }" x-show="show"
-                                                                    class="bg-white shadow-md rounded-lg p-6 w-full h-[300px] md:w-1/3 relative">
-                                                                    <div class="flex justify-between items-start">
-                                                                        <div class="flex items-center space-x-2">
-                                                                            <img src="{{ asset('assets/system-uicons_lightbulb-on.svg') }}"
-                                                                                alt="Help"
-                                                                                class="w-6 h-6 md:w-7 md:h-7 cursor-pointer" />
-                                                                            <h3
-                                                                                class="text-gray-800 font-semibold text-base">
-                                                                                What if my house rules change?</h3>
-                                                                        </div>
-                                                                        <button @click="show = false"
-                                                                            class="text-gray-400 hover:text-gray-600">
-                                                                            <svg xmlns="http://www.w3.org/2000/svg"
-                                                                                class="h-5 w-5" viewBox="0 0 20 20"
-                                                                                fill="currentColor">
-                                                                                <path fill-rule="evenodd"
-                                                                                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                                                                    clip-rule="evenodd" />
-                                                                            </svg>
-                                                                        </button>
-                                                                    </div>
-                                                                    <p class="text-sm text-gray-700 mt-3">
-                                                                        You can easily customise these house rules later
-                                                                        and additional house rules can be set on the
-                                                                        Policies page of the extranet after you complete
-                                                                        registration.
-                                                                    </p>
-                                                                </div>
-                                                            </div>
+                    <!-- Check-in -->
+                    <div class="mt-6">
+                        <h3 class="text-base font-semibold mb-2">Check in</h3>
+                        <div class="flex space-x-4">
+                            <div class="w-full">
+                                <label class="block text-sm font-medium mb-1">From</label>
+                                <input type="time" x-model="checkInFrom" class="w-full border rounded p-2" />
+                            </div>
+                            <div class="w-full">
+                                <label class="block text-sm font-medium mb-1">Until</label>
+                                <input type="time" x-model="checkInUntil" class="w-full border rounded p-2" />
+                            </div>
+                        </div>
+                    </div>
 
-                                                            <!-- Navigation Buttons -->
-                                                            <div class="mt-8 flex ">
-                                                                <button type="button"  @click="step = Math.max(step - 1, 1)"
-                                                                    class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
-                                                                    ←
-                                                                </button>
-                                                                <button type="button"     @click="saveHouseRules()"
-                                                                    class="px-6 h-12 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ml-[285px]">
-                                                                    Continue
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                    <!-- Check-out -->
+                    <div class="mt-6">
+                        <h3 class="text-base font-semibold mb-2">Check out</h3>
+                        <div class="flex space-x-4">
+                            <div class="w-full">
+                                <label class="block text-sm font-medium mb-1">From</label>
+                                <input type="time" x-model="checkOutFrom" class="w-full border rounded p-2" />
+                            </div>
+                            <div class="w-full">
+                                <label class="block text-sm font-medium mb-1">Until</label>
+                                <input type="time" x-model="checkOutUntil" class="w-full border rounded p-2" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Section: Tip Box -->
+                <div x-data="{ show: true }" x-show="show" class="bg-white shadow-md rounded-lg p-6 w-full h-[300px] md:w-1/3 relative">
+                    <div class="flex justify-between items-start">
+                        <div class="flex items-center space-x-2">
+                            <img src="{{ asset('assets/system-uicons_lightbulb-on.svg') }}" alt="Help" class="w-6 h-6 md:w-7 md:h-7 cursor-pointer" />
+                            <h3 class="text-gray-800 font-semibold text-base">
+                                What if my house rules change?</h3>
+                        </div>
+                        <button @click="show = false" class="text-gray-400 hover:text-gray-600">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    </div>
+                    <p class="text-sm text-gray-700 mt-3">
+                        You can easily customise these house rules later and additional house rules can be set on the Policies page of the extranet after you complete registration.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="mt-8 flex">
+                <button type="button" @click="step = Math.max(step - 1, 1)" class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                    ←
+                </button>
+                <button type="button" @click="handleContinue()" class="px-6 h-12 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ml-[285px]">
+                    Continue
+                </button>
+            </div>
+        </div>
+    </div>
 </template>
 <template x-if="step === 8">
       <div class="max-w-2xl mx-auto space-y-8 px-4 sm:px-6 lg:px-8 lg:ml-32 py-6">
@@ -1876,4 +1851,392 @@ You will be able to add more apartments or duplicate this one when you finish fi
 
 
                         </body>
+
+                        <script>
+                            // Function to save languages data
+                            function saveLanguages(propertyId) {
+                                return new Promise((resolve, reject) => {
+                                    console.log('saveLanguages called with propertyId:', propertyId);
+                                    
+                                    // Get Alpine.js data from the main component
+                                    const mainData = Alpine.$data(document.querySelector('[x-data*="step"]'));
+                                    console.log('Main Alpine data:', mainData);
+                                    
+                                    if (!mainData) {
+                                        console.error('Could not find Alpine.js data');
+                                        reject('Could not find Alpine.js data');
+                                        return;
+                                    }
+
+                                    const languagesData = {
+                                        languages: mainData.selectedLanguages || []
+                                    };
+
+                                    console.log('Languages data to be sent:', languagesData);
+
+                                    // Get CSRF token
+                                    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                                    console.log('CSRF token:', csrfToken);
+
+                                    // Send data to backend
+                                    fetch(`/partner/property/${propertyId}/languages`, {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'X-CSRF-TOKEN': csrfToken
+                                        },
+                                        body: JSON.stringify(languagesData)
+                                    })
+                                    .then(response => {
+                                        console.log('Response status:', response.status);
+                                        return response.json();
+                                    })
+                                    .then(data => {
+                                        console.log('Response data:', data);
+                                        if (data.success) {
+                                            console.log('Languages saved successfully');
+                                            resolve('Languages saved successfully!');
+                                        } else {
+                                            console.error('Error saving languages:', data.message);
+                                            reject('Error saving languages: ' + data.message);
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('Fetch error:', error);
+                                        reject('Error saving languages: ' + error.message);
+                                    });
+                                });
+                            }
+
+                            // Function to save house rules data
+                            function saveHouseRules(propertyId) {
+                                return new Promise((resolve, reject) => {
+                                    console.log('saveHouseRules called with propertyId:', propertyId);
+                                    
+                                    // Get Alpine.js data from the step 7 template
+                                    const step7Element = document.querySelector('[x-data*="petPolicy"]');
+                                    console.log('Step 7 element found:', step7Element);
+                                    
+                                    if (!step7Element) {
+                                        console.error('Could not find Alpine.js element for step 7');
+                                        reject('Could not find Alpine.js element for step 7');
+                                        return;
+                                    }
+                                    
+                                    const step7Data = Alpine.$data(step7Element);
+                                    console.log('Step 7 Alpine data:', step7Data);
+                                    
+                                    if (!step7Data) {
+                                        console.error('Could not find Alpine.js data for step 7');
+                                        reject('Could not find Alpine.js data for step 7');
+                                        return;
+                                    }
+
+                                    // Get form data from Alpine.js data
+                                    const smokingAllowed = step7Data.smokingAllowed || false;
+                                    const childrenAllowed = step7Data.childrenAllowed || true;
+                                    const partiesAllowed = step7Data.partiesAllowed || false;
+                                    const petsAllowed = step7Data.petPolicy || 'no';
+                                    const petsFees = step7Data.petsFees || null;
+                                    const checkInFrom = step7Data.checkInFrom || '15:00';
+                                    const checkInUntil = step7Data.checkInUntil || '18:00';
+                                    const checkOutFrom = step7Data.checkOutFrom || '08:00';
+                                    const checkOutUntil = step7Data.checkOutUntil || '11:00';
+
+                                    const houseRulesData = {
+                                        smoking_allowed: smokingAllowed,
+                                        children_allowed: childrenAllowed,
+                                        parties_allowed: partiesAllowed,
+                                        pets_allowed: petsAllowed,
+                                        pets_fees: petsFees,
+                                        check_in_from: checkInFrom,
+                                        check_in_until: checkInUntil,
+                                        check_out_from: checkOutFrom,
+                                        check_out_until: checkOutUntil
+                                    };
+
+                                    console.log('House rules data to be sent:', houseRulesData);
+                                    console.log('Step 7 Alpine data:', step7Data);
+                                    console.log('smokingAllowed:', smokingAllowed);
+                                    console.log('childrenAllowed:', childrenAllowed);
+                                    console.log('partiesAllowed:', partiesAllowed);
+                                    console.log('petsAllowed:', petsAllowed);
+                                    console.log('petsFees:', petsFees);
+
+                                    // Get CSRF token
+                                    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                                    console.log('CSRF token:', csrfToken);
+
+                                    // Send data to backend
+                                    fetch(`/partner/property/${propertyId}/house-rules`, {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'X-CSRF-TOKEN': csrfToken
+                                        },
+                                        body: JSON.stringify(houseRulesData)
+                                    })
+                                    .then(response => {
+                                        console.log('Response status:', response.status);
+                                        return response.json();
+                                    })
+                                    .then(data => {
+                                        console.log('Response data:', data);
+                                        if (data.success) {
+                                            console.log('House rules saved successfully');
+                                            resolve('House rules saved successfully!');
+                                        } else {
+                                            console.error('Error saving house rules:', data.message);
+                                            reject('Error saving house rules: ' + data.message);
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('Fetch error:', error);
+                                        reject('Error saving house rules: ' + error.message);
+                                    });
+                                });
+                            }
+
+                            // Function to save services data
+                            function saveServices(propertyId) {
+                                return new Promise((resolve, reject) => {
+                                    console.log('saveServices called with propertyId:', propertyId);
+                                    
+                                    // Get Alpine.js data from the step 5 template
+                                    const step5Element = document.querySelector('[x-data*="servesBreakfast"]');
+                                    console.log('Step 5 element found:', step5Element);
+                                    
+                                    if (!step5Element) {
+                                        console.error('Could not find Alpine.js element for step 5');
+                                        reject('Could not find Alpine.js element for step 5');
+                                        return;
+                                    }
+                                    
+                                    // Get Alpine.js data using the correct method
+                                    const step5Data = Alpine.$data(step5Element);
+                                    console.log('Step 5 Alpine data:', step5Data);
+                                    
+                                    if (!step5Data) {
+                                        console.error('Could not find Alpine.js data for step 5');
+                                        reject('Could not find Alpine.js data for step 5');
+                                        return;
+                                    }
+
+                                    // Get parking data from DOM
+                                    const parkingAvailable = document.querySelector('input[name="parking"]:checked')?.value || 'no';
+                                    const parkingCost = document.querySelector('input[name="cost"]')?.value || null;
+                                    const parkingReservation = document.querySelector('input[name="reservation_needed"]:checked')?.value || null;
+                                    const parkingLocation = document.querySelector('input[name="location"]:checked')?.value || null;
+                                    const parkingType = document.querySelector('input[name="type"]:checked')?.value || null;
+
+                                    // Convert boolean for servesBreakfast
+                                    const servesBreakfast = step5Data.servesBreakfast === true || step5Data.servesBreakfast === 'true';
+
+                                    const servicesData = {
+                                        serve_breakfast: servesBreakfast,
+                                        breakfast_included: step5Data.breakfastIncluded || null,
+                                        breakfast_type: step5Data.selectedBreakfasts || [],
+                                        breakfast_price: step5Data.breakfastPrice || null,
+                                        parking_available: parkingAvailable,
+                                        parking_cost: parkingCost,
+                                        parking_reservation: parkingReservation,
+                                        parking_location: parkingLocation,
+                                        parking_type: parkingType
+                                    };
+
+                                    console.log('Services data to be sent:', servicesData);
+                                    console.log('Raw Alpine data:', step5Data);
+                                    console.log('servesBreakfast type:', typeof step5Data.servesBreakfast);
+                                    console.log('servesBreakfast value:', step5Data.servesBreakfast);
+
+                                    // Get CSRF token
+                                    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                                    console.log('CSRF token:', csrfToken);
+
+                                    // Send data to backend
+                                    fetch(`/partner/property/${propertyId}/services`, {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'X-CSRF-TOKEN': csrfToken
+                                        },
+                                        body: JSON.stringify(servicesData)
+                                    })
+                                    .then(response => {
+                                        console.log('Response status:', response.status);
+                                        return response.json();
+                                    })
+                                    .then(data => {
+                                        console.log('Response data:', data);
+                                        if (data.success) {
+                                            console.log('Services saved successfully');
+                                            resolve('Services saved successfully!');
+                                        } else {
+                                            console.error('Error saving services:', data.message);
+                                            reject('Error saving services: ' + data.message);
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('Fetch error:', error);
+                                        reject('Error saving services: ' + error.message);
+                                    });
+                                });
+                            }
+
+                            // Function to handle continue logic
+                            function handleContinueLogic(alpineData) {
+                                alert('handleContinue called on step ' + alpineData.step);
+                                console.log('=== handleContinue called ===');
+                                console.log('Current step:', alpineData.step);
+                                const propertyId = {{ $property->id ?? 'null' }};
+                                console.log('Property ID:', propertyId);
+                                console.log('handleContinue called, step:', alpineData.step, 'propertyId:', propertyId);
+                                
+                                if (alpineData.step === 5 && propertyId) {
+                                    console.log('Saving services on step 5');
+                                    saveServices(propertyId)
+                                        .then(result => {
+                                            console.log('Services saved:', result);
+                                            alpineData.step = Math.min(alpineData.step + 1, 13);
+                                        })
+                                        .catch(error => {
+                                            console.error('Error saving services:', error);
+                                            alert('Error saving services: ' + error);
+                                        });
+                                } else if (alpineData.step === 6 && propertyId) {
+                                    console.log('Saving languages on step 6');
+                                    saveLanguages(propertyId)
+                                        .then(result => {
+                                            console.log('Languages saved:', result);
+                                            alpineData.step = Math.min(alpineData.step + 1, 13);
+                                        })
+                                        .catch(error => {
+                                            console.error('Error saving languages:', error);
+                                            alert('Error saving languages: ' + error);
+                                        });
+                                } else if (alpineData.step === 7 && propertyId) {
+                                    console.log('Saving house rules on step 7');
+                                    // Call the step 7's saveHouseRules function
+                                    const step7Element = document.querySelector('[x-data*="petPolicy"]');
+                                    if (step7Element) {
+                                        const step7Data = Alpine.$data(step7Element);
+                                        if (step7Data && step7Data.saveHouseRules) {
+                                            step7Data.saveHouseRules();
+                                        } else {
+                                            console.error('Could not find step 7 saveHouseRules function');
+                                            alpineData.step = Math.min(alpineData.step + 1, 13);
+                                        }
+                                    } else {
+                                        console.error('Could not find step 7 element');
+                                        alpineData.step = Math.min(alpineData.step + 1, 13);
+                                    }
+                                } else {
+                                    // Proceed to next step immediately for other steps
+                                    alpineData.step = Math.min(alpineData.step + 1, 13);
+                                }
+                            }
+
+                            // Function to save house rules from step 7
+                            async function saveHouseRulesFromStep7(step7Data) {
+                                try {
+                                    const propertyId = {{ $property->id ?? 'null' }};
+                                    const response = await fetch(`/partner/property/${propertyId}/house-rules`, {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'Accept': 'application/json',
+                                            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                                        },
+                                        body: JSON.stringify({
+                                            smoking_allowed: step7Data.smokingAllowed,
+                                            children_allowed: step7Data.childrenAllowed,
+                                            parties_allowed: step7Data.partiesAllowed,
+                                            pets_allowed: step7Data.petPolicy,
+                                            pets_fees: step7Data.petsFees,
+                                            check_in_from: step7Data.checkInFrom,
+                                            check_in_until: step7Data.checkInUntil,
+                                            check_out_from: step7Data.checkOutFrom,
+                                            check_out_until: step7Data.checkOutUntil
+                                        })
+                                    });
+                                    
+                                    console.log('Sending data:', {
+                                        smoking_allowed: step7Data.smokingAllowed,
+                                        children_allowed: step7Data.childrenAllowed,
+                                        parties_allowed: step7Data.partiesAllowed,
+                                        pets_allowed: step7Data.petPolicy,
+                                        pets_fees: step7Data.petsFees,
+                                        check_in_from: step7Data.checkInFrom,
+                                        check_in_until: step7Data.checkInUntil,
+                                        check_out_from: step7Data.checkOutFrom,
+                                        check_out_until: step7Data.checkOutUntil
+                                    });
+                                    
+                                    if (response.ok) {
+                                        console.log('House rules saved successfully');
+                                        
+                                        // Try multiple approaches to find and update the step
+                                        let stepUpdated = false;
+                                        
+                                        // Approach 1: Look for the main container with step data
+                                        // Try to find the element that contains the step variable and also has the handleContinue function
+                                        const mainContainer = document.querySelector('[x-data*="handleContinue"]');
+                                        if (mainContainer) {
+                                            const mainData = Alpine.$data(mainContainer);
+                                            if (mainData && typeof mainData.step !== 'undefined') {
+                                                console.log('Found main container with step:', mainData.step);
+                                                // Only update if we're actually on step 7
+                                                if (mainData.step === 7) {
+                                                    mainData.step = Math.min(mainData.step + 1, 13);
+                                                    console.log('Step updated to:', mainData.step);
+                                                    stepUpdated = true;
+                                                } else {
+                                                    console.log('Found step data but not on step 7, current step:', mainData.step);
+                                                }
+                                            }
+                                        }
+                                        
+                                        // Approach 2: If first approach failed, try to find any element with step
+                                        if (!stepUpdated) {
+                                            const allElements = document.querySelectorAll('[x-data]');
+                                            for (let element of allElements) {
+                                                const data = Alpine.$data(element);
+                                                if (data && typeof data.step !== 'undefined') {
+                                                    console.log('Found step data in fallback element, step:', data.step);
+                                                    // Only update if we're actually on step 7
+                                                    if (data.step === 7) {
+                                                        data.step = Math.min(data.step + 1, 13);
+                                                        console.log('Step updated to:', data.step);
+                                                        stepUpdated = true;
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        
+                                        // Approach 3: If still not found, try to trigger the continue button
+                                        if (!stepUpdated) {
+                                            console.log('Trying to trigger continue button');
+                                            const continueButton = document.querySelector('[x-on\\:click*="handleContinue"]');
+                                            if (continueButton) {
+                                                continueButton.click();
+                                                stepUpdated = true;
+                                            }
+                                        }
+                                        
+                                        if (!stepUpdated) {
+                                            console.error('Could not update step - all approaches failed');
+                                        }
+                                    } else {
+                                        console.error('Failed to save house rules');
+                                    }
+                                } catch (error) {
+                                    console.error('Error saving house rules:', error);
+                                }
+                            }
+
+
+
+
+                        </script>
                         </html>

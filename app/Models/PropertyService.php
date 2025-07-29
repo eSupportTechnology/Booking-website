@@ -14,6 +14,7 @@ class PropertyService extends Model
         'serve_breakfast',
         'breakfast_included',
         'breakfast_type',
+        'breakfast_price',
         'parking_available',
         'parking_cost',
         'parking_cost_unit',

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use App\DTOs\Partner\PropertyStep1DTO;
 use App\DTOs\Partner\PropertyStep2DTO;
 
+
 use Illuminate\Support\Facades\DB;
 use App\Models\PropertyCategory;
 use App\DTOs\Partner\PropertyAdditionalDetailsDTO;
@@ -27,6 +28,8 @@ use App\DTOs\Partner\PartnerVerificationDTO;
 use App\DTOs\Partner\SaveLanguagesDTO;
 use App\DTOs\Partner\SaveAddressSameDTO;
 use App\DTOs\Partner\PropertyServiceDTO;
+use App\DTOs\Partner\SaveServicesDTO;
+use App\DTOs\Partner\SaveHouseRulesDTO;
 use App\Models\Room;
 use App\Models\PartnerVerification;
 use App\Models\Language;
@@ -402,12 +405,22 @@ class PropertyController extends Controller
                 'request' => $request->all(),
             ]);
         
-              $dto = SaveAmenitiesDTO::fromRequest($request);
+              
+        try {
+            $dto = SaveAmenitiesDTO::fromRequest($request);
             Log::info('SaveAmenitiesDTO created:', ['amenities' => $dto->amenities]);
-            Log::info('saveAmenities validated', $dto->toArray());
-            $propertyAction->saveAmenities($property, $dto);
+            Log::info('saveAmenities validated', $dto->toArray());            Log::info('SaveAmenitiesDTO created:', ['amenities' => $dto->amenities]);
 
-            return response()->json(['success' => true]);
+                $propertyAction->saveAmenities($property, $dto);
+
+                return response()->json(['success' => true, 'message' => 'Amenities saved successfully']);
+        } catch (\Exception $e) {
+            Log::error('Error saving amenities:', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
         } catch (\Exception $e) {
             Log::error('saveAmenities error', [
                 'message' => $e->getMessage(),
@@ -532,15 +545,18 @@ class PropertyController extends Controller
             $property = null;
         }
         
-        $amenities = $action->getSpecificAmenities();
+        $amenities = $action->getAmenities();
+        $languages = $action->getLanguages();
         
         Log::info('showMultipleApartmentForm returning', [
             'property_id' => $property ? $property->id : null,
             'amenities_count' => $amenities->count(),
-            'amenities' => $amenities->toArray()
+            'amenities' => $amenities->toArray(),
+            'languages_count' => $languages->count(),
+            'languages' => $languages->toArray()
         ]);
         
-        return view('partner.partner-multiple-apartment', compact('property', 'amenities'));
+        return view('partner.partner-multiple-apartment', compact('property', 'amenities', 'languages'));
     }
 
     /**
@@ -781,22 +797,84 @@ class PropertyController extends Controller
         return view('partner.partner-homes-multiple', compact('propertyId', 'subtypeId'));
     }
 
-    public function saveServices(Request $request, $propertyId)
+    public function saveServices(Request $request, Property $property, PropertyAction $propertyAction)
     {
+        Log::info('saveServices called', [
+            'property_id' => $property->id,
+            'request' => $request->all(),
+            'request_method' => $request->method(),
+            'content_type' => $request->header('Content-Type'),
+            'url' => $request->url(),
+        ]);
+
         try {
-            Log::info('saveServices called', [
-                'property_id' => $propertyId,
-                'request' => $request->all(),
+            $dto = SaveServicesDTO::fromRequest($request);
+            Log::info('DTO created successfully', [
+                'dto_data' => $dto->toArray()
+            ]);
+            
+            $propertyAction->saveServices($property, $dto);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Services saved successfully.',
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error saving services', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
             ]);
 
-            $dto = PropertyServiceDTO::fromRequest($request);
-
-            (new PropertyAction())->saveService($dto);
-
-            return response()->json(['success' => true]);
-        } catch (\Exception $e) {
-            Log::error('Error saving property services', ['error' => $e->getMessage()]);
-            return response()->json(['success' => false, 'message' => 'Error saving property services']);
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
         }
     }
+
+    public function saveHouseRules(Request $request, Property $property, PropertyAction $propertyAction)
+    {
+        Log::info('saveHouseRules called', [
+            'property_id' => $property->id,
+            'request' => $request->all(),
+            'request_method' => $request->method(),
+            'content_type' => $request->header('Content-Type'),
+            'url' => $request->url(),
+        ]);
+
+        try {
+            // Log the raw request data
+            Log::info('Raw request data', [
+                'all' => $request->all(),
+                'json' => $request->json()->all(),
+                'input' => $request->input(),
+            ]);
+            
+            $dto = SaveHouseRulesDTO::fromRequest($request);
+            Log::info('DTO created successfully', [
+                'dto_data' => $dto->toArray()
+            ]);
+            
+            $propertyAction->saveHouseRules($property, $dto);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'House rules saved successfully.',
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error saving house rules', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
 }

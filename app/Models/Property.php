@@ -86,4 +86,6 @@ class Property extends Model
     {
         return $this->belongsTo(AddressType::class);
     }
+
+
 }
