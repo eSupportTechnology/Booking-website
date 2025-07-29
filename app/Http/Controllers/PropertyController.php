@@ -877,4 +877,29 @@ class PropertyController extends Controller
     }
 
 
+    public function showPrivateHomesRooms($propertyId)
+    {
+       $property = Property::findOrFail($propertyId);
+        return view('partner.partner-homes-rooms', compact('property'));
+    }
+
+    public function showPrivateHomesImages($propertyId)
+    {
+       $property = Property::findOrFail($propertyId);
+        return view('partner.partner-homes-images', compact('property'));
+    }
+
+    public function showPrivateHomesPayments($propertyId)
+    {
+        $property = Property::findOrFail($propertyId);
+        return view('partner.partner-homes-payments', compact('property'));
+    }
+
+    public function showPrivateHomesEdit($propertyId)
+    {
+        $property = Property::findOrFail($propertyId);
+        return view('partner.partner-homes-edit', compact('property'));
+    }
+
+
 }

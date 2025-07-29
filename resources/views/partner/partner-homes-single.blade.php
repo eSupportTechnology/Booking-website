@@ -1242,9 +1242,9 @@
                                 can add more.</p>
                         </div>
                     </div>
-                    <a href="{{ route('partner.homes.rooms') }}"
-                        class=" bg-sky-400 border border-sky-400 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-sky-500">
-                        Add room
+                    <a href="{{ url('/partner-homes-rooms/' . $propertyId) }}"
+                    class=" bg-sky-400 border border-sky-400 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-sky-500">
+                            Add room
                     </a>
                 </div>
 
@@ -1260,8 +1260,8 @@
                                 expect.</p>
                         </div>
                     </div>
-                    <a href="{{ route('partner.homes.images') }}"
-                        class="border border-sky-400 text-sky-400 text-sm font-semibold px-4 py-2 rounded hover:bg-sky-50">
+                    <a href="{{ url('/partner-homes-images/' . $propertyId) }}"
+                    class="border border-sky-400 text-sky-400 text-sm font-semibold px-4 py-2 rounded hover:bg-sky-50">
                         Add Photos
                     </a>
 
@@ -1279,8 +1279,8 @@
                                 bookings.</p>
                         </div>
                     </div>
-                    <a href="{{ route('partner.homes.payments') }}"
-                        class=" bg-sky-400 border border-sky-400 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-sky-500">
+                    <a href="{{ url('/partner-homes-payments/' . $propertyId) }}">
+                    class=" bg-sky-400 border border-sky-400 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-sky-500">
                         Add final details
                     </a>
                 </div>

@@ -261,21 +261,13 @@ Route::post('/partner-homes-single', [PropertyController::class, 'showPrivateHom
 Route::post('/partner-homes-multiple', [PropertyController::class, 'showPrivateHomesMultiple'])->name('partner.homes.multiple');
 
 
-Route::get('/partner-homes-rooms', function () {
-    return view('partner.partner-homes-rooms');
-})->name('partner.homes.rooms');
+Route::get('/partner-homes-rooms/{id}',[PropertyController::class, 'showPrivateHomesRooms'])->name('partner.homes.rooms');
 
-Route::get('/partner-homes-edit', function () {
-    return view('partner.partner-homes-edit');
-})->name('partner.homes.edit');
+Route::get('/partner-homes-edit/{id}', [PropertyController::class, 'showPrivateHomesEdit'])->name('partner.homes.edit');
 
-Route::get('/partner-homes-payments', function () {
-    return view('partner.partner-homes-payments');
-})->name('partner.homes.payments');
+Route::get('/partner-homes-payments/{id}', [PropertyController::class, 'showPrivateHomesPayments'])->name('partner.homes.payments');
 
-Route::get('/partner-homes-images', function () {
-    return view('partner.partner-homes-images');
-})->name('partner.homes.images');
+Route::get('/partner-homes-images/{id}',[PropertyController::class, 'showPrivateHomesImages'])->name('partner.homes.images');
 
 
 
@@ -413,7 +405,7 @@ Route::prefix('partner')->group(function () {
     // Step 2: Show next form and save more details (dynamic for any category, static route name)
     Route::post('/property/{category}/step2/{property}', [PropertyController::class, 'storeStep2'])->name('partner.property.store.step2');
     Route::post('/property/step3/{property}', [PropertyController::class, 'storeStep2'])->name('partner.property.store.step3');
-    Route::post('/property/upload-photos', [PropertyController::class, 'uploadPhotos']);
+    Route::post('/property/upload-photos', [PropertyController::class, 'uploadPhotos'])->name('partner.property.upload.photos');
     Route::post('/property/save-amenities/{property}', [PropertyController::class, 'saveAmenities']);
     Route::post('/property/save-policy/{property}', [PropertyController::class, 'savePolicy']);
     Route::post('/property/save-languages/{property}', [PropertyController::class, 'saveLanguages']);
