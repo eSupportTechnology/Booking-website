@@ -31,6 +31,16 @@ use App\DTOs\Partner\PropertyServiceDTO;
 use App\DTOs\Partner\SaveServicesDTO;
 use App\DTOs\Partner\SaveHouseRulesDTO;
 use App\DTOs\SaveAvailabilitySettingsDTO;
+use App\DTOs\Partner\SaveHostProfileDTO;
+use App\DTOs\Partner\SaveBedroomDTO;
+use App\DTOs\Partner\SaveAdditionalDetailsDTO;
+use App\DTOs\Partner\SaveAddressMultipleDTO;
+use App\DTOs\Partner\SavePricingDTO;
+use App\Actions\Partner\SaveHostProfileAction;
+use App\Actions\Partner\SaveBedroomAction;
+use App\Actions\Partner\SaveAdditionalDetailsAction;
+use App\Actions\Partner\SaveAddressMultipleAction;
+use App\Actions\Partner\SavePricingAction;
 use App\Models\Room;
 use App\Models\PartnerVerification;
 use App\Models\Language;
@@ -506,30 +516,21 @@ class PropertyController extends Controller
         ]);
     }
 
-    public function saveBedroom(Request $request, Property $property)
+    public function saveBedroom(Request $request, Property $property, SaveBedroomAction $action)
     {
-        $validated = $request->validate([
-            'room_name' => 'required|string',
-            'beds' => 'required|array',
-            'beds.*.id' => 'required|exists:bed_types,id',
-            'beds.*.count' => 'required|integer|min:0',
-        ]);
+        try {
+            $dto = SaveBedroomDTO::fromRequest($request);
+            $action->execute($dto, $property);
 
-        $room = $property->rooms()->updateOrCreate(
-            ['name' => $validated['room_name']],
-            ['room_type_id' => 1] // Assuming 'bedroom' type
-        );
-
-        $bedData = [];
-        foreach ($validated['beds'] as $bed) {
-            if ($bed['count'] > 0) {
-                $bedData[$bed['id']] = ['count' => $bed['count']];
-            }
+            return response()->json(['success' => true, 'message' => 'Bedroom saved successfully.']);
+        } catch (\Exception $e) {
+            Log::error('Error saving bedroom', [
+                'error' => $e->getMessage(),
+                'property_id' => $property->id,
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json(['success' => false, 'message' => 'Error saving bedroom: ' . $e->getMessage()], 500);
         }
-
-        $room->beds()->sync($bedData);
-
-        return response()->json(['success' => true, 'message' => 'Bedroom saved successfully.']);
     }
 
     public function showMultipleApartmentForm($property = null, PropertyAction $action)
@@ -604,25 +605,15 @@ class PropertyController extends Controller
     /**
      * Save additional details including languages (for the saveAdditionalDetails method)
      */
-    public function saveAdditionalDetails(Request $request)
+    public function saveAdditionalDetails(Request $request, SaveAdditionalDetailsAction $action)
     {
         Log::info('saveAdditionalDetails called', [
             'request' => $request->all(),
         ]);
 
         try {
-            $validated = $request->validate([
-                'property_id' => 'required|exists:properties,id',
-                'languages' => 'nullable|array',
-                'languages.*' => 'exists:languages,id',
-            ]);
-
-            $property = Property::findOrFail($validated['property_id']);
-
-            // Save languages if provided
-            if (!empty($validated['languages'])) {
-                $property->languages()->sync($validated['languages']);
-            }
+            $dto = SaveAdditionalDetailsDTO::fromRequest($request);
+            $action->execute($dto);
 
             return response()->json([
                 'success' => true,
@@ -662,33 +653,23 @@ class PropertyController extends Controller
         }
     }
 
-    public function saveAddressMultiple(Request $request)
+    public function saveAddressMultiple(Request $request, SaveAddressMultipleAction $action)
     {
-        $validated = $request->validate([
-            'first_property_id' => 'required|exists:properties,id',
-            'addresses' => 'required|array',
-        ]);
+        try {
+            $dto = SaveAddressMultipleDTO::fromRequest($request);
+            $action->execute($dto);
 
-        $addresses = $validated['addresses'];
-
-        Property::findOrFail($validated['first_property_id'])->update([
-            'address' => $addresses[0]
-        ]);
-
-        for ($i = 1; $i < count($addresses); $i++) {
-            Property::create([
-                'address' => $addresses[$i],
-                'category_id' => session('category_id'),
-                'subcategory_id' => session('subcategory_id'),
-                'apartment_type' => session('apartment_type'),
-                // other required fields...
+            return response()->json(['message' => 'Multiple addresses saved']);
+        } catch (\Exception $e) {
+            Log::error('Error saving multiple addresses', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
             ]);
+            return response()->json(['success' => false, 'message' => 'Error saving multiple addresses: ' . $e->getMessage()], 500);
         }
-
-        return response()->json(['message' => 'Multiple addresses saved']);
     }
 
-    public function saveHostProfile(Request $request, Property $property)
+    public function saveHostProfile(Request $request, Property $property, SaveHostProfileAction $action)
     {
         Log::info('saveHostProfile called', [
             'property_id' => $property->id,
@@ -698,32 +679,12 @@ class PropertyController extends Controller
         ]);
 
         try {
-            $validated = $request->validate([
-                'property_id' => 'required|exists:properties,id',
-                'about_property' => 'nullable|string|max:1000',
-                'about_host' => 'nullable|string|max:1000',
-                'about_neighborhood' => 'nullable|string|max:1000',
-                'show_property' => 'boolean',
-                'show_host' => 'boolean',
-                'show_neighborhood' => 'boolean',
-                'none_selected' => 'boolean',
-                'host_name' => 'nullable|string|max:255'
-            ]);
-
-            Log::info('Validation passed', ['validated_data' => $validated]);
-
-            // Update the property title with the host name
-            if (!empty($validated['host_name'])) {
-                $property->update(['title' => $validated['host_name']]);
-                Log::info('Property title updated', ['property_id' => $property->id, 'title' => $validated['host_name']]);
-            }
-
-            $property->hostProfile()->updateOrCreate(
-                ['property_id' => $property->id],
-                $validated
-            );
-
-            Log::info('Host profile saved successfully', ['property_id' => $property->id, 'data' => $validated]);
+            // Merge property_id into request data since it comes from route parameter
+            $requestData = $request->all();
+            $requestData['property_id'] = $property->id;
+            
+            $dto = SaveHostProfileDTO::fromArray($requestData);
+            $action->execute($dto, $property);
 
             return response()->json(['success' => true, 'message' => 'Host profile saved successfully']);
         } catch (\Exception $e) {
@@ -738,42 +699,20 @@ class PropertyController extends Controller
         }
     }
 
-    public function savePricing(Request $request, Property $property)
+    public function savePricing(Request $request, Property $property, SavePricingAction $action)
     {
         Log::info('savePricing called', [
             'property_id' => $property->id,
             'request_data' => $request->all()
         ]);
         try {
-            $validated = $request->validate([
-                'property_id' => 'required|exists:properties,id',
-                'booking_type' => 'required|in:instant,request',
-                'price_per_night' => 'nullable|numeric|min:0',
-                'currency' => 'nullable|in:usd,eur,gbp',
-                'discount_enabled' => 'boolean',
-                'discount_percent' => 'nullable|integer|min:0|max:100'
-            ]);
-            Log::info('savePricing validated data', [
-                'property_id' => $property->id,
-                'validated' => $validated
-            ]);
+            // Merge property_id into request data since it comes from route parameter
+            $requestData = $request->all();
+            $requestData['property_id'] = $property->id;
             
-            // Set default currency if not provided
-            if (!isset($validated['currency'])) {
-                $validated['currency'] = 'usd';
-            }
-            
-            Log::info('Before updateOrCreate', [
-                'property_id' => $property->id
-            ]);
-            $property->pricing()->updateOrCreate(
-                ['property_id' => $property->id],
-                $validated
-            );
-            Log::info('After updateOrCreate', [
-                'property_id' => $property->id
-            ]);
-            Log::info('Pricing saved successfully', ['property_id' => $property->id, 'data' => $validated]);
+            $dto = SavePricingDTO::fromArray($requestData);
+            $action->execute($dto, $property);
+
             return response()->json(['success' => true, 'message' => 'Pricing saved successfully']);
         } catch (\Exception $e) {
             Log::error('Error saving pricing', [
