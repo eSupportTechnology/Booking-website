@@ -28,6 +28,10 @@
             showHost: false,
             showNeighborhood: false,
             showNone: false,
+            hostName: '',
+            aboutProperty: '',
+            aboutHost: '',
+            aboutNeighborhood: '',
 
             toggleBreakfastOption(option) {
                 if (this.selectedBreakfasts.includes(option)) {
@@ -283,10 +287,10 @@
                     show_host: this.showHost,
                     show_neighborhood: this.showNeighborhood,
                     none_selected: this.showNone,
-                    about_property: this.$refs.about_property?.value || '',
-                    host_name: this.$refs.host_name?.value || '',
-                    about_host: this.$refs.about_host?.value || '',
-                    about_neighborhood: this.$refs.about_neighborhood?.value || '',
+                    about_property: this.aboutProperty || '',
+                    host_name: this.hostName || '',
+                    about_host: this.aboutHost || '',
+                    about_neighborhood: this.aboutNeighborhood || '',
                 };
 
                 try {
@@ -528,10 +532,11 @@
                         Property name
                     </label>
                     <input
+                        
                         type="text"
                         id="property_name"
                         name="property_name"
-                        value="ccc"
+                        x-model="propertyName"
                         class="w-full border border-gray-300 rounded-md px-4 py-4 text-lg focus:outline-none focus:border-blue-500"
                         placeholder="e.g., Sunset Villa"
                         required>
@@ -554,7 +559,7 @@
                 <!-- Continue Button -->
                 <button
                     type="button"
-                    @click="step = Math.min(step + 1, 10)"
+                    @click="saveStep3()"
                     class="bg-[#3CC0E9] text-white font-semibold px-6 h-12 rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
                     Continue
                 </button>
@@ -584,80 +589,18 @@
                                 <h3
                                     class="text-gray-700 font-semibold mb-2">
                                     Select property type(s)</h3>
-                                <div
-                                    class="grid grid-cols-1 sm:grid-cols-1 gap-2 text-sm text-gray-700">
-                                    <label
-                                        class="flex items-center space-x-2">
-                                        <input type="checkbox"
+                                <div class="grid grid-cols-1 sm:grid-cols-1 gap-2 text-sm text-gray-700">
+                                    @foreach($amenities as $amenity)
+                                    <label class="flex items-center space-x-2">
+                                        <input
+                                            type="checkbox"
                                             name="property_types[]"
-                                            value="Apartment"
-                                            class="text-blue-500" />
-                                        <span>Bar</span>
+                                            value="{{ $amenity['id'] }}"
+                                            class="text-blue-500"
+                                            x-model="selectedAmenities" />
+                                        <span>{{ $amenity['name'] }}</span>
                                     </label>
-                                    <label
-                                        class="flex items-center space-x-2">
-                                        <input type="checkbox"
-                                            name="property_types[]"
-                                            value="Villa"
-                                            class="text-blue-500" />
-                                        <span>Sauna</span>
-                                    </label>
-                                    <label
-                                        class="flex items-center space-x-2">
-                                        <input type="checkbox"
-                                            name="property_types[]"
-                                            value="Holiday Home"
-                                            class="text-blue-500" />
-                                        <span>Garden</span>
-                                    </label>
-                                    <label
-                                        class="flex items-center space-x-2">
-                                        <input type="checkbox"
-                                            name="property_types[]"
-                                            value="Chalet"
-                                            class="text-blue-500" />
-                                        <span>Terrace</span>
-                                    </label>
-                                    <label
-                                        class="flex items-center space-x-2">
-                                        <input type="checkbox"
-                                            name="property_types[]"
-                                            value="Cottage"
-                                            class="text-blue-500" />
-                                        <span>Hot tub/Jacuzzi</span>
-                                    </label>
-                                    <label
-                                        class="flex items-center space-x-2">
-                                        <input type="checkbox"
-                                            name="property_types[]"
-                                            value="Cabin"
-                                            class="text-blue-500" />
-                                        <span>Heating</span>
-                                    </label>
-                                    <label
-                                        class="flex items-center space-x-2">
-                                        <input type="checkbox"
-                                            name="property_types[]"
-                                            value="Bungalow"
-                                            class="text-blue-500" />
-                                        <span>Free WiFi</span>
-                                    </label>
-                                    <label
-                                        class="flex items-center space-x-2">
-                                        <input type="checkbox"
-                                            name="property_types[]"
-                                            value="Farm Stay"
-                                            class="text-blue-500" />
-                                        <span>Air conditioning</span>
-                                    </label>
-                                    <label
-                                        class="flex items-center space-x-2">
-                                        <input type="checkbox"
-                                            name="property_types[]"
-                                            value="Houseboat"
-                                            class="text-blue-500" />
-                                        <span>Swimming pool</span>
-                                    </label>
+                                    @endforeach
                                 </div>
                             </div>
                         </div>
@@ -722,7 +665,7 @@
                     <!-- Continue Button -->
                     <button
                         type="button"
-                        @click="step = Math.min(step + 1, 10)"
+                        @click="saveStep4()"
                         class="bg-[#3CC0E9] text-white font-semibold px-6 h-12 rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
                         Continue
                     </button>
@@ -731,20 +674,7 @@
     </template>
 
     <template x-if="step === 5">
-        <div x-data="{
-            servesBreakfast: false,
-            breakfastIncluded: '',
-            selectedBreakfasts: [],
-            breakfastPrice: '',
-            breakfastOptions: ['À la carte', 'American', 'Asian', 'Breakfast to go', 'Buffet', 'Continental', 'Full English/Irish', 'Gluten-free', 'Halal', 'Italian', 'Kosher', 'Vegan', 'Vegetarian'],
-            toggleBreakfastOption(option) {
-                if (this.selectedBreakfasts.includes(option)) {
-                    this.selectedBreakfasts = this.selectedBreakfasts.filter(o => o !== option);
-                } else {
-                    this.selectedBreakfasts.push(option);
-                }
-            }
-        }"
+        <div 
             class="container mx-auto px-4 py-4 max-w-6xl mb-8">
 
             <!-- Header -->
@@ -766,12 +696,12 @@
                     </p>
                     <div class="space-y-2">
                         <label class="flex items-center cursor-pointer">
-                            <input type="radio" name="breakfast" value="yes" class="mr-2"
+                            <input type="radio" name="breakfast" x-model="servesBreakfast" value="yes" class="mr-2"
                                 @click="servesBreakfast = true" />
                             <span>Yes</span>
                         </label>
                         <label class="flex items-center cursor-pointer">
-                            <input type="radio" name="breakfast" value="no" class="mr-2"
+                            <input type="radio" name="breakfast" x-model="servesBreakfast" value="no" class="mr-2"
                                 checked @click="servesBreakfast = false; breakfastIncluded=''; selectedBreakfasts=[]; breakfastPrice=''" />
                             <span>No</span>
                         </label>
@@ -784,12 +714,12 @@
                         </p>
                         <div class="space-y-2">
                             <label class="flex items-center cursor-pointer">
-                                <input type="radio" name="breakfast_included" value="included" class="mr-2"
+                                <input type="radio" name="breakfast_included" x-model="breakfastIncluded" value="included" class="mr-2"
                                     @click="breakfastIncluded = 'included'" />
                                 <span>Yes, it's included</span>
                             </label>
                             <label class="flex items-center cursor-pointer">
-                                <input type="radio" name="breakfast_included" value="extra" class="mr-2"
+                                <input type="radio" name="breakfast_included" x-model="breakfastIncluded" value="extra" class="mr-2"
                                     @click="breakfastIncluded = 'extra'" />
                                 <span>No, it costs extra</span>
                             </label>
@@ -839,15 +769,15 @@
                     </p>
                     <div class="space-y-2 mb-4">
                         <label class="flex items-center cursor-pointer">
-                            <input type="radio" name="parking" value="free" x-model="parking" class="mr-2" />
+                            <input type="radio" name="parking" id="free-parking" value="free" x-model="parking" class="mr-2" />
                             <span>Yes, free</span>
                         </label>
                         <label class="flex items-center cursor-pointer">
-                            <input type="radio" name="parking" value="paid" x-model="parking" class="mr-2" />
+                            <input type="radio" name="parking" id="paid-parking" value="paid" x-model="parking" class="mr-2" />
                             <span>Yes, paid</span>
                         </label>
                         <label class="flex items-center cursor-pointer">
-                            <input type="radio" name="parking" value="no" x-model="parking" class="mr-2" />
+                            <input type="radio" name="parking" id="no-parking" value="no" x-model="parking" class="mr-2" />
                             <span>No</span>
                         </label>
                     </div>
@@ -903,7 +833,7 @@
                     <!-- Paid Parking - Cost Input -->
                     <div x-show="parking === 'paid'" x-transition class="mt-4">
                         <label class="block text-gray-700 font-semibold mb-1">How much does parking cost?</label>
-                        <input type="text" name="cost" placeholder="e.g., $10 per day" class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+                        <input type="text" name="cost" id="parking_cost" x-model="parkingCost" placeholder="e.g., $10 per day" class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
                     </div>
                 </div>
 
@@ -915,7 +845,7 @@
                     class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
                     ←
                 </button>
-                <button type="button" @click="step = Math.min(step + 1, 13)"
+                <button type="button" @click="saveStep5()"
                     class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
                     Continue
                 </button>
@@ -939,22 +869,15 @@
                     <h3 class="text-lg  mb-4 font-bold">Select languages
                     </h3>
                     <div class="space-y-2">
+                        @foreach ($languages as $lang)
                         <label class="flex items-center cursor-pointer">
-                            <input type="checkbox" class="mr-2" />
-                            <span>English</span>
+                            <input type="checkbox"
+                                class="mr-2 language-checkbox"
+                                :value="'{{ $lang['id'] }}'" />
+                            <span>{{ $lang['name'] }}</span>
                         </label>
-                        <label class="flex items-center cursor-pointer">
-                            <input type="checkbox" class="mr-2" />
-                            <span>French</span>
-                        </label>
-                        <label class="flex items-center cursor-pointer">
-                            <input type="checkbox" class="mr-2" />
-                            <span>German</span>
-                        </label>
-                        <label class="flex items-center cursor-pointer">
-                            <input type="checkbox" class="mr-2" />
-                            <span>Hindi</span>
-                        </label>
+                        @endforeach
+
                     </div>
 
                     <!-- Add Additional Languages -->
@@ -1028,7 +951,7 @@
                     </button>
 
                     <!-- Continue Button on the right -->
-                    <button type="button" @click="step = Math.min(step + 1, 13)"
+                    <button type="button" @click="saveStep6()"
                         class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
                         Continue
                     </button>
@@ -1110,6 +1033,7 @@
                 <!-- Header -->
                 <h2 class="text-2xl font-bold mb-8 text-left">House rules</h2>
 
+                
                 <div class="flex flex-col md:flex-row gap-6">
                     <!-- Left Section -->
                     <div class="bg-white shadow-md rounded-lg p-6 w-full md:w-2/3">
@@ -1118,7 +1042,7 @@
                             <label class="flex items-center justify-between cursor-pointer">
                                 <span>Smoking allowed</span>
                                 <div class="relative">
-                                    <input type="checkbox" class="sr-only peer" />
+                                    <input type="checkbox" id="smokingAllowed" class="sr-only peer" />
                                     <div class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition"></div>
                                     <div class="absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-4"></div>
                                 </div>
@@ -1127,7 +1051,7 @@
                             <label class="flex items-center justify-between cursor-pointer">
                                 <span>Children allowed</span>
                                 <div class="relative">
-                                    <input type="checkbox" class="sr-only peer" checked />
+                                    <input type="checkbox" id="childrenAllowed" class="sr-only peer" checked />
                                     <div class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition"></div>
                                     <div class="absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-4"></div>
                                 </div>
@@ -1136,7 +1060,7 @@
                             <label class="flex items-center justify-between cursor-pointer">
                                 <span>Parties/events allowed</span>
                                 <div class="relative">
-                                    <input type="checkbox" class="sr-only peer" />
+                                    <input type="checkbox" id="partiesAllowed" class="sr-only peer" />
                                     <div class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition"></div>
                                     <div class="absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-4"></div>
                                 </div>
@@ -1185,11 +1109,11 @@
                             <div class="flex space-x-4">
                                 <div class="w-full">
                                     <label class="block text-sm font-medium mb-1">From</label>
-                                    <input type="time" value="15:00" class="w-full border rounded p-2" />
+                                    <input type="time" id="checkInFrom" value="15:00" class="w-full border rounded p-2" />
                                 </div>
                                 <div class="w-full">
                                     <label class="block text-sm font-medium mb-1">Until</label>
-                                    <input type="time" value="18:00" class="w-full border rounded p-2" />
+                                    <input type="time" id="checkInUntil" value="18:00" class="w-full border rounded p-2" />
                                 </div>
                             </div>
                         </div>
@@ -1200,11 +1124,11 @@
                             <div class="flex space-x-4">
                                 <div class="w-full">
                                     <label class="block text-sm font-medium mb-1">From</label>
-                                    <input type="time" value="08:00" class="w-full border rounded p-2" />
+                                    <input type="time" id="checkOutFrom" value="08:00" class="w-full border rounded p-2" />
                                 </div>
                                 <div class="w-full">
                                     <label class="block text-sm font-medium mb-1">Until</label>
-                                    <input type="time" value="11:00" class="w-full border rounded p-2" />
+                                    <input type="time" id="checkOutUntil" value="11:00" class="w-full border rounded p-2" />
                                 </div>
                             </div>
                         </div>
@@ -1244,7 +1168,7 @@
                         class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
                         ←
                     </button>
-                    <button type="button" @click="step = Math.min(step + 1, 13)"
+                    <button type="button" @click="saveStep7()"
                         class="px-6 h-12 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ml-[395px]">
                         Continue
                     </button>
@@ -1255,12 +1179,7 @@
     </template>
 
     <template x-if="step === 8">
-        <div x-data="{
-                showProperty: false,
-                showHost: false,
-                showNeighborhood: false,
-                showNone: false,
-            }"
+        <div 
             class="max-w-2xl mx-auto space-y-8 px-4 sm:px-6 lg:px-8 lg:ml-32 py-6">
 
             <h2 class="text-2xl font-bold mb-8 text-left">Host Profile</h2>
@@ -1279,7 +1198,7 @@
 
                     <div x-show="showProperty" x-transition class="mt-2">
                         <label class="block text-sm font-semibold text-gray-700">About the property</label>
-                        <textarea rows="4" maxlength="1200" placeholder="What makes your place unique? What can guests expect?"
+                        <textarea rows="4" maxlength="1200" x-model="aboutProperty" placeholder="What makes your place unique? What can guests expect?"
                             class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"></textarea>
                         <p class="text-right text-xs text-gray-500">0/1200</p>
                     </div>
@@ -1295,14 +1214,14 @@
                     <div x-show="showHost" x-transition class="mt-2 space-y-2">
                         <div>
                             <label class="block text-sm font-semibold text-gray-700">Host name</label>
-                            <input type="text" maxlength="80"
+                            <input type="text" maxlength="80"  x-model="hostName" 
                                 class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
                             <p class="text-right text-xs text-gray-500">0/80</p>
                         </div>
 
                         <div>
                             <label class="block text-sm font-semibold text-gray-700">About the host</label>
-                            <textarea rows="4" maxlength="1200" placeholder="What are your interests? What do you like about hosting?"
+                            <textarea rows="4" maxlength="1200" x-model="aboutHost" placeholder="What are your interests? What do you like about hosting?" x-ref="about_host"
                                 class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"></textarea>
                             <p class="text-right text-xs text-gray-500">0/1200</p>
                         </div>
@@ -1318,7 +1237,7 @@
 
                     <div x-show="showNeighborhood" x-transition class="mt-2">
                         <label class="block text-sm font-semibold text-gray-700">About the neighborhood</label>
-                        <textarea rows="4" maxlength="1200" placeholder="What's the area like? Are there any attractions nearby?"
+                        <textarea rows="4" x-model="aboutNeighborhood" maxlength="1200" placeholder="What's the area like? Are there any attractions nearby?" x-ref="about_neighborhood"
                             class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"></textarea>
                         <p class="text-right text-xs text-gray-500">0/1200</p>
                     </div>
@@ -1333,6 +1252,7 @@
                 </div>
             </div>
 
+
             <!-- Navigation Buttons -->
             <div class="mt-12 flex justify-between">
                 <button type="button" @click="step = Math.max(step - 1, 1)"
@@ -1341,7 +1261,7 @@
                     ←
                 </button>
 
-                <button type="button" @click="step = Math.min(step + 1, 13)"
+                <button type="button" @click="saveStep8()"
                     class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
                     Continue
                 </button>

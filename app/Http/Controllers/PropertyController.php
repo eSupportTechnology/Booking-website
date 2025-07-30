@@ -810,12 +810,14 @@ class PropertyController extends Controller
         return view('partner.partner-homes-single', compact('propertyId', 'subtypeId', 'amenities', 'languages'));
     }
 
-    public function showPrivateHomesMultiple(Request $request)
+    public function showPrivateHomesMultiple(Request $request, PropertyAction $action)
     {
         $propertyId = $request->input('propertyId');
         $subtypeId = $request->input('subtypeId');
+        $amenities = $action->getAmenities();
+        $languages = $action->getLanguages();
 
-        return view('partner.partner-homes-multiple', compact('propertyId', 'subtypeId'));
+        return view('partner.partner-homes-multiple', compact('propertyId', 'subtypeId', 'amenities', 'languages'));
     }
 
     public function saveServices(Request $request, Property $property, PropertyAction $propertyAction)

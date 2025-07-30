@@ -450,6 +450,11 @@ Route::post('/property/save-address-multiple', [PropertyController::class, 'save
 Route::get('/partner/login', [LoginController::class, 'show'])->name('partner.login');
 Route::post('/partner/login', [LoginController::class, 'login'])->name('partner.login.submit');
 
+Route::post('/store-step', function (\Illuminate\Http\Request $request) {
+    session(['current_step' => $request->step]);
+    return response()->json(['status' => 'ok']);
+});
+
 // Show the email verification notice
 Route::get('/email/verify', function () {
     return view('auth.verify-email');
