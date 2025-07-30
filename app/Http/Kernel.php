@@ -71,5 +71,6 @@ class Kernel extends HttpKernel
         'ensure.partner' => \App\Http\Middleware\EnsurePartner::class,
         'admin' => \App\Http\Middleware\AdminMiddleware::class,
         'superAdmin' => \App\Http\Middleware\SuperAdminMiddleware::class,
+        'prevent.back' => \App\Http\Middleware\PreventBackHistory::class,
     ];
 }

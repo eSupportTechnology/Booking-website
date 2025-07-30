@@ -182,6 +182,23 @@
     toggleButton.addEventListener('click', () => {
       sidebar.classList.toggle('-translate-x-full');
     });
+
+    // Prevent back navigation after logout
+    window.addEventListener('pageshow', function(event) {
+      if (event.persisted) {
+        window.location.href = '{{ route('admin.login') }}';
+      }
+    });
+
+    // Redirect to login on back button
+    window.addEventListener('popstate', function(event) {
+      window.location.href = '{{ route('admin.login') }}';
+    });
+
+    // Clear history on load
+    if (window.history.replaceState) {
+      window.history.replaceState(null, null, window.location.href);
+    }
   </script>
 </body>
 </html>

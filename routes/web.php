@@ -490,7 +490,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     });
 
         // Protected admin routes
-        Route::middleware(['auth:admin', \App\Http\Middleware\AdminMiddleware::class])->group(function () {
+        Route::middleware(['auth:admin', \App\Http\Middleware\AdminMiddleware::class, \App\Http\Middleware\PreventBackHistory::class])->group(function () {
         Route::get('/center', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
         Route::post('/exit', [\App\Http\Controllers\Admin\AuthController::class, 'logout'])->name('logout');
 
