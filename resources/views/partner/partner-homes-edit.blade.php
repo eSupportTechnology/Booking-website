@@ -8,17 +8,25 @@
         const urlParams = new URLSearchParams(window.location.search);
         const uploaded = urlParams.get('uploaded');
         const details = urlParams.get('details');
+        const paymentDetails = urlParams.get('paymentDetails');
         const detailsLink = document.getElementById('detailsEditLink');
         const detailsIcon = document.getElementById('detailsStatusIcon');
         const photoLink = document.getElementById('photoEditLink');
         const icon = document.getElementById('statusIcon');
-
-        const propertyType = urlParams.get('propertyType').toLowerCase();
+        const finalicon = document.getElementById('finalStatusIcon');
+        const paymenEditLink = document.getElementById('paymentEditLink');
+        const paymentEditLinkBtn = document.getElementById('paymentEditLinkBtn');
+        const propertyType = urlParams.get('propertyType');
         const propertyId = document.getElementById('propertyId').value;
         const subtypeId = document.getElementById('subtypeId').value;
+
+        const baseUrl = `/partner-homes-images/${propertyId}`;
+        const url = `${baseUrl}?details=true&propertyType=${encodeURIComponent(propertyType)}`;
+        const paymentUrl = `/partner-homes-payments/${propertyId}?propertyType=${encodeURIComponent(propertyType)}`;
+        photoLink.href = url;
+        paymenEditLink.href = paymentUrl;
         if (uploaded === 'true') {
             // Update the icon (optional - if not already done)
-        
             if (icon) {
                 icon.src = "{{ asset('assets/flat-color-icons_ok.svg') }}";
                 icon.className = "w-6 h-6 md:w-7 md:h-7";
@@ -38,19 +46,27 @@
                 photoLink.appendChild(btn);
             }
 
+            if(paymentDetails === 'true') {
+                // Update the icon (optional - if not already done)
+                if (paymentEditLinkBtn) {
+                    paymentEditLinkBtn.innerText = "Edit";  
+                    paymentEditLinkBtn.className = "text-sky-600 font-medium text-sm hover:underline";
+                }
+                if (finalicon) {
+                    finalicon.src = "{{ asset('assets/flat-color-icons_ok.svg') }}";
+                    finalicon.className = "w-6 h-6 md:w-7 md:h-7";
+                }
+            }
+
             // Optional: clean up URL
             if (window.history.replaceState) {
                 const url = new URL(window.location);
                 url.searchParams.delete('uploaded');
-                window.history.replaceState({}, document.title, url.pathname);
-            }
-        
-                        // Optional: clean up URL
-            if (window.history.replaceState) {
-                const url = new URL(window.location);
                 url.searchParams.delete('details');
+                url.searchParams.delete('paymentDetails');
                 window.history.replaceState({}, document.title, url.pathname);
-            }
+            }        
+        
         }
 
         let actionUrl = '';
@@ -142,7 +158,7 @@
                         expect.</p>
                 </div>
             </div>
-            <a id="photoEditLink" href="{{ url('/partner-homes-images/' . $property->id) }}"
+            <a id="photoEditLink" href="#"
                  class="mt-4 text-sky-600 text-sm font-semibold px-4 py-2 rounded border border-sky-300 hover:bg-sky-100">Add photos</a>
 
         </div>
@@ -150,7 +166,7 @@
         <!-- Step 4 - Final -->
         <div class=" border border-gray-300 rounded-lg p-4 flex justify-between items-center">
             <div class="flex items-center gap-4">
-                <img src="{{ asset('assets/Vector (41).svg') }}" alt="Icon"
+                <img id="finalStatusIcon" src="{{ asset('assets/Vector (41).svg') }}" alt="Icon"
                     class="w-4 h-4 md:w-5 md:h-5 cursor-pointer" />
                 <div>
                     <p class="text-sm text-gray-500">Step 4</p>
@@ -160,10 +176,11 @@
                 </div>
             </div>
 
-            <a href="{{ url('/partner-homes-payments/' . $property->id) }}"
-                class=" bg-sky-400 border border-sky-400 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-sky-500">
+            <a id="paymentEditLink" href="#">
+                <button id="paymentEditLinkBtn" class=" bg-sky-400 border border-sky-400 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-sky-500">
                         Add final details
-                    </a>
+                </button>
+            </a>
         </div>
 
 

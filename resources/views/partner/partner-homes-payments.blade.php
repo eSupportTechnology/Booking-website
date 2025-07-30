@@ -15,6 +15,7 @@
     </style>
 </head>
 <script>
+   
     function stepForm() {
         return {
             step: 1,
@@ -739,17 +740,25 @@
             </div>
 
             <!-- Navigation -->
-            <div class="flex justify-between items-center">
+            <div class="flex justify-between items-center" x-init="$nextTick(() => {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const propertyType = urlParams.get('propertyType');
+                    const propertyId = window.location.href.split('/').filter(Boolean).slice(-1)[0].split('?')[0];
+                    const baseUrl = `/partner-homes-edit/${propertyId}`;
+                    const url = `${baseUrl}?uploaded=true&paymentDetails=true&propertyType=${encodeURIComponent(propertyType)}`;
+
+                    const link = document.getElementById('finalLink');
+                    if (link) link.href = url;
+                })">
                 <button @click="step--"
                     class="flex items-center border border-[#3CC0E9] rounded text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12">
 
                     ←
                 </button>
-                <a href="{{  url('/partner-homes-edit/' . $property->id)  }}?uploaded=true">
-                    <button @click="step++"
+                <a id="finalLink" href="#"                    
                         class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition ">
                         Continue
-                    </button></a>
+                </a>
             </div>
 
         </div>
