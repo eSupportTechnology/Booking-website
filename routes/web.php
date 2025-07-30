@@ -470,7 +470,7 @@ Route::patch('/partner/property/{property}/additional-details', [PropertyControl
 require __DIR__ . '/auth.php';
 
 
-// Management Portal Routes
+// Admin Portal Routes
 Route::prefix('admin')->name('admin.')->group(function () {
     // Guest routes
     Route::middleware('guest')->group(function () {
@@ -513,6 +513,17 @@ Route::prefix('admin')->name('admin.')->group(function () {
             return view('admin.admin-customers');
         })->name('customers');
         Route::post('/account-details', [\App\Http\Controllers\Admin\CustomerViewController::class, 'show'])->name('customer.view');
+
+        // Partner management
+        Route::get('/partners', function () {
+            return view('admin.admin-partners');
+        })->name('partners');
+        Route::post('/partner-details', [\App\Http\Controllers\Admin\PartnerViewController::class, 'show'])->name('partner.view');
+
+        // Settings
+        Route::get('/settings', function () {
+            return view('admin.admin-settings');
+        })->name('settings');
 
         // Super admin only routes
         Route::middleware(\App\Http\Middleware\SuperAdminMiddleware::class)->group(function () {
