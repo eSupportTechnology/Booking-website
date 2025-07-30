@@ -19,7 +19,7 @@
         const propertyType = urlParams.get('propertyType');
         const propertyId = document.getElementById('propertyId').value;
         const subtypeId = document.getElementById('subtypeId').value;
-
+        const completeRegistrationBtn = document.getElementById('completeRegistrationBtn');
         const baseUrl = `/partner-homes-images/${propertyId}`;
         const url = `${baseUrl}?details=true&propertyType=${encodeURIComponent(propertyType)}`;
         const paymentUrl = `/partner-homes-payments/${propertyId}?propertyType=${encodeURIComponent(propertyType)}`;
@@ -82,12 +82,17 @@
 
         const form = document.getElementById('editForm');
         form.action = actionUrl;
-           document.getElementById('formPropertyId').value = propertyId;
+        document.getElementById('formPropertyId').value = propertyId;
         document.getElementById('formSubtypeId').value = subtypeId;
 
         detailsLink.addEventListener('click', () => {
             form.submit();
         })
+
+        completeRegistrationBtn.addEventListener('click', () => {
+            window.location.href = `/partner-homes-complete-registration/${propertyId}?propertyType=${encodeURIComponent(propertyType)}`;
+        })
+
     });
 </script>
 <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
@@ -185,7 +190,7 @@
 
 
         <div class="flex justify-center">
-            <button
+            <button id="completeRegistrationBtn"
                 class="mt-4 w-full  bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 text-sm font-semibold px-6 py-2 rounded shadow">
                 Complete Registration
             </button>

@@ -173,7 +173,7 @@
             });
 
             try {
-                const response = await fetch("{{ route('partner.property.upload.photos') }}", {
+                const response = await fetch("{{ url('/partner/property/upload-photos') }}", {
                     method: "POST",
                     headers: {
                         'X-CSRF-TOKEN': '{{ csrf_token() }}',

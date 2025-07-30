@@ -181,9 +181,11 @@ Route::get('/partner-apartment-livingroom', function () {
     return view('frontend.partner-apartments-livingroom');
 })->name('partner.apartment.livingroom');
 
-// Route::get('/partner-apartment-price-group', function () {
-//     return view('frontend.partner-apartment-priceper-group');
-// })->name('partner.apartment.price.group');
+
+
+Route::get('/partner-homes-complete', function () {
+    return view('frontend.partner-homes-complete-registration');
+})->name('partner.homes.complete');
 
 // Route::get('/partner-apartment-weekly-rate', function () {
 //     return view('frontend.partner-apartment-weekly-rate');
@@ -449,7 +451,9 @@ Route::post('/property/save-address-same', [PropertyController::class, 'saveAddr
 Route::post('/property/save-address-multiple', [PropertyController::class, 'saveAddressMultiple']);
 Route::get('/partner/login', [LoginController::class, 'show'])->name('partner.login');
 Route::post('/partner/login', [LoginController::class, 'login'])->name('partner.login.submit');
-
+Route::get('/partner-homes-complete-registration/{id}', function () {
+    return view('partner.partner-homes-complete-registration');
+});
 Route::post('/store-step', function (\Illuminate\Http\Request $request) {
     session(['current_step' => $request->step]);
     return response()->json(['status' => 'ok']);
