@@ -56,12 +56,13 @@ class PropertyAction
     }
     public function getAmenities(): Collection
     {
-        return \App\Models\Amenity::all()->map(function ($amenity) {
-            return [
-                'id' => $amenity->id,
-                'name' => $amenity->name,
-            ];
-        });
+        return \App\Models\Amenity::all();
+    }
+
+    public function getAmenitiesByContext(string $context): Collection
+    {
+        // For apartments, we'll use the specific multiple_apartment category
+        return \App\Models\Amenity::where('category', 'multiple_apartment')->get();
     }
 
     public function getLanguages(): Collection
@@ -296,14 +297,26 @@ class PropertyAction
             'dto_data' => $dto->toArray()
         ]);
 
-        // Create or update accommodation record
-        $accommodation = Accommodation::updateOrCreate(
-            ['property_id' => $dto->property_id],
-            [
+        // Check if accommodation record already exists
+        $accommodation = Accommodation::where('property_id', $dto->property_id)->first();
+        
+        if (!$accommodation) {
+            // Create accommodation record only if it doesn't exist
+            $accommodation = Accommodation::create([
                 'property_id' => $dto->property_id,
                 'ownership_type' => $dto->type === 'individual' ? 'individual' : 'business_entity'
-            ]
-        );
+            ]);
+            
+            Log::info('Created new accommodation record', [
+                'accommodation_id' => $accommodation->id,
+                'property_id' => $dto->property_id
+            ]);
+        } else {
+            Log::info('Accommodation record already exists', [
+                'accommodation_id' => $accommodation->id,
+                'property_id' => $dto->property_id
+            ]);
+        }
 
         if ($dto->type === 'individual') {
             // Handle individual verification
@@ -344,18 +357,35 @@ class PropertyAction
             }
         } else {
             // Handle business entity verification
-            $businessEntity = BusinessEntity::updateOrCreate(
-                ['accommodation_id' => $accommodation->id],
-                [
+            // Check if required fields are present for business entity
+            if ($dto->company_name && $dto->address && $dto->zip_code && $dto->city && $dto->country) {
+                $businessEntity = BusinessEntity::updateOrCreate(
+                    ['accommodation_id' => $accommodation->id],
+                    [
+                        'accommodation_id' => $accommodation->id,
+                        'business_name' => $dto->company_name,
+                        'trading_name' => $dto->trading_name,
+                        'address' => $dto->address,
+                        'zip_code' => $dto->zip_code,
+                        'city' => $dto->city,
+                        'country' => $dto->country,
+                    ]
+                );
+                
+                Log::info('Business entity verification saved', [
                     'accommodation_id' => $accommodation->id,
-                    'business_name' => $dto->company_name,
-                    'trading_name' => $dto->trading_name, // Could be added to DTO if needed
-                    'address' => $dto->address, // Could be added to DTO if needed
-                    'zip_code' => $dto->zip_code, // Could be added to DTO if needed
-                    'city' => $dto->city, // Could be added to DTO if needed
-                    'country' => $dto->country, // Could be added to DTO if needed
-                ]
-            );
+                    'business_entity_id' => $businessEntity->id,
+                    'business_entity_data' => $businessEntity->toArray()
+                ]);
+            } else {
+                Log::warning('Skipping business entity creation - missing required fields', [
+                    'company_name' => $dto->company_name,
+                    'address' => $dto->address,
+                    'zip_code' => $dto->zip_code,
+                    'city' => $dto->city,
+                    'country' => $dto->country,
+                ]);
+            }
             
             if ($dto->owners && is_array($dto->owners)) {
                 foreach ($dto->owners as $owner) {
@@ -376,13 +406,6 @@ class PropertyAction
                     ]);
                 }
             }
-
-
-            Log::info('Business entity verification saved', [
-                'accommodation_id' => $accommodation->id,
-                'business_entity_id' => $businessEntity->id,
-                'business_entity_data' => $businessEntity->toArray()
-            ]);
         }
 
         Log::info('Partner verification completed successfully', [

@@ -256,9 +256,9 @@ Route::get('/partner-apartment-multiple', function () {
 
 Route::get('/partner-homes-form2/{id}/{subtype}', [PropertyController::class, 'showHomesForm2'])->name('partner.homes.form.2');
 
-Route::get('/partner-apartment-multiple-2', function () {
-    return view('frontend.partner-apartments-multiple-2');
-})->name('partner.apartment.multiple.2');
+// Route::get('/partner-apartment-multiple-2', function () {
+//     return view('frontend.partner-apartments-multiple-2');
+// })->name('partner.apartment.multiple.2');
 
 Route::get('/partner-homes-form2', function () {
     return view('frontend.partner-homes-form-2');
@@ -562,5 +562,5 @@ Route::get('/partner/apartment/weekly-rate', function () {
 Route::get('/partner/partner-multiple-apartment/{property}', [PropertyController::class, 'showMultipleApartmentForm'])->name('partner.multiple.apartment');
 
 Route::get('/partner/multiple-apartment', [PropertyController::class, 'showMultipleApartmentForm'])->name('partner.multiple.apartment.initial');
-Route::get('/partner/multiple-apartment-2', [PropertyController::class, 'showMultipleApartmentForm2'])->name('partner.multiple.apartment.2');
+Route::get('/partner/multiple-apartment-2/{propertyId?}', [PropertyController::class, 'showMultipleApartmentForm2'])->name('partner.multiple.apartment.2');
 Route::get('/partner/multiple-apartment-3', [PropertyController::class, 'showMultipleApartmentForm3'])->name('partner.multiple.apartment.3');

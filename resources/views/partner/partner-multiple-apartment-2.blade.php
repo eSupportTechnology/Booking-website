@@ -4,10 +4,58 @@
 
 @section('content')
 
+<!-- Add CSRF token meta tag -->
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
 <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
 <!-- Alpine Data Scope -->
-<div x-data="{ step: 1}">
+<div x-data="{ 
+    step: 1,
+    selectedAmenities: [],
+    propertyId: {{ $propertyId ?? 'null' }},
+    propertyCount: 1,
+    
+    async saveAmenities() {
+        if (!this.propertyId) {
+            console.log('No property ID available, skipping amenities save');
+            this.step++;
+            return;
+        }
+        
+        if (this.selectedAmenities.length === 0) {
+            console.log('No amenities selected');
+            this.step++;
+            return;
+        }
+        
+        try {
+            const response = await fetch(`/partner/property/save-amenities/${this.propertyId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    amenities: this.selectedAmenities,
+                    property_id: this.propertyId
+                })
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                console.log('Amenities saved successfully:', result);
+                this.step++;
+            } else {
+                alert('Failed to save amenities: ' + (result.message || 'Unknown error'));
+            }
+        } catch (error) {
+            console.error('Error saving amenities:', error);
+            alert('Error saving amenities: ' + error.message);
+        }
+    }
+}">
 
     <!-- Full-width Progress Bar (just under header) -->
     <div class="w-full bg-gray-200 h-2">
@@ -152,24 +200,13 @@
        
         <!-- Amenities List -->
         <div class="bg-white p-6 space-y-3 shadow-sm rounded">
-            @php
-                $amenities = [
-                    'Air conditioning',
-                    'Kitchenette',
-                    'Kitchen',
-                    'Balcony',
-                    'View',
-                    'Flat-screen TV',
-                    'Private pool',
-                    'Terrace',
-                    'Washing machine'
-                ];
-            @endphp
-
-            @foreach ($amenities as $item)
+            @foreach ($amenities as $amenity)
                 <label class="flex items-center space-x-3 text-gray-800 text-sm">
-                    <input type="checkbox" name="amenities[]" value="{{ $item }}" class="h-4 w-4 text-blue-600">
-                    <span>{{ $item }}</span>
+                    <input type="checkbox" 
+                           x-model="selectedAmenities" 
+                           value="{{ $amenity->id }}" 
+                           class="h-4 w-4 text-blue-600">
+                    <span>{{ $amenity->name }}</span>
                 </label>
             @endforeach
         </div>
@@ -186,8 +223,8 @@
 
             <!-- Continue Button -->
             <button
-                type="submit"
-                @click="step++"
+                type="button"
+                @click="saveAmenities()"
                 class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300">
                 Continue
             </button>

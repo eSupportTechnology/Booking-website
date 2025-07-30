@@ -564,11 +564,36 @@ class PropertyController extends Controller
         return view('partner.partner-multiple-apartment', compact('property', 'amenities', 'languages'));
     }
 
-    public function showMultipleApartmentForm2(PropertyAction $action)
+    public function showMultipleApartmentForm2(PropertyAction $action, $propertyId = null)
     {
-        Log::info('showMultipleApartmentForm2 called');
+        Log::info('showMultipleApartmentForm2 called', [
+            'property_id' => $propertyId
+        ]);
         
-        $amenities = $action->getAmenities();
+        // If no property ID is provided, create a test property for testing purposes
+        if (!$propertyId) {
+            $testProperty = \App\Models\Property::create([
+                'user_id' => auth()->id() ?? 1, // Use authenticated user or default to user ID 1
+                'category_id' => 2, // Apartment category
+                'subcategory_id' => 2, // Multiple apartments
+                'subtype_id' => 1, // Default subtype
+                'address_type_id' => 2, // Same address
+                'title' => 'Test Property',
+                'description' => 'Test property for amenities form',
+                'address' => 'Test Address',
+                'city' => 'Test City',
+                'country' => 'Sri Lanka',
+                'status' => 'pending'
+            ]);
+            
+            $propertyId = $testProperty->id;
+            
+            Log::info('Created test property for Form 2', [
+                'test_property_id' => $propertyId
+            ]);
+        }
+        
+        $amenities = $action->getAmenitiesByContext('apartment');
         $languages = $action->getLanguages();
         
         Log::info('showMultipleApartmentForm2 returning', [
@@ -578,7 +603,7 @@ class PropertyController extends Controller
             'languages' => $languages->toArray()
         ]);
         
-        return view('partner.partner-multiple-apartment-2', compact('amenities', 'languages'));
+        return view('partner.partner-multiple-apartment-2', compact('amenities', 'languages', 'propertyId'));
     }
 
     public function showMultipleApartmentForm3(PropertyAction $action)

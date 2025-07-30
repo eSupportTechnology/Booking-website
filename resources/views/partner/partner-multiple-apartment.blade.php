@@ -1906,7 +1906,7 @@ You will be able to add more apartments or duplicate this one when you finish fi
                                                                     class= "border border-[#3CC0E9]  text-blue-600 hover:bg-[#29ACD5] font-semibold py-2 px-4 rounded">
                                                                     ←
                                                                 </button>
-                                                                <a href="{{ route('partner.multiple.apartment.2') }}">
+                                                                <a href="{{ route('partner.multiple.apartment.2', ['propertyId' => $property->id ?? null]) }}">
                                                                     <button type="button"
                                                                         class="font-semibold py-3 px-8 rounded bg-[#3CC0E9] hover:bg-[#29ACD5] text-white">
                                                                         Continue
