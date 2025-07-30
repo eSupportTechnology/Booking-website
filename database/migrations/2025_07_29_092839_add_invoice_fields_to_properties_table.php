@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::table('properties', function (Blueprint $table) {
             $table->json('invoicing_info')->nullable()->after('payment_method');
+            $table->boolean('open_for_bookings')->default(false)->after('invoicing_info');
         });
     }
 
@@ -20,6 +21,7 @@ return new class extends Migration
     {
         Schema::table('properties', function (Blueprint $table) {
             $table->dropColumn('invoicing_info');
+            $table->dropColumn('open_for_bookings');
         });
     }
 };

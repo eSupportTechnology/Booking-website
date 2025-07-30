@@ -195,9 +195,7 @@ Route::get('/partner-apartment-refundable-rate', function () {
     return view('frontend.partner-apartment-non-refundable-rate');
 })->name('partner.apartment.refundable.rate');
 
-Route::get('/open-booking', function () {
-    return view('frontend.open-booking');
-})->name('open.booking');
+Route::get('/open-booking/{propertyId}', [PropertyController::class, 'openBooking'])->name('open.booking');
 
 // Route::get('/partner-apartment-pricing-policies', function () {
 //     return view('frontend.partner-apartment-pricing-cancel-policies');
@@ -451,9 +449,7 @@ Route::post('/property/save-address-same', [PropertyController::class, 'saveAddr
 Route::post('/property/save-address-multiple', [PropertyController::class, 'saveAddressMultiple']);
 Route::get('/partner/login', [LoginController::class, 'show'])->name('partner.login');
 Route::post('/partner/login', [LoginController::class, 'login'])->name('partner.login.submit');
-Route::get('/partner-homes-complete-registration/{id}', function () {
-    return view('partner.partner-homes-complete-registration');
-});
+Route::get('/partner-homes-complete-registration/{id}', [PropertyController::class, 'completeHomesRegistration'])->name('partner.homes.complete.registration');
 Route::post('/store-step', function (\Illuminate\Http\Request $request) {
     session(['current_step' => $request->step]);
     return response()->json(['status' => 'ok']);

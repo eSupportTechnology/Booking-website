@@ -43,6 +43,7 @@ use App\Actions\Partner\SaveAdditionalDetailsAction;
 use App\Actions\Partner\SaveAddressMultipleAction;
 use App\Actions\Partner\SavePricingAction;
 use App\DTOs\Partner\SaveInvoicingDTO;
+use App\Models\Accommodation;
 use App\Models\Room;
 use App\Models\PartnerVerification;
 use App\Models\Language;
@@ -840,6 +841,14 @@ class PropertyController extends Controller
         return view('partner.partner-homes-multiple', compact('propertyId', 'subtypeId', 'amenities', 'languages'));
     }
 
+    public function completeHomesRegistration($propertyId, PropertyAction $action)
+    {
+        $property =Property::findOrFail($propertyId);
+        $accommodation_type=Accommodation::where('property_id', $propertyId)->first()->ownership_type;
+        Log::info('Accommodation type found', ['accommodation_type' => $accommodation_type]);
+        return view('partner.partner-homes-complete-registration', compact('propertyId', 'accommodation_type'));
+    }
+
     public function saveServices(Request $request, Property $property, PropertyAction $propertyAction)
     {
         Log::info('saveServices called', [
@@ -1000,6 +1009,17 @@ class PropertyController extends Controller
                 'message' => 'Error saving invoicing info.',
                 'error' => $e->getMessage(),
             ], 500);
+        }
+    }
+
+    public function openBooking($propertyId, PropertyAction $propertyAction)
+    {
+        try {
+            $property = Property::findOrFail($propertyId);
+            $propertyAction->openBooking($property);
+            return view('frontend.open-booking');
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
 }

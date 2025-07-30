@@ -579,4 +579,11 @@ class PropertyAction
             'invoicing_info' => $dto->toArray(),
         ]);
     }
+
+    public function openBooking(Property $property): void
+    {
+        $property->update([
+            'open_for_booking' => true,
+        ]);
+    }
 }

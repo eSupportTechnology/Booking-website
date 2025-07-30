@@ -28,6 +28,7 @@ class Property extends Model
         'group',
         'payment_method',
         'invoicing_info',
+        'open_for_bookings',
     ];
     public function photos()
     {

@@ -14,18 +14,18 @@ class StoreAccommodationDetailsAction
     public function execute(AccommodationDetailsDTO $dto): Accommodation
     {
         return DB::transaction(function () use ($dto) {
-            $accommodation = Accommodation::create([
+            $accommodation = Accommodation::updateOrCreate([
                 'property_id' => $dto->property_id,
                 'ownership_type' => $dto->ownership_type,
             ]);
 
             if ($dto->ownership_type === 'business_entity' && $dto->business_entity) {
-                $business = $accommodation->businessEntities()->create($dto->business_entity);
+                $business = $accommodation->businessEntities()->updateOrCreate($dto->business_entity);
             }
 
             if ($dto->ownership_type === 'individual' && $dto->individuals) {
                 foreach ($dto->individuals as $individualData) {
-                    $individual = $accommodation->individuals()->create([
+                    $individual = $accommodation->individuals()->updateOrCreate([
                         'first_name' => $individualData['first_name'],
                         'last_name' => $individualData['last_name'],
                         'date_of_birth' => $individualData['date_of_birth'],
