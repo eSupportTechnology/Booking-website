@@ -15,7 +15,7 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('admin.hotels') }}">Hotels</a>
                 </li>
-                @if(Auth::guard('admin')->user()->hasRole('super-admin'))
+                @if(Auth::guard('admin')->user()->hasRole('superAdmin'))
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('admin.approvals.index') }}">Pending Admins</a>
                 </li>

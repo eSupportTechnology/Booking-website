@@ -138,7 +138,7 @@
 
         </div>
 
-        @if(Auth::guard('admin')->user()->hasRole('super-admin'))
+        @if(Auth::guard('admin')->user()->hasRole('superAdmin'))
         <!-- ADMIN MANAGEMENT -->
         <div>
           <a href="{{ route('admin.approvals.index') }}" class="flex items-center px-4 py-2 rounded hover:bg-blue-200 transition text-blue-800 font-bold text-base">

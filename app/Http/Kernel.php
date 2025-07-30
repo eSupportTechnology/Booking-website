@@ -70,6 +70,6 @@ class Kernel extends HttpKernel
     protected $middlewareAliases = [
         'ensure.partner' => \App\Http\Middleware\EnsurePartner::class,
         'admin' => \App\Http\Middleware\AdminMiddleware::class,
-        'super-admin' => \App\Http\Middleware\SuperAdminMiddleware::class,
+        'superAdmin' => \App\Http\Middleware\SuperAdminMiddleware::class,
     ];
 }

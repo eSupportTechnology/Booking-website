@@ -14,12 +14,12 @@ class AdminRolesSeeder extends Seeder
 
         // Create roles for admin guard
         $admin = Role::updateOrCreate(['name' => 'admin', 'guard_name' => 'admin']);
-        $superAdmin = Role::updateOrCreate(['name' => 'super-admin', 'guard_name' => 'admin']);
+        $superAdmin = Role::updateOrCreate(['name' => 'superAdmin', 'guard_name' => 'admin']);
 
         // Create permissions for admin guard
         $permissions = [
             'manage-users',
-            'manage-properties', 
+            'manage-properties',
             'manage-bookings',
             'view-dashboard',
             'manage-admins'
