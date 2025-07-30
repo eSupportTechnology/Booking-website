@@ -130,6 +130,10 @@
                 const ownershipType = this.ownershipType;
                 const formData = new FormData();
 
+                if (ownershipType!=='individual' && ownershipType!=='business') {
+                    alert('Please select a valid ownership type.');
+                    return;
+                }
                 formData.append('property_id', propertyId);
                 formData.append('type', ownershipType);
 
@@ -499,7 +503,7 @@
                     <label class="block font-semibold text-gray-900 mb-2">
                         Is the accommodation owned by an individual or business entity?
                     </label>
-                    <select x-model="ownershipType"
+                    <select x-model="ownershipType" required
                         class="w-full p-2 border rounded text-sm focus:ring focus:ring-sky-200">
                         <option value="">Select an option</option>
                         <option value="individual">I am an individual running a business</option>
@@ -741,7 +745,7 @@
 
                     ←
                 </button>
-                <a href="{{  url('/partner-homes-edit/' . $property->id)  }}">
+                <a href="{{  url('/partner-homes-edit/' . $property->id)  }}?uploaded=true">
                     <button @click="step++"
                         class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition ">
                         Continue

@@ -262,7 +262,7 @@ Route::get('/partner-apartment-multiple-2', function () {
 
 Route::get('/partner-homes-form2', function () {
     return view('frontend.partner-homes-form-2');
-})->name('partner.homes.form.2');
+})->name('partner.homes.form2');
 
 
 Route::post('/partner-homes-single', [PropertyController::class, 'showPrivateHomesSingle'])->name('partner.homes.single');
