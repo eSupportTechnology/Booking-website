@@ -181,6 +181,10 @@ Route::get('/partner-apartment-livingroom', function () {
     return view('frontend.partner-apartments-livingroom');
 })->name('partner.apartment.livingroom');
 
+
+Route::get('/partner-homes-complete', function () {
+    return view('frontend.partner-homes-complete-registration');
+})->name('partner.homes.complete');
 // Route::get('/partner-apartment-price-group', function () {
 //     return view('frontend.partner-apartment-priceper-group');
 // })->name('partner.apartment.price.group');
