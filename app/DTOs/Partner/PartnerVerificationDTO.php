@@ -16,7 +16,7 @@ class PartnerVerificationDTO extends ValidatedDTO
     public ?string $address;
     public ?string $zip_code;
     public ?string $country;
-    public array $owners;
+    public ?array $owners;
 
     protected function rules(): array
     {
@@ -32,10 +32,10 @@ class PartnerVerificationDTO extends ValidatedDTO
             'zip_code' => ['nullable', 'string'],
             'city' => ['nullable', 'string'],
             'country' => ['nullable', 'string'],
-            'owners' => ['required', 'array'],
-            'owners.*.first_name' => ['required', 'string'],
-            'owners.*.last_name' => ['required', 'string'],
-            'owners.*.dob' => ['required', 'date'],
+            'owners' => ['nullable', 'array'],
+            'owners.*.first_name' => ['nullable', 'string'],
+            'owners.*.last_name' => ['nullable', 'string'],
+            'owners.*.dob' => ['nullable', 'date'],
         ];
     }
     protected function casts(): array
@@ -50,10 +50,11 @@ class PartnerVerificationDTO extends ValidatedDTO
             'company_name' => null,
             'registration_number' => null,
             'trading_name' => null,
-            'address' => 'null',
-            'zip_code' => 'null',
-            'city' => 'null',
-            'country' => 'null'
+            'address' => null,
+            'zip_code' => null,
+            'city' => null,
+            'country' => null,
+            'owners' => null
         ];
     }
 }

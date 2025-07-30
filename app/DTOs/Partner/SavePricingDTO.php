@@ -20,7 +20,7 @@ class SavePricingDTO extends ValidatedDTO
             'booking_type' => ['required', 'in:instant,request'],
             'price_per_night' => ['nullable', 'numeric', 'min:0'],
             'currency' => ['nullable', 'in:usd,eur,gbp'],
-            'discount_enabled' => ['required', 'boolean'],
+            'discount_enabled' => ['nullable', 'boolean'],
             'discount_percent' => ['nullable', 'integer', 'min:0', 'max:100'],
         ];
     }
@@ -31,7 +31,7 @@ class SavePricingDTO extends ValidatedDTO
             'price_per_night' => null,
             'currency' => 'usd',
             'discount_enabled' => false,
-            'discount_percent' => null,
+            'discount_percent' => 0,
         ];
     }
 

@@ -307,21 +307,39 @@ class PropertyAction
 
         if ($dto->type === 'individual') {
             // Handle individual verification
-            foreach ($dto->owners as $owner) {
+            if ($dto->owners && is_array($dto->owners)) {
+                foreach ($dto->owners as $owner) {
+                    $individual = Individual::updateOrCreate(
+                        [
+                            'accommodation_id' => $accommodation->id,
+                            'first_name' => $owner['first_name'],
+                            'last_name' => $owner['last_name'],
+                        ],
+                        [
+                            'date_of_birth' => $owner['dob'],
+                        ]
+                    );
+
+                    Log::info('Saved individual owner', [
+                        'individual_id' => $individual->id,
+                        'owner_data' => $individual->toArray()
+                    ]);
+                }
+            } else {
+                // Create individual record without owners array
                 $individual = Individual::updateOrCreate(
+                    ['accommodation_id' => $accommodation->id],
                     [
                         'accommodation_id' => $accommodation->id,
-                        'first_name' => $owner['first_name'],
-                        'last_name' => $owner['last_name'],
-                    ],
-                    [
-                        'date_of_birth' => $owner['dob'],
+                        'first_name' => $dto->full_name ? explode(' ', $dto->full_name)[0] : null,
+                        'last_name' => $dto->full_name ? (explode(' ', $dto->full_name)[1] ?? '') : null,
+                        'date_of_birth' => $dto->national_id,
                     ]
                 );
 
-                Log::info('Saved individual owner', [
+                Log::info('Saved individual without owners array', [
                     'individual_id' => $individual->id,
-                    'owner_data' => $individual->toArray()
+                    'individual_data' => $individual->toArray()
                 ]);
             }
         } else {
@@ -338,22 +356,25 @@ class PropertyAction
                     'country' => $dto->country, // Could be added to DTO if needed
                 ]
             );
-            foreach ($dto->owners as $owner) {
-                $individual = Individual::updateOrCreate(
-                    [
-                        'accommodation_id' => $accommodation->id,
-                        'first_name' => $owner['first_name'],
-                        'last_name' => $owner['last_name'],
-                    ],
-                    [
-                        'date_of_birth' => $owner['dob'],
-                    ]
-                );
+            
+            if ($dto->owners && is_array($dto->owners)) {
+                foreach ($dto->owners as $owner) {
+                    $individual = Individual::updateOrCreate(
+                        [
+                            'accommodation_id' => $accommodation->id,
+                            'first_name' => $owner['first_name'],
+                            'last_name' => $owner['last_name'],
+                        ],
+                        [
+                            'date_of_birth' => $owner['dob'],
+                        ]
+                    );
 
-                Log::info('Saved individual owner', [
-                    'individual_id' => $individual->id,
-                    'owner_data' => $individual->toArray()
-                ]);
+                    Log::info('Saved business owner', [
+                        'individual_id' => $individual->id,
+                        'owner_data' => $individual->toArray()
+                    ]);
+                }
             }
 
 

@@ -103,7 +103,11 @@
                 },
                 body: JSON.stringify({
                     property_id: propertyId,
-                    booking_type: this.bookingOption
+                    booking_type: this.bookingOption,
+                    price_per_night: null,
+                    currency: 'usd',
+                    discount_enabled: false,
+                    discount_percent: 0
                 })
             });
             
@@ -1902,10 +1906,12 @@ You will be able to add more apartments or duplicate this one when you finish fi
                                                                     class= "border border-[#3CC0E9]  text-blue-600 hover:bg-[#29ACD5] font-semibold py-2 px-4 rounded">
                                                                     ←
                                                                 </button>
-                                                                <button type="button"   @click="step = Math.min(step + 1, 13)"
-                                                                    class=" font-semibold py-3 px-8 rounded  bg-[#3CC0E9] hover:bg-[#29ACD5] text-white">
-                                                                    Continue
-                                                                </button>
+                                                                <a href="{{ route('partner.multiple.apartment.2') }}">
+                                                                    <button type="button"
+                                                                        class="font-semibold py-3 px-8 rounded bg-[#3CC0E9] hover:bg-[#29ACD5] text-white">
+                                                                        Continue
+                                                                    </button>
+                                                                </a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -2370,19 +2376,37 @@ You will be able to add more apartments or duplicate this one when you finish fi
                                         type: step11Data.ownershipType
                                     };
                                     
+                                    console.log('Initial verification data:', verificationData);
+                                    
                                     if (step11Data.ownershipType === 'individual') {
                                         // For individual, use individual data
                                         if (step11Data.individual) {
                                             verificationData.full_name = `${step11Data.individual.firstName} ${step11Data.individual.lastName}`.trim();
                                             verificationData.national_id = step11Data.individual.dob; // Using DOB as national_id for now
+                                            // Add owners array for individual
+                                            verificationData.owners = [{
+                                                first_name: step11Data.individual.firstName,
+                                                last_name: step11Data.individual.lastName,
+                                                dob: step11Data.individual.dob
+                                            }];
                                         }
                                     } else if (step11Data.ownershipType === 'business') {
                                         // For business, use business data
                                         if (step11Data.business) {
                                             verificationData.company_name = step11Data.business.businessName;
                                             verificationData.registration_number = step11Data.business.address; // Using address as registration_number for now
+                                            // Add owners array for business if available
+                                            if (step11Data.business.owners && step11Data.business.owners.length > 0) {
+                                                verificationData.owners = step11Data.business.owners.map(owner => ({
+                                                    first_name: owner.firstName,
+                                                    last_name: owner.lastName,
+                                                    dob: owner.dob
+                                                }));
+                                            }
                                         }
                                     }
+                                    
+                                    console.log('Final verification data to be sent:', verificationData);
                                     
                                     const response = await fetch(`/partner/store-verification`, {
                                         method: 'POST',

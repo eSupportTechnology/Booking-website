@@ -536,23 +536,23 @@ class PropertyController extends Controller
         }
     }
 
-    public function showMultipleApartmentForm($property = null, PropertyAction $action)
+        public function showMultipleApartmentForm($property = null, PropertyAction $action)
     {
         Log::info('showMultipleApartmentForm called', [
             'property_param' => $property,
             'property_type' => gettype($property)
         ]);
-
+        
         // If property is a numeric ID, fetch the property, otherwise set to null
         if ($property && is_numeric($property)) {
             $property = \App\Models\Property::find($property);
         } else {
             $property = null;
         }
-
+        
         $amenities = $action->getAmenities();
         $languages = $action->getLanguages();
-
+        
         Log::info('showMultipleApartmentForm returning', [
             'property_id' => $property ? $property->id : null,
             'amenities_count' => $amenities->count(),
@@ -560,8 +560,34 @@ class PropertyController extends Controller
             'languages_count' => $languages->count(),
             'languages' => $languages->toArray()
         ]);
-
+        
         return view('partner.partner-multiple-apartment', compact('property', 'amenities', 'languages'));
+    }
+
+    public function showMultipleApartmentForm2(PropertyAction $action)
+    {
+        Log::info('showMultipleApartmentForm2 called');
+        
+        $amenities = $action->getAmenities();
+        $languages = $action->getLanguages();
+        
+        Log::info('showMultipleApartmentForm2 returning', [
+            'amenities_count' => $amenities->count(),
+            'amenities' => $amenities->toArray(),
+            'languages_count' => $languages->count(),
+            'languages' => $languages->toArray()
+        ]);
+        
+        return view('partner.partner-multiple-apartment-2', compact('amenities', 'languages'));
+    }
+
+    public function showMultipleApartmentForm3(PropertyAction $action)
+    {
+        Log::info('showMultipleApartmentForm3 called');
+        
+        // For now, just show a success message
+        // You can modify this to show a specific view or redirect to the appropriate next step
+        return view('partner.property-listing-success');
     }
 
     /**

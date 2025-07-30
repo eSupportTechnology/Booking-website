@@ -37,11 +37,11 @@ class SaveAvailabilitySettingsDTO extends ValidatedDTO
     protected function casts(): array
     {
         return [
-            'property_id' => 'integer',
-            'availability_days' => 'integer',
-            'allow_long_stays' => 'boolean',
-            'max_nights' => 'integer',
-            'sync_tripadvisor' => 'boolean',
+            // 'property_id' => 'integer',
+            // 'availability_days' => 'integer',
+            // 'allow_long_stays' => 'boolean',
+            // 'max_nights' => 'integer',
+            // 'sync_tripadvisor' => 'boolean',
         ];
     }
 }
