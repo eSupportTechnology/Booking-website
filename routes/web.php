@@ -475,9 +475,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Guest routes
     Route::middleware('guest')->group(function () {
         Route::get('/admin-login', [\App\Http\Controllers\Admin\AuthController::class, 'showLogin'])->name('login');
-        Route::post('/admin-login', [\App\Http\Controllers\Admin\AuthController::class, 'login'])->name('login');
+        Route::post('/admin-login', [\App\Http\Controllers\Admin\AuthController::class, 'login']);
         Route::get('/admin-registration', [\App\Http\Controllers\Admin\AuthController::class, 'showRegister'])->name('register');
-        Route::post('/admin-registration', [\App\Http\Controllers\Admin\AuthController::class, 'register'])->name('register');
+        Route::post('/admin-registration', [\App\Http\Controllers\Admin\AuthController::class, 'register']);
         Route::get('/admin-forgot-password', [\App\Http\Controllers\Admin\AuthController::class, 'showForgotPassword'])->name('forgot-password');
         Route::post('/admin-forgot-password', [\App\Http\Controllers\Admin\AdminPasswordResetLinkController::class, 'store'])->name('password.email');
         Route::get('/admin-reset-password/{token}', function ($token) {
@@ -523,17 +523,17 @@ Route::prefix('admin')->name('admin.')->group(function () {
     });
 });
 
-Route::get('/admin/partners', function () {
-    return view('frontend.admin.partners');
-})->name('admin.partners');
+// Route::get('/admin/partners', function () {
+//     return view('frontend.admin.partners');
+// })->name('admin.partners');
 
-Route::get('/admin/partner-view', function () {
-    return view('frontend.admin.partner-view');
-})->name('admin.partner-view');
+// Route::get('/admin/partner-view', function () {
+//     return view('frontend.admin.partner-view');
+// })->name('admin.partner-view');
 
-Route::get('/admin/settings', function () {
-    return view('frontend.admin.settings');
-})->name('admin.settings');
+// Route::get('/admin/settings', function () {
+//     return view('frontend.admin.settings');
+// })->name('admin.settings');
 
 Route::get('/partner-home-final-steps', function () {
     return view('frontend.partner-home-final-steps');
