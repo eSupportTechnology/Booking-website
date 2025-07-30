@@ -12,11 +12,17 @@
         <!-- Search & Add Button -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
 
-            <!-- Search Input -->
-            <div class="w-full sm:w-1/2 lg:w-1/3">
+            <!-- Search and Filter Section -->
+            <div class="w-full sm:w-2/3 lg:w-2/3 flex gap-3">
                 <input type="text" placeholder="Search alternative places..."
                     class="w-full px-3 py-1.5 text-xs sm:text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#3CC0E9]"
                     id="alternativePlaceSearchInput">
+                <select id="statusFilter" class="px-3 py-1.5 text-xs sm:text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#3CC0E9] bg-white">
+                    <option value="">All Status</option>
+                    <option value="Available">Available</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Unavailable">Unavailable</option>
+                </select>
             </div>
 
             <!-- Add Button -->
@@ -227,34 +233,37 @@
 
     document.addEventListener('DOMContentLoaded', function() {
         const searchInput = document.getElementById('alternativePlaceSearchInput');
-        const table = document.getElementById('alternativePlacesTable'); // Corrected ID
+        const statusFilter = document.getElementById('statusFilter');
+        const table = document.getElementById('alternativePlacesTable');
         const rows = table.querySelectorAll('tbody tr');
 
-        searchInput.addEventListener('input', function(event) {
-            const searchTerm = event.target.value.toLowerCase();
+        function filterTable() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const statusTerm = statusFilter.value.toLowerCase();
 
             rows.forEach(row => {
-                // Get text content from relevant cells for searching
-                // Corrected indices based on the table structure for Alternative Places
-                const id = row.children[0].textContent.toLowerCase(); // ID
-                const partnerName = row.children[1].textContent.toLowerCase(); // Partner Name
-                const placeName = row.children[2].textContent.toLowerCase(); // Place Name
-                const location = row.children[3].textContent.toLowerCase(); // Location
-                const status = row.children[6].textContent.toLowerCase(); // Status (index 6)
+                const id = row.children[0].textContent.toLowerCase();
+                const partnerName = row.children[1].textContent.toLowerCase();
+                const placeName = row.children[2].querySelector('.font-medium')?.textContent.toLowerCase() || '';
+                const location = row.children[3].textContent.toLowerCase();
+                const statusSelect = row.children[6].querySelector('select');
+                const status = statusSelect ? statusSelect.value.toLowerCase() : '';
 
-                if (id.includes(searchTerm) ||
+                const matchesSearch = id.includes(searchTerm) ||
                     partnerName.includes(searchTerm) ||
                     placeName.includes(searchTerm) ||
                     location.includes(searchTerm) ||
-                    status.includes(searchTerm)) {
-                    row.style.display = ''; // Show the row
-                } else {
-                    row.style.display = 'none'; // Hide the row
-                }
+                    status.includes(searchTerm);
+
+                const matchesStatus = !statusTerm || status === statusTerm;
+
+                row.style.display = matchesSearch && matchesStatus ? '' : 'none';
             });
-        });
+        }
+
+        searchInput.addEventListener('input', filterTable);
+        statusFilter.addEventListener('change', filterTable);
     });
 </script>
 
 @endsection
-search

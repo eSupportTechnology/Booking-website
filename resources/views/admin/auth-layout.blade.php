@@ -42,14 +42,7 @@
                 <a href="#" class="text-xl font-bold">Admin</a>
                 </div>
 
-                <div class="flex items-center space-x-4">
-                    <div class="relative">
-                        <button class="text-white">
-                        <i class="fas fa-bell"></i>
-                        </button>
-                        <span class="absolute -top-1 -right-2 bg-red-500 text-xs px-1.5 rounded-full">3</span>
-                    </div>
-                </div>
+                
             </div>
         </div>
     </nav>

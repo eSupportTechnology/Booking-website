@@ -1,25 +1,26 @@
-@extends('frontend.admin.auth-layout')
+@extends('admin.auth-layout')
 
 @section('title', 'Admin Login')
 
 @section('content')
 <div class="bg-white/70 backdrop-blur-md p-8 rounded-xl shadow-xl w-full max-w-md">
     <h2 class="text-3xl font-bold text-center text-darkText mb-6">Log In</h2>
-    <form onsubmit="return validateLogin()">
+    <form method="POST" action="{{ route('admin.login') }}">
+        @csrf
         <div class="relative w-full mb-4">
-            <input type="Username" id="loginUsername" name="Username"
+            <input type="text" id="username" name="username" value="{{ old('username') }}"
                 class="peer w-full px-3 pt-5 pb-2 placeholder-transparent border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm"
                 placeholder="Username" required />
-            <label for="loginUsername"
+            <label for="username"
                 class="absolute left-3 top-2.5 text-gray-500 text-xs transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-2.5 peer-focus:text-xs peer-focus:text-darkBlueStart">
                 Username
             </label>
         </div>
         <div class="relative w-full mb-4">
-            <input type="password" id="loginPassword" name="password"
+            <input type="password" id="password" name="password"
                 class="peer w-full px-3 pt-5 pb-2 pr-10 placeholder-transparent border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm"
                 placeholder="Password" required />
-            <label for="loginPassword"
+            <label for="password"
                 class="absolute left-3 top-2.5 text-gray-500 text-xs transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-2.5 peer-focus:text-xs peer-focus:text-darkBlueStart">
                 Password
             </label>
@@ -38,49 +39,48 @@
                 </svg>
             </button>
         </div>
-        <p id="loginError" class="text-sm text-red-600 mb-2 hidden"></p>
+        <div class="flex items-center mb-4">
+            <input type="checkbox" id="remember" name="remember" value="1" class="mr-2">
+            <label for="remember" class="text-sm text-gray-600">Remember me</label>
+        </div>
+        @if ($errors->any())
+            <div class="text-sm text-red-600 mb-2">
+                @foreach ($errors->all() as $error)
+                    <p>{{ $error }}</p>
+                @endforeach
+            </div>
+        @endif
+        
+        @if (session('status'))
+            <div class="text-sm text-green-600 mb-2">
+                {{ session('status') }}
+            </div>
+        @endif
         <button type="submit"
             class="w-full bg-primary hover:bg-hoverPrimary text-white py-3 rounded-lg font-semibold transition duration-200">
             Log In
         </button>
         <p class="text-center text-gray-600 mt-6">
-            <a href="{{ route('admin.ForgotPassword') }}" class="text-primary hover:underline">Forgot Password?</a>
+            <a href="{{ route('admin.forgot-password') }}" class="text-primary hover:underline">Forgot Password?</a>
         </p>
         <p class="text-center text-gray-600 mt-4">
             Don't have an account?
-            <a href="{{ route('admin.Registration') }}" class="text-primary hover:underline">Register</a>
+            <a href="{{ route('admin.register') }}" class="text-primary hover:underline">Register</a>
         </p>
     </form>
 </div>
 
 <script>
-    function validateLogin() {
-        const Username = document.getElementById("loginUsername").value.trim();
-        const password = document.getElementById("loginPassword").value.trim();
-        const error = document.getElementById("loginError");
-
-        if (password.length < 6) {
-            error.textContent = "Invalid Username or password must be at least 6 characters.";
-            error.classList.remove("hidden");
-            return false;
-        }
-        error.classList.add("hidden");
-        return true;
-    }
-
-    // Show/Hide Password functionality
     document.addEventListener('DOMContentLoaded', function() {
         const togglePassword = document.getElementById('togglePassword');
-        const passwordInput = document.getElementById('loginPassword');
+        const passwordInput = document.getElementById('password');
         const eyeIcon = document.getElementById('eyeIcon');
         const eyeSlashIcon = document.getElementById('eyeSlashIcon');
 
         togglePassword.addEventListener('click', function() {
-            // Toggle password visibility
             const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordInput.setAttribute('type', type);
             
-            // Toggle icon visibility
             if (type === 'text') {
                 eyeIcon.classList.add('hidden');
                 eyeSlashIcon.classList.remove('hidden');

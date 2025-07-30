@@ -36,7 +36,7 @@ Route::get('/login', [LoginController::class, 'show'])->name('login');
 //     return view('frontend.login');
 // });
 
-Route::get('change', [LanguageController::class, 'change'])->name('lang.change');
+Route::post('change-language', [LanguageController::class, 'change'])->name('lang.change');
 
 Route::prefix('customer')->group(function () {
     Route::get('/login', [CustomerAuthController::class, 'showLoginForm'])->name('customer.login');
@@ -500,30 +500,70 @@ Route::patch('/partner/property/{property}/additional-details', [PropertyControl
 require __DIR__ . '/auth.php';
 
 
-Route::get('/admin/dashboard', function () {
-    return view('frontend.admin.dashboard');
-})->name('admin.dashboard');
+// Admin Portal Routes
+Route::prefix('admin')->name('admin.')->group(function () {
+    // Guest routes
+    Route::middleware('guest')->group(function () {
+        Route::get('/admin-login', [\App\Http\Controllers\Admin\AuthController::class, 'showLogin'])->name('login');
+        Route::post('/admin-login', [\App\Http\Controllers\Admin\AuthController::class, 'login']);
+        Route::get('/admin-registration', [\App\Http\Controllers\Admin\AuthController::class, 'showRegister'])->name('register');
+        Route::post('/admin-registration', [\App\Http\Controllers\Admin\AuthController::class, 'register']);
+        Route::get('/admin-forgot-password', [\App\Http\Controllers\Admin\AuthController::class, 'showForgotPassword'])->name('forgot-password');
+        Route::post('/admin-forgot-password', [\App\Http\Controllers\Admin\AdminPasswordResetLinkController::class, 'store'])->name('password.email');
+        Route::get('/admin-reset-password/{token}', function ($token) {
+            return view('admin.admin-reset-password', [
+                'token' => $token,
+                'email' => request('email')
+            ]);
+        })->name('password.reset');
+        Route::post('/admin-reset-password', [\App\Http\Controllers\Admin\AdminNewPasswordController::class, 'store'])->name('password.store');
+    });
 
+        // Protected admin routes
+        Route::middleware(['auth:admin', \App\Http\Middleware\AdminMiddleware::class])->group(function () {
+        Route::get('/center', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
+        Route::post('/exit', [\App\Http\Controllers\Admin\AuthController::class, 'logout'])->name('logout');
 
-Route::get('/admin/customers', function () {
-    return view('frontend.admin.customers');
-})->name('admin.customers');
+        // Property management
+        Route::get('/units', function () {
+            return view('admin.admin-apartments');
+        })->name('apartments');
+        Route::get('/residences', function () {
+            return view('admin.admin-homes');
+        })->name('homes');
+        Route::get('/venues', function () {
+            return view('admin.admin-hotels');
+        })->name('hotels');
+        Route::get('/unique-stays', function () {
+            return view('admin.admin-alternative-places');
+        })->name('alternative.places');
 
-Route::get('/admin/customer-view', function () {
-    return view('frontend.admin.customer-view');
+        // Customer management
+        Route::get('/accounts', function () {
+            return view('admin.admin-customers');
+        })->name('customers');
+        Route::post('/account-details', [\App\Http\Controllers\Admin\CustomerViewController::class, 'show'])->name('customer.view');
+
+        // Partner management
+        Route::get('/partners', function () {
+            return view('admin.admin-partners');
+        })->name('partners');
+        Route::post('/partner-details', [\App\Http\Controllers\Admin\PartnerViewController::class, 'show'])->name('partner.view');
+
+        // Settings
+        Route::get('/settings', function () {
+            return view('admin.admin-settings');
+        })->name('settings');
+
+        // Super admin only routes
+        Route::middleware(\App\Http\Middleware\SuperAdminMiddleware::class)->group(function () {
+            Route::get('/pending', [\App\Http\Controllers\Admin\AdminApprovalController::class, 'index'])->name('approvals.index');
+            Route::post('/pending/{admin}/approve', [\App\Http\Controllers\Admin\AdminApprovalController::class, 'approve'])->name('approvals.approve');
+            Route::post('/pending/{admin}/reject', [\App\Http\Controllers\Admin\AdminApprovalController::class, 'reject'])->name('approvals.reject');
+        });
+    });
 });
 
-Route::get('/admin/partners', function () {
-    return view('frontend.admin.partners');
-})->name('admin.partners');
-
-Route::get('/admin/partner-view', function () {
-    return view('frontend.admin.partner-view');
-})->name('admin.partner-view');
-
-Route::get('/admin/settings', function () {
-    return view('frontend.admin.settings');
-})->name('admin.settings');
 
 Route::get('/partner-home-final-steps', function () {
     return view('frontend.partner-home-final-steps');
@@ -533,50 +573,6 @@ Route::get('/partner-home-final-steps', function () {
 Route::get('/apartment/final', function () {
     return view('frontend.partner-apartment-final');
 })->name('partner.apartment.final');
-
-
-
-
-// Admin Routes for Property
-Route::get('/admin/apartments', function () {
-    return view('frontend.admin.apartments');
-})->name('admin.apartments');
-
-Route::get('/admin/homes', function () {
-    return view('frontend.admin.homes');
-})->name('admin.homes');
-
-Route::get('/admin/hotels', function () {
-    return view('frontend.admin.hotels');
-})->name('admin.hotels');
-
-Route::get('/admin/alternative-places', function () {
-    return view('frontend.admin.alternative-places');
-})->name('admin.alternative.places');
-
-
-// Admin Routes Login Registration Forgot Password
-Route::get('/admin/login', function () {
-    return view('frontend.admin.login');
-})->name('admin.login');
-
-Route::get('/admin/Registration', function () {
-    return view('frontend.admin.Registration');
-})->name('admin.Registration');
-
-Route::get('/admin/ForgotPassword', function () {
-    return view('frontend.admin.ForgotPassword');
-})->name('admin.ForgotPassword');
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -6,33 +6,31 @@ use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 
-class RolesAndPermissionsSeeder extends Seeder
+class AdminRolesSeeder extends Seeder
 {
     public function run(): void
     {
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // Create roles
-        $customer = Role::updateOrCreate(['name' => 'customer']);
-        $partner = Role::updateOrCreate(['name' => 'partner']);
-        $admin = Role::updateOrCreate(['name' => 'admin']);
-        $superAdmin = Role::updateOrCreate(['name' => 'super-admin']);
+        // Create roles for admin guard
+        $admin = Role::updateOrCreate(['name' => 'admin', 'guard_name' => 'admin']);
+        $superAdmin = Role::updateOrCreate(['name' => 'super-admin', 'guard_name' => 'admin']);
 
-        // Create permissions
+        // Create permissions for admin guard
         $permissions = [
             'manage-users',
-            'manage-properties',
+            'manage-properties', 
             'manage-bookings',
             'view-dashboard',
             'manage-admins'
         ];
 
         foreach ($permissions as $permission) {
-            Permission::updateOrCreate(['name' => $permission]);
+            Permission::updateOrCreate(['name' => $permission, 'guard_name' => 'admin']);
         }
 
-        // Assign permissions to roles
+        // Assign permissions
         $admin->givePermissionTo(['manage-users', 'manage-properties', 'manage-bookings', 'view-dashboard']);
-        $superAdmin->givePermissionTo(Permission::all());
+        $superAdmin->givePermissionTo(Permission::where('guard_name', 'admin')->get());
     }
 }

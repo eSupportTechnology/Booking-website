@@ -12,11 +12,17 @@
         <!-- Search & Add Button Section -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
 
-            <!-- Search Bar -->
-            <div class="w-full sm:w-1/2 lg:w-1/3">
+            <!-- Search and Filter Section -->
+            <div class="w-full sm:w-2/3 lg:w-2/3 flex gap-3">
                 <input type="text" placeholder="Search hotels..."
                     class="w-full px-3 py-1.5 text-xs sm:text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#3CC0E9]"
                     id="hotelSearchInput">
+                <select id="statusFilter" class="px-3 py-1.5 text-xs sm:text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#3CC0E9] bg-white">
+                    <option value="">All Status</option>
+                    <option value="Available">Available</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Unavailable">Unavailable</option>
+                </select>
             </div>
 
             <!-- Add New Hotel Button -->
@@ -230,36 +236,38 @@
             handleStatusChange(select, select.getAttribute('onchange').split(',')[1]?.replace(/[^0-9]/g, ''));
         });
 
-        // Search functionality
         const searchInput = document.getElementById('hotelSearchInput');
+        const statusFilter = document.getElementById('statusFilter');
         const table = document.getElementById('hotelsTable');
         const rows = table.querySelectorAll('tbody tr');
 
-        searchInput.addEventListener('input', function(event) {
-            const searchTerm = event.target.value.toLowerCase();
+        function filterTable() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const statusTerm = statusFilter.value.toLowerCase();
 
             rows.forEach(row => {
-                // Get text content from relevant cells for searching
-                // Corrected indices based on the table structure for Hotel Listings
-                const id = row.children[0].textContent.toLowerCase(); // ID (#201)
-                const partnerName = row.children[1].textContent.toLowerCase(); // Partner Name (Global Stays Inc.)
-                const hotelName = row.children[2].textContent.toLowerCase(); // Hotel Name (Grand Hyatt New York)
-                const location = row.children[3].textContent.toLowerCase(); // Location (New York, USA)
-                const dateAdded = row.children[5].textContent.toLowerCase(); // Date Added (Jul 22, 2025)
-                const status = row.children[6].textContent.toLowerCase(); // Status (Active, Inactive, Pending)
+                const id = row.children[0]?.textContent.toLowerCase() || '';
+                const partnerName = row.children[1]?.textContent.toLowerCase() || '';
+                const hotelNameEl = row.children[2]?.querySelector('.font-medium');
+                const hotelName = hotelNameEl ? hotelNameEl.textContent.toLowerCase() : '';
+                const location = row.children[3]?.textContent.toLowerCase() || '';
+                const statusSelect = row.children[6]?.querySelector('select');
+                const status = statusSelect ? statusSelect.value.toLowerCase() : '';
 
-                if (id.includes(searchTerm) ||
+                const matchesSearch = searchTerm === '' ||
+                    id.includes(searchTerm) ||
                     partnerName.includes(searchTerm) ||
                     hotelName.includes(searchTerm) ||
-                    location.includes(searchTerm) ||
-                    dateAdded.includes(searchTerm) ||
-                    status.includes(searchTerm)) {
-                    row.style.display = ''; // Show the row
-                } else {
-                    row.style.display = 'none'; // Hide the row
-                }
+                    location.includes(searchTerm);
+
+                const matchesStatus = !statusTerm || status === statusTerm;
+
+                row.style.display = matchesSearch && matchesStatus ? '' : 'none';
             });
-        });
+        }
+
+        searchInput.addEventListener('input', filterTable);
+        statusFilter.addEventListener('change', filterTable);
     });
 </script>
 @endsection
