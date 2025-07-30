@@ -509,6 +509,29 @@ Route::get('/admin/customer-view', function () {
     return view('frontend.admin.customer-view');
 });
 
+Route::get('/admin/partners', function () {
+    return view('frontend.admin.partners');
+})->name('admin.partners');
+
+Route::get('/admin/partner-view', function () {
+    return view('frontend.admin.partner-view');
+})->name('admin.partner-view');
+
+Route::get('/admin/settings', function () {
+    return view('frontend.admin.settings');
+})->name('admin.settings');
+
+Route::get('/partner-home-final-steps', function () {
+    return view('frontend.partner-home-final-steps');
+})->name('frontend.partner-home-final-steps');
+
+
+Route::get('/apartment/final', function () {
+    return view('frontend.partner-apartment-final');
+})->name('partner.apartment.final');
+
+
+
 
 // Admin Routes for Property
 Route::get('/admin/apartments', function () {
