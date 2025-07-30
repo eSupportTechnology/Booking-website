@@ -564,43 +564,34 @@ class PropertyController extends Controller
         return view('partner.partner-multiple-apartment', compact('property', 'amenities', 'languages'));
     }
 
-    public function showMultipleApartmentForm2(PropertyAction $action, $propertyId = null)
+    public function showMultipleApartmentForm2(PropertyAction $action, $propertyId)
     {
         Log::info('showMultipleApartmentForm2 called', [
             'property_id' => $propertyId
         ]);
         
-        // If no property ID is provided, create a test property for testing purposes
+        // Require a property ID - redirect to first form if none provided
         if (!$propertyId) {
-            $testProperty = \App\Models\Property::create([
-                'user_id' => auth()->id() ?? 1, // Use authenticated user or default to user ID 1
-                'category_id' => 2, // Apartment category
-                'subcategory_id' => 2, // Multiple apartments
-                'subtype_id' => 1, // Default subtype
-                'address_type_id' => 2, // Same address
-                'title' => 'Test Property',
-                'description' => 'Test property for amenities form',
-                'address' => 'Test Address',
-                'city' => 'Test City',
-                'country' => 'Sri Lanka',
-                'status' => 'pending'
-            ]);
-            
-            $propertyId = $testProperty->id;
-            
-            Log::info('Created test property for Form 2', [
-                'test_property_id' => $propertyId
-            ]);
+            Log::warning('No property ID provided for Form 2, redirecting to first form');
+            return redirect()->route('partner.multiple.apartment.initial')
+                ->with('error', 'Please complete the first step before proceeding.');
+        }
+        
+        // Verify the property exists
+        $property = \App\Models\Property::find($propertyId);
+        if (!$property) {
+            Log::error('Property not found', ['property_id' => $propertyId]);
+            return redirect()->route('partner.multiple.apartment.initial')
+                ->with('error', 'Property not found. Please start over.');
         }
         
         $amenities = $action->getAmenitiesByContext('apartment');
         $languages = $action->getLanguages();
         
         Log::info('showMultipleApartmentForm2 returning', [
+            'property_id' => $propertyId,
             'amenities_count' => $amenities->count(),
-            'amenities' => $amenities->toArray(),
-            'languages_count' => $languages->count(),
-            'languages' => $languages->toArray()
+            'languages_count' => $languages->count()
         ]);
         
         return view('partner.partner-multiple-apartment-2', compact('amenities', 'languages', 'propertyId'));
@@ -610,9 +601,38 @@ class PropertyController extends Controller
     {
         Log::info('showMultipleApartmentForm3 called');
         
-        // For now, just show a success message
-        // You can modify this to show a specific view or redirect to the appropriate next step
-        return view('partner.property-listing-success');
+        // Redirect to dashboard or show a simple success message
+        return redirect()->route('partner.multiple.apartment.initial')
+            ->with('success', 'Property listing completed successfully!');
+    }
+
+    public function getLatestProperty()
+    {
+        try {
+            $userId = auth()->id();
+            if (!$userId) {
+                return response()->json(['success' => false, 'message' => 'User not authenticated']);
+            }
+            
+            $latestProperty = \App\Models\Property::where('user_id', $userId)
+                ->orderBy('created_at', 'desc')
+                ->first();
+            
+            if ($latestProperty) {
+                return response()->json([
+                    'success' => true, 
+                    'property_id' => $latestProperty->id
+                ]);
+            } else {
+                return response()->json(['success' => false, 'message' => 'No property found']);
+            }
+        } catch (\Exception $e) {
+            Log::error('Error getting latest property', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json(['success' => false, 'message' => 'Error getting latest property']);
+        }
     }
 
     /**

@@ -566,6 +566,8 @@ Route::get('/partner/apartment/weekly-rate', function () {
 
 Route::get('/partner/partner-multiple-apartment/{property}', [PropertyController::class, 'showMultipleApartmentForm'])->name('partner.multiple.apartment');
 
-Route::get('/partner/multiple-apartment', [PropertyController::class, 'showMultipleApartmentForm'])->name('partner.multiple.apartment.initial');
-Route::get('/partner/multiple-apartment-2/{propertyId?}', [PropertyController::class, 'showMultipleApartmentForm2'])->name('partner.multiple.apartment.2');
+Route::get('/partner/multiple-apartment/{property?}', [PropertyController::class, 'showMultipleApartmentForm'])->name('partner.multiple.apartment.initial');
+Route::get('/partner/multiple-apartment-2/{propertyId}', [PropertyController::class, 'showMultipleApartmentForm2'])->name('partner.multiple.apartment.2');
+Route::get('/partner/get-latest-property', [PropertyController::class, 'getLatestProperty'])->name('partner.get.latest.property');
+Route::post('/partner/property/upload-photos', [PropertyController::class, 'uploadPhotos'])->name('partner.property.upload-photos');
 Route::get('/partner/multiple-apartment-3', [PropertyController::class, 'showMultipleApartmentForm3'])->name('partner.multiple.apartment.3');

@@ -1864,7 +1864,7 @@
                 <!-- Tip Content -->
                 <div class="text-sm text-gray-700">
                     <p class="font-semibold mb-1">What if I want to change my selection later on?</p>
-                    <p>Your selection here isn’t final. You can always change it by heading to the Policies section after you’ve registered.</p>
+                    <p>Your selection here isn't final. You can always change it by heading to the Policies section after you've registered.</p>
                     <a href="#" class="text-blue-600 hover:underline mt-1 inline-block">Read more about 30+ night stays</a>
                 </div>
             </div>
@@ -1906,12 +1906,11 @@ You will be able to add more apartments or duplicate this one when you finish fi
                                                                     class= "border border-[#3CC0E9]  text-blue-600 hover:bg-[#29ACD5] font-semibold py-2 px-4 rounded">
                                                                     ←
                                                                 </button>
-                                                                <a href="{{ route('partner.multiple.apartment.2', ['propertyId' => $property->id ?? null]) }}">
-                                                                    <button type="button"
+                                                                <button type="button" 
+                                                                        onclick="continueToForm2()"
                                                                         class="font-semibold py-3 px-8 rounded bg-[#3CC0E9] hover:bg-[#29ACD5] text-white">
-                                                                        Continue
-                                                                    </button>
-                                                                </a>
+                                                                    Continue
+                                                                </button>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1922,7 +1921,18 @@ You will be able to add more apartments or duplicate this one when you finish fi
 
                         </body>
 
+                        
+
                         <script>
+                            // Function to continue to form 2
+                            function continueToForm2() {
+                                const propertyId = @json($property->id ?? null);
+                                if (propertyId) {
+                                    window.location.href = `/partner/multiple-apartment-2/${propertyId}`;
+                                } else {
+                                    alert('Please complete all steps before continuing.');
+                                }
+                            }
                             // Function to save languages data
                             function saveLanguages(propertyId) {
                                 return new Promise((resolve, reject) => {

@@ -115,6 +115,9 @@ class PropertyAction
 
         $property = \App\Models\Property::create($dto->toArray());
 
+        // Store property ID in session for form navigation
+        session(['current_property_id' => $property->id]);
+
         Log::info('Property created successfully', [
             'property_id' => $property->id,
             'property_data' => $property->toArray(),
@@ -177,6 +180,9 @@ class PropertyAction
         } else {
             Log::info('No languages to sync for property', ['property_id' => $property->id]);
         }
+
+        // Store property ID in session for form navigation
+        session(['current_property_id' => $property->id]);
 
         return $property;
     }

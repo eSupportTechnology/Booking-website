@@ -10,13 +10,24 @@
 <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
 <!-- Alpine Data Scope -->
-<div x-data="{ 
+<div x-data="{
     step: 1,
     selectedAmenities: [],
     propertyId: {{ $propertyId ?? 'null' }},
     propertyCount: 1,
-    
-    async saveAmenities() {
+    uploadedPhotos: [],
+    guests: 2,
+    bathrooms: 1,
+    showTips: true,
+    count: 2,
+    showDetails: false,
+    showTip1: true,
+    showTip2: true,
+    feedback: null,
+    showDiscount: false
+}" 
+x-init="
+    $data.saveAmenities = async function() {
         if (!this.propertyId) {
             console.log('No property ID available, skipping amenities save');
             this.step++;
@@ -54,8 +65,73 @@
             console.error('Error saving amenities:', error);
             alert('Error saving amenities: ' + error.message);
         }
-    }
-}">
+    };
+    
+    $data.handleUpload = function(event) {
+        const files = Array.from(event.target.files).slice(0, 5 - this.uploadedPhotos.length);
+        files.forEach(file => {
+            const url = URL.createObjectURL(file);
+            this.uploadedPhotos.push({ file, url });
+        });
+    };
+    
+    $data.handleUploadDrop = function(event) {
+        const dt = event.dataTransfer;
+        if (!dt) return;
+        const files = Array.from(dt.files).slice(0, 5 - this.uploadedPhotos.length);
+        files.forEach(file => {
+            const url = URL.createObjectURL(file);
+            this.uploadedPhotos.push({ file, url });
+        });
+    };
+    
+    $data.removePhoto = function(index) {
+        this.uploadedPhotos.splice(index, 1);
+    };
+    
+    $data.uploadPhotosAndContinue = async function() {
+        if (this.uploadedPhotos.length < 3) {
+            alert('Please upload at least 3 photos');
+            return;
+        }
+        
+        if (!this.propertyId) {
+            alert('No property ID available');
+            return;
+        }
+        
+        try {
+            const formData = new FormData();
+            formData.append('property_id', this.propertyId);
+            
+            this.uploadedPhotos.forEach((photo, index) => {
+                formData.append(`photos[${index}]`, photo.file);
+            });
+            
+            const response = await fetch(`/partner/property/upload-photos`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                },
+                body: formData
+            });
+            
+            if (response.ok) {
+                console.log('Photos uploaded successfully');
+                console.log('Current step before:', this.step);
+                this.step = 4; // Go to step 4 instead of redirecting
+                console.log('Current step after:', this.step);
+            } else {
+                const errorData = await response.json();
+                console.error('Error uploading photos:', errorData);
+                alert('Error uploading photos: ' + (errorData.message || 'Unknown error'));
+            }
+        } catch (error) {
+            console.error('Error uploading photos:', error);
+            alert('Error uploading photos: ' + error.message);
+        }
+    };
+">
 
     <!-- Full-width Progress Bar (just under header) -->
     <div class="w-full bg-gray-200 h-2">
@@ -108,7 +184,7 @@
             </div>
 
             <!-- Guests and Bathrooms -->
-            <div x-data="{ guests: 2, bathrooms: 1 }" class="bg-white p-4 rounded-lg shadow space-y-4 w-full max-w-xl">
+            <div class="bg-white p-4 rounded-lg shadow space-y-4 w-full max-w-xl">
                 <!-- Guests -->
                 <div>
                     <label class="block text-sm text-gray-800">How many guests can stay?</label>
@@ -241,28 +317,7 @@
     <!-- ✅ Single Step Section (no condition needed) -->
     <div class="px-4 py-8 mt-2 w-full max-w-6xl mx-auto lg:ml-24 space-y-6">
 
-        <section class="px-4 py-6 md:px-8 lg:px-16 flex justify-center" x-data="{
-            uploadedPhotos: [],
-            handleUpload(event) {
-                const files = Array.from(event.target.files).slice(0, 5 - this.uploadedPhotos.length);
-                files.forEach(file => {
-                    const url = URL.createObjectURL(file);
-                    this.uploadedPhotos.push({ file, url });
-                });
-            },
-            handleUploadDrop(event) {
-                const dt = event.dataTransfer;
-                if (!dt) return;
-                const files = Array.from(dt.files).slice(0, 5 - this.uploadedPhotos.length);
-                files.forEach(file => {
-                    const url = URL.createObjectURL(file);
-                    this.uploadedPhotos.push({ file, url });
-                });
-            },
-            removePhoto(index) {
-                this.uploadedPhotos.splice(index, 1);
-            }
-        }">
+        <section class="px-4 py-6 md:px-8 lg:px-16 flex justify-center">
             <div class="w-full max-w-6xl">
                 <h2 class="text-xl md:text-2xl font-bold text-black mb-6 text-left mt-12">What does your place look
                     like?</h2>
@@ -342,7 +397,7 @@
                     </div>
 
                     <!-- ℹ️ Tips Box -->
-                    <div x-data="{ showTips: true }">
+                    <div>
                         <div x-show="showTips" x-transition
                             class="bg-white border rounded-none p-4 shadow-sm relative text-sm">
 
@@ -381,7 +436,7 @@
 <!-- Continue Button -->
 <button 
     :disabled="uploadedPhotos.length < 3"
-    @click="uploadedPhotos.length >= 3 && step++"
+    @click="uploadPhotosAndContinue()"
     :class="{
         'px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 cursor-pointer opacity-100': uploadedPhotos.length >= 3,
         'bg-gray-400 rounded cursor-not-allowed opacity-50': uploadedPhotos.length < 3
@@ -405,7 +460,7 @@
             How many apartments with this layout do you have?
         </h2>
         <div class="bg-white px-4 py-6  w-full max-w-3xl mx-auto shadow rounded-lg">
-            <div x-data="{ count: 2, showDetails: false }" class="space-y-6">
+            <div class="space-y-6">
 
             <!-- Count Selector -->
             <div class="bg-white rounded-lg shadow p-4">
@@ -483,7 +538,7 @@
                     class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
                 ←
             </button>
-            <button @click="step > 1 ? step++ : step"
+            <button @click="step++"
                 class="ml-auto px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500">
                 Continue 
             </button>
@@ -493,7 +548,7 @@
 
  <template x-if="step === 5">
     <div class="max-w-4xl ml-40 px-4 py-8 mt-6">
-        <div class="max-w-4xl mx-auto px-4 py-8 space-y-6" x-data="{ showTip1: true, showTip2: true }">
+        <div class="max-w-4xl mx-auto px-4 py-8 space-y-6">
 
             <!-- Title -->
             <h2 class="text-2xl font-bold text-gray-800">Price per night</h2>
@@ -532,7 +587,7 @@
     </div>
 </div>
 
-<div x-data="{ feedback: null }" class="pt-2 text-sm text-gray-700">
+        <div class="pt-2 text-sm text-gray-700">
   <span>Did this help you decide on a price?</span>
 
   <!-- Like (Thumbs Up) -->
@@ -628,7 +683,7 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 
                <!-- Discount card -->
-<div x-data="{ showDiscount: false }" class="md:col-span-2 bg-white border rounded-lg p-6 shadow-sm space-y-3">
+        <div class="md:col-span-2 bg-white border rounded-lg p-6 shadow-sm space-y-3">
 
   <!-- Checkbox -->
   <label class="inline-flex items-center">
