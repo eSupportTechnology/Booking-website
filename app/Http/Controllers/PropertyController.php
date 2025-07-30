@@ -803,7 +803,7 @@ class PropertyController extends Controller
     public function showPrivateHomesSingle(Request $request, PropertyAction $action)
     {
         $propertyId = $request->input('propertyId');
-        $subtypeId = $request->input('subtypeId');
+        $subtypeId = $request->input('subtypeId')||Property::where('id', $propertyId)->first()->subtype_id;
         $amenities = $action->getAmenities();
         $languages = $action->getLanguages();
 
@@ -813,7 +813,7 @@ class PropertyController extends Controller
     public function showPrivateHomesMultiple(Request $request, PropertyAction $action)
     {
         $propertyId = $request->input('propertyId');
-        $subtypeId = $request->input('subtypeId');
+        $subtypeId = $request->input('subtypeId')||Property::where('id', $propertyId)->first()->subtype_id;
         $amenities = $action->getAmenities();
         $languages = $action->getLanguages();
 

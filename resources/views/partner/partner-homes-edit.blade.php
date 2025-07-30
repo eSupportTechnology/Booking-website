@@ -12,6 +12,10 @@
         const detailsIcon = document.getElementById('detailsStatusIcon');
         const photoLink = document.getElementById('photoEditLink');
         const icon = document.getElementById('statusIcon');
+
+        const propertyType = urlParams.get('propertyType').toLowerCase();
+        const propertyId = document.getElementById('propertyId').value;
+        const subtypeId = document.getElementById('subtypeId').value;
         if (uploaded === 'true') {
             // Update the icon (optional - if not already done)
         
@@ -48,6 +52,26 @@
                 window.history.replaceState({}, document.title, url.pathname);
             }
         }
+
+        let actionUrl = '';
+
+        if (propertyType === 'multiple') {
+            actionUrl = '/partner-homes-multiple';
+        } else if (propertyType === 'single') {
+            actionUrl = '/partner-homes-single';
+        } else {
+            alert('Unknown property type');
+            return;
+        }
+
+        const form = document.getElementById('editForm');
+        form.action = actionUrl;
+           document.getElementById('formPropertyId').value = propertyId;
+        document.getElementById('formSubtypeId').value = subtypeId;
+
+        detailsLink.addEventListener('click', () => {
+            form.submit();
+        })
     });
 </script>
 <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
@@ -55,7 +79,14 @@
     <div class="max-w-3xl mx-auto p-4 space-y-4 ">
         <div>
             <input type="hidden" id="propertyId" value="{{ $property->id }}">
+            <input type="hidden" id="subtypeId" value="{{ $property->subtype_id }}">
         </div>
+        <form id="editForm" method="POST">
+            @csrf
+            <input type="hidden" name="propertyId" id="formPropertyId">
+            <input type="hidden" name="subtypeId" id="formSubtypeId">
+        </form>
+
         <!-- Step 1 - Completed -->
         <div class="border border-gray-300 border rounded-lg p-4 flex justify-between items-center">
             <div class="flex items-center gap-4">
@@ -68,8 +99,8 @@
                         more</p>
                 </div>
             </div>
-            <a id="detailsEditLink" href="{{ url('/partner-homes-form2/' . $property->id . '/' . $property->subtype_id ) }}"
-                                class="text-sky-600 font-medium text-sm hover:underline">Edit</a>
+            <button id="detailsEditLink" 
+                                class="text-sky-600 font-medium text-sm hover:underline">Edit</button>
         </div>
 
         <div class="border border-gray-300 rounded-lg p-4 flex flex-col gap-6">

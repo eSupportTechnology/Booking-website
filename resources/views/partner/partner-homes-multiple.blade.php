@@ -8,7 +8,6 @@
 <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
 <script>
-
     function stepForm() {
         return {
             step: 1,
@@ -308,7 +307,7 @@
                     if (result.success) {
                         console.log('✅ Host profile saved:', result.message);
                         // Optionally move to next step
-                        window.location.href = "{{ url('/partner-homes-edit/' . $propertyId) }}?details=true";                    
+                        window.location.href = "{{ url('/partner-homes-edit/' . $propertyId) }}?details=true&propertyType=multiple";                    
                     } else {
                         console.error('❌ Save failed:', result.message);
                     }
