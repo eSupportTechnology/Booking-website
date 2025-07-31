@@ -20,11 +20,11 @@
         const propertyId = document.getElementById('propertyId').value;
         const subtypeId = document.getElementById('subtypeId').value;
         const completeRegistrationBtn = document.getElementById('completeRegistrationBtn');
-        const baseUrl = `/partner-homes-images/${propertyId}`;
-        const url = `${baseUrl}?details=true&propertyType=${encodeURIComponent(propertyType)}`;
-        const paymentUrl = `/partner-homes-payments/${propertyId}?propertyType=${encodeURIComponent(propertyType)}`;
-        photoLink.href = url;
-        paymenEditLink.href = paymentUrl;
+
+        
+        photoLink.href = `/partner-homes-images/${propertyId}?details=true&propertyType=${encodeURIComponent(propertyType)}`;
+        roomsEditLink.href = `/partner-homes-rooms/${propertyId}?details=true&propertyType=${encodeURIComponent(propertyType)}`;
+        paymenEditLink.href =  `/partner-homes-payments/${propertyId}?propertyType=${encodeURIComponent(propertyType)}`;
         if (uploaded === 'true') {
             // Update the icon (optional - if not already done)
             if (icon) {
@@ -138,7 +138,8 @@
                                 can add more.</p>
                         </div>
                     </div>
-                    <a href="{{ url('/partner-homes-rooms/' . $property->id) }}"
+                    <a  id="roomsEditLink"
+                      href="#"
                     class=" bg-sky-400 border border-sky-400 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-sky-500">
                             Add rooms
                     </a>

@@ -5,6 +5,20 @@
 @section('content')
 <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 <script>
+const observer = new MutationObserver(() => {
+    const editPageLink = document.getElementById('editPageLink');
+    if (editPageLink) {
+        const propertyType = 'multiple'; // or dynamically fetch this
+        const propertyId = 2; // or fetch this dynamically as well
+        editPageLink.href = `/partner-homes-edit/${propertyId}?uploaded=true&paymentDetails=true&propertyType=${encodeURIComponent(propertyType)}`;
+        observer.disconnect(); // stop observing once link is set
+    }
+});
+
+// Start observing body (or container where content is rendered)
+observer.observe(document.body, { childList: true, subtree: true });
+
+
     function stepForm() {
         return {
             step: 1,
@@ -12,13 +26,22 @@
             propertyCount: '',
             showMoreBeds: false,
             showTip: true,
-            offerCots: 'no', // Default value for cots
-            cotCount: 0, // Default count for cots
-            cotPriceType: 'free', // Default price type for cots
+            offerCots: 'no', 
+            cotCount: 0, 
+            cotPriceType: 'free',
+            selectedRoomName: '',
+            showTip1: true, 
+            showTip2: true , 
+            showDiscount: false,
+            price: 120.00, // default value
+
+            get discountedPrice() {
+                return (this.price * 0.8).toFixed(2);
+            },
             saveStep1() {
                 const url = window.location.href;
-                const propertyId = url.substring(url.lastIndexOf("/") + 1);
-
+                const pathname = new URL(url).pathname;
+                const propertyId = pathname.substring(pathname.lastIndexOf("/") + 1);
                 const roomType = document.querySelector('.room-type-id')?.value;
                 const roomCount = document.querySelector('[name="property_count"]')?.value;
                 const smokingAllowed = document.querySelector('input[name="smoking"]:checked')?.nextElementSibling?.innerText.trim().toLowerCase() === 'yes';
@@ -143,7 +166,50 @@
                 } catch (error) {
                     console.error('Error saving amenities', error.response?.data || error.message);
                 }
+            },
+
+            async  saveStep4() {
+                try {
+
+                    const payload = {
+                        rooms: this.rooms.map(roomId  => ({
+                            id: roomId,
+                            name: this.selectedRoomName
+
+                        }))
+                    };
+                    const response = await axios.post('/save-step-4-room-name', payload);
+
+                    if (response.data.success) {
+                        alert('Step 4 saved!');
+                        this.step++;
+                    }
+                } catch (err) {
+                    console.error(err.response?.data || err.message);
+                }
+            },
+
+            async  saveStep5() {
+                try {
+
+                    const payload = {
+                        rooms: this.rooms.map(roomId  => ({
+                            id: roomId,
+                            price_per_night: this.price
+
+                        }))
+                    };
+                    const response = await axios.post('/save-step-5-room-prices', payload);
+
+                    if (response.data.success) {
+                        alert('Step 5 saved!');
+                        this.step++;
+                    }
+                } catch (err) {
+                    console.error(err.response?.data || err.message);
+                }
             }
+
         }
     }
 </script>
@@ -713,7 +779,7 @@
                                 </p>
                                 <label class="block text-sm font-semibold text-gray-700 mb-1 mt-6">Room Name</label>
                                 <select
-                                    class="w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200 px-3 py-2 relative z-50">
+                                    class="w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200 px-3 py-2 relative z-50" x-model="selectedRoomName">
                                     <option>Double Room</option>
                                     <option>Double Room with Balcony</option>
                                     <option>Double Room with Private Bathroom</option>
@@ -821,7 +887,7 @@
                         class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
                         ←
                     </button>
-                    <button type="button" @click="step < 9 ? step++ : step"
+                    <button type="button" @click="saveStep4()"
                         class="ml-auto px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300 ml-[335px]">
                         Continue
                     </button>
@@ -833,7 +899,7 @@
 
     <template x-if="step === 5">
         <div class="max-w-4xl ml-40 px-4 py-8 mt-6">
-            <div class="max-w-4xl mx-auto px-4 py-8 space-y-6" x-data="{ showTip1: true, showTip2: true }">
+            <div class="max-w-4xl mx-auto px-4 py-8 space-y-6" >
 
                 <!-- Title -->
                 <h2 class="text-2xl font-bold text-gray-800">Set the price per night for this room</h2>
@@ -935,8 +1001,9 @@
                             </select>
 
                             <!-- Input Field -->
-                            <input type="text" value="120.00"
-                                class="w-full border border-gray-400 rounded-md p-2 pl-16 text-gray-700 font-semibold focus:ring-2 focus:ring-blue-300 focus:outline-none" />
+                            <input type="number" x-model.number="price"
+                                    class="w-full border border-gray-400 rounded-md p-2 pl-16 text-gray-700 font-semibold focus:ring-2 focus:ring-blue-300 focus:outline-none" />
+
 
                             <p class="text-sm text-gray-500 mt-2">Including taxes, commission, and fees</p>
                         </div>
@@ -1002,9 +1069,10 @@
                             <div>
                                 <hr class="my-4">
                                 <p class="text-sm text-gray-800">
-                                    <del class="text-gray-500">US$ 120.00</del>
-                                    <span class="text-green-600 font-semibold">US$ 96.00 per night</span>
+                                    <del class="text-gray-500">US$ <span x-text="price.toFixed(2)"></span></del>
+                                    <span class="text-green-600 font-semibold">US$ <span x-text="discountedPrice"></span> per night</span>
                                 </p>
+
                             </div>
                         </template>
                     </div>
@@ -1035,7 +1103,7 @@
                         class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
                         ←
                     </button>
-                    <button type="button" @click="step < 9 ? step++ : step"
+                    <button type="button" @click="saveStep5()"
                         class="ml-auto px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300 ml-[402px]">
                         Continue
                     </button>
@@ -1238,7 +1306,7 @@
                 </button>
 
                 <!-- Continue Button -->
-                <a href="{{ url('/partner-homes-edit/' . $property->id) }}">
+                <a  id="editPageLink" href="#">
                     <button
                         class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-sky-500 transition w-full sm:w-auto">
                         Continue

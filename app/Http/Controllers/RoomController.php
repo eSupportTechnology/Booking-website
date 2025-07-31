@@ -134,4 +134,39 @@ class RoomController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
+
+    public function saveStep4RoomName(Request $request)
+    {
+        Log::info('Saving room names', $request->all());
+        $validated = $request->validate([
+            'rooms' => 'required|array',
+            'rooms.*.id' => 'required|exists:rooms,id',
+            'rooms.*.name' => 'required|string|max:255',
+        ]);
+
+        foreach ($validated['rooms'] as $roomData) {
+            $room = Room::findOrFail($roomData['id']);
+            $room->name = $roomData['name'];
+            $room->save();
+        }
+
+        return response()->json(['success' => true]);
+    }
+
+    public function saveStep5RoomPrices(Request $request)
+    {
+        $validated = $request->validate([
+            'rooms' => 'required|array',
+            'rooms.*.id' => 'required|exists:rooms,id',
+            'rooms.*.price_per_night' => 'required|numeric',
+        ]);
+
+        foreach ($validated['rooms'] as $roomData) {
+            $room = Room::findOrFail($roomData['id']);
+            $room->price_per_night = $roomData['price_per_night'];
+            $room->save();
+        }
+
+        return response()->json(['success' => true]);
+    }
 }

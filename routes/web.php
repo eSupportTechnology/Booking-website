@@ -457,6 +457,8 @@ Route::get('/partner-homes-complete-registration/{id}', [PropertyController::cla
 Route::post('/rooms', [RoomController::class, 'store'])->name('rooms.store');
 Route::post('/rooms/update-bathroom-details', [RoomController::class, 'updateBathroomDetails']);
 Route::post('/save-step-3-amenities', [RoomController::class, 'saveStep3Amenities']);
+Route::post('/save-step-4-room-name', [RoomController::class, 'saveStep4RoomName']);
+Route::post('/save-step-5-room-prices', [RoomController::class, 'saveStep5RoomPrices']);
 
 Route::post('/store-step', function (\Illuminate\Http\Request $request) {
     session(['current_step' => $request->step]);
