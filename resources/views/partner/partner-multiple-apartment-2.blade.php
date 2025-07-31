@@ -7,131 +7,155 @@
 <!-- Add CSRF token meta tag -->
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
-<script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-
-<!-- Alpine Data Scope -->
-<div x-data="{
-    step: 1,
-    selectedAmenities: [],
-    propertyId: {{ $propertyId ?? 'null' }},
-    propertyCount: 1,
-    uploadedPhotos: [],
-    guests: 2,
-    bathrooms: 1,
-    showTips: true,
-    count: 2,
-    showDetails: false,
-    showTip1: true,
-    showTip2: true,
-    feedback: null,
-    showDiscount: false
-}" 
-x-init="
-    $data.saveAmenities = async function() {
-        if (!this.propertyId) {
-            console.log('No property ID available, skipping amenities save');
-            this.step++;
-            return;
-        }
+<!-- Define Alpine.js data function -->
+<script>
+function apartmentForm2Data() {
+    return {
+        step: 1,
+        selectedAmenities: [],
+        propertyId: {{ $propertyId ?? 'null' }},
+        propertyCount: 1,
+        uploadedPhotos: @json($propertyData['photos'] ?? []),
+        guests: 2,
+        bathrooms: 1,
+        showTips: true,
+        count: 2,
+        showDetails: false,
+        showTip1: true,
+        showTip2: true,
+        feedback: null,
+        showDiscount: false,
         
-        if (this.selectedAmenities.length === 0) {
-            console.log('No amenities selected');
-            this.step++;
-            return;
-        }
+        init() {
+            console.log('=== apartmentForm2Data initialized ===');
+            console.log('Loaded existing photos:', this.uploadedPhotos);
+            console.log('Current step:', this.step);
+            console.log('Selected amenities:', this.selectedAmenities);
+            console.log('Property ID:', this.propertyId);
+            console.log('=====================================');
+        },
         
-        try {
-            const response = await fetch(`/partner/property/save-amenities/${this.propertyId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
-                },
-                body: JSON.stringify({
-                    amenities: this.selectedAmenities,
-                    property_id: this.propertyId
-                })
-            });
-            
-            const result = await response.json();
-            
-            if (result.success) {
-                console.log('Amenities saved successfully:', result);
+        async saveAmenities() {
+            if (!this.propertyId) {
+                console.log('No property ID available, skipping amenities save');
                 this.step++;
-            } else {
-                alert('Failed to save amenities: ' + (result.message || 'Unknown error'));
+                return;
             }
-        } catch (error) {
-            console.error('Error saving amenities:', error);
-            alert('Error saving amenities: ' + error.message);
-        }
-    };
-    
-    $data.handleUpload = function(event) {
-        const files = Array.from(event.target.files).slice(0, 5 - this.uploadedPhotos.length);
-        files.forEach(file => {
-            const url = URL.createObjectURL(file);
-            this.uploadedPhotos.push({ file, url });
-        });
-    };
-    
-    $data.handleUploadDrop = function(event) {
-        const dt = event.dataTransfer;
-        if (!dt) return;
-        const files = Array.from(dt.files).slice(0, 5 - this.uploadedPhotos.length);
-        files.forEach(file => {
-            const url = URL.createObjectURL(file);
-            this.uploadedPhotos.push({ file, url });
-        });
-    };
-    
-    $data.removePhoto = function(index) {
-        this.uploadedPhotos.splice(index, 1);
-    };
-    
-    $data.uploadPhotosAndContinue = async function() {
-        if (this.uploadedPhotos.length < 3) {
-            alert('Please upload at least 3 photos');
-            return;
-        }
+            
+            if (this.selectedAmenities.length === 0) {
+                console.log('No amenities selected');
+                this.step++;
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/partner/property/save-amenities/${this.propertyId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        amenities: this.selectedAmenities,
+                        property_id: this.propertyId
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    console.log('Amenities saved successfully:', result);
+                    this.step++;
+                } else {
+                    alert('Failed to save amenities: ' + (result.message || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error saving amenities:', error);
+                alert('Error saving amenities: ' + error.message);
+            }
+        },
         
-        if (!this.propertyId) {
-            alert('No property ID available');
-            return;
-        }
+        handleUpload(event) {
+            const files = Array.from(event.target.files).slice(0, 5 - this.uploadedPhotos.length);
+            files.forEach(file => {
+                this.uploadedPhotos.push({ file, url: null });
+            });
+        },
         
-        try {
-            const formData = new FormData();
-            formData.append('property_id', this.propertyId);
-            
-            this.uploadedPhotos.forEach((photo, index) => {
-                formData.append(`photos[${index}]`, photo.file);
+        handleUploadDrop(event) {
+            const dt = event.dataTransfer;
+            if (!dt) return;
+            const files = Array.from(dt.files).slice(0, 5 - this.uploadedPhotos.length);
+            files.forEach(file => {
+                this.uploadedPhotos.push({ file, url: null });
             });
+        },
+        
+        removePhoto(index) {
+            const photo = this.uploadedPhotos[index];
+            // If it's a new photo with a file, revoke the object URL to free memory
+            if (photo.file && photo.url) {
+                URL.revokeObjectURL(photo.url);
+            }
+            this.uploadedPhotos.splice(index, 1);
+        },
+        
+        async uploadPhotosAndContinue() {
+            if (this.uploadedPhotos.length < 3) {
+                alert('Please upload at least 3 photos');
+                return;
+            }
             
-            const response = await fetch(`/partner/property/upload-photos`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
-                },
-                body: formData
-            });
+            if (!this.propertyId) {
+                alert('No property ID available');
+                return;
+            }
             
-            if (response.ok) {
-                console.log('Photos uploaded successfully');
+            try {
+                const formData = new FormData();
+                formData.append('property_id', this.propertyId);
+                
+                // Only upload new photos (those with file property)
+                const newPhotos = this.uploadedPhotos.filter(photo => photo.file);
+                newPhotos.forEach((photo, index) => {
+                    formData.append(`photos[${index}]`, photo.file);
+                });
+                
+                // If there are new photos to upload, do the upload
+                if (newPhotos.length > 0) {
+                    const response = await fetch(`/partner/property/upload-photos`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                        },
+                        body: formData
+                    });
+                    
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        console.error('Error uploading photos:', errorData);
+                        alert('Error uploading photos: ' + (errorData.message || 'Unknown error'));
+                        return;
+                    }
+                    console.log('New photos uploaded successfully');
+                }
+                
                 console.log('Current step before:', this.step);
                 this.step = 4; // Go to step 4 instead of redirecting
                 console.log('Current step after:', this.step);
-            } else {
-                const errorData = await response.json();
-                console.error('Error uploading photos:', errorData);
-                alert('Error uploading photos: ' + (errorData.message || 'Unknown error'));
+            } catch (error) {
+                console.error('Error uploading photos:', error);
+                alert('Error uploading photos: ' + error.message);
             }
-        } catch (error) {
-            console.error('Error uploading photos:', error);
-            alert('Error uploading photos: ' + error.message);
         }
-    };
-">
+    }
+}
+</script>
+
+<script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js?v={{ time() }}&v={{ rand(1000, 9999) }}" defer></script>
+
+<!-- Alpine Data Scope -->
+<div x-data="apartmentForm2Data()">
 
     <!-- Full-width Progress Bar (just under header) -->
     <div class="w-full bg-gray-200 h-2">
@@ -352,7 +376,6 @@ x-init="
                         </div>
 
                         <!-- Uploaded photo previews -->
-                        <!-- Uploaded photo previews -->
                         <template x-if="uploadedPhotos.length > 0">
                             <div>
                                 <!-- 📝 Instructions placed properly above the grid -->
@@ -385,7 +408,7 @@ x-init="
                                                 &times;
                                             </button>
 
-                                            <img :src="photo.url" alt="Uploaded photo"
+                                            <img :src="photo.file ? URL.createObjectURL(photo.file) : photo.url" alt="Uploaded photo"
                                                 class="w-full h-32 object-cover" />
                                         </div>
                                     </template>

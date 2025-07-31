@@ -35,6 +35,8 @@ use App\Models\Accommodation;
 use App\Models\Individual;
 use App\Models\BusinessEntity;
 use App\Models\PropertyAvailabilitySetting;
+use App\DTOs\SaveFacilitiesDTO;
+use App\Models\PropertyFacility;
 
 use Faker\Provider\ar_EG\Address;
 
@@ -242,17 +244,41 @@ class PropertyAction
 
     public function saveAmenities(Property $property, SaveAmenitiesDTO $dto): void
     {
-        Log::info('PropertyAction::saveAmenities called', [
+        Log::info('Saving amenities for property', [
             'property_id' => $property->id,
-            'amenities' => $dto->amenities
+            'amenities_count' => count($dto->amenities)
         ]);
 
+        // Sync amenities (this will handle both adding and removing)
         $property->amenities()->sync($dto->amenities);
+    }
 
-        Log::info('Amenities synced successfully', [
+    public function saveFacilities(Property $property, SaveFacilitiesDTO $dto): void
+    {
+        Log::info('Saving facilities for property', [
             'property_id' => $property->id,
-            'amenity_count' => count($dto->amenities)
+            'facilities_count' => count($dto->facilities)
         ]);
+
+        // Delete existing facilities for this property
+        $property->facilities()->delete();
+
+        // Insert new facilities
+        $facilitiesData = array_map(function($facility) use ($property) {
+            return [
+                'property_id' => $property->id,
+                'facility_name' => $facility,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }, $dto->facilities);
+
+        PropertyFacility::insert($facilitiesData);
+    }
+
+    public function getFacilities(Property $property): array
+    {
+        return $property->facilities()->pluck('facility_name')->toArray();
     }
 
     public function saveLanguages(Property $property, SaveLanguagesDTO $dto): void

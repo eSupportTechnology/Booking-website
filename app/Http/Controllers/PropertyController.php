@@ -47,6 +47,7 @@ use App\Models\Accommodation;
 use App\Models\Room;
 use App\Models\PartnerVerification;
 use App\Models\Language;
+use App\DTOs\SaveFacilitiesDTO;
 use Faker\Provider\ar_EG\Address;
 
 class PropertyController extends Controller
@@ -411,41 +412,60 @@ class PropertyController extends Controller
     }
 
 
-    public function saveAmenities(Request $request, Property $property, PropertyAction $propertyAction)
+    public function saveAmenities(Request $request, $propertyId, PropertyAction $propertyAction)
     {
+        Log::info('saveAmenities called', [
+            'property_id' => $propertyId,
+            'request_data' => $request->all(),
+            'request_method' => $request->method(),
+            'url' => $request->url()
+        ]);
+        
         try {
-            Log::info('saveAmenities called', [
-                'property_id' => $property->id,
-                'request' => $request->all(),
+            $property = Property::findOrFail($propertyId);
+            Log::info('Property found', ['property_id' => $property->id]);
+            
+            $dto = SaveAmenitiesDTO::fromRequest($request);
+            Log::info('DTO created successfully', ['dto_data' => $dto->toArray()]);
+            
+            $propertyAction->saveAmenities($property, $dto);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Amenities saved successfully'
             ]);
-
-
-            try {
-                $dto = SaveAmenitiesDTO::fromRequest($request);
-                Log::info('SaveAmenitiesDTO created:', ['amenities' => $dto->amenities]);
-                Log::info('saveAmenities validated', $dto->toArray());
-                Log::info('SaveAmenitiesDTO created:', ['amenities' => $dto->amenities]);
-
-                $propertyAction->saveAmenities($property, $dto);
-
-                return response()->json(['success' => true, 'message' => 'Amenities saved successfully']);
-            } catch (\Exception $e) {
-                Log::error('Error saving amenities:', [
-                    'message' => $e->getMessage(),
-                    'trace' => $e->getTraceAsString()
-                ]);
-                return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
-            }
         } catch (\Exception $e) {
-            Log::error('saveAmenities error', [
+            Log::error('Error saving amenities', [
                 'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
             ]);
-            return response()->json(['error' => $e->getMessage()], 500);
+            return response()->json([
+                'success' => false,
+                'message' => 'Error saving amenities: ' . $e->getMessage()
+            ], 500);
         }
     }
 
-
+    public function saveFacilities(Request $request, Property $property, PropertyAction $propertyAction)
+    {
+        try {
+            $dto = SaveFacilitiesDTO::fromRequest($request->all());
+            $propertyAction->saveFacilities($property, $dto);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Facilities saved successfully'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error saving facilities: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error saving facilities: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 
 
 
@@ -547,8 +567,108 @@ class PropertyController extends Controller
         // If property is a numeric ID, fetch the property, otherwise set to null
         if ($property && is_numeric($property)) {
             $property = \App\Models\Property::find($property);
+            
+            // Load existing data for the property
+            if ($property) {
+                // Load amenities
+                $existingAmenities = $property->amenities()->pluck('amenity_id')->toArray();
+                
+                // Load languages
+                $existingLanguages = $property->languages()->pluck('language_id')->toArray();
+                
+                // Load facilities
+                $existingFacilities = $property->facilities()->pluck('facility_name')->toArray();
+                
+                // Load partner verification data
+                $existingVerification = $property->partnerVerification;
+                $verificationData = null;
+                
+                if ($existingVerification) {
+                    $verificationData = [
+                        'type' => $existingVerification->type,
+                        'individual' => [
+                            'firstName' => $existingVerification->individual?->first_name ?? '',
+                            'lastName' => $existingVerification->individual?->last_name ?? '',
+                            'dob' => $existingVerification->individual?->date_of_birth ?? '',
+                            'altNames' => [$existingVerification->individual?->alternative_names ?? '']
+                        ],
+                        'business' => [
+                            'businessName' => $existingVerification->businessEntity?->business_name ?? '',
+                            'tradingName' => $existingVerification->businessEntity?->trading_name ?? '',
+                            'address' => $existingVerification->businessEntity?->address ?? '',
+                            'zipCode' => $existingVerification->businessEntity?->zip_code ?? '',
+                            'city' => $existingVerification->businessEntity?->city ?? '',
+                            'country' => $existingVerification->businessEntity?->country ?? '',
+                            'owners' => []
+                        ]
+                    ];
+                    
+                    // Load business owners if they exist
+                    if ($existingVerification->businessEntity) {
+                        $owners = \App\Models\Individual::where('business_entity_id', $existingVerification->businessEntity->id)->get();
+                        foreach ($owners as $owner) {
+                            $verificationData['business']['owners'][] = [
+                                'firstName' => $owner->first_name ?? '',
+                                'lastName' => $owner->last_name ?? '',
+                                'dob' => $owner->date_of_birth ?? '',
+                                'altNames' => [$owner->alternative_names ?? '']
+                            ];
+                        }
+                    }
+                }
+                
+                // Load other property details
+                $propertyData = [
+                    'title' => $property->title,
+                    'description' => $property->description,
+                    'address' => $property->address,
+                    'city' => $property->city,
+                    'country' => $property->country,
+                    'zip_code' => $property->zip_code,
+                    'amenities' => $existingAmenities,
+                    'languages' => $existingLanguages,
+                    'facilities' => $existingFacilities,
+                    'verification' => $verificationData,
+                    'property_count' => $property->property_count ?? 1,
+                    'property_name' => $property->title ?? '',
+                    'booking_type' => $property->booking_type ?? 'instant',
+                    'price_per_night' => $property->price_per_night ?? '',
+                    'currency' => $property->currency ?? 'USD',
+                    'discount_enabled' => $property->discount_enabled ?? false,
+                    'discount_percent' => $property->discount_percent ?? '',
+                    'smoking_allowed' => $property->smoking_allowed ?? false,
+                    'parties_allowed' => $property->parties_allowed ?? false,
+                    'pets_allowed' => $property->pets_allowed ?? 'no',
+                    'pets_fees' => $property->pets_fees ?? '',
+                    'check_in_from' => $property->check_in_from ?? '15:00',
+                    'check_in_until' => $property->check_in_until ?? '18:00',
+                    'check_out_from' => $property->check_out_from ?? '08:00',
+                    'check_out_until' => $property->check_out_until ?? '11:00',
+                    'host_name' => $property->host_name ?? '',
+                    'about_property' => $property->about_property ?? '',
+                    'about_host' => $property->about_host ?? '',
+                    'about_neighborhood' => $property->about_neighborhood ?? '',
+                    'show_property' => $property->show_property ?? false,
+                    'show_host' => $property->show_host ?? false,
+                    'show_neighborhood' => $property->show_neighborhood ?? false,
+                    'channel_manager' => $property->channel_manager ?? 'yes',
+                    // Add other fields as needed
+                ];
+                
+                Log::info('Loaded existing property data', [
+                    'property_id' => $property->id,
+                    'amenities_count' => count($existingAmenities),
+                    'languages_count' => count($existingLanguages),
+                    'facilities_count' => count($existingFacilities),
+                    'has_verification' => $existingVerification ? true : false,
+                    'property_data' => $propertyData
+                ]);
+            } else {
+                $propertyData = null;
+            }
         } else {
             $property = null;
+            $propertyData = null;
         }
         
         $amenities = $action->getAmenities();
@@ -559,10 +679,11 @@ class PropertyController extends Controller
             'amenities_count' => $amenities->count(),
             'amenities' => $amenities->toArray(),
             'languages_count' => $languages->count(),
-            'languages' => $languages->toArray()
+            'languages' => $languages->toArray(),
+            'has_existing_data' => $propertyData ? true : false
         ]);
         
-        return view('partner.partner-multiple-apartment', compact('property', 'amenities', 'languages'));
+        return view('partner.partner-multiple-apartment', compact('property', 'amenities', 'languages', 'propertyData'));
     }
 
     public function showMultipleApartmentForm2(PropertyAction $action, $propertyId)
@@ -586,16 +707,47 @@ class PropertyController extends Controller
                 ->with('error', 'Property not found. Please start over.');
         }
         
+        // Load existing data for the property
+        $existingAmenities = $property->amenities()->pluck('amenity_id')->toArray();
+        $existingPhotos = $property->files()->where('file_type', 'image')->pluck('path')->map(function($path) {
+            // Return in the format expected by Alpine.js with correct storage path
+            return [
+                'url' => '/storage/' . $path,
+                'file' => null
+            ];
+        })->toArray();
+        
+        // Debug logging - check all files
+        $allFiles = $property->files()->get();
+        Log::info('Loading existing data for property', [
+            'property_id' => $property->id,
+            'amenities_count' => count($existingAmenities),
+            'photos_count' => count($existingPhotos),
+            'photos' => $existingPhotos,
+            'all_files_count' => $allFiles->count(),
+            'all_files' => $allFiles->toArray(),
+            'files_query' => $property->files()->where('file_type', 'image')->toSql()
+        ]);
+        
+        $propertyData = [
+            'amenities' => $existingAmenities,
+            'photos' => $existingPhotos,
+            'property_count' => $property->property_count ?? 1,
+            // Add other fields as needed
+        ];
+        
         $amenities = $action->getAmenitiesByContext('apartment');
         $languages = $action->getLanguages();
         
         Log::info('showMultipleApartmentForm2 returning', [
             'property_id' => $propertyId,
             'amenities_count' => $amenities->count(),
-            'languages_count' => $languages->count()
+            'languages_count' => $languages->count(),
+            'existing_amenities_count' => count($existingAmenities),
+            'existing_photos_count' => count($existingPhotos)
         ]);
         
-        return view('partner.partner-multiple-apartment-2', compact('amenities', 'languages', 'propertyId'));
+        return view('partner.partner-multiple-apartment-2', compact('amenities', 'languages', 'propertyId', 'propertyData'));
     }
 
     public function showMultipleApartmentForm3(PropertyAction $action)
@@ -607,43 +759,9 @@ class PropertyController extends Controller
             ->with('success', 'Property listing completed successfully!');
     }
 
-    public function getLatestProperty()
-    {
-        try {
-            $userId = auth()->id();
-            if (!$userId) {
-                return response()->json(['success' => false, 'message' => 'User not authenticated']);
-            }
-            
-            $latestProperty = \App\Models\Property::where('user_id', $userId)
-                ->orderBy('created_at', 'desc')
-                ->first();
-            
-            if ($latestProperty) {
-                return response()->json([
-                    'success' => true, 
-                    'property_id' => $latestProperty->id
-                ]);
-            } else {
-                return response()->json(['success' => false, 'message' => 'No property found']);
-            }
-        } catch (\Exception $e) {
-            Log::error('Error getting latest property', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            return response()->json(['success' => false, 'message' => 'Error getting latest property']);
-        }
-    }
 
-    /**
-     * Get all available languages for the dropdown
-     */
-    public function getLanguages()
-    {
-        $languages = Language::orderBy('name')->get();
-        return response()->json($languages);
-    }
+
+
 
     /**
      * Save selected languages for a property

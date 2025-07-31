@@ -7,6 +7,8 @@
     selectedBox: null,
     // Amenities
     selectedAmenities: [],
+    // Facilities
+    selectedFacilities: [],
     
     // Languages
     selectedLanguages: [],
@@ -26,7 +28,7 @@
     checkOutFrom: '08:00',
     checkOutUntil: '11:00',
     
-    // Host Profile
+        // Host Profile
     hostProfile: {
         about_property: '',
         about_host: '',
@@ -38,7 +40,7 @@
         host_name: ''
     },
     
-    // Pricing
+        // Pricing
     pricing: {
         booking_type: 'instant',
         price_per_night: '',
@@ -47,7 +49,7 @@
         discount_percent: ''
     },
     
-    // Address data
+        // Address data
     addressData: {
         address: 'Sri Lanka',
         apartment: 'aaa',
@@ -59,6 +61,24 @@
     
     // Channel manager data
     channelManager: 'yes',
+    
+    // Verification data
+    verificationType: '',
+    individualData: {
+        firstName: '',
+        lastName: '',
+        dob: '',
+        altNames: []
+    },
+    businessData: {
+        businessName: '',
+        tradingName: '',
+        address: '',
+        zipCode: '',
+        city: '',
+        country: '',
+        owners: []
+    },
     
     // Methods
     async savePropertyName() {
@@ -301,7 +321,326 @@
         }
     },
     
+    async saveFacilities() {
+        try {
+            const propertyId = @json($property->id ?? 'new');
+            const response = await fetch(`/partner/property/${propertyId}/facilities`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    facilities: this.selectedFacilities
+                })
+            });
+            
+            if (response.ok) {
+                console.log('Facilities saved successfully');
+                this.step = Math.min(this.step + 1, 13);
+            } else {
+                console.error('Failed to save facilities');
+                const errorData = await response.json();
+                alert('Error: ' + (errorData.message || 'Failed to save facilities'));
+            }
+        } catch (error) {
+            console.error('Error saving facilities:', error);
+            alert('An error occurred while saving the facilities.');
+        }
+    },
+    
+    async loadFacilities() {
+        try {
+            const propertyId = @json($property->id ?? 'new');
+            const response = await fetch(`/partner/property/${propertyId}/facilities`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                }
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success && data.facilities) {
+                    this.selectedFacilities = data.facilities;
+                    console.log('Facilities loaded successfully:', data.facilities);
+                }
+            } else {
+                console.error('Failed to load facilities');
+            }
+        } catch (error) {
+            console.error('Error loading facilities:', error);
+        }
+    },
 
+    async loadServices() {
+        try {
+            const propertyId = @json($property->id ?? 'new');
+            const response = await fetch(`/partner/property/${propertyId}/services`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                }
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success && data.services) {
+                    // Update the services data in the form
+                    // This will need to be implemented based on the services structure
+                    console.log('Services loaded successfully:', data.services);
+                }
+            } else {
+                console.error('Failed to load services');
+            }
+        } catch (error) {
+            console.error('Error loading services:', error);
+        }
+    },
+
+    async loadLanguages() {
+        try {
+            const propertyId = @json($property->id ?? 'new');
+            const response = await fetch(`/partner/property/${propertyId}/languages`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                }
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success && data.languages) {
+                    this.selectedLanguages = data.languages;
+                    console.log('Languages loaded successfully:', data.languages);
+                }
+            } else {
+                console.error('Failed to load languages');
+            }
+        } catch (error) {
+            console.error('Error loading languages:', error);
+        }
+    },
+
+    async loadVerificationData() {
+        try {
+            const propertyId = @json($property->id ?? 'new');
+            const response = await fetch(`/partner/property/${propertyId}/verification`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                }
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success && data.verification) {
+                    // Update verification form data
+                    this.verificationType = data.verification.type || '';
+                    
+                    if (data.verification.individual) {
+                        this.individualData = {
+                            firstName: data.verification.individual.firstName || '',
+                            lastName: data.verification.individual.lastName || '',
+                            dob: data.verification.individual.dob || '',
+                            altNames: data.verification.individual.altNames || []
+                        };
+                    }
+                    
+                    if (data.verification.business) {
+                        this.businessData = {
+                            businessName: data.verification.business.businessName || '',
+                            tradingName: data.verification.business.tradingName || '',
+                            address: data.verification.business.address || '',
+                            zipCode: data.verification.business.zipCode || '',
+                            city: data.verification.business.city || '',
+                            country: data.verification.business.country || '',
+                            owners: data.verification.business.owners || []
+                        };
+                    }
+                    
+                    console.log('Verification data loaded successfully:', data.verification);
+                }
+            } else {
+                console.error('Failed to load verification data');
+            }
+        } catch (error) {
+            console.error('Error loading verification data:', error);
+        }
+    },
+
+    // Watch for step changes to load data when navigating to specific steps
+    init() {
+        this.$watch('step', (newStep) => {
+            if (newStep === 4) {
+                this.loadFacilities();
+            } else if (newStep === 5) {
+                this.loadServices();
+            } else if (newStep === 6) {
+                this.loadLanguages();
+            } else if (newStep === 11) {
+                this.loadVerificationData();
+            }
+        });
+    },
+    
+    // localStorage watchers
+    init() {
+        // Watch for step changes and save to localStorage
+        this.$watch('step', (newStep) => {
+            localStorage.setItem('wizard_step_main_{{ $property->id ?? 'new' }}', newStep);
+            console.log('Step saved to localStorage:', newStep);
+        });
+        
+        // Watch for amenities changes and save to localStorage
+        this.$watch('selectedAmenities', (newAmenities) => {
+            localStorage.setItem('selected_amenities_main_{{ $property->id ?? 'new' }}', JSON.stringify(newAmenities));
+            console.log('Amenities saved to localStorage:', newAmenities);
+        });
+        
+        // Watch for facilities changes and save to localStorage
+        this.$watch('selectedFacilities', (newFacilities) => {
+            localStorage.setItem('selected_facilities_main_{{ $property->id ?? 'new' }}', JSON.stringify(newFacilities));
+            console.log('Facilities saved to localStorage:', newFacilities);
+        });
+        
+        // Watch for languages changes and save to localStorage
+        this.$watch('selectedLanguages', (newLanguages) => {
+            localStorage.setItem('selected_languages_main_{{ $property->id ?? 'new' }}', JSON.stringify(newLanguages));
+            console.log('Languages saved to localStorage:', newLanguages);
+        });
+        
+        // Watch for address data changes and save to localStorage
+        this.$watch('addressData', (newAddressData) => {
+            localStorage.setItem('address_data_main_{{ $property->id ?? 'new' }}', JSON.stringify(newAddressData));
+            console.log('Address data saved to localStorage:', newAddressData);
+        });
+        
+        // Watch for host profile changes and save to localStorage
+        this.$watch('hostProfile', (newHostProfile) => {
+            localStorage.setItem('host_profile_main_{{ $property->id ?? 'new' }}', JSON.stringify(newHostProfile));
+            console.log('Host profile saved to localStorage:', newHostProfile);
+        });
+        
+        // Watch for pricing changes and save to localStorage
+        this.$watch('pricing', (newPricing) => {
+            localStorage.setItem('pricing_main_{{ $property->id ?? 'new' }}', JSON.stringify(newPricing));
+            console.log('Pricing saved to localStorage:', newPricing);
+        });
+        
+        // Watch for verification data changes and save to localStorage
+        this.$watch('verificationType', (newType) => {
+            localStorage.setItem('verification_type_main_{{ $property->id ?? 'new' }}', newType);
+            console.log('Verification type saved to localStorage:', newType);
+        });
+        
+        this.$watch('individualData', (newData) => {
+            localStorage.setItem('individual_data_main_{{ $property->id ?? 'new' }}', JSON.stringify(newData));
+            console.log('Individual data saved to localStorage:', newData);
+        });
+        
+        this.$watch('businessData', (newData) => {
+            localStorage.setItem('business_data_main_{{ $property->id ?? 'new' }}', JSON.stringify(newData));
+            console.log('Business data saved to localStorage:', newData);
+        });
+        
+        // Watch for house rules changes and save to localStorage
+        this.$watch('smokingAllowed', (newValue) => {
+            localStorage.setItem('smoking_allowed_main_{{ $property->id ?? 'new' }}', JSON.stringify(newValue));
+        });
+        
+        this.$watch('partiesAllowed', (newValue) => {
+            localStorage.setItem('parties_allowed_main_{{ $property->id ?? 'new' }}', JSON.stringify(newValue));
+        });
+        
+        this.$watch('petsAllowed', (newValue) => {
+            localStorage.setItem('pets_allowed_main_{{ $property->id ?? 'new' }}', newValue);
+        });
+        
+        this.$watch('petsFees', (newValue) => {
+            localStorage.setItem('pets_fees_main_{{ $property->id ?? 'new' }}', newValue);
+        });
+        
+        this.$watch('checkInFrom', (newValue) => {
+            localStorage.setItem('check_in_from_main_{{ $property->id ?? 'new' }}', newValue);
+        });
+        
+        this.$watch('checkInUntil', (newValue) => {
+            localStorage.setItem('check_in_until_main_{{ $property->id ?? 'new' }}', newValue);
+        });
+        
+        this.$watch('checkOutFrom', (newValue) => {
+            localStorage.setItem('check_out_from_main_{{ $property->id ?? 'new' }}', newValue);
+        });
+        
+        this.$watch('checkOutUntil', (newValue) => {
+            localStorage.setItem('check_out_until_main_{{ $property->id ?? 'new' }}', newValue);
+        });
+        
+        // Watch for channel manager changes and save to localStorage
+        this.$watch('channelManager', (newValue) => {
+            localStorage.setItem('channel_manager_main_{{ $property->id ?? 'new' }}', newValue);
+        });
+        
+        console.log('Wizard state loaded from localStorage');
+        
+        // Add event listener to clear localStorage when user leaves the page
+        window.addEventListener('beforeunload', () => {
+            // Don't clear localStorage on page unload, let user return to their progress
+            console.log('Page unload detected - preserving wizard state');
+        });
+    },
+    
+    // Method to clear localStorage when wizard is completed
+    clearWizardData() {
+        const propertyId = '{{ $property->id ?? 'new' }}';
+        localStorage.removeItem(`wizard_step_main_${propertyId}`);
+        localStorage.removeItem(`selected_amenities_main_${propertyId}`);
+        localStorage.removeItem(`selected_facilities_main_${propertyId}`);
+        localStorage.removeItem(`selected_languages_main_${propertyId}`);
+        localStorage.removeItem(`address_data_main_${propertyId}`);
+        localStorage.removeItem(`host_profile_main_${propertyId}`);
+        localStorage.removeItem(`pricing_main_${propertyId}`);
+        localStorage.removeItem(`verification_type_main_${propertyId}`);
+        localStorage.removeItem(`individual_data_main_${propertyId}`);
+        localStorage.removeItem(`business_data_main_${propertyId}`);
+        localStorage.removeItem(`smoking_allowed_main_${propertyId}`);
+        localStorage.removeItem(`parties_allowed_main_${propertyId}`);
+        localStorage.removeItem(`pets_allowed_main_${propertyId}`);
+        localStorage.removeItem(`pets_fees_main_${propertyId}`);
+        localStorage.removeItem(`check_in_from_main_${propertyId}`);
+        localStorage.removeItem(`check_in_until_main_${propertyId}`);
+        localStorage.removeItem(`check_out_from_main_${propertyId}`);
+        localStorage.removeItem(`check_out_until_main_${propertyId}`);
+        localStorage.removeItem(`channel_manager_main_${propertyId}`);
+        console.log('Wizard data cleared from localStorage');
+    },
+    
+    // Method to complete the wizard and clear localStorage
+    completeWizard() {
+        this.clearWizardData();
+        // Redirect to success page or dashboard
+        window.location.href = '{{ route("partner.multiple.apartment.3") }}';
+    },
+    
+    // Debug method to check localStorage contents
+    debugLocalStorage() {
+        const propertyId = '{{ $property->id ?? 'new' }}';
+        console.log('=== localStorage Debug ===');
+        console.log('Current step:', localStorage.getItem(`wizard_step_main_${propertyId}`));
+        console.log('Selected amenities:', localStorage.getItem(`selected_amenities_main_${propertyId}`));
+        console.log('Selected facilities:', localStorage.getItem(`selected_facilities_main_${propertyId}`));
+        console.log('Selected languages:', localStorage.getItem(`selected_languages_main_${propertyId}`));
+        console.log('Address data:', localStorage.getItem(`address_data_main_${propertyId}`));
+        console.log('Host profile:', localStorage.getItem(`host_profile_main_${propertyId}`));
+        console.log('Pricing:', localStorage.getItem(`pricing_main_${propertyId}`));
+        console.log('=======================');
+    }
 }" xmlns:x-bind="http://www.w3.org/1999/xlink">
 
 <head>
@@ -666,25 +1005,50 @@
                                                                         class="w-full bg-white p-6 rounded shadow-md flex flex-col text-base">
 
 
-                                                                        <!-- Amenities Checkboxes Section -->
+                                                                        <!-- Facilities Checkboxes Section -->
 
                                                                         <div class="mt-2">
                                                                             <h3
                                                                                 class="text-gray-700 font-semibold mb-2">
-                                                                                Select amenities</h3>
+                                                                                Select facilities</h3>
                                                                             <div
                                                                                 class="grid grid-cols-1 sm:grid-cols-1 gap-2 text-sm text-gray-700">
-                                                                                @foreach($amenities as $amenity)
-                                                                                <label
-                                                                                    class="flex items-center space-x-2">
-                                                                                    <input type="checkbox"
-                                                                                        name="amenities[]"
-                                                                                        value="{{ $amenity['id'] }}"
-                                                                                        x-model="selectedAmenities"
-                                                                                        class="text-blue-500" />
-                                                                                    <span>{{ $amenity['name'] }}</span>
+                                                                                <label class="flex items-center space-x-2">
+                                                                                    <input type="checkbox" name="facilities[]" value="Bar" x-model="selectedFacilities" class="text-blue-500" />
+                                                                                    <span>Bar</span>
                                                                                 </label>
-                                                                                @endforeach
+                                                                                <label class="flex items-center space-x-2">
+                                                                                    <input type="checkbox" name="facilities[]" value="Sauna" x-model="selectedFacilities" class="text-blue-500" />
+                                                                                    <span>Sauna</span>
+                                                                                </label>
+                                                                                <label class="flex items-center space-x-2">
+                                                                                    <input type="checkbox" name="facilities[]" value="Garden" x-model="selectedFacilities" class="text-blue-500" />
+                                                                                    <span>Garden</span>
+                                                                                </label>
+                                                                                <label class="flex items-center space-x-2">
+                                                                                    <input type="checkbox" name="facilities[]" value="Terrace" x-model="selectedFacilities" class="text-blue-500" />
+                                                                                    <span>Terrace</span>
+                                                                                </label>
+                                                                                <label class="flex items-center space-x-2">
+                                                                                    <input type="checkbox" name="facilities[]" value="Hot tub/Jacuzzi" x-model="selectedFacilities" class="text-blue-500" />
+                                                                                    <span>Hot tub/Jacuzzi</span>
+                                                                                </label>
+                                                                                <label class="flex items-center space-x-2">
+                                                                                    <input type="checkbox" name="facilities[]" value="Heating" x-model="selectedFacilities" class="text-blue-500" />
+                                                                                    <span>Heating</span>
+                                                                                </label>
+                                                                                <label class="flex items-center space-x-2">
+                                                                                    <input type="checkbox" name="facilities[]" value="Free Wifi" x-model="selectedFacilities" class="text-blue-500" />
+                                                                                    <span>Free Wifi</span>
+                                                                                </label>
+                                                                                <label class="flex items-center space-x-2">
+                                                                                    <input type="checkbox" name="facilities[]" value="Air conditioning" x-model="selectedFacilities" class="text-blue-500" />
+                                                                                    <span>Air conditioning</span>
+                                                                                </label>
+                                                                                <label class="flex items-center space-x-2">
+                                                                                    <input type="checkbox" name="facilities[]" value="Swimming pool" x-model="selectedFacilities" class="text-blue-500" />
+                                                                                    <span>Swimming pool</span>
+                                                                                </label>
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -722,11 +1086,7 @@
                                                                         </div>
                                                                         <p class="text-sm text-gray-700">
                                                                             The facilities listed here are the ones most
-                                                                            searched for by guests. After you complete
-                                                                            your registration, you can add more
-                                                                            facilities from a larger list in the
-                                                                            extranet, the platform you'll use to manage
-                                                                            your property.
+                                                                            searched for by guests. These are separate from amenities and will be saved to your property's facilities list.
                                                                             <br>
                                                                             The ones selected here will apply to all of
                                                                             your apartments.
@@ -743,7 +1103,7 @@
                                                                     class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
                                                                     ←
                                                                 </button>
-                                                                <button type="button"     @click="saveAmenities()"
+                                                                <button type="button"     @click="saveFacilities()"
                                                                     class="px-4 py-3 bg-[#3CC0E9] font-semibold  text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ml-[330px]">
                                                                     Continue
                                                                 </button>
