@@ -8,14 +8,17 @@
         const urlParams = new URLSearchParams(window.location.search);
         const uploaded = urlParams.get('uploaded');
         const details = urlParams.get('details');
+        const rooms = urlParams.get('rooms');
         const paymentDetails = urlParams.get('paymentDetails');
         const detailsLink = document.getElementById('detailsEditLink');
         const detailsIcon = document.getElementById('detailsStatusIcon');
         const photoLink = document.getElementById('photoEditLink');
         const icon = document.getElementById('statusIcon');
         const finalicon = document.getElementById('finalStatusIcon');
+        const roomsStatusIcon = document.getElementById('roomsStatusIcon');
         const paymenEditLink = document.getElementById('paymentEditLink');
         const paymentEditLinkBtn = document.getElementById('paymentEditLinkBtn');
+        const roomsEditLink = document.getElementById('roomsEditLink');
         const propertyType = urlParams.get('propertyType');
         const propertyId = document.getElementById('propertyId').value;
         const subtypeId = document.getElementById('subtypeId').value;
@@ -59,14 +62,25 @@
             }
 
             // Optional: clean up URL
-            if (window.history.replaceState) {
-                const url = new URL(window.location);
-                url.searchParams.delete('uploaded');
-                url.searchParams.delete('details');
-                url.searchParams.delete('paymentDetails');
-                window.history.replaceState({}, document.title, url.pathname);
-            }        
+            // if (window.history.replaceState) {
+            //     const url = new URL(window.location);
+            //     url.searchParams.delete('uploaded');
+            //     url.searchParams.delete('details');
+            //     url.searchParams.delete('paymentDetails');
+            //     window.history.replaceState({}, document.title, url.pathname);
+            // }        
         
+        }
+
+        if(rooms === 'true') {
+            if (roomsStatusIcon) {
+                roomsStatusIcon.src = "{{ asset('assets/flat-color-icons_ok.svg') }}";
+                roomsStatusIcon.className = "w-6 h-6 md:w-7 md:h-7";
+            }            
+            if (roomsEditLink) {
+                roomsEditLink.innerText = "Edit";  
+                roomsEditLink.className = "text-sky-600 font-medium text-sm hover:underline";
+            }
         }
 
         let actionUrl = '';
@@ -129,7 +143,7 @@
             <!-- Step 2 Header -->
            <div class="border border-gray-300  rounded-lg p-4 flex justify-between items-center ">
                     <div class="flex items-center gap-4">
-                        <img src="{{ asset('assets/Group 3926.svg') }}" alt="Icon"
+                        <img id="roomsStatusIcon" src="{{ asset('assets/Group 3926.svg') }}" alt="Icon"
                             class="w-6 h-6 md:w-7 md:h-7" />
                         <div>
                             <p class="text-sm text-gray-500">Step 2</p>

@@ -745,7 +745,7 @@
                     const propertyType = urlParams.get('propertyType');
                     const propertyId = window.location.href.split('/').filter(Boolean).slice(-1)[0].split('?')[0];
                     const baseUrl = `/partner-homes-edit/${propertyId}`;
-                    const url = `${baseUrl}?uploaded=true&paymentDetails=true&propertyType=${encodeURIComponent(propertyType)}`;
+                    const url = `${baseUrl}?uploaded=true&rooms=true&paymentDetails=true&propertyType=${encodeURIComponent(propertyType)}`;
 
                     const link = document.getElementById('finalLink');
                     if (link) link.href = url;

@@ -10,7 +10,7 @@ const observer = new MutationObserver(() => {
     if (editPageLink) {
         const propertyType = 'multiple'; // or dynamically fetch this
         const propertyId = 2; // or fetch this dynamically as well
-        editPageLink.href = `/partner-homes-edit/${propertyId}?uploaded=true&paymentDetails=true&propertyType=${encodeURIComponent(propertyType)}`;
+        editPageLink.href = `/partner-homes-edit/${propertyId}?rooms=true&propertyType=${encodeURIComponent(propertyType)}`;
         observer.disconnect(); // stop observing once link is set
     }
 });
