@@ -8,6 +8,7 @@
     function stepForm() {
         return {
             step: 1,
+            rooms: [],
             propertyCount: '',
             showMoreBeds: false,
             showTip: true,
@@ -64,6 +65,7 @@
                     .then(data => {
                         if (data.success) {
                             alert('Step 1 saved successfully!');
+                            this.rooms = data.saved_rooms; 
                             this.step++;
                         } else {
                             alert('Something went wrong: ' + (data.message || 'Unknown error'));
@@ -73,6 +75,57 @@
                         console.error('Error saving step 1:', err);
                         alert('Something went wrong while saving step 1.');
                     });
+            },
+
+            saveStep2() {
+                const bathroomPrivate = document.querySelector('input[name="bathroom_private"]:checked')?.nextElementSibling?.innerText.trim().toLowerCase();
+                const bathroomType = bathroomPrivate === 'yes' ? 'private' : 'shared';
+
+                const amenityCheckboxes = document.querySelectorAll('input[type="checkbox"]');
+                const selectedAmenities = [];
+
+                amenityCheckboxes.forEach(checkbox => {
+                    if (checkbox.checked) {
+                        const label = checkbox.nextElementSibling?.innerText.trim();
+                        if (label) selectedAmenities.push(label);
+                    }
+                });
+
+                // `this.rooms` should be accessible from Alpine — pass to JS if needed
+                const rooms = this.rooms || [] // make sure you assign this somewhere
+                if (!rooms.length) {
+                    alert("No rooms found to update.");
+                    return;
+                }
+                console.log(this.rooms);
+                const payload = {
+                    rooms: rooms.map(roomId  => ({
+                        id: roomId,
+                        bathroom_type: bathroomType,
+                        bathroom_amenities: selectedAmenities
+                    }))
+                };
+
+                fetch('/rooms/update-bathroom-details', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify(payload)
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Step 2 saved!');
+                        this.step++; // advance to next step if Alpine watches this
+                    } else {
+                        alert('Save failed: ' + (data.message || 'Unknown error'));
+                    }
+                })
+                .catch(err => {
+                    console.error('Error saving bathroom details:', err);
+                });
             }
         }
     }
@@ -538,7 +591,7 @@
                     </button>
 
                     <!-- Continue Button -->
-                    <button type="submit" @click="step < 9 ? step++ : step"
+                    <button type="button" @click="saveStep2()"
                         class="px-6 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300 ml-[316px]">
                         Continue
                     </button>

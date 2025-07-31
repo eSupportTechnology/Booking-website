@@ -15,6 +15,7 @@ class RoomController extends Controller
     {
         try {
             Log::info('Received room creation request:', $request->all());
+              $saved_rooms = [];
             $validated = $request->validate([
                 'property_id' => 'required|exists:properties,id',
                 'room_type' => 'nullable|string|max:255',
@@ -47,6 +48,8 @@ class RoomController extends Controller
                     'you_earn' => 0.00
                 ]);
 
+                $saved_rooms[$i] = $room->id;
+
                 // 🌟 Step 2: Save Beds
                 $totalBeds = 0;
 
@@ -67,11 +70,11 @@ class RoomController extends Controller
 
 
 
-
+            Log::info('Rooms created:', $saved_rooms);
             // Update bed_count in room
             $room->update(['bed_count' => $totalBeds]);
-
-            return response()->json(['success' => true, 'room_id' => $room->id]);
+            
+            return response()->json(['success' => true, 'saved_rooms' => $saved_rooms]);
         } catch (\Exception $e) {
             Log::info('Error creating room', [
                 'message' => $e->getMessage(),
@@ -80,4 +83,36 @@ class RoomController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
+
+  public function updateBathroomDetails(Request $request)
+{
+   try {
+        Log::info('Updating bathroom details', $request->all());
+        $validated = $request->validate([
+            'rooms' => 'required|array',
+            'rooms.*.id' => 'required|exists:rooms,id',
+            'rooms.*.bathroom_type' => 'required|in:private,shared',
+            'rooms.*.bathroom_amenities' => 'nullable|array',
+            'rooms.*.bathroom_amenities.*' => 'string|max:255',
+        ]);
+    
+        foreach ($validated['rooms'] as $roomData) {
+            $room = Room::find($roomData['id']);
+            $room->update([
+                'bathroom_type' => $roomData['bathroom_type'],
+                'bathroom_amenities' => $roomData['bathroom_amenities'] ?? [],
+            ]);
+        }
+    
+        return response()->json(['success' => true]);
+   } catch (\Exception $e) {
+       Log::error('Error updating bathroom details', [
+           'message' => $e->getMessage(),
+           'trace' => $e->getTraceAsString(),
+       ]);
+       return response()->json(['error' => $e ->getMessage()], 500);
+   }
+}
+
+
 }

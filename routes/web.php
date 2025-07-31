@@ -457,6 +457,7 @@ Route::post('/partner/login', [LoginController::class, 'login'])->name('partner.
 Route::get('/partner-homes-complete-registration/{id}', [PropertyController::class, 'completeHomesRegistration'])->name('partner.homes.complete.registration');
 
 Route::post('/rooms', [RoomController::class, 'store'])->name('rooms.store');
+Route::post('/rooms/update-bathroom-details', [RoomController::class, 'updateBathroomDetails']);
 
 Route::post('/store-step', function (\Illuminate\Http\Request $request) {
     session(['current_step' => $request->step]);

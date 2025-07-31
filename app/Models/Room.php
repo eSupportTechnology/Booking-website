@@ -17,6 +17,7 @@ class Room extends Model
         'size_sq_m',    
         'max_guests',
         'bathroom_count',
+        'bathroom_amenities',
         'bathroom_type',
         'room_type', 
         'bed_type',
