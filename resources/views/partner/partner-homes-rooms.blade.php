@@ -1,6 +1,6 @@
-@extends('frontend.partner-layout')
+@extends('partner.partner-layout')
 
-@section('title', 'Alternative Places Entire Types')
+@section('title', ' Homes Rooms | ' . config('domains.app_name'))
 
 @section('content')
 <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>

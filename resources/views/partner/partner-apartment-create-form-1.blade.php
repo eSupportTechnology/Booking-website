@@ -1,7 +1,7 @@
 
 @extends('partner.partner-layout')
 
-@section('title', 'Single Apartment Create')
+@section('title', 'Apartment Create | ' . config('domains.app_name'))
 
 @section('content')
 

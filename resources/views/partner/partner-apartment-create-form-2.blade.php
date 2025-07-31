@@ -2,7 +2,7 @@
 
 @extends('partner.partner-layout')
 
-@section('title', 'Single Apartment Create 2')
+@section('title', 'Apartment Create | ' . config('domains.app_name'))
 
 @section('content')
 
@@ -715,11 +715,11 @@ savePricing() {
     >
       <div x-data="{ step: 1, wizardStep: 1 , propertyWizardStep: 1 }">
         <!-- Sticky Top Navbar -->
-        <nav class="border-b shadow-sm sticky top-0 z-50">
-          <div class="max-w-full mx-auto px-4 py-3">
+        <nav class="border-b shadow-sm sticky top-0 z-50 bg-white">
+          <div class="max-w-full mx-auto px-4 py-3 overflow-x-auto">
             <!-- Scrollable/Responsive Nav Items -->
             <div
-              class="flex flex-wrap sm:flex-nowrap overflow-x-auto space-x-6 sm:space-x-10 md:space-x-14 lg:space-x-20 xl:space-x-24 text-sm font-medium whitespace-nowrap"
+              class="flex flex-nowrap min-w-max space-x-6 sm:space-x-12 md:space-x-8 lg:space-x-24 xl:space-x-24 text-sm font-medium whitespace-nowrap"
             >
               <!-- Loop through nav steps -->
               <template
@@ -761,7 +761,7 @@ savePricing() {
                   <!-- Progress bar under "Property setup" tab -->
                   <template x-if="index === 1 && step === 2">
                     <div
-                      class="flex space-x-1 mt-1 w-35 sm:w-48 md:w-56 lg:w-64 xl:w-72 ml-[-15px] sm:ml-[-25px] md:ml-[-35px]"
+                      class="flex space-x-1 mt-1 w-15 sm:w-25 md:w-30 lg:w-64 xl:w-72 ml-[-60px] sm:ml-[-80px] md:ml-[-90px]"
                     >
                       <template x-for="i in 6">
                         <div
@@ -773,7 +773,7 @@ savePricing() {
                   </template>
 
                   <template x-if="index === 3 && step === 4">
-                    <div class="flex space-x-1 mt-1 w-35 sm:w-48 md:w-56 lg:w-64 xl:w-72 ml-[-15px] sm:ml-[-25px] md:ml-[-35px]">
+                    <div class="flex space-x-1 mt-1 w-10 sm:w-16 md:w-24 lg:w-56 xl:w-72 ml-[-40px] sm:ml-[-60px] md:ml-[-70px]">
                       <template x-for="i in 4">
                         <div
                           :class="pricingWizardStep >= i ? 'bg-blue-600' : 'bg-gray-300'"

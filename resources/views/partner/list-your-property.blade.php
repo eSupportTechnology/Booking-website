@@ -1,7 +1,7 @@
 
 @extends('partner.partner-layout')
 
-@section('title', 'List Your Property')
+@section('title', 'List Your Property | ' . config('domains.app_name'))
 
 @section('content')
 

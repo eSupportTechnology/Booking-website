@@ -1,6 +1,6 @@
 @extends('partner.partner-layout')
 
-@section('title', 'Homes Entire Rooms')
+@section('title', ' Homes Create | ' . config('domains.app_name'))
 
 @section('content')
 
