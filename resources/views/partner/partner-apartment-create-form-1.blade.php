@@ -11,7 +11,7 @@
    
 
     <!--Start Form-->
-    <div class="max-w-6xl p-4 ml-14  bg-gray-100" x-data="{
+    <div class="max-w-6xl p-4 ml-14  " x-data="{
         step: 1,
         categoryId: null,
         subcategoryId: null,
