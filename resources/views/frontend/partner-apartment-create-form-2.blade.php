@@ -440,16 +440,6 @@
 
 <h2 class="text-2xl font-bold text-gray-900 mt-8">What can guests use at your place?</h2>
             
-            <!-- Debug Info (remove in production) -->
-            @if(isset($roomDisplayData))
-            <div class="bg-yellow-50 border border-yellow-200 rounded p-3 mb-4 text-xs">
-                <strong>Debug - Room Data:</strong><br>
-                @foreach($roomDisplayData as $roomType => $data)
-                    <strong>{{ ucfirst($roomType) }}:</strong> {{ $data['bed_summary'] ?: 'No beds' }} (Total: {{ $data['total_beds'] }})<br>
-                @endforeach
-            </div>
-            @endif
-            
     <!-- Where can people sleep -->
     <div class="bg-white p-4 rounded-lg shadow space-y-4">
         <h2 class="text-lg font-semibold">Where can people sleep?</h2>

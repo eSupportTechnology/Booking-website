@@ -32,18 +32,11 @@ function apartmentForm2Data() {
 
         
         init() {
-            console.log('=== apartmentForm2Data initialized ===');
-            console.log('Loaded existing photos:', this.uploadedPhotos);
-            console.log('Current step:', this.step);
-            console.log('Selected amenities:', this.selectedAmenities);
-            console.log('Property ID:', this.propertyId);
-            console.log('=====================================');
-            
+            // Initialize form data
         },
         
         async saveStep1Data() {
             if (!this.propertyId) {
-                console.log('No property ID available, proceeding to next step');
                 this.step++;
                 return;
             }
@@ -66,12 +59,6 @@ function apartmentForm2Data() {
                 
                 const step1Result = await step1Response.json();
                 
-                if (step1Result.success) {
-                    console.log('Step 1 data saved successfully:', step1Result);
-                } else {
-                    console.log('Step 1 data save failed, but proceeding:', step1Result.message);
-                }
-                
                 // Then save additional details
                 const additionalDetailsResponse = await fetch(`/partner/property/${this.propertyId}/additional-details`, {
                     method: 'PATCH',
@@ -90,11 +77,6 @@ function apartmentForm2Data() {
                 });
                 
                 const additionalDetailsResult = await additionalDetailsResponse.json();
-                if (additionalDetailsResult.success) {
-                    console.log('Additional details saved successfully:', additionalDetailsResult);
-                } else {
-                    console.log('Additional details save failed, but proceeding:', additionalDetailsResult.message);
-                }
                 
                 // Proceed to next step regardless of save results
                 this.step++;
@@ -108,7 +90,6 @@ function apartmentForm2Data() {
         
         async saveAmenities() {
             if (!this.propertyId) {
-                console.log('No property ID available, skipping save');
                 this.step++;
                 return;
             }
@@ -133,7 +114,6 @@ function apartmentForm2Data() {
                         alert('Failed to save amenities: ' + (amenitiesResult.message || 'Unknown error'));
                         return;
                     }
-                    console.log('Amenities saved successfully:', amenitiesResult);
                 }
                 
                 // Then save additional details
@@ -155,7 +135,6 @@ function apartmentForm2Data() {
                 
                 const additionalDetailsResult = await additionalDetailsResponse.json();
                 if (additionalDetailsResult.success) {
-                    console.log('Additional details saved successfully:', additionalDetailsResult);
                     this.step++;
                 } else {
                     alert('Failed to save additional details: ' + (additionalDetailsResult.message || 'Unknown error'));
@@ -259,16 +238,6 @@ function apartmentForm2Data() {
     <template x-if="step === 1">
         <div class="max-w-xl mx-auto space-y-8 lg:ml-32 px-4 py-6">
             <h2 class="text-2xl font-bold text-gray-900 mt-8">Property details</h2>
-            
-            <!-- Debug Info (remove in production) -->
-            @if(isset($roomDisplayData))
-            <div class="bg-yellow-50 border border-yellow-200 rounded p-3 mb-4 text-xs">
-                <strong>Debug - Room Data:</strong><br>
-                @foreach($roomDisplayData as $roomType => $data)
-                    <strong>{{ ucfirst($roomType) }}:</strong> {{ $data['bed_summary'] ?: 'No beds' }} (Total: {{ $data['total_beds'] }})<br>
-                @endforeach
-            </div>
-            @endif
 
             <!-- Where can people sleep -->
             <div class="bg-white p-4 rounded-lg shadow space-y-4">
@@ -625,14 +594,31 @@ function apartmentForm2Data() {
                 </div>
             </div>
 
-            <!-- Room Details Card -->
+            <!-- Apartment Details Card -->
             <div class="bg-white rounded-lg shadow overflow-hidden">
                 <!-- Card Header with Toggle -->
                 <div @click="showDetails = !showDetails"
                     class="flex justify-between items-center p-6 cursor-pointer hover:bg-gray-50">
                     <div>
-                        <h3 class="font-semibold text-gray-900">Double Room</h3>
-                        <p class="text-sm text-gray-600">2 guests, 1 bed, 1 bathroom</p>
+                        <h3 class="font-semibold text-gray-900">Apartment</h3>
+                        <p class="text-sm text-gray-600">
+                            @if(isset($roomDisplayData))
+                                @php
+                                    $totalGuests = 0;
+                                    $totalBeds = 0;
+                                    $totalBathrooms = isset($propertyData['bathrooms_count']) ? $propertyData['bathrooms_count'] : 1;
+                                    
+                                    foreach($roomDisplayData as $roomType => $data) {
+                                        $totalBeds += $data['total_beds'];
+                                    }
+                                    
+                                    $totalGuests = isset($propertyData['guests_capacity']) ? $propertyData['guests_capacity'] : 2;
+                                @endphp
+                                {{ $totalGuests }} guests, {{ $totalBeds }} beds, {{ $totalBathrooms }} bathroom{{ $totalBathrooms > 1 ? 's' : '' }}
+                            @else
+                                2 guests, 1 bed, 1 bathroom
+                            @endif
+                        </p>
                     </div>
                     <svg :class="{'rotate-180': showDetails}" class="w-5 h-5 text-gray-500 transition-transform duration-300"
                         fill="none" stroke="currentColor" viewBox="0 0 24 24"
@@ -648,28 +634,62 @@ function apartmentForm2Data() {
 <!-- Reduced Width Image Container -->
 <div class="max-w-md mx-auto">
     <div class="w-full h-52 md:h-64 rounded-lg bg-gray-200 overflow-hidden">
-        <img src="{{ asset('assets/double-room.jpg') }}" alt="Double Room" class="w-full h-full object-cover" />
+        @if(isset($propertyData['photos']) && count($propertyData['photos']) > 0)
+            <img src="{{ $propertyData['photos'][0]['url'] }}" alt="Apartment" class="w-full h-full object-cover" />
+        @else
+            <img src="{{ asset('assets/double-room.jpg') }}" alt="Apartment" class="w-full h-full object-cover" />
+        @endif
     </div>
 </div>
-
 
                     <div class="p-4 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-700">
                         <div>
                             <span class="block font-bold">Guests</span>
-                            2
+                            @if(isset($propertyData['guests_capacity']))
+                                {{ $propertyData['guests_capacity'] }}
+                            @else
+                                2
+                            @endif
                         </div>
                         <div>
                             <span class="block font-bold">Beds</span>
-                            1
+                            @if(isset($roomDisplayData))
+                                @php
+                                    $totalBeds = 0;
+                                    foreach($roomDisplayData as $roomType => $data) {
+                                        $totalBeds += $data['total_beds'];
+                                    }
+                                @endphp
+                                {{ $totalBeds }}
+                            @else
+                                1
+                            @endif
                         </div>
                         <div>
                             <span class="block font-bold">Bathrooms</span>
-                            1
+                            @if(isset($propertyData['bathrooms_count']))
+                                {{ $propertyData['bathrooms_count'] }}
+                            @else
+                                1
+                            @endif
                         </div>
-                        <div class="md:col-span-3">
-                            <span class="block font-bold">Bedroom 1</span>
-                            1 double bed
-                        </div>
+                        
+                        <!-- Room Details -->
+                        @if(isset($roomDisplayData))
+                            @foreach($roomDisplayData as $roomType => $data)
+                                @if($data['has_beds'])
+                                    <div class="md:col-span-3">
+                                        <span class="block font-bold">{{ $data['name'] }}</span>
+                                        {{ $data['bed_summary'] }}
+                                    </div>
+                                @endif
+                            @endforeach
+                        @else
+                            <div class="md:col-span-3">
+                                <span class="block font-bold">Bedroom 1</span>
+                                1 double bed
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
