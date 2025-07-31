@@ -266,9 +266,7 @@ Route::get('/partner-homes-edit/{id}', [PropertyController::class, 'showPrivateH
 Route::get('/partner-homes-payments/{id}', [PropertyController::class, 'showPrivateHomesPayments'])->name('partner.homes.payments');
 Route::get('/partner-homes-images/{id}', [PropertyController::class, 'showPrivateHomesImages'])->name('partner.homes.images');
 
-Route::get('/partner-apartments-final', function () {
-    return view('frontend.partner-apartment-final-step');
-})->name('partner.apartments.final');
+Route::get('/partner-apartments-final/{property?}', [PropertyController::class, 'showFinalStep'])->name('partner.apartments.final');
 
 Route::get('/partner-hotels-edit', function () {
     return view('frontend.partner-hotels-edit');
@@ -491,6 +489,12 @@ Route::post('/property/{property}/update-title', [PropertyController::class, 'up
 
 Route::patch('/partner/property/{property}/additional-details', [PropertyController::class, 'updateAdditionalDetails'])
     ->name('partner.property.update.additional-details');
+
+Route::post('/partner/property/{property}/pricing', [PropertyController::class, 'savePricing'])
+    ->name('partner.property.save.pricing');
+
+Route::post('/partner/property/{property}/rate-plans', [PropertyController::class, 'saveRatePlans'])
+    ->name('partner.property.save.rate-plans');
 
 
 

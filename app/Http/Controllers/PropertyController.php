@@ -1135,6 +1135,40 @@ class PropertyController extends Controller
         }
     }
 
+    public function saveRatePlans(Request $request, Property $property)
+    {
+        Log::info('saveRatePlans called', [
+            'property_id' => $property->id,
+            'request_data' => $request->all()
+        ]);
+
+        try {
+            // Save rate plans data to property_policies table
+            // Only save the cancellation policy since that's the main field available
+            $property->policies()->updateOrCreate([], [
+                'property_id' => $property->id,
+                'cancellation_policy' => $request->input('standard_rate.cancellation_policy', 'flexible'),
+                // Store rate plans data as JSON in a custom field or use existing fields
+                'check_in_from' => json_encode([
+                    'standard_rate' => $request->input('standard_rate'),
+                    'non_refundable_rate' => $request->input('non_refundable_rate'),
+                    'weekly_rate' => $request->input('weekly_rate')
+                ])
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Rate plans saved successfully'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error saving rate plans: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error saving rate plans: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
 
 
     public function showHomesForm2($id, $subtype)
@@ -1362,5 +1396,94 @@ class PropertyController extends Controller
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
+    }
+
+    public function showFinalStep($propertyId = null)
+    {
+        Log::info('showFinalStep called', ['property_id' => $propertyId]);
+        
+        $property = null;
+        $propertyData = [];
+        $roomDisplayData = [];
+        
+        if ($propertyId) {
+            try {
+                $property = Property::findOrFail($propertyId);
+                
+                // Get additional details for guests and bathrooms
+                $additionalDetails = $property->additionalDetails;
+                
+                // Get property data
+                $propertyData = [
+                    'name' => $property->title ?? 'Property Name',
+                    'address' => $property->address ?? 'Address not set',
+                    'guests_capacity' => $additionalDetails->guests_capacity ?? 0,
+                    'bathrooms_count' => $additionalDetails->bathrooms_count ?? 0,
+                    'photos' => $property->files()->where('file_type', 'image')->pluck('path')->toArray(),
+                ];
+                
+                // Get room data (bedrooms, living room, other spaces)
+                $bedrooms = $property->bedrooms()->get();
+                $roomDisplayData = [];
+                
+                foreach ($bedrooms as $bedroom) {
+                    $roomType = $bedroom->room_type;
+                    $bedSummary = [];
+                    $totalBeds = 0;
+                    
+                    // Use correct field names from PropertyBedroom model
+                    if ($bedroom->twin > 0) {
+                        $bedSummary[] = $bedroom->twin . ' Twin';
+                        $totalBeds += $bedroom->twin;
+                    }
+                    if ($bedroom->full > 0) {
+                        $bedSummary[] = $bedroom->full . ' Full';
+                        $totalBeds += $bedroom->full;
+                    }
+                    if ($bedroom->queen > 0) {
+                        $bedSummary[] = $bedroom->queen . ' Queen';
+                        $totalBeds += $bedroom->queen;
+                    }
+                    if ($bedroom->king > 0) {
+                        $bedSummary[] = $bedroom->king . ' King';
+                        $totalBeds += $bedroom->king;
+                    }
+                    if ($bedroom->sofa > 0) {
+                        $bedSummary[] = $bedroom->sofa . ' Sofa';
+                        $totalBeds += $bedroom->sofa;
+                    }
+                    if ($bedroom->bunk > 0) {
+                        $bedSummary[] = $bedroom->bunk . ' Bunk';
+                        $totalBeds += $bedroom->bunk;
+                    }
+                    if ($bedroom->futon > 0) {
+                        $bedSummary[] = $bedroom->futon . ' Futon';
+                        $totalBeds += $bedroom->futon;
+                    }
+                    
+                    $roomDisplayData[$roomType] = [
+                        'has_beds' => !empty($bedSummary),
+                        'bed_summary' => implode(', ', $bedSummary),
+                        'total_beds' => $totalBeds
+                    ];
+                }
+                
+                Log::info('Property data for final step', [
+                    'property_id' => $propertyId,
+                    'property_data' => $propertyData,
+                    'room_display_data' => $roomDisplayData,
+                    'bedrooms_count' => $bedrooms->count()
+                ]);
+                
+            } catch (\Exception $e) {
+                Log::error('Error loading property for final step', [
+                    'property_id' => $propertyId,
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ]);
+            }
+        }
+        
+        return view('partner.partner-apartment-final-step', compact('property', 'propertyData', 'roomDisplayData'));
     }
 }
