@@ -15,6 +15,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Customer\CustomerPersonalDetailsController;
 use App\Http\Controllers\Customer\EmailVerifyController;
 use App\Http\Controllers\PropertyController;
+use App\Http\Controllers\RoomController;
 use App\Http\Controllers\PropertyDataController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -464,6 +465,9 @@ Route::post('/property/save-address-multiple', [PropertyController::class, 'save
 Route::get('/partner/login', [LoginController::class, 'show'])->name('partner.login');
 Route::post('/partner/login', [LoginController::class, 'login'])->name('partner.login.submit');
 Route::get('/partner-homes-complete-registration/{id}', [PropertyController::class, 'completeHomesRegistration'])->name('partner.homes.complete.registration');
+
+Route::post('/rooms', [RoomController::class, 'store'])->name('rooms.store');
+
 Route::post('/store-step', function (\Illuminate\Http\Request $request) {
     session(['current_step' => $request->step]);
     return response()->json(['status' => 'ok']);

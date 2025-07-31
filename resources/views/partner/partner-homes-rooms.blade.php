@@ -15,52 +15,64 @@
             cotCount: 0, // Default count for cots
             cotPriceType: 'free', // Default price type for cots
             saveStep1() {
-                const propertyId = document.getElementById('propertyId').value;
+                const url = window.location.href;
+                const propertyId = url.substring(url.lastIndexOf("/") + 1);
 
-                const roomElements = document.querySelectorAll('.room-item'); // Each .room-item holds room inputs
-                const rooms = [];
+                const roomType = document.querySelector('.room-type-id')?.value;
+                const roomCount = document.querySelector('[name="property_count"]')?.value;
+                const smokingAllowed = document.querySelector('input[name="smoking"]:checked')?.nextElementSibling?.innerText.trim().toLowerCase() === 'yes';
+                const guestSpan = document.querySelector('.room-guests');
+                const maxGuests = guestSpan ? parseInt(guestSpan.innerText) : 0;
+                const roomSize = document.querySelector('.room-size')?.value;
+                const sizeUnit = document.querySelector('select')?.value;
 
-                roomElements.forEach((roomEl) => {
-                    rooms.push({
-                        room_type_id: roomEl.querySelector('.room-type-id').value,
-                        name: roomEl.querySelector('.room-name').value,
-                        price_per_night: parseFloat(roomEl.querySelector('.room-price').value) || null,
-                        max_guests: parseInt(roomEl.querySelector('.room-guests').value) || null,
-                        bathroom_count: parseInt(roomEl.querySelector('.room-bathrooms').value) || null,
-                        size_sq_m: parseFloat(roomEl.querySelector('.room-size').value) || null,
-                        beds: Array.from(roomEl.querySelectorAll('.bed-type:checked')).map(el => el.value)
-                    });
+                // 🛏️ Collect bed types and counts
+                const bedElements = document.querySelectorAll('[x-data^="{ guests:');
+                const bedCounts = [];
+
+                bedElements.forEach(el => {
+                    const label = el.querySelector('p.text-sm')?.innerText?.trim();
+                    const count = parseInt(el.querySelector('span[x-text="guests"]')?.innerText) || 0;
+                    if (count > 0 && label) {
+                        bedCounts.push({
+                            label,
+                            count
+                        });
+                    }
                 });
 
                 const payload = {
                     property_id: propertyId,
-                    rooms: rooms
+                    room_count: roomCount,
+                    room_type: roomType,
+                    max_guests: maxGuests,
+                    smoking_allowed: smokingAllowed,
+                    size_sq_m: sizeUnit === 'square feet' ? Math.round(roomSize * 0.092903) : roomSize,
+                    beds: bedCounts
                 };
-
                 console.log(payload);
-                this.step++;
 
-                // fetch(`/partner/save-rooms/${propertyId}`, {
-                //     method: 'POST',
-                //     headers: {
-                //         'Content-Type': 'application/json',
-                //         "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
-                //     },
-                //     body: JSON.stringify(payload)
-                // })
-                // .then(response => response.json())
-                // .then(data => {
-                //     if (data.success) {
-                //         alert('Rooms saved successfully!');
-                //         this.step++;
-                //     } else {
-                //         alert('Error: ' + data.error);
-                //     }
-                // })
-                // .catch(error => {
-                //     console.error('Request failed:', error);
-                //     alert('Something went wrong while saving rooms.');
-                // });
+                fetch('/rooms', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: JSON.stringify(payload)
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Step 1 saved successfully!');
+                            this.step++;
+                        } else {
+                            alert('Something went wrong: ' + (data.message || 'Unknown error'));
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Error saving step 1:', err);
+                        alert('Something went wrong while saving step 1.');
+                    });
             }
         }
     }
@@ -96,9 +108,9 @@
                                 this?</label>
                             <select
                                 class="w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200 px-3 py-2 room-type-id">
-                                <option>Double</option>
-                                <option>Single</option>
-                                <option>Suite</option>
+                                @foreach ($roomTypes as $roomType)
+                                <option value="{{ $roomType->id }}">{{ $roomType->name }}</option>
+                                @endforeach
                             </select>
                         </div>
 
@@ -111,7 +123,7 @@
                             </label>
 
                             <input type="number" min="1" step="1" inputmode="numeric" pattern="\d*"
-                                x-model="propertyCount" name="property_count"
+                                x-model="propertyCount" name="property_count" 
                                 class="w-[40%] border border-gray-300 rounded-md shadow-sm px-3 py-2" />
                         </div>
 
@@ -130,16 +142,16 @@
 
                         @php
                         $mainBeds = [
-                        ['label' => 'Twin bed(s)', 'desc' => '35–51 inches wide'],
-                        ['label' => 'Full bed(s)', 'desc' => '52–59 inches wide'],
-                        ['label' => 'Queen bed(s)', 'desc' => '60–70 inches wide'],
-                        ['label' => 'King bed(s)', 'desc' => '71–81 inches wide'],
+                        ['label' => 'Twin', 'desc' => '35–51 inches wide'],
+                        ['label' => 'Full', 'desc' => '52–59 inches wide'],
+                        ['label' => 'Queen', 'desc' => '60–70 inches wide'],
+                        ['label' => 'King', 'desc' => '71–81 inches wide'],
                         ];
 
                         $extraBeds = [
-                        ['label' => 'Bunk bed', 'desc' => 'Varying sizes'],
-                        ['label' => 'Sofa bed', 'desc' => 'Varying sizes'],
-                        ['label' => 'Futon bed(s)', 'desc' => 'Varying sizes'],
+                        ['label' => 'Bunk', 'desc' => 'Varying sizes'],
+                        ['label' => 'Sofa', 'desc' => 'Varying sizes'],
+                        ['label' => 'Futon', 'desc' => 'Varying sizes'],
                         ];
                         @endphp
 
@@ -414,7 +426,7 @@
                                 </button></a>
 
                             <!-- Continue Button (Right-aligned) -->
-                            <button type="submit" @click="saveStep1()" :disabled="step === 9"
+                            <button type="button" @click="saveStep1()" :disabled="step === 9"
                                 class="px-6 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300">
                                 Continue
                             </button>

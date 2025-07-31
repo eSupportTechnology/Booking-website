@@ -14,9 +14,19 @@ class Room extends Model
         'name',
         'description',
         'price_per_night',
+        'size_sq_m',    
         'max_guests',
         'bathroom_count',
-        'size_sq_m'
+        'bathroom_type',
+        'room_type', 
+        'bed_type',
+        'smoking_allowed', 
+        'price_per_night', 
+        'currency', 
+        'discount_enabled', 
+        'commission_percentage', 
+        'you_earn',
+
     ];
 
     public function roomType()
@@ -28,4 +38,11 @@ class Room extends Model
     {
         return $this->belongsToMany(BedType::class, 'room_beds')->withPivot('count')->withTimestamps();
     }
+
+     public function amenities()
+    {
+        return $this->belongsToMany(Amenity::class, 'room_amenity', 'room_id', 'amenity_id');
+    }
+
+
 }

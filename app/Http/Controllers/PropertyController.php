@@ -44,9 +44,11 @@ use App\Actions\Partner\SaveAddressMultipleAction;
 use App\Actions\Partner\SavePricingAction;
 use App\DTOs\Partner\SaveInvoicingDTO;
 use App\Models\Accommodation;
+use App\Models\BedType;
 use App\Models\Room;
 use App\Models\PartnerVerification;
 use App\Models\Language;
+use App\Models\RoomType;
 use App\DTOs\SaveFacilitiesDTO;
 use Faker\Provider\ar_EG\Address;
 
@@ -1069,7 +1071,10 @@ class PropertyController extends Controller
     public function showPrivateHomesRooms($propertyId)
     {
         $property = Property::findOrFail($propertyId);
-        return view('partner.partner-homes-rooms', compact('property'));
+        $roomTypes=RoomType::all();
+        $bedTypes=BedType::all();
+        Log::info('Bed types found', ['bed_types' => $bedTypes]);
+        return view('partner.partner-homes-rooms', compact('property', 'roomTypes', 'bedTypes'));
     }
 
     public function showPrivateHomesImages($propertyId)
