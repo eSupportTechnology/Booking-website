@@ -804,7 +804,10 @@ class PropertyController extends Controller
             'room_display_data' => $roomDisplayData
         ]);
         
-        return view('partner.partner-apartment-create-form-2', compact('propertyId', 'roomDisplayData'));
+        // Get grouped amenities for the view
+        $groupedAmenities = \App\Models\Amenity::all()->groupBy('category');
+        
+        return view('partner.partner-apartment-create-form-2', compact('propertyId', 'roomDisplayData', 'groupedAmenities'));
     }
 
     public function showMultipleApartmentForm2(PropertyAction $action, $propertyId)

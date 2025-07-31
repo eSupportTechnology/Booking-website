@@ -543,6 +543,11 @@ Route::get('/partner/apartment/bedrooms/{property}', function ($propertyId) {
     return view('partner.partner-apartments-bedrooms', compact('property', 'bedTypes'));
 })->name('partner.apartment.bedrooms');
 
+// Temporary redirect for old URL pattern
+Route::get('/partner/property/apartment/bedrooms/{property}', function ($propertyId) {
+    return redirect('/partner/apartment/bedrooms/' . $propertyId);
+});
+
 Route::get('/partner/property/{category}/step3/{property}', function ($category, $propertyId) {
     $property = \App\Models\Property::findOrFail($propertyId);
     $bedTypes = \App\Models\BedType::all();

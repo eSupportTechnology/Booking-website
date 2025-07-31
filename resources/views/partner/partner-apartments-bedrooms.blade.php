@@ -214,18 +214,19 @@
            // Redirect based on source and step
            const source = '{{ request('source') }}';
            const step = '{{ request('step') }}';
+           const propertyId = '{{ $property->id }}';
            
-           console.log('Source:', source, 'Step:', step);
+           console.log('Source:', source, 'Step:', step, 'Property ID:', propertyId);
            
            if (source === 'multiple') {
              console.log('Redirecting to multiple apartment step 2');
-             window.location.href = 'http://127.0.0.1:8000/partner/multiple-apartment-2/116';
+             window.location.href = `/partner/multiple-apartment-2/${propertyId}`;
            } else if (source === 'single') {
-             console.log('Redirecting to single apartment step 2');
-             window.location.href = 'http://127.0.0.1:8000/partner/property/apartment/step2/116';
+             console.log('Redirecting to single apartment form 2');
+             window.location.href = `/partner-apartment-create-2`;
            } else {
-             console.log('Fallback redirect to step 2');
-             window.location.href = 'http://127.0.0.1:8000/partner/property/apartment/step2/116';
+             console.log('Fallback redirect to single apartment form 2');
+             window.location.href = `/partner-apartment-create-2`;
            }
          } else {
            alert('Error: ' + (data.message || 'Could not save bedroom.'));
@@ -254,6 +255,23 @@
     
     get totalBeds() {
       return this.beds.reduce((sum, bed) => sum + bed.count, 0);
+    },
+    
+    goBack() {
+      const source = '{{ request('source') }}';
+      const step = '{{ request('step') }}';
+      const propertyId = '{{ $property->id }}';
+      
+      console.log('Going back - Source:', source, 'Step:', step, 'Property ID:', propertyId);
+      
+      if (source === 'multiple') {
+        window.location.href = `/partner/multiple-apartment-2/${propertyId}`;
+      } else if (source === 'single') {
+        window.location.href = `/partner-apartment-create-2`;
+      } else {
+        // Fallback to browser back
+        window.history.back();
+      }
     }
   }" class="max-w-3xl mx-auto space-y-8 lg:ml-32 px-4 py-6">
     
@@ -383,7 +401,7 @@
     <!-- Navigation Buttons -->
     <div class="mt-8 flex justify-between items-center">
       <button type="button" 
-              onclick="window.history.back()"
+              @click="goBack()"
               class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-6 py-3 flex items-center justify-center rounded transition-colors">
         ← Back
       </button>

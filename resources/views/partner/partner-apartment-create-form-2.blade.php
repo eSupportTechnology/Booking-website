@@ -1219,7 +1219,7 @@ savePricing() {
         <div class="flex flex-col gap-4">
           <template x-for="(room, roomId) in rooms" :key="roomId">
             <a
-              :href="'/partner/property/apartment/bedrooms/' + propertyId + '/' + roomId"
+              :href="'/partner/apartment/bedrooms/' + propertyId + '/' + roomId"
               class="block"
             >
               <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer flex justify-between items-center">
@@ -1240,7 +1240,7 @@ savePricing() {
                   d="M12 4v16m8-8H4"/>
           </svg>
           <a
-            :href="'/partner/property/apartment/bedrooms/' + propertyId + '?source=single&step=1'"
+            :href="'/partner/apartment/bedrooms/' + propertyId + '?source=single&step=1'"
             class="text-blue-600 hover:underline text-sm flex items-center space-x-1"
           >
             <span>Add Bedroom</span>
