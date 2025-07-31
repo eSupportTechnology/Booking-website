@@ -439,29 +439,61 @@
 <div class="max-w-xl mx-auto space-y-8 lg:ml-32 px-4 py-6">
 
 <h2 class="text-2xl font-bold text-gray-900 mt-8">What can guests use at your place?</h2>
+            
+            <!-- Debug Info (remove in production) -->
+            @if(isset($roomDisplayData))
+            <div class="bg-yellow-50 border border-yellow-200 rounded p-3 mb-4 text-xs">
+                <strong>Debug - Room Data:</strong><br>
+                @foreach($roomDisplayData as $roomType => $data)
+                    <strong>{{ ucfirst($roomType) }}:</strong> {{ $data['bed_summary'] ?: 'No beds' }} (Total: {{ $data['total_beds'] }})<br>
+                @endforeach
+            </div>
+            @endif
+            
     <!-- Where can people sleep -->
     <div class="bg-white p-4 rounded-lg shadow space-y-4">
         <h2 class="text-lg font-semibold">Where can people sleep?</h2>
 
      <div class="flex flex-col gap-4">
-    <a href="{{ route('partner.apartment.bedrooms', ['property' => $property->id]) }}">
+    <!-- Bedroom -->
+    <a href="{{ route('partner.apartment.bedrooms', ['property' => $property->id]) }}?source=single&step=1">
         <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer">
             <p class="text-sm">Bedroom 1</p>
-            <p class="text-sm text-gray-600">1 full bed</p>
+            <p class="text-sm text-gray-600">
+                @if(isset($roomDisplayData['bedroom']) && $roomDisplayData['bedroom']['has_beds'])
+                    {{ $roomDisplayData['bedroom']['bed_summary'] }}
+                @else
+                    No beds added
+                @endif
+            </p>
         </div>
     </a>
 
-    <a href="{{ route('partner.apartment.livingroom') }}">
+    <!-- Living Room -->
+    <a href="{{ route('partner.apartment.livingroom') }}?source=single&step=1">
         <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer">
             <p class="text-sm">Living Room</p>
-            <p class="text-sm text-gray-600">1 full bed</p>
+            <p class="text-sm text-gray-600">
+                @if(isset($roomDisplayData['living_room']) && $roomDisplayData['living_room']['has_beds'])
+                    {{ $roomDisplayData['living_room']['bed_summary'] }}
+                @else
+                    No beds added
+                @endif
+            </p>
         </div>
     </a>
 
-    <a href="{{ route('partner.apartment.otherspaces') }}">
+    <!-- Other Spaces -->
+    <a href="{{ route('partner.apartment.otherspaces') }}?source=single&step=1">
         <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer">
             <p class="text-sm">Other spaces</p>
-            <p class="text-sm text-gray-600">1 full bed</p>
+            <p class="text-sm text-gray-600">
+                @if(isset($roomDisplayData['other']) && $roomDisplayData['other']['has_beds'])
+                    {{ $roomDisplayData['other']['bed_summary'] }}
+                @else
+                    No beds added
+                @endif
+            </p>
         </div>
     </a>
 </div>
@@ -471,7 +503,7 @@
 
 
         <!-- Add Bedroom Button (navigate to 2nd page) -->
-        <a href="{{ route('partner.apartment.bedrooms', ['property' => $property->id]) }}" class="text-blue-600 hover:underline text-sm flex items-center space-x-1 mt-2">
+        <a href="{{ route('partner.apartment.bedrooms', ['property' => $property->id]) }}?source=single&step=1" class="text-blue-600 hover:underline text-sm flex items-center space-x-1 mt-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
                  viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

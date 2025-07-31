@@ -18,6 +18,10 @@ function apartmentForm2Data() {
         uploadedPhotos: @json($propertyData['photos'] ?? []),
         guests: 2,
         bathrooms: 1,
+        allowChildren: 'yes',
+        offerCribs: 'no',
+        apartmentSize: 100,
+        apartmentUnit: 'square meters',
         showTips: true,
         count: 2,
         showDetails: false,
@@ -25,6 +29,7 @@ function apartmentForm2Data() {
         showTip2: true,
         feedback: null,
         showDiscount: false,
+
         
         init() {
             console.log('=== apartmentForm2Data initialized ===');
@@ -33,45 +38,131 @@ function apartmentForm2Data() {
             console.log('Selected amenities:', this.selectedAmenities);
             console.log('Property ID:', this.propertyId);
             console.log('=====================================');
+            
         },
         
-        async saveAmenities() {
+        async saveStep1Data() {
             if (!this.propertyId) {
-                console.log('No property ID available, skipping amenities save');
-                this.step++;
-                return;
-            }
-            
-            if (this.selectedAmenities.length === 0) {
-                console.log('No amenities selected');
+                console.log('No property ID available, proceeding to next step');
                 this.step++;
                 return;
             }
             
             try {
-                const response = await fetch(`/partner/property/save-amenities/${this.propertyId}`, {
+                // First save step 1 data
+                const step1Response = await fetch(`/partner/property/${this.propertyId}/step1-data`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
                     },
                     body: JSON.stringify({
-                        amenities: this.selectedAmenities,
-                        property_id: this.propertyId
+                        guests: this.guests,
+                        bathrooms: this.bathrooms,
+                        property_count: this.propertyCount,
+                        bedrooms: this.bedrooms
                     })
                 });
                 
-                const result = await response.json();
+                const step1Result = await step1Response.json();
                 
-                if (result.success) {
-                    console.log('Amenities saved successfully:', result);
+                if (step1Result.success) {
+                    console.log('Step 1 data saved successfully:', step1Result);
+                } else {
+                    console.log('Step 1 data save failed, but proceeding:', step1Result.message);
+                }
+                
+                // Then save additional details
+                const additionalDetailsResponse = await fetch(`/partner/property/${this.propertyId}/additional-details`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        guests: this.guests,
+                        bathrooms: this.bathrooms,
+                        allow_children: this.allowChildren,
+                        offer_cribs: this.offerCribs,
+                        apartment_size: this.apartmentSize,
+                        apartment_unit: this.apartmentUnit
+                    })
+                });
+                
+                const additionalDetailsResult = await additionalDetailsResponse.json();
+                if (additionalDetailsResult.success) {
+                    console.log('Additional details saved successfully:', additionalDetailsResult);
+                } else {
+                    console.log('Additional details save failed, but proceeding:', additionalDetailsResult.message);
+                }
+                
+                // Proceed to next step regardless of save results
+                this.step++;
+                
+            } catch (error) {
+                console.error('Error saving data:', error);
+                // Proceed to next step even if save fails
+                this.step++;
+            }
+        },
+        
+        async saveAmenities() {
+            if (!this.propertyId) {
+                console.log('No property ID available, skipping save');
+                this.step++;
+                return;
+            }
+            
+            try {
+                // First save amenities
+                if (this.selectedAmenities.length > 0) {
+                    const amenitiesResponse = await fetch(`/partner/property/save-amenities/${this.propertyId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                        },
+                        body: JSON.stringify({
+                            amenities: this.selectedAmenities,
+                            property_id: this.propertyId
+                        })
+                    });
+                    
+                    const amenitiesResult = await amenitiesResponse.json();
+                    if (!amenitiesResult.success) {
+                        alert('Failed to save amenities: ' + (amenitiesResult.message || 'Unknown error'));
+                        return;
+                    }
+                    console.log('Amenities saved successfully:', amenitiesResult);
+                }
+                
+                // Then save additional details
+                const additionalDetailsResponse = await fetch(`/partner/property/${this.propertyId}/additional-details`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        guests: this.guests,
+                        bathrooms: this.bathrooms,
+                        allow_children: this.allowChildren,
+                        offer_cribs: this.offerCribs,
+                        apartment_size: this.apartmentSize,
+                        apartment_unit: this.apartmentUnit
+                    })
+                });
+                
+                const additionalDetailsResult = await additionalDetailsResponse.json();
+                if (additionalDetailsResult.success) {
+                    console.log('Additional details saved successfully:', additionalDetailsResult);
                     this.step++;
                 } else {
-                    alert('Failed to save amenities: ' + (result.message || 'Unknown error'));
+                    alert('Failed to save additional details: ' + (additionalDetailsResult.message || 'Unknown error'));
                 }
             } catch (error) {
-                console.error('Error saving amenities:', error);
-                alert('Error saving amenities: ' + error.message);
+                console.error('Error saving data:', error);
+                alert('Error saving data: ' + error.message);
             }
         },
         
@@ -168,36 +259,67 @@ function apartmentForm2Data() {
     <template x-if="step === 1">
         <div class="max-w-xl mx-auto space-y-8 lg:ml-32 px-4 py-6">
             <h2 class="text-2xl font-bold text-gray-900 mt-8">Property details</h2>
+            
+            <!-- Debug Info (remove in production) -->
+            @if(isset($roomDisplayData))
+            <div class="bg-yellow-50 border border-yellow-200 rounded p-3 mb-4 text-xs">
+                <strong>Debug - Room Data:</strong><br>
+                @foreach($roomDisplayData as $roomType => $data)
+                    <strong>{{ ucfirst($roomType) }}:</strong> {{ $data['bed_summary'] ?: 'No beds' }} (Total: {{ $data['total_beds'] }})<br>
+                @endforeach
+            </div>
+            @endif
 
             <!-- Where can people sleep -->
             <div class="bg-white p-4 rounded-lg shadow space-y-4">
                 <h2 class="text-lg font-semibold">Where can people sleep?</h2>
 
                 <div class="flex flex-col gap-4">
-                    <a href="{{ route('partner.apartment.bedrooms', ['property' => 1]) }}">
+                    <!-- Bedroom -->
+                    <a href="{{ route('partner.apartment.bedrooms', ['property' => $propertyId ?? 1]) }}?source=multiple&step=2">
                         <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer">
                             <p class="text-sm">Bedroom 1</p>
-                            <p class="text-sm text-gray-600">1 full bed</p>
+                            <p class="text-sm text-gray-600">
+                                @if(isset($roomDisplayData['bedroom']) && $roomDisplayData['bedroom']['has_beds'])
+                                    {{ $roomDisplayData['bedroom']['bed_summary'] }}
+                                @else
+                                    No beds added
+                                @endif
+                            </p>
                         </div>
                     </a>
 
-                    <a href="{{ route('partner.apartment.livingroom', ['property' => 1]) }}">
+                    <!-- Living Room -->
+                    <a href="{{ route('partner.apartment.livingroom', ['property' => $propertyId ?? 1]) }}?source=multiple&step=2">
                         <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer">
                             <p class="text-sm">Living Room</p>
-                            <p class="text-sm text-gray-600">1 full bed</p>
+                            <p class="text-sm text-gray-600">
+                                @if(isset($roomDisplayData['living_room']) && $roomDisplayData['living_room']['has_beds'])
+                                    {{ $roomDisplayData['living_room']['bed_summary'] }}
+                                @else
+                                    No beds added
+                                @endif
+                            </p>
                         </div>
                     </a>
 
-                    <a href="{{ route('partner.apartment.otherspaces', ['property' => 1]) }}">
+                    <!-- Other Spaces -->
+                    <a href="{{ route('partner.apartment.otherspaces', ['property' => $propertyId ?? 1]) }}?source=multiple&step=2">
                         <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer">
                             <p class="text-sm">Other spaces</p>
-                            <p class="text-sm text-gray-600">1 full bed</p>
+                            <p class="text-sm text-gray-600">
+                                @if(isset($roomDisplayData['other']) && $roomDisplayData['other']['has_beds'])
+                                    {{ $roomDisplayData['other']['bed_summary'] }}
+                                @else
+                                    No beds added
+                                @endif
+                            </p>
                         </div>
                     </a>
                 </div>
 
                 <!-- Add Bedroom Button (navigate to 2nd page) -->
-                <a href="{{ route('partner.apartment.bedrooms', ['property' => 1]) }}" class="text-blue-600 hover:underline text-sm flex items-center space-x-1 mt-2">
+                <a href="{{ route('partner.apartment.bedrooms', ['property' => $propertyId ?? 1]) }}?source=multiple&step=2" class="text-blue-600 hover:underline text-sm flex items-center space-x-1 mt-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
                          viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -237,8 +359,8 @@ function apartmentForm2Data() {
                 <div>
                     <p class="font-medium text-sm">Do you offer cribs?</p>
                     <p class="text-xs text-gray-500">Cribs sleep most infants 0–3 years old and are available to guests on request.</p>
-                    <label class="mr-4 text-sm"><input type="radio" name="infants" checked> Yes</label>
-                    <label class="text-sm"><input type="radio" name="infants"> No</label>
+                    <label class="mr-4 text-sm"><input type="radio" name="infants" value="yes" x-model="offerCribs" checked> Yes</label>
+                    <label class="text-sm"><input type="radio" name="infants" value="no" x-model="offerCribs"> No</label>
                 </div>
             </div>
 
@@ -255,7 +377,7 @@ function apartmentForm2Data() {
                             step="1"
                             inputmode="numeric"
                             pattern="\d*"
-                            x-model="propertyCount"
+                            x-model="apartmentSize"
                             name="property_count"
                             class="w-full border border-gray-300 rounded-md shadow-sm text-sm mt-2 px-2 py-2"
                         >
@@ -264,9 +386,9 @@ function apartmentForm2Data() {
                     <!-- Size Unit Dropdown -->
                     <div class="w-full lg:w-1/4">
                         <label class="block text-sm text-transparent mb-1">Unit</label>
-                        <select class="w-full bg-gray-300 text-black border border-gray-300 rounded-md shadow-sm text-sm mt-2 px-2 py-2">
-                            <option>square meters</option>
-                            <option>square feet</option>
+                        <select x-model="apartmentUnit" class="w-full bg-gray-300 text-black border border-gray-300 rounded-md shadow-sm text-sm mt-2 px-2 py-2">
+                            <option value="square meters">square meters</option>
+                            <option value="square feet">square feet</option>
                         </select>
                     </div>
                 </div>
@@ -280,7 +402,7 @@ function apartmentForm2Data() {
                     ←
                 </button>
 
-                <button type="button" @click="step < 5 ? step++ : step"
+                <button type="button" @click="saveStep1Data()"
                         class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
                     Continue
                 </button>

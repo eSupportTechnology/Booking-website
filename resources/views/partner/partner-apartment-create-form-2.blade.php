@@ -1240,7 +1240,7 @@ savePricing() {
                   d="M12 4v16m8-8H4"/>
           </svg>
           <a
-            :href="'/partner/property/apartment/bedrooms/' + propertyId + '/create'"
+            :href="'/partner/property/apartment/bedrooms/' + propertyId + '?source=single&step=1'"
             class="text-blue-600 hover:underline text-sm flex items-center space-x-1"
           >
             <span>Add Bedroom</span>

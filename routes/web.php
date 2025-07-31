@@ -175,12 +175,14 @@ Route::get('/partner-apartment-create-1', function () {
     return view('frontend.partner-apartment-create-form-1');
 })->name('partner.apartment.create.1');
 
-Route::get('/partner-apartment-otherspaces', function () {
-    return view('frontend.partner-apartments-otherspaces');
+Route::get('/partner/apartment/otherspaces/{property}', function ($property) {
+    $property = \App\Models\Property::findOrFail($property);
+    return view('partner.partner-apartments-otherspaces', compact('property'));
 })->name('partner.apartment.otherspaces');
 
-Route::get('/partner-apartment-livingroom', function () {
-    return view('frontend.partner-apartments-livingroom');
+Route::get('/partner/apartment/livingroom/{property}', function ($property) {
+    $property = \App\Models\Property::findOrFail($property);
+    return view('partner.partner-apartments-livingroom', compact('property'));
 })->name('partner.apartment.livingroom');
 
 
@@ -207,19 +209,7 @@ Route::get('/customer-profile-create', function () {
     return view('frontend.customer-profile-create');
 })->name('customer.profile.create');
 
-Route::get('/partner-apartment-create-2', function () {
-    // Example: fetch the latest property for the current user (customize as needed)
-    $property = null;
-    if (Auth::check()) {
-        $property = \App\Models\Property::where('user_id', Auth::id())->latest()->first();
-    }
-    // Fallback: if no property found, create a dummy object to avoid errors
-    if (!$property) {
-        $property = new \App\Models\Property();
-        $property->id = 0;
-    }
-    return view('frontend.partner-apartment-create-form-2', compact('property'));
-})->name('partner.apartment.create.2');
+Route::get('/partner-apartment-create-2', [PropertyController::class, 'showSingleApartmentForm2'])->name('partner.apartment.create.2');
 
 Route::get('/partner-homes-create-1', function () {
     return view('frontend.partner-homes-create-form-1');
@@ -586,6 +576,7 @@ Route::get('/partner/partner-multiple-apartment/{property}', [PropertyController
 
 Route::get('/partner/multiple-apartment/{property?}', [PropertyController::class, 'showMultipleApartmentForm'])->name('partner.multiple.apartment.initial');
 Route::get('/partner/multiple-apartment-2/{propertyId}', [PropertyController::class, 'showMultipleApartmentForm2'])->name('partner.multiple.apartment.2');
+Route::post('/partner/property/{property}/step1-data', [PropertyController::class, 'saveStep1Data'])->name('partner.property.step1-data');
 Route::get('/partner/get-latest-property', [PropertyDataController::class, 'getLatestProperty'])->name('partner.get.latest.property');
 Route::post('/partner/property/upload-photos', [PropertyController::class, 'uploadPhotos'])->name('partner.property.upload-photos');
 Route::get('/partner/multiple-apartment-3', [PropertyController::class, 'showMultipleApartmentForm3'])->name('partner.multiple.apartment.3');
