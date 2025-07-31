@@ -138,7 +138,7 @@
 
         </div>
 
-        @if(Auth::guard('admin')->user()->hasRole('super-admin'))
+        @if(Auth::guard('admin')->user()->hasRole('superAdmin'))
         <!-- ADMIN MANAGEMENT -->
         <div>
           <a href="{{ route('admin.approvals.index') }}" class="flex items-center px-4 py-2 rounded hover:bg-blue-200 transition text-blue-800 font-bold text-base">
@@ -182,6 +182,23 @@
     toggleButton.addEventListener('click', () => {
       sidebar.classList.toggle('-translate-x-full');
     });
+
+    // Prevent back navigation after logout
+    window.addEventListener('pageshow', function(event) {
+      if (event.persisted) {
+        window.location.href = '{{ route('admin.login') }}';
+      }
+    });
+
+    // Redirect to login on back button
+    window.addEventListener('popstate', function(event) {
+      window.location.href = '{{ route('admin.login') }}';
+    });
+
+    // Clear history on load
+    if (window.history.replaceState) {
+      window.history.replaceState(null, null, window.location.href);
+    }
   </script>
 </body>
 </html>

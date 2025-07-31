@@ -88,7 +88,7 @@
             <div class="flex flex-col space-y-2">
                 <a href="{{ route('admin.apartments') }}" class="text-center text-white px-4 py-2 rounded hover:opacity-90 transition" style="background-color: #1F8FB2;">Manage Properties</a>
                 <a href="{{ route('admin.customers') }}" class="text-center text-white px-4 py-2 rounded hover:opacity-90 transition" style="background-color: #3CC0E9;">Manage Users</a>
-                @if(Auth::guard('admin')->user()->hasRole('super-admin'))
+                @if(Auth::guard('admin')->user()->hasRole('superAdmin'))
                 <a href="{{ route('admin.approvals.index') }}" class="text-center bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 transition">Pending Admins</a>
                 @endif
             </div>
