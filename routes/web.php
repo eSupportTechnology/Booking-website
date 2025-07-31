@@ -458,6 +458,7 @@ Route::get('/partner-homes-complete-registration/{id}', [PropertyController::cla
 
 Route::post('/rooms', [RoomController::class, 'store'])->name('rooms.store');
 Route::post('/rooms/update-bathroom-details', [RoomController::class, 'updateBathroomDetails']);
+Route::post('/save-step-3-amenities', [RoomController::class, 'saveStep3Amenities']);
 
 Route::post('/store-step', function (\Illuminate\Http\Request $request) {
     session(['current_step' => $request->step]);

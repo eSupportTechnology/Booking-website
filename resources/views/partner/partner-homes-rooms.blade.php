@@ -126,6 +126,23 @@
                 .catch(err => {
                     console.error('Error saving bathroom details:', err);
                 });
+            },
+
+            async  saveStep3() {
+                const form = new FormData();
+                this.rooms.forEach(id => form.append('rooms[]', id));
+                document.querySelectorAll('input[name="amenities[]"]:checked').forEach(cb => {
+                    form.append('amenities[]', cb.value);
+                });
+                try {
+                    const response = await axios.post('/save-step-3-amenities', form);
+                    console.log(response.data);
+
+                    // Move to Step 4
+                    this.step++; // Alpine or Vue-controlled step change
+                } catch (error) {
+                    console.error('Error saving amenities', error.response?.data || error.message);
+                }
             }
         }
     }
@@ -618,79 +635,27 @@
 
 
                         <!-- Bathroom Amenities -->
-                        <div>
+                        @foreach ($groupedAmenities as $category => $items)
+                            <div>
+                                <label class="block font-semibold text-sm text-gray-700 mb-3">{{ $category }}</label>
 
-                            <label class="block font-semibold text-sm text-gray-700 mb-3">General Amenities</label>
+                                <div class="space-y-2">
+                                    @foreach ($items as $amenity)
+                                        <label class="flex items-center gap-3 cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                class="form-checkbox text-blue-500"
+                                                name="amenities[]"
+                                                value="{{ $amenity->id }}"
+                                            >
+                                            <span class="text-sm">{{ $amenity->name }}</span>
+                                        </label>
+                                    @endforeach
+                                </div>
 
-                            @php
-                            $amenities = [
-                            'Clothes rack',
-                            'Flat-screen TV',
-                            'Air conditioning',
-                            'Linen',
-                            'Desk',
-                            'Wake-up service',
-                            'Towels',
-                            'Wardrobe or closet',
-                            'Heating',
-                            'Fan',
-                            'Safety deposit box',
-                            'Towels/sheets (extra fee)',
-                            'Entire unit located on ground floor',
-                            ];
-                            @endphp
-
-                            <div class="space-y-2">
-                                @foreach ($amenities as $item)
-                                <label class="flex items-center gap-3 cursor-pointer">
-                                    <input type="checkbox" class="form-checkbox text-blue-500">
-                                    <span class="text-sm">{{ $item }}</span>
-                                </label>
-                                @endforeach
+                                <hr class="my-4" />
                             </div>
-                        </div>
-
-                        <div>
-                            <hr class="my-4">
-                            <label class="block font-semibold text-sm text-gray-700 mb-3">Outdoors and
-                                Views</label>
-
-                            @php
-                            $amenities = ['Balcony', 'Terrace', 'View'];
-                            @endphp
-
-                            <div class="space-y-2">
-                                @foreach ($amenities as $item)
-                                <label class="flex items-center gap-3 cursor-pointer">
-                                    <input type="checkbox" class="form-checkbox text-blue-500">
-                                    <span class="text-sm">{{ $item }}</span>
-                                </label>
-                                @endforeach
-                            </div>
-                        </div>
-                        <div>
-                            <hr class="my-4">
-                            <label class="block font-semibold text-sm text-gray-700 mb-3">Food and Drink</label>
-
-                            @php
-                            $amenities = [
-                            'Electric kettle',
-                            'Tea/Coffee maker',
-                            'Dining area',
-                            'Dining table',
-                            'Microwave',
-                            ];
-                            @endphp
-
-                            <div class="space-y-2">
-                                @foreach ($amenities as $item)
-                                <label class="flex items-center gap-3 cursor-pointer">
-                                    <input type="checkbox" class="form-checkbox text-blue-500">
-                                    <span class="text-sm">{{ $item }}</span>
-                                </label>
-                                @endforeach
-                            </div>
-                        </div>
+                        @endforeach
                     </div>
 
                     <!-- Tip Box Outside of Main Box -->
@@ -724,7 +689,7 @@
                     </button>
 
                     <!-- Continue Button -->
-                    <button type="submit" @click="step < 9 ? step++ : step"
+                    <button type="button" @click="saveStep3()"
                         class="px-6 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300 ml-[315px]">
                         Continue
                     </button>

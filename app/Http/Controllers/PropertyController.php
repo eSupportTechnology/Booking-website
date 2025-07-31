@@ -50,6 +50,7 @@ use App\Models\PartnerVerification;
 use App\Models\Language;
 use App\Models\RoomType;
 use App\DTOs\SaveFacilitiesDTO;
+use App\Models\Amenity;
 use Faker\Provider\ar_EG\Address;
 
 class PropertyController extends Controller
@@ -1288,8 +1289,10 @@ class PropertyController extends Controller
         $property = Property::findOrFail($propertyId);
         $roomTypes=RoomType::all();
         $bedTypes=BedType::all();
-        Log::info('Bed types found', ['bed_types' => $bedTypes]);
-        return view('partner.partner-homes-rooms', compact('property', 'roomTypes', 'bedTypes'));
+        $amenities=Amenity::all();
+        $groupedAmenities = $amenities->groupBy('category');
+
+        return view('partner.partner-homes-rooms', compact('property', 'roomTypes', 'bedTypes', 'groupedAmenities'));
     }
 
     public function showPrivateHomesImages($propertyId)
