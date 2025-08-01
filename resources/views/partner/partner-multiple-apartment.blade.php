@@ -2525,7 +2525,7 @@ You will be able to add more apartments or duplicate this one when you finish fi
 
                             // Function to handle continue logic
                             function handleContinueLogic(alpineData) {
-                                alert('handleContinue called on step ' + alpineData.step);
+                                // alert('handleContinue called on step ' + alpineData.step);
                                 console.log('=== handleContinue called ===');
                                 console.log('Current step:', alpineData.step);
                                 const propertyId = {{ $property->id ?? 'null' }};

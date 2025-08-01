@@ -209,7 +209,8 @@ Route::get('/customer-profile-create', function () {
     return view('frontend.customer-profile-create');
 })->name('customer.profile.create');
 
-Route::get('/partner-apartment-create-2', [PropertyController::class, 'showSingleApartmentForm2'])->name('partner.apartment.create.2');
+Route::get('/partner-apartment-create-2/{propertyId?}', [PropertyController::class, 'showSingleApartmentForm2'])->name('partner.apartment.create.2');
+Route::get('/partner/property/apartment/step2/{propertyId}', [PropertyController::class, 'showSingleApartmentForm2'])->name('partner.property.apartment.step2');
 
 Route::get('/partner-homes-create-1', function () {
     return view('frontend.partner-homes-create-form-1');
@@ -419,6 +420,8 @@ Route::prefix('partner')->middleware('auth')->group(function () {
     Route::get('/property/{property}/facilities', [PropertyDataController::class, 'getFacilities'])->name('partner.property.facilities.get');
     Route::post('/property/{property}/services', [PropertyController::class, 'saveServices'])->name('partner.property.services.store');
     Route::get('/property/{property}/services', [PropertyDataController::class, 'getServices'])->name('partner.property.services.get');
+    Route::post('/partner/property/{property}/services', [PropertyController::class, 'saveServices'])->name('partner.property.services.store');
+    Route::patch('/partner/property/{property}/additional-details', [PropertyController::class, 'updateAdditionalDetails'])->name('partner.property.update.additional-details');
     Route::post('/property/{property}/languages', [PropertyController::class, 'saveLanguages'])->name('partner.property.languages.store');
     Route::get('/property/{property}/languages', [PropertyDataController::class, 'getPropertyLanguages'])->name('partner.property.languages.get');
     Route::get('/property/{property}/verification', [PropertyDataController::class, 'getVerification'])->name('partner.property.verification.get');
@@ -426,6 +429,7 @@ Route::prefix('partner')->middleware('auth')->group(function () {
     // Add new routes for loading saved data
     Route::get('/property/{property}/details', [PropertyDataController::class, 'getPropertyDetails'])->name('partner.property.details.get');
     Route::get('/property/{property}/amenities', [PropertyDataController::class, 'getAmenities'])->name('partner.property.amenities.get');
+    Route::post('/property/{property}/amenities', [PropertyController::class, 'saveAmenities'])->name('partner.property.amenities.store');
     Route::get('/property/{property}/host-profile', [PropertyDataController::class, 'getHostProfile'])->name('partner.property.host-profile.get');
     Route::get('/property/{property}/pricing', [PropertyDataController::class, 'getPricing'])->name('partner.property.pricing.get');
     Route::get('/property/{property}/house-rules', [PropertyDataController::class, 'getHouseRules'])->name('partner.property.house-rules.get');
@@ -546,7 +550,32 @@ Route::get('/customer-myAccount', function () {
 Route::get('/partner/apartment/bedrooms/{property}', function ($propertyId) {
     $property = \App\Models\Property::findOrFail($propertyId);
     $bedTypes = \App\Models\BedType::all();
-    return view('partner.partner-apartments-bedrooms', compact('property', 'bedTypes'));
+    
+    // Fetch existing bedrooms for this property
+    $existingBedrooms = \App\Models\PropertyBedroom::where('property_id', $propertyId)->get();
+    
+    // Convert to rooms structure for frontend
+    $rooms = [
+        'bedroom1' => ['name' => 'Bedroom 1', 'twin' => 0, 'full' => 1, 'queen' => 0, 'king' => 0, 'bunk' => 0, 'sofa' => 0, 'futon' => 0],
+        'livingRoom' => ['name' => 'Living room', 'twin' => 0, 'full' => 0, 'queen' => 0, 'king' => 0, 'bunk' => 0, 'sofa' => 0, 'futon' => 0],
+        'otherSpaces' => ['name' => 'Other spaces', 'twin' => 0, 'full' => 0, 'queen' => 0, 'king' => 0, 'bunk' => 0, 'sofa' => 0, 'futon' => 0]
+    ];
+    
+    foreach ($existingBedrooms as $room) {
+        $roomKey = strtolower(str_replace(' ', '', $room->name));
+        $rooms[$roomKey] = [
+            'name' => $room->name,
+            'twin' => $room->twin ?? 0,
+            'full' => $room->full ?? 0,
+            'queen' => $room->queen ?? 0,
+            'king' => $room->king ?? 0,
+            'bunk' => $room->bunk ?? 0,
+            'sofa' => $room->sofa ?? 0,
+            'futon' => $room->futon ?? 0
+        ];
+    }
+    
+    return view('partner.partner-apartments-bedrooms', compact('property', 'bedTypes', 'rooms'));
 })->name('partner.apartment.bedrooms');
 
 // Temporary redirect for old URL pattern
