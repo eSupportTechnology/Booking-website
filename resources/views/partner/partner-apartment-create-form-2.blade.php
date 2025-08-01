@@ -3,20 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>create apartment</title>
+    <title>Create Apartment</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet" />
-    <!-- Vite assets (optional for Laravel Mix setup) -->
-    @vite(['resources/js/app.js'])
+    
     <style>
       body {
         font-family: 'Noto Sans', sans-serif;
       }
     </style>
+    
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <script>
       // Ensure CSRF token is always sent with fetch/AJAX requests
@@ -37,6 +37,20 @@
     </script>
   </head>
   <body class="bg-gray-50 text-gray-800">
+    <!-- Property Data from Backend -->
+    @if(isset($propertyData) && $propertyData)
+    <script id="property-data" type="application/json">
+        {!! json_encode($propertyData) !!}
+    </script>
+    <script>
+        console.log('Property data from backend:', {!! json_encode($propertyData) !!});
+    </script>
+    @else
+    <script>
+        console.log('No property data found in backend');
+    </script>
+    @endif
+    
     <!-- Header -->
     <header class="text-white px-4 py-2" style="background-color: #1f8fb2">
       <section class="py-4">
@@ -50,751 +64,49 @@
             <div class="flex items-center space-x-4 text-sm font-medium md:ml-auto font-sans">
               <!-- Help Icon -->
               <a href="/help" title="Help">
-                <img src="{{ asset('assets/question.svg') }}" alt="Help" class="w-6 h-6 md:w-7 md:h-7 cursor-pointer" />
+                <svg class="w-6 h-6 md:w-7 md:h-7 cursor-pointer" fill="white" viewBox="0 0 24 24">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/>
+                </svg>
               </a>
               <!-- Language Button -->
               <button
-                id="language-button"
                 type="button"
                 class="flex items-center justify-center w-8 h-8 bg-white rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-hidden"
                 title="Change Language"
-                x-data="{ isLanguageModalOpen: false }"
-                @click="isLanguageModalOpen = true"
+                @click="showLanguageModal = !showLanguageModal"
               >
-                <img src="{{ asset('images/uk.png') }}" alt="UK Flag" class="w-full h-full object-cover rounded-full" />
+                <span class="text-sm font-medium text-gray-800">EN</span>
               </button>
-              <!-- Language Modal -->
-              <div
-                x-data="{ isLanguageModalOpen: false }"
-                x-show="isLanguageModalOpen"
-                x-transition
-                id="language-modal"
-                class="fixed inset-0 z-50 overflow-y-auto flex items-start justify-center px-4 py-8 bg-black bg-opacity-50"
-              >
-                <div class="relative w-full max-w-md p-6 bg-white rounded-lg shadow">
-                  <!-- Modal Header -->
-                  <div class="flex items-start justify-between">
-                    <h3 class="text-xl font-semibold text-gray-900">Select your language</h3>
-                    <button
-                      type="button"
-                      class="close-btn text-gray-400 hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
-                      @click="isLanguageModalOpen = false"
-                    >
-                      <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                        <path
-                          fill-rule="evenodd"
-                          d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                          clip-rule="evenodd"
-                        />
-                      </svg>
-                      <span class="sr-only">Close modal</span>
-                    </button>
-                  </div>
-                  <!-- Modal Body -->
-                  <div class="mt-4">
-                    <p class="mb-4 text-base text-gray-500">Suggested for you</p>
-                    <div class="grid grid-cols-2 gap-4">
-                      <button class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100">
-                        <img src="https://flagcdn.com/w40/gb.png" alt="English (UK)" class="h-5 w-5" />
-                        <span>English (UK)</span>
-                      </button>
-                      <button class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100">
-                        <img src="https://flagcdn.com/w40/de.png" alt="Deutsch" class="h-5 w-5" />
-                        <span>Deutsch</span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
       </section>
     </header>
-    <!-- Alpine.js root with merged state and backend logic -->
+    
+    <!-- Main Alpine.js Application -->
     <div
-      x-data="{
-            // Wizard state// Language selection state (make sure these exist in main scope)
-            selectedLanguages: [],
-            availableLanguages: [],
-            showAdditionalLanguages: false,
-            searchTerm: '',
-            showDropdown: false,
-            filteredLanguages: [],
-          // Step navigation
-          step: 1,
-          wizardStep: 1,
-          propertyWizardStep: 1,
-          pricingWizardStep:1,
-          // Backend-connected state
-          propertyId: '{{ $property->id ?? 'new' }}', // Use 'new' if $property->id is not set
-          title: '{{ old('title', $property->title ?? '') }}',
-          address: '{{ old('address', $property->address ?? '') }}',
-          city: '{{ old('city', $property->city ?? '') }}',
-          country: 'Sri Lanka', // <-- Set the default value!
-          apartment: '',
-          zipcode: '{{ old('zipcode', $property->zipcode ?? '') }}',
-          description: '{{ old('description', $property->description ?? '') }}',
-          channelManager: 'yes', // or 'no' as default
-          isLoading: false,
-          // Property services state
-          breakfastServed: '', // 'yes' or 'no'
-          breakfastIncluded: '', // 'included' or 'extra'
-          breakfastTypes: [],
-          parkingAvailable: '', // 'free', 'paid', 'no'
-          parkingCost: '',
-          parkingCurrency: 'usd',
-          parkingRate: 'per_day',
-          parkingReservation: '', // 'needed', 'not_needed'
-          parkingLocation: '', // 'on_site', 'off_site'
-          parkingType: '', // 'private', 'public'
-          // Language selection state
-          selectedLanguages: [],
-          availableLanguages: [],
-          // Photo upload state
-          uploadedPhotos: [],
-
-          // Room and Bed Management State
-          rooms: {
-              'bedroom1': { name: 'Bedroom 1', twin: 0, full: 1, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 },
-              'livingRoom': { name: 'Living room', twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 },
-              'otherSpaces': { name: 'Other spaces', twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 }
-          },
-          currentEditingRoomId: null, // Tracks which room is currently being edited
-          tempBedCounts: { twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 }, // Temporary state for the modal
-          nextRoomIndex: 2, // For generating unique IDs for new bedrooms (e.g., bedroom2, bedroom3)
-          showBedTypeSelector: false,
-          showAllBedTypesInModal: false, // New state to control showing all bed types in the modal
-
-          // Methods for Room and Bed Management
-          openBedTypeSelector(roomId) {
-              this.currentEditingRoomId = roomId;
-              this.tempBedCounts = { ...this.rooms[roomId] };
-              // Set initial visibility of bed types based on the room
-              if (roomId === 'livingRoom') {
-                  this.showAllBedTypesInModal = false; // Start with only sofa bed visible
-              } else {
-                  this.showAllBedTypesInModal = true; // Start with all standard beds visible
-              }
-              this.showBedTypeSelector = true;
-          },
-          saveBedTypes() {
-              if (this.currentEditingRoomId) {
-                  // Save the temporary bed counts back to the actual room state
-                  this.rooms[this.currentEditingRoomId] = { ...this.rooms[this.currentEditingRoomId], ...this.tempBedCounts };
-              }
-              this.showBedTypeSelector = false;
-              this.currentEditingRoomId = null; // Clear the editing room
-          },
-          cancelBedTypes() {
-              // Just close the modal without saving changes from tempBedCounts
-              this.showBedTypeSelector = false;
-              this.currentEditingRoomId = null;
-          },
-          addBedroom() {
-              const newRoomId = `bedroom${this.nextRoomIndex++}`;
-              this.rooms[newRoomId] = { name: `Bedroom ${this.nextRoomIndex -1}`, twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 };
-              this.openBedTypeSelector(newRoomId);
-          },
-          getBedSummary(roomId) {
-              const beds = this.rooms[roomId];
-              if (!beds) return '0 beds'; // Handle newly added rooms before they are configured
-
-              const summaryParts = [];
-              if (beds.twin > 0) summaryParts.push(`${beds.twin} twin bed${beds.twin > 1 ? 's' : ''}`);
-              if (beds.full > 0) summaryParts.push(`${beds.full} full bed${beds.full > 1 ? 's' : ''}`);
-              if (beds.queen > 0) summaryParts.push(`${beds.queen} queen bed${beds.queen > 1 ? 's' : ''}`);
-              if (beds.king > 0) summaryParts.push(`${beds.king} king bed${beds.king > 1 ? 's' : ''}`);
-              if (beds.bunk > 0) summaryParts.push(`${beds.bunk} bunk bed${beds.bunk > 1 ? 's' : ''}`);
-              if (beds.sofa > 0) summaryParts.push(`${beds.sofa} sofa bed${beds.sofa > 1 ? 's' : ''}`);
-              if (beds.futon > 0) summaryParts.push(`${beds.futon} futon bed${beds.futon > 1 ? 's' : ''}`);
-
-              return summaryParts.length > 0 ? summaryParts.join(', ') : '0 beds';
-          },
-
-          // Backend methods (simplified, removed actual fetch for this example)
-          async saveName() {
-              if (!this.title.trim()) {
-                  alert('Please enter a property name');
-                  return;
-              }
-              this.isLoading = true;
-              // Simulate API call
-              await new Promise(resolve => setTimeout(resolve, 500));
-              this.isLoading = false;
-              this.wizardStep = 2;
-          },
-          async saveLocation() {
-              if (!this.address.trim() || !this.city.trim() || !this.country.trim()) {
-                  alert('Please fill in all required location fields');
-                  return;
-              }
-              this.isLoading = true;
-              const payload = {
-                  title: this.title,
-                  address: this.address,
-                  apartment:  null,
-                  city: this.city,
-                  country: this.country,
-                  zipcode: this.zipcode,
-                  description: this.description,
-                  subtype_id: this.subtype_id || null,
-                  address_type_id: this.address_type_id || null,
-                  channel_manager: this.channelManager,
-                  bedrooms: Object.values(this.rooms).map(room => {
-                      // Add room_type if not present
-                      return {
-                          room_type: room.name === 'Living room' ? 'living_room' : (room.name === 'Other spaces' ? 'other' : 'bedroom'),
-                          name: room.name,
-                          twin: room.twin || 0,
-                          full: room.full || 0,
-                          queen: room.queen || 0,
-                          king: room.king || 0,
-                          bunk: room.bunk || 0,
-                          sofa: room.sofa || 0,
-                          futon: room.futon || 0,
-                      };
-                  }),
-              };
-              console.log('Sending payload to backend:', payload);
-              try {
-                  let res = await fetch(`/partner/property/${this.propertyId}`, {
-                      method: 'PATCH',
-                      headers: {
-                          'Content-Type': 'application/json',
-                          'Accept': 'application/json',
-                          'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
-                      },
-                      body: JSON.stringify(payload)
-                  });
-                  let data = await res.json();
-                  if (res.ok && data.success) {
-                      this.wizardStep = 3;
-                  } else {
-                      alert('Error: ' + (data.message || 'Could not update location.'));
-                  }
-              } catch (err) {
-                  alert('AJAX error: ' + err.message);
-              } finally {
-                  this.isLoading = false;
-              }
-          },
-          async saveChannelManager() {
-              this.isLoading = true;
-              // Simulate API call
-              await new Promise(resolve => setTimeout(resolve, 500));
-              this.isLoading = false;
-              this.step = 2;
-              this.propertyWizardStep = 1;
-          },
-          savePropertyDetails() {
-            // Add this debug logging
-    console.log('Current wizard step:', this.propertyWizardStep);
-    console.log('Selected languages before save:', this.selectedLanguages);
-          const payload = {
-        guests: this.guests,
-        bathrooms: this.bathrooms,
-        allow_children: this.allowChildren,
-        offer_cribs: this.offerCribs,
-        apartment_size: this.apartmentSize,
-        apartment_unit: this.apartmentUnit,
-        breakfast_served: this.breakfastServed,
-        breakfast_included: this.breakfastIncluded,
-        breakfast_types: this.breakfastTypes,
-        parking_available: this.parkingAvailable,
-        parking_cost: this.parkingCost,
-        parking_currency: this.parkingCurrency,
-        parking_rate: this.parkingRate,
-        parking_reservation: this.parkingReservation,
-        parking_location: this.parkingLocation,
-        parking_type: this.parkingType,
-        languages: this.selectedLanguages,
-        check_in_from: this.checkInFrom,
-        check_in_until: this.checkInUntil,
-        check_out_from: this.checkOutFrom,
-        check_out_until: this.checkOutUntil,
-    };
-    
-    // Log the complete payload
-    console.log('Payload being sent:', payload);
-    
-    this.isLoading = true;
-
-    // Helper to parse JSON safely
-    const parseJsonResponse = async (res, contextLabel) => {
-        const contentType = res.headers.get('content-type') || '';
-        const text = await res.text();
-
-        if (!res.ok) {
-            throw new Error(`HTTP ${res.status}: ${text.substring(0, 300)}`);
-        }
-
-        if (contentType.includes('application/json')) {
-            try {
-                return JSON.parse(text);
-            } catch (e) {
-                console.error(`${contextLabel} - JSON parse error`, text);
-                throw new Error('Failed to parse JSON response from server.');
-            }
-        } else {
-            console.error(`${contextLabel} - Expected JSON, got HTML/text:`, text);
-            throw new Error(`Unexpected server response format from ${contextLabel}.`);
-        }
-    };
-
-    // Main fetch
-    fetch(`/partner/property/${this.propertyId}`, {
-        method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
-        },
-        body: JSON.stringify(payload)
-    })
-    .then(res => parseJsonResponse(res, 'property update'))
-    .then(data => {
-        if (data && data.success) {
-            // Only save amenities if on step 2
-            if (this.propertyWizardStep === 2) {
-                return fetch(`/partner/property/${this.propertyId}/amenities`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
-                    },
-                    body: JSON.stringify({ amenities: this.selectedAmenities })
-                })
-                .then(res => parseJsonResponse(res, 'amenities save'))
-                .then(data => {
-                    if (data && data.success) {
-                        this.propertyWizardStep++;
-                    } else {
-                        alert(data.message || 'Could not save amenities.');
-                    }
-                });
-            } else {
-                this.propertyWizardStep++;
-            }
-        } else {
-            throw new Error(data && data.message ? data.message : 'Could not update property details.');
-        }
-    })
-    .catch(err => {
-        alert('Error: ' + err.message);
-        console.error(err);
-    })
-    .finally(() => {
-        this.isLoading = false;
-    });
-},
-
-          // Photo upload methods
-          isUploading: false,
-          uploadedPhotos: [],
-          hostProfile: {
-        about_property: '',
-        about_host: '',
-        about_neighborhood: '',
-        show_property: false,
-        show_host: false,
-        show_neighborhood: false,
-        none_selected: false,
-        host_name: ''
-    },
-      saveHostProfile() {
-    const payload = {
-        property_id: this.propertyId,
-        about_property: this.hostProfile.about_property,
-        about_host: this.hostProfile.about_host,
-        about_neighborhood: this.hostProfile.about_neighborhood,
-        show_property: this.hostProfile.show_property,
-        show_host: this.hostProfile.show_host,
-        show_neighborhood: this.hostProfile.show_neighborhood,
-        none_selected: this.hostProfile.none_selected,
-        host_name: this.hostProfile.host_name,
-    };
-    this.isLoading = true;
-    fetch('/partner/property/' + this.propertyId + '/host-profile', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
-        },
-        body: JSON.stringify(payload)
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            this.propertyWizardStep++;
-        } else {
-            alert(data.message || 'Could not save host profile.');
-        }
-    })
-    .catch(err => {
-        alert('AJAX error: ' + err.message);
-    })
-    .finally(() => {
-        this.isLoading = false;
-    });
-},
-          handleUpload(event) {
-            const files = Array.from(event.target.files).slice(0, 5 - this.uploadedPhotos.length);
-            files.forEach(file => {
-              const url = URL.createObjectURL(file);
-              this.uploadedPhotos.push({ file, url });
-            });
-          },
-          handleUploadDrop(event) {
-            const dt = event.dataTransfer;
-            if (!dt) return;
-            const files = Array.from(dt.files).slice(0, 5 - this.uploadedPhotos.length);
-            files.forEach(file => {
-              const url = URL.createObjectURL(file);
-              this.uploadedPhotos.push({ file, url });
-            });
-          },
-          removePhoto(index) {
-            this.uploadedPhotos.splice(index, 1);
-          },
-          
-          guests: 4,
-          bathrooms: 2,
-          allowChildren: 'yes',
-          offerCribs: 'no',
-          apartmentSize: 100,
-          apartmentUnit: 'square meters',
-          saveAdditionalDetails() {
-              // Check if propertyId is valid
-              if (!this.propertyId || this.propertyId === 'new') {
-                  alert('Property ID is missing. Please refresh the page.');
-                  return;
-              }
-
-              // For step 4 (languages), use dedicated language route
-              if (this.propertyWizardStep === 4) {
-                  console.log('Saving languages for step 4:', this.selectedLanguages);
-                  
-                  const payload = {
-                      languages: this.selectedLanguages
-                  };
-                  
-                  this.isLoading = true;
-                  
-                  fetch(`/partner/property/${this.propertyId}/languages`, {
-                      method: 'POST',
-                      headers: {
-                          'Content-Type': 'application/json',
-                          'Accept': 'application/json',
-                          'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
-                      },
-                      body: JSON.stringify(payload)
-                  })
-                  .then(async res => {
-                      const data = await res.json();
-                      if (res.ok && data.success) {
-                          console.log('Languages saved successfully:', data);
-                          this.propertyWizardStep++;
-                      } else {
-                          console.error('Language save error:', data);
-                          alert('Error: ' + (data.message || 'Could not save languages.'));
-                      }
-                  })
-                  .catch(err => {
-                      console.error('AJAX error:', err);
-                      alert('AJAX error: ' + err.message);
-                  })
-                  .finally(() => {
-                      this.isLoading = false;
-                  });
-                  
-                  return; // Exit early for language step
-              }
-
-              // For other steps, use the existing logic
-              const payload = {
-                  guests: this.guests,
-                  bathrooms: this.bathrooms,
-                  children_allowed: this.allowChildren === 'yes',
-                  offer_cribs: this.offerCribs,
-                  apartment_size: this.apartmentSize,
-                  apartment_unit: this.apartmentUnit,
-                  serve_breakfast: this.breakfastServed === 'yes',
-                  breakfast_included: this.breakfastIncluded,
-                  breakfast_type: this.breakfastTypes,
-                  parking_available: this.parkingAvailable,
-                  parking_cost: this.parkingCost,
-                  parking_reservation: this.parkingReservation,
-                  parking_location: this.parkingLocation,
-                  parking_type: this.parkingType,
-              };
-              this.isLoading = true;
-
-              // If on the services step, POST to /services, otherwise PATCH additional-details
-              if (this.propertyWizardStep === 3) {
-                  fetch(`/partner/property/${this.propertyId}/services`, {
-                      method: 'POST',
-                      headers: {
-                          'Content-Type': 'application/json',
-                          'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
-                      },
-                      body: JSON.stringify(payload)
-                  })
-                  .then(async res => {
-                      let text = await res.text();
-                      try {
-                          return JSON.parse(text);
-                      } catch (e) {
-                          console.error('Non-JSON response from services POST:', text);
-                          alert('Server error (services save):\n' + text.substring(0, 500));
-                          throw new Error('Non-JSON response from services POST');
-                      }
-                  })
-                  .then(data => {
-                      if (data && data.success) {
-                          this.propertyWizardStep++;
-                      } else {
-                          alert('Error: ' + (data && data.message ? data.message : 'Could not save services.'));
-                      }
-                  })
-                  .catch(err => {
-                      alert('AJAX error: ' + err.message);
-                  })
-                  .finally(() => {
-                      this.isLoading = false;
-                  });
-              } else {
-                  fetch(`/partner/property/${this.propertyId}/additional-details`, {
-                      method: 'PATCH',
-                      headers: {
-                          'Content-Type': 'application/json',
-                          'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
-                      },
-                      body: JSON.stringify(payload)
-                  })
-                  .then(async res => {
-                      const contentType = res.headers.get('content-type');
-                      if (contentType && contentType.includes('application/json')) {
-                          return res.json();
-                      } else {
-                          const text = await res.text();
-                          throw new Error('Server did not return JSON: ' + text.substring(0, 200));
-                      }
-                  })
-                  .then(data => {
-                      if (data.success) {
-                          this.propertyWizardStep++;
-                      } else {
-                          alert('Error: ' + (data.message || 'Could not update additional details.'));
-                      }
-                  })
-                  .catch(err => {
-                      alert('AJAX error: ' + err.message);
-                  })
-                  .finally(() => {
-                      this.isLoading = false;
-                  });
-              }
-          },
-          selectedAmenities: [],
-          propertyCount: 1,
-          owners: [
-            { firstName: '', address: '', zipCode: '', city: '', country: '' }
-          ],
-          ownershipType: '', // 'individual' or 'business'
-          // For individual
-          individual: { firstName: '', lastName: '', dob: '', altNames: [] },
-          // For business entity
-          business: {
-            businessName: '',
-            tradingName: '',
-            address: '',
-            zipCode: '',
-            city: '',
-            country: '',
-            owners: [
-              { firstName: '', lastName: '', dob: '', altNames: [] }
-            ]
-          },
-          
-async loadLanguages() {
-    try {
-        console.log('Loading languages...');
-        const response = await fetch('/partner/languages');
-        const languages = await response.json();
-        console.log('Languages loaded:', languages);
-        
-        this.availableLanguages = languages;
-        this.filteredLanguages = languages;
-    } catch (error) {
-        console.error('Error loading languages:', error);
-    }
-},
-
-filterLanguages() {
-  if (!this.searchTerm) {
-    this.filteredLanguages = this.availableLanguages;
-  } else {
-    this.filteredLanguages = this.availableLanguages.filter(lang => 
-      lang.name.toLowerCase().includes(this.searchTerm.toLowerCase())
-    );
-  }
-},
-
-selectLanguage(languageId, languageName) {
-    console.log('selectLanguage called with:', { languageId, languageName });
-    console.log('selectedLanguages before:', this.selectedLanguages);
-    
-    if (!this.selectedLanguages.includes(languageId)) {
-        this.selectedLanguages.push(languageId);
-        console.log('Language added. selectedLanguages after:', this.selectedLanguages);
-    } else {
-        console.log('Language already selected');
-    }
-    
-    this.showDropdown = false;
-    this.searchTerm = '';
-    this.filteredLanguages = this.availableLanguages;
-},
-
-removeLanguage(languageId) {
-    console.log('removeLanguage called with:', languageId);
-    console.log('selectedLanguages before removal:', this.selectedLanguages);
-    
-    const index = this.selectedLanguages.indexOf(languageId);
-    if (index > -1) {
-        this.selectedLanguages.splice(index, 1);
-        console.log('Language removed. selectedLanguages after:', this.selectedLanguages);
-    } else {
-        console.log('Language not found in array');
-    }
-},
-
-getLanguageName(languageId) {
-  const language = this.availableLanguages.find(lang => lang.id === languageId);
-  return language ? language.name : '';
-},
-
-isLanguageSelected(languageId) {
-  return this.selectedLanguages.includes(languageId);
-},
-
-toggleAdditionalLanguages() {
-  this.showAdditionalLanguages = !this.showAdditionalLanguages;
-  if (this.showAdditionalLanguages && this.availableLanguages.length === 0) {
-    this.loadLanguages();
-  }
-},
-
-async saveHouseRules() {
-    const payload = {
-        property_id: this.propertyId,
-        smoking_allowed: this.smokingAllowed,
-        children_allowed: this.allowChildren === 'yes',
-        parties_allowed: this.partiesAllowed,
-        pets_allowed: this.petsAllowed,
-        pets_fees: this.petsFees === 'fees' ? 'charges' : this.petsFees,
-        check_in_from: this.checkInFrom,
-        check_in_until: this.checkInUntil,
-        check_out_from: this.checkOutFrom,
-        check_out_until: this.checkOutUntil,
-        cancellation_policy: 'flexible', // or whatever value you want
-    };
-    this.isLoading = true;
-    try {
-        const res = await fetch('/partner/property/' + this.propertyId + '/policy', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
-            },
-            body: JSON.stringify(payload)
-        });
-        const data = await res.json();
-        if (data.success) {
-            this.propertyWizardStep++;
-        } else {
-            alert(data.message || 'Could not save house rules.');
-        }
-    } catch (err) {
-        alert('AJAX error: ' + err.message);
-    } finally {
-        this.isLoading = false;
-    }
-},
-
-
-    smokingAllowed: false,
-    partiesAllowed: false,
-    petsAllowed: 'no',
-    petsFees: 'free',
-    checkInFrom: '15:00',
-    checkInUntil: '18:00',
-    checkOutFrom: '08:00',
-    checkOutUntil: '11:00',
-   pricing: {
-    booking_type: 'instant',
-    price_per_night: '',
-    currency: 'usd',
-    discount_enabled: false,
-    discount_percent: 0,
-},
-hostProfile: {
-    about_property: '',
-    about_host: '',
-    about_neighborhood: '',
-    show_property: false,
-    show_host: false,
-    show_neighborhood: false,
-    none_selected: false,
-    host_name: ''
-},
-savePricing() {
-    const payload = {
-        property_id: this.propertyId,
-        booking_type: this.pricing.booking_type,
-        price_per_night: this.pricing.price_per_night,
-        currency: this.pricing.currency,
-        discount_enabled: this.pricing.discount_enabled,
-        discount_percent: this.pricing.discount_percent,
-    };
-    this.isLoading = true;
-    fetch('/partner/property/' + this.propertyId + '/pricing', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
-        },
-        body: JSON.stringify(payload)
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            if (this.pricingWizardStep === 4) { // <-- replace 4 with your last pricing step number
-                this.step = 5; // Move to legal info
-                // Optionally reset pricingWizardStep
-                // this.pricingWizardStep = 1;
-            } else {
-                this.pricingWizardStep++;
-            }
-        } else {
-            alert(data.message || 'Could not save pricing.');
-        }
-    })
-    .catch(err => {
-        alert('AJAX error: ' + err.message);
-    })
-    .finally(() => {
-        this.isLoading = false;
-    });
-},
-      }"
-      x-init="console.log('Wizard initialized', { title, address, city, country, zipcode, description })"
+      x-data="wizardApp()"
+      x-init="console.log('Alpine.js initialized'); console.log('testValue:', testValue);"
     >
-      <div x-data="{ step: 1, wizardStep: 1 , propertyWizardStep: 1 }">
+        <!-- Debug Panel (remove in production) -->
+        <div x-data="{ showDebug: false }" class="fixed top-4 right-4 z-50">
+          <button @click="showDebug = !showDebug" class="bg-blue-600 text-white px-3 py-1 rounded text-sm">
+            Debug Panel
+          </button>
+          <div x-show="showDebug" x-transition class="bg-white border rounded-lg p-4 mt-2 shadow-lg max-w-md">
+            <h3 class="font-bold mb-2">Wizard State</h3>
+            <div class="text-xs space-y-1">
+              <div>Main Step: <span x-text="step"></span></div>
+              <div>Wizard Step: <span x-text="wizardStep"></span></div>
+              <div>Property Wizard Step: <span x-text="propertyWizardStep"></span></div>
+              <div>Pricing Wizard Step: <span x-text="pricingWizardStep"></span></div>
+              <div>Bedroom Step: <span x-text="bedroomStep"></span></div>
+            </div>
+            <button @click="logCurrentState()" class="mt-2 bg-gray-600 text-white px-2 py-1 rounded text-xs">
+              Log Current State
+            </button>
+          </div>
+        </div>
         <!-- Sticky Top Navbar -->
         <nav class="border-b shadow-sm sticky top-0 z-50">
           <div class="max-w-full mx-auto px-4 py-3">
@@ -810,7 +122,7 @@ savePricing() {
                 <div class="relative">
                   <!-- Tab Label -->
                   <div
-                    @click="step = index + 1"
+                    @click="navigateToStep(index + 1)"
                     class="flex items-center space-x-1 cursor-pointer transition duration-200"
                     :class="step === index + 1 ? 'text-blue-600' : 'text-gray-700'"
                   >
@@ -887,6 +199,7 @@ savePricing() {
                             id="property_name"
                             name="property_name"
                             x-model="title"
+                            @input="logInputChange('title', $event.target.value)"
                             class="w-full h-16 border border-gray-300 rounded p-4 mt-3 text-lg focus:outline-none focus:border-blue-500"
                             placeholder="e.g., Sunset Villa"
                             required
@@ -976,9 +289,12 @@ savePricing() {
                         <button
                           type="button"
                           @click="saveName"
-                          class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300"
+                          :disabled="isLoading"
+                          :class="isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'"
+                          class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded focus:outline-none focus:ring focus:ring-blue-300"
                         >
-                          Continue
+                          <span x-show="!isLoading">Continue</span>
+                          <span x-show="isLoading">Saving...</span>
                         </button>
                       </div>
                     </div>
@@ -1007,6 +323,7 @@ savePricing() {
                           id="address"
                           name="address"
                           x-model="address"
+                          @input="logInputChange('address', $event.target.value)"
                           class="mt-1 p-2 w-full border border-gray-300 rounded"
                         />
                       </div>
@@ -1019,6 +336,7 @@ savePricing() {
                           id="apartment"
                           name="apartment"
                           x-model="apartment"
+                          @input="logInputChange('apartment', $event.target.value)"
                           placeholder="Apartment or floor number (optional)"
                           class="mt-1 p-2 w-full border border-gray-300 rounded"
                         />
@@ -1029,6 +347,7 @@ savePricing() {
                           id="country"
                           name="country"
                           x-model="country"
+                          @change="logInputChange('country', $event.target.value)"
                           class="mt-1 p-2 w-full border border-gray-300 rounded"
                         >
                           <option value="Sri Lanka">Sri Lanka</option>
@@ -1042,6 +361,7 @@ savePricing() {
                             id="city"
                             name="city"
                             x-model="city"
+                            @input="logInputChange('city', $event.target.value)"
                             class="mt-1 p-2 w-full border border-gray-300 rounded"
                           />
                         </div>
@@ -1054,6 +374,7 @@ savePricing() {
                             id="postcode"
                             name="postcode"
                             x-model="zipcode"
+                            @input="logInputChange('zipcode', $event.target.value)"
                             class="mt-1 p-2 w-full border border-gray-300 rounded"
                           />
                         </div>
@@ -1106,9 +427,12 @@ savePricing() {
                         <button
                           type="submit"
                           @click="saveLocation"
-                          class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300"
+                          :disabled="isLoading"
+                          :class="isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'"
+                          class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded focus:outline-none focus:ring focus:ring-blue-300"
                         >
-                          Continue
+                          <span x-show="!isLoading">Continue</span>
+                          <span x-show="isLoading">Saving...</span>
                         </button>
                       </div>
                     </div>
@@ -1192,9 +516,12 @@ savePricing() {
                         <button
                           type="button"
                           @click="saveChannelManager"
-                          class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300"
+                          :disabled="isLoading"
+                          :class="isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'"
+                          class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded focus:outline-none focus:ring focus:ring-blue-300"
                         >
-                          Continue
+                          <span x-show="!isLoading">Continue</span>
+                          <span x-show="isLoading">Saving...</span>
                         </button>
                       </div>
                     </div>
@@ -1213,40 +540,57 @@ savePricing() {
     <div class="max-w-xl mx-auto space-y-8 lg:ml-32 px-4 py-6">
 
       <h2 class="text-2xl font-bold text-gray-900 mt-8">What can guests use at your place?</h2>
-      <!-- Where can people sleep -->
-      <div class="bg-white p-4 rounded-lg shadow space-y-4">
-        <h2 class="text-lg font-semibold">Where can people sleep?</h2>
-        <div class="flex flex-col gap-4">
-          <template x-for="(room, roomId) in rooms" :key="roomId">
-            <a
-              :href="'/partner/apartment/bedrooms/' + propertyId + '/' + roomId"
-              class="block"
-            >
-              <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer flex justify-between items-center">
-                <div>
-                  <p class="text-sm" x-text="room.name"></p>
-                  <p class="text-sm text-gray-600" x-text="getBedSummary(roomId)"></p>
+              <!-- Where can people sleep -->
+        <div class="bg-white p-4 rounded-lg shadow space-y-4">
+          <h2 class="text-lg font-semibold">Where can people sleep?</h2>
+          <div class="flex flex-col gap-4">
+            <!-- Default rooms (bedroom1, livingRoom, otherSpaces) -->
+            <template x-for="(room, roomId) in rooms" :key="roomId">
+              <template x-if="roomId === 'bedroom1' || roomId === 'livingRoom' || roomId === 'otherSpaces'">
+                <a
+                  @click.prevent="navigateToBedroom(roomId)"
+                  href="#"
+                  class="block"
+                >
+                  <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer flex justify-between items-center">
+                    <div>
+                      <p class="text-sm" x-text="room.name"></p>
+                      <p class="text-sm text-gray-600" x-text="getBedSummary(roomId)"></p>
+                    </div>
+                    <span class="text-xs text-blue-600 hover:underline">Edit</span>
+                  </div>
+                </a>
+              </template>
+            </template>
+            
+            <!-- Additional bedrooms from bedroom page -->
+            <template x-for="(room, key) in rooms" :key="key">
+              <template x-if="key !== 'bedroom1' && key !== 'livingRoom' && key !== 'otherSpaces'">
+                <div class="border border-green-300 bg-green-50 rounded px-3 py-2 w-96 flex justify-between items-center">
+                  <div>
+                    <p class="text-sm font-medium" x-text="room.name"></p>
+                    <p class="text-sm text-gray-600" x-text="getSavedRoomBedSummary(room)"></p>
+                    <p class="text-xs text-green-600">✓ Saved</p>
+                  </div>
+                  <span class="text-xs text-blue-600 hover:underline cursor-pointer" @click="editSavedRoom(key)">Edit</span>
                 </div>
-                <span class="text-xs text-blue-600 hover:underline">Edit</span>
-              </div>
-            </a>
-          </template>
-        </div>
-        <!-- Add Bedroom Button -->
-        <button type="button" @click="addBedroom" class="text-blue-600 hover:underline text-sm flex items-center space-x-1 mt-2">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
-               viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M12 4v16m8-8H4"/>
-          </svg>
-          <a
-            :href="'/partner/apartment/bedrooms/' + propertyId + '?source=single&step=1'"
-            class="text-blue-600 hover:underline text-sm flex items-center space-x-1"
+              </template>
+            </template>
+          </div>
+          <!-- Add Bedroom Button -->
+          <button 
+            type="button" 
+            @click="navigateToBedroom()" 
+            class="text-blue-600 hover:underline text-sm flex items-center space-x-1 mt-2"
           >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+                 viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 4v16m8-8H4"/>
+            </svg>
             <span>Add Bedroom</span>
-          </a>
-        </button>
-      </div>
+          </button>
+        </div>
 
       <!-- Guests and Bathrooms -->
       <div class="bg-white p-4 rounded-lg shadow space-y-4 w-full max-w-xl">
@@ -1346,6 +690,9 @@ savePricing() {
       <div class="max-w-2xl mx-auto space-y-8 lg:ml-32">
         <!-- Heading -->
         <h2 class="text-2xl font-bold text-gray-900 mt-8">What can guests use at your place?</h2>
+        
+        
+        
         <!-- Amenities Section Container -->
         <div class="bg-white rounded-lg shadow-sm p-6 space-y-6">
           @foreach ($groupedAmenities as $category => $items)
@@ -1404,10 +751,10 @@ savePricing() {
             <p class="font-semibold text-sm text-gray-800 mb-2">Do you serve guests breakfast?</p>
             <div class="flex flex-col text-sm gap-2">
               <label>
-                <input type="radio" name="serve_breakfast" value="yes" x-model="breakfastServed" class="mr-2"> Yes
+                <input type="radio" name="serve_breakfast" value="yes" x-model="breakfastServed" @change="logBreakfastChange('breakfastServed', $event.target.value)" class="mr-2"> Yes
               </label>
               <label>
-                <input type="radio" name="serve_breakfast" value="no" x-model="breakfastServed" class="mr-2"> No
+                <input type="radio" name="serve_breakfast" value="no" x-model="breakfastServed" @change="logBreakfastChange('breakfastServed', $event.target.value)" class="mr-2"> No
               </label>
             </div>
           </div>
@@ -1416,10 +763,10 @@ savePricing() {
             <p class="font-semibold text-sm text-gray-800 mb-2">Is breakfast included in the price guests pay?</p>
             <div class="flex flex-col text-sm gap-2">
               <label>
-                <input type="radio" name="breakfast_included" value="included" x-model="breakfastIncluded" class="mr-2"> Yes, it's included
+                <input type="radio" name="breakfast_included" value="included" x-model="breakfastIncluded" @change="logBreakfastChange('breakfastIncluded', $event.target.value)" class="mr-2"> Yes, it's included
               </label>
               <label>
-                <input type="radio" name="breakfast_included" value="extra" x-model="breakfastIncluded" class="mr-2"> No, it costs extra
+                <input type="radio" name="breakfast_included" value="extra" x-model="breakfastIncluded" @change="logBreakfastChange('breakfastIncluded', $event.target.value)" class="mr-2"> No, it costs extra
               </label>
             </div>
           </div>
@@ -1440,7 +787,8 @@ savePricing() {
                 >
                   <input type="checkbox" class="hidden"
                          :value="'{{ $option }}'"
-                         x-model="breakfastTypes">
+                         x-model="breakfastTypes"
+                         @change="logBreakfastChange('breakfastTypes', breakfastTypes)">
                   {{ $option }}
                 </label>
               @endforeach
@@ -1456,13 +804,13 @@ savePricing() {
             <p class="text-sm font-semibold text-gray-800 mb-2">Is parking available to guests?</p>
             <div class="flex flex-col text-sm gap-2">
               <label>
-                <input type="radio" name="parking_available" value="free" x-model="parkingAvailable" class="mr-2"> Yes, free
+                <input type="radio" name="parking_available" value="free" x-model="parkingAvailable" @change="logParkingChange('parkingAvailable', $event.target.value)" class="mr-2"> Yes, free
               </label>
               <label>
-                <input type="radio" name="parking_available" value="paid" x-model="parkingAvailable" class="mr-2"> Yes, paid
+                <input type="radio" name="parking_available" value="paid" x-model="parkingAvailable" @change="logParkingChange('parkingAvailable', $event.target.value)" class="mr-2"> Yes, paid
               </label>
               <label>
-                <input type="radio" name="parking_available" value="no" x-model="parkingAvailable" class="mr-2"> No
+                <input type="radio" name="parking_available" value="no" x-model="parkingAvailable" @change="logParkingChange('parkingAvailable', $event.target.value)" class="mr-2"> No
               </label>
             </div>
           </div>
@@ -1473,7 +821,7 @@ savePricing() {
             <div class="flex flex-col sm:flex-row items-center gap-4">
               <!-- Input + Currency Select Wrapper -->
               <div class="relative w-full max-w-xs">
-                <select x-model="parkingCurrency" class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-transparent text-gray-700 text-sm pr-1 pl-1 focus:outline-none">
+                <select x-model="parkingCurrency" @change="logParkingChange('parkingCurrency', $event.target.value)" class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-transparent text-gray-700 text-sm pr-1 pl-1 focus:outline-none">
                   <option value="usd">US$</option>
                   <option value="eur">€</option>
                   <option value="gbp">£</option>
@@ -1482,11 +830,12 @@ savePricing() {
                 <input
                   type="text"
                   x-model="parkingCost"
+                @input="logParkingChange('parkingCost', $event.target.value)"
                   class="w-full border border-gray-400 rounded-md pl-16 pr-2 py-2 text-gray-700 font-semibold focus:ring-2 focus:ring-blue-300 focus:outline-none"
                 />
               </div>
               <!-- Rate Select -->
-              <select x-model="parkingRate" class="border border-gray-300 rounded px-3 py-2 w-32 text-sm text-gray-700">
+                              <select x-model="parkingRate" @change="logParkingChange('parkingRate', $event.target.value)" class="border border-gray-300 rounded px-3 py-2 w-32 text-sm text-gray-700">
                 <option value="per_day">Per day</option>
                 <option value="per_stay">Per stay</option>
               </select>
@@ -1497,10 +846,10 @@ savePricing() {
             <p class="font-semibold text-sm text-gray-800 mb-2">Do guests need to reserve a parking spot?</p>
             <div class="flex flex-col text-sm gap-2">
               <label>
-                <input type="radio" name="parking_reservation" value="needed" x-model="parkingReservation" class="mr-2"> Reservation needed
+                <input type="radio" name="parking_reservation" value="needed" x-model="parkingReservation" @change="logParkingChange('parkingReservation', $event.target.value)" class="mr-2"> Reservation needed
               </label>
               <label>
-                <input type="radio" name="parking_reservation" value="not_needed" x-model="parkingReservation" class="mr-2"> No reservation needed
+                <input type="radio" name="parking_reservation" value="not_needed" x-model="parkingReservation" @change="logParkingChange('parkingReservation', $event.target.value)" class="mr-2"> No reservation needed
               </label>
             </div>
           </div>
@@ -1509,10 +858,10 @@ savePricing() {
             <p class="font-semibold text-sm text-gray-800 mb-2">Where is the parking located?</p>
             <div class="flex flex-col text-sm gap-2">
               <label>
-                <input type="radio" name="parking_location" value="on_site" x-model="parkingLocation" class="mr-2"> On site
+                <input type="radio" name="parking_location" value="on_site" x-model="parkingLocation" @change="logParkingChange('parkingLocation', $event.target.value)" class="mr-2"> On site
               </label>
               <label>
-                <input type="radio" name="parking_location" value="off_site" x-model="parkingLocation" class="mr-2"> Off site
+                <input type="radio" name="parking_location" value="off_site" x-model="parkingLocation" @change="logParkingChange('parkingLocation', $event.target.value)" class="mr-2"> Off site
               </label>
             </div>
           </div>
@@ -1521,10 +870,10 @@ savePricing() {
             <p class="font-semibold text-sm text-gray-800 mb-2">What type of parking is it?</p>
             <div class="flex flex-col text-sm gap-2">
               <label>
-                <input type="radio" name="parking_type" value="private" x-model="parkingType" class="mr-2"> Private
+                <input type="radio" name="parking_type" value="private" x-model="parkingType" @change="logParkingChange('parkingType', $event.target.value)" class="mr-2"> Private
               </label>
               <label>
-                <input type="radio" name="parking_type" value="public" x-model="parkingType" class="mr-2"> Public
+                <input type="radio" name="parking_type" value="public" x-model="parkingType" @change="logParkingChange('parkingType', $event.target.value)" class="mr-2"> Public
               </label>
             </div>
           </div>
@@ -1606,7 +955,7 @@ savePricing() {
             <input
               type="text"
               x-model="searchTerm"
-              @input="filterLanguages()"
+              @input="filterLanguages(); logLanguageChange('searchTerm', $event.target.value)"
               @focus="showDropdown = true"
               @click="showDropdown = true"
               placeholder="Search languages..."
@@ -1616,7 +965,7 @@ savePricing() {
             <!-- Dropdown arrow -->
             <button
               type="button"
-              @click="showDropdown = !showDropdown"
+              @click="showDropdown = !showDropdown; logLanguageChange('showDropdown', !showDropdown)"
               class="absolute right-2 top-2.5 text-gray-600 hover:text-gray-900 focus:outline-none"
               tabindex="-1"
             >
@@ -1644,7 +993,7 @@ savePricing() {
         <!-- Toggle Button for Additional Languages -->
         <button
           type="button"
-          @click="toggleAdditionalLanguages()"
+          @click="toggleAdditionalLanguages(); logLanguageChange('showAdditionalLanguages', !showAdditionalLanguages)"
           class="text-blue-500 hover:underline mt-4 block"
         >
           <span x-text="showAdditionalLanguages ? 'Hide additional languages' : 'Add additional languages'"></span>
@@ -2159,7 +1508,7 @@ savePricing() {
     <div class="flex justify-between items-center">
       <button  @click="pricingWizardStep--"      class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
           ←</button>
-      <button  @click="pricingWizardStep++" class="  px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500">Continue</button>
+      <button  @click="savePricing()" class="  px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500">Continue</button>
     </div>
   </div>
 </template>
@@ -2767,7 +2116,7 @@ function calendarComponent() {
         <label class="block font-semibold text-gray-900 mb-2">
           Is the accommodation owned by an individual or business entity?
         </label>
-        <select x-model="ownershipType" class="w-full p-2 border rounded text-sm focus:ring focus:ring-sky-200">
+        <select x-model="ownershipType" @change="logBusinessChange('ownershipType', $event.target.value)" class="w-full p-2 border rounded text-sm focus:ring focus:ring-sky-200">
           <option value="">Select an option</option>
           <option value="individual">I am an individual running a business</option>
           <option value="business">I represent a business entity</option>
@@ -2783,15 +2132,15 @@ function calendarComponent() {
       <div class="border p-4 rounded-lg space-y-4 bg-white">
         <div>
           <label class="block text-sm font-semibold text-gray-600">First Name</label>
-          <input type="text" x-model="individual.firstName" placeholder="First Name" class="w-full p-2 border rounded text-sm" />
+          <input type="text" x-model="individual.firstName" @input="logBusinessChange('individual.firstName', $event.target.value)" placeholder="First Name" class="w-full p-2 border rounded text-sm" />
         </div>
         <div>
           <label class="block text-sm font-semibold text-gray-600">Last Name</label>
-          <input type="text" x-model="individual.lastName" placeholder="Last Name" class="w-full p-2 border rounded text-sm" />
+          <input type="text" x-model="individual.lastName" @input="logBusinessChange('individual.lastName', $event.target.value)" placeholder="Last Name" class="w-full p-2 border rounded text-sm" />
         </div>
         <div>
           <label class="block text-sm font-semibold text-gray-600 mb-2">Date of Birth</label>
-          <input type="date" x-model="individual.dob" class="w-full p-2 border rounded text-sm focus:outline-none focus:ring-2 focus:ring-sky-200" />
+          <input type="date" x-model="individual.dob" @change="logBusinessChange('individual.dob', $event.target.value)" class="w-full p-2 border rounded text-sm focus:outline-none focus:ring-2 focus:ring-sky-200" />
         </div>
         <!-- Alt names if needed -->
         <div>
@@ -2809,27 +2158,27 @@ function calendarComponent() {
       <div class="border p-4 rounded-lg space-y-4 bg-white">
         <div>
           <label class="block text-sm font-semibold text-gray-600">Full name of business entity</label>
-          <input type="text" x-model="business.businessName" placeholder="Business Name" class="w-full p-2 border rounded text-sm" />
+          <input type="text" x-model="business.businessName" @input="logBusinessChange('business.businessName', $event.target.value)" placeholder="Business Name" class="w-full p-2 border rounded text-sm" />
         </div>
         <div>
           <label class="block text-sm font-semibold text-gray-600">Trading Name (optional)</label>
-          <input type="text" x-model="business.tradingName" placeholder="Trading Name" class="w-full p-2 border rounded text-sm" />
+          <input type="text" x-model="business.tradingName" @input="logBusinessChange('business.tradingName', $event.target.value)" placeholder="Trading Name" class="w-full p-2 border rounded text-sm" />
         </div>
         <div>
           <label class="block text-sm font-semibold text-gray-600">Address of business entity</label>
-          <input type="text" x-model="business.address" placeholder="Address" class="w-full p-2 border rounded text-sm" />
+          <input type="text" x-model="business.address" @input="logBusinessChange('business.address', $event.target.value)" placeholder="Address" class="w-full p-2 border rounded text-sm" />
         </div>
         <div>
           <label class="block text-sm font-semibold text-gray-600">Zip Code</label>
-          <input type="text" x-model="business.zipCode" placeholder="Zip Code" class="w-full p-2 border rounded text-sm" />
+          <input type="text" x-model="business.zipCode" @input="logBusinessChange('business.zipCode', $event.target.value)" placeholder="Zip Code" class="w-full p-2 border rounded text-sm" />
         </div>
         <div>
           <label class="block text-sm font-semibold text-gray-600">City</label>
-          <input type="text" x-model="business.city" placeholder="City" class="w-full p-2 border rounded text-sm" />
+          <input type="text" x-model="business.city" @input="logBusinessChange('business.city', $event.target.value)" placeholder="City" class="w-full p-2 border rounded text-sm" />
         </div>
         <div>
           <label class="block text-sm font-semibold text-gray-600">Country</label>
-          <select x-model="business.country" class="w-full p-2 border rounded text-sm">
+          <select x-model="business.country" @change="logBusinessChange('business.country', $event.target.value)" class="w-full p-2 border rounded text-sm">
             <option value="">Select a country</option>
             <option value="Sri Lanka">Sri Lanka</option>
             <option value="India">India</option>
@@ -2887,21 +2236,1391 @@ function calendarComponent() {
 
             ←
       </button>
-      <button @click="step++"
-              class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition ">
-        Continue
+      <button @click="saveLegalInfo()"
+              :disabled="isLoading"
+              :class="isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-600'"
+              class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded transition ">
+        <span x-show="!isLoading">Continue</span>
+        <span x-show="isLoading">Saving...</span>
       </button>
     </div>
   </div>
 </section>
 
+<script>
+function wizardApp() {
+    return {
+        // Debug and logging utilities
+        debugMode: true,
+        log(message, data = null) {
+            if (this.debugMode) {
+                console.log('[WIZARD DEBUG] ' + message, data || '');
+            }
+        },
+        logStepChange(oldStep, newStep, context = '') {
+            this.log('Step changed from ' + oldStep + ' to ' + newStep + ' ' + context);
+        },
+        logCurrentState() {
+            this.log('Current State:', {
+                step: this.step,
+                wizardStep: this.wizardStep,
+                propertyWizardStep: this.propertyWizardStep,
+                pricingWizardStep: this.pricingWizardStep,
+                bedroomStep: this.bedroomStep,
+                propertyId: this.propertyId,
+                totalRooms: Object.keys(this.rooms).length,
+                currentEditingRoom: this.currentEditingRoomId
+            });
+        },
+
+        // Step tracking
+        testValue: 'Alpine.js is working',
+        propertyWizardStep: 1,
+        step: 1,
+        wizardStep: 1,
+        pricingWizardStep: 1,
+        bedroomStep: 1,
+        
+        // Initialize watchers
+        init() {
+            this.log('Alpine.js initialized');
+            this.loadLanguages();
+            this.restoreWizardState();
+            this.handleBedroomReturn();
+            this.loadPropertyData();
+            this.logCurrentState();
+            console.log('Initial rooms state:', this.rooms);
+            console.log('Final wizard state after initialization:', {
+                step: this.step,
+                wizardStep: this.wizardStep,
+                propertyWizardStep: this.propertyWizardStep,
+                pricingWizardStep: this.pricingWizardStep,
+                bedroomStep: this.bedroomStep
+            });
+            
+            // Watch for step changes
+            this.$watch('step', (newVal, oldVal) => {
+                if (oldVal !== undefined) {
+                    this.logStepChange(oldVal, newVal, 'main step');
+                }
+            });
+            
+            this.$watch('wizardStep', (newVal, oldVal) => {
+                if (oldVal !== undefined) {
+                    this.logStepChange(oldVal, newVal, 'wizard step');
+                }
+            });
+            
+            this.$watch('propertyWizardStep', (newVal, oldVal) => {
+                if (oldVal !== undefined) {
+                    this.logStepChange(oldVal, newVal, 'property wizard step');
+                }
+            });
+            
+            this.$watch('bedroomStep', (newVal, oldVal) => {
+                if (oldVal !== undefined) {
+                    this.logStepChange(oldVal, newVal, 'bedroom step');
+                }
+            });
+        },
+
+        // Navigation helpers
+        goToStep(stepNumber, context = '') {
+            this.log('Navigating to step ' + stepNumber + ' ' + context);
+            this.step = stepNumber;
+        },
+
+        goToPropertyStep(stepNumber) {
+            this.log('Navigating to property step ' + stepNumber);
+            this.propertyWizardStep = stepNumber;
+        },
+
+        goToPricingStep(stepNumber) {
+            this.log('Navigating to pricing step ' + stepNumber);
+            this.pricingWizardStep = stepNumber;
+        },
+
+        // Property data
+        propertyId: 'new',
+        title: '',
+        address: '',
+        city: '',
+        country: 'Sri Lanka',
+        apartment: '',
+        zipcode: '',
+        description: '',
+        channelManager: 'yes',
+        isLoading: false,
+        
+        // Guest and amenity data
+        guests: 4,
+        bathrooms: 2,
+        allowChildren: 'yes',
+        offerCribs: 'no',
+        apartmentSize: 100,
+        apartmentUnit: 'square_meters',
+        selectedAmenities: [],
+        
+        // Rooms data - using single rooms object for all bedrooms
+        rooms: {
+            'bedroom1': { name: 'Bedroom 1', twin: 0, full: 1, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 },
+            'livingRoom': { name: 'Living room', twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 },
+            'otherSpaces': { name: 'Other spaces', twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 }
+        },
+        currentEditingRoomId: null,
+        tempBedCounts: { twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 },
+        nextRoomIndex: 2,
+        showBedTypeSelector: false,
+        showAllBedTypesInModal: false,
+        
+        // Parking data
+        parkingAvailable: '',
+        parkingCurrency: 'USD',
+        parkingCost: '',
+        parkingRate: 'per_day',
+        parkingReservation: '',
+        parkingLocation: '',
+        parkingType: '',
+        
+        // Breakfast data
+        breakfastServed: '',
+        breakfastIncluded: '',
+        breakfastTypes: [],
+        
+        // Language data
+        showAdditionalLanguages: false,
+        showLanguageModal: false,
+        searchTerm: '',
+        showDropdown: false,
+        filteredLanguages: [],
+        selectedLanguages: [],
+        availableLanguages: [
+            { id: 1, name: 'English' },
+            { id: 2, name: 'Spanish' },
+            { id: 3, name: 'French' },
+            { id: 4, name: 'German' },
+            { id: 5, name: 'Italian' },
+            { id: 6, name: 'Portuguese' },
+            { id: 7, name: 'Dutch' },
+            { id: 8, name: 'Russian' },
+            { id: 9, name: 'Chinese' },
+            { id: 10, name: 'Japanese' }
+        ],
+        
+        // Business/Individual data
+        ownershipType: '',
+        individual: {
+            firstName: '',
+            lastName: '',
+            dob: '',
+            altNames: ['']
+        },
+        business: {
+            businessName: '',
+            tradingName: '',
+            address: '',
+            zipCode: '',
+            city: '',
+            country: '',
+            owners: [
+                {
+                    firstName: '',
+                    lastName: '',
+                    dob: '',
+                    altNames: ['']
+                }
+            ]
+        },
+
+        // House rules data
+        smokingAllowed: false,
+        partiesAllowed: false,
+        petsAllowed: 'no',
+        petsFees: 'free',
+        checkInFrom: '15:00',
+        checkInUntil: '18:00',
+        checkOutFrom: '08:00',
+        checkOutUntil: '11:00',
+
+        // Pricing data
+        pricing: {
+            booking_type: 'instant',
+            price_per_night: '',
+            currency: 'usd',
+            discount_enabled: false,
+            discount_percent: 0
+        },
+
+        // Host profile data
+        hostProfile: {
+            about_property: '',
+            about_host: '',
+            about_neighborhood: '',
+            show_property: false,
+            show_host: false,
+            show_neighborhood: false,
+            none_selected: false,
+            host_name: ''
+        },
+
+        // Photo upload data
+        isUploading: false,
+        uploadedPhotos: [],
+
+        // Bedroom management methods
+        openBedTypeSelector(roomId) {
+            this.log('Opening bed type selector for room: ' + roomId);
+            this.currentEditingRoomId = roomId;
+            this.tempBedCounts = { ...this.rooms[roomId] };
+            this.showAllBedTypesInModal = roomId !== 'livingRoom';
+            this.showBedTypeSelector = true;
+        },
+
+        saveBedTypes() {
+            this.log('Saving bed types');
+            if (this.currentEditingRoomId) {
+                Object.assign(this.rooms[this.currentEditingRoomId], this.tempBedCounts);
+                this.log('Bed types saved for ' + this.currentEditingRoomId + ':', this.rooms[this.currentEditingRoomId]);
+            }
+            this.showBedTypeSelector = false;
+            this.currentEditingRoomId = null;
+        },
+
+        cancelBedTypes() {
+            this.log('Canceling bed type selection');
+            this.showBedTypeSelector = false;
+            this.currentEditingRoomId = null;
+        },
 
 
 
+        getBedSummary(roomId) {
+            const beds = this.rooms[roomId];
+            if (!beds) return '0 beds';
+            const summaryParts = [];
+            if (beds.twin > 0) summaryParts.push(beds.twin + ' twin bed' + (beds.twin > 1 ? 's' : ''));
+            if (beds.full > 0) summaryParts.push(beds.full + ' full bed' + (beds.full > 1 ? 's' : ''));
+            if (beds.queen > 0) summaryParts.push(beds.queen + ' queen bed' + (beds.queen > 1 ? 's' : ''));
+            if (beds.king > 0) summaryParts.push(beds.king + ' king bed' + (beds.king > 1 ? 's' : ''));
+            if (beds.bunk > 0) summaryParts.push(beds.bunk + ' bunk bed' + (beds.bunk > 1 ? 's' : ''));
+            if (beds.sofa > 0) summaryParts.push(beds.sofa + ' sofa bed' + (beds.sofa > 1 ? 's' : ''));
+            if (beds.futon > 0) summaryParts.push(beds.futon + ' futon bed' + (beds.futon > 1 ? 's' : ''));
+            return summaryParts.length > 0 ? summaryParts.join(', ') : '0 beds';
+        },
 
-          </div>
-        </div>
-      </div>
-    </div>
+        // Language management methods
+        async loadLanguages() {
+            this.log('Loading languages...');
+            try {
+                // Simulate API call - replace with actual endpoint
+                await new Promise(resolve => setTimeout(resolve, 100));
+                this.filteredLanguages = this.availableLanguages;
+                this.log('Languages loaded: ' + this.availableLanguages.length);
+            } catch (error) {
+                this.log('Error loading languages: ' + error);
+            }
+        },
+
+        filterLanguages() {
+            if (!this.searchTerm.trim()) {
+                this.filteredLanguages = this.availableLanguages;
+            } else {
+                this.filteredLanguages = this.availableLanguages.filter(language =>
+                    language.name.toLowerCase().includes(this.searchTerm.toLowerCase())
+                );
+            }
+            this.log('Filtered languages: ' + this.filteredLanguages.length + ' results');
+        },
+
+        selectLanguage(languageId, languageName) {
+            this.log('Selecting language: ' + languageId + ', ' + languageName);
+            if (!this.selectedLanguages.includes(languageId)) {
+                this.selectedLanguages.push(languageId);
+                this.log('Language added');
+            }
+            this.showDropdown = false;
+        },
+
+        removeLanguage(languageId) {
+            this.log('Removing language: ' + languageId);
+            const index = this.selectedLanguages.indexOf(languageId);
+            if (index > -1) {
+                this.selectedLanguages.splice(index, 1);
+                this.log('Language removed');
+            }
+        },
+
+        getLanguageName(languageId) {
+            const language = this.availableLanguages.find(l => l.id === languageId);
+            return language ? language.name : 'Unknown';
+        },
+
+        isLanguageSelected(languageId) {
+            return this.selectedLanguages.includes(languageId);
+        },
+
+        // Photo upload methods
+        handleUpload(event) {
+            const files = Array.from(event.target.files).slice(0, 5 - this.uploadedPhotos.length);
+            files.forEach(file => {
+                const url = URL.createObjectURL(file);
+                this.uploadedPhotos.push({ file, url });
+            });
+        },
+
+        handleUploadDrop(event) {
+            const dt = event.dataTransfer;
+            if (!dt) return;
+            const files = Array.from(dt.files).slice(0, 5 - this.uploadedPhotos.length);
+            files.forEach(file => {
+                const url = URL.createObjectURL(file);
+                this.uploadedPhotos.push({ file, url });
+            });
+        },
+
+        removePhoto(index) {
+            this.uploadedPhotos.splice(index, 1);
+        },
+
+        // Form submission methods
+        async saveName() {
+            this.log('Saving name');
+            if (!this.title.trim()) {
+                alert('Please enter a property name');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/partner/property/${this.propertyId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        title: this.title
+                    })
+                });
+                
+                if (response.ok) {
+                    this.wizardStep++;
+                    this.saveWizardState();
+                    console.log('Property name saved successfully');
+                } else {
+                    console.error('Failed to save property name');
+                }
+            } catch (error) {
+                console.error('Error saving property name:', error);
+            }
+        },
+
+        async saveLocation() {
+            this.log('Saving location');
+            if (!this.address.trim() || !this.city.trim()) {
+                alert('Please enter both address and city');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/partner/property/${this.propertyId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        address: this.address,
+                        city: this.city,
+                        country: this.country,
+                        apartment: this.apartment,
+                        zipcode: this.zipcode
+                    })
+                });
+                
+                if (response.ok) {
+                    this.wizardStep++;
+                    this.saveWizardState();
+                    console.log('Property location saved successfully');
+                } else {
+                    console.error('Failed to save property location');
+                }
+            } catch (error) {
+                console.error('Error saving property location:', error);
+            }
+        },
+
+        async saveChannelManager() {
+            this.log('Saving channel manager preference');
+            
+            try {
+                const response = await fetch(`/partner/property/${this.propertyId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        channel_manager: this.channelManager
+                    })
+                });
+                
+                if (response.ok) {
+                    this.step++;
+                    this.saveWizardState();
+                    console.log('Channel manager preference saved successfully');
+                } else {
+                    console.error('Failed to save channel manager preference');
+                }
+            } catch (error) {
+                console.error('Error saving channel manager preference:', error);
+            }
+        },
+
+        async savePropertyDetails() {
+            this.log('Saving property details');
+            
+            // Validate required fields
+            if (!this.guests || this.guests < 1) {
+                alert('Please set the number of guests (minimum 1)');
+                return;
+            }
+            
+            if (!this.bathrooms || this.bathrooms < 0) {
+                alert('Please set the number of bathrooms');
+                return;
+            }
+            
+            if (!this.allowChildren) {
+                alert('Please select whether children are allowed');
+                return;
+            }
+            
+            if (!this.offerCribs) {
+                alert('Please select whether infants are allowed');
+                return;
+            }
+            
+            try {
+                console.log('Saving property details with data:', {
+                    guests: this.guests,
+                    bathrooms: this.bathrooms,
+                    allow_children: this.allowChildren,
+                    offer_cribs: this.offerCribs,
+                    apartment_size: this.apartmentSize,
+                    apartment_unit: this.apartmentUnit
+                });
+                
+                const response = await fetch(`/partner/property/${this.propertyId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        guests: this.guests,
+                        bathrooms: this.bathrooms,
+                        allow_children: this.allowChildren,
+                        offer_cribs: this.offerCribs,
+                        apartment_size: this.apartmentSize,
+                        apartment_unit: this.apartmentUnit
+                    })
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('Property details saved successfully:', result);
+                    this.propertyWizardStep++;
+                    this.saveWizardState();
+                } else {
+                    const errorData = await response.json();
+                    console.error('Failed to save property details:', errorData);
+                    alert('Failed to save property details: ' + (errorData.message || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error saving property details:', error);
+                alert('Error saving property details: ' + error.message);
+            }
+        },
+
+        async saveHostProfile() {
+            this.log('Saving host profile');
+            
+            try {
+                const response = await fetch(`/partner/property/${this.propertyId}/host-profile`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        property_id: this.propertyId,
+                        about_property: this.hostProfile.about_property,
+                        about_host: this.hostProfile.about_host,
+                        about_neighborhood: this.hostProfile.about_neighborhood,
+                        show_property: this.hostProfile.show_property,
+                        show_host: this.hostProfile.show_host,
+                        show_neighborhood: this.hostProfile.show_neighborhood,
+                        none_selected: this.hostProfile.none_selected,
+                        host_name: this.hostProfile.host_name
+                    })
+                });
+                
+                if (response.ok) {
+                    // Move to pricing section after completing property wizard
+                    this.step = 3; // Move to pricing section
+                    this.pricingWizardStep = 1; // Start at first pricing step
+                    this.saveWizardState();
+                    console.log('Host profile saved successfully');
+                } else {
+                    console.error('Failed to save host profile');
+                }
+            } catch (error) {
+                console.error('Error saving host profile:', error);
+            }
+        },
+
+        // Logging methods
+        logBusinessChange(fieldName, value) {
+            this.log('Business field changed: ' + fieldName + ' = ' + value);
+        },
+
+        logInputChange(fieldName, value) {
+            this.log('Input changed: ' + fieldName + ' = ' + value);
+        },
+
+        logBreakfastChange(fieldName, value) {
+            this.log('Breakfast field changed: ' + fieldName + ' = ' + value);
+        },
+
+        logParkingChange(fieldName, value) {
+            this.log('Parking field changed: ' + fieldName + ' = ' + value);
+        },
+
+        // State persistence
+        saveWizardState() {
+            const state = {
+                propertyId: this.propertyId, // Add property ID to saved state
+                step: this.step,
+                wizardStep: this.wizardStep,
+                propertyWizardStep: this.propertyWizardStep,
+                pricingWizardStep: this.pricingWizardStep,
+                bedroomStep: this.bedroomStep,
+                title: this.title,
+                address: this.address,
+                city: this.city,
+                country: this.country,
+                apartment: this.apartment,
+                zipcode: this.zipcode,
+                description: this.description,
+                channelManager: this.channelManager,
+                guests: this.guests,
+                bathrooms: this.bathrooms,
+                allowChildren: this.allowChildren,
+                offerCribs: this.offerCribs,
+                apartmentSize: this.apartmentSize,
+                apartmentUnit: this.apartmentUnit,
+                selectedAmenities: this.selectedAmenities,
+                rooms: this.rooms,
+                parkingAvailable: this.parkingAvailable,
+                parkingCurrency: this.parkingCurrency,
+                parkingCost: this.parkingCost,
+                parkingRate: this.parkingRate,
+                parkingReservation: this.parkingReservation,
+                parkingLocation: this.parkingLocation,
+                parkingType: this.parkingType,
+                breakfastServed: this.breakfastServed,
+                breakfastIncluded: this.breakfastIncluded,
+                breakfastTypes: this.breakfastTypes,
+                selectedLanguages: this.selectedLanguages,
+                ownershipType: this.ownershipType,
+                individual: this.individual,
+                business: this.business,
+                smokingAllowed: this.smokingAllowed,
+                partiesAllowed: this.partiesAllowed,
+                petsAllowed: this.petsAllowed,
+                petsFees: this.petsFees,
+                checkInFrom: this.checkInFrom,
+                checkInUntil: this.checkInUntil,
+                checkOutFrom: this.checkOutFrom,
+                checkOutUntil: this.checkOutUntil,
+                pricing: this.pricing,
+                hostProfile: this.hostProfile,
+                uploadedPhotos: this.uploadedPhotos
+            };
+            sessionStorage.setItem('wizardState', JSON.stringify(state));
+            this.log('Wizard state saved for property: ' + this.propertyId);
+        },
+
+        restoreWizardState() {
+            // First check sessionStorage for wizard state (prioritize this)
+            const savedState = sessionStorage.getItem('wizardState');
+            console.log('Attempting to restore wizard state from sessionStorage. Saved state:', savedState);
+            console.log('Current property ID:', this.propertyId);
+            
+            if (savedState) {
+                try {
+                    const state = JSON.parse(savedState);
+                    console.log('Parsed wizard state from sessionStorage:', state);
+                    
+                    // Check if the saved state is for the current property
+                    if (state.propertyId && state.propertyId !== this.propertyId) {
+                        this.log('Property ID mismatch - clearing old state. Saved: ' + state.propertyId + ', Current: ' + this.propertyId);
+                        sessionStorage.removeItem('wizardState');
+                        console.log('Cleared old wizard state for different property');
+                        return; // Don't restore state for different property
+                    }
+                    
+                    // For new properties, start with fresh state
+                    if (this.propertyId === 'new' || !this.propertyId) {
+                        console.log('New property detected - starting with fresh wizard state');
+                        sessionStorage.removeItem('wizardState');
+                        return;
+                    }
+                    
+                    console.log('Restoring wizard state from sessionStorage for property:', this.propertyId);
+                    this.step = state.step || 1;
+                    this.wizardStep = state.wizardStep || 1;
+                    this.propertyWizardStep = state.propertyWizardStep || 1;
+                    this.pricingWizardStep = state.pricingWizardStep || 1;
+                    this.bedroomStep = state.bedroomStep || 1;
+                    
+                    console.log('Wizard state restored from sessionStorage');
+                    return;
+                } catch (error) {
+                    console.error('Error parsing wizard state from sessionStorage:', error);
+                }
+            }
+            
+            // Fallback to URL parameters for wizard state
+            const urlParams = new URLSearchParams(window.location.search);
+            const wizardStateParam = urlParams.get('wizardState');
+            
+            console.log('Checking URL parameters for wizard state:', wizardStateParam);
+            
+            if (wizardStateParam) {
+                try {
+                    // Handle double-encoded URL parameters
+                    let decodedParam = decodeURIComponent(wizardStateParam);
+                    // If it's still encoded, decode again
+                    if (decodedParam.includes('%')) {
+                        decodedParam = decodeURIComponent(decodedParam);
+                    }
+                    console.log('Raw wizard state param:', wizardStateParam);
+                    console.log('Decoded wizard state param:', decodedParam);
+                    
+                    const state = JSON.parse(decodedParam);
+                    console.log('Parsed wizard state from URL:', state);
+                    
+                    // Check if the saved state is for the current property
+                    if (state.propertyId && state.propertyId !== this.propertyId) {
+                        console.log('Property ID mismatch in URL state. Saved: ' + state.propertyId + ', Current: ' + this.propertyId);
+                        return; // Don't restore state for different property
+                    }
+                    
+                    console.log('Restoring wizard state from URL for property:', this.propertyId);
+                    this.step = state.step || 1;
+                    this.wizardStep = state.wizardStep || 1;
+                    this.propertyWizardStep = state.propertyWizardStep || 1;
+                    this.pricingWizardStep = state.pricingWizardStep || 1;
+                    this.bedroomStep = state.bedroomStep || 1;
+                    
+                    // Clean up URL parameters
+                    const newUrl = new URL(window.location);
+                    newUrl.searchParams.delete('wizardState');
+                    window.history.replaceState({}, '', newUrl);
+                    
+                    console.log('Wizard state restored from URL and URL cleaned up');
+                    return;
+                } catch (error) {
+                    console.error('Error parsing wizard state from URL:', error);
+                }
+            }
+            
+            if (savedState) {
+                try {
+                    const state = JSON.parse(savedState);
+                    console.log('Parsed wizard state from sessionStorage:', state);
+                    
+                    // Check if the saved state is for the current property
+                    if (state.propertyId && state.propertyId !== this.propertyId) {
+                        this.log('Property ID mismatch - clearing old state. Saved: ' + state.propertyId + ', Current: ' + this.propertyId);
+                        sessionStorage.removeItem('wizardState');
+                        console.log('Cleared old wizard state for different property');
+                        return; // Don't restore state for different property
+                    }
+                    
+                    // For new properties, start with fresh state
+                    if (this.propertyId === 'new' || !this.propertyId) {
+                        console.log('New property detected - starting with fresh wizard state');
+                        sessionStorage.removeItem('wizardState');
+                        return;
+                    }
+                    
+                    console.log('Restoring wizard state from sessionStorage for property:', this.propertyId);
+                    this.step = state.step || 1;
+                    this.wizardStep = state.wizardStep || 1;
+                    this.propertyWizardStep = state.propertyWizardStep || 1;
+                    this.pricingWizardStep = state.pricingWizardStep || 1;
+                    this.bedroomStep = state.bedroomStep || 1;
+                    this.title = state.title || '';
+                    this.address = state.address || '';
+                    this.city = state.city || '';
+                    this.country = state.country || 'Sri Lanka';
+                    this.apartment = state.apartment || '';
+                    this.zipcode = state.zipcode || '';
+                    this.description = state.description || '';
+                    this.channelManager = state.channelManager || 'yes';
+                    this.guests = state.guests || 4;
+                    this.bathrooms = state.bathrooms || 2;
+                    this.allowChildren = state.allowChildren || 'yes';
+                    this.offerCribs = state.offerCribs || 'no';
+                    this.apartmentSize = state.apartmentSize || 100;
+                    this.apartmentUnit = state.apartmentUnit || 'square_meters';
+                    this.selectedAmenities = state.selectedAmenities || [];
+                    this.rooms = state.rooms || this.rooms;
+                    this.parkingAvailable = state.parkingAvailable || '';
+                    this.parkingCurrency = state.parkingCurrency || 'USD';
+                    this.parkingCost = state.parkingCost || '';
+                    this.parkingRate = state.parkingRate || 'per_day';
+                    this.parkingReservation = state.parkingReservation || '';
+                    this.parkingLocation = state.parkingLocation || '';
+                    this.parkingType = state.parkingType || '';
+                    this.breakfastServed = state.breakfastServed || '';
+                    this.breakfastIncluded = state.breakfastIncluded || '';
+                    this.breakfastTypes = state.breakfastTypes || [];
+                    this.selectedLanguages = state.selectedLanguages || [];
+                    this.ownershipType = state.ownershipType || '';
+                    this.individual = state.individual || this.individual;
+                    this.business = state.business || this.business;
+                    this.smokingAllowed = state.smokingAllowed || false;
+                    this.partiesAllowed = state.partiesAllowed || false;
+                    this.petsAllowed = state.petsAllowed || 'no';
+                    this.petsFees = state.petsFees || 'free';
+                    this.checkInFrom = state.checkInFrom || '15:00';
+                    this.checkInUntil = state.checkInUntil || '18:00';
+                    this.checkOutFrom = state.checkOutFrom || '08:00';
+                    this.checkOutUntil = state.checkOutUntil || '11:00';
+                    this.pricing = state.pricing || this.pricing;
+                    this.hostProfile = state.hostProfile || this.hostProfile;
+                    this.uploadedPhotos = state.uploadedPhotos || [];
+                    this.log('Wizard state restored for property: ' + this.propertyId);
+                } catch (error) {
+                    this.log('Error restoring wizard state: ' + error);
+                }
+            } else {
+                console.log('No saved wizard state found - starting fresh');
+                this.resetWizardState();
+            }
+        },
+
+        resetWizardState() {
+            console.log('Resetting wizard state to defaults');
+            this.step = 1;
+            this.wizardStep = 1;
+            this.propertyWizardStep = 1;
+            this.pricingWizardStep = 1;
+            this.bedroomStep = 1;
+            console.log('Wizard state reset to:', {
+                step: this.step,
+                wizardStep: this.wizardStep,
+                propertyWizardStep: this.propertyWizardStep,
+                pricingWizardStep: this.pricingWizardStep,
+                bedroomStep: this.bedroomStep
+            });
+        },
+
+        handleBedroomReturn() {
+            this.log('Handling bedroom return');
+            
+            // Check for bedroom data in sessionStorage (old method)
+            const bedroomData = sessionStorage.getItem('bedroomData');
+            if (bedroomData) {
+                this.handleBedroomData(bedroomData);
+                sessionStorage.removeItem('bedroomData');
+                return;
+            }
+            
+            // Check for bedroom data in URL parameters (new method)
+            const urlParams = new URLSearchParams(window.location.search);
+            const returnFromBedroom = urlParams.get('returnFromBedroom');
+            const bedroomDataParam = urlParams.get('bedroomData');
+            
+            console.log('Checking URL parameters for bedroom return');
+            console.log('returnFromBedroom:', returnFromBedroom);
+            console.log('bedroomData param:', bedroomDataParam);
+            
+            if (returnFromBedroom === 'true' && bedroomDataParam) {
+                try {
+                    const bedroomData = JSON.parse(decodeURIComponent(bedroomDataParam));
+                    console.log('Parsed bedroom data from URL:', bedroomData);
+                    this.handleBedroomData(JSON.stringify(bedroomData));
+                    
+                    // Clean up URL parameters
+                    const newUrl = new URL(window.location);
+                    newUrl.searchParams.delete('returnFromBedroom');
+                    newUrl.searchParams.delete('bedroomData');
+                    window.history.replaceState({}, '', newUrl);
+                    
+                    console.log('Cleaned up URL parameters');
+                } catch (error) {
+                    console.error('Error parsing bedroom data from URL:', error);
+                }
+            }
+        },
+
+        handleBedroomData(bedroomDataString) {
+            try {
+                const bedroomData = JSON.parse(bedroomDataString);
+                console.log('Received bedroom data:', bedroomData);
+                
+                // Convert bed data from the new format to the old format
+                const bedCounts = {};
+                if (bedroomData.beds && Array.isArray(bedroomData.beds)) {
+                    bedroomData.beds.forEach(bed => {
+                        bedCounts[bed.name.toLowerCase().replace(' ', '_')] = bed.count;
+                    });
+                }
+                
+                const roomName = bedroomData.room_name || bedroomData.name || 'Bedroom 1';
+                const roomKey = roomName.toLowerCase().replace(' ', '');
+                
+                // Add or update the room in the rooms object
+                this.rooms[roomKey] = {
+                    name: roomName,
+                    twin: bedCounts.twin || 0,
+                    full: bedCounts.full || 0,
+                    queen: bedCounts.queen || 0,
+                    king: bedCounts.king || 0,
+                    bunk: bedCounts.bunk || 0,
+                    sofa: bedCounts.sofa || 0,
+                    futon: bedCounts.futon || 0
+                };
+                
+                this.log('Bedroom data saved: ' + roomName);
+                console.log('Updated rooms:', this.rooms);
+            } catch (error) {
+                this.log('Error handling bedroom data: ' + error);
+                console.error('Error parsing bedroom data:', error);
+            }
+        },
+
+        getSavedRoomBedSummary(room) {
+            const summaryParts = [];
+            if (room.twin > 0) summaryParts.push(room.twin + ' twin bed' + (room.twin > 1 ? 's' : ''));
+            if (room.full > 0) summaryParts.push(room.full + ' full bed' + (room.full > 1 ? 's' : ''));
+            if (room.queen > 0) summaryParts.push(room.queen + ' queen bed' + (room.queen > 1 ? 's' : ''));
+            if (room.king > 0) summaryParts.push(room.king + ' king bed' + (room.king > 1 ? 's' : ''));
+            if (room.bunk > 0) summaryParts.push(room.bunk + ' bunk bed' + (room.bunk > 1 ? 's' : ''));
+            if (room.sofa > 0) summaryParts.push(room.sofa + ' sofa bed' + (room.sofa > 1 ? 's' : ''));
+            if (room.futon > 0) summaryParts.push(room.futon + ' futon bed' + (room.futon > 1 ? 's' : ''));
+            return summaryParts.length > 0 ? summaryParts.join(', ') : '0 beds';
+        },
+
+        editSavedRoom(roomKey) {
+            this.log('Editing room: ' + roomKey);
+            const room = this.rooms[roomKey];
+            if (room) {
+                this.currentEditingRoomId = roomKey;
+                this.tempBedCounts = { ...room };
+                this.showBedTypeSelector = true;
+                this.showAllBedTypesInModal = true;
+            }
+        },
+
+        // Data loading
+        loadPropertyData() {
+            this.log('Loading property data');
+            const propertyDataElement = document.getElementById('property-data');
+            if (propertyDataElement) {
+                const propertyDataString = propertyDataElement.textContent;
+                try {
+                    const propertyData = JSON.parse(propertyDataString);
+                    this.propertyId = propertyData.id || 'new';
+                    this.title = propertyData.title || '';
+                    this.address = propertyData.address || '';
+                    this.city = propertyData.city || '';
+                    this.country = propertyData.country || 'Sri Lanka';
+                    this.apartment = propertyData.apartment || '';
+                    this.zipcode = propertyData.zipcode || '';
+                    this.description = propertyData.description || '';
+                    this.channelManager = propertyData.channel_manager || 'yes';
+                    this.guests = propertyData.guests || 4;
+                    this.bathrooms = propertyData.bathrooms || 2;
+                    this.allowChildren = propertyData.allow_children || 'yes';
+                    this.offerCribs = propertyData.offer_cribs || 'no';
+                    this.apartmentSize = propertyData.apartment_size || 100;
+                    this.apartmentUnit = propertyData.apartment_unit || 'square_meters';
+                    this.selectedAmenities = propertyData.selected_amenities || [];
+                    console.log('Full propertyData from backend:', propertyData);
+                    this.rooms = propertyData.rooms || this.rooms;
+                    console.log('Loaded rooms from backend:', this.rooms);
+                    console.log('Room keys:', Object.keys(this.rooms));
+                    console.log('Additional bedrooms found:', Object.keys(this.rooms).filter(key => key !== 'bedroom1' && key !== 'livingRoom' && key !== 'otherSpaces'));
+                    this.parkingAvailable = propertyData.parking_available || '';
+                    this.parkingCurrency = propertyData.parking_currency || 'USD';
+                    this.parkingCost = propertyData.parking_cost || '';
+                    this.parkingRate = propertyData.parking_rate || 'per_day';
+                    this.parkingReservation = propertyData.parking_reservation || '';
+                    this.parkingLocation = propertyData.parking_location || '';
+                    this.parkingType = propertyData.parking_type || '';
+                    this.breakfastServed = propertyData.breakfast_served || '';
+                    this.breakfastIncluded = propertyData.breakfast_included || '';
+                    this.breakfastTypes = propertyData.breakfast_types || [];
+                    this.selectedLanguages = propertyData.selected_languages || [];
+                    this.ownershipType = propertyData.ownership_type || '';
+                    this.individual = propertyData.individual || this.individual;
+                    this.business = propertyData.business || this.business;
+                    this.smokingAllowed = propertyData.smoking_allowed || false;
+                    this.partiesAllowed = propertyData.parties_allowed || false;
+                    this.petsAllowed = propertyData.pets_allowed || 'no';
+                    this.petsFees = propertyData.pets_fees || 'free';
+                    this.checkInFrom = propertyData.check_in_from || '15:00';
+                    this.checkInUntil = propertyData.check_in_until || '18:00';
+                    this.checkOutFrom = propertyData.check_out_from || '08:00';
+                    this.checkOutUntil = propertyData.check_out_until || '11:00';
+                    this.pricing = propertyData.pricing || this.pricing;
+                    this.hostProfile = propertyData.host_profile || this.hostProfile;
+                    this.uploadedPhotos = propertyData.uploaded_photos || [];
+                    this.log('Updated form fields:', {
+                        propertyId: this.propertyId,
+                        title: this.title,
+                        address: this.address,
+                        city: this.city
+                    });
+                } catch (error) {
+                    this.log('Error parsing property data: ' + error);
+                }
+            } else {
+                this.log('No property data element found');
+            }
+        },
+
+        // Form submission methods
+        async saveAdditionalDetails() {
+            this.log('Saving additional details');
+            
+            // Check if propertyId is valid
+            if (!this.propertyId || this.propertyId === 'new') {
+                this.log('Validation failed: Property ID is missing');
+                alert('Property ID is missing. Please refresh the page.');
+                return;
+            }
+            
+            // For step 4 (languages), use dedicated language route
+            if (this.propertyWizardStep === 4) {
+                this.log('Saving languages for step 4: ' + this.selectedLanguages);
+                const payload = {
+                    languages: this.selectedLanguages
+                };
+                this.isLoading = true;
+                
+                try {
+                    const res = await fetch('/partner/property/' + this.propertyId + '/languages', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        body: JSON.stringify(payload)
+                    });
+                    
+                    const data = await res.json();
+                    if (res.ok && data.success) {
+                        this.log('Languages saved successfully: ' + data);
+                        this.log('Moving from propertyWizardStep ' + this.propertyWizardStep + ' to ' + (this.propertyWizardStep + 1));
+                        this.propertyWizardStep++;
+                        this.logCurrentState();
+                    } else {
+                        this.log('Language save error: ' + data);
+                        alert('Error: ' + (data.message || 'Could not save languages.'));
+                    }
+                } catch (err) {
+                    this.log('AJAX error in language save: ' + err);
+                    alert('AJAX error: ' + err.message);
+                } finally {
+                    this.isLoading = false;
+                }
+                return; // Exit early for language step
+            }
+            
+            // For other steps, use the existing logic
+            const payload = {
+                guests: this.guests,
+                bathrooms: this.bathrooms,
+                children_allowed: this.allowChildren === 'yes',
+                offer_cribs: this.offerCribs,
+                apartment_size: this.apartmentSize,
+                apartment_unit: this.apartmentUnit,
+                serve_breakfast: this.breakfastServed === 'yes',
+                breakfast_included: this.breakfastIncluded,
+                breakfast_type: this.breakfastTypes,
+                parking_available: this.parkingAvailable,
+                parking_cost: this.parkingCost,
+                parking_reservation: this.parkingReservation,
+                parking_location: this.parkingLocation,
+                parking_type: this.parkingType,
+            };
+            
+            this.log('Additional details payload: ' + payload);
+            this.isLoading = true;
+            
+            // If on the services step, POST to /services, otherwise PATCH additional-details
+            if (this.propertyWizardStep === 3) {
+                this.log('Saving services for step 3');
+                
+                try {
+                    const res = await fetch('/partner/property/' + this.propertyId + '/services', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        body: JSON.stringify(payload)
+                    });
+                    
+                    let text = await res.text();
+                    let data;
+                    try {
+                        data = JSON.parse(text);
+                    } catch (e) {
+                        this.log('Non-JSON response from services POST: ' + text);
+                        alert('Server error (services save):\n' + text.substring(0, 500));
+                        throw new Error('Non-JSON response from services POST');
+                    }
+                    
+                    if (data && data.success) {
+                        this.log('Moving from propertyWizardStep ' + this.propertyWizardStep + ' to ' + (this.propertyWizardStep + 1));
+                        this.propertyWizardStep++;
+                        this.logCurrentState();
+                    } else {
+                        this.log('Services save error: ' + data);
+                        alert('Error: ' + (data && data.message ? data.message : 'Could not save services.'));
+                    }
+                } catch (err) {
+                    this.log('AJAX error in services save: ' + err);
+                    alert('AJAX error: ' + err.message);
+                } finally {
+                    this.isLoading = false;
+                }
+            } else {
+                // For other steps, use PATCH additional-details
+                try {
+                    const res = await fetch('/partner/property/' + this.propertyId + '/additional-details', {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        body: JSON.stringify(payload)
+                    });
+                    
+                    const data = await res.json();
+                    if (res.ok && data.success) {
+                        this.log('Moving from propertyWizardStep ' + this.propertyWizardStep + ' to ' + (this.propertyWizardStep + 1));
+                        this.propertyWizardStep++;
+                        this.logCurrentState();
+                    } else {
+                        this.log('Additional details save error: ' + data);
+                        alert('Error: ' + (data.message || 'Could not save additional details.'));
+                    }
+                } catch (err) {
+                    this.log('AJAX error in additional details save: ' + err);
+                    alert('AJAX error: ' + err.message);
+                } finally {
+                    this.isLoading = false;
+                }
+            }
+        },
+
+        async saveHouseRules() {
+            this.log('Saving house rules');
+            this.isLoading = true;
+            
+            try {
+                console.log('Saving house rules with data:', {
+                    smoking_allowed: this.smokingAllowed,
+                    parties_allowed: this.partiesAllowed,
+                    pets_allowed: this.petsAllowed,
+                    check_in_from: this.checkInFrom,
+                    check_in_until: this.checkInUntil,
+                    check_out_from: this.checkOutFrom,
+                    check_out_until: this.checkOutUntil
+                });
+                
+                const response = await fetch(`/partner/property/${this.propertyId}/house-rules`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        smoking_allowed: this.smokingAllowed,
+                        parties_allowed: this.partiesAllowed,
+                        pets_allowed: this.petsAllowed,
+                        check_in_from: this.checkInFrom,
+                        check_in_until: this.checkInUntil,
+                        check_out_from: this.checkOutFrom,
+                        check_out_until: this.checkOutUntil
+                    })
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('House rules saved successfully:', result);
+                    this.propertyWizardStep++;
+                    this.saveWizardState();
+                } else {
+                    const errorData = await response.json();
+                    console.error('Failed to save house rules:', errorData);
+                    alert('Failed to save house rules: ' + (errorData.message || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error saving house rules:', error);
+                alert('Error saving house rules: ' + error.message);
+            } finally {
+                this.isLoading = false;
+            }
+        },
+
+        async savePricing() {
+            this.log('Saving pricing');
+            this.isLoading = true;
+            
+            try {
+                console.log('Saving pricing with data:', {
+                    property_id: this.propertyId,
+                    booking_type: this.pricing.booking_type,
+                    price_per_night: this.pricing.price_per_night,
+                    currency: this.pricing.currency,
+                    discount_enabled: this.pricing.discount_enabled,
+                    discount_percent: this.pricing.discount_percent
+                });
+                
+                const response = await fetch(`/partner/property/${this.propertyId}/pricing`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        property_id: this.propertyId,
+                        booking_type: this.pricing.booking_type,
+                        price_per_night: this.pricing.price_per_night,
+                        currency: this.pricing.currency,
+                        discount_enabled: this.pricing.discount_enabled,
+                        discount_percent: this.pricing.discount_percent
+                    })
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('Pricing saved successfully:', result);
+                    
+                    if (this.pricingWizardStep < 4) {
+                        this.pricingWizardStep++;
+                    } else {
+                        this.step = 5; // Move to legal info
+                    }
+                    this.saveWizardState();
+                } else {
+                    const errorData = await response.json();
+                    console.error('Failed to save pricing:', errorData);
+                    alert('Failed to save pricing: ' + (errorData.message || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error saving pricing:', error);
+                alert('Error saving pricing: ' + error.message);
+            } finally {
+                this.isLoading = false;
+            }
+        },
+
+        async saveLegalInfo() {
+            this.log('Saving legal information');
+            this.isLoading = true;
+            try {
+                console.log('Saving legal info with data:', {
+                    property_id: this.propertyId,
+                    ownershipType: this.ownershipType,
+                    individual: this.individual,
+                    business: this.business
+                });
+                
+                // Prepare data based on ownership type
+                let requestData = {
+                    property_id: this.propertyId,
+                    type: this.ownershipType
+                };
+
+                if (this.ownershipType === 'individual') {
+                    requestData.full_name = (this.individual?.firstName || '') + ' ' + (this.individual?.lastName || '');
+                    requestData.national_id = this.individual?.dob || '';
+                    // Add owners array for individual
+                    requestData.owners = [{
+                        first_name: this.individual?.firstName || '',
+                        last_name: this.individual?.lastName || '',
+                        dob: this.individual?.dob || ''
+                    }];
+                } else if (this.ownershipType === 'business') {
+                    requestData.company_name = this.business?.businessName || '';
+                    requestData.trading_name = this.business?.tradingName || '';
+                    requestData.address = this.business?.address || '';
+                    requestData.zip_code = this.business?.zipCode || '';
+                    requestData.city = this.business?.city || '';
+                    requestData.country = this.business?.country || '';
+                    // Add owners array for business
+                    requestData.owners = this.business?.owners?.map(owner => ({
+                        first_name: owner.firstName || '',
+                        last_name: owner.lastName || '',
+                        dob: owner.dob || ''
+                    })) || [];
+                }
+
+                console.log('Final request data being sent:', requestData);
+
+                const response = await fetch(`/partner/partner-verification`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify(requestData)
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('Legal info saved successfully:', result);
+                    this.step = 6; // Move to final step
+                    this.saveWizardState();
+                } else {
+                    const errorData = await response.json();
+                    console.error('Failed to save legal info:', errorData);
+                    alert('Failed to save legal info: ' + (errorData.message || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error saving legal info:', error);
+                alert('Error saving legal info: ' + error.message);
+            } finally {
+                this.isLoading = false;
+            }
+        },
+
+        logBusinessChange(field, value) {
+            this.log('Business/Individual field changed: ' + field + ' = ' + value);
+            console.log('Field changed:', field, 'Value:', value);
+        },
+
+        navigateToBedroom(roomId = null) {
+            this.log('Navigating to bedroom page for new bedroom');
+            
+            // Save current wizard state
+            this.saveWizardState();
+            
+            // Debug: Log current rooms
+            console.log('Current rooms before navigation:', this.rooms);
+            console.log('Rooms count:', Object.keys(this.rooms).length);
+            console.log('Bedroom keys:', Object.keys(this.rooms).filter(key => key.startsWith('bedroom')));
+            
+            // Prepare room data if editing
+            let roomData = null;
+            if (roomId) {
+                const room = this.rooms[roomId];
+                if (room) {
+                    roomData = {
+                        name: room.name,
+                        twin: room.twin || 0,
+                        full: room.full || 0,
+                        queen: room.queen || 0,
+                        king: room.king || 0,
+                        bunk: room.bunk || 0,
+                        sofa: room.sofa || 0,
+                        futon: room.futon || 0
+                    };
+                }
+            }
+            
+            // Calculate next bedroom number
+            const bedroomKeys = Object.keys(this.rooms).filter(key => key.startsWith('bedroom'));
+            const bedroomCount = bedroomKeys.length;
+            const nextBedroomNumber = bedroomCount + 1;
+            
+            console.log('Bedroom calculation debug:');
+            console.log('  - All room keys:', Object.keys(this.rooms));
+            console.log('  - Bedroom keys:', bedroomKeys);
+            console.log('  - Bedroom count:', bedroomCount);
+            console.log('  - Next bedroom number:', nextBedroomNumber);
+            
+            // Prepare wizard state for bedroom page
+            const wizardState = {
+                step: this.step,
+                wizardStep: this.wizardStep,
+                propertyWizardStep: this.propertyWizardStep,
+                pricingWizardStep: this.pricingWizardStep,
+                bedroomStep: this.bedroomStep,
+                propertyId: this.propertyId,
+                rooms: this.rooms, // Pass existing rooms to calculate next bedroom number
+                nextBedroomNumber: nextBedroomNumber
+            };
+            
+            console.log('Wizard state being passed:', wizardState);
+            console.log('Next bedroom number:', nextBedroomNumber);
+            
+            // Build URL with parameters
+            const propertyId = this.propertyId || 'new';
+            let url = `/partner/apartment/bedrooms/${propertyId}?source=single`;
+            url += '&step=' + this.step;
+            url += '&wizardState=' + encodeURIComponent(JSON.stringify(wizardState));
+            
+            if (roomData) {
+                url += '&roomData=' + encodeURIComponent(JSON.stringify(roomData));
+            }
+            
+            console.log('=== URL DEBUG ===');
+            console.log('Property ID:', propertyId);
+            console.log('Step:', this.step);
+            console.log('Wizard State JSON:', JSON.stringify(wizardState));
+            console.log('Encoded Wizard State:', encodeURIComponent(JSON.stringify(wizardState)));
+            console.log('Final URL:', url);
+            console.log('=== END URL DEBUG ===');
+            
+            this.log('Navigating to: ' + url);
+            window.location.href = url;
+        },
+
+        navigateToStep(stepNumber) {
+            this.log('Navigating to step: ' + stepNumber);
+            
+            // Save current wizard state before navigation
+            this.saveWizardState();
+            
+            // Set the main step
+            this.step = stepNumber;
+            
+            // Reset the appropriate wizard step based on which section we're going to
+            switch (stepNumber) {
+                case 1: // Basic information
+                    this.wizardStep = 1;
+                    break;
+                case 2: // Property setup
+                    this.propertyWizardStep = 1;
+                    break;
+                case 3: // Photos
+                    // Photos don't have sub-steps, so no reset needed
+                    break;
+                case 4: // Pricing and calendar
+                    this.pricingWizardStep = 1;
+                    break;
+                case 5: // Legal information
+                    // Legal info doesn't have sub-steps, so no reset needed
+                    break;
+            }
+            
+            this.log('Navigation complete - Step: ' + this.step + ', PropertyWizardStep: ' + this.propertyWizardStep);
+        }
+    }
+}
+</script>
+
   </body>
 </html>
