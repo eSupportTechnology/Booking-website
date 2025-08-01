@@ -44,6 +44,17 @@ class AmenitiesTableSeeder extends Seeder
             ['name' => 'Garden view', 'category' => 'Outside and view'],
             ['name' => 'Terrace', 'category' => 'Outside and view'],
             ['name' => 'View', 'category' => 'Outside and view'],
+
+            // Multiple Apartment specific amenities
+            ['name' => 'Air conditioning', 'category' => 'multiple_apartment'],
+            ['name' => 'Kitchenette', 'category' => 'multiple_apartment'],
+            ['name' => 'Kitchen', 'category' => 'multiple_apartment'],
+            ['name' => 'Balcony', 'category' => 'multiple_apartment'],
+            ['name' => 'View', 'category' => 'multiple_apartment'],
+            ['name' => 'Flat-screen TV', 'category' => 'multiple_apartment'],
+            ['name' => 'Private pool', 'category' => 'multiple_apartment'],
+            ['name' => 'Terrace', 'category' => 'multiple_apartment'],
+            ['name' => 'Washing machine', 'category' => 'multiple_apartment'],
         ];
 
         foreach ($amenities as $data) {

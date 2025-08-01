@@ -38,11 +38,18 @@
                 <!-- Right Section -->
                 <div class="flex items-center space-x-4 flex-wrap">
                     <!-- Language Button -->
+                    @php
+                    $locale = app()->getLocale();
+                    $language = config('languages.' . $locale);
+                    $flag = isset($language['flag']) ? asset($language['flag']) : asset('images/flags/uk.png');
+                    @endphp
+
                     <button id="language-button" type="button"
                         class="flex items-center justify-center w-7 h-7 bg-white rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-hidden">
-                        <img src="{{ asset('images/uk.png') }}" alt="UK Flag"
+                        <img src="{{ $flag }}" alt="{{ $language['name'] ?? 'Language' }}"
                             class="w-full h-full object-cover rounded-full" />
                     </button>
+
 
                     <!-- Language Modal -->
                     <div id="language-modal"
@@ -83,11 +90,41 @@
                     </div>
 
                     <!-- Nav Links -->
+                     @if (session('partner_name'))
+                    <span class="bg-white text-[#1F8FB2] px-4 py-2 rounded font-bold"
+                        style="font-family: 'Noto Sans', sans-serif;">{{ session('partner_name') }}</span>
+                    <!-- Logout Link -->
+                    <a href="#"
+                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                        class="bg-[#1F8FB2] px-4 py-2 rounded hover:bg-[#29ACD5] text-white font-sans border border-white">
+                        Logout
+                    </a>
+
+                    <!-- Hidden Logout Form -->
+                    <form id="logout-form" action="{{ route('partner.logout') }}" method="POST" class="hidden">
+                        @csrf
+                    </form>
+                    @elseif(Auth::check())
+                        <span class="bg-white text-[#1F8FB2] px-4 py-2 rounded font-bold"
+                            style="font-family: 'Noto Sans', sans-serif;">{{ Auth::user()->name }}</span>
+                        <!-- Logout Link -->
+                       <a href="#"
+                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                            class="bg-[#1F8FB2] px-4 py-2 rounded hover:bg-[#29ACD5] text-white font-sans border border-white">
+                            Logout
+                        </a>
+
+                        <!-- Hidden Logout Form -->
+                        <form id="logout-form" action="{{ route('partner.logout') }}" method="POST" class="hidden">
+                           @csrf
+                        </form>
+                    @else
                     <a href="#" class="hover:underline font-sans"
                         style="font-family: 'Noto Sans', sans-serif;">Already a partner?</a>
-                    <a href="{{ url('partner/sign-in') }}"
+                    <a href="#"
                         class="bg-[#1F8FB2] px-4 py-2 rounded hover:bg-[#29ACD5] text-white font-sans border border-white">Sign
                         in</a>
+                    @endif
                     <a href="#"
                         class="bg-[#3CC0E9] px-4 py-2 rounded hover:bg-[#29ACD5] text-white font-sans">Help</a>
                 </div>
