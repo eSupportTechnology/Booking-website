@@ -12,7 +12,8 @@ return new class extends Migration
     public function up()
     {
         Schema::table('properties', function (Blueprint $table) {
-            $table->json('invoicing_info')->nullable()->after('payment_method');
+            $table->json('invoicing_info')->nullable()->after('status');
+            $table->enum('payment_method', ['online', 'credit'])->nullable()->after('invoicing_info');
             $table->boolean('open_for_bookings')->default(false)->after('invoicing_info');
         });
     }
