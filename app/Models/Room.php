@@ -45,5 +45,9 @@ class Room extends Model
         return $this->belongsToMany(Amenity::class, 'room_amenity', 'room_id', 'amenity_id');
     }
 
+    public function ratePlans()
+    {
+        return $this->hasMany(RatePlan::class);
+    }
 
 }

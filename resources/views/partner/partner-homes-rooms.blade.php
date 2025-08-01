@@ -5,19 +5,6 @@
 @section('content')
 <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 <script>
-const observer = new MutationObserver(() => {
-    const editPageLink = document.getElementById('editPageLink');
-    if (editPageLink) {
-        const propertyType = 'multiple'; // or dynamically fetch this
-        const propertyId = 2; // or fetch this dynamically as well
-        editPageLink.href = `/partner-homes-edit/${propertyId}?rooms=true&propertyType=${encodeURIComponent(propertyType)}`;
-        observer.disconnect(); // stop observing once link is set
-    }
-});
-
-// Start observing body (or container where content is rendered)
-observer.observe(document.body, { childList: true, subtree: true });
-
 
     function stepForm() {
         return {
@@ -26,12 +13,12 @@ observer.observe(document.body, { childList: true, subtree: true });
             propertyCount: '',
             showMoreBeds: false,
             showTip: true,
-            offerCots: 'no', 
-            cotCount: 0, 
+            offerCots: 'no',
+            cotCount: 0,
             cotPriceType: 'free',
             selectedRoomName: '',
-            showTip1: true, 
-            showTip2: true , 
+            showTip1: true,
+            showTip2: true,
             showDiscount: false,
             price: 120.00, // default value
 
@@ -88,7 +75,7 @@ observer.observe(document.body, { childList: true, subtree: true });
                     .then(data => {
                         if (data.success) {
                             alert('Step 1 saved successfully!');
-                            this.rooms = data.saved_rooms; 
+                            this.rooms = data.saved_rooms;
                             this.step++;
                         } else {
                             alert('Something went wrong: ' + (data.message || 'Unknown error'));
@@ -122,7 +109,7 @@ observer.observe(document.body, { childList: true, subtree: true });
                 }
                 console.log(this.rooms);
                 const payload = {
-                    rooms: rooms.map(roomId  => ({
+                    rooms: rooms.map(roomId => ({
                         id: roomId,
                         bathroom_type: bathroomType,
                         bathroom_amenities: selectedAmenities
@@ -130,28 +117,28 @@ observer.observe(document.body, { childList: true, subtree: true });
                 };
 
                 fetch('/rooms/update-bathroom-details', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                    },
-                    body: JSON.stringify(payload)
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Step 2 saved!');
-                        this.step++; // advance to next step if Alpine watches this
-                    } else {
-                        alert('Save failed: ' + (data.message || 'Unknown error'));
-                    }
-                })
-                .catch(err => {
-                    console.error('Error saving bathroom details:', err);
-                });
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: JSON.stringify(payload)
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Step 2 saved!');
+                            this.step++; // advance to next step if Alpine watches this
+                        } else {
+                            alert('Save failed: ' + (data.message || 'Unknown error'));
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Error saving bathroom details:', err);
+                    });
             },
 
-            async  saveStep3() {
+            async saveStep3() {
                 const form = new FormData();
                 this.rooms.forEach(id => form.append('rooms[]', id));
                 document.querySelectorAll('input[name="amenities[]"]:checked').forEach(cb => {
@@ -168,11 +155,11 @@ observer.observe(document.body, { childList: true, subtree: true });
                 }
             },
 
-            async  saveStep4() {
+            async saveStep4() {
                 try {
 
                     const payload = {
-                        rooms: this.rooms.map(roomId  => ({
+                        rooms: this.rooms.map(roomId => ({
                             id: roomId,
                             name: this.selectedRoomName
 
@@ -189,11 +176,11 @@ observer.observe(document.body, { childList: true, subtree: true });
                 }
             },
 
-            async  saveStep5() {
+            async saveStep5() {
                 try {
 
                     const payload = {
-                        rooms: this.rooms.map(roomId  => ({
+                        rooms: this.rooms.map(roomId => ({
                             id: roomId,
                             price_per_night: this.price
 
@@ -208,7 +195,37 @@ observer.observe(document.body, { childList: true, subtree: true });
                 } catch (err) {
                     console.error(err.response?.data || err.message);
                 }
-            }
+            },
+
+            async saveStep6() {
+    try {
+        const response = await fetch('/save-step-6-room-rate-plans', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            },
+            body: JSON.stringify({
+                rooms: this.rooms.map(id => ({ id })),
+            }),
+
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            alert('Step 6 (Rate Plans) saved successfully!');
+            window.location.href = `/partner-homes-edit/${propertyId}?rooms=true&propertyType=${encodeURIComponent(propertyType)}`;
+        } else {
+            alert('Error saving rate plans.');
+        }
+
+    } catch (error) {
+        console.error('Request failed:', error);
+        alert('Network error');
+    }
+}
+
 
         }
     }
@@ -259,7 +276,7 @@ observer.observe(document.body, { childList: true, subtree: true });
                             </label>
 
                             <input type="number" min="1" step="1" inputmode="numeric" pattern="\d*"
-                                x-model="propertyCount" name="property_count" 
+                                x-model="propertyCount" name="property_count"
                                 class="w-[40%] border border-gray-300 rounded-md shadow-sm px-3 py-2" />
                         </div>
 
@@ -702,25 +719,24 @@ observer.observe(document.body, { childList: true, subtree: true });
 
                         <!-- Bathroom Amenities -->
                         @foreach ($groupedAmenities as $category => $items)
-                            <div>
-                                <label class="block font-semibold text-sm text-gray-700 mb-3">{{ $category }}</label>
+                        <div>
+                            <label class="block font-semibold text-sm text-gray-700 mb-3">{{ $category }}</label>
 
-                                <div class="space-y-2">
-                                    @foreach ($items as $amenity)
-                                        <label class="flex items-center gap-3 cursor-pointer">
-                                            <input
-                                                type="checkbox"
-                                                class="form-checkbox text-blue-500"
-                                                name="amenities[]"
-                                                value="{{ $amenity->id }}"
-                                            >
-                                            <span class="text-sm">{{ $amenity->name }}</span>
-                                        </label>
-                                    @endforeach
-                                </div>
-
-                                <hr class="my-4" />
+                            <div class="space-y-2">
+                                @foreach ($items as $amenity)
+                                <label class="flex items-center gap-3 cursor-pointer">
+                                    <input
+                                        type="checkbox"
+                                        class="form-checkbox text-blue-500"
+                                        name="amenities[]"
+                                        value="{{ $amenity->id }}">
+                                    <span class="text-sm">{{ $amenity->name }}</span>
+                                </label>
+                                @endforeach
                             </div>
+
+                            <hr class="my-4" />
+                        </div>
                         @endforeach
                     </div>
 
@@ -899,7 +915,7 @@ observer.observe(document.body, { childList: true, subtree: true });
 
     <template x-if="step === 5">
         <div class="max-w-4xl ml-40 px-4 py-8 mt-6">
-            <div class="max-w-4xl mx-auto px-4 py-8 space-y-6" >
+            <div class="max-w-4xl mx-auto px-4 py-8 space-y-6">
 
                 <!-- Title -->
                 <h2 class="text-2xl font-bold text-gray-800">Set the price per night for this room</h2>
@@ -1002,7 +1018,7 @@ observer.observe(document.body, { childList: true, subtree: true });
 
                             <!-- Input Field -->
                             <input type="number" x-model.number="price"
-                                    class="w-full border border-gray-400 rounded-md p-2 pl-16 text-gray-700 font-semibold focus:ring-2 focus:ring-blue-300 focus:outline-none" />
+                                class="w-full border border-gray-400 rounded-md p-2 pl-16 text-gray-700 font-semibold focus:ring-2 focus:ring-blue-300 focus:outline-none" />
 
 
                             <p class="text-sm text-gray-500 mt-2">Including taxes, commission, and fees</p>
@@ -1306,12 +1322,12 @@ observer.observe(document.body, { childList: true, subtree: true });
                 </button>
 
                 <!-- Continue Button -->
-                <a  id="editPageLink" href="#">
-                    <button
+               
+                    <button type="button" @click="saveStep6()"
                         class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-sky-500 transition w-full sm:w-auto">
                         Continue
                     </button>
-                </a>
+            
             </div>
 
 

@@ -315,7 +315,7 @@
 <script>
   const observeFlagDropdowns = () => {
     document.querySelectorAll('.country-select').forEach(select => {
-      if (select.dataset.flagAttached) return; // Avoid duplicate listeners
+      if (select.dataset.flagAttached) return; 
 
       const wrapper = select.closest('.flex');
       const flag = wrapper?.querySelector('.selected-flag');
@@ -335,7 +335,6 @@
   // Initial run
   document.addEventListener('DOMContentLoaded', observeFlagDropdowns);
 
-  // Watch for dynamic DOM changes (e.g., from Alpine x-if)
   const observer = new MutationObserver(() => {
     observeFlagDropdowns();
   });
@@ -423,7 +422,27 @@
   }
 
   document.getElementById('completeRegistrationBtn').addEventListener('click', function () {
-    submitForm();
+    const propertyId = parseInt(document.getElementById('propertyId').value);
+
+    submitForm(); // your existing logic
+
+    fetch(`/properties/${propertyId}/open-for-bookings`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') // if using Laravel
+        },
+        body: JSON.stringify({
+            open_for_bookings: true
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Booking status updated:', data);
+    })
+    .catch(error => {
+        console.error('Error updating booking status:', error);
+    });
   });
 </script>
 @endsection

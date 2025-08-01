@@ -304,7 +304,7 @@ Route::get('/airport-taxis', function () {
 // });
 
 // Partner Registration (Web)
-Route::prefix('partner')->group(function () {
+Route::prefix('partner')->middleware('auth')->group(function () {
     Route::get('/property_category', [PropertyController::class, 'categories'])->name('partner.property.category');
     Route::get('/property_subcategory/{id}', [PropertyController::class, 'subcategories'])->name('partner.property.subcategory');
     Route::get('/hotels/rooms/{id}', [PropertyController::class, 'rooms'])->name('partner.hotels.room');
@@ -343,10 +343,6 @@ Route::prefix('partner')->group(function () {
     Route::post('/register/contact', [PartnerRegistrationController::class, 'storeContact'])->name('partner.register.contact');
 
     // Show password creation form
-    Route::get('/register/password', [PartnerRegistrationController::class, 'createPassword'])->name('partner.register.password-create');
-
-    // Handle password creation POST
-    Route::post('/register/password', [PartnerRegistrationController::class, 'register'])->name('partner.register.password');
 
     // Show email verification page
     Route::get('/register/verify', function (\Illuminate\Http\Request $request) {
@@ -369,10 +365,7 @@ Route::prefix('partner')->group(function () {
     })->name('partner.apartment.create');
 
     // Partner two-step login
-    Route::get('/sign-in', [LoginController::class, 'showEmailForm'])->name('partner.login.email');
-    Route::post('/sign-in', [LoginController::class, 'storeEmail']);
-    Route::get('/password', [LoginController::class, 'showPasswordForm'])->name('partner.login.password');
-    Route::post('/password', [LoginController::class, 'loginWithPassword']);
+    
 
     // Show the forgot password form
     Route::get('/forgot-password', function () {
@@ -447,6 +440,14 @@ Route::prefix('partner')->group(function () {
     Route::post('/property/save-payment-method', [PropertyController::class, 'savePaymentMethod'])->name('partner.property.savePaymentMethod');
     Route::post('/property/save-invoicing/{property}', [PropertyController::class, 'saveInvoicing'])->name('partner.property.saveInvoicing');
 });
+    Route::get('partner/password', [LoginController::class, 'showPasswordForm'])->name('partner.login.password');
+    Route::post('partner/password', [LoginController::class, 'loginWithPassword']);
+    Route::get('partner/register/password', [PartnerRegistrationController::class, 'createPassword'])->name('partner.register.password-create');
+
+    // Handle password creation POST
+    Route::post('partner/register/password', [PartnerRegistrationController::class, 'register'])->name('partner.register.password');
+Route::get('partner/sign-in', [LoginController::class, 'showEmailForm'])->name('partner.login.email');
+    Route::post('partner/sign-in', [LoginController::class, 'storeEmail']);
 Route::post('/save-amenities/{propertyId}', [PropertyController::class, 'saveAmenities']);
 Route::post('/property/save-address-same', [PropertyController::class, 'saveAddressSame']);
 Route::post('/property/save-address-multiple', [PropertyController::class, 'saveAddressMultiple']);
@@ -459,6 +460,9 @@ Route::post('/rooms/update-bathroom-details', [RoomController::class, 'updateBat
 Route::post('/save-step-3-amenities', [RoomController::class, 'saveStep3Amenities']);
 Route::post('/save-step-4-room-name', [RoomController::class, 'saveStep4RoomName']);
 Route::post('/save-step-5-room-prices', [RoomController::class, 'saveStep5RoomPrices']);
+Route::post('/save-step-6-room-rate-plans', [RoomController::class, 'storeRatePlans'])->name('rooms.ratePlans');
+
+Route::post('/properties/{id}/open-for-bookings', [RoomController::class, 'updateBookingStatus']);
 
 Route::post('/store-step', function (\Illuminate\Http\Request $request) {
     session(['current_step' => $request->step]);
