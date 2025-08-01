@@ -298,7 +298,7 @@
       </button>
 
       <!-- Open for bookings Button (take remaining space) -->
-        <button id="completeRegistrationBtn" disabled class="flex-1 px-6 py-3 bg-[#3CC0E9] text-white text-center font-semibold rounded-md hover:bg-[#29ACD5] transition">
+        <button id="completeRegistrationBtn" disabled  class="flex-1 px-6 py-3 bg-[#939393] text-white text-center font-semibold rounded-md hover:cursor-not-allowed transition">
           Open for bookings
         </button>
 
@@ -313,13 +313,24 @@
 
 </section>
 <script>
-  const generalDeliveryTerms1 = document.getElementById('generalDeliveryTerms1');
+ const generalDeliveryTerms1 = document.getElementById('generalDeliveryTerms1');
   const generalDeliveryTerms2 = document.getElementById('generalDeliveryTerms2');
   const completeRegistrationBtn = document.getElementById('completeRegistrationBtn');
 
-  if (generalDeliveryTerms1.checked && generalDeliveryTerms2.checked) {
-    completeRegistrationBtn.disabled = false;
+  function toggleButton() {
+    if (generalDeliveryTerms1.checked && generalDeliveryTerms2.checked) {
+      completeRegistrationBtn.disabled = false;
+      completeRegistrationBtn.classList.remove('hover:cursor-not-allowed', 'bg-[#939393]');
+      completeRegistrationBtn.classList.add('bg-[#3CC0E9]');
+    } else {
+      completeRegistrationBtn.disabled = true;
+      completeRegistrationBtn.classList.remove('bg-[#3CC0E9]');
+      completeRegistrationBtn.classList.add('hover:cursor-not-allowed', 'bg-[#939393]');
+    }
   }
+
+  generalDeliveryTerms1.addEventListener('change', toggleButton);
+  generalDeliveryTerms2.addEventListener('change', toggleButton);
 
   const observeFlagDropdowns = () => {
     document.querySelectorAll('.country-select').forEach(select => {

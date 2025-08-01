@@ -361,7 +361,7 @@ class PropertyAction
                             'last_name' => $owner['last_name'],
                         ],
                         [
-                            'date_of_birth' => $owner['dob'],
+                            'date_of_birth' => $owner['dob']||"0000-00-00",
                         ]
                     );
 
