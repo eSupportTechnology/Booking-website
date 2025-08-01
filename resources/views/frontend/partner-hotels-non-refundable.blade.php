@@ -1,6 +1,6 @@
 @extends('partner.partner-layout')
 
-@section('title', 'List Your Property')
+@section('title', ' Hotels Non Refundable Rate | ' . config('domains.app_name'))
 
 @section('content')
 

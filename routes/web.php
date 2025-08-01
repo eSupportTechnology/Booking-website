@@ -231,6 +231,9 @@ Route::get('/partner-hotels-rooms', function () {
     return view('frontend.partner-hotels-rooms');
 })->name('partner.hotels.rooms');
 
+
+
+
 Route::get('/partner-hotels-create-2', function () {
     return view('frontend.partner-hotels-create-2');
 })->name('partner.hotels.create.2');
@@ -253,6 +256,10 @@ Route::get('/partner-alternative-entireplace', function () {
 Route::get('/partner-alternative-privateroom', function () {
     return view('frontend.partner-alternative-privateroom');
 })->name('partner.alternative.privateroom');
+
+Route::get('/partner/alternative/entireplace/step/2', function () {
+    return view('frontend.partner-alternative-entireplace-step-02');
+})->name('partner.alternative.entireplace.step.2');
 
 Route::get('/partner-apartment-multiple', function () {
     return view('frontend.partner-multiple-apartment');
@@ -304,6 +311,9 @@ Route::get('/partner-hotels-non-refundable-rate', function () {
 })->name('partner.hotels.non.refundable.rate');
 
 
+Route::get('/partner-hotels-complete-registration', function () {
+    return view('frontend.partner-hotels-complete-registration');
+})->name('partner.hotels.complete.registration');
 
 // Route::get('/email-verify', function () {
 //     return view('frontend.verify-email');

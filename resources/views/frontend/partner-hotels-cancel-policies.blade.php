@@ -1,6 +1,6 @@
 @extends('partner.partner-layout')
 
-@section('title', 'List Your Property')
+@section('title', ' Hotels Cancel Policies | ' . config('domains.app_name'))
 
 @section('content')
 <div class="max-w-7xl mx-auto px-4">
