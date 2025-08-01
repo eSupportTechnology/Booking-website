@@ -14,7 +14,6 @@ return new class extends Migration {
             $table->foreignId('subcategory_id')->constrained('property_subcategories');
             $table->foreignId('subtype_id')->constrained('property_subtypes');
             $table->foreignId('address_type_id')->constrained('address_types');
-            $table->enum('payment_method', ['online', 'credit'])->nullable();
             $table->string('title');
             $table->text('description');
             $table->text('address');
