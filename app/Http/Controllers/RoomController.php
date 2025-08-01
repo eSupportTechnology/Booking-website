@@ -2,81 +2,42 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Partner\BathroomDetailsAction;
+use App\Actions\Partner\RoomsActions;
+use App\Actions\Partner\SaveRoomAmenitiesAction;
+use App\Actions\Partner\SaveRoomNamesAction;
+use App\Actions\Partner\SaveRoomPricesAction;
+use App\Actions\Partner\StoreRatePlansAction;
+use App\DTOs\Partner\BathroomDetailsDTO;
+use App\DTOs\Partner\SaveRoomAmenitiesDTO;
+use App\DTOs\Partner\SaveRoomNamesDTO;
+use App\DTOs\Partner\SaveRoomPricesDTO;
+use App\DTOs\Partner\StoreRatePlansDTO;
+use App\DTOs\Partner\StoreRoomDTO;
 use App\Models\BedType;
+use App\Models\Property;
 use App\Models\Room;
 use App\Models\RoomBed;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class RoomController extends Controller
 {
-    public function store(Request $request)
+    public function store(Request $request, RoomsActions $action)
     {
         try {
             Log::info('Received room creation request:', $request->all());
-            $saved_rooms = [];
-            $validated = $request->validate([
-                'property_id' => 'required|exists:properties,id',
-                'room_type' => 'nullable|string|max:255',
-                'max_guests' => 'required|integer|min:1',
-                'smoking_allowed' => 'boolean',
-                'size_sq_m' => 'nullable|numeric|min:0',
-                'beds' => 'nullable|array',
-                'beds.*.label' => 'required|string',
-                'beds.*.count' => 'required|integer|min:1',
-                'room_count' => 'required|integer|min:1',
-            ]);
 
-            for ($i = 0; $i < $validated['room_count']; $i++) {
-                // 🌟 Step 1: Create Room                
-                $room = Room::create([
-                    'property_id' => $validated['property_id'],
-                    'room_type' => $validated['room_type'] ?? null,
-                    'room_type_id' => $validated['room_type'] ?? null,
-                    'max_guests' => $validated['max_guests'],
-                    'smoking_allowed' => $validated['smoking_allowed'],
-                    'size_sq_m' => $validated['size_sq_m'],
-                    'name' => 'Default Room', // You can customize this
-                    'price_per_night' => 0.00, // default placeholder
-                    'bed_count' => 1,
-                    'bathroom_count' => 1,
-                    'bathroom_type' => null,
-                    'currency' => 'usd',
-                    'discount_enabled' => false,
-                    'commission_percentage' => 15.00,
-                    'you_earn' => 0.00
-                ]);
-
-                $saved_rooms[$i] = $room->id;
-
-                // 🌟 Step 2: Save Beds
-                $totalBeds = 0;
-
-                foreach ($validated['beds'] ?? [] as $bed) {
-                    $bedType = BedType::where('name', $bed['label'])->first();
-
-                    if ($bedType) {
-                        RoomBed::create([
-                            'room_id' => $room->id,
-                            'bed_type_id' => $bedType->id,
-                            'count' => $bed['count']
-                        ]);
-
-                        $totalBeds += $bed['count'];
-                    }
-                }
-            }
-
-
+            $dto = StoreRoomDTO::fromRequest($request);
+            $saved_rooms = $action->execute($dto);
 
             Log::info('Rooms created:', $saved_rooms);
-            // Update bed_count in room
-            $room->update(['bed_count' => $totalBeds]);
 
             return response()->json(['success' => true, 'saved_rooms' => $saved_rooms]);
         } catch (\Exception $e) {
-            Log::info('Error creating room', [
+            Log::error('Error creating room', [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
@@ -84,25 +45,13 @@ class RoomController extends Controller
         }
     }
 
-    public function updateBathroomDetails(Request $request)
+    public function updateBathroomDetails(Request $request, BathroomDetailsAction $action)
     {
         try {
             Log::info('Updating bathroom details', $request->all());
-            $validated = $request->validate([
-                'rooms' => 'required|array',
-                'rooms.*.id' => 'required|exists:rooms,id',
-                'rooms.*.bathroom_type' => 'required|in:private,shared',
-                'rooms.*.bathroom_amenities' => 'nullable|array',
-                'rooms.*.bathroom_amenities.*' => 'string|max:255',
-            ]);
 
-            foreach ($validated['rooms'] as $roomData) {
-                $room = Room::find($roomData['id']);
-                $room->update([
-                    'bathroom_type' => $roomData['bathroom_type'],
-                    'bathroom_amenities' => $roomData['bathroom_amenities'] ?? [],
-                ]);
-            }
+            $dto = BathroomDetailsDTO::fromRequest($request);
+            $action->execute($dto);
 
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
@@ -115,19 +64,47 @@ class RoomController extends Controller
     }
 
 
-    public function saveStep3Amenities(Request $request)
+
+    public function saveStep3Amenities(Request $request, SaveRoomAmenitiesAction $action)
     {
         try {
             Log::info('Saving amenities', $request->all());
-            $validated = $request->validate([
-                'rooms' => 'required|array',
-                'amenities' => 'required|array',
-            ]);
 
-            foreach ($validated['rooms'] as $roomId) {
-                $room = Room::find($roomId);
-                $room->amenities()->sync($validated['amenities']);
-            }
+            $dto = SaveRoomAmenitiesDTO::fromRequest($request);
+            $action->execute($dto);
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            Log::error('Error saving amenities', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+    public function saveStep4RoomName(Request $request, SaveRoomNamesAction $action)
+    {
+        try {
+            Log::info('Saving room names', $request->all());
+
+            $dto = SaveRoomNamesDTO::fromRequest($request);
+            $action->execute($dto);
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            Log::error('Error saving room names', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function saveStep5RoomPrices(Request $request, SaveRoomPricesAction $action)
+    {
+        try {
+            $dto = SaveRoomPricesDTO::fromRequest($request);
+            $action->execute($dto);
 
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
@@ -135,38 +112,39 @@ class RoomController extends Controller
         }
     }
 
-    public function saveStep4RoomName(Request $request)
+
+    public function updateBookingStatus(Request $request, $id)
     {
-        Log::info('Saving room names', $request->all());
-        $validated = $request->validate([
-            'rooms' => 'required|array',
-            'rooms.*.id' => 'required|exists:rooms,id',
-            'rooms.*.name' => 'required|string|max:255',
+        $request->validate([
+            'open_for_bookings' => 'required|boolean',
         ]);
 
-        foreach ($validated['rooms'] as $roomData) {
-            $room = Room::findOrFail($roomData['id']);
-            $room->name = $roomData['name'];
-            $room->save();
-        }
+        $property = Property::findOrFail($id);
+        $property->open_for_bookings = $request->open_for_bookings;
+        $property->save();
 
         return response()->json(['success' => true]);
     }
 
-    public function saveStep5RoomPrices(Request $request)
+
+    public function storeRatePlans(Request $request, StoreRatePlansAction $action)
     {
-        $validated = $request->validate([
-            'rooms' => 'required|array',
-            'rooms.*.id' => 'required|exists:rooms,id',
-            'rooms.*.price_per_night' => 'required|numeric',
-        ]);
+        try {
+            Log::info('storeRatePlans called', [
+                'request' => $request->all(),
+            ]);
 
-        foreach ($validated['rooms'] as $roomData) {
-            $room = Room::findOrFail($roomData['id']);
-            $room->price_per_night = $roomData['price_per_night'];
-            $room->save();
+            $dto = StoreRatePlansDTO::fromRequest($request);
+            $action->execute($dto);
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            Log::error('Error saving rate plans', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
-
-        return response()->json(['success' => true]);
     }
 }

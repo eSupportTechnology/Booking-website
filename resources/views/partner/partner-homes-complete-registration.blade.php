@@ -4,7 +4,7 @@
 
 @section('content')
 <meta name="csrf-token" content="{{ csrf_token() }}">
-<section x-data="{ businessType: '{{ $accommodation_type === 'individual' ? 'individual' : 'business' }}' }" x-init="window.businessType = businessType" class="w-full px-4 py-8 max-w-2xl mx-auto lg:ml-32">
+<section x-data="{ businessType: '{{ $accommodation_type === 'individual' ? 'individual' : 'business_entity' }}' }" x-init="window.businessType = businessType" class="w-full px-4 py-8 max-w-2xl mx-auto lg:ml-32">
 
 <input type="hidden" id="propertyId" value="{{ $propertyId }}">
   <div class="bg-white p-6 rounded-lg shadow-md space-y-6">
@@ -26,7 +26,7 @@
         </label>
 
         <label class="flex items-start space-x-2 mb-4">
-          <input type="radio" name="type" value="business" x-model="businessType" class="mt-1" >
+          <input type="radio" name="type" value="business_entity" x-model="businessType" class="mt-1" >
           <div>
             <span class="font-semibold text-sm">Business</span>
             <p class="text-sm text-gray-600">
@@ -43,7 +43,7 @@
     </div>
 
     <!-- Business Form -->
-    <template x-if="businessType === 'business'">
+    <template x-if="businessType === 'business_entity'">
       <div>
         <p class="text-lg font-semibold text-gray-700 ">
           Legal business name
@@ -273,14 +273,14 @@
     <div class="mt-6 space-y-4 text-sm text-gray-700">
       <hr class="border-t border-gray-300 mb-4" />
       <label class="flex items-start gap-2">
-        <input type="checkbox" class="mt-1 accent-blue-600">
+        <input type="checkbox" class="mt-1 accent-blue-600" id="generalDeliveryTerms1">
         <span>
           I certify that this is a legitimate accommodation business with all necessary licenses and permits, which can be shown upon first request. {{ config('domains.domain') }} B.V. reserves the right to verify and investigate any details provided in this registration.
         </span>
       </label>
 
       <label class="flex items-start gap-2">
-        <input type="checkbox" class="mt-1 accent-blue-600">
+        <input type="checkbox" class="mt-1 accent-blue-600" id="generalDeliveryTerms2">
         <span>
           I have read, accepted, and agreed to the <a href="#" class="text-blue-600 hover:underline">General Delivery Terms</a>.
         </span>
@@ -298,7 +298,7 @@
       </button>
 
       <!-- Open for bookings Button (take remaining space) -->
-        <button id="completeRegistrationBtn" class="flex-1 px-6 py-3 bg-[#3CC0E9] text-white text-center font-semibold rounded-md hover:bg-[#29ACD5] transition">
+        <button id="completeRegistrationBtn" disabled class="flex-1 px-6 py-3 bg-[#3CC0E9] text-white text-center font-semibold rounded-md hover:bg-[#29ACD5] transition">
           Open for bookings
         </button>
 
@@ -313,6 +313,14 @@
 
 </section>
 <script>
+  const generalDeliveryTerms1 = document.getElementById('generalDeliveryTerms1');
+  const generalDeliveryTerms2 = document.getElementById('generalDeliveryTerms2');
+  const completeRegistrationBtn = document.getElementById('completeRegistrationBtn');
+
+  if (generalDeliveryTerms1.checked && generalDeliveryTerms2.checked) {
+    completeRegistrationBtn.disabled = false;
+  }
+
   const observeFlagDropdowns = () => {
     document.querySelectorAll('.country-select').forEach(select => {
       if (select.dataset.flagAttached) return; 

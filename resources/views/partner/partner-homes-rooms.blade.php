@@ -5,6 +5,8 @@
 @section('content')
 <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 <script>
+    
+    const urlParams = new URLSearchParams(window.location.search);
 
     function stepForm() {
         return {
@@ -198,33 +200,36 @@
             },
 
             async saveStep6() {
-    try {
-        const response = await fetch('/save-step-6-room-rate-plans', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-            },
-            body: JSON.stringify({
-                rooms: this.rooms.map(id => ({ id })),
-            }),
+                const url = window.location.href;
+                const pathname = new URL(url).pathname;
+                const propertyId = pathname.substring(pathname.lastIndexOf("/") + 1);
+                try {
+                    const response = await fetch('/save-step-6-room-rate-plans', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        },
+                        body: JSON.stringify({
+                            rooms: this.rooms.map(id => ({ id })),
+                        }),
 
-        });
+                    });
 
-        const data = await response.json();
+                    const data = await response.json();
 
-        if (data.success) {
-            alert('Step 6 (Rate Plans) saved successfully!');
-            window.location.href = `/partner-homes-edit/${propertyId}?rooms=true&propertyType=${encodeURIComponent(propertyType)}`;
-        } else {
-            alert('Error saving rate plans.');
-        }
+                    if (data.success) {
+                        alert('Step 6 (Rate Plans) saved successfully!');
+                        window.location.href = `/partner-homes-edit/${propertyId}?rooms=true&propertyType=${encodeURIComponent(urlParams.get('propertyType'))}`;
+                    } else {
+                        alert('Error saving rate plans.');
+                    }
 
-    } catch (error) {
-        console.error('Request failed:', error);
-        alert('Network error');
-    }
-}
+                } catch (error) {
+                    console.error('Request failed:', error);
+                    alert('Network error');
+                }
+            }
 
 
         }
