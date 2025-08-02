@@ -224,7 +224,7 @@
                     <!-- Buttons -->
 
                     <div class="space-y-2">
-                        <a href="{{ route('partner.hotels.create.2') }}">
+                        <a href="{{ route('partner.hotels.multiple') }}">
                             <button type="button"
                                 class="w-full bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded">
                                 Continue

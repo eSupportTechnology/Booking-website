@@ -300,6 +300,10 @@ Route::get('/partner-hotels-complete-registration', function () {
     return view('frontend.partner-hotels-complete-registration');
 })->name('partner.hotels.complete.registration');
 
+Route::get('/partner-hotels-multiple', function () {
+    return view('frontend.partner-hotels-multiple');
+})->name('partner.hotels.multiple');
+
 // Route::get('/email-verify', function () {
 //     return view('frontend.verify-email');
 // })->name('email.verify');
