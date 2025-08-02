@@ -92,6 +92,7 @@
 
 <!-- ✅ Pure JS Upload Logic -->
 <script>
+    const urlParams = new URLSearchParams(window.location.search);
     document.addEventListener('DOMContentLoaded', function () {
         const uploadedPhotos = [];
         const fileInput = document.getElementById('fileInput');
@@ -99,6 +100,7 @@
         const previewContainer = document.getElementById('photoPreview');
         const continueButton = document.getElementById('continueBtn');
         const propertyId = document.getElementById('propertyId').value;
+        const propertyType = urlParams.get('propertyType');
 
         fileInput.addEventListener('change', handleUpload);
         dropZone.addEventListener('dragover', (e) => e.preventDefault());
@@ -171,7 +173,7 @@
             });
 
             try {
-                const response = await fetch("{{ route('partner.property.upload.photos') }}", {
+                const response = await fetch("{{ url('/partner/property/upload-photos') }}", {
                     method: "POST",
                     headers: {
                         'X-CSRF-TOKEN': '{{ csrf_token() }}',
@@ -182,7 +184,7 @@
                 const result = await response.json();
                 if (result.success) {
                     alert("Photos uploaded successfully!");
-                    window.location.href = "{{ url('/partner-homes-edit/' . $property->id) }}?uploaded=true";
+                    window.location.href = `{{ url('/partner-homes-edit/' . $property->id) }}?uploaded=true&rooms=true&propertyType=${encodeURIComponent(propertyType)}`;
                 }
                 else {
                     alert("Upload failed.");

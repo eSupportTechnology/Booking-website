@@ -140,16 +140,18 @@
                 const propertyId = document.getElementById('propertyId').value;
                 const payload = {
                     property_id: parseInt(document.getElementById('propertyId').value),
-                    serve_breakfast: this.servesBreakfast === 'yes' ? true : false,
-                    breakfast_included: this.breakfastIncluded === 'included' ? true : false,
-                    breakfast_type: this.selectedBreakfasts.join(','),
-                    parking_available: document.querySelector('input[name="parking"]:checked')?.value === 'no' ? false : true,
-                    parking_cost: document.querySelector('input[name="parking"]:checked')?.value === 'paid' ? document.getElementById('parking_cost').value : 0,
-                    parking_cost_unit: this.parking === 'paid' ? 'per_day' : null,
-                    parking_reservation: document.querySelector('input[name="reservation_needed"]:checked')?.value === 'yes',
-                    parking_location: document.querySelector('input[name="location"]:checked')?.value || null,
-                    parking_type: document.querySelector('input[name="type"]:checked')?.value || null
+                    serve_breakfast: this.servesBreakfast === 'yes' ? true : false, // send as string
+                    breakfast_included: this.breakfastIncluded || null, // should be 'included', 'extra', or null
+                    breakfast_type: this.selectedBreakfasts.length > 0 ? this.selectedBreakfasts : null, // array of strings or null
+                    breakfast_price: document.getElementById('breakfast_price')?.value || null,
+                    parking_available: document.querySelector('input[name="parking"]:checked')?.value || null, // 'free', 'paid', 'no'
+                    parking_cost: document.querySelector('input[name="parking"]:checked')?.value === 'paid'
+                        ? document.getElementById('parking_cost')?.value : '0',                        
+                    parking_reservation: document.querySelector('input[name="reservation_needed"]:checked')?.value || null, // 'yes' / 'no'
+                    parking_location: document.querySelector('input[name="location"]:checked')?.value || null, // 'on_site' / 'off_site'
+                    parking_type: document.querySelector('input[name="type"]:checked')?.value || null // 'private' / 'public'
                 };
+
 
                 try {
                     const response = await fetch(`/partner/property/save-services/${propertyId}`, {
@@ -299,7 +301,7 @@
                     if (result.success) {
                         console.log('✅ Host profile saved:', result.message);
                         // Optionally move to next step
-                        this.step = Math.min(this.step + 1, 13);
+                        window.location.href = "{{ url('/partner-homes-edit/' . $propertyId) }}?details=true&propertyType=single";                    
                     } else {
                         console.error('❌ Save failed:', result.message);
                     }
@@ -1280,7 +1282,7 @@
                                 bookings.</p>
                         </div>
                     </div>
-                    <a href="{{ url('/partner-homes-payments/' . $propertyId) }}">
+                    <a href="{{ url('/partner-homes-payments/' . $propertyId) }}"
                     class=" bg-sky-400 border border-sky-400 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-sky-500">
                         Add final details
                     </a>

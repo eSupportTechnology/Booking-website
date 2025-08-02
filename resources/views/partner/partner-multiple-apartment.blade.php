@@ -7,6 +7,8 @@
     selectedBox: null,
     // Amenities
     selectedAmenities: [],
+    // Facilities
+    selectedFacilities: [],
     
     // Languages
     selectedLanguages: [],
@@ -26,7 +28,7 @@
     checkOutFrom: '08:00',
     checkOutUntil: '11:00',
     
-    // Host Profile
+        // Host Profile
     hostProfile: {
         about_property: '',
         about_host: '',
@@ -38,7 +40,7 @@
         host_name: ''
     },
     
-    // Pricing
+        // Pricing
     pricing: {
         booking_type: 'instant',
         price_per_night: '',
@@ -47,7 +49,7 @@
         discount_percent: ''
     },
     
-    // Address data
+        // Address data
     addressData: {
         address: 'Sri Lanka',
         apartment: 'aaa',
@@ -60,7 +62,92 @@
     // Channel manager data
     channelManager: 'yes',
     
+    // Verification data
+    verificationType: '',
+    individualData: {
+        firstName: '',
+        lastName: '',
+        dob: '',
+        altNames: []
+    },
+    businessData: {
+        businessName: '',
+        tradingName: '',
+        address: '',
+        zipCode: '',
+        city: '',
+        country: '',
+        owners: []
+    },
+    
     // Methods
+    async savePropertyName() {
+        try {
+            const propertyId = @json($property->id ?? 'new');
+            const propertyName = document.getElementById('property_name').value;
+            
+            const response = await fetch(`/property/${propertyId}/update-title`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    title: propertyName
+                })
+            });
+            
+            if (response.ok) {
+                console.log('Property name saved successfully');
+                this.step = Math.min(this.step + 1, 13);
+            } else {
+                console.error('Failed to save property name');
+                const errorData = await response.json();
+                console.error('Error details:', errorData);
+            }
+        } catch (error) {
+            console.error('Error saving property name:', error);
+        }
+    },
+
+    async saveBookingOption() {
+        try {
+            const propertyId = @json($property->id ?? 'new');
+            const response = await fetch(`/partner/property/${propertyId}/pricing`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    property_id: propertyId,
+                    booking_type: this.bookingOption,
+                    price_per_night: null,
+                    currency: 'usd',
+                    discount_enabled: false,
+                    discount_percent: 0
+                })
+            });
+            
+            if (response.ok) {
+                console.log('Booking option saved successfully');
+                this.step = Math.min(this.step + 1, 13);
+            } else {
+                console.error('Failed to save booking option');
+                const errorData = await response.json();
+                console.error('Error details:', errorData);
+            }
+        } catch (error) {
+            console.error('Error saving booking option:', error);
+        }
+    },
+
+    savePartnerVerification() {
+        savePartnerVerificationFromStep11(this);
+    },
+
     async saveAddress() {
         try {
             const propertyId = @json($property->id ?? 'new');
@@ -234,7 +321,326 @@
         }
     },
     
+    async saveFacilities() {
+        try {
+            const propertyId = @json($property->id ?? 'new');
+            const response = await fetch(`/partner/property/${propertyId}/facilities`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    facilities: this.selectedFacilities
+                })
+            });
+            
+            if (response.ok) {
+                console.log('Facilities saved successfully');
+                this.step = Math.min(this.step + 1, 13);
+            } else {
+                console.error('Failed to save facilities');
+                const errorData = await response.json();
+                alert('Error: ' + (errorData.message || 'Failed to save facilities'));
+            }
+        } catch (error) {
+            console.error('Error saving facilities:', error);
+            alert('An error occurred while saving the facilities.');
+        }
+    },
+    
+    async loadFacilities() {
+        try {
+            const propertyId = @json($property->id ?? 'new');
+            const response = await fetch(`/partner/property/${propertyId}/facilities`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                }
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success && data.facilities) {
+                    this.selectedFacilities = data.facilities;
+                    console.log('Facilities loaded successfully:', data.facilities);
+                }
+            } else {
+                console.error('Failed to load facilities');
+            }
+        } catch (error) {
+            console.error('Error loading facilities:', error);
+        }
+    },
 
+    async loadServices() {
+        try {
+            const propertyId = @json($property->id ?? 'new');
+            const response = await fetch(`/partner/property/${propertyId}/services`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                }
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success && data.services) {
+                    // Update the services data in the form
+                    // This will need to be implemented based on the services structure
+                    console.log('Services loaded successfully:', data.services);
+                }
+            } else {
+                console.error('Failed to load services');
+            }
+        } catch (error) {
+            console.error('Error loading services:', error);
+        }
+    },
+
+    async loadLanguages() {
+        try {
+            const propertyId = @json($property->id ?? 'new');
+            const response = await fetch(`/partner/property/${propertyId}/languages`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                }
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success && data.languages) {
+                    this.selectedLanguages = data.languages;
+                    console.log('Languages loaded successfully:', data.languages);
+                }
+            } else {
+                console.error('Failed to load languages');
+            }
+        } catch (error) {
+            console.error('Error loading languages:', error);
+        }
+    },
+
+    async loadVerificationData() {
+        try {
+            const propertyId = @json($property->id ?? 'new');
+            const response = await fetch(`/partner/property/${propertyId}/verification`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                }
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success && data.verification) {
+                    // Update verification form data
+                    this.verificationType = data.verification.type || '';
+                    
+                    if (data.verification.individual) {
+                        this.individualData = {
+                            firstName: data.verification.individual.firstName || '',
+                            lastName: data.verification.individual.lastName || '',
+                            dob: data.verification.individual.dob || '',
+                            altNames: data.verification.individual.altNames || []
+                        };
+                    }
+                    
+                    if (data.verification.business) {
+                        this.businessData = {
+                            businessName: data.verification.business.businessName || '',
+                            tradingName: data.verification.business.tradingName || '',
+                            address: data.verification.business.address || '',
+                            zipCode: data.verification.business.zipCode || '',
+                            city: data.verification.business.city || '',
+                            country: data.verification.business.country || '',
+                            owners: data.verification.business.owners || []
+                        };
+                    }
+                    
+                    console.log('Verification data loaded successfully:', data.verification);
+                }
+            } else {
+                console.error('Failed to load verification data');
+            }
+        } catch (error) {
+            console.error('Error loading verification data:', error);
+        }
+    },
+
+    // Watch for step changes to load data when navigating to specific steps
+    init() {
+        this.$watch('step', (newStep) => {
+            if (newStep === 4) {
+                this.loadFacilities();
+            } else if (newStep === 5) {
+                this.loadServices();
+            } else if (newStep === 6) {
+                this.loadLanguages();
+            } else if (newStep === 11) {
+                this.loadVerificationData();
+            }
+        });
+    },
+    
+    // localStorage watchers
+    init() {
+        // Watch for step changes and save to localStorage
+        this.$watch('step', (newStep) => {
+            localStorage.setItem('wizard_step_main_{{ $property->id ?? 'new' }}', newStep);
+            console.log('Step saved to localStorage:', newStep);
+        });
+        
+        // Watch for amenities changes and save to localStorage
+        this.$watch('selectedAmenities', (newAmenities) => {
+            localStorage.setItem('selected_amenities_main_{{ $property->id ?? 'new' }}', JSON.stringify(newAmenities));
+            console.log('Amenities saved to localStorage:', newAmenities);
+        });
+        
+        // Watch for facilities changes and save to localStorage
+        this.$watch('selectedFacilities', (newFacilities) => {
+            localStorage.setItem('selected_facilities_main_{{ $property->id ?? 'new' }}', JSON.stringify(newFacilities));
+            console.log('Facilities saved to localStorage:', newFacilities);
+        });
+        
+        // Watch for languages changes and save to localStorage
+        this.$watch('selectedLanguages', (newLanguages) => {
+            localStorage.setItem('selected_languages_main_{{ $property->id ?? 'new' }}', JSON.stringify(newLanguages));
+            console.log('Languages saved to localStorage:', newLanguages);
+        });
+        
+        // Watch for address data changes and save to localStorage
+        this.$watch('addressData', (newAddressData) => {
+            localStorage.setItem('address_data_main_{{ $property->id ?? 'new' }}', JSON.stringify(newAddressData));
+            console.log('Address data saved to localStorage:', newAddressData);
+        });
+        
+        // Watch for host profile changes and save to localStorage
+        this.$watch('hostProfile', (newHostProfile) => {
+            localStorage.setItem('host_profile_main_{{ $property->id ?? 'new' }}', JSON.stringify(newHostProfile));
+            console.log('Host profile saved to localStorage:', newHostProfile);
+        });
+        
+        // Watch for pricing changes and save to localStorage
+        this.$watch('pricing', (newPricing) => {
+            localStorage.setItem('pricing_main_{{ $property->id ?? 'new' }}', JSON.stringify(newPricing));
+            console.log('Pricing saved to localStorage:', newPricing);
+        });
+        
+        // Watch for verification data changes and save to localStorage
+        this.$watch('verificationType', (newType) => {
+            localStorage.setItem('verification_type_main_{{ $property->id ?? 'new' }}', newType);
+            console.log('Verification type saved to localStorage:', newType);
+        });
+        
+        this.$watch('individualData', (newData) => {
+            localStorage.setItem('individual_data_main_{{ $property->id ?? 'new' }}', JSON.stringify(newData));
+            console.log('Individual data saved to localStorage:', newData);
+        });
+        
+        this.$watch('businessData', (newData) => {
+            localStorage.setItem('business_data_main_{{ $property->id ?? 'new' }}', JSON.stringify(newData));
+            console.log('Business data saved to localStorage:', newData);
+        });
+        
+        // Watch for house rules changes and save to localStorage
+        this.$watch('smokingAllowed', (newValue) => {
+            localStorage.setItem('smoking_allowed_main_{{ $property->id ?? 'new' }}', JSON.stringify(newValue));
+        });
+        
+        this.$watch('partiesAllowed', (newValue) => {
+            localStorage.setItem('parties_allowed_main_{{ $property->id ?? 'new' }}', JSON.stringify(newValue));
+        });
+        
+        this.$watch('petsAllowed', (newValue) => {
+            localStorage.setItem('pets_allowed_main_{{ $property->id ?? 'new' }}', newValue);
+        });
+        
+        this.$watch('petsFees', (newValue) => {
+            localStorage.setItem('pets_fees_main_{{ $property->id ?? 'new' }}', newValue);
+        });
+        
+        this.$watch('checkInFrom', (newValue) => {
+            localStorage.setItem('check_in_from_main_{{ $property->id ?? 'new' }}', newValue);
+        });
+        
+        this.$watch('checkInUntil', (newValue) => {
+            localStorage.setItem('check_in_until_main_{{ $property->id ?? 'new' }}', newValue);
+        });
+        
+        this.$watch('checkOutFrom', (newValue) => {
+            localStorage.setItem('check_out_from_main_{{ $property->id ?? 'new' }}', newValue);
+        });
+        
+        this.$watch('checkOutUntil', (newValue) => {
+            localStorage.setItem('check_out_until_main_{{ $property->id ?? 'new' }}', newValue);
+        });
+        
+        // Watch for channel manager changes and save to localStorage
+        this.$watch('channelManager', (newValue) => {
+            localStorage.setItem('channel_manager_main_{{ $property->id ?? 'new' }}', newValue);
+        });
+        
+        console.log('Wizard state loaded from localStorage');
+        
+        // Add event listener to clear localStorage when user leaves the page
+        window.addEventListener('beforeunload', () => {
+            // Don't clear localStorage on page unload, let user return to their progress
+            console.log('Page unload detected - preserving wizard state');
+        });
+    },
+    
+    // Method to clear localStorage when wizard is completed
+    clearWizardData() {
+        const propertyId = '{{ $property->id ?? 'new' }}';
+        localStorage.removeItem(`wizard_step_main_${propertyId}`);
+        localStorage.removeItem(`selected_amenities_main_${propertyId}`);
+        localStorage.removeItem(`selected_facilities_main_${propertyId}`);
+        localStorage.removeItem(`selected_languages_main_${propertyId}`);
+        localStorage.removeItem(`address_data_main_${propertyId}`);
+        localStorage.removeItem(`host_profile_main_${propertyId}`);
+        localStorage.removeItem(`pricing_main_${propertyId}`);
+        localStorage.removeItem(`verification_type_main_${propertyId}`);
+        localStorage.removeItem(`individual_data_main_${propertyId}`);
+        localStorage.removeItem(`business_data_main_${propertyId}`);
+        localStorage.removeItem(`smoking_allowed_main_${propertyId}`);
+        localStorage.removeItem(`parties_allowed_main_${propertyId}`);
+        localStorage.removeItem(`pets_allowed_main_${propertyId}`);
+        localStorage.removeItem(`pets_fees_main_${propertyId}`);
+        localStorage.removeItem(`check_in_from_main_${propertyId}`);
+        localStorage.removeItem(`check_in_until_main_${propertyId}`);
+        localStorage.removeItem(`check_out_from_main_${propertyId}`);
+        localStorage.removeItem(`check_out_until_main_${propertyId}`);
+        localStorage.removeItem(`channel_manager_main_${propertyId}`);
+        console.log('Wizard data cleared from localStorage');
+    },
+    
+    // Method to complete the wizard and clear localStorage
+    completeWizard() {
+        this.clearWizardData();
+        // Redirect to success page or dashboard
+        window.location.href = '{{ route("partner.multiple.apartment.3") }}';
+    },
+    
+    // Debug method to check localStorage contents
+    debugLocalStorage() {
+        const propertyId = '{{ $property->id ?? 'new' }}';
+        console.log('=== localStorage Debug ===');
+        console.log('Current step:', localStorage.getItem(`wizard_step_main_${propertyId}`));
+        console.log('Selected amenities:', localStorage.getItem(`selected_amenities_main_${propertyId}`));
+        console.log('Selected facilities:', localStorage.getItem(`selected_facilities_main_${propertyId}`));
+        console.log('Selected languages:', localStorage.getItem(`selected_languages_main_${propertyId}`));
+        console.log('Address data:', localStorage.getItem(`address_data_main_${propertyId}`));
+        console.log('Host profile:', localStorage.getItem(`host_profile_main_${propertyId}`));
+        console.log('Pricing:', localStorage.getItem(`pricing_main_${propertyId}`));
+        console.log('=======================');
+    }
 }" xmlns:x-bind="http://www.w3.org/1999/xlink">
 
 <head>
@@ -599,25 +1005,50 @@
                                                                         class="w-full bg-white p-6 rounded shadow-md flex flex-col text-base">
 
 
-                                                                        <!-- Amenities Checkboxes Section -->
+                                                                        <!-- Facilities Checkboxes Section -->
 
                                                                         <div class="mt-2">
                                                                             <h3
                                                                                 class="text-gray-700 font-semibold mb-2">
-                                                                                Select amenities</h3>
+                                                                                Select facilities</h3>
                                                                             <div
                                                                                 class="grid grid-cols-1 sm:grid-cols-1 gap-2 text-sm text-gray-700">
-                                                                                @foreach($amenities as $amenity)
-                                                                                <label
-                                                                                    class="flex items-center space-x-2">
-                                                                                    <input type="checkbox"
-                                                                                        name="amenities[]"
-                                                                                        value="{{ $amenity['id'] }}"
-                                                                                        x-model="selectedAmenities"
-                                                                                        class="text-blue-500" />
-                                                                                    <span>{{ $amenity['name'] }}</span>
+                                                                                <label class="flex items-center space-x-2">
+                                                                                    <input type="checkbox" name="facilities[]" value="Bar" x-model="selectedFacilities" class="text-blue-500" />
+                                                                                    <span>Bar</span>
                                                                                 </label>
-                                                                                @endforeach
+                                                                                <label class="flex items-center space-x-2">
+                                                                                    <input type="checkbox" name="facilities[]" value="Sauna" x-model="selectedFacilities" class="text-blue-500" />
+                                                                                    <span>Sauna</span>
+                                                                                </label>
+                                                                                <label class="flex items-center space-x-2">
+                                                                                    <input type="checkbox" name="facilities[]" value="Garden" x-model="selectedFacilities" class="text-blue-500" />
+                                                                                    <span>Garden</span>
+                                                                                </label>
+                                                                                <label class="flex items-center space-x-2">
+                                                                                    <input type="checkbox" name="facilities[]" value="Terrace" x-model="selectedFacilities" class="text-blue-500" />
+                                                                                    <span>Terrace</span>
+                                                                                </label>
+                                                                                <label class="flex items-center space-x-2">
+                                                                                    <input type="checkbox" name="facilities[]" value="Hot tub/Jacuzzi" x-model="selectedFacilities" class="text-blue-500" />
+                                                                                    <span>Hot tub/Jacuzzi</span>
+                                                                                </label>
+                                                                                <label class="flex items-center space-x-2">
+                                                                                    <input type="checkbox" name="facilities[]" value="Heating" x-model="selectedFacilities" class="text-blue-500" />
+                                                                                    <span>Heating</span>
+                                                                                </label>
+                                                                                <label class="flex items-center space-x-2">
+                                                                                    <input type="checkbox" name="facilities[]" value="Free Wifi" x-model="selectedFacilities" class="text-blue-500" />
+                                                                                    <span>Free Wifi</span>
+                                                                                </label>
+                                                                                <label class="flex items-center space-x-2">
+                                                                                    <input type="checkbox" name="facilities[]" value="Air conditioning" x-model="selectedFacilities" class="text-blue-500" />
+                                                                                    <span>Air conditioning</span>
+                                                                                </label>
+                                                                                <label class="flex items-center space-x-2">
+                                                                                    <input type="checkbox" name="facilities[]" value="Swimming pool" x-model="selectedFacilities" class="text-blue-500" />
+                                                                                    <span>Swimming pool</span>
+                                                                                </label>
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -655,11 +1086,7 @@
                                                                         </div>
                                                                         <p class="text-sm text-gray-700">
                                                                             The facilities listed here are the ones most
-                                                                            searched for by guests. After you complete
-                                                                            your registration, you can add more
-                                                                            facilities from a larger list in the
-                                                                            extranet, the platform you'll use to manage
-                                                                            your property.
+                                                                            searched for by guests. These are separate from amenities and will be saved to your property's facilities list.
                                                                             <br>
                                                                             The ones selected here will apply to all of
                                                                             your apartments.
@@ -676,7 +1103,7 @@
                                                                     class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
                                                                     ←
                                                                 </button>
-                                                                <button type="button"     @click="saveAmenities()"
+                                                                <button type="button"     @click="saveFacilities()"
                                                                     class="px-4 py-3 bg-[#3CC0E9] font-semibold  text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ml-[330px]">
                                                                     Continue
                                                                 </button>
@@ -1432,7 +1859,7 @@
                                                                     <!-- Continue Button -->
                                                                     <!-- Continue Button (inside input field container, aligned right) -->
                                                                     <div class="flex justify-end mt-4">
-                                                                        <button type="submit"     @click="step = Math.min(step + 1, 13)"
+                                                                        <button type="submit"     @click="savePropertyName()"
                                                                             class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
                                                                             Continue
                                                                         </button>
@@ -1562,7 +1989,7 @@
                                                                 </button>
 
                                                                 <!-- Continue Button on the right -->
-                                                                <button type="button"     @click="step = Math.min(step + 1, 13)"
+                                                                <button type="button"     @click="saveBookingOption()"
                                                                     class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
                                                                     Continue
                                                                 </button>
@@ -1573,7 +2000,7 @@
                                                     </div>
 </template>
 <template x-if="step === 11">
-     <div class="px-4 py-8 mt-6 w-full max-w-2xl mx-auto lg:ml-24 space-y-6" x-data="{ ownershipType: '', owners: [{ firstName: '', lastName: '', dob: '' }] }">
+     <div class="px-4 py-8 mt-6 w-full max-w-2xl mx-auto lg:ml-24 space-y-6" x-data="{ ownershipType: '', individual: { firstName: '', lastName: '', dob: '', altNames: [] }, business: { businessName: '', tradingName: '', address: '', zipCode: '', city: '', country: '', owners: [{ firstName: '', lastName: '', dob: '', altNames: [] }] } }">
 
             <h2 class="text-3xl font-bold text-gray-800">Partner verification</h2>
 
@@ -1597,164 +2024,107 @@
             </div>
 
             <!-- Individual Form -->
-            <div x-show="ownershipType === 'individual'" x-transition class="bg-white p-6 rounded-lg  space-y-4">
-
+            <div x-show="ownershipType === 'individual'" x-transition class="bg-white p-6 rounded-lg space-y-4">
                 <p class="text-sm text-gray-800">
-                    Please provide the full names and dates of birth of all individuals who own 25% or more of the
-                    accommodation.
+                    Please provide the full names and dates of birth of the individual who owns the accommodation.
                 </p>
-
-                <!-- Owner Input Blocks -->
-                <template x-for="(owner, index) in owners" :key="index">
-                    <div class="border p-4 rounded-lg space-y-4 bg-white">
-                        <div>
-                            <label class="block  text-sm font-semibold text-gray-600">First Name</label>
-                            <input type="text" x-model="owner.firstName" placeholder="First Name"
-                                class="w-full p-2 border rounded text-sm" />
-                        </div>
-
-                        <div>
-                            <label class="block  text-sm font-semibold text-gray-600">Last Name</label>
-                            <input type="text" x-model="owner.lastName" placeholder="Last Name"
-                                class="w-full p-2 border rounded text-sm" />
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-600 mb-2">Date of Birth</label>
-                            <input type="date" x-model="owner.dob"
-                                class="w-full p-2 border rounded text-sm focus:outline-none focus:ring-2 focus:ring-sky-200" />
-                        </div>
-
-                        <div x-show="owners.length > 1" class="text-right">
-                            <button @click="owners.splice(index, 1)" class="text-red-600 text-sm hover:underline">
-                                Remove
-                            </button>
-                        </div>
+                <div class="border p-4 rounded-lg space-y-4 bg-white">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600">First Name</label>
+                        <input type="text" x-model="individual.firstName" placeholder="First Name" class="w-full p-2 border rounded text-sm" />
                     </div>
-                </template>
-
-                <!-- Add Another Owner -->
-                <div>
-                    <button @click="owners.push({ firstName: '', lastName: '', dob: '' })" type="button"
-                        class="text-sky-600 text-sm font-medium hover:underline mt-2">
-                        + Add another
-                    </button>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600">Last Name</label>
+                        <input type="text" x-model="individual.lastName" placeholder="Last Name" class="w-full p-2 border rounded text-sm" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-2">Date of Birth</label>
+                        <input type="date" x-model="individual.dob" class="w-full p-2 border rounded text-sm focus:outline-none focus:ring-2 focus:ring-sky-200" />
+                    </div>
+                    <!-- Alt names if needed -->
+                    <div>
+                        <label class="block font-semibold text-sm text-gray-600">
+                            If the owner goes by an alternative name or names, please provide those details.
+                            <span class="text-gray-500">- (Optional)</span>
+                        </label>
+                        <input type="text" x-model="individual.altNames[0]" class="w-full p-2 border rounded text-sm" />
+                    </div>
                 </div>
-                <!-- Single Optional Field Outside Loop -->
-                <div>
-                    <label class="block font-semibold text-sm text-gray-600">
-                        If any owners go by an alternative name or names, please provide those details.
-                        <span class="text-gray-500">- (Optional)</span>
-                    </label>
-                    <input type="text" class="w-full p-2 border rounded text-sm" />
-                </div>
-
-
             </div>
 
             <!-- Business Form -->
-            <div x-show="ownershipType === 'business'" x-transition
-                class="bg-white p-6 rounded-lg shadow border space-y-4">
-
-
+            <div x-show="ownershipType === 'business'" x-transition class="bg-white p-6 rounded-lg shadow border space-y-4">
                 <div class="border p-4 rounded-lg space-y-4 bg-white">
-
                     <div>
-                        <label class="block  text-sm font-semibold text-gray-600">Full name of business entity</label>
-                        <input type="text" x-model="owner.firstName" placeholder="First Name"
-                            class="w-full p-2 border rounded text-sm" />
-                    </div>
-
-                    <div>
-                        <label class="block  text-sm font-semibold text-gray-600">Address of business entity</label>
-                        <input type="text" x-model="owner.address" placeholder="Address"
-                            class="w-full p-2 border rounded text-sm" />
-                    </div>
-
-                    <div>
-                        <label class="block  text-sm font-semibold text-gray-600">Zip Code</label>
-                        <input type="text" x-model="owner.zipCode" placeholder="Zip Code"
-                            class="w-full p-2 border rounded text-sm" />
+                        <label class="block text-sm font-semibold text-gray-600">Full name of business entity</label>
+                        <input type="text" x-model="business.businessName" placeholder="Business Name" class="w-full p-2 border rounded text-sm" />
                     </div>
                     <div>
-                        <label class="block  text-sm font-semibold text-gray-600">City</label>
-                        <input type="text" x-model="owner.city" placeholder="City"
-                            class="w-full p-2 border rounded text-sm" />
+                        <label class="block text-sm font-semibold text-gray-600">Trading Name (optional)</label>
+                        <input type="text" x-model="business.tradingName" placeholder="Trading Name" class="w-full p-2 border rounded text-sm" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600">Address of business entity</label>
+                        <input type="text" x-model="business.address" placeholder="Address" class="w-full p-2 border rounded text-sm" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600">Zip Code</label>
+                        <input type="text" x-model="business.zipCode" placeholder="Zip Code" class="w-full p-2 border rounded text-sm" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600">City</label>
+                        <input type="text" x-model="business.city" placeholder="City" class="w-full p-2 border rounded text-sm" />
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-gray-600">Country</label>
-                        <select x-model="owner.country" class="w-full p-2 border rounded text-sm">
+                        <select x-model="business.country" class="w-full p-2 border rounded text-sm">
                             <option value="">Select a country</option>
                             <option value="Sri Lanka">Sri Lanka</option>
                             <option value="India">India</option>
                             <option value="United States">United States</option>
                             <option value="United Kingdom">United Kingdom</option>
                             <option value="Australia">Australia</option>
-                            <!-- Add more countries as needed -->
                         </select>
                     </div>
-
-
-
                     <div>
                         <label class="block font-semibold text-sm text-gray-600">
-                            If the company operates under a different name (e.g. "trading as" name) in relation to the
-                            accommodation, please provide those details.
+                            If the company operates under a different name (e.g. "trading as" name) in relation to the accommodation, please provide those details.
                             <span class="text-gray-500">- (Optional)</span>
                         </label>
-                        <input type="text" class="w-full p-2 border rounded text-sm" />
+                        <input type="text" x-model="business.tradingName" class="w-full p-2 border rounded text-sm" />
                     </div>
-
-
-
                 </div>
                 <p class="text-sm text-gray-800">
-                    Please provide the full names and dates of birth of all individuals who own 25% or more of the
-                    accommodation.
+                    Please provide the full names and dates of birth of all individuals who own 25% or more of the accommodation.
                 </p>
-                <!-- Owner Input Blocks -->
-                <template x-for="(owner, index) in owners" :key="index">
+                <template x-for="(owner, index) in business.owners" :key="index">
                     <div class="border p-4 rounded-lg space-y-4 bg-white">
                         <div>
-                            <label class="block  text-sm font-semibold text-gray-600">First Name</label>
-                            <input type="text" x-model="owner.firstName" placeholder="First Name"
-                                class="w-full p-2 border rounded text-sm" />
+                            <label class="block text-sm font-semibold text-gray-600">First Name</label>
+                            <input type="text" x-model="owner.firstName" placeholder="First Name" class="w-full p-2 border rounded text-sm" />
                         </div>
-
                         <div>
-                            <label class="block  text-sm font-semibold text-gray-600">Last Name</label>
-                            <input type="text" x-model="owner.lastName" placeholder="Last Name"
-                                class="w-full p-2 border rounded text-sm" />
+                            <label class="block text-sm font-semibold text-gray-600">Last Name</label>
+                            <input type="text" x-model="owner.lastName" placeholder="Last Name" class="w-full p-2 border rounded text-sm" />
                         </div>
-
                         <div>
                             <label class="block text-sm font-semibold text-gray-600 mb-2">Date of Birth</label>
-                            <input type="date" x-model="owner.dob"
-                                class="w-full p-2 border rounded text-sm focus:outline-none focus:ring-2 focus:ring-sky-200" />
+                            <input type="date" x-model="owner.dob" class="w-full p-2 border rounded text-sm focus:outline-none focus:ring-2 focus:ring-sky-200" />
                         </div>
-
-                        <div x-show="owners.length > 1" class="text-right">
-                            <button @click="owners.splice(index, 1)" class="text-red-600 text-sm hover:underline">
-                                Remove
-                            </button>
+                        <div>
+                            <label class="block font-semibold text-sm text-gray-600">
+                                If any owners go by an alternative name or names, please provide those details.
+                                <span class="text-gray-500">- (Optional)</span>
+                            </label>
+                            <input type="text" x-model="owner.altNames[0]" class="w-full p-2 border rounded text-sm" />
+                        </div>
+                        <div x-show="business.owners.length > 1" class="text-right">
+                            <button @click="business.owners.splice(index, 1)" type="button" class="text-red-600 text-sm hover:underline">Remove</button>
                         </div>
                     </div>
                 </template>
-
-                <!-- Add Another Owner -->
                 <div>
-                    <button @click="owners.push({ firstName: '', lastName: '', dob: '' })" type="button"
-                        class="text-sky-600 text-sm font-medium hover:underline mt-2">
-                        + Add another
-                    </button>
-                </div>
-                <!-- Single Optional Field Outside Loop -->
-                <div>
-                    <label class="block font-semibold text-sm text-gray-600">
-                        If any owners go by an alternative name or names, please provide those details.
-                        <span class="text-gray-500">- (Optional)</span>
-                    </label>
-                    <input type="text" class="w-full p-2 border rounded text-sm" />
+                    <button @click="business.owners.push({ firstName: '', lastName: '', dob: '', altNames: [] })" type="button" class="text-sky-600 text-sm font-medium hover:underline mt-2">+ Add another owner</button>
                 </div>
             </div>
 
@@ -1765,7 +2135,7 @@
 
                     ←
                 </button>
-                <button     @click="step = Math.min(step + 1, 13)"
+                <button     @click="savePartnerVerification()"
                     class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition ">
                     Continue
                 </button>
@@ -1773,32 +2143,66 @@
         </div>
                                                         </template>
 
-        <template x-if="step === 12">
-            <div>
-    <div class="max-w-2xl mx-auto px-4 py-8 space-y-6">
-    <h1 class="text-3xl font-bold text-gray-900">Availability</h1>
+                                                        <template x-if="step === 12">
+    <div x-data="{ allowLongStays: null, showTip: true, availabilityOption: '365' }">
+        <div class="max-w-2xl mx-auto px-4 py-8 space-y-6">
+            <h1 class="text-3xl font-bold text-gray-900">Availability</h1>
 
-    <div class="bg-white shadow-md rounded-lg p-6 space-y-4">
-        <h2 class="text-lg font-semibold">Do you want to allow 30+ night stays?</h2>
-        <p class="text-sm text-gray-600">
-            Allowing guests to stay for up to 90 nights can help you fill your calendar
-            and tap into the trend of guests working remotely.
-        </p>
+            <!-- Availability Options -->
+            <div class="bg-white shadow-md rounded-lg p-6 space-y-4">
+                <h2 class="text-lg font-semibold">How would you like to open up dates for booking?</h2>
+                <div class="space-y-3">
+                    <label class="flex items-center space-x-3">
+                        <input type="radio" name="availability_mode" value="continuous"
+                               class="form-radio text-blue-500"
+                               checked>
+                        <span>Continuously extend my availability to:</span>
+                        <select x-model="availabilityOption"
+                                class="ml-2 border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300">
+                            <option value="30">30 days</option>
+                            <option value="90">90 days</option>
+                            <option value="180">180 days</option>
+                            <option value="365">365 days</option>
+                        </select>
+                    </label>
 
-        <div>
-            <p class="font-semibold text-gray-800">Will you accept reservations for stays over 30 nights?</p>
-            <div class="flex items-center space-x-6 mt-2">
-                <label class="inline-flex items-center space-x-2">
-                    <input type="radio" name="allow_long_stays" value="yes" class="form-radio text-blue-500">
-                    <span>Yes</span>
-                </label>
-                <label class="inline-flex items-center space-x-2">
-                    <input type="radio" name="allow_long_stays" value="no" class="form-radio text-blue-500">
-                    <span>No</span>
-                </label>
+                    <label class="flex items-center space-x-3">
+                        <input type="radio" name="availability_mode" value="18months"
+                               class="form-radio text-blue-500">
+                        <span>Only open up the first 18 months</span>
+                    </label>
+                </div>
             </div>
-        </div>
 
+            <!-- Stay Options + Tip Box in horizontal layout -->
+            <div class="md:flex md:space-x-6">
+                <!-- 30+ Night Stays Section -->
+              <!-- 30+ Night Stays Section -->
+<div class="bg-white shadow-md rounded-lg p-6 space-y-4 flex-1 max-w-full">
+    <h2 class="text-lg font-semibold">Do you want to allow 30+ night stays?</h2>
+    <p class="text-sm text-gray-600">
+        Allowing guests to stay for up to 90 nights can help you fill your calendar
+        and tap into the trend of guests working remotely.
+    </p>
+
+    <div>
+        <p class="font-semibold text-gray-800">Will you accept reservations for stays over 30 nights?</p>
+        <div class="flex items-center space-x-6 mt-2">
+            <label class="inline-flex items-center space-x-2">
+                <input type="radio" name="allow_long_stays" value="yes" class="form-radio text-blue-500"
+                       @click="allowLongStays = true">
+                <span>Yes</span>
+            </label>
+            <label class="inline-flex items-center space-x-2">
+                <input type="radio" name="allow_long_stays" value="no" class="form-radio text-blue-500"
+                       @click="allowLongStays = false">
+                <span>No</span>
+            </label>
+        </div>
+    </div>
+
+    <!-- Conditional max nights input -->
+    <template x-if="allowLongStays">
         <div>
             <label for="max_nights" class="block font-semibold text-gray-800 mt-4 mb-2">
                 What's the maximum number of nights you want guests to be able to book?
@@ -1807,24 +2211,43 @@
                    class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-300"
                    placeholder="90" min="31" max="90" />
         </div>
-    </div>
+    </template>
 
-    <!-- Navigation -->
-    <div class="flex justify-between pt-4">
-        <button @click="step = Math.max(step - 1, 1)"
-                class="flex items-center border border-[#3CC0E9] text-[#3CC0E9] hover:bg-blue-50 font-semibold px-4 h-12 rounded">
-            ←
-        </button>
-        <button @click="step = Math.min(step + 1, 13)"
-                class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition">
-            Continue
-        </button>
-    </div>
+    <!-- Tip Box (Now inside this section) -->
+    <template x-if="showTip">
+        <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 mt-4 relative">
+            <button @click="showTip = false"
+                    class="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-xl font-bold">&times;</button>
+            <div class="flex items-start space-x-3">
+              
+
+                <!-- Tip Content -->
+                <div class="text-sm text-gray-700">
+                    <p class="font-semibold mb-1">What if I want to change my selection later on?</p>
+                    <p>Your selection here isn't final. You can always change it by heading to the Policies section after you've registered.</p>
+                    <a href="#" class="text-blue-600 hover:underline mt-1 inline-block">Read more about 30+ night stays</a>
+                </div>
+            </div>
+        </div>
+    </template>
 </div>
 
             </div>
-</template>
-                                                        </template>
+
+            <!-- Navigation -->
+            <div class="flex justify-between pt-4">
+                <button @click="step = Math.max(step - 1, 1)"
+                        class="flex items-center border border-[#3CC0E9] text-[#3CC0E9] hover:bg-blue-50 font-semibold px-4 h-12 rounded">
+                    ←
+                </button>
+                <button @click="handleContinue()"
+                        class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition">
+                    Continue
+                </button>
+            </div>
+        </div>
+    </div>
+</template>                                          </template>
 <template x-if="step === 13">
       <div>
                                                         <!-- Main Content -->
@@ -1843,8 +2266,9 @@ You will be able to add more apartments or duplicate this one when you finish fi
                                                                     class= "border border-[#3CC0E9]  text-blue-600 hover:bg-[#29ACD5] font-semibold py-2 px-4 rounded">
                                                                     ←
                                                                 </button>
-                                                                <button type="button"   @click="step = Math.min(step + 1, 13)"
-                                                                    class=" font-semibold py-3 px-8 rounded  bg-[#3CC0E9] hover:bg-[#29ACD5] text-white">
+                                                                <button type="button" 
+                                                                        onclick="continueToForm2()"
+                                                                        class="font-semibold py-3 px-8 rounded bg-[#3CC0E9] hover:bg-[#29ACD5] text-white">
                                                                     Continue
                                                                 </button>
                                                             </div>
@@ -1857,7 +2281,18 @@ You will be able to add more apartments or duplicate this one when you finish fi
 
                         </body>
 
+                        
+
                         <script>
+                            // Function to continue to form 2
+                            function continueToForm2() {
+                                const propertyId = @json($property->id ?? null);
+                                if (propertyId) {
+                                    window.location.href = `/partner/multiple-apartment-2/${propertyId}`;
+                                } else {
+                                    alert('Please complete all steps before continuing.');
+                                }
+                            }
                             // Function to save languages data
                             function saveLanguages(propertyId) {
                                 return new Promise((resolve, reject) => {
@@ -2135,6 +2570,9 @@ You will be able to add more apartments or duplicate this one when you finish fi
                                         console.error('Could not find step 7 element');
                                         alpineData.step = Math.min(alpineData.step + 1, 13);
                                     }
+                                } else if (alpineData.step === 12 && propertyId) {
+                                    console.log('Saving availability settings on step 12');
+                                    saveAvailabilitySettingsFromStep12(alpineData);
                                 } else {
                                     // Proceed to next step immediately for other steps
                                     alpineData.step = Math.min(alpineData.step + 1, 13);
@@ -2237,6 +2675,129 @@ You will be able to add more apartments or duplicate this one when you finish fi
                                     }
                                 } catch (error) {
                                     console.error('Error saving house rules:', error);
+                                }
+                            }
+
+                            // Function to save availability settings from step 12
+                            async function saveAvailabilitySettingsFromStep12(alpineData) {
+                                try {
+                                    const propertyId = {{ $property->id ?? 'null' }};
+                                    console.log('saveAvailabilitySettingsFromStep12 called with propertyId:', propertyId);
+                                    
+                                    // Get the step 12 data
+                                    const step12Element = document.querySelector('[x-data*="allowLongStays"]');
+                                    if (!step12Element) {
+                                        console.error('Could not find step 12 element');
+                                        return;
+                                    }
+                                    
+                                    const step12Data = Alpine.$data(step12Element);
+                                    console.log('Step 12 data found:', step12Data);
+                                    
+                                    const availabilityData = {
+                                        property_id: propertyId,
+                                        availability_mode: step12Data.availabilityOption === '18months' ? '18months' : 'continuous',
+                                        availability_days: parseInt(step12Data.availabilityOption),
+                                        allow_long_stays: step12Data.allowLongStays,
+                                        max_nights: step12Data.allowLongStays ? document.getElementById('max_nights')?.value : null,
+                                        sync_tripadvisor: false // Default to false for now
+                                    };
+                                    
+                                    console.log('Availability data to be sent:', availabilityData);
+                                    
+                                    const response = await fetch(`/partner/property/${propertyId}/availability-settings`, {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'Accept': 'application/json',
+                                            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                                        },
+                                        body: JSON.stringify(availabilityData)
+                                    });
+                                    
+                                    if (response.ok) {
+                                        console.log('Availability settings saved successfully');
+                                        alpineData.step = Math.min(alpineData.step + 1, 13);
+                                    } else {
+                                        console.error('Failed to save availability settings');
+                                        const errorData = await response.json();
+                                        console.error('Error details:', errorData);
+                                    }
+                                } catch (error) {
+                                    console.error('Error saving availability settings:', error);
+                                }
+                            }
+
+                            // Function to save partner verification from step 11
+                            async function savePartnerVerificationFromStep11(alpineData) {
+                                try {
+                                    const propertyId = {{ $property->id ?? 'null' }};
+                                    
+                                    // Get the step 11 data
+                                    const step11Element = document.querySelector('[x-data*="ownershipType"]');
+                                    if (!step11Element) {
+                                        console.error('Could not find step 11 element');
+                                        return;
+                                    }
+                                    
+                                    const step11Data = Alpine.$data(step11Element);
+                                    let verificationData = {
+                                        property_id: propertyId,
+                                        type: step11Data.ownershipType
+                                    };
+                                    
+                                    console.log('Initial verification data:', verificationData);
+                                    
+                                    if (step11Data.ownershipType === 'individual') {
+                                        // For individual, use individual data
+                                        if (step11Data.individual) {
+                                            verificationData.full_name = `${step11Data.individual.firstName} ${step11Data.individual.lastName}`.trim();
+                                            verificationData.national_id = step11Data.individual.dob; // Using DOB as national_id for now
+                                            // Add owners array for individual
+                                            verificationData.owners = [{
+                                                first_name: step11Data.individual.firstName,
+                                                last_name: step11Data.individual.lastName,
+                                                dob: step11Data.individual.dob
+                                            }];
+                                        }
+                                    } else if (step11Data.ownershipType === 'business') {
+                                        // For business, use business data
+                                        if (step11Data.business) {
+                                            verificationData.company_name = step11Data.business.businessName;
+                                            verificationData.registration_number = step11Data.business.address; // Using address as registration_number for now
+                                            // Add owners array for business if available
+                                            if (step11Data.business.owners && step11Data.business.owners.length > 0) {
+                                                verificationData.owners = step11Data.business.owners.map(owner => ({
+                                                    first_name: owner.firstName,
+                                                    last_name: owner.lastName,
+                                                    dob: owner.dob
+                                                }));
+                                            }
+                                        }
+                                    }
+                                    
+                                    console.log('Final verification data to be sent:', verificationData);
+                                    
+                                    const response = await fetch(`/partner/store-verification`, {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'Accept': 'application/json',
+                                            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                                        },
+                                        body: JSON.stringify(verificationData)
+                                    });
+                                    
+                                    if (response.ok) {
+                                        console.log('Partner verification saved successfully');
+                                        alpineData.step = Math.min(alpineData.step + 1, 13);
+                                    } else {
+                                        console.error('Failed to save partner verification');
+                                        const errorData = await response.json();
+                                        console.error('Error details:', errorData);
+                                    }
+                                } catch (error) {
+                                    console.error('Error saving partner verification:', error);
                                 }
                             }
 

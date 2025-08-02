@@ -435,17 +435,15 @@
               const payload = {
                   guests: this.guests,
                   bathrooms: this.bathrooms,
-                  allow_children: this.allowChildren,
+                  children_allowed: this.allowChildren === 'yes',
                   offer_cribs: this.offerCribs,
                   apartment_size: this.apartmentSize,
                   apartment_unit: this.apartmentUnit,
-                  breakfast_served: this.breakfastServed,
+                  serve_breakfast: this.breakfastServed === 'yes',
                   breakfast_included: this.breakfastIncluded,
-                  breakfast_types: this.breakfastTypes,
+                  breakfast_type: this.breakfastTypes,
                   parking_available: this.parkingAvailable,
                   parking_cost: this.parkingCost,
-                  parking_currency: this.parkingCurrency,
-                  parking_rate: this.parkingRate,
                   parking_reservation: this.parkingReservation,
                   parking_location: this.parkingLocation,
                   parking_type: this.parkingType,
@@ -612,9 +610,10 @@ async saveHouseRules() {
     const payload = {
         property_id: this.propertyId,
         smoking_allowed: this.smokingAllowed,
+        children_allowed: this.allowChildren === 'yes',
         parties_allowed: this.partiesAllowed,
         pets_allowed: this.petsAllowed,
-        pets_fees: this.petsFees,
+        pets_fees: this.petsFees === 'fees' ? 'charges' : this.petsFees,
         check_in_from: this.checkInFrom,
         check_in_until: this.checkInUntil,
         check_out_from: this.checkOutFrom,
@@ -1138,7 +1137,7 @@ savePricing() {
         <div class="flex flex-col gap-4">
           <template x-for="(room, roomId) in rooms" :key="roomId">
             <a
-              :href="'/partner/property/apartment/bedrooms/' + propertyId + '/' + roomId"
+              :href="'/partner/apartment/bedrooms/' + propertyId + '/' + roomId"
               class="block"
             >
               <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer flex justify-between items-center">
@@ -1159,7 +1158,7 @@ savePricing() {
                   d="M12 4v16m8-8H4"/>
           </svg>
           <a
-            :href="'/partner/property/apartment/bedrooms/' + propertyId + '/create'"
+            :href="'/partner/apartment/bedrooms/' + propertyId + '?source=single&step=1'"
             class="text-blue-600 hover:underline text-sm flex items-center space-x-1"
           >
             <span>Add Bedroom</span>

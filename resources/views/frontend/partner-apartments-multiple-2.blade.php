@@ -33,14 +33,14 @@
                         </div>
                     </a>
 
-                    <a href="{{ route('partner.apartment.livingroom', ['property' => 1]) }}">
+                    <a href="{{ route('partner.apartment.livingroom', ['property' => 1]) }}?source=multiple&step=2">
                         <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer">
                             <p class="text-sm">Living Room</p>
                             <p class="text-sm text-gray-600">1 full bed</p>
                         </div>
                     </a>
 
-                    <a href="{{ route('partner.apartment.otherspaces', ['property' => 1]) }}">
+                    <a href="{{ route('partner.apartment.otherspaces', ['property' => 1]) }}?source=multiple&step=2">
                         <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer">
                             <p class="text-sm">Other spaces</p>
                             <p class="text-sm text-gray-600">1 full bed</p>
@@ -49,7 +49,7 @@
                 </div>
 
                 <!-- Add Bedroom Button (navigate to 2nd page) -->
-                <a href="{{ route('partner.apartment.bedrooms', ['property' => 1]) }}" class="text-blue-600 hover:underline text-sm flex items-center space-x-1 mt-2">
+                <a href="{{ route('partner.apartment.bedrooms', ['property' => 1]) }}?source=multiple&step=2" class="text-blue-600 hover:underline text-sm flex items-center space-x-1 mt-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
                          viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
