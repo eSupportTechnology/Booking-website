@@ -7,6 +7,8 @@
     <title>create homes</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet" />
@@ -112,7 +114,7 @@
 
             <!-- Main Step 1 Content -->
             <div x-show="step === 1" x-cloak x-data="{
-
+                
                 subcategories: {{ Js::from($subcategories) }},
                 async submitStep1() {
                     if (this.selected === '') return;
@@ -144,12 +146,29 @@
                         this.propertyId = data.property_id;
                         this.step = 2;
                         await this.fetchSubtypes(this.selected);
-                        alert(data.message || 'Property created successfully');
+                        Swal.fire({
+                        icon: 'success',
+                        title: data.message || 'Property created successfully',
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        });
 
                     } catch (error) {
                         console.error('Request failed:', error);
-                        alert('Request failed: ' + error.message);
-                    }
+                        Swal.fire({
+                        icon: 'error',
+                        title: 'Request failed',
+                        text: error.message,
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        });
+                                            }
                 },
                     async fetchSubtypes(subcategoryId) {
                         try {
@@ -242,10 +261,27 @@
                             const data = await response.json();
                             this.step = 3;
                             console.log('Step 2 selectedBox:', this.selectedBox);
-                            alert(data.message || 'Step 2 saved successfully');
+                         
+                            Swal.fire({
+                                icon: 'success',
+                                title: data.message || 'Property created successfully',
+                                toast: true,
+                                position: 'top-end',
+                                showConfirmButton: false,
+                                timer: 3000,
+                                timerProgressBar: true,
+                            });
                         } else {
                             const error = await response.json();
-                            alert(error.message || 'Error in Step 2');
+                            Swal.fire({
+                                icon: 'error',
+                                title: error.message || 'Error in Step 2',
+                                toast: true,
+                                position: 'top-end',
+                                showConfirmButton: false,
+                                timer: 3000,
+                                timerProgressBar: true,
+                            })
                         }
                     }
                 }">
@@ -615,58 +651,114 @@
                                         </template>
 
                                         <template x-if="step === 5 && selected === 'one'">
-                                            <div class="space-y-6">
-                                                <h3 class="text-lg font-bold">Upload Photos</h3>
+                                            <div class=" space-y-6">
+                                                <section >
+                                                    <div class="w-full max-w-6xl">
+                                                        <h2 class="text-xl md:text-2xl font-bold text-black mb-6 text-left mt-12">
+                                                            What does your place look like?
+                                                        </h2>
 
-                                                <!-- Stylish Upload Box -->
-                                                <div
-                                                    class="relative border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center text-center hover:border-blue-400 transition"
-                                                    @dragover.prevent
-                                                    @drop.prevent>
-                                                    <svg class="w-12 h-12 text-blue-400 mb-2" fill="none" stroke="currentColor" stroke-width="1.5"
-                                                        viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            d="M3 16.5V18a2.5 2.5 0 002.5 2.5h13a2.5 2.5 0 002.5-2.5v-1.5M16.5 12L12 7.5 7.5 12M12 7.5V18" />
-                                                    </svg>
+                                                        <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6 items-start">
+                                                            <!-- 📸 Upload Area -->
+                                                            <div class="border rounded-lg p-6 bg-white shadow-sm">
+                                                                <p class="font-semibold text-gray-800 mb-2">Upload at least one photo of your property.</p>
+                                                                <p class="text-sm text-gray-600 mb-4">
+                                                                    The more you upload, the more likely you are to get bookings. You can add more later.
+                                                                </p>
 
-                                                    <p class="text-gray-600 text-sm">Drag and drop your images here, or</p>
+                                                                <!-- Drag and Drop Upload -->
+                                                                <div class="border border-dashed border-gray-400 rounded-lg p-6 text-center bg-gray-50 mb-6"
+                                                                    @dragover.prevent
+                                                                    @drop.prevent>
+                                                                    <div class="mb-4">
+                                                                        <svg class="w-12 h-12 text-blue-400 mx-auto" fill="none" stroke="currentColor" stroke-width="1.5"
+                                                                            viewBox="0 0 24 24">
+                                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                                d="M3 16.5V18a2.5 2.5 0 002.5 2.5h13a2.5 2.5 0 002.5-2.5v-1.5M16.5 12L12 7.5 7.5 12M12 7.5V18" />
+                                                                        </svg>
+                                                                    </div>
 
-                                                    <label class="mt-2 cursor-pointer inline-block bg-blue-100 hover:bg-blue-200 text-blue-700 px-4 py-2 rounded font-medium">
-                                                        Browse files
-                                                        <input
-                                                            type="file"
-                                                            multiple
-                                                            x-ref="photoInput"
-                                                            @change="handlePreview"
-                                                            accept="image/*"
-                                                            class="hidden" />
-                                                    </label>
+                                                                    <p class="text-gray-700 font-medium mb-2">Drag and drop or</p>
 
-                                                    <p class="text-xs text-gray-500 mt-2">Accepted formats: JPG, PNG, WebP. Max size: 5MB each</p>
-                                                </div>
-                                                <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-4" x-show="previewFiles.length">
-                                                    <template x-for="(file, index) in previewFiles" :key="index">
-                                                        <img :src="file" class="rounded shadow object-cover w-full h-32 border border-gray-300" />
-                                                    </template>
-                                                </div>
+                                                                    <label
+                                                                        class="inline-flex items-center gap-2 px-4 py-2 bg-white text-gray-800 border border-gray-800 rounded cursor-pointer hover:bg-gray-50 hover:text-black transition"
+                                                                        for="photoInput">
+                                                                        <img src="{{ asset('assets/mdi_camera-outline.svg') }}" alt="Upload" class="w-4 h-4" />
+                                                                        <span>Upload photos</span>
+                                                                    </label>
 
+                                                                    <input id="photoInput" type="file" multiple accept="image/*"
+                                                                        class="hidden" x-ref="photoInput" @change="handlePreview" />
 
-                                                <!-- Navigation Buttons -->
-                                                <div class="flex justify-between pt-4">
-                                                    <button type="button"
-                                                        @click="prevStep"
-                                                        class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium px-5 py-2 rounded">
-                                                        ←
-                                                    </button>
+                                                                    <p class="text-xs text-gray-500 mt-2">
+                                                                        JPG, PNG, or WebP. Max size: 47MB each
+                                                                    </p>
+                                                                </div>
 
-                                                    <button
-                                                        type="button"
-                                                        @click="nextStep"
-                                                        class="bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold px-6 py-2 rounded shadow">
-                                                        Continue →
-                                                    </button>
-                                                </div>
+                                                               <!-- Previews -->
+                                                                <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-4" x-show="previewFiles.length">
+                                                                    <template x-for="(file, index) in previewFiles" :key="index">
+                                                                        <div class="relative group border rounded overflow-hidden">
+                                                                            <!-- Main Photo Label -->
+                                                                            <span x-show="index === 0"
+                                                                                class="absolute top-1 left-1 bg-green-600 text-white text-xs px-2 py-1 rounded z-10">
+                                                                                Main Photo
+                                                                            </span>
+
+                                                                            <!-- Remove Button -->
+                                                                            <button type="button"
+                                                                                    @click="removePhoto(index)"
+                                                                                    class="absolute top-1 right-1 bg-black bg-opacity-50 text-white rounded-full p-1 z-10 hover:bg-opacity-75">
+                                                                                &times;
+                                                                            </button>
+
+                                                                            <!-- Preview Image -->
+                                                                            <img :src="file" class="rounded shadow object-cover w-full h-32 border border-gray-300" />
+                                                                        </div>
+                                                                    </template>
+                                                                </div>
+
+                                                                <!-- Navigation Buttons -->
+                                                                <div class="mt-6 flex justify-between">
+                                                                    <button type="button"
+                                                                            @click="prevStep"
+                                                                            class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
+                                                                        ←
+                                                                    </button>
+
+                                                                     <button
+                                                                        type="button"
+                                                                        @click="nextStep"
+                                                                        x-ref="continueBtn"
+                                                                        class="px-6 py-2 text-white rounded bg-gray-400 cursor-not-allowed"
+                                                                        disabled>
+                                                                        Continue →
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- ℹ️ Tips Box -->
+                                                            <div>
+                                                                <div class="bg-white border rounded-none p-4 shadow-sm relative text-sm">
+                                                                    <h3 class="font-semibold text-gray-800 mb-2 text-base">
+                                                                        What if I don't have professional photos?
+                                                                    </h3>
+                                                                    <p class="text-gray-600 mb-2">
+                                                                        No problem! You can use a smartphone or a digital camera. Here are some tips for taking great photos.
+                                                                    </p>
+                                                                    <a href="#" class="text-[#3CC0E9] hover:underline block mb-2">
+                                                                        Here are some tips for taking great photos of your property
+                                                                    </a>
+                                                                    <p class="text-gray-600">
+                                                                        If you don’t know who took a photo, it's best not to use it. Only use photos others have taken if you have permission.
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </section>
                                             </div>
+
                                         </template>
 
 
@@ -3260,18 +3352,34 @@
                                         };
                                     },
                                     handlePreview(event) {
-                                        this.previewFiles = [];
                                         const files = event.target.files;
 
                                         for (let i = 0; i < files.length; i++) {
                                             const reader = new FileReader();
                                             reader.onload = e => {
                                                 this.previewFiles.push(e.target.result);
+                                                this.updateContinueButton();
+
                                             };
+
                                             reader.readAsDataURL(files[i]);
                                         }
                                     },
 
+                                    removePhoto(index) {
+                                        this.previewFiles.splice(index, 1);
+                                        this.updateContinueButton();
+                                    },
+                                    updateContinueButton() {
+                                        const btn = this.$refs.continueBtn;
+                                        if (this.previewFiles.length < 3) {
+                                            btn.disabled = true;
+                                            btn.className = 'px-6 py-2 text-white rounded bg-gray-400 cursor-not-allowed';
+                                        } else {
+                                            btn.disabled = false;
+                                            btn.className = 'px-6 py-2 text-white rounded bg-[#3CC0E9] hover:bg-blue-700';
+                                        }
+                                    },
                                     selectOption(option) {
                                         this.selected = option;
                                         // Reset step if needed
