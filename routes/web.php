@@ -250,6 +250,16 @@ Route::get('/partner/alternative/entireplace/step/2', function () {
     return view('frontend.partner-alternative-entireplace-step-02');
 })->name('partner.alternative.entireplace.step.2');
 
+
+
+Route::get('/partner/alternative/Single/Campsite', function () {
+    return view('frontend.partner-alternative-one-campsite');
+})->name('partner.alternative.single.campsite');
+
+Route::get('/partner/alternative/Single/Campsite/room', function () {
+    return view('frontend.partner-alternative-campsite-room');
+})->name('partner.alternative.single.campsite.room');
+
 Route::get('/partner-apartment-multiple', function () {
     return view('frontend.partner-multiple-apartment');
 })->name('partner.apartment.multiple');
