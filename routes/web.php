@@ -15,6 +15,8 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Customer\CustomerPersonalDetailsController;
 use App\Http\Controllers\Customer\EmailVerifyController;
 use App\Http\Controllers\PropertyController;
+use App\Http\Controllers\RoomController;
+use App\Http\Controllers\PropertyDataController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\App;
@@ -36,7 +38,7 @@ Route::get('/login', [LoginController::class, 'show'])->name('login');
 //     return view('frontend.login');
 // });
 
-Route::get('change', [LanguageController::class, 'change'])->name('lang.change');
+Route::post('change-language', [LanguageController::class, 'change'])->name('lang.change');
 
 Route::prefix('customer')->group(function () {
     Route::get('/login', [CustomerAuthController::class, 'showLoginForm'])->name('customer.login');
@@ -173,51 +175,42 @@ Route::get('/partner-apartment-create-1', function () {
     return view('frontend.partner-apartment-create-form-1');
 })->name('partner.apartment.create.1');
 
-Route::get('/partner-apartment-otherspaces', function () {
-    return view('frontend.partner-apartments-otherspaces');
+Route::get('/partner/apartment/otherspaces/{property}', function ($property) {
+    $property = \App\Models\Property::findOrFail($property);
+    return view('partner.partner-apartments-otherspaces', compact('property'));
 })->name('partner.apartment.otherspaces');
 
-Route::get('/partner-apartment-livingroom', function () {
-    return view('frontend.partner-apartments-livingroom');
+Route::get('/partner/apartment/livingroom/{property}', function ($property) {
+    $property = \App\Models\Property::findOrFail($property);
+    return view('partner.partner-apartments-livingroom', compact('property'));
 })->name('partner.apartment.livingroom');
 
-Route::get('/partner-apartment-price-group', function () {
-    return view('frontend.partner-apartment-priceper-group');
-})->name('partner.apartment.price.group');
 
-Route::get('/partner-apartment-weekly-rate', function () {
-    return view('frontend.partner-apartment-weekly-rate');
-})->name('partner.apartment.weekly.rate');
+
+Route::get('/partner-homes-complete', function () {
+    return view('frontend.partner-homes-complete-registration');
+})->name('partner.homes.complete');
+
+// Route::get('/partner-apartment-weekly-rate', function () {
+//     return view('frontend.partner-apartment-weekly-rate');
+// })->name('partner.apartment.weekly.rate');
 
 Route::get('/partner-apartment-refundable-rate', function () {
     return view('frontend.partner-apartment-non-refundable-rate');
 })->name('partner.apartment.refundable.rate');
 
-Route::get('/open-booking', function () {
-    return view('frontend.open-booking');
-})->name('open.booking');
+Route::get('/open-booking/{propertyId}', [PropertyController::class, 'openBooking'])->name('open.booking');
 
-Route::get('/partner-apartment-pricing-policies', function () {
-    return view('frontend.partner-apartment-pricing-cancel-policies');
-})->name('partner.apartment.pricing.policies');
+// Route::get('/partner-apartment-pricing-policies', function () {
+//     return view('frontend.partner-apartment-pricing-cancel-policies');
+// })->name('partner.apartment.pricing.policies');
 
 Route::get('/customer-profile-create', function () {
     return view('frontend.customer-profile-create');
 })->name('customer.profile.create');
 
-Route::get('/partner-apartment-create-2', function () {
-    // Example: fetch the latest property for the current user (customize as needed)
-    $property = null;
-    if (Auth::check()) {
-        $property = \App\Models\Property::where('user_id', Auth::id())->latest()->first();
-    }
-    // Fallback: if no property found, create a dummy object to avoid errors
-    if (!$property) {
-        $property = new \App\Models\Property();
-        $property->id = 0;
-    }
-    return view('frontend.partner-apartment-create-form-2', compact('property'));
-})->name('partner.apartment.create.2');
+Route::get('/partner-apartment-create-2/{propertyId?}', [PropertyController::class, 'showSingleApartmentForm2'])->name('partner.apartment.create.2');
+Route::get('/partner/property/apartment/step2/{propertyId}', [PropertyController::class, 'showSingleApartmentForm2'])->name('partner.property.apartment.step2');
 
 Route::get('/partner-homes-create-1', function () {
     return view('frontend.partner-homes-create-form-1');
@@ -254,6 +247,27 @@ Route::get('/partner-apartment-multiple', function () {
     return view('frontend.partner-multiple-apartment');
 })->name('partner.apartment.multiple');
 
+Route::get('/partner-homes-form2/{id}/{subtype}', [PropertyController::class, 'showHomesForm2'])->name('partner.homes.form.2');
+
+// Route::get('/partner-apartment-multiple-2', function () {
+//     return view('frontend.partner-apartments-multiple-2');
+// })->name('partner.apartment.multiple.2');
+
+Route::get('/partner-homes-form2', function () {
+    return view('frontend.partner-homes-form-2');
+})->name('partner.homes.form2');
+
+
+Route::post('/partner-homes-single', [PropertyController::class, 'showPrivateHomesSingle'])->name('partner.homes.single');
+Route::post('/partner-homes-multiple', [PropertyController::class, 'showPrivateHomesMultiple'])->name('partner.homes.multiple');
+
+
+Route::get('/partner-homes-rooms/{id}', [PropertyController::class, 'showPrivateHomesRooms'])->name('partner.homes.rooms');
+Route::get('/partner-homes-edit/{id}', [PropertyController::class, 'showPrivateHomesEdit'])->name('partner.homes.edit');
+Route::get('/partner-homes-payments/{id}', [PropertyController::class, 'showPrivateHomesPayments'])->name('partner.homes.payments');
+Route::get('/partner-homes-images/{id}', [PropertyController::class, 'showPrivateHomesImages'])->name('partner.homes.images');
+
+Route::get('/partner-apartments-final/{property?}', [PropertyController::class, 'showFinalStep'])->name('partner.apartments.final');
 
 Route::get('/partner-hotels-edit', function () {
     return view('frontend.partner-hotels-edit');
@@ -290,32 +304,20 @@ Route::get('/airport-taxis', function () {
 //     });
 // });
 
-// Partner Registration (Web)
+// Partner Registration Routes (Public - No Auth Required)
 Route::prefix('partner')->group(function () {
-    Route::get('/property_category', [PropertyController::class, 'categories'])->name('partner.property.category');
-    Route::get('/property_subcategory/{id}', [PropertyController::class, 'subcategories'])->name('partner.property.subcategory');
-    Route::get('/hotels/rooms/{id}', [PropertyController::class, 'rooms'])->name('partner.hotels.room');
-    Route::get('/property_subtype/{id}', [PropertyController::class, 'subtypes'])->name('partner.property.subtype');
-    Route::post('/property/register', [PropertyController::class, 'register'])->name('partner.property.register');
-    // Show Step 1 form
-    Route::get('/property/{category}/step1', [PropertyController::class, 'showStep1'])->name('partner.property.step1.show');
-
-    // Handle Step 1 submission
-    Route::post('/partner/property/{category}/step1', [PropertyController::class, 'storeStep1'])->name('partner.property.step1.store');
-
-
-    // Show Step 2 form
-    Route::get('/property/{category}/step2/{property}', [PropertyController::class, 'showStep2'])
-        ->name('partner.property.step2');
+    // Partner Login Routes
+    Route::get('/login', [LoginController::class, 'show'])->name('partner.login');
+    Route::post('/login', [LoginController::class, 'login'])->name('partner.login.submit');
+    Route::get('/sign-in', [LoginController::class, 'showEmailForm'])->name('partner.login.email');
+    Route::post('/sign-in', [LoginController::class, 'storeEmail']);
+    Route::get('/password', [LoginController::class, 'showPasswordForm'])->name('partner.login.password');
+    Route::post('/password', [LoginController::class, 'loginWithPassword']);
 
     // Show email registration form
     Route::get('/register', [PartnerRegistrationController::class, 'createEmail'])->name('partner.register.email-create');
     Route::get('/register/email', [PartnerRegistrationController::class, 'createEmail'])->name('partner.register.email.form');
 
-    Route::get('/property-apartment-2', function () {
-        return view('partner.partner-apartment-create-form-2');
-    })->name('partner.property.apartment.2');
-    Route::get('/property-apartment-1', [\App\Http\Controllers\PropertyController::class, 'apartmentSubcategories'])->name('partner.property.apartment.1');
     // Handle email registration POST
     Route::post('/register/email', [PartnerRegistrationController::class, 'storeEmail'])->name('partner.register.email');
 
@@ -342,20 +344,7 @@ Route::prefix('partner')->group(function () {
         return response()->json(['status' => 'success', 'message' => 'Verification email resent (placeholder).']);
     })->name('partner.register.resend');
 
-    Route::get('/list-your-property', function () {
-        return view('partner.list-your-property');
-    })->name('partner.list-your-property');
-
-    // Partner apartment creation form
-    Route::get('/apartment/create', function () {
-        return view('partner.partner-apartment-create');
-    })->name('partner.apartment.create');
-
-    // Partner two-step login
-    Route::get('/sign-in', [LoginController::class, 'showEmailForm'])->name('partner.login.email');
-    Route::post('/sign-in', [LoginController::class, 'storeEmail']);
-    Route::get('/password', [LoginController::class, 'showPasswordForm'])->name('partner.login.password');
-    Route::post('/password', [LoginController::class, 'loginWithPassword']);
+    Route::get('/register/verify/{token}', [PartnerRegistrationController::class, 'verify'])->name('partner.register.verify.token');
 
     // Show the forgot password form
     Route::get('/forgot-password', function () {
@@ -377,20 +366,58 @@ Route::prefix('partner')->group(function () {
     // Handle the reset password POST
     Route::post('/reset-password', [\App\Http\Controllers\Partner\NewPasswordController::class, 'store'])
         ->name('partner.password.update');
+});
 
-    Route::get('/register/verify/{token}', [PartnerRegistrationController::class, 'verify'])->name('partner.register.verify.token');
+// Partner Routes (Protected - Auth Required)
+Route::prefix('partner')->middleware('auth')->group(function () {
+    Route::get('/property_category', [PropertyController::class, 'categories'])->name('partner.property.category');
+    Route::get('/property_subcategory/{id}', [PropertyController::class, 'subcategories'])->name('partner.property.subcategory');
+    Route::get('/hotels/rooms/{id}', [PropertyController::class, 'rooms'])->name('partner.hotels.room');
+    Route::get('/property_subtype/{id}', [PropertyController::class, 'subtypes'])->name('partner.property.subtype');
+    Route::post('/property/register', [PropertyController::class, 'register'])->name('partner.property.register');
+    // Show Step 1 form
+    Route::get('/property/{category}/step1', [PropertyController::class, 'showStep1'])->name('partner.property.step1.show');
+
+    // Handle Step 1 submission
+    Route::post('/partner/property/{category}/step1', [PropertyController::class, 'storeStep1'])->name('partner.property.step1.store');
+
+
+    // Show Step 2 form
+    Route::get('/property/{category}/step2/{property}', [PropertyController::class, 'showStep2'])
+        ->name('partner.property.step2');
+
+    Route::get('/property-apartment-2', function () {
+        return view('partner.partner-apartment-create-form-2', [
+            'property' => null,
+            'category' => 'apartment',
+            'groupedAmenities' => []
+        ]);
+    })->name('partner.property.apartment.2');
+    Route::get('/property-apartment-1', [\App\Http\Controllers\PropertyController::class, 'apartmentSubcategories'])->name('partner.property.apartment.1');
+
+    Route::get('/list-your-property', function () {
+        return view('partner.list-your-property');
+    })->name('partner.list-your-property');
+
+    // Partner apartment creation form
+    Route::get('/apartment/create', function () {
+        return view('partner.partner-apartment-create');
+    })->name('partner.apartment.create');
 
     Route::post('/property-apartment', [\App\Http\Controllers\PropertyController::class, 'storeApartment'])->name('partner.property.apartment.store');
 
     // Step 2: Show next form and save more details (dynamic for any category, static route name)
     Route::post('/property/{category}/step2/{property}', [PropertyController::class, 'storeStep2'])->name('partner.property.store.step2');
     Route::post('/property/step3/{property}', [PropertyController::class, 'storeStep2'])->name('partner.property.store.step3');
-    Route::post('/property/upload-photos', [PropertyController::class, 'uploadPhotos']);
-    Route::post('/property/save-amenities/{property}', [PropertyController::class, 'saveAmenities']);
+    Route::post('/property/upload-photos', [PropertyController::class, 'uploadPhotos'])->name('partner.property.upload.photos');
+    Route::post('/property/save-amenities/{propertyId}', [PropertyController::class, 'saveAmenities']);
     Route::post('/property/save-policy/{property}', [PropertyController::class, 'savePolicy']);
     Route::post('/property/save-languages/{property}', [PropertyController::class, 'saveLanguages']);
     Route::post('/save-rooms/{property}', [PropertyController::class, 'saveRooms']);
+    Route::post('/store-verification', [PropertyController::class, 'storePartnerVerification']);
     Route::post('/partner-verification', [PropertyController::class, 'storePartnerVerification']);
+    Route::post('/partner/property/{property}/partner-verification', [PropertyController::class, 'storePartnerVerification']);
+    Route::post('/partner/property/{property}/verification', [PropertyController::class, 'storePartnerVerification']);
 
     // Store accommodation, business entity, individual, and alt name details
     Route::post('/accommodation/store', [PropertyController::class, 'storeAccommodationDetails'])->name('partner.accommodation.store');
@@ -402,18 +429,53 @@ Route::prefix('partner')->group(function () {
 
     // Partial update for AJAX step-by-step wizard
     Route::patch('/property/{property}', [PropertyController::class, 'updatePartial'])->name('partner.property.update.partial');
+    Route::post('/property/{property}/facilities', [PropertyController::class, 'saveFacilities'])->name('partner.property.facilities.store');
+    Route::get('/property/{property}/facilities', [PropertyDataController::class, 'getFacilities'])->name('partner.property.facilities.get');
+    Route::post('/property/{property}/services', [PropertyController::class, 'saveServices'])->name('partner.property.services.store');
+    Route::get('/property/{property}/services', [PropertyDataController::class, 'getServices'])->name('partner.property.services.get');
+    Route::post('/partner/property/{property}/services', [PropertyController::class, 'saveServices'])->name('partner.property.services.store');
+    Route::patch('/partner/property/{property}/additional-details', [PropertyController::class, 'updateAdditionalDetails'])->name('partner.property.update.additional-details');
+    Route::post('/property/{property}/languages', [PropertyController::class, 'saveLanguages'])->name('partner.property.languages.store');
+    Route::get('/property/{property}/languages', [PropertyDataController::class, 'getPropertyLanguages'])->name('partner.property.languages.get');
+    Route::get('/property/{property}/verification', [PropertyDataController::class, 'getVerification'])->name('partner.property.verification.get');
+
+    // Add new routes for loading saved data
+    Route::get('/property/{property}/details', [PropertyDataController::class, 'getPropertyDetails'])->name('partner.property.details.get');
+    Route::get('/property/{property}/amenities', [PropertyDataController::class, 'getAmenities'])->name('partner.property.amenities.get');
     Route::post('/property/{property}/amenities', [PropertyController::class, 'saveAmenities'])->name('partner.property.amenities.store');
-    Route::post('/property/{property}/services', [\App\Http\Controllers\PropertyServiceController::class, 'store'])->name('partner.property.services.store');
-    Route::post('/property/{property}/languages', [\App\Http\Controllers\PropertyController::class, 'saveLanguages'])->name('partner.property.languages.store');
-    Route::get('/languages', [\App\Http\Controllers\PropertyController::class, 'getLanguages'])->name('partner.languages.get');
+    Route::get('/property/{property}/host-profile', [PropertyDataController::class, 'getHostProfile'])->name('partner.property.host-profile.get');
+    Route::get('/property/{property}/pricing', [PropertyDataController::class, 'getPricing'])->name('partner.property.pricing.get');
+    Route::get('/property/{property}/house-rules', [PropertyDataController::class, 'getHouseRules'])->name('partner.property.house-rules.get');
+    Route::get('/property/{property}/availability-settings', [PropertyDataController::class, 'getAvailabilitySettings'])->name('partner.property.availability-settings.get');
+
+    Route::post('/property/{property}/house-rules', [\App\Http\Controllers\PropertyController::class, 'saveHouseRules'])->name('partner.property.house-rules.store');
+    Route::post('/property/{property}/availability-settings', [\App\Http\Controllers\PropertyController::class, 'saveAvailabilitySettings'])->name('partner.property.availability-settings.store');
+    Route::get('/languages', [PropertyDataController::class, 'getLanguages'])->name('partner.languages.get');
     Route::post('/property/save-additional-details', [PropertyController::class, 'saveAdditionalDetails'])->name('partner.property.save-additional-details');
+    Route::post('/property/save-services/{property}', [PropertyController::class, 'saveServices']);
+    Route::post('/save-languages/{property}', [PropertyController::class, 'saveLanguages']);
+    Route::post('/property/save-payment-method', [PropertyController::class, 'savePaymentMethod'])->name('partner.property.savePaymentMethod');
+    Route::post('/property/save-invoicing/{property}', [PropertyController::class, 'saveInvoicing'])->name('partner.property.saveInvoicing');
 });
-Route::post('/save-amenities/{property}', [PropertyController::class, 'saveAmenities']);
+
+Route::post('/save-amenities/{propertyId}', [PropertyController::class, 'saveAmenities']);
 Route::post('/property/save-address-same', [PropertyController::class, 'saveAddressSame']);
 Route::post('/property/save-address-multiple', [PropertyController::class, 'saveAddressMultiple']);
-Route::post('/save-languages/{property}', [PropertyController::class, 'saveLanguages']);
-Route::get('/partner/login', [LoginController::class, 'show'])->name('partner.login');
-Route::post('/partner/login', [LoginController::class, 'login'])->name('partner.login.submit');
+Route::get('/partner-homes-complete-registration/{id}', [PropertyController::class, 'completeHomesRegistration'])->name('partner.homes.complete.registration');
+
+Route::post('/rooms', [RoomController::class, 'store'])->name('rooms.store');
+Route::post('/rooms/update-bathroom-details', [RoomController::class, 'updateBathroomDetails']);
+Route::post('/save-step-3-amenities', [RoomController::class, 'saveStep3Amenities']);
+Route::post('/save-step-4-room-name', [RoomController::class, 'saveStep4RoomName']);
+Route::post('/save-step-5-room-prices', [RoomController::class, 'saveStep5RoomPrices']);
+Route::post('/save-step-6-room-rate-plans', [RoomController::class, 'storeRatePlans'])->name('rooms.ratePlans');
+
+Route::post('/properties/{id}/open-for-bookings', [RoomController::class, 'updateBookingStatus']);
+
+Route::post('/store-step', function (\Illuminate\Http\Request $request) {
+    session(['current_step' => $request->step]);
+    return response()->json(['status' => 'ok']);
+});
 
 // Show the email verification notice
 Route::get('/email/verify', function () {
@@ -442,79 +504,91 @@ Route::post('/property/{property}/update-title', [PropertyController::class, 'up
 Route::patch('/partner/property/{property}/additional-details', [PropertyController::class, 'updateAdditionalDetails'])
     ->name('partner.property.update.additional-details');
 
+Route::post('/partner/property/{property}/pricing', [PropertyController::class, 'savePricing'])
+    ->name('partner.property.save.pricing');
+
+Route::post('/partner/property/{property}/rate-plans', [PropertyController::class, 'saveRatePlans'])
+    ->name('partner.property.save.rate-plans');
+
 
 
 
 require __DIR__ . '/auth.php';
 
 
-Route::get('/admin/dashboard', function () {
-    return view('frontend.admin.dashboard');
-})->name('admin.dashboard');
+// Admin Portal Routes
+Route::prefix('admin')->name('admin.')->group(function () {
+    // Guest routes
+    Route::middleware('guest')->group(function () {
+        Route::get('/admin-login', [\App\Http\Controllers\Admin\AuthController::class, 'showLogin'])->name('login');
+        Route::post('/admin-login', [\App\Http\Controllers\Admin\AuthController::class, 'login']);
+        Route::get('/admin-registration', [\App\Http\Controllers\Admin\AuthController::class, 'showRegister'])->name('register');
+        Route::post('/admin-registration', [\App\Http\Controllers\Admin\AuthController::class, 'register']);
+        Route::get('/admin-forgot-password', [\App\Http\Controllers\Admin\AuthController::class, 'showForgotPassword'])->name('forgot-password');
+        Route::post('/admin-forgot-password', [\App\Http\Controllers\Admin\AdminPasswordResetLinkController::class, 'store'])->name('password.email');
+        Route::get('/admin-reset-password/{token}', function ($token) {
+            return view('admin.admin-reset-password', [
+                'token' => $token,
+                'email' => request('email')
+            ]);
+        })->name('password.reset');
+        Route::post('/admin-reset-password', [\App\Http\Controllers\Admin\AdminNewPasswordController::class, 'store'])->name('password.store');
+    });
 
+        // Protected admin routes
+        Route::middleware(['auth:admin', \App\Http\Middleware\AdminMiddleware::class, \App\Http\Middleware\PreventBackHistory::class])->group(function () {
+        Route::get('/center', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
+        Route::post('/exit', [\App\Http\Controllers\Admin\AuthController::class, 'logout'])->name('logout');
 
-Route::get('/admin/customers', function () {
-    return view('frontend.admin.customers');
-})->name('admin.customers');
+        // Property management
+        Route::get('/units', function () {
+            return view('admin.admin-apartments');
+        })->name('apartments');
+        Route::get('/residences', function () {
+            return view('admin.admin-homes');
+        })->name('homes');
+        Route::get('/venues', function () {
+            return view('admin.admin-hotels');
+        })->name('hotels');
+        Route::get('/unique-stays', function () {
+            return view('admin.admin-alternative-places');
+        })->name('alternative.places');
 
-Route::get('/admin/customer-view', function () {
-    return view('frontend.admin.customer-view');
+        // Customer management
+        Route::get('/accounts', function () {
+            return view('admin.admin-customers');
+        })->name('customers');
+        Route::post('/account-details', [\App\Http\Controllers\Admin\CustomerViewController::class, 'show'])->name('customer.view');
+
+        // Partner management
+        Route::get('/partners', function () {
+            return view('admin.admin-partners');
+        })->name('partners');
+        Route::post('/partner-details', [\App\Http\Controllers\Admin\PartnerViewController::class, 'show'])->name('partner.view');
+
+        // Settings
+        Route::get('/settings', function () {
+            return view('admin.admin-settings');
+        })->name('settings');
+
+        // Super admin only routes
+        Route::middleware(\App\Http\Middleware\SuperAdminMiddleware::class)->group(function () {
+            Route::get('/pending', [\App\Http\Controllers\Admin\AdminApprovalController::class, 'index'])->name('approvals.index');
+            Route::post('/pending/{admin}/approve', [\App\Http\Controllers\Admin\AdminApprovalController::class, 'approve'])->name('approvals.approve');
+            Route::post('/pending/{admin}/reject', [\App\Http\Controllers\Admin\AdminApprovalController::class, 'reject'])->name('approvals.reject');
+        });
+    });
 });
 
-Route::get('/admin/partners', function () {
-    return view('frontend.admin.partners');
-})->name('admin.partners');
 
-Route::get('/admin/partner-view', function () {
-    return view('frontend.admin.partner-view');
-})->name('admin.partner-view');
-
-Route::get('/admin/settings', function () {
-    return view('frontend.admin.settings');
-})->name('admin.settings');
+Route::get('/partner-home-final-steps', function () {
+    return view('frontend.partner-home-final-steps');
+})->name('frontend.partner-home-final-steps');
 
 
-
-// Admin Routes for Property
-Route::get('/admin/apartments', function () {
-    return view('frontend.admin.apartments');
-})->name('admin.apartments');
-
-Route::get('/admin/homes', function () {
-    return view('frontend.admin.homes');
-})->name('admin.homes');
-
-Route::get('/admin/hotels', function () {
-    return view('frontend.admin.hotels');
-})->name('admin.hotels');
-
-Route::get('/admin/alternative-places', function () {
-    return view('frontend.admin.alternative-places');
-})->name('admin.alternative.places');
-
-
-// Admin Routes Login Registration Forgot Password
-Route::get('/admin/login', function () {
-    return view('frontend.admin.login');
-})->name('admin.login');
-
-Route::get('/admin/Registration', function () {
-    return view('frontend.admin.Registration');
-})->name('admin.Registration');
-
-Route::get('/admin/ForgotPassword', function () {
-    return view('frontend.admin.ForgotPassword');
-})->name('admin.ForgotPassword');
-
-
-
-
-
-
-
-
-
-
+Route::get('/apartment/final', function () {
+    return view('frontend.partner-apartment-final');
+})->name('partner.apartment.final');
 
 
 
@@ -528,8 +602,38 @@ Route::get('/customer-myAccount', function () {
 Route::get('/partner/apartment/bedrooms/{property}', function ($propertyId) {
     $property = \App\Models\Property::findOrFail($propertyId);
     $bedTypes = \App\Models\BedType::all();
-    return view('partner.partner-apartments-bedrooms', compact('property', 'bedTypes'));
+    
+    // Fetch existing bedrooms for this property
+    $existingBedrooms = \App\Models\PropertyBedroom::where('property_id', $propertyId)->get();
+    
+    // Convert to rooms structure for frontend
+    $rooms = [
+        'bedroom1' => ['name' => 'Bedroom 1', 'twin' => 0, 'full' => 1, 'queen' => 0, 'king' => 0, 'bunk' => 0, 'sofa' => 0, 'futon' => 0],
+        'livingRoom' => ['name' => 'Living room', 'twin' => 0, 'full' => 0, 'queen' => 0, 'king' => 0, 'bunk' => 0, 'sofa' => 0, 'futon' => 0],
+        'otherSpaces' => ['name' => 'Other spaces', 'twin' => 0, 'full' => 0, 'queen' => 0, 'king' => 0, 'bunk' => 0, 'sofa' => 0, 'futon' => 0]
+    ];
+    
+    foreach ($existingBedrooms as $room) {
+        $roomKey = strtolower(str_replace(' ', '', $room->name));
+        $rooms[$roomKey] = [
+            'name' => $room->name,
+            'twin' => $room->twin ?? 0,
+            'full' => $room->full ?? 0,
+            'queen' => $room->queen ?? 0,
+            'king' => $room->king ?? 0,
+            'bunk' => $room->bunk ?? 0,
+            'sofa' => $room->sofa ?? 0,
+            'futon' => $room->futon ?? 0
+        ];
+    }
+    
+    return view('partner.partner-apartments-bedrooms', compact('property', 'bedTypes', 'rooms'));
 })->name('partner.apartment.bedrooms');
+
+// Temporary redirect for old URL pattern
+Route::get('/partner/property/apartment/bedrooms/{property}', function ($propertyId) {
+    return redirect('/partner/apartment/bedrooms/' . $propertyId);
+});
 
 Route::get('/partner/property/{category}/step3/{property}', function ($category, $propertyId) {
     $property = \App\Models\Property::findOrFail($propertyId);
@@ -544,24 +648,33 @@ Route::post('/partner/property/{property}/policy', [\App\Http\Controllers\Proper
 Route::post('/partner/property/{property}/host-profile', [PropertyController::class, 'saveHostProfile']);
 
 Route::post('/partner/property/{property}/pricing', [PropertyController::class, 'savePricing']);
+Route::post('/partner/property/{property}/address-type', [PropertyController::class, 'saveAddressType']);
+
+
 
 // Apartment pricing-related routes
-Route::get('/partner/apartment/non-refundable-rate', function() {
+Route::get('/partner/apartment/non-refundable-rate', function () {
     return view('partner.partner-apartment-non-refundable-rate');
-})->name('partner.apartment.refundable.rate');
+})->name('partner.apartment.non.refundable.rate');
 
-Route::get('/partner/apartment/price/group', function() {
+Route::get('/partner/apartment/price/group', function () {
     return view('partner.partner-apartment-priceper-group');
 })->name('partner.apartment.price.group');
 
-Route::get('/partner/apartment/pricing/cancel-policies', function() {
+Route::get('/partner/apartment/pricing/cancel-policies', function () {
     return view('partner.partner-apartment-pricing-cancel-policies');
 })->name('partner.apartment.pricing.policies');
 
-Route::get('/partner/apartment/weekly-rate', function() {
+Route::get('/partner/apartment/weekly-rate', function () {
     return view('partner.partner-apartment-weekly-rate');
 })->name('partner.apartment.weekly.rate');
 
-Route::get('/partner/partner-multiple-apartment', function () {
-    return view('partner.partner-multiple-apartment');
-})->name('partner.multiple.apartment');
+
+Route::get('/partner/partner-multiple-apartment/{property}', [PropertyController::class, 'showMultipleApartmentForm'])->name('partner.multiple.apartment');
+
+Route::get('/partner/multiple-apartment/{property?}', [PropertyController::class, 'showMultipleApartmentForm'])->name('partner.multiple.apartment.initial');
+Route::get('/partner/multiple-apartment-2/{propertyId}', [PropertyController::class, 'showMultipleApartmentForm2'])->name('partner.multiple.apartment.2');
+Route::post('/partner/property/{property}/step1-data', [PropertyController::class, 'saveStep1Data'])->name('partner.property.step1-data');
+Route::get('/partner/get-latest-property', [PropertyDataController::class, 'getLatestProperty'])->name('partner.get.latest.property');
+Route::post('/partner/property/upload-photos', [PropertyController::class, 'uploadPhotos'])->name('partner.property.upload-photos');
+Route::get('/partner/multiple-apartment-3', [PropertyController::class, 'showMultipleApartmentForm3'])->name('partner.multiple.apartment.3');

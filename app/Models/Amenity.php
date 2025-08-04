@@ -12,8 +12,12 @@ class Amenity extends Model
     public $timestamps = false;
 
     public function properties()
-{
-    return $this->belongsToMany(Property::class, 'property_amenity', 'amenity_id', 'property_id');
-}
+    {
+        return $this->belongsToMany(Property::class, 'property_amenity', 'amenity_id', 'property_id');
+    }
 
+    public function rooms()
+    {
+        return $this->belongsToMany(Room::class, 'room_amenity', 'amenity_id', 'room_id');
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\PropertyAvailabilitySetting;
 
 class Property extends Model
 {
@@ -26,10 +27,18 @@ class Property extends Model
         'status',
         'stars',
         'group',
+        'payment_method',
+        'invoicing_info',
+        'open_for_bookings',
     ];
     public function photos()
     {
         return $this->hasMany(PropertyPhoto::class);
+    }
+    
+    public function files()
+    {
+        return $this->hasMany(File::class);
     }
     public function rooms()
     {
@@ -81,4 +90,21 @@ class Property extends Model
     {
         return $this->hasOne(\App\Models\PropertyPricing::class);
     }
+
+    public function addressType()
+    {
+        return $this->belongsTo(AddressType::class);
+    }
+
+    public function facilities()
+    {
+        return $this->hasMany(PropertyFacility::class);
+    }
+
+    public function availabilitySettings()
+    {
+        return $this->hasOne(PropertyAvailabilitySetting::class);
+    }
+
+
 }

@@ -82,19 +82,36 @@
 
             <!-- Notifications -->
             <div id="notifications" class="bg-gray-50 border rounded-lg shadow p-6 space-y-4">
-                <h3 class="text-xl font-semibold text-gray-700">🔔 Notification Preferences</h3>
-                <div class="space-y-2">
-                    <label class="flex items-center space-x-2">
-                        <input type="checkbox" class="form-checkbox" checked>
-                        <span>Send booking alerts via email</span>
-                    </label>
-                    <label class="flex items-center space-x-2">
-                        <input type="checkbox" class="form-checkbox">
-                        <span>Send promotional updates</span>
-                    </label>
+              <h3 class="text-xl font-semibold text-gray-700">🔔 Notification Preferences</h3>
+              <div class="space-y-4">
+
+                <!-- Booking Alerts Switch -->
+                <div class="flex items-center justify-between">
+                  <span class="text-gray-700">Send booking alerts via email</span>
+                  <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" value="" class="sr-only peer" checked>
+                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-[#1F8FB2] rounded-full peer dark:bg-gray-300 peer-checked:bg-[#1F8FB2] transition-all"></div>
+                    <div class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-all peer-checked:translate-x-full"></div>
+                  </label>
                 </div>
-                <button class="mt-4 bg-[#1F8FB2] text-white px-4 py-2 rounded hover:bg-[#157799] transition">Save Preferences</button>
+
+                <!-- Promotional Updates Switch -->
+                <div class="flex items-center justify-between">
+                  <span class="text-gray-700">Send promotional updates</span>
+                  <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" value="" class="sr-only peer">
+                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-[#1F8FB2] rounded-full peer dark:bg-gray-300 peer-checked:bg-[#1F8FB2] transition-all"></div>
+                    <div class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-all peer-checked:translate-x-full"></div>
+                  </label>
+                </div>
+
+              </div>
+
+              <button class="mt-6 bg-[#1F8FB2] text-white px-4 py-2 rounded hover:bg-[#157799] transition">
+                Save Preferences
+              </button>
             </div>
+
 
         </div>
     </div>
