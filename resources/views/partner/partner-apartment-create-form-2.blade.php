@@ -1386,12 +1386,86 @@
       What does your place look like?
     </h2>
     <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6 items-start">
-      <!-- 📸 Photo Upload Area -->
-      <div class="border rounded-lg p-6 bg-white shadow-sm">
-        <p class="font-semibold text-gray-800 mb-2">Upload at least 5 photos of your property.</p>
+              <!-- 📸 Photo Upload Area -->
+        <div class="border rounded-lg p-6 bg-white shadow-sm">
+          <p class="font-semibold text-gray-800 mb-2">Upload at least 3 photos of your property.</p>
           <p class="text-sm text-gray-600 mb-4">
             The more you upload, the more likely you are to get bookings. You can add more later.
           </p>
+          
+          <!-- Toast notification for photo requirement -->
+          <div 
+            x-show="uploadedPhotos.length === 0" 
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0 transform translate-y-2"
+            x-transition:enter-end="opacity-100 transform translate-y-0"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100 transform translate-y-0"
+            x-transition:leave-end="opacity-0 transform translate-y-2"
+            class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg"
+          >
+            <div class="flex items-center">
+              <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <div class="ml-3">
+                <p class="text-sm text-red-800">
+                  <strong>Photo requirement:</strong> You need to upload at least 3 photos to continue to the next step.
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <div 
+            x-show="uploadedPhotos.length === 1" 
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0 transform translate-y-2"
+            x-transition:enter-end="opacity-100 transform translate-y-0"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100 transform translate-y-0"
+            x-transition:leave-end="opacity-0 transform translate-y-2"
+            class="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg"
+          >
+            <div class="flex items-center">
+              <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <div class="ml-3">
+                <p class="text-sm text-yellow-800">
+                  <strong>Photo requirement:</strong> You need to upload at least 2 more photos (3 total) to continue to the next step.
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <div 
+            x-show="uploadedPhotos.length >= 3" 
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0 transform translate-y-2"
+            x-transition:enter-end="opacity-100 transform translate-y-0"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100 transform translate-y-0"
+            x-transition:leave-end="opacity-0 transform translate-y-2"
+            class="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg"
+          >
+            <div class="flex items-center">
+              <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <div class="ml-3">
+                <p class="text-sm text-green-800">
+                  <strong>Great!</strong> You have uploaded enough photos to continue.
+                </p>
+              </div>
+            </div>
+          </div>
+          
           <!-- Upload box with drag and drop -->
           <div
             class="border border-dashed border-gray-400 rounded-lg p-6 text-center bg-gray-50 mb-6"
