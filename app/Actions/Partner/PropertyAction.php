@@ -329,6 +329,18 @@ class PropertyAction
             'dto_data' => $dto->toArray()
         ]);
 
+        // Debug owners data
+        if ($dto->owners && is_array($dto->owners)) {
+            foreach ($dto->owners as $index => $owner) {
+                Log::info("Owner {$index} data:", [
+                    'first_name' => $owner['first_name'] ?? 'null',
+                    'last_name' => $owner['last_name'] ?? 'null',
+                    'dob' => $owner['dob'] ?? 'null',
+                    'dob_type' => gettype($owner['dob'] ?? null)
+                ]);
+            }
+        }
+
         // Check if accommodation record already exists
         $accommodation = Accommodation::where('property_id', $dto->property_id)->first();
         
@@ -354,6 +366,19 @@ class PropertyAction
             // Handle individual verification
             if ($dto->owners && is_array($dto->owners)) {
                 foreach ($dto->owners as $owner) {
+                    // Validate and format the date
+                    $dateOfBirth = null;
+                    if (!empty($owner['dob']) && $owner['dob'] !== '1') {
+                        try {
+                            $date = \DateTime::createFromFormat('Y-m-d', $owner['dob']);
+                            if ($date && $date->format('Y-m-d') === $owner['dob']) {
+                                $dateOfBirth = $owner['dob'];
+                            }
+                        } catch (\Exception $e) {
+                            Log::warning('Invalid date format for DOB:', ['dob' => $owner['dob']]);
+                        }
+                    }
+                    
                     $individual = Individual::updateOrCreate(
                         [
                             'accommodation_id' => $accommodation->id,
@@ -361,7 +386,7 @@ class PropertyAction
                             'last_name' => $owner['last_name'],
                         ],
                         [
-                            'date_of_birth' => $owner['dob']||"0000-00-00",
+                            'date_of_birth' => $dateOfBirth,
                         ]
                     );
 
@@ -378,7 +403,7 @@ class PropertyAction
                         'accommodation_id' => $accommodation->id,
                         'first_name' => $dto->full_name ? explode(' ', $dto->full_name)[0] : null,
                         'last_name' => $dto->full_name ? (explode(' ', $dto->full_name)[1] ?? '') : null,
-                        'date_of_birth' => $dto->national_id,
+                        'date_of_birth' => null, // This should be properly handled from the owners array
                     ]
                 );
 
