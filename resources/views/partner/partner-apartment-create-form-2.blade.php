@@ -891,67 +891,70 @@
               </label>
             </div>
           </div>
-          <hr class="my-6 border-t border-gray-300">
-          <!-- Parking cost -->
-          <div>
-            <p class="text-sm font-semibold text-gray-800 mb-2">How much does parking cost?</p>
-            <div class="flex flex-col sm:flex-row items-center gap-4">
-              <!-- Input + Currency Select Wrapper -->
-              <div class="relative w-full max-w-xs">
-                <select x-model="parkingCurrency" @change="logParkingChange('parkingCurrency', $event.target.value)" class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-transparent text-gray-700 text-sm pr-1 pl-1 focus:outline-none">
-                  <option value="usd">US$</option>
-                  <option value="eur">€</option>
-                  <option value="gbp">£</option>
-                  <option value="lkr">Rs</option>
+          <!-- Parking details - only show if parking is available -->
+          <div x-show="parkingAvailable !== 'no'" x-transition>
+            <hr class="my-6 border-t border-gray-300">
+            <!-- Parking cost - only show if parking is paid -->
+            <div x-show="parkingAvailable === 'paid'">
+              <p class="text-sm font-semibold text-gray-800 mb-2">How much does parking cost?</p>
+              <div class="flex flex-col sm:flex-row items-center gap-4">
+                <!-- Input + Currency Select Wrapper -->
+                <div class="relative w-full max-w-xs">
+                  <select x-model="parkingCurrency" @change="logParkingChange('parkingCurrency', $event.target.value)" class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-transparent text-gray-700 text-sm pr-1 pl-1 focus:outline-none">
+                    <option value="usd">US$</option>
+                    <option value="eur">€</option>
+                    <option value="gbp">£</option>
+                    <option value="lkr">Rs</option>
+                  </select>
+                  <input
+                    type="text"
+                    x-model="parkingCost"
+                  @input="logParkingChange('parkingCost', $event.target.value)"
+                    class="w-full border border-gray-400 rounded-md pl-16 pr-2 py-2 text-gray-700 font-semibold focus:ring-2 focus:ring-blue-300 focus:outline-none"
+                  />
+                </div>
+                <!-- Rate Select -->
+                                <select x-model="parkingRate" @change="logParkingChange('parkingRate', $event.target.value)" class="border border-gray-300 rounded px-3 py-2 w-32 text-sm text-gray-700">
+                  <option value="per_day">Per day</option>
+                  <option value="per_stay">Per stay</option>
                 </select>
-                <input
-                  type="text"
-                  x-model="parkingCost"
-                @input="logParkingChange('parkingCost', $event.target.value)"
-                  class="w-full border border-gray-400 rounded-md pl-16 pr-2 py-2 text-gray-700 font-semibold focus:ring-2 focus:ring-blue-300 focus:outline-none"
-                />
               </div>
-              <!-- Rate Select -->
-                              <select x-model="parkingRate" @change="logParkingChange('parkingRate', $event.target.value)" class="border border-gray-300 rounded px-3 py-2 w-32 text-sm text-gray-700">
-                <option value="per_day">Per day</option>
-                <option value="per_stay">Per stay</option>
-              </select>
             </div>
-          </div>
-          <!-- Reservation needed -->
-          <div>
-            <p class="font-semibold text-sm text-gray-800 mb-2">Do guests need to reserve a parking spot?</p>
-            <div class="flex flex-col text-sm gap-2">
-              <label>
-                <input type="radio" name="parking_reservation" value="needed" x-model="parkingReservation" @change="logParkingChange('parkingReservation', $event.target.value)" class="mr-2"> Reservation needed
+            <!-- Reservation needed -->
+            <div>
+              <p class="font-semibold text-sm text-gray-800 mb-2">Do guests need to reserve a parking spot?</p>
+              <div class="flex flex-col text-sm gap-2">
+                              <label>
+                <input type="radio" name="parking_reservation" value="yes" x-model="parkingReservation" @change="logParkingChange('parkingReservation', $event.target.value)" class="mr-2"> Reservation needed
               </label>
               <label>
-                <input type="radio" name="parking_reservation" value="not_needed" x-model="parkingReservation" @change="logParkingChange('parkingReservation', $event.target.value)" class="mr-2"> No reservation needed
+                <input type="radio" name="parking_reservation" value="no" x-model="parkingReservation" @change="logParkingChange('parkingReservation', $event.target.value)" class="mr-2"> No reservation needed
               </label>
+              </div>
             </div>
-          </div>
-          <!-- Parking location -->
-          <div>
-            <p class="font-semibold text-sm text-gray-800 mb-2">Where is the parking located?</p>
-            <div class="flex flex-col text-sm gap-2">
-              <label>
-                <input type="radio" name="parking_location" value="on_site" x-model="parkingLocation" @change="logParkingChange('parkingLocation', $event.target.value)" class="mr-2"> On site
-              </label>
-              <label>
-                <input type="radio" name="parking_location" value="off_site" x-model="parkingLocation" @change="logParkingChange('parkingLocation', $event.target.value)" class="mr-2"> Off site
-              </label>
+            <!-- Parking location -->
+            <div>
+              <p class="font-semibold text-sm text-gray-800 mb-2">Where is the parking located?</p>
+              <div class="flex flex-col text-sm gap-2">
+                <label>
+                  <input type="radio" name="parking_location" value="on_site" x-model="parkingLocation" @change="logParkingChange('parkingLocation', $event.target.value)" class="mr-2"> On site
+                </label>
+                <label>
+                  <input type="radio" name="parking_location" value="off_site" x-model="parkingLocation" @change="logParkingChange('parkingLocation', $event.target.value)" class="mr-2"> Off site
+                </label>
+              </div>
             </div>
-          </div>
-          <!-- Parking type -->
-          <div>
-            <p class="font-semibold text-sm text-gray-800 mb-2">What type of parking is it?</p>
-            <div class="flex flex-col text-sm gap-2">
-              <label>
-                <input type="radio" name="parking_type" value="private" x-model="parkingType" @change="logParkingChange('parkingType', $event.target.value)" class="mr-2"> Private
-              </label>
-              <label>
-                <input type="radio" name="parking_type" value="public" x-model="parkingType" @change="logParkingChange('parkingType', $event.target.value)" class="mr-2"> Public
-              </label>
+            <!-- Parking type -->
+            <div>
+              <p class="font-semibold text-sm text-gray-800 mb-2">What type of parking is it?</p>
+              <div class="flex flex-col text-sm gap-2">
+                <label>
+                  <input type="radio" name="parking_type" value="private" x-model="parkingType" @change="logParkingChange('parkingType', $event.target.value)" class="mr-2"> Private
+                </label>
+                <label>
+                  <input type="radio" name="parking_type" value="public" x-model="parkingType" @change="logParkingChange('parkingType', $event.target.value)" class="mr-2"> Public
+                </label>
+              </div>
             </div>
           </div>
         </div>
@@ -3278,6 +3281,29 @@ function wizardApp() {
 
         logParkingChange(fieldName, value) {
             this.log('Parking field changed: ' + fieldName + ' = ' + value);
+            
+            // Clear parking details when "No" is selected
+            if (fieldName === 'parkingAvailable' && value === 'no') {
+                this.clearParkingDetails();
+            }
+            
+            // Clear parking cost when switching to "free"
+            if (fieldName === 'parkingAvailable' && value === 'free') {
+                this.clearParkingCost();
+            }
+        },
+        
+        clearParkingDetails() {
+            this.parkingCost = '';
+            this.parkingReservation = '';
+            this.parkingLocation = '';
+            this.parkingType = '';
+            this.log('Parking details cleared');
+        },
+        
+        clearParkingCost() {
+            this.parkingCost = '';
+            this.log('Parking cost cleared');
         },
 
         // State persistence
@@ -3652,7 +3678,7 @@ function wizardApp() {
                 parking_type: this.parkingType,
             };
             
-            this.log('Additional details payload: ' + payload);
+            this.log('Additional details payload: ' + JSON.stringify(payload, null, 2));
             this.isLoading = true;
             
             // If on the services step, POST to /services, otherwise PATCH additional-details
