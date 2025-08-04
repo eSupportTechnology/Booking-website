@@ -1265,7 +1265,11 @@
                                                         <h3 class="text-lg  mb-4 font-bold">Select languages
                                                         </h3>
                                                         <div class="space-y-2">
-                                                            @foreach ($languages as $lang)
+                                                            @php
+                                                                $initialLanguages = $languages->take(6);
+                                                                $additionalLanguages = $languages->slice(6);
+                                                            @endphp
+                                                            @foreach ($initialLanguages as $lang)
                                                             <label class="flex items-center cursor-pointer">
                                                                 <input type="checkbox"
                                                                     class="mr-2"
@@ -1304,33 +1308,19 @@
                                                                 <!-- Dropdown list -->
                                                                 <ul id="languageDropdown"
                                                                     class="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded max-h-40 overflow-auto shadow-lg hidden">
-                                                                    <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                                        onclick="selectLanguage(this)">Arabic
-                                                                    </li>
-                                                                    <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                                        onclick="selectLanguage(this)">
-                                                                        Bulgarian</li>
-                                                                    <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                                        onclick="selectLanguage(this)">Catalan
-                                                                    </li>
-                                                                    <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                                        onclick="selectLanguage(this)">Chinese
-                                                                    </li>
-                                                                    <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                                        onclick="selectLanguage(this)">Croatian
-                                                                    </li>
-                                                                    <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                                        onclick="selectLanguage(this)">Czech
-                                                                    </li>
-                                                                    <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                                        onclick="selectLanguage(this)">Danish
-                                                                    </li>
-                                                                    <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                                        onclick="selectLanguage(this)">Dutch
-                                                                    </li>
+                                                                    @foreach ($additionalLanguages as $lang)
+                                                                        <li class="p-2 hover:bg-blue-100 cursor-pointer"
+                                                                            onclick="selectLanguage(this)"
+                                                                            data-id="{{ $lang['id'] }}">
+                                                                            {{ $lang['name'] }}
+                                                                        </li>
+                                                                    @endforeach
                                                                 </ul>
+
                                                             </div>
                                                         </div>
+                                                        <!-- Container to hold dynamically selected additional languages -->
+                                                        <div id="selectedAdditionalLanguages" class="mt-2 space-y-2"></div>
 
                                                         <!-- Toggle Button for Additional Languages -->
                                                         <a href="#"
@@ -1358,6 +1348,35 @@
                                                 </div>
 
                                                 <script>
+                                                    function selectLanguage(element) {
+                                                            const input = document.getElementById("languageInput");
+                                                            const selectedContainer = document.getElementById("selectedAdditionalLanguages");
+                                                            const langName = element.textContent.trim();
+                                                            const langId = element.dataset.id;
+
+                                                            // Prevent duplicate
+                                                            if (document.getElementById(`lang-${langId}`)) {
+                                                                input.value = '';
+                                                                hideDropdown();
+                                                                return;
+                                                            }
+
+                                                            // Create checkbox dynamically
+                                                            const label = document.createElement('label');
+                                                            label.className = 'flex items-center cursor-pointer';
+                                                            label.id = `lang-${langId}`;
+                                                            label.innerHTML = `
+                                                                <input type="checkbox" class="mr-2" name="languages[]" value="${langId}" checked />
+                                                                <span>${langName}</span>
+                                                            `;
+
+                                                            selectedContainer.appendChild(label);
+
+                                                            // Clear input and close dropdown
+                                                            input.value = '';
+                                                            hideDropdown();
+                                                    }
+
                                                     function toggleAdditionalLanguages() {
                                                         const section = document.getElementById("additionalLanguagesSection");
                                                         section.classList.toggle("hidden");
@@ -1404,11 +1423,7 @@
                                                         }
                                                     }
 
-                                                    function selectLanguage(element) {
-                                                        const input = document.getElementById("languageInput");
-                                                        input.value = element.textContent;
-                                                        hideDropdown();
-                                                    }
+                                                 
 
                                                     // Close dropdown when clicking outside
                                                     document.addEventListener("click", function(event) {
