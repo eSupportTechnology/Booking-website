@@ -1082,73 +1082,161 @@
                                         </template>
                                         <!-- Step 5 -->
                                         <template x-if="step === 9 && selected === 'one'">
-                                            <div>
+                                            <div x-data="{
+                                                    servesBreakfast: false,
+                                                    breakfastIncluded: '',
+                                                    selectedBreakfasts: [],
+                                                    breakfastPrice: '',
+                                                    breakfastOptions: ['Continental', 'Full English', 'Buffet', 'Vegetarian', 'Vegan', 'Gluten-free'],
+                                                    parking: 'no',
+                                                    parkingCost: '',
+                                                    toggleBreakfastOption(option) {
+                                                        const index = this.selectedBreakfasts.indexOf(option);
+                                                        if (index > -1) {
+                                                            this.selectedBreakfasts.splice(index, 1);
+                                                        } else {
+                                                            this.selectedBreakfasts.push(option);
+                                                        }
+                                                    }
+                                                }">
                                                 <div class="container mx-auto px-4 py-4 max-w-6xl mb-8">
 
-                                                    <!-- Header -->
-                                                    <h2
-                                                        class="text-2xl font-bold mb-4 text-left ml-6 max-w-xl">
+                                                    <h2 class="text-2xl font-bold mb-4 text-left ml-6 max-w-xl">
                                                         Services at your property
                                                     </h2>
 
-                                                    <!-- Sections stacked vertically, aligned with header -->
                                                     <div class="max-w-xl ml-6 flex flex-col space-y-8">
                                                         <!-- Breakfast Section -->
                                                         <div class="bg-white shadow-md rounded-lg p-6">
-                                                            <h3 class="text-lg  mb-4 font-bold">Breakfast</h3>
+                                                            <h3 class="text-lg mb-4 font-bold">Breakfast</h3>
                                                             <hr class="border-gray-300 mb-4" />
-                                                            <p class="text-gray-700 mb-2 font-bold text-base">
-                                                                Do you serve guests breakfast?
-                                                            </p>
+
+                                                            <p class="text-gray-700 mb-2 font-bold text-base">Do you serve guests breakfast?</p>
                                                             <div class="space-y-2">
-                                                                <label
-                                                                    class="flex items-center cursor-pointer">
-                                                                    <input type="radio" name="breakfast"
-                                                                        value="yes" class="mr-2" />
+                                                                <label class="flex items-center cursor-pointer">
+                                                                    <input type="radio" name="breakfast" x-model="servesBreakfast" value="yes" class="mr-2" />
                                                                     <span>Yes</span>
                                                                 </label>
-                                                                <label
-                                                                    class="flex items-center cursor-pointer">
-                                                                    <input type="radio" name="breakfast"
-                                                                        value="no" class="mr-2"
-                                                                        checked />
+                                                                <label class="flex items-center cursor-pointer">
+                                                                    <input type="radio" name="breakfast" x-model="servesBreakfast" value="no" class="mr-2"
+                                                                        @click="breakfastIncluded=''; selectedBreakfasts=[]; breakfastPrice=''" />
                                                                     <span>No</span>
                                                                 </label>
+                                                            </div>
+
+                                                            <div x-show="servesBreakfast" x-transition class="mt-6">
+                                                                <p class="text-gray-700 mb-2 font-bold text-base">Is breakfast included in the price guests pay?</p>
+                                                                <div class="space-y-2">
+                                                                    <label class="flex items-center cursor-pointer">
+                                                                        <input type="radio" name="breakfast_included" x-model="breakfastIncluded" value="included" class="mr-2" />
+                                                                        <span>Yes, it's included</span>
+                                                                    </label>
+                                                                    <label class="flex items-center cursor-pointer">
+                                                                        <input type="radio" name="breakfast_included" x-model="breakfastIncluded" value="extra" class="mr-2" />
+                                                                        <span>No, it costs extra</span>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+
+                                                            <div x-show="servesBreakfast && breakfastIncluded === 'extra'" x-transition class="mt-6">
+                                                                <p class="text-gray-700 mb-2 font-bold text-base">Breakfast price per person, per day</p>
+                                                                <input type="text" x-model="breakfastPrice"
+                                                                    class="border border-gray-300 px-3 py-2 rounded w-full mb-1" placeholder="US$" />
+                                                                <p class="text-sm text-gray-500">Including all fees and taxes</p>
+                                                            </div>
+
+                                                            <div x-show="servesBreakfast" x-transition class="mt-6">
+                                                                <p class="text-gray-700 mb-2 font-bold text-base">What type of breakfast do you offer?</p>
+                                                                <p class="text-sm text-gray-500 mb-2">Select all that apply</p>
+                                                                <div class="flex flex-wrap gap-2">
+                                                                    <template x-for="option in breakfastOptions" :key="option">
+                                                                        <button type="button" @click="toggleBreakfastOption(option)"
+                                                                            :class="selectedBreakfasts.includes(option) ? 'bg-blue-100 border-blue-500 text-blue-700' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
+                                                                            class="border px-3 py-1 rounded-full text-sm flex items-center space-x-1 transition">
+                                                                            <span x-text="option"></span>
+                                                                            <template x-if="selectedBreakfasts.includes(option)">
+                                                                                <span class="ml-1 font-bold text-lg leading-none">×</span>
+                                                                            </template>
+                                                                        </button>
+                                                                    </template>
+                                                                </div>
                                                             </div>
                                                         </div>
 
                                                         <!-- Parking Section -->
                                                         <div class="bg-white shadow-md rounded-lg p-6">
-                                                            <h3 class="text-lg  mb-4 font-bold">Parking</h3>
+                                                            <h3 class="text-lg mb-4 font-bold">Parking</h3>
                                                             <hr class="border-gray-300 mb-4" />
-                                                            <p class="text-gray-700 mb-2 font-bold">
-                                                                Is parking available to guests?
-                                                            </p>
-                                                            <div class="space-y-2">
-                                                                <label
-                                                                    class="flex items-center cursor-pointer">
-                                                                    <input type="radio" name="parking"
-                                                                        value="free" class="mr-2" />
+
+                                                            <p class="text-gray-700 mb-2 font-bold">Is parking available to guests?</p>
+                                                            <div class="space-y-2 mb-4">
+                                                                <label class="flex items-center cursor-pointer">
+                                                                    <input type="radio" name="parking" value="free" x-model="parking" class="mr-2" />
                                                                     <span>Yes, free</span>
                                                                 </label>
-                                                                <label
-                                                                    class="flex items-center cursor-pointer">
-                                                                    <input type="radio" name="parking"
-                                                                        value="paid" class="mr-2" />
+                                                                <label class="flex items-center cursor-pointer">
+                                                                    <input type="radio" name="parking" value="paid" x-model="parking" class="mr-2" />
                                                                     <span>Yes, paid</span>
                                                                 </label>
-                                                                <label
-                                                                    class="flex items-center cursor-pointer">
-                                                                    <input type="radio" name="parking"
-                                                                        value="no" class="mr-2"
-                                                                        checked />
+                                                                <label class="flex items-center cursor-pointer">
+                                                                    <input type="radio" name="parking" value="no" x-model="parking" class="mr-2" />
                                                                     <span>No</span>
                                                                 </label>
+                                                            </div>
+
+                                                            <div x-show="parking === 'free' || parking === 'paid'" x-transition class="space-y-4">
+                                                                <div>
+                                                                    <p class="text-gray-700 font-semibold mb-1">Do they need to reserve a parking spot?</p>
+                                                                    <div class="space-y-2">
+                                                                        <label class="flex items-center">
+                                                                            <input type="radio" name="reservation_needed" value="yes" class="mr-2" />
+                                                                            <span>Reservation needed</span>
+                                                                        </label>
+                                                                        <label class="flex items-center">
+                                                                            <input type="radio" name="reservation_needed" value="no" class="mr-2" />
+                                                                            <span>No reservation needed</span>
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div>
+                                                                    <p class="text-gray-700 font-semibold mb-1">Where is the parking located?</p>
+                                                                    <div class="space-y-2">
+                                                                        <label class="flex items-center">
+                                                                            <input type="radio" name="location" value="on_site" class="mr-2" />
+                                                                            <span>On site</span>
+                                                                        </label>
+                                                                        <label class="flex items-center">
+                                                                            <input type="radio" name="location" value="off_site" class="mr-2" />
+                                                                            <span>Off site</span>
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div>
+                                                                    <p class="text-gray-700 font-semibold mb-1">What type of parking is it?</p>
+                                                                    <div class="space-y-2">
+                                                                        <label class="flex items-center">
+                                                                            <input type="radio" name="type" value="private" class="mr-2" />
+                                                                            <span>Private</span>
+                                                                        </label>
+                                                                        <label class="flex items-center">
+                                                                            <input type="radio" name="type" value="public" class="mr-2" />
+                                                                            <span>Public</span>
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div x-show="parking === 'paid'" x-transition class="mt-4">
+                                                                <label class="block text-gray-700 font-semibold mb-1">How much does parking cost?</label>
+                                                                <input type="text" x-model="parkingCost" placeholder="e.g., $10 per day"
+                                                                    class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
                                                             </div>
                                                         </div>
                                                     </div>
 
-                                                    <!-- Navigation Buttons below sections -->
+                                                    <!-- Navigation Buttons -->
                                                     <div class="mt-8 flex justify-between max-w-xl ml-6">
                                                         <button type="button" @click="prevStep"
                                                             class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
@@ -1161,6 +1249,7 @@
                                                     </div>
                                                 </div>
                                             </div>
+
                                         </template>
                                         <!-- Step 5 -->
                                         <template x-if="step === 10 && selected === 'one'">
@@ -3321,6 +3410,7 @@
                                     unitFacilities: [],
                                     unitServices: [],
                                     previewFiles: [],
+                                    channelManager: '',
                                     formData: {
                                         propertyName: '',
                                         description: '',
@@ -3585,7 +3675,68 @@
                                             } catch (e) {
                                                 console.error('Error saving amenities:', e);
                                             }
-                                        }else if (this.step === 10 && this.selected === 'one') {
+                                        }else if (this.step === 9 && this.selected === 'one') {
+                                            const propertyId = this.propertyId;
+                                            const payload = {
+                                                property_id: parseInt(propertyId),
+                                                serve_breakfast: this.servesBreakfast === 'yes',
+                                                breakfast_included: this.breakfastIncluded || null,
+                                                breakfast_type: this.selectedBreakfasts.length > 0 ? this.selectedBreakfasts : null,
+                                                breakfast_price: document.getElementById('breakfast_price')?.value || null,
+                                                parking_available: document.querySelector('input[name="parking"]:checked')?.value || null,
+                                                parking_cost: document.querySelector('input[name="parking"]:checked')?.value === 'paid'
+                                                    ? document.getElementById('parking_cost')?.value : '0',
+                                                parking_reservation: document.querySelector('input[name="reservation_needed"]:checked')?.value || null,
+                                                parking_location: document.querySelector('input[name="location"]:checked')?.value || null,
+                                                parking_type: document.querySelector('input[name="type"]:checked')?.value || null
+                                            };
+
+                                            try {
+                                                const response = await fetch(`/partner/property/save-services/${propertyId}`, {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                                                    },
+                                                    body: JSON.stringify(payload)
+                                                });
+
+                                                const result = await response.json();
+
+                                                if (result.success) {
+                                                    Swal.fire({
+                                                        toast: true,
+                                                        position: 'top-end',
+                                                        icon: 'success',
+                                                        title: 'Services saved successfully!',
+                                                        showConfirmButton: false,
+                                                        timer: 2500
+                                                    });
+                                                    this.step++;
+                                                } else {
+                                                    Swal.fire({
+                                                        toast: true,
+                                                        position: 'top-end',
+                                                        icon: 'error',
+                                                        title: result.message || 'Failed to save services',
+                                                        showConfirmButton: false,
+                                                        timer: 3000
+                                                    });
+                                                }
+                                            } catch (error) {
+                                                Swal.fire({
+                                                    toast: true,
+                                                    position: 'top-end',
+                                                    icon: 'error',
+                                                    title: 'Error saving services',
+                                                    text: error.message,
+                                                    showConfirmButton: false,
+                                                    timer: 3000
+                                                });
+                                            }
+                                        }
+
+                                        else if (this.step === 10 && this.selected === 'one') {
                                             try {
                                                 // Get all selected languages (checked checkboxes)
                                                 const selectedLanguages = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
