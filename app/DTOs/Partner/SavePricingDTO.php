@@ -38,10 +38,7 @@ class SavePricingDTO extends ValidatedDTO
     protected function casts(): array
     {
         return [
-            // 'property_id' => 'integer',
-            // 'price_per_night' => 'float',
-            // 'discount_enabled' => 'boolean',
-            // 'discount_percent' => 'integer',
+            // Casts handled manually in controller
         ];
     }
 } 

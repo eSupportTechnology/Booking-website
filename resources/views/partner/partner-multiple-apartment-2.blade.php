@@ -702,11 +702,14 @@ function apartmentForm2Data() {
 <!-- Reduced Width Image Container -->
 <div class="max-w-md mx-auto">
     <div class="w-full h-52 md:h-64 rounded-lg bg-gray-200 overflow-hidden">
-        @if(isset($propertyData['photos']) && count($propertyData['photos']) > 0)
-            <img src="{{ $propertyData['photos'][0]['url'] }}" alt="Apartment" class="w-full h-full object-cover" />
-        @else
+        <template x-if="uploadedPhotos.length > 0">
+            <img :src="uploadedPhotos[0].file ? URL.createObjectURL(uploadedPhotos[0].file) : uploadedPhotos[0].url" 
+                 alt="Apartment" 
+                 class="w-full h-full object-cover" />
+        </template>
+        <template x-if="uploadedPhotos.length === 0">
             <img src="{{ asset('assets/double-room.jpg') }}" alt="Apartment" class="w-full h-full object-cover" />
-        @endif
+        </template>
     </div>
 </div>
 
