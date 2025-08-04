@@ -995,7 +995,34 @@ class PropertyController extends Controller
             ];
             
             // Convert to rooms object structure for frontend
-            $roomKey = strtolower(str_replace(' ', '', $room->name));
+            // Map room names to frontend keys
+            $roomKey = null;
+            $normalizedName = strtolower(trim($room->name));
+            
+            if (strpos($normalizedName, 'living') !== false) {
+                $roomKey = 'livingRoom';
+            } elseif (strpos($normalizedName, 'other') !== false) {
+                $roomKey = 'otherSpaces';
+            } else {
+                // For other rooms, use the original logic
+                $roomKey = strtolower(str_replace(' ', '', $room->name));
+            }
+            
+            // Log the room key mapping for debugging
+            Log::info('Added room to rooms object', [
+                'room_key' => $roomKey,
+                'room_data' => [
+                    'name' => $room->name,
+                    'twin' => $room->twin ?? 0,
+                    'full' => $room->full ?? 0,
+                    'queen' => $room->queen ?? 0,
+                    'king' => $room->king ?? 0,
+                    'bunk' => $room->bunk ?? 0,
+                    'sofa' => $room->sofa ?? 0,
+                    'futon' => $room->futon ?? 0
+                ]
+            ]);
+            
             $rooms[$roomKey] = [
                 'name' => $room->name,
                 'twin' => $room->twin ?? 0,

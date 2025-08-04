@@ -545,23 +545,75 @@
           <h2 class="text-lg font-semibold">Where can people sleep?</h2>
           <div class="flex flex-col gap-4">
             <!-- Default rooms (bedroom1, livingRoom, otherSpaces) -->
-            <template x-for="(room, roomId) in rooms" :key="roomId">
-              <template x-if="roomId === 'bedroom1' || roomId === 'livingRoom' || roomId === 'otherSpaces'">
-                <a
-                  @click.prevent="navigateToBedroom(roomId)"
-                  href="#"
-                  class="block"
-                >
-                  <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer flex justify-between items-center">
-                    <div>
-                      <p class="text-sm" x-text="room.name"></p>
-                      <p class="text-sm text-gray-600" x-text="getBedSummary(roomId)"></p>
-                    </div>
-                    <span class="text-xs text-blue-600 hover:underline">Edit</span>
+            <!-- Force show default rooms -->
+            <!-- Bedroom 1 -->
+            <div>
+              <a
+                @click.prevent="navigateToBedroom('bedroom1')"
+                href="#"
+                class="block"
+              >
+                <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer flex justify-between items-center">
+                  <div>
+                    <p class="text-sm" x-text="rooms.bedroom1?.name || 'Bedroom 1'"></p>
+                    <p class="text-sm text-gray-600" x-text="getBedSummary('bedroom1')"></p>
                   </div>
-                </a>
-              </template>
-            </template>
+                  <span class="text-xs text-blue-600 hover:underline">Edit</span>
+                </div>
+              </a>
+            </div>
+            
+            <!-- Living Room -->
+            <div>
+              <div x-show="hasBedCounts('livingRoom')" class="border border-green-300 bg-green-50 rounded px-3 py-2 w-96 flex justify-between items-center">
+                <div>
+                  <p class="text-sm font-medium" x-text="rooms.livingRoom?.name || 'Living room'"></p>
+                  <p class="text-sm text-gray-600" x-text="getBedSummary('livingRoom')"></p>
+                  <p class="text-xs text-green-600">✓ Saved</p>
+                </div>
+                <span class="text-xs text-blue-600 hover:underline cursor-pointer" @click="navigateToBedroom('livingRoom')">Edit</span>
+              </div>
+              <a
+                x-show="!hasBedCounts('livingRoom')"
+                @click.prevent="navigateToBedroom('livingRoom')"
+                href="#"
+                class="block"
+              >
+                <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer flex justify-between items-center">
+                  <div>
+                    <p class="text-sm" x-text="rooms.livingRoom?.name || 'Living room'"></p>
+                    <p class="text-sm text-gray-600" x-text="getBedSummary('livingRoom')"></p>
+                  </div>
+                  <span class="text-xs text-blue-600 hover:underline">Edit</span>
+                </div>
+              </a>
+            </div>
+            
+            <!-- Other Spaces -->
+            <div>
+              <div x-show="hasBedCounts('otherSpaces')" class="border border-green-300 bg-green-50 rounded px-3 py-2 w-96 flex justify-between items-center">
+                <div>
+                  <p class="text-sm font-medium" x-text="rooms.otherSpaces?.name || 'Other spaces'"></p>
+                  <p class="text-sm text-gray-600" x-text="getBedSummary('otherSpaces')"></p>
+                  <p class="text-xs text-green-600">✓ Saved</p>
+                </div>
+                <span class="text-xs text-blue-600 hover:underline cursor-pointer" @click="navigateToBedroom('otherSpaces')">Edit</span>
+              </div>
+              <a
+                x-show="!hasBedCounts('otherSpaces')"
+                @click.prevent="navigateToBedroom('otherSpaces')"
+                href="#"
+                class="block"
+              >
+                <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer flex justify-between items-center">
+                  <div>
+                    <p class="text-sm" x-text="rooms.otherSpaces?.name || 'Other spaces'"></p>
+                    <p class="text-sm text-gray-600" x-text="getBedSummary('otherSpaces')"></p>
+                  </div>
+                  <span class="text-xs text-blue-600 hover:underline">Edit</span>
+                </div>
+              </a>
+            </div>
             
             <!-- Additional bedrooms from bedroom page -->
             <template x-for="(room, key) in rooms" :key="key">
@@ -2275,19 +2327,25 @@ function wizardApp() {
 
         // Step tracking
         testValue: 'Alpine.js is working',
+        currentSubStep: 1,   // 1 = wizardStep, 2 = propertyWizardStep, 3 = pricingWizardStep
         propertyWizardStep: 1,
         step: 1,
         wizardStep: 1,
         pricingWizardStep: 1,
         bedroomStep: 1,
         
+        
         // Initialize watchers
         init() {
             this.log('Alpine.js initialized');
             this.loadLanguages();
+            console.log('Before restoreWizardState - step:', this.step);
             this.restoreWizardState();
+            console.log('After restoreWizardState - step:', this.step);
             this.handleBedroomReturn();
+            console.log('After handleBedroomReturn - step:', this.step);
             this.loadPropertyData();
+            console.log('After loadPropertyData - step:', this.step);
             this.logCurrentState();
             console.log('Initial rooms state:', this.rooms);
             console.log('Final wizard state after initialization:', {
@@ -2298,7 +2356,7 @@ function wizardApp() {
                 bedroomStep: this.bedroomStep
             });
             
-            // Watch for step changes
+            // Re-enabled basic watchers without saveWizardState calls
             this.$watch('step', (newVal, oldVal) => {
                 if (oldVal !== undefined) {
                     this.logStepChange(oldVal, newVal, 'main step');
@@ -2309,12 +2367,21 @@ function wizardApp() {
                 if (oldVal !== undefined) {
                     this.logStepChange(oldVal, newVal, 'wizard step');
                 }
+                this.currentSubStep = newVal;
             });
             
             this.$watch('propertyWizardStep', (newVal, oldVal) => {
                 if (oldVal !== undefined) {
                     this.logStepChange(oldVal, newVal, 'property wizard step');
                 }
+                this.currentSubStep = newVal;
+            });
+            
+            this.$watch('pricingWizardStep', (newVal, oldVal) => {
+                if (oldVal !== undefined) {
+                    this.logStepChange(oldVal, newVal, 'pricing wizard step');
+                }
+                this.currentSubStep = newVal;
             });
             
             this.$watch('bedroomStep', (newVal, oldVal) => {
@@ -2322,22 +2389,40 @@ function wizardApp() {
                     this.logStepChange(oldVal, newVal, 'bedroom step');
                 }
             });
+            
+            // Ensure default rooms are always present
+            this.$watch('rooms', (newRooms) => {
+                if (newRooms) {
+                    const defaultRooms = {
+                        'bedroom1': { name: 'Bedroom 1', twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 },
+                        'livingRoom': { name: 'Living room', twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 },
+                        'otherSpaces': { name: 'Other spaces', twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 }
+                    };
+                    
+                    // Ensure default rooms are always present
+                    this.rooms = { ...defaultRooms, ...newRooms };
+                    console.log('Rooms watcher triggered. Current rooms:', this.rooms);
+                }
+            }, { deep: true });
         },
 
         // Navigation helpers
         goToStep(stepNumber, context = '') {
             this.log('Navigating to step ' + stepNumber + ' ' + context);
             this.step = stepNumber;
+            this.saveWizardState();
         },
 
         goToPropertyStep(stepNumber) {
             this.log('Navigating to property step ' + stepNumber);
             this.propertyWizardStep = stepNumber;
+            this.saveWizardState();
         },
 
         goToPricingStep(stepNumber) {
             this.log('Navigating to pricing step ' + stepNumber);
             this.pricingWizardStep = stepNumber;
+            this.saveWizardState();
         },
 
         // Property data
@@ -2363,7 +2448,7 @@ function wizardApp() {
         
         // Rooms data - using single rooms object for all bedrooms
         rooms: {
-            'bedroom1': { name: 'Bedroom 1', twin: 0, full: 1, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 },
+            'bedroom1': { name: 'Bedroom 1', twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 },
             'livingRoom': { name: 'Living room', twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 },
             'otherSpaces': { name: 'Other spaces', twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 }
         },
@@ -2496,6 +2581,7 @@ function wizardApp() {
 
         getBedSummary(roomId) {
             const beds = this.rooms[roomId];
+            console.log(`Getting bed summary for ${roomId}:`, beds);
             if (!beds) return '0 beds';
             const summaryParts = [];
             if (beds.twin > 0) summaryParts.push(beds.twin + ' twin bed' + (beds.twin > 1 ? 's' : ''));
@@ -2505,7 +2591,16 @@ function wizardApp() {
             if (beds.bunk > 0) summaryParts.push(beds.bunk + ' bunk bed' + (beds.bunk > 1 ? 's' : ''));
             if (beds.sofa > 0) summaryParts.push(beds.sofa + ' sofa bed' + (beds.sofa > 1 ? 's' : ''));
             if (beds.futon > 0) summaryParts.push(beds.futon + ' futon bed' + (beds.futon > 1 ? 's' : ''));
-            return summaryParts.length > 0 ? summaryParts.join(', ') : '0 beds';
+            const summary = summaryParts.length > 0 ? summaryParts.join(', ') : '0 beds';
+            console.log(`Bed summary for ${roomId}:`, summary);
+            return summary;
+        },
+
+        hasBedCounts(roomId) {
+            const beds = this.rooms[roomId];
+            if (!beds) return false;
+            return (beds.twin > 0 || beds.full > 0 || beds.queen > 0 || beds.king > 0 || 
+                    beds.bunk > 0 || beds.sofa > 0 || beds.futon > 0);
         },
 
         // Language management methods
@@ -2798,8 +2893,16 @@ function wizardApp() {
 
         // State persistence
         saveWizardState() {
+            console.log('=== SAVING WIZARD STATE ===');
+            console.log('Saving step:', this.step);
+            console.log('Saving wizardStep:', this.wizardStep);
+            console.log('Saving propertyWizardStep:', this.propertyWizardStep);
+            console.log('Saving pricingWizardStep:', this.pricingWizardStep);
+            console.log('Saving propertyId:', this.propertyId);
+            
             const state = {
                 propertyId: this.propertyId, // Add property ID to saved state
+                currentSubStep: this.currentSubStep,
                 step: this.step,
                 wizardStep: this.wizardStep,
                 propertyWizardStep: this.propertyWizardStep,
@@ -2849,169 +2952,48 @@ function wizardApp() {
             };
             sessionStorage.setItem('wizardState', JSON.stringify(state));
             this.log('Wizard state saved for property: ' + this.propertyId);
+            console.log('State saved to sessionStorage:', JSON.stringify(state));
+            console.log('SessionStorage after save:', sessionStorage.getItem('wizardState'));
+            console.log('=== END SAVING WIZARD STATE ===');
         },
 
         restoreWizardState() {
-            // First check sessionStorage for wizard state (prioritize this)
-            const savedState = sessionStorage.getItem('wizardState');
-            console.log('Attempting to restore wizard state from sessionStorage. Saved state:', savedState);
-            console.log('Current property ID:', this.propertyId);
+            console.log('=== SIMPLE WIZARD STATE RESTORATION ===');
             
-            if (savedState) {
-                try {
+            try {
+                const savedState = sessionStorage.getItem('wizardState');
+                console.log('Saved state from sessionStorage:', savedState);
+                
+                if (savedState) {
                     const state = JSON.parse(savedState);
-                    console.log('Parsed wizard state from sessionStorage:', state);
+                    console.log('Parsed state:', state);
                     
-                    // Check if the saved state is for the current property
-                    if (state.propertyId && state.propertyId !== this.propertyId) {
-                        this.log('Property ID mismatch - clearing old state. Saved: ' + state.propertyId + ', Current: ' + this.propertyId);
-                        sessionStorage.removeItem('wizardState');
-                        console.log('Cleared old wizard state for different property');
-                        return; // Don't restore state for different property
+                    // Simple property ID check
+                    if (state.propertyId && this.propertyId === 'new' && state.propertyId !== 'new') {
+                        this.propertyId = state.propertyId;
+                        console.log('Updated propertyId to:', this.propertyId);
                     }
                     
-                    // For new properties, start with fresh state
-                    if (this.propertyId === 'new' || !this.propertyId) {
-                        console.log('New property detected - starting with fresh wizard state');
-                        sessionStorage.removeItem('wizardState');
-                        return;
-                    }
+                    // Restore basic wizard state
+                    if (state.step) this.step = state.step;
+                    if (state.wizardStep) this.wizardStep = state.wizardStep;
+                    if (state.propertyWizardStep) this.propertyWizardStep = state.propertyWizardStep;
+                    if (state.pricingWizardStep) this.pricingWizardStep = state.pricingWizardStep;
+                    if (state.bedroomStep) this.bedroomStep = state.bedroomStep;
+                    if (state.currentSubStep) this.currentSubStep = state.currentSubStep;
                     
-                    console.log('Restoring wizard state from sessionStorage for property:', this.propertyId);
-                    this.step = state.step || 1;
-                    this.wizardStep = state.wizardStep || 1;
-                    this.propertyWizardStep = state.propertyWizardStep || 1;
-                    this.pricingWizardStep = state.pricingWizardStep || 1;
-                    this.bedroomStep = state.bedroomStep || 1;
-                    
-                    console.log('Wizard state restored from sessionStorage');
-                    return;
-                } catch (error) {
-                    console.error('Error parsing wizard state from sessionStorage:', error);
+                    console.log('Restored state - step:', this.step, 'wizardStep:', this.wizardStep);
+                } else {
+                    console.log('No saved state found');
                 }
+            } catch (error) {
+                console.error('Error in restoreWizardState:', error);
             }
             
-            // Fallback to URL parameters for wizard state
-            const urlParams = new URLSearchParams(window.location.search);
-            const wizardStateParam = urlParams.get('wizardState');
-            
-            console.log('Checking URL parameters for wizard state:', wizardStateParam);
-            
-            if (wizardStateParam) {
-                try {
-                    // Handle double-encoded URL parameters
-                    let decodedParam = decodeURIComponent(wizardStateParam);
-                    // If it's still encoded, decode again
-                    if (decodedParam.includes('%')) {
-                        decodedParam = decodeURIComponent(decodedParam);
-                    }
-                    console.log('Raw wizard state param:', wizardStateParam);
-                    console.log('Decoded wizard state param:', decodedParam);
-                    
-                    const state = JSON.parse(decodedParam);
-                    console.log('Parsed wizard state from URL:', state);
-                    
-                    // Check if the saved state is for the current property
-                    if (state.propertyId && state.propertyId !== this.propertyId) {
-                        console.log('Property ID mismatch in URL state. Saved: ' + state.propertyId + ', Current: ' + this.propertyId);
-                        return; // Don't restore state for different property
-                    }
-                    
-                    console.log('Restoring wizard state from URL for property:', this.propertyId);
-                    this.step = state.step || 1;
-                    this.wizardStep = state.wizardStep || 1;
-                    this.propertyWizardStep = state.propertyWizardStep || 1;
-                    this.pricingWizardStep = state.pricingWizardStep || 1;
-                    this.bedroomStep = state.bedroomStep || 1;
-                    
-                    // Clean up URL parameters
-                    const newUrl = new URL(window.location);
-                    newUrl.searchParams.delete('wizardState');
-                    window.history.replaceState({}, '', newUrl);
-                    
-                    console.log('Wizard state restored from URL and URL cleaned up');
-                    return;
-                } catch (error) {
-                    console.error('Error parsing wizard state from URL:', error);
-                }
-            }
-            
-            if (savedState) {
-                try {
-                    const state = JSON.parse(savedState);
-                    console.log('Parsed wizard state from sessionStorage:', state);
-                    
-                    // Check if the saved state is for the current property
-                    if (state.propertyId && state.propertyId !== this.propertyId) {
-                        this.log('Property ID mismatch - clearing old state. Saved: ' + state.propertyId + ', Current: ' + this.propertyId);
-                        sessionStorage.removeItem('wizardState');
-                        console.log('Cleared old wizard state for different property');
-                        return; // Don't restore state for different property
-                    }
-                    
-                    // For new properties, start with fresh state
-                    if (this.propertyId === 'new' || !this.propertyId) {
-                        console.log('New property detected - starting with fresh wizard state');
-                        sessionStorage.removeItem('wizardState');
-                        return;
-                    }
-                    
-                    console.log('Restoring wizard state from sessionStorage for property:', this.propertyId);
-                    this.step = state.step || 1;
-                    this.wizardStep = state.wizardStep || 1;
-                    this.propertyWizardStep = state.propertyWizardStep || 1;
-                    this.pricingWizardStep = state.pricingWizardStep || 1;
-                    this.bedroomStep = state.bedroomStep || 1;
-                    this.title = state.title || '';
-                    this.address = state.address || '';
-                    this.city = state.city || '';
-                    this.country = state.country || 'Sri Lanka';
-                    this.apartment = state.apartment || '';
-                    this.zipcode = state.zipcode || '';
-                    this.description = state.description || '';
-                    this.channelManager = state.channelManager || 'yes';
-                    this.guests = state.guests || 4;
-                    this.bathrooms = state.bathrooms || 2;
-                    this.allowChildren = state.allowChildren || 'yes';
-                    this.offerCribs = state.offerCribs || 'no';
-                    this.apartmentSize = state.apartmentSize || 100;
-                    this.apartmentUnit = state.apartmentUnit || 'square_meters';
-                    this.selectedAmenities = state.selectedAmenities || [];
-                    this.rooms = state.rooms || this.rooms;
-                    this.parkingAvailable = state.parkingAvailable || '';
-                    this.parkingCurrency = state.parkingCurrency || 'USD';
-                    this.parkingCost = state.parkingCost || '';
-                    this.parkingRate = state.parkingRate || 'per_day';
-                    this.parkingReservation = state.parkingReservation || '';
-                    this.parkingLocation = state.parkingLocation || '';
-                    this.parkingType = state.parkingType || '';
-                    this.breakfastServed = state.breakfastServed || '';
-                    this.breakfastIncluded = state.breakfastIncluded || '';
-                    this.breakfastTypes = state.breakfastTypes || [];
-                    this.selectedLanguages = state.selectedLanguages || [];
-                    this.ownershipType = state.ownershipType || '';
-                    this.individual = state.individual || this.individual;
-                    this.business = state.business || this.business;
-                    this.smokingAllowed = state.smokingAllowed || false;
-                    this.partiesAllowed = state.partiesAllowed || false;
-                    this.petsAllowed = state.petsAllowed || 'no';
-                    this.petsFees = state.petsFees || 'free';
-                    this.checkInFrom = state.checkInFrom || '15:00';
-                    this.checkInUntil = state.checkInUntil || '18:00';
-                    this.checkOutFrom = state.checkOutFrom || '08:00';
-                    this.checkOutUntil = state.checkOutUntil || '11:00';
-                    this.pricing = state.pricing || this.pricing;
-                    this.hostProfile = state.hostProfile || this.hostProfile;
-                    this.uploadedPhotos = state.uploadedPhotos || [];
-                    this.log('Wizard state restored for property: ' + this.propertyId);
-                } catch (error) {
-                    this.log('Error restoring wizard state: ' + error);
-                }
-            } else {
-                console.log('No saved wizard state found - starting fresh');
-                this.resetWizardState();
-            }
+            console.log('=== END SIMPLE RESTORATION ===');
         },
+
+
 
         resetWizardState() {
             console.log('Resetting wizard state to defaults');
@@ -3020,12 +3002,14 @@ function wizardApp() {
             this.propertyWizardStep = 1;
             this.pricingWizardStep = 1;
             this.bedroomStep = 1;
+            this.currentSubStep = 1;
             console.log('Wizard state reset to:', {
                 step: this.step,
                 wizardStep: this.wizardStep,
                 propertyWizardStep: this.propertyWizardStep,
                 pricingWizardStep: this.pricingWizardStep,
-                bedroomStep: this.bedroomStep
+                bedroomStep: this.bedroomStep,
+                currentSubStep: this.currentSubStep
             });
         },
 
@@ -3152,7 +3136,16 @@ function wizardApp() {
                     this.apartmentUnit = propertyData.apartment_unit || 'square_meters';
                     this.selectedAmenities = propertyData.selected_amenities || [];
                     console.log('Full propertyData from backend:', propertyData);
-                    this.rooms = propertyData.rooms || this.rooms;
+                    
+                    // Ensure default rooms are always present
+                    const defaultRooms = {
+                        'bedroom1': { name: 'Bedroom 1', twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 },
+                        'livingRoom': { name: 'Living room', twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 },
+                        'otherSpaces': { name: 'Other spaces', twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 }
+                    };
+                    
+                    // Merge backend rooms with default rooms
+                    this.rooms = { ...defaultRooms, ...(propertyData.rooms || {}) };
                     console.log('Loaded rooms from backend:', this.rooms);
                     console.log('Room keys:', Object.keys(this.rooms));
                     console.log('Additional bedrooms found:', Object.keys(this.rooms).filter(key => key !== 'bedroom1' && key !== 'livingRoom' && key !== 'otherSpaces'));
@@ -3181,6 +3174,7 @@ function wizardApp() {
                     this.pricing = propertyData.pricing || this.pricing;
                     this.hostProfile = propertyData.host_profile || this.hostProfile;
                     this.uploadedPhotos = propertyData.uploaded_photos || [];
+                    
                     this.log('Updated form fields:', {
                         propertyId: this.propertyId,
                         title: this.title,
@@ -3512,7 +3506,7 @@ function wizardApp() {
         },
 
         navigateToBedroom(roomId = null) {
-            this.log('Navigating to bedroom page for new bedroom');
+            this.log('Navigating to room page for: ' + roomId);
             
             // Save current wizard state
             this.saveWizardState();
@@ -3551,7 +3545,7 @@ function wizardApp() {
             console.log('  - Bedroom count:', bedroomCount);
             console.log('  - Next bedroom number:', nextBedroomNumber);
             
-            // Prepare wizard state for bedroom page
+            // Prepare wizard state for room page
             const wizardState = {
                 step: this.step,
                 wizardStep: this.wizardStep,
@@ -3568,7 +3562,18 @@ function wizardApp() {
             
             // Build URL with parameters
             const propertyId = this.propertyId || 'new';
-            let url = `/partner/apartment/bedrooms/${propertyId}?source=single`;
+            let url = '';
+            
+            // Route to different pages based on room type
+            if (roomId === 'livingRoom') {
+                url = `/partner/apartment/livingroom/${propertyId}?source=single`;
+            } else if (roomId === 'otherSpaces') {
+                url = `/partner/apartment/otherspaces/${propertyId}?source=single`;
+            } else {
+                // Default to bedrooms page for bedroom1 and other bedrooms
+                url = `/partner/apartment/bedrooms/${propertyId}?source=single`;
+            }
+            
             url += '&step=' + this.step;
             url += '&wizardState=' + encodeURIComponent(JSON.stringify(wizardState));
             
@@ -3577,6 +3582,7 @@ function wizardApp() {
             }
             
             console.log('=== URL DEBUG ===');
+            console.log('Room ID:', roomId);
             console.log('Property ID:', propertyId);
             console.log('Step:', this.step);
             console.log('Wizard State JSON:', JSON.stringify(wizardState));
@@ -3590,9 +3596,6 @@ function wizardApp() {
 
         navigateToStep(stepNumber) {
             this.log('Navigating to step: ' + stepNumber);
-            
-            // Save current wizard state before navigation
-            this.saveWizardState();
             
             // Set the main step
             this.step = stepNumber;
@@ -3615,6 +3618,9 @@ function wizardApp() {
                     // Legal info doesn't have sub-steps, so no reset needed
                     break;
             }
+            
+            // Save wizard state after setting the new step
+            this.saveWizardState();
             
             this.log('Navigation complete - Step: ' + this.step + ', PropertyWizardStep: ' + this.propertyWizardStep);
         }
