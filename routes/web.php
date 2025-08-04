@@ -369,7 +369,25 @@ Route::prefix('partner')->group(function () {
 });
 
 // Partner Routes (Protected - Auth Required)
-Route::prefix('partner')->middleware('auth')->group(function () {
+Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddleware::class])->group(function () {
+    // Partner Dashboard
+    Route::get('/dashboard', [\App\Http\Controllers\Partner\DashboardController::class, 'index'])->name('partner.dashboard');
+    
+    // Properties
+    Route::get('/properties', [\App\Http\Controllers\Partner\PropertyController::class, 'index'])->name('partner.properties');
+    Route::get('/bookings', [\App\Http\Controllers\Partner\PropertyController::class, 'bookings'])->name('partner.bookings');
+    
+    // Earnings
+    Route::get('/earnings', [\App\Http\Controllers\Partner\EarningsController::class, 'index'])->name('partner.earnings');
+    
+    // Messages
+    Route::get('/messages', [\App\Http\Controllers\Partner\MessageController::class, 'index'])->name('partner.messages');
+    
+    // Reviews
+    Route::get('/reviews', [\App\Http\Controllers\Partner\ReviewController::class, 'index'])->name('partner.reviews');
+    
+    // Settings
+    Route::get('/settings', [\App\Http\Controllers\Partner\SettingsController::class, 'index'])->name('partner.settings');
     Route::get('/property_category', [PropertyController::class, 'categories'])->name('partner.property.category');
     Route::get('/property_subcategory/{id}', [PropertyController::class, 'subcategories'])->name('partner.property.subcategory');
     Route::get('/hotels/rooms/{id}', [PropertyController::class, 'rooms'])->name('partner.hotels.room');
