@@ -242,11 +242,11 @@
                     <!-- Buttons -->
             <div class="flex justify-between items-center mt-10">
                 <button type="button" @click="step--"
-                    class="border border-blue-500 text-blue-600 font-medium px-4 py-2 rounded hover:bg-blue-50">
+                    class="border border-[#3CC0E9] text-blue-600 font-medium px-4 py-2 rounded hover:bg-sky-50">
                     ←
                 </button>
                 <button type="button" @click="step++"
-                    class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded">
+                    class="bg-[#3CC0E9] hover:bg-sky-500 text-white font-semibold px-6 py-3 rounded ">
                     Continue
                 </button>
             </div>
@@ -258,7 +258,7 @@
 <div class="flex-1 flex flex-col gap-4 max-w-md w-full">
     <!-- Tip 1 -->
     <div x-data="{ show: true }" x-show="show"
-        class="relative border border-gray-200 rounded-lg p-4 bg-white shadow w-full">
+        class="relative border border-gray-200 rounded-lg p-4 bg-white shadow w-full  max-w-xs">
         <button @click="show = false"
             class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">
             ✕
@@ -275,7 +275,7 @@
 
     <!-- Tip 2 -->
     <div x-data="{ show: true }" x-show="show"
-        class="relative border border-gray-200 rounded-lg p-4 bg-white shadow w-full">
+        class="relative border border-gray-200 rounded-lg p-4 bg-white shadow w-full  max-w-xs">
         <button @click="show = false"
             class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">
             ✕
@@ -307,69 +307,69 @@
 
             <div class="flex flex-col lg:flex-row gap-8">
                 <!-- Left: Facility checklist -->
-                <div class="flex-1">
-                    <div class="bg-white p-6 rounded-lg shadow-md 
-                        min-h-[220px] sm:min-h-[250px] md:min-h-[300px] lg:min-h-[350px]">
-                        <form class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-800">
-                            <label class="flex items-center space-x-2">
-                                <input type="checkbox" class="form-checkbox" />
-                                <span>Garden</span>
-                            </label>
-                            <label class="flex items-center space-x-2">
-                                <input type="checkbox" class="form-checkbox" />
-                                <span>Terrace</span>
-                            </label>
-                            <label class="flex items-center space-x-2">
-                                <input type="checkbox" class="form-checkbox" checked />
-                                <span>Non-smoking rooms</span>
-                            </label>
-                            <label class="flex items-center space-x-2">
-                                <input type="checkbox" class="form-checkbox" />
-                                <span>Family rooms</span>
-                            </label>
-                            <label class="flex items-center space-x-2">
-                                <input type="checkbox" class="form-checkbox" />
-                                <span>Swimming pool</span>
-                            </label>
-                            <label class="flex items-center space-x-2">
-                                <input type="checkbox" class="form-checkbox" />
-                                <span>Bar</span>
-                            </label>
-                            <label class="flex items-center space-x-2">
-                                <input type="checkbox" class="form-checkbox" />
-                                <span>Air conditioning</span>
-                            </label>
-                            <label class="flex items-center space-x-2">
-                                <input type="checkbox" class="form-checkbox" />
-                                <span>Beach</span>
-                            </label>
-                            <label class="flex items-center space-x-2">
-                                <input type="checkbox" class="form-checkbox" />
-                                <span>Free WiFi</span>
-                            </label>
-                            <label class="flex items-center space-x-2">
-                                <input type="checkbox" class="form-checkbox" />
-                                <span>Hot tub/Jacuzzi</span>
-                            </label>
-                            <label class="flex items-center space-x-2">
-                                <input type="checkbox" class="form-checkbox" />
-                                <span>Sauna</span>
-                            </label>
-                            <label class="flex items-center space-x-2">
-                                <input type="checkbox" class="form-checkbox" />
-                                <span>Electric vehicle charging station</span>
-                            </label>
-                        </form>
-                    </div>
-
+               <div class="flex-1">
+    <div class="bg-white p-6 rounded-lg shadow-md 
+        min-h-[220px] sm:min-h-[250px] md:min-h-[300px] lg:min-h-[350px]">
+        <!-- Removed sm:grid-cols-2 to keep one column -->
+        <form class="grid grid-cols-1 gap-4 text-sm text-gray-800">
+            <label class="flex items-center space-x-2">
+                <input type="checkbox" class="form-checkbox" />
+                <span>Garden</span>
+            </label>
+            <label class="flex items-center space-x-2">
+                <input type="checkbox" class="form-checkbox" />
+                <span>Terrace</span>
+            </label>
+            <label class="flex items-center space-x-2">
+                <input type="checkbox" class="form-checkbox" checked />
+                <span>Non-smoking rooms</span>
+            </label>
+            <label class="flex items-center space-x-2">
+                <input type="checkbox" class="form-checkbox" />
+                <span>Family rooms</span>
+            </label>
+            <label class="flex items-center space-x-2">
+                <input type="checkbox" class="form-checkbox" />
+                <span>Swimming pool</span>
+            </label>
+            <label class="flex items-center space-x-2">
+                <input type="checkbox" class="form-checkbox" />
+                <span>Bar</span>
+            </label>
+            <label class="flex items-center space-x-2">
+                <input type="checkbox" class="form-checkbox" />
+                <span>Air conditioning</span>
+            </label>
+            <label class="flex items-center space-x-2">
+                <input type="checkbox" class="form-checkbox" />
+                <span>Beach</span>
+            </label>
+            <label class="flex items-center space-x-2">
+                <input type="checkbox" class="form-checkbox" />
+                <span>Free WiFi</span>
+            </label>
+            <label class="flex items-center space-x-2">
+                <input type="checkbox" class="form-checkbox" />
+                <span>Hot tub/Jacuzzi</span>
+            </label>
+            <label class="flex items-center space-x-2">
+                <input type="checkbox" class="form-checkbox" />
+                <span>Sauna</span>
+            </label>
+            <label class="flex items-center space-x-2">
+                <input type="checkbox" class="form-checkbox" />
+                <span>Electric vehicle charging station</span>
+            </label>
+        </form>
+    </div>
                     <!-- Buttons -->
                     <div class="flex justify-between items-center mt-10">
                         <button type="button" @click="step--"
-                            class="border border-blue-500 text-blue-600 font-medium px-4 py-2 rounded hover:bg-blue-50">
+                            class="border border-blue-500 text-blue-600 font-medium px-4 py-2 rounded hover:bg-sky-50">
                             ←
                         </button>
                         <button type="button" @click="step++"
-                            class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded">
+                            class="bg-[#3CC0E9] hover:bg-sky-500 text-white font-semibold px-6 py-3 rounded">
                             Continue
                         </button>
                     </div>
@@ -378,7 +378,7 @@
                 <!-- Right: Tips -->
                 <div class="flex-1 flex flex-col gap-4 max-w-md w-full">
                     <div x-data="{ show: true }" x-show="show"
-                        class="relative border border-gray-200 rounded-lg p-4 bg-white shadow w-full">
+                        class="relative border border-gray-200 rounded-lg p-4 bg-white shadow w-full  max-w-xs">
                         <button @click="show = false"
                             class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">
                             ✕
@@ -871,6 +871,21 @@
                             </label>
                         </div>
                     </div>
+                    <div class="mt-8 flex justify-between">
+                                                                <!-- Back Button on the left -->
+                                                                <button type="button"  @click="step--"
+                                                                    class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                                                                    ←
+                                                                </button>
+
+                                                                <!-- Continue Button on the right -->
+                                                                <button type="button"    @click="step++"
+                                                                    class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
+                                                                    Continue
+                                                                </button>
+                                                            </div>
+
+
                 </div>
 
                 <!-- Right Section: Tip Box -->
@@ -903,17 +918,10 @@
             </div>
 
             <!-- Navigation Buttons -->
-            <div class="mt-8 flex flex-col sm:flex-row sm:justify-between items-center gap-4">
-                <button type="button" @click="step--"
-                        class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded w-full sm:w-auto">
-                    ←
-                </button>
-                <button type="button" @click="step++"
-                        class="px-6 h-12 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 w-full sm:w-auto">
-                    Continue
-                </button>
-            </div>
+         
+
         </div>
+        
     </div>
 </template>
 
