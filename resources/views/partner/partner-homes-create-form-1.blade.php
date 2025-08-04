@@ -1617,76 +1617,116 @@
 
 
                                         <template x-if="step === 12 && selected === 'one'">
-                                            <div>
-                                                <!-- Main Content -->
-                                                <main class="container mx-auto px-4 py-8 max-w-4xl">
-                                                    <h2 class="text-2xl md:text-3xl font-bold mb-6 text-left">
-                                                        Host profile
-                                                    </h2>
+                                            <div 
+                                                class="max-w-2xl mx-auto space-y-8 px-4 sm:px-6 lg:px-8 lg:ml-32 py-6"
+                                                x-data="{
+                                                            showProperty: false,
+                                                            showHost: false,
+                                                            showNeighborhood: false,
+                                                            showNone: false
+                                                        }"
+                                                    >
+                                                <h2 class="text-2xl font-bold mb-8 text-left">Host Profile</h2>
 
-                                                    <div class="bg-white shadow-md rounded-lg p-6 md:p-8">
-                                                        <p class="text-gray-700 mb-4 text-sm md:text-base">
-                                                            Help your listing stand out by telling potential
-                                                            guests a bit more about yourself, your property and
-                                                            your neighbourhood. This information will be shown
-                                                            on your property page.
-                                                        </p>
+                                                <div class="bg-white shadow-md rounded-lg p-4 space-y-6">
+                                                    <p class="text-base text-gray-800">
+                                                        Help your listing stand out by telling potential guests a bit more about yourself, your property and your neighborhood. This information will appear on your property page.
+                                                    </p>
 
-                                                        <div class="space-y-3">
-                                                            <label
-                                                                class="flex items-start sm:items-center cursor-pointer">
-                                                                <input type="radio" name="profile-info"
-                                                                    value="property"
-                                                                    class="mr-3 mt-1 sm:mt-0">
-                                                                <span class="text-sm sm:text-base">The
-                                                                    property</span>
-                                                            </label>
-
-                                                            <label
-                                                                class="flex items-start sm:items-center cursor-pointer">
-                                                                <input type="radio" name="profile-info"
-                                                                    value="host" class="mr-3 mt-1 sm:mt-0">
-                                                                <span class="text-sm sm:text-base">The
-                                                                    host</span>
-                                                            </label>
-
-                                                            <label
-                                                                class="flex items-start sm:items-center cursor-pointer">
-                                                                <input type="radio" name="profile-info"
-                                                                    value="neighbourhood"
-                                                                    class="mr-3 mt-1 sm:mt-0">
-                                                                <span class="text-sm sm:text-base">The
-                                                                    neighbourhood</span>
-                                                            </label>
-
-                                                            <label
-                                                                class="flex items-start sm:items-center cursor-pointer">
-                                                                <input type="radio" name="profile-info"
-                                                                    value="later" class="mr-3 mt-1 sm:mt-0"
-                                                                    checked>
-                                                                <span class="text-sm sm:text-base">None of the
-                                                                    above/I'll add these later</span>
-                                                            </label>
+                                                    <!-- Property -->
+                                                    <div>
+                                                        <label class="inline-flex items-center space-x-2">
+                                                            <input type="checkbox" class="form-checkbox text-blue-600" x-model="showProperty">
+                                                            <span class="text-gray-800">The property</span>
+                                                        </label>
+                                                        <div x-show="showProperty" x-transition class="mt-2">
+                                                            <label class="block text-sm font-semibold text-gray-700">About the property</label>
+                                                            <textarea
+                                                                rows="4"
+                                                                x-ref="about_property"
+                                                                maxlength="1200"
+                                                                placeholder="What makes your place unique? What can guests expect?"
+                                                                class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"
+                                                            ></textarea>
+                                                            <p class="text-right text-xs text-gray-500">0/1200</p>
                                                         </div>
                                                     </div>
 
-                                                    <!-- Navigation Buttons -->
-                                                    <div class="mt-8 flex justify-between">
-                                                        <!-- Back Button on the left -->
-                                                        <button type="button" @click="prevStep"
-                                                            class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
-                                                            ←
-                                                        </button>
-
-                                                        <!-- Continue Button on the right -->
-                                                        <button type="button" @click="nextStep"
-                                                            class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
-                                                            Continue
-                                                        </button>
+                                                    <!-- Host -->
+                                                    <div>
+                                                        <label class="inline-flex items-center space-x-2">
+                                                            <input type="checkbox" class="form-checkbox text-blue-600" x-model="showHost">
+                                                            <span class="text-gray-800">The host</span>
+                                                        </label>
+                                                        <div x-show="showHost" x-transition class="mt-2 space-y-2">
+                                                            <div>
+                                                                <label class="block text-sm font-semibold text-gray-700">Host name</label>
+                                                                <input
+                                                                    type="text"
+                                                                    x-ref="host_name" 
+                                                                    maxlength="80"
+                                                                    placeholder="Your name"
+                                                                    class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+                                                                >
+                                                                <p class="text-right text-xs text-gray-500">0/80</p>
+                                                            </div>
+                                                            <div>
+                                                                <label class="block text-sm font-semibold text-gray-700">About the host</label>
+                                                                <textarea
+                                                                    rows="4"
+                                                                    maxlength="1200"
+                                                                    x-ref="about_host"
+                                                                    placeholder="What are your interests? What do you like about hosting?"
+                                                                    class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"
+                                                                ></textarea>
+                                                                <p class="text-right text-xs text-gray-500">0/1200</p>
+                                                            </div>
+                                                        </div>
                                                     </div>
 
-                                                </main>
+                                                    <!-- Neighborhood -->
+                                                    <div>
+                                                        <label class="inline-flex items-center space-x-2">
+                                                            <input type="checkbox" class="form-checkbox text-blue-600" x-model="showNeighborhood">
+                                                            <span class="text-gray-800">The neighborhood</span>
+                                                        </label>
+                                                        <div x-show="showNeighborhood" x-transition class="mt-2">
+                                                            <label class="block text-sm font-semibold text-gray-700">About the neighborhood</label>
+                                                            <textarea
+                                                                x-ref="about_neighborhood"
+                                                                rows="4"
+                                                                maxlength="1200"
+                                                                placeholder="What's the area like? Are there any attractions nearby?"
+                                                                class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"
+                                                            ></textarea>
+                                                            <p class="text-right text-xs text-gray-500">0/1200</p>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- None -->
+                                                    <div>
+                                                        <label class="inline-flex items-center space-x-2">
+                                                            <input type="checkbox" class="form-checkbox text-blue-600" x-model="showNone">
+                                                            <span class="text-gray-800">None of the above / I'll add these later</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Navigation Buttons -->
+                                                <div class="mt-12 flex justify-between">
+                                                    <button type="button"
+                                                        @click="prevStep"
+                                                        class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                                                        ←
+                                                    </button>
+                                                    <button type="button"
+                                                        @click="nextStep"
+                                                        class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
+                                                        Continue
+                                                    </button>
+                                                </div>
                                             </div>
+
                                         </template>
 
                                         <template x-if="step === 13 && selected === 'one'"
@@ -3827,44 +3867,45 @@
                                                 console.error('Error saving policy:', e);
                                             }
                                         }else if (this.step === 12 && this.selected === 'one') {
+                              
+
+                                            const payload = {
+                                                property_id: this.propertyId,
+                                                show_property: this.showProperty,
+                                                show_host: this.showHost,
+                                                show_neighborhood: this.showNeighborhood,
+                                                none_selected: this.showNone,
+                                                about_property: this.$refs.about_property?.value || '',
+                                                host_name: this.$refs.host_name?.value || '',
+                                                about_host: this.$refs.about_host?.value || '',
+                                                about_neighborhood: this.$refs.about_neighborhood?.value || '',
+                                            };
+
                                             try {
-                                                // Read selected radio value
-                                                const selectedValue = document.querySelector('input[name="profile-info"]:checked')?.value;
-
-                                                // Initialize flags
-                                                const show_property = selectedValue === 'property';
-                                                const show_host = selectedValue === 'host';
-                                                const show_neighborhood = selectedValue === 'neighbourhood';
-                                                const none_selected = selectedValue === 'later';
-
-                                                // POST the values
-                                                const response = await fetch(`/partner/property/${this.propertyId}/host-profile`, {
+                                                const response = await fetch(`/partner/property/${propertyId}/host-profile`, {
                                                     method: 'POST',
                                                     headers: {
                                                         'Content-Type': 'application/json',
-                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                                                     },
-                                                    body: JSON.stringify({
-                                                        property_id: this.propertyId,
-                                                        show_property,
-                                                        show_host,
-                                                        show_neighborhood,
-                                                        none_selected
-                                                    })
+                                                    body: JSON.stringify(payload),
                                                 });
 
                                                 const result = await response.json();
 
                                                 if (result.success) {
-                                                    console.log('Host profile saved:', result);
-                                                    this.step++; // go to next step
+                                                    console.log('✅ Host profile saved:', result.message);
+                                                    // Optionally move to next step
+                                                    this.step++;
                                                 } else {
-                                                    alert('Failed to save host profile: ' + result.message);
+                                                    console.error('❌ Save failed:', result.message);
                                                 }
-                                            } catch (e) {
-                                                console.error('Error saving host profile:', e);
+                                            } catch (error) {
+                                                console.error('❌ Error submitting host profile:', error);
                                             }
-                                        } else if (this.step === 13 && this.selected === 'one') {
+                                        }
+
+                                         else if (this.step === 13 && this.selected === 'one') {
                                             console.log('Saving room details for property ID:', this.propertyId);
 
                                             if (this.rooms.length === 0) {
