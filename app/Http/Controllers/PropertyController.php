@@ -738,7 +738,9 @@ class PropertyController extends Controller
     public function showSingleApartmentForm2($propertyId = null)
     {
         Log::info('showSingleApartmentForm2 called', [
-            'property_id' => $propertyId
+            'property_id' => $propertyId,
+            'request_url' => request()->url(),
+            'user_id' => Auth::id()
         ]);
         
         // Get the latest property if none provided
@@ -751,11 +753,36 @@ class PropertyController extends Controller
         
         // Fetch saved room data from property_bedrooms table
         $roomDisplayData = [];
+        $rooms = [
+            'bedroom1' => ['name' => 'Bedroom 1', 'twin' => 0, 'full' => 1, 'queen' => 0, 'king' => 0, 'bunk' => 0, 'sofa' => 0, 'futon' => 0],
+            'livingRoom' => ['name' => 'Living room', 'twin' => 0, 'full' => 0, 'queen' => 0, 'king' => 0, 'bunk' => 0, 'sofa' => 0, 'futon' => 0],
+            'otherSpaces' => ['name' => 'Other spaces', 'twin' => 0, 'full' => 0, 'queen' => 0, 'king' => 0, 'bunk' => 0, 'sofa' => 0, 'futon' => 0]
+        ];
+        
         if ($propertyId) {
             $savedRooms = \App\Models\PropertyBedroom::where('property_id', $propertyId)->get();
             
-            // Process room data for display
+            Log::info('Loading saved rooms from database', [
+                'property_id' => $propertyId,
+                'saved_rooms_count' => $savedRooms->count(),
+                'saved_rooms' => $savedRooms->toArray()
+            ]);
+            
+            // Process room data for display and convert to rooms object
             foreach ($savedRooms as $room) {
+                Log::info('Processing room', [
+                    'room_id' => $room->id,
+                    'room_name' => $room->name,
+                    'room_type' => $room->room_type,
+                    'twin' => $room->twin,
+                    'full' => $room->full,
+                    'queen' => $room->queen,
+                    'king' => $room->king,
+                    'bunk' => $room->bunk,
+                    'sofa' => $room->sofa,
+                    'futon' => $room->futon
+                ]);
+                
                 $bedSummary = [];
                 $totalBeds = 0;
                 
@@ -795,19 +822,72 @@ class PropertyController extends Controller
                     'total_beds' => $totalBeds,
                     'has_beds' => $totalBeds > 0
                 ];
+                
+                // Convert to rooms object structure for frontend
+                $roomKey = strtolower(str_replace(' ', '', $room->name));
+                $rooms[$roomKey] = [
+                    'name' => $room->name,
+                    'twin' => $room->twin ?? 0,
+                    'full' => $room->full ?? 0,
+                    'queen' => $room->queen ?? 0,
+                    'king' => $room->king ?? 0,
+                    'bunk' => $room->bunk ?? 0,
+                    'sofa' => $room->sofa ?? 0,
+                    'futon' => $room->futon ?? 0
+                ];
+                
+                Log::info('Added room to rooms object', [
+                    'room_key' => $roomKey,
+                    'room_data' => $rooms[$roomKey]
+                ]);
             }
+        }
+        
+        // Fetch property data if propertyId exists
+        $propertyData = null;
+        if ($propertyId) {
+            Log::info('Looking for property with ID:', ['property_id' => $propertyId]);
+            $property = \App\Models\Property::find($propertyId);
+            if ($property) {
+                Log::info('Property found:', [
+                    'id' => $property->id,
+                    'title' => $property->title,
+                    'user_id' => $property->user_id
+                ]);
+                $propertyData = [
+                    'id' => $property->id,
+                    'title' => $property->title,
+                    'address' => $property->address,
+                    'city' => $property->city,
+                    'country' => $property->country,
+                    'apartment' => $property->apartment,
+                    'zipcode' => $property->zipcode,
+                    'description' => $property->description,
+                    'channel_manager' => $property->channel_manager,
+                    'wizard_step' => $property->wizard_step,
+                    'property_wizard_step' => $property->property_wizard_step,
+                    'pricing_wizard_step' => $property->pricing_wizard_step,
+                    'rooms' => $rooms
+                ];
+            } else {
+                Log::warning('Property not found with ID:', ['property_id' => $propertyId]);
+            }
+        } else {
+            Log::info('No property ID provided, will use latest property');
         }
         
         Log::info('showSingleApartmentForm2 returning', [
             'property_id' => $propertyId,
             'saved_rooms_count' => isset($savedRooms) ? $savedRooms->count() : 0,
-            'room_display_data' => $roomDisplayData
+            'room_display_data' => $roomDisplayData,
+            'final_rooms_object' => $rooms,
+            'property_data' => $propertyData
         ]);
         
         // Get grouped amenities for the view
         $groupedAmenities = \App\Models\Amenity::all()->groupBy('category');
         
-        return view('partner.partner-apartment-create-form-2', compact('propertyId', 'roomDisplayData', 'groupedAmenities'));
+        return view('partner.partner-apartment-create-form-2', compact('propertyId', 'propertyData', 'roomDisplayData', 'groupedAmenities', 'rooms'));
     }
 
     public function showMultipleApartmentForm2(PropertyAction $action, $propertyId)
@@ -853,17 +933,25 @@ class PropertyController extends Controller
             'files_query' => $property->files()->where('file_type', 'image')->toSql()
         ]);
         
+        // Fetch saved room data from property_bedrooms table
+        $savedRooms = \App\Models\PropertyBedroom::where('property_id', $propertyId)->get();
+        
+        // Initialize rooms object with default structure
+        $rooms = [
+            'bedroom1' => ['name' => 'Bedroom 1', 'twin' => 0, 'full' => 1, 'queen' => 0, 'king' => 0, 'bunk' => 0, 'sofa' => 0, 'futon' => 0],
+            'livingRoom' => ['name' => 'Living room', 'twin' => 0, 'full' => 0, 'queen' => 0, 'king' => 0, 'bunk' => 0, 'sofa' => 0, 'futon' => 0],
+            'otherSpaces' => ['name' => 'Other spaces', 'twin' => 0, 'full' => 0, 'queen' => 0, 'king' => 0, 'bunk' => 0, 'sofa' => 0, 'futon' => 0]
+        ];
+        
         $propertyData = [
             'amenities' => $existingAmenities,
             'photos' => $existingPhotos,
             'property_count' => $property->property_count ?? 1,
+            'rooms' => $rooms,
             // Add other fields as needed
         ];
         
-        // Fetch saved room data from property_bedrooms table
-        $savedRooms = \App\Models\PropertyBedroom::where('property_id', $propertyId)->get();
-        
-        // Process room data for display
+        // Process room data for display and convert to rooms object
         $roomDisplayData = [];
         foreach ($savedRooms as $room) {
             $bedSummary = [];
@@ -905,6 +993,19 @@ class PropertyController extends Controller
                 'total_beds' => $totalBeds,
                 'has_beds' => $totalBeds > 0
             ];
+            
+            // Convert to rooms object structure for frontend
+            $roomKey = strtolower(str_replace(' ', '', $room->name));
+            $rooms[$roomKey] = [
+                'name' => $room->name,
+                'twin' => $room->twin ?? 0,
+                'full' => $room->full ?? 0,
+                'queen' => $room->queen ?? 0,
+                'king' => $room->king ?? 0,
+                'bunk' => $room->bunk ?? 0,
+                'sofa' => $room->sofa ?? 0,
+                'futon' => $room->futon ?? 0
+            ];
         }
         
         $amenities = $action->getAmenitiesByContext('apartment');
@@ -920,7 +1021,7 @@ class PropertyController extends Controller
             'room_display_data' => $roomDisplayData
         ]);
         
-        return view('partner.partner-multiple-apartment-2', compact('amenities', 'languages', 'propertyId', 'propertyData', 'roomDisplayData'));
+        return view('partner.partner-multiple-apartment-2', compact('amenities', 'languages', 'propertyId', 'propertyData', 'roomDisplayData', 'rooms'));
     }
 
     public function saveStep1Data(Request $request, Property $property)
@@ -1123,6 +1224,20 @@ class PropertyController extends Controller
             // Merge property_id into request data since it comes from route parameter
             $requestData = $request->all();
             $requestData['property_id'] = $property->id;
+            
+            // Convert string values to proper types before creating DTO
+            if (isset($requestData['price_per_night']) && $requestData['price_per_night'] !== null) {
+                $requestData['price_per_night'] = (float) $requestData['price_per_night'];
+            }
+            if (isset($requestData['discount_percent'])) {
+                $requestData['discount_percent'] = (int) $requestData['discount_percent'];
+            }
+            if (isset($requestData['discount_enabled'])) {
+                $requestData['discount_enabled'] = (bool) $requestData['discount_enabled'];
+            }
+            if (isset($requestData['property_id'])) {
+                $requestData['property_id'] = (int) $requestData['property_id'];
+            }
             
             $dto = SavePricingDTO::fromArray($requestData);
             $action->execute($dto, $property);

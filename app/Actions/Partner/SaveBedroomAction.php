@@ -77,14 +77,27 @@ class SaveBedroomAction
             }
         }
 
-        // Create or update the room
-        $room = PropertyBedroom::updateOrCreate(
-            [
-                'property_id' => $property->id,
-                'name' => $dto->room_name
-            ],
-            $roomData
-        );
+        // Check if this is an existing room or a new one
+        $existingRoom = PropertyBedroom::where('property_id', $property->id)
+            ->where('name', $dto->room_name)
+            ->first();
+
+        if ($existingRoom) {
+            // Update existing room
+            $existingRoom->update($roomData);
+            $room = $existingRoom;
+            Log::info('Updated existing room', [
+                'room_id' => $room->id,
+                'room_name' => $room->name
+            ]);
+        } else {
+            // Create new room
+            $room = PropertyBedroom::create($roomData);
+            Log::info('Created new room', [
+                'room_id' => $room->id,
+                'room_name' => $room->name
+            ]);
+        }
 
         Log::info('Room saved successfully', [
             'property_id' => $property->id,
