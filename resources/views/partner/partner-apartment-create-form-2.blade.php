@@ -1676,7 +1676,7 @@
     <div class="flex justify-between items-center">
       <button  @click="pricingWizardStep--"      class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
           ←</button>
-      <button  @click="savePricing()" class="  px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500">Continue</button>
+      <button  @click="pricingWizardStep++" class="  px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500">Continue</button>
     </div>
   </div>
 </template>
@@ -2255,7 +2255,7 @@ function calendarComponent() {
 
   <!-- Continue Button -->
   
-  <button       @click="pricingWizardStep++" class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-sky-500 transition w-full sm:w-auto">
+  <button       @click="savePricing()" class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-sky-500 transition w-full sm:w-auto">
     Continue
   </button>
 
@@ -2452,7 +2452,7 @@ function wizardApp() {
         
         
         // Initialize watchers
-        init() {
+        async init() {
             this.log('Alpine.js initialized');
             this.loadLanguages();
             console.log('Before restoreWizardState - step:', this.step);
@@ -2460,8 +2460,14 @@ function wizardApp() {
             console.log('After restoreWizardState - step:', this.step);
             this.handleBedroomReturn();
             console.log('After handleBedroomReturn - step:', this.step);
-            this.loadPropertyData();
+            await this.loadPropertyData();
             console.log('After loadPropertyData - step:', this.step);
+            
+            // Check completion status for existing properties
+            if (this.propertyId !== 'new') {
+                await this.checkBasicInfoCompletion();
+            }
+            
             this.logCurrentState();
             console.log('Initial rooms state:', this.rooms);
             console.log('Final wizard state after initialization:', {
@@ -2506,6 +2512,14 @@ function wizardApp() {
                 }
             });
             
+            // Watch for step changes to check completion status
+            this.$watch('step', async (newStep, oldStep) => {
+                if (oldStep !== undefined && newStep === 1 && this.propertyId !== 'new') {
+                    // Check completion status when navigating to basic info step
+                    await this.checkBasicInfoCompletion();
+                }
+            });
+            
             // Ensure default rooms are always present
             this.$watch('rooms', (newRooms) => {
                 if (newRooms) {
@@ -2523,9 +2537,15 @@ function wizardApp() {
         },
 
         // Navigation helpers
-        goToStep(stepNumber, context = '') {
+        async goToStep(stepNumber, context = '') {
             this.log('Navigating to step ' + stepNumber + ' ' + context);
             this.step = stepNumber;
+            
+            // Check completion status when navigating to basic info step
+            if (stepNumber === 1 && this.propertyId !== 'new') {
+                await this.checkBasicInfoCompletion();
+            }
+            
             this.saveWizardState();
         },
 
@@ -2541,21 +2561,65 @@ function wizardApp() {
             this.saveWizardState();
         },
 
+        // Track completion status for each step
+        stepCompletionStatus: {
+            basicInfo: false,
+            propertySetup: false,
+            photos: false,
+            pricing: false,
+            legalInfo: false
+        },
+
         // Helper function to check if a step is completed
         isStepCompleted(stepIndex) {
             switch(stepIndex) {
                 case 0: // Basic Information
-                    return this.wizardStep === 3;
+                    // Check database completion status first, then fallback to wizard step
+                    const basicInfoCompleted = this.stepCompletionStatus.basicInfo || this.wizardStep >= 3;
+                    console.log('Basic info completion check:', {
+                        stepIndex,
+                        stepCompletionStatus: this.stepCompletionStatus.basicInfo,
+                        wizardStep: this.wizardStep,
+                        completed: basicInfoCompleted
+                    });
+                    return basicInfoCompleted;
                 case 1: // Property Setup
-                    return this.propertyWizardStep === 6;
+                    return this.stepCompletionStatus.propertySetup || this.propertyWizardStep >= 6;
                 case 2: // Photos
-                    return this.uploadedPhotos && this.uploadedPhotos.length >= 3;
+                    return this.stepCompletionStatus.photos || (this.uploadedPhotos && this.uploadedPhotos.length >= 3);
                 case 3: // Pricing and Calendar
-                    return this.pricingWizardStep === 4;
+                    return this.stepCompletionStatus.pricing || this.pricingWizardStep >= 4;
                 case 4: // Legal Information
-                    return this.step >= 6 || (this.ownershipType && (this.individual.firstName || this.business.businessName));
+                    return this.stepCompletionStatus.legalInfo || this.step >= 6 || (this.ownershipType && (this.individual.firstName || this.business.businessName));
                 default:
                     return false;
+            }
+        },
+
+        // Check if basic information is completed in database
+        async checkBasicInfoCompletion() {
+            if (this.propertyId === 'new') {
+                return false;
+            }
+            
+            try {
+                const response = await fetch(`/partner/property/${this.propertyId}/check-basic-info`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    this.stepCompletionStatus.basicInfo = data.completed;
+                    this.log('Basic info completion status: ' + data.completed);
+                } else {
+                    this.log('Failed to check basic info completion');
+                }
+            } catch (error) {
+                this.log('Error checking basic info completion: ' + error.message);
             }
         },
 
@@ -3020,6 +3084,12 @@ function wizardApp() {
                     this.wizardStep++;
                     this.saveWizardState();
                     console.log('Property name saved successfully');
+                    
+                    // Mark basic info as completed if all required fields are saved
+                    if (this.wizardStep >= 3) {
+                        this.stepCompletionStatus.basicInfo = true;
+                        this.log('Basic info marked as completed');
+                    }
                 } else {
                     console.error('Failed to save property name');
                 }
@@ -3227,6 +3297,7 @@ function wizardApp() {
                 propertyWizardStep: this.propertyWizardStep,
                 pricingWizardStep: this.pricingWizardStep,
                 bedroomStep: this.bedroomStep,
+                stepCompletionStatus: this.stepCompletionStatus,
                 title: this.title,
                 address: this.address,
                 city: this.city,
@@ -3300,6 +3371,12 @@ function wizardApp() {
                     if (state.pricingWizardStep) this.pricingWizardStep = state.pricingWizardStep;
                     if (state.bedroomStep) this.bedroomStep = state.bedroomStep;
                     if (state.currentSubStep) this.currentSubStep = state.currentSubStep;
+                    
+                    // Restore completion status
+                    if (state.stepCompletionStatus) {
+                        this.stepCompletionStatus = { ...this.stepCompletionStatus, ...state.stepCompletionStatus };
+                        console.log('Restored completion status:', this.stepCompletionStatus);
+                    }
                     
                     console.log('Restored state - step:', this.step, 'wizardStep:', this.wizardStep);
                 } else {
@@ -3698,6 +3775,7 @@ function wizardApp() {
 
         async savePricing() {
             this.log('Saving pricing');
+            console.log('Current pricingWizardStep before saving:', this.pricingWizardStep);
             this.isLoading = true;
             
             try {
@@ -3730,10 +3808,14 @@ function wizardApp() {
                     const result = await response.json();
                     console.log('Pricing saved successfully:', result);
                     
+                    console.log('Pricing saved successfully, current pricingWizardStep:', this.pricingWizardStep);
                     if (this.pricingWizardStep < 4) {
                         this.pricingWizardStep++;
+                        console.log('Incremented pricingWizardStep to:', this.pricingWizardStep);
                     } else {
+                        console.log('Moving to step 5 (legal info)');
                         this.step = 5; // Move to legal info
+                        this.pricingWizardStep = 1; // Reset for next time
                     }
                     this.saveWizardState();
                 } else {
@@ -3913,7 +3995,7 @@ function wizardApp() {
             window.location.href = url;
         },
 
-        navigateToStep(stepNumber) {
+        async navigateToStep(stepNumber) {
             this.log('Navigating to step: ' + stepNumber);
             
             // Set the main step
@@ -3936,6 +4018,11 @@ function wizardApp() {
                 case 5: // Legal information
                     // Legal info doesn't have sub-steps, so no reset needed
                     break;
+            }
+            
+            // Check completion status when navigating to basic info step
+            if (stepNumber === 1 && this.propertyId !== 'new') {
+                await this.checkBasicInfoCompletion();
             }
             
             // Save wizard state after setting the new step

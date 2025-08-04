@@ -1241,6 +1241,52 @@ class PropertyController extends Controller
         }
     }
 
+    public function checkBasicInfoCompletion(Property $property)
+    {
+        Log::info('Checking basic info completion for property', ['property_id' => $property->id]);
+        
+        try {
+            // Check if all required basic information fields are filled
+            $hasTitle = !empty($property->title);
+            $hasAddress = !empty($property->address) && !empty($property->city);
+            $hasChannelManager = !empty($property->channel_manager);
+            
+            // Check if property details are saved
+            $hasPropertyDetails = !empty($property->description) || 
+                                !empty($property->guests) || 
+                                !empty($property->bathrooms) ||
+                                !empty($property->apartment_size);
+            
+            $completed = $hasTitle && $hasAddress && $hasChannelManager && $hasPropertyDetails;
+            
+            Log::info('Basic info completion check result', [
+                'property_id' => $property->id,
+                'hasTitle' => $hasTitle,
+                'hasAddress' => $hasAddress,
+                'hasChannelManager' => $hasChannelManager,
+                'hasPropertyDetails' => $hasPropertyDetails,
+                'completed' => $completed
+            ]);
+            
+            return response()->json([
+                'completed' => $completed,
+                'details' => [
+                    'hasTitle' => $hasTitle,
+                    'hasAddress' => $hasAddress,
+                    'hasChannelManager' => $hasChannelManager,
+                    'hasPropertyDetails' => $hasPropertyDetails
+                ]
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error checking basic info completion', ['error' => $e->getMessage()]);
+            
+            return response()->json([
+                'completed' => false,
+                'error' => 'Failed to check completion status'
+            ], 500);
+        }
+    }
+
     public function savePricing(Request $request, Property $property, SavePricingAction $action)
     {
         Log::info('savePricing called', [
