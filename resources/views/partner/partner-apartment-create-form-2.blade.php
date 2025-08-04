@@ -127,14 +127,9 @@
                     :class="step === index + 1 ? 'text-blue-600' : 'text-gray-700'"
                   >
                     <span x-text="label"></span>
-                    <!-- Optional checkmark -->
-                    <template x-if="index === 0 && wizardStep === 3">
-                      <span class="text-green-600">✔️</span>
-                    </template>
-
-                     <!-- Optional checkmark -->
-                    <template x-if="index === 1 && propertyWizardStep === 6">
-                      <span class="text-green-600">✔️</span>
+                    <!-- Checkmark for completed steps -->
+                    <template x-if="isStepCompleted(index)">
+                      <span class="text-green-600 ml-1" title="Step completed">✔️</span>
                     </template>
                   </div>
                   <!-- 🔵 Progress bar only under "Basic information" when active -->
@@ -963,20 +958,30 @@
         <h3 class="text-lg mb-4 font-bold">Select languages</h3>
         
         <!-- Common Languages (hardcoded for quick selection) -->
-        <div class="space-y-2 mb-4">
+        <div class="space-y-2 mb-4" x-show="availableLanguages.length > 0">
           <template x-for="commonLang in ['English', 'French', 'German', 'Hindi']" :key="commonLang">
             <label class="flex items-center cursor-pointer">
               <input 
                 type="checkbox" 
                 class="mr-2" 
-                :value="availableLanguages.find(lang => lang.name === commonLang)?.id"
+                :value="getLanguageIdByName(commonLang)"
                 x-model="selectedLanguages" 
-                :disabled="!availableLanguages.find(lang => lang.name === commonLang)"
+                :disabled="!getLanguageIdByName(commonLang)"
               />
               <span x-text="commonLang"></span>
             </label>
           </template>
         </div>
+        
+        <!-- Loading indicator for languages -->
+        <div x-show="availableLanguages.length === 0" class="text-sm text-gray-500 mb-4">
+          Loading languages...
+        </div>
+        
+        <!-- Debug: Show available languages -->
+        <!-- <div class="text-xs text-gray-500 mb-2">
+          Debug - Available languages: <span x-text="JSON.stringify(availableLanguages)"></span>
+        </div> -->
 
         <!-- Selected Languages Display -->
         <template x-if="selectedLanguages.length > 0">
@@ -1002,6 +1007,12 @@
         <!-- Add Additional Languages -->
         <div x-show="showAdditionalLanguages" class="mt-4 relative">
           <h3 class="text-lg font-medium mb-2">Add additional languages</h3>
+          <!-- Debug info -->
+          <div class="text-xs text-gray-500 mb-2">
+            Available languages: <span x-text="availableLanguages.length"></span> | 
+            Filtered languages: <span x-text="filteredLanguages.length"></span> | 
+            Show dropdown: <span x-text="showDropdown"></span>
+          </div>
           <!-- Searchable dropdown container -->
           <div class="relative w-full max-w-md">
             <input
@@ -1029,6 +1040,7 @@
               x-transition
               class="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded max-h-40 overflow-auto shadow-lg"
               @click.away="showDropdown = false"
+              x-init="console.log('Dropdown languages count:', filteredLanguages.length)"
             >
               <template x-for="language in filteredLanguages" :key="language.id">
                 <li 
@@ -2425,6 +2437,24 @@ function wizardApp() {
             this.saveWizardState();
         },
 
+        // Helper function to check if a step is completed
+        isStepCompleted(stepIndex) {
+            switch(stepIndex) {
+                case 0: // Basic Information
+                    return this.wizardStep === 3;
+                case 1: // Property Setup
+                    return this.propertyWizardStep === 6;
+                case 2: // Photos
+                    return this.uploadedPhotos && this.uploadedPhotos.length >= 3;
+                case 3: // Pricing and Calendar
+                    return this.pricingWizardStep === 4;
+                case 4: // Legal Information
+                    return this.step >= 6 || (this.ownershipType && (this.individual.firstName || this.business.businessName));
+                default:
+                    return false;
+            }
+        },
+
         // Property data
         propertyId: 'new',
         title: '',
@@ -2607,12 +2637,140 @@ function wizardApp() {
         async loadLanguages() {
             this.log('Loading languages...');
             try {
-                // Simulate API call - replace with actual endpoint
-                await new Promise(resolve => setTimeout(resolve, 100));
-                this.filteredLanguages = this.availableLanguages;
-                this.log('Languages loaded: ' + this.availableLanguages.length);
+                const response = await fetch('/partner/languages', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                });
+                
+                console.log('Languages API response status:', response.status);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Languages API response data:', data);
+                    this.availableLanguages = data || [];
+                    this.filteredLanguages = this.availableLanguages;
+                    this.log('Languages loaded from database: ' + this.availableLanguages.length);
+                    console.log('Available languages after loading:', this.availableLanguages);
+                    
+                    // Clear selected languages to prevent ID mismatches
+                    this.selectedLanguages = [];
+                    console.log('Cleared selected languages to prevent ID mismatches');
+                } else {
+                    this.log('Failed to load languages from database, using fallback');
+                    console.log('Response not ok, status:', response.status);
+                    // Use hardcoded languages as fallback
+                    this.availableLanguages = [
+                        { id: 1, name: 'English' },
+                        { id: 2, name: 'Spanish' },
+                        { id: 3, name: 'French' },
+                        { id: 4, name: 'German' },
+                        { id: 5, name: 'Italian' },
+                        { id: 6, name: 'Portuguese' },
+                        { id: 7, name: 'Dutch' },
+                        { id: 8, name: 'Russian' },
+                        { id: 9, name: 'Chinese' },
+                        { id: 10, name: 'Japanese' },
+                        { id: 11, name: 'Korean' },
+                        { id: 12, name: 'Thai' },
+                        { id: 13, name: 'Vietnamese' },
+                        { id: 14, name: 'Turkish' },
+                        { id: 15, name: 'Greek' },
+                        { id: 16, name: 'Hebrew' },
+                        { id: 17, name: 'Polish' },
+                        { id: 18, name: 'Swedish' },
+                        { id: 19, name: 'Norwegian' },
+                        { id: 20, name: 'Finnish' },
+                        { id: 21, name: 'Hungarian' },
+                        { id: 22, name: 'Romanian' },
+                        { id: 23, name: 'Ukrainian' },
+                        { id: 24, name: 'Indonesian' },
+                        { id: 25, name: 'Malay' },
+                        { id: 26, name: 'Tagalog' },
+                        { id: 27, name: 'Swahili' },
+                        { id: 28, name: 'Urdu' },
+                        { id: 29, name: 'Bengali' },
+                        { id: 30, name: 'Tamil' },
+                        { id: 31, name: 'Telugu' },
+                        { id: 32, name: 'Marathi' },
+                        { id: 33, name: 'Gujarati' },
+                        { id: 34, name: 'Punjabi' },
+                        { id: 35, name: 'Kannada' },
+                        { id: 36, name: 'Malayalam' },
+                        { id: 37, name: 'Sinhala' },
+                        { id: 38, name: 'Hindi' },
+                        { id: 39, name: 'Arabic' },
+                        { id: 40, name: 'Bulgarian' },
+                        { id: 41, name: 'Catalan' },
+                        { id: 42, name: 'Croatian' },
+                        { id: 43, name: 'Czech' },
+                        { id: 44, name: 'Danish' }
+                    ];
+                    this.filteredLanguages = this.availableLanguages;
+                    this.log('Using fallback languages: ' + this.availableLanguages.length);
+                    
+                    // Clear selected languages to prevent ID mismatches
+                    this.selectedLanguages = [];
+                    console.log('Cleared selected languages to prevent ID mismatches');
+                }
             } catch (error) {
                 this.log('Error loading languages: ' + error);
+                console.error('Error loading languages:', error);
+                // Use hardcoded languages as fallback
+                this.availableLanguages = [
+                    { id: 1, name: 'English' },
+                    { id: 2, name: 'Spanish' },
+                    { id: 3, name: 'French' },
+                    { id: 4, name: 'German' },
+                    { id: 5, name: 'Italian' },
+                    { id: 6, name: 'Portuguese' },
+                    { id: 7, name: 'Dutch' },
+                    { id: 8, name: 'Russian' },
+                    { id: 9, name: 'Chinese' },
+                    { id: 10, name: 'Japanese' },
+                    { id: 11, name: 'Korean' },
+                    { id: 12, name: 'Thai' },
+                    { id: 13, name: 'Vietnamese' },
+                    { id: 14, name: 'Turkish' },
+                    { id: 15, name: 'Greek' },
+                    { id: 16, name: 'Hebrew' },
+                    { id: 17, name: 'Polish' },
+                    { id: 18, name: 'Swedish' },
+                    { id: 19, name: 'Norwegian' },
+                    { id: 20, name: 'Finnish' },
+                    { id: 21, name: 'Hungarian' },
+                    { id: 22, name: 'Romanian' },
+                    { id: 23, name: 'Ukrainian' },
+                    { id: 24, name: 'Indonesian' },
+                    { id: 25, name: 'Malay' },
+                    { id: 26, name: 'Tagalog' },
+                    { id: 27, name: 'Swahili' },
+                    { id: 28, name: 'Urdu' },
+                    { id: 29, name: 'Bengali' },
+                    { id: 30, name: 'Tamil' },
+                    { id: 31, name: 'Telugu' },
+                    { id: 32, name: 'Marathi' },
+                    { id: 33, name: 'Gujarati' },
+                    { id: 34, name: 'Punjabi' },
+                    { id: 35, name: 'Kannada' },
+                    { id: 36, name: 'Malayalam' },
+                    { id: 37, name: 'Sinhala' },
+                    { id: 38, name: 'Hindi' },
+                    { id: 39, name: 'Arabic' },
+                    { id: 40, name: 'Bulgarian' },
+                    { id: 41, name: 'Catalan' },
+                    { id: 42, name: 'Croatian' },
+                    { id: 43, name: 'Czech' },
+                    { id: 44, name: 'Danish' }
+                ];
+                this.filteredLanguages = this.availableLanguages;
+                this.log('Using fallback languages: ' + this.availableLanguages.length);
+                
+                // Clear selected languages to prevent ID mismatches
+                this.selectedLanguages = [];
+                console.log('Cleared selected languages to prevent ID mismatches');
             }
         },
 
@@ -2629,29 +2787,86 @@ function wizardApp() {
 
         selectLanguage(languageId, languageName) {
             this.log('Selecting language: ' + languageId + ', ' + languageName);
-            if (!this.selectedLanguages.includes(languageId)) {
-                this.selectedLanguages.push(languageId);
-                this.log('Language added');
+            
+            // Ensure languageId is a number
+            const numericId = parseInt(languageId);
+            if (isNaN(numericId)) {
+                console.error('Invalid language ID:', languageId);
+                return;
+            }
+            
+            if (!this.selectedLanguages.includes(numericId)) {
+                this.selectedLanguages.push(numericId);
+                this.log('Language added with ID: ' + numericId);
             }
             this.showDropdown = false;
         },
 
         removeLanguage(languageId) {
             this.log('Removing language: ' + languageId);
-            const index = this.selectedLanguages.indexOf(languageId);
+            
+            // Ensure languageId is a number
+            const numericId = parseInt(languageId);
+            if (isNaN(numericId)) {
+                console.error('Invalid language ID for removal:', languageId);
+                return;
+            }
+            
+            const index = this.selectedLanguages.indexOf(numericId);
             if (index > -1) {
                 this.selectedLanguages.splice(index, 1);
-                this.log('Language removed');
+                this.log('Language removed with ID: ' + numericId);
             }
         },
 
         getLanguageName(languageId) {
-            const language = this.availableLanguages.find(l => l.id === languageId);
-            return language ? language.name : 'Unknown';
+            console.log('Getting language name for ID:', languageId);
+            console.log('Available languages:', this.availableLanguages);
+            
+            // Ensure languageId is a number
+            const numericId = parseInt(languageId);
+            if (isNaN(numericId)) {
+                console.error('Invalid language ID for name lookup:', languageId);
+                return 'Unknown';
+            }
+            
+            const language = this.availableLanguages.find(l => l.id === numericId);
+            console.log('Found language:', language);
+            
+            if (language) {
+                return language.name;
+            } else {
+                console.warn('Language not found for ID:', numericId);
+                return 'Unknown';
+            }
+        },
+
+        getLanguageIdByName(languageName) {
+            console.log('Getting language ID for name:', languageName);
+            console.log('Available languages:', this.availableLanguages);
+            
+            const language = this.availableLanguages.find(l => l.name === languageName);
+            console.log('Found language for name:', language);
+            
+            return language ? language.id : null;
         },
 
         isLanguageSelected(languageId) {
-            return this.selectedLanguages.includes(languageId);
+            // Ensure languageId is a number
+            const numericId = parseInt(languageId);
+            if (isNaN(numericId)) {
+                return false;
+            }
+            return this.selectedLanguages.includes(numericId);
+        },
+
+        toggleAdditionalLanguages() {
+            this.showAdditionalLanguages = !this.showAdditionalLanguages;
+            this.log('Toggled additional languages: ' + this.showAdditionalLanguages);
+        },
+
+        logLanguageChange(field, value) {
+            this.log('Language field changed: ' + field + ' = ' + value);
         },
 
         // Photo upload methods
