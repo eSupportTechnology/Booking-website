@@ -52,35 +52,83 @@
     @endif
     
     <!-- Header -->
-    <header class="text-white px-4 py-2" style="background-color: #1f8fb2">
-      <section class="py-4">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
-            <!-- Logo -->
-            <div class="w-full md:w-auto md:ml-6">
-              <a href="/" class="text-2xl font-bold font-poppins">Bookintour.com</a>
+    <header class="text-white px-4 py-2" style="background-color:#1F8FB2;">
+        <section class="py-4">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div
+                    class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
+                    <!-- Logo -->
+                    <div class="w-full md:w-auto md:ml-6">
+                        @php
+                            $host = config('domains.app_name');
+
+                        @endphp
+
+                        <a href="{{ url('/') }}" class="text-2xl font-bold flex items-center">
+                            @if ($host == 'BookinTour')
+                                <h1>Bookintour.com</h1>
+                            @elseif ($host == 'Inselor')
+                                <img src="{{ asset('images/inselor-logo.png') }}" alt="Inselor"
+                                    class="h-12 w-auto align-middle" />
+                            @endif
+                        </a>
+                    </div>
+
+                    <!-- Right Section -->
+                    <div class="flex items-center space-x-4 text-sm font-medium md:ml-auto font-sans">
+                        <!-- Help Icon -->
+                        <a href="/help" title="Help">
+                            <img src="{{ asset('assets/question.svg') }}" alt="Help"
+                                class="w-6 h-6 md:w-7 md:h-7 cursor-pointer" />
+                        </a>
+
+                        <!-- Language Button -->
+                        <button id="language-button" type="button"
+                            class="flex items-center justify-center w-8 h-8 bg-white rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-hidden"
+                            title="Change Language">
+                            <img src="{{ asset('images/uk.png') }}" alt="UK Flag"
+                                class="w-full h-full object-cover rounded-full" />
+                        </button>
+
+                        <!-- Language Modal -->
+                        <div id="language-modal"
+                            class="fixed inset-0 hidden z-50 overflow-y-auto flex items-start justify-center px-4 py-8 bg-black bg-opacity-50">
+                            <div class="relative w-full max-w-md p-6 bg-white rounded-lg shadow">
+                                <!-- Modal Header -->
+                                <div class="flex items-start justify-between">
+                                    <h3 class="text-xl font-semibold text-gray-900">Select your language</h3>
+                                    <button type="button"
+                                        class="close-btn text-gray-400 hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center">
+                                        <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd"
+                                                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                                clip-rule="evenodd" />
+                                        </svg>
+                                        <span class="sr-only">Close modal</span>
+                                    </button>
+                                </div>
+
+                                <!-- Modal Body -->
+                                <div class="mt-4">
+                                    <p class="mb-4 text-base text-gray-500">Suggested for you</p>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <button class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100">
+                                            <img src="https://flagcdn.com/w40/gb.png" alt="English (UK)"
+                                                class="h-5 w-5" />
+                                            <span>English (UK)</span>
+                                        </button>
+                                        <button class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100">
+                                            <img src="https://flagcdn.com/w40/de.png" alt="Deutsch" class="h-5 w-5" />
+                                            <span>Deutsch</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <!-- Right Section -->
-            <div class="flex items-center space-x-4 text-sm font-medium md:ml-auto font-sans">
-              <!-- Help Icon -->
-              <a href="/help" title="Help">
-                <svg class="w-6 h-6 md:w-7 md:h-7 cursor-pointer" fill="white" viewBox="0 0 24 24">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/>
-                </svg>
-              </a>
-              <!-- Language Button -->
-              <button
-                type="button"
-                class="flex items-center justify-center w-8 h-8 bg-white rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-hidden"
-                title="Change Language"
-                @click="showLanguageModal = !showLanguageModal"
-              >
-                <span class="text-sm font-medium text-gray-800">EN</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
+        </section>
     </header>
     
     <!-- Main Alpine.js Application -->
@@ -88,25 +136,7 @@
       x-data="wizardApp()"
       x-init="console.log('Alpine.js initialized'); console.log('testValue:', testValue);"
     >
-        <!-- Debug Panel (remove in production) -->
-        <div x-data="{ showDebug: false }" class="fixed top-4 right-4 z-50">
-          <button @click="showDebug = !showDebug" class="bg-blue-600 text-white px-3 py-1 rounded text-sm">
-            Debug Panel
-          </button>
-          <div x-show="showDebug" x-transition class="bg-white border rounded-lg p-4 mt-2 shadow-lg max-w-md">
-            <h3 class="font-bold mb-2">Wizard State</h3>
-            <div class="text-xs space-y-1">
-              <div>Main Step: <span x-text="step"></span></div>
-              <div>Wizard Step: <span x-text="wizardStep"></span></div>
-              <div>Property Wizard Step: <span x-text="propertyWizardStep"></span></div>
-              <div>Pricing Wizard Step: <span x-text="pricingWizardStep"></span></div>
-              <div>Bedroom Step: <span x-text="bedroomStep"></span></div>
-            </div>
-            <button @click="logCurrentState()" class="mt-2 bg-gray-600 text-white px-2 py-1 rounded text-xs">
-              Log Current State
-            </button>
-          </div>
-        </div>
+
         <!-- Sticky Top Navbar -->
         <nav class="border-b shadow-sm sticky top-0 z-50">
           <div class="max-w-full mx-auto px-4 py-3">
