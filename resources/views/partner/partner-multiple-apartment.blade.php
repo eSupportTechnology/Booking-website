@@ -2754,10 +2754,22 @@ You will be able to add more apartments or duplicate this one when you finish fi
                                             verificationData.full_name = `${step11Data.individual.firstName} ${step11Data.individual.lastName}`.trim();
                                             verificationData.national_id = step11Data.individual.dob; // Using DOB as national_id for now
                                             // Add owners array for individual
+                                            // Validate and format the date
+                                            let dobValue = null;
+                                            if (step11Data.individual.dob && step11Data.individual.dob !== '1') {
+                                                // Check if it's a valid date format
+                                                const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+                                                if (dateRegex.test(step11Data.individual.dob)) {
+                                                    dobValue = step11Data.individual.dob;
+                                                } else {
+                                                    console.warn('Invalid date format:', step11Data.individual.dob);
+                                                }
+                                            }
+                                            
                                             verificationData.owners = [{
                                                 first_name: step11Data.individual.firstName,
                                                 last_name: step11Data.individual.lastName,
-                                                dob: step11Data.individual.dob
+                                                dob: dobValue
                                             }];
                                         }
                                     } else if (step11Data.ownershipType === 'business') {
@@ -2767,16 +2779,32 @@ You will be able to add more apartments or duplicate this one when you finish fi
                                             verificationData.registration_number = step11Data.business.address; // Using address as registration_number for now
                                             // Add owners array for business if available
                                             if (step11Data.business.owners && step11Data.business.owners.length > 0) {
-                                                verificationData.owners = step11Data.business.owners.map(owner => ({
-                                                    first_name: owner.firstName,
-                                                    last_name: owner.lastName,
-                                                    dob: owner.dob
-                                                }));
+                                                verificationData.owners = step11Data.business.owners.map(owner => {
+                                                    // Validate and format the date for each owner
+                                                    let dobValue = null;
+                                                    if (owner.dob && owner.dob !== '1') {
+                                                        // Check if it's a valid date format
+                                                        const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+                                                        if (dateRegex.test(owner.dob)) {
+                                                            dobValue = owner.dob;
+                                                        } else {
+                                                            console.warn('Invalid date format for owner:', owner.dob);
+                                                        }
+                                                    }
+                                                    
+                                                    return {
+                                                        first_name: owner.firstName,
+                                                        last_name: owner.lastName,
+                                                        dob: dobValue
+                                                    };
+                                                });
                                             }
                                         }
                                     }
                                     
                                     console.log('Final verification data to be sent:', verificationData);
+                                    console.log('Individual DOB value:', step11Data.individual?.dob);
+                                    console.log('Individual DOB type:', typeof step11Data.individual?.dob);
                                     
                                     const response = await fetch(`/partner/store-verification`, {
                                         method: 'POST',

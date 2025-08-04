@@ -35,7 +35,7 @@ class PartnerVerificationDTO extends ValidatedDTO
             'owners' => ['nullable', 'array'],
             'owners.*.first_name' => ['nullable', 'string'],
             'owners.*.last_name' => ['nullable', 'string'],
-            'owners.*.dob' => ['nullable', 'date'],
+            'owners.*.dob' => ['nullable', 'date_format:Y-m-d'],
         ];
     }
     protected function casts(): array

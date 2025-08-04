@@ -433,7 +433,7 @@ Route::prefix('partner')->middleware('auth')->group(function () {
     Route::get('/property/{property}/facilities', [PropertyDataController::class, 'getFacilities'])->name('partner.property.facilities.get');
     Route::post('/property/{property}/services', [PropertyController::class, 'saveServices'])->name('partner.property.services.store');
     Route::get('/property/{property}/services', [PropertyDataController::class, 'getServices'])->name('partner.property.services.get');
-    Route::post('/partner/property/{property}/services', [PropertyController::class, 'saveServices'])->name('partner.property.services.store');
+    Route::post('/partner/property/{property}/services', [PropertyController::class, 'saveServices'])->name('partner.property.services.store.partner');
     Route::patch('/partner/property/{property}/additional-details', [PropertyController::class, 'updateAdditionalDetails'])->name('partner.property.update.additional-details');
     Route::post('/property/{property}/languages', [PropertyController::class, 'saveLanguages'])->name('partner.property.languages.store');
     Route::get('/property/{property}/languages', [PropertyDataController::class, 'getPropertyLanguages'])->name('partner.property.languages.get');
@@ -502,7 +502,7 @@ Route::middleware(\App\Http\Middleware\EnsurePartner::class)->group(function () 
 Route::post('/property/{property}/update-title', [PropertyController::class, 'updateTitle'])->name('partner.property.update-title');
 
 Route::patch('/partner/property/{property}/additional-details', [PropertyController::class, 'updateAdditionalDetails'])
-    ->name('partner.property.update.additional-details');
+    ->name('partner.property.update.additional-details.partner');
 
 Route::post('/partner/property/{property}/pricing', [PropertyController::class, 'savePricing'])
     ->name('partner.property.save.pricing');
