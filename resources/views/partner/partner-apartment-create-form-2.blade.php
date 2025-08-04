@@ -3859,6 +3859,11 @@ function wizardApp() {
 
         async saveLegalInfo() {
             this.log('Saving legal information');
+            console.log('=== SAVE LEGAL INFO CALLED ===');
+            console.log('Property ID:', this.propertyId);
+            console.log('Ownership Type:', this.ownershipType);
+            console.log('Individual Data:', this.individual);
+            console.log('Business Data:', this.business);
             this.isLoading = true;
             try {
                 console.log('Saving legal info with data:', {
@@ -3909,11 +3914,20 @@ function wizardApp() {
                     body: JSON.stringify(requestData)
                 });
                 
+                console.log('Response status:', response.status);
+                console.log('Response ok:', response.ok);
+                
                 if (response.ok) {
                     const result = await response.json();
                     console.log('Legal info saved successfully:', result);
-                    this.step = 6; // Move to final step
-                    this.saveWizardState();
+                    
+                    // Redirect to list-your-property page with success message
+                    const successMessage = encodeURIComponent('🎉 Congratulations! Your property has been successfully listed and is now live on our platform. You can start receiving bookings from guests worldwide!');
+                    const redirectUrl = `/list-your-property?success=true&message=${successMessage}`;
+                    
+                    console.log('Redirecting to:', redirectUrl);
+                    window.location.href = redirectUrl;
+                    console.log('Legal info saved successfully, redirecting to list-your-property');
                 } else {
                     const errorData = await response.json();
                     console.error('Failed to save legal info:', errorData);

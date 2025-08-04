@@ -1,6 +1,73 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+
+<!-- Toast Notification System -->
+<div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
+
+<script>
+    // Toast notification function
+    function showToast(message, type = 'success') {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        
+        // Set toast styles based on type
+        let bgColor = 'bg-green-500';
+        let borderColor = 'border-green-600';
+        let icon = '✓';
+        
+        if (type === 'error') {
+            bgColor = 'bg-red-500';
+            borderColor = 'border-red-600';
+            icon = '✕';
+        } else if (type === 'warning') {
+            bgColor = 'bg-yellow-500';
+            borderColor = 'border-yellow-600';
+            icon = '⚠';
+        }
+        
+        toast.className = `${bgColor} ${borderColor} border text-white px-6 py-4 rounded-lg shadow-lg max-w-sm transform transition-all duration-300 ease-in-out translate-x-full`;
+        toast.innerHTML = `
+            <div class="flex items-center space-x-3">
+                <span class="text-lg">${icon}</span>
+                <p class="flex-1 text-sm font-medium">${message}</p>
+                <button onclick="this.parentElement.parentElement.remove()" class="text-white hover:text-gray-200 text-lg font-bold">&times;</button>
+            </div>
+        `;
+        
+        container.appendChild(toast);
+        
+        // Animate in
+        setTimeout(() => {
+            toast.classList.remove('translate-x-full');
+        }, 100);
+        
+        // Auto remove after 8 seconds
+        setTimeout(() => {
+            toast.classList.add('translate-x-full');
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.remove();
+                }
+            }, 300);
+        }, 8000);
+    }
+    
+    // Check for success message on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const success = urlParams.get('success');
+        const message = urlParams.get('message');
+        
+        if (success === 'true' && message) {
+            showToast(decodeURIComponent(message), 'success');
+            
+            // Clean up URL parameters
+            const newUrl = window.location.pathname;
+            window.history.replaceState({}, document.title, newUrl);
+        }
+    });
+</script>
 <!-- HEADER -->
 <header class="text-white px-4 py-2" style="background-color:#1F8FB2;">
     <section class="py-4">
