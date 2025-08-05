@@ -1752,89 +1752,7 @@
 
                                         </template>
 
-                                        <template x-if="step === 13 && selected === 'one'"
-                                            x-data="{
-                                                    rooms: {
-                                                        bedroom1: {key:'1',room_type_id: 2, name: 'Bedroom 1', beds: {} },
-                                                        livingRoom: {key:'2',room_type_id: 1,  name: 'Living Room', beds: {} },
-                                                        otherSpaces: {key:'3',room_type_id: 3, name: 'Other Spaces', beds: {} },
-                                                    },
-                                                    allBedTypes: [
-                                                        { id: '1', name: 'Single', applicableTo: ['1', '3'] },
-                                                        { id: '2', name: 'Double', applicableTo: ['1', '3'] },
-                                                        { id: '3', name: 'King', applicableTo: ['1', '3'] },
-                                                        { id: '4', name: 'Super King', applicableTo: ['1', '3'] },
-                                                        { id: '5', name: 'Bunk', applicableTo: ['1', '3'] },
-                                                        { id: '6', name: 'Sofa Bed', applicableTo: ['1', '2', '3'] }
-                                                    ],
-                                                    guests: 1,
-                                                    bathrooms: 1,
-                                                    allowChildren: 'yes',
-                                                    offerCribs: 'no',
-                                                    apartmentSize: '',
-                                                    price_per_night: '',
-                                                    apartmentUnit: 'square meters',
-                                                    showRoomEditor: false,
-
-                                                    currentEditingRoomKey: null,
-                                                    editingRoom: { name: '', beds: {} ,room_type_id: 1},
-
-                                                    openRoomEditor(key = null) {
-                                                        this.currentEditingRoomKey = key;
-
-                                                        if (key && this.rooms[key]) {
-                                                            this.editingRoom = JSON.parse(JSON.stringify(this.rooms[key]));
-                                                        } else {
-                                                            // For new room
-                                                            const newKey = 'bedroom' + (Object.keys(this.rooms).filter(k => k.startsWith('bedroom')).length + 1);
-                                                            this.currentEditingRoomKey = newKey;
-                                                            this.editingRoom = { name: 'Bedroom', beds: {},room_type_id: 1 };
-                                                        }
-
-                                                        this.showRoomEditor = true;
-                                                    },
-
-                                                    saveRoomEditor() {
-                                                        this.rooms[this.currentEditingRoomKey] = JSON.parse(JSON.stringify(this.editingRoom));
-                                                        this.showRoomEditor = false;
-                                                    },
-
-                                                    cancelRoomEditor() {
-                                                        this.showRoomEditor = false;
-                                                    },
-
-                                                    getBedSummary(key) {
-                                                        const bedCounts = this.rooms[key]?.beds || {};
-                                                        return Object.entries(bedCounts)
-                                                            .filter(([_, count]) => count > 0)
-                                                            .map(([id, count]) => `${count} ${this.allBedTypes.find(bt => bt.id === id)?.name}`)
-                                                            .join(', ') || 'No beds selected';
-                                                    },
-
-                                                    hasBedCounts(key) {
-                                                        const beds = this.rooms[key]?.beds || {};
-                                                        return Object.values(beds).some(count => count > 0);
-                                                    },
-
-                                                   navigateToBedroom(key = null) {
-                                                        this.openRoomEditor(key);
-                                                    },
-
-                                                    editSavedRoom(key) {
-                                                        this.openRoomEditor(key);
-                                                    },
-                                                    getSavedRoomBedSummary(room) {
-                                                        return Object.entries(room.beds)
-                                                            .filter(([_, count]) => count > 0)
-                                                            .map(([id, count]) => `${count} ${this.allBedTypes.find(bt => bt.id === id)?.name}`)
-                                                            .join(', ');
-                                                    },
-                                                    deleteRoom(key) {
-                                                        if (confirm('Are you sure you want to delete this room?')) {
-                                                            delete this.rooms[key];
-                                                        }
-                                                    }
-                                                }">
+                                        <template x-if="step === 13 && selected === 'one'">
 
                                             <!-- Room Editor Modal -->
 
@@ -1871,6 +1789,7 @@
                                                                                 <p class="text-sm text-gray-600" x-text="getBedSummary(key)"></p>
                                                                             </div>
                                                                             <span class="text-xs text-blue-600 hover:underline">Edit</span>
+                                                                            <span class="text-xs text-red-600 hover:underline cursor-pointer" @click="deleteRoom(key)">Delete</span>    
                                                                         </div>
                                                                     </a>
                                                                 </template>
@@ -2009,7 +1928,7 @@
                                                         <div class="mb-4">
                                                             <h3 class="text-sm font-semibold text-gray-800 mb-2">Bed Configuration</h3>
                                                             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                                                                <template x-for="bed in allBedTypes" :key="bed.id">
+                                                                <template x-for="bed in allBedTypes.filter(b => b.applicableTo.includes(String(editingRoom.room_type_id)))" :key="bed.id">
                                                                     <div class="flex items-center space-x-3">
                                                                         <label class="w-1/2 text-gray-700 text-sm" x-text="bed.name"></label>
                                                                         <input type="number" min="0"
@@ -3657,6 +3576,86 @@
                                             state: '',
                                             country: '',
                                             postal_code: ''
+                                        }
+                                    },
+                                    rooms: {
+                                        bedroom1: {key:'1',room_type_id: 1, name: 'Bedroom ', beds: {} },
+                                        livingRoom: {key:'2',room_type_id: 2,  name: 'Living Room', beds: {} },
+                                        otherSpaces: {key:'3',room_type_id: 3, name: 'Other Spaces', beds: {} },
+                                    },
+                                    allBedTypes: [
+                                        { id: '1', name: 'Single', applicableTo: ['1', '3'] },
+                                        { id: '2', name: 'Double', applicableTo: ['1', '3'] },
+                                        { id: '3', name: 'King', applicableTo: ['1', '3'] },
+                                        { id: '4', name: 'Super King', applicableTo: ['1', '3'] },
+                                        { id: '5', name: 'Bunk', applicableTo: ['1', '3'] },
+                                        { id: '6', name: 'Sofa Bed', applicableTo: ['1', '2', '3'] }
+                                    ],
+                                    guests: 1,
+                                    bathrooms: 1,
+                                    allowChildren: 'yes',
+                                    offerCribs: 'no',
+                                    apartmentSize: '',
+                                    price_per_night: '',
+                                    apartmentUnit: 'square meters',
+                                    showRoomEditor: false,
+
+                                    currentEditingRoomKey: null,
+                                    editingRoom: { name: '', beds: {} ,room_type_id: 1},
+
+                                    openRoomEditor(key = null) {
+                                        this.currentEditingRoomKey = key;
+
+                                        if (key && this.rooms[key]) {
+                                            this.editingRoom = JSON.parse(JSON.stringify(this.rooms[key]));
+                                        } else {
+                                            // For new room
+                                            const newKey = 'bedroom' + (Object.keys(this.rooms).filter(k => k.startsWith('bedroom')).length + 1);
+                                            this.currentEditingRoomKey = newKey;
+                                            this.editingRoom = { name: 'Bedroom', beds: {},room_type_id: 1 };
+                                        }
+
+                                        this.showRoomEditor = true;
+                                    },
+
+                                    saveRoomEditor() {
+                                        this.rooms[this.currentEditingRoomKey] = JSON.parse(JSON.stringify(this.editingRoom));
+                                        this.showRoomEditor = false;
+                                    },
+
+                                    cancelRoomEditor() {
+                                        this.showRoomEditor = false;
+                                    },
+
+                                    getBedSummary(key) {
+                                        const bedCounts = this.rooms[key]?.beds || {};
+                                        return Object.entries(bedCounts)
+                                            .filter(([_, count]) => count > 0)
+                                            .map(([id, count]) => `${count} ${this.allBedTypes.find(bt => bt.id === id)?.name}`)
+                                            .join(', ') || 'No beds selected';
+                                    },
+
+                                    hasBedCounts(key) {
+                                        const beds = this.rooms[key]?.beds || {};
+                                        return Object.values(beds).some(count => count > 0);
+                                    },
+
+                                    navigateToBedroom(key = null) {
+                                        this.openRoomEditor(key);
+                                    },
+
+                                    editSavedRoom(key) {
+                                        this.openRoomEditor(key);
+                                    },
+                                    getSavedRoomBedSummary(room) {
+                                        return Object.entries(room.beds)
+                                            .filter(([_, count]) => count > 0)
+                                            .map(([id, count]) => `${count} ${this.allBedTypes.find(bt => bt.id === id)?.name}`)
+                                            .join(', ');
+                                    },
+                                    deleteRoom(key) {
+                                        if (confirm('Are you sure you want to delete this room?')) {
+                                            delete this.rooms[key];
                                         }
                                     },
                                     addRoom() {
