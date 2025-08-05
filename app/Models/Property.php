@@ -30,6 +30,9 @@ class Property extends Model
         'payment_method',
         'invoicing_info',
         'open_for_bookings',
+        'wizard_step',
+        'property_wizard_step',
+        'pricing_wizard_step',
     ];
     public function photos()
     {

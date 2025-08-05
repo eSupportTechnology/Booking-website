@@ -278,15 +278,41 @@
           const propertyId = '{{ $property->id ?? 'new' }}';
           const wizardState = '{{ request('wizardState') }}';
           
-          if (source === 'multiple') {
-            window.location.href = `/partner/multiple-apartment-2/${propertyId}`;
-          } else if (source === 'single') {
-            // Return with wizard state preservation
-            const returnUrl = `/partner/property/apartment/step2/${propertyId}?step=${step}&returnFromBedroom=true&wizardState=${encodeURIComponent(wizardState)}`;
-            window.location.href = returnUrl;
+          // Get wizard state from URL parameters
+          const urlParams = new URLSearchParams(window.location.search);
+          const wizardStateParam = urlParams.get('wizardState');
+          
+          if (wizardStateParam) {
+            try {
+              const wizardState = JSON.parse(decodeURIComponent(wizardStateParam));
+              console.log('Wizard state found:', wizardState);
+              
+              // Navigate back to the original form with the wizard state
+              const returnUrl = `/partner-apartment-create-2?wizardState=${encodeURIComponent(wizardStateParam)}&step=${wizardState.step || 2}`;
+              console.log('Redirecting to:', returnUrl);
+              window.location.href = returnUrl;
+            } catch (error) {
+              console.error('Error parsing wizard state:', error);
+              // Fallback to original logic
+              if (source === 'multiple') {
+                window.location.href = `/partner/multiple-apartment-2/${propertyId}`;
+              } else if (source === 'single') {
+                const returnUrl = `/partner/property/apartment/step2/${propertyId}?step=${step}&returnFromBedroom=true&wizardState=${encodeURIComponent(wizardState)}`;
+                window.location.href = returnUrl;
+              } else {
+                window.history.back();
+              }
+            }
           } else {
-            // Fallback to browser back
-            window.history.back();
+            // Fallback to original logic if no wizard state
+            if (source === 'multiple') {
+              window.location.href = `/partner/multiple-apartment-2/${propertyId}`;
+            } else if (source === 'single') {
+              const returnUrl = `/partner/property/apartment/step2/${propertyId}?step=${step}&returnFromBedroom=true&wizardState=${encodeURIComponent(wizardState)}`;
+              window.location.href = returnUrl;
+            } else {
+              window.history.back();
+            }
           }
         },
         

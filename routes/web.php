@@ -672,6 +672,8 @@ Route::post('/partner/property/{property}/policy', [\App\Http\Controllers\Proper
 
 Route::post('/partner/property/{property}/host-profile', [PropertyController::class, 'saveHostProfile']);
 
+Route::get('/partner/property/{property}/check-basic-info', [PropertyController::class, 'checkBasicInfoCompletion'])->name('partner.property.check-basic-info');
+
 Route::post('/partner/property/{property}/pricing', [PropertyController::class, 'savePricing']);
 Route::post('/partner/property/{property}/address-type', [PropertyController::class, 'saveAddressType']);
 

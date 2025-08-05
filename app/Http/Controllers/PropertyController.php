@@ -995,7 +995,34 @@ class PropertyController extends Controller
             ];
             
             // Convert to rooms object structure for frontend
-            $roomKey = strtolower(str_replace(' ', '', $room->name));
+            // Map room names to frontend keys
+            $roomKey = null;
+            $normalizedName = strtolower(trim($room->name));
+            
+            if (strpos($normalizedName, 'living') !== false) {
+                $roomKey = 'livingRoom';
+            } elseif (strpos($normalizedName, 'other') !== false) {
+                $roomKey = 'otherSpaces';
+            } else {
+                // For other rooms, use the original logic
+                $roomKey = strtolower(str_replace(' ', '', $room->name));
+            }
+            
+            // Log the room key mapping for debugging
+            Log::info('Added room to rooms object', [
+                'room_key' => $roomKey,
+                'room_data' => [
+                    'name' => $room->name,
+                    'twin' => $room->twin ?? 0,
+                    'full' => $room->full ?? 0,
+                    'queen' => $room->queen ?? 0,
+                    'king' => $room->king ?? 0,
+                    'bunk' => $room->bunk ?? 0,
+                    'sofa' => $room->sofa ?? 0,
+                    'futon' => $room->futon ?? 0
+                ]
+            ]);
+            
             $rooms[$roomKey] = [
                 'name' => $room->name,
                 'twin' => $room->twin ?? 0,
@@ -1211,6 +1238,52 @@ class PropertyController extends Controller
                 'trace' => $e->getTraceAsString()
             ]);
             return response()->json(['success' => false, 'message' => 'Error saving host profile: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function checkBasicInfoCompletion(Property $property)
+    {
+        Log::info('Checking basic info completion for property', ['property_id' => $property->id]);
+        
+        try {
+            // Check if all required basic information fields are filled
+            $hasTitle = !empty($property->title);
+            $hasAddress = !empty($property->address) && !empty($property->city);
+            $hasChannelManager = !empty($property->channel_manager);
+            
+            // Check if property details are saved
+            $hasPropertyDetails = !empty($property->description) || 
+                                !empty($property->guests) || 
+                                !empty($property->bathrooms) ||
+                                !empty($property->apartment_size);
+            
+            $completed = $hasTitle && $hasAddress && $hasChannelManager && $hasPropertyDetails;
+            
+            Log::info('Basic info completion check result', [
+                'property_id' => $property->id,
+                'hasTitle' => $hasTitle,
+                'hasAddress' => $hasAddress,
+                'hasChannelManager' => $hasChannelManager,
+                'hasPropertyDetails' => $hasPropertyDetails,
+                'completed' => $completed
+            ]);
+            
+            return response()->json([
+                'completed' => $completed,
+                'details' => [
+                    'hasTitle' => $hasTitle,
+                    'hasAddress' => $hasAddress,
+                    'hasChannelManager' => $hasChannelManager,
+                    'hasPropertyDetails' => $hasPropertyDetails
+                ]
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error checking basic info completion', ['error' => $e->getMessage()]);
+            
+            return response()->json([
+                'completed' => false,
+                'error' => 'Failed to check completion status'
+            ], 500);
         }
     }
 

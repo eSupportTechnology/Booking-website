@@ -6,7 +6,7 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <section x-data="{ businessType: '{{ $accommodation_type === 'individual' ? 'individual' : 'business_entity' }}' }" x-init="window.businessType = businessType" class="w-full px-4 py-8 max-w-2xl mx-auto lg:ml-32">
 
-<input type="hidden" id="propertyId" value="{{ $propertyId }}">
+  <input type="hidden" id="propertyId" value="{{ $propertyId }}">
   <div class="bg-white p-6 rounded-lg shadow-md space-y-6">
     <div>
       <h3 class="text-xl font-semibold mb-2">Are you listing property as a business or individual?</h3>
@@ -16,7 +16,7 @@
 
       <div class="space-y-2">
         <label class="flex items-start space-x-2 mb-4 mt-4">
-          <input type="radio" name="type" value="individual" x-model="businessType" class="mt-1" >
+          <input type="radio" name="type" value="individual" x-model="businessType" class="mt-1">
           <div>
             <span class="font-semibold text-sm">Individual</span>
             <p class="text-sm text-gray-600">
@@ -26,7 +26,7 @@
         </label>
 
         <label class="flex items-start space-x-2 mb-4">
-          <input type="radio" name="type" value="business_entity" x-model="businessType" class="mt-1" >
+          <input type="radio" name="type" value="business_entity" x-model="businessType" class="mt-1">
           <div>
             <span class="font-semibold text-sm">Business</span>
             <p class="text-sm text-gray-600">
@@ -298,9 +298,9 @@
       </button>
 
       <!-- Open for bookings Button (take remaining space) -->
-        <button id="completeRegistrationBtn" disabled  class="flex-1 px-6 py-3 bg-[#939393] text-white text-center font-semibold rounded-md hover:cursor-not-allowed transition">
-          Open for bookings
-        </button>
+      <button id="completeRegistrationBtn" disabled class="flex-1 px-6 py-3 bg-[#939393] text-white text-center font-semibold rounded-md hover:cursor-not-allowed transition">
+        Open for bookings
+      </button>
 
     </div>
 
@@ -313,7 +313,7 @@
 
 </section>
 <script>
- const generalDeliveryTerms1 = document.getElementById('generalDeliveryTerms1');
+  const generalDeliveryTerms1 = document.getElementById('generalDeliveryTerms1');
   const generalDeliveryTerms2 = document.getElementById('generalDeliveryTerms2');
   const completeRegistrationBtn = document.getElementById('completeRegistrationBtn');
 
@@ -334,7 +334,7 @@
 
   const observeFlagDropdowns = () => {
     document.querySelectorAll('.country-select').forEach(select => {
-      if (select.dataset.flagAttached) return; 
+      if (select.dataset.flagAttached) return;
 
       const wrapper = select.closest('.flex');
       const flag = wrapper?.querySelector('.selected-flag');
@@ -366,51 +366,142 @@
 
   async function submitForm() {
     const businessType = window.businessType;
+    const propertyId = parseInt(document.getElementById('propertyId').value);
+
+    if (!propertyId || isNaN(propertyId)) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Missing Property ID'
+      });
+      return;
+    }
+
     const payload = {
-      property_id:parseInt(document.getElementById('propertyId').value), // replace with actual property ID
+      property_id: propertyId,
       ownership_type: businessType,
     };
 
+    // Validation helpers
+    const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    const isValidPhone = (phone) => /^[0-9\-\+]{7,15}$/.test(phone);
+
     if (businessType === 'individual') {
+      const first_name = document.querySelector('[name="full_name"]')?.value.trim();
+      const middle_name = document.querySelector('[name="middle_name"]')?.value.trim();
+      const last_name = document.querySelector('[name="last_name"]')?.value.trim();
+      const email = document.querySelector('[name="email"]')?.value.trim();
+      const phone = document.querySelector('[name="phone"]')?.value.trim();
+      const country = document.querySelector('[name="country"]')?.value.trim();
+      const address_line_1 = document.querySelectorAll('[name="middle_name"]')[1]?.value.trim();
+      const address_line_2 = document.querySelectorAll('[name="middle_name"]')[2]?.value.trim();
+      const city = document.querySelector('[name="city"]')?.value.trim();
+      const zip_code = document.querySelector('[name="postcode"]')?.value.trim();
+
+      // Required field validation
+      if (!first_name || !last_name || !email || !phone || !country || !address_line_1 || !city || !zip_code) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Please fill all required fields.'
+        });
+        return;
+      }
+
+      if (!isValidEmail(email)) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Invalid email address.'
+        });
+        return;
+      }
+
+      if (!isValidPhone(phone)) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Invalid phone number.'
+        });
+        return;
+      }
+
       const individual = {
-        first_name: document.querySelector('[name="full_name"]')?.value || '',
-        middle_name: document.querySelector('[name="middle_name"]')?.value || '',
-        last_name: document.querySelector('[name="last_name"]')?.value || '',
-        email: document.querySelector('[name="email"]')?.value || '',
-        phone: document.querySelector('[name="phone"]')?.value || '',
-        country: document.querySelector('[name="country"]')?.value || '',
-        address_line_1: document.querySelectorAll('[name="middle_name"]')[1]?.value || '',
-        address_line_2: document.querySelectorAll('[name="middle_name"]')[2]?.value || '',
-        city: document.querySelector('[name="city"]')?.value || '',
-        zip_code: document.querySelector('[name="postcode"]')?.value || '',
-        date_of_birth: '1990-01-01', // add input field or logic for this
-        alt_names: [], // optional: add logic if needed
+        first_name,
+        middle_name,
+        last_name,
+        email,
+        phone,
+        country,
+        address_line_1,
+        address_line_2,
+        city,
+        zip_code,
+        date_of_birth: '1990-01-01',
+        alt_names: []
       };
 
       payload.individuals = [individual];
 
     } else if (businessType === 'business_entity') {
-      const business = {
-        business_name: document.querySelector('[name="legal_name"]')?.value || '',
-        address: document.querySelectorAll('[name="middle_name"]')[1]?.value || '',
-        city: document.querySelector('[name="city"]')?.value || '',
-        country: document.querySelector('[name="country"]')?.value || '',
-        zip_code: document.querySelector('[name="postcode"]')?.value || '',
-      };
+      const business_name = document.querySelector('[name="legal_name"]')?.value.trim();
+      const address = document.querySelectorAll('[name="middle_name"]')[1]?.value.trim();
+      const city = document.querySelector('[name="city"]')?.value.trim();
+      const country = document.querySelector('[name="country"]')?.value.trim();
+      const zip_code = document.querySelector('[name="postcode"]')?.value.trim();
 
+      if (!business_name || !address || !city || !country || !zip_code) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Please fill all business fields.'
+        });
+        return;
+      }
+
+      const business = {
+        business_name,
+        address,
+        city,
+        country,
+        zip_code
+      };
       payload.business_entity = business;
 
-      const representative = {
-        first_name: document.querySelector('[name="full_name"]')?.value || '',
-        middle_name: document.querySelector('[name="middle_name"]')?.value || '',
-        last_name: document.querySelector('[name="last_name"]')?.value || '',
-        email: document.querySelector('[name="email"]')?.value || '',
-        phone: document.querySelector('[name="phone"]')?.value || '',
-        date_of_birth: '1990-01-01', // add logic
-        alt_names: [],
-      };
+      const rep_first_name = document.querySelector('[name="full_name"]')?.value.trim();
+      const rep_middle_name = document.querySelector('[name="middle_name"]')?.value.trim();
+      const rep_last_name = document.querySelector('[name="last_name"]')?.value.trim();
+      const rep_email = document.querySelector('[name="email"]')?.value.trim();
+      const rep_phone = document.querySelector('[name="phone"]')?.value.trim();
 
-      payload.individuals = [representative]; // assuming legal rep is an "individual"
+      if (!rep_first_name || !rep_last_name || !rep_email || !rep_phone) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Please fill all representative fields.'
+        });
+        return;
+      }
+
+      if (!isValidEmail(rep_email)) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Invalid representative email.'
+        });
+        return;
+      }
+
+      if (!isValidPhone(rep_phone)) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Invalid representative phone number.'
+        });
+        return;
+      }
+
+      payload.individuals = [{
+        first_name: rep_first_name,
+        middle_name: rep_middle_name,
+        last_name: rep_last_name,
+        email: rep_email,
+        phone: rep_phone,
+        date_of_birth: '1990-01-01',
+        alt_names: []
+      }];
     }
 
     try {
@@ -426,42 +517,59 @@
       const result = await response.json();
 
       if (response.ok) {
-        alert('Saved successfully!');
+        Swal.fire({
+          icon: 'success',
+          title: 'Registration completed successfully',
+          showConfirmButton: false,
+          timer: 3000
+        });
         console.log(result);
-        window.location.href = `/open-booking/${payload.property_id}`;
+        setTimeout(() => {
+          // window.location.href = `/open-booking/${payload.property_id}`;
+    window.location.href = `/partner/list-your-property?property_id=${propertyId}`;
 
+        }, 3000);
       } else {
         console.error('Validation error:', result.errors);
-        alert('Error: ' + JSON.stringify(result.errors));
+        Swal.fire({
+          icon: 'error',
+          title: 'Server validation failed.',
+          text: JSON.stringify(result.errors)
+        });
       }
     } catch (error) {
       console.error('Request failed', error);
-      alert('Request failed: ' + error.message);
+      Swal.fire({
+        icon: 'error',
+        title: 'Network error',
+        text: error.message
+      });
     }
   }
 
-  document.getElementById('completeRegistrationBtn').addEventListener('click', function () {
+
+  document.getElementById('completeRegistrationBtn').addEventListener('click', function() {
     const propertyId = parseInt(document.getElementById('propertyId').value);
 
-    submitForm(); // your existing logic
+    submitForm();
+      // fetch(`/properties/${propertyId}/open-for-bookings`, {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') // if using Laravel
+      //   },
+      //   body: JSON.stringify({
+      //     open_for_bookings: true
+      //   })
+      // })
+      // .then(response => response.json())
+      // .then(data => {
+      //   console.log('Booking status updated:', data);
 
-    fetch(`/properties/${propertyId}/open-for-bookings`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') // if using Laravel
-        },
-        body: JSON.stringify({
-            open_for_bookings: true
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Booking status updated:', data);
-    })
-    .catch(error => {
-        console.error('Error updating booking status:', error);
-    });
+      // })
+      // .catch(error => {
+      //   console.error('Error updating booking status:', error);
+      // });
   });
 </script>
 @endsection
