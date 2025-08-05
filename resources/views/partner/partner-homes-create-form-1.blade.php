@@ -49,14 +49,7 @@
                             <img src="{{ asset('images/uk.png') }}" alt="UK Flag"
                                 class="w-full h-full object-cover rounded-full" />
                         </button>
-                        <!-- Logout Link -->
-                        <form action="{{ route('partner.logout') }}" method="POST">
-                            @csrf
-                            <button type="submit" class="text-sm font-medium text-red-200 hover:underline"
-                                title="Logout">
-                                Logout
-                            </button>
-                        </form>
+                       
 
                         <!-- Language Modal -->
                         <div id="language-modal"
@@ -92,6 +85,42 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- Nav Links -->
+                     @if (session('partner_name'))
+                    <span class="bg-white text-[#1F8FB2] px-4 py-2 rounded font-bold"
+                        style="font-family: 'Noto Sans', sans-serif;">{{ session('partner_name') }}</span>
+                    <!-- Logout Link -->
+                    <a href="#"
+                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                        class="bg-[#1F8FB2] px-4 py-2 rounded hover:bg-[#29ACD5] text-white font-sans border border-white">
+                        Logout
+                    </a>
+
+                    <!-- Hidden Logout Form -->
+                    <form id="logout-form" action="{{ route('partner.logout') }}" method="POST" class="hidden">
+                        @csrf
+                    </form>
+                    @elseif(Auth::check())
+                        <span class="bg-white text-[#1F8FB2] px-4 py-2 rounded font-bold"
+                            style="font-family: 'Noto Sans', sans-serif;">{{ Auth::user()->name }}</span>
+                        <!-- Logout Link -->
+                       <a href="#"
+                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                            class="bg-[#1F8FB2] px-4 py-2 rounded hover:bg-[#29ACD5] text-white font-sans border border-white">
+                            Logout
+                        </a>
+
+                        <!-- Hidden Logout Form -->
+                        <form id="logout-form" action="{{ route('partner.logout') }}" method="POST" class="hidden">
+                           @csrf
+                        </form>
+                    @else
+                    <a href="#" class="hover:underline font-sans"
+                        style="font-family: 'Noto Sans', sans-serif;">Already a partner?</a>
+                    <a href="#"
+                        class="bg-[#1F8FB2] px-4 py-2 rounded hover:bg-[#29ACD5] text-white font-sans border border-white">Sign
+                        in</a>
+                    @endif
                     </div>
                 </div>
             </div>
@@ -148,7 +177,7 @@
                         await this.fetchSubtypes(this.selected);
                         Swal.fire({
                         icon: 'success',
-                        title: data.message || 'Property created successfully',
+                        title:  'Property initiated successfully',
                         toast: true,
                         position: 'top-end',
                         showConfirmButton: false,
@@ -264,7 +293,7 @@
                          
                             Swal.fire({
                                 icon: 'success',
-                                title: data.message || 'Property created successfully',
+                                title: 'Property subcategory saved successfully',
                                 toast: true,
                                 position: 'top-end',
                                 showConfirmButton: false,
@@ -3754,9 +3783,24 @@
                                                 const result = await response.json();
                                                 if (result.success) {
                                                     console.log('Address type saved:', result);
+                                                    Swal.fire({
+                                                        icon: 'success',
+                                                        title: 'Address type saved successfully',
+                                                        toast: true,
+                                                        position: 'top-end',
+                                                        showConfirmButton: false,
+                                                        timer: 3000
+                                                    });
                                                     this.step++;
                                                 } else {
-                                                    alert('Failed to save address step: ' + result.message);
+                                                    Swal.fire({
+                                                        icon: 'error',
+                                                        title: 'Failed to save address step: ' + result.message,
+                                                        toast: true,
+                                                        position: 'top-end',
+                                                        showConfirmButton: false,
+                                                        timer: 3000
+                                                    });
                                                 }
                                             } catch (e) {
                                                 console.error('Error saving step 2:', e);
@@ -3765,7 +3809,11 @@
                                             console.log(`Submitting property name ${this.propertyName} and description ${this.description} for property ID:`, this.propertyId);
 
                                             if (!this.propertyName || this.propertyName.trim() === '') {
-                                                alert('Please enter a property name.');
+                                                Swal.fire({
+                                                    icon: 'error',
+                                                    title: 'Error',
+                                                    text: 'Please enter a property name.'
+                                                });
                                                 return;
                                             }
 
@@ -3785,20 +3833,49 @@
                                                 .then(result => {
                                                     if (result.success) {
                                                         console.log('Property name saved:', result);
+                                                        Swal.fire({
+                                                            icon: 'success',
+                                                            title: 'Property name saved successfully',
+                                                            toast: true,
+                                                            position: 'top-end',
+                                                            showConfirmButton: false,
+                                                            timer: 3000
+                                                        });
                                                         this.step++; // move to next step
                                                     } else {
-                                                        alert(result.message || 'Failed to save property name.');
+                                                        Swal.fire({
+                                                            icon: 'error',
+                                                            title: 'Failed to save property name: ' + result.message,
+                                                            toast: true,
+                                                            position: 'top-end',
+                                                            showConfirmButton: false,
+                                                            timer: 3000
+                                                        });
                                                     }
                                                 })
                                                 .catch(error => {
                                                     console.error('Error saving property name:', error);
-                                                    alert('Something went wrong while saving the property name.');
+                                                    Swal.fire({
+                                                        icon: 'error',
+                                                        title: 'Something went wrong while saving the property name.',
+                                                        toast: true,
+                                                        position: 'top-end',
+                                                        showConfirmButton: false,
+                                                        timer: 3000
+                                                    })
                                                 });
                                         } else if (this.step === 5 && this.selected === 'one') {
                                             console.log('Submitting photos for property ID:', this.propertyId);
                                             const files = this.$refs.photoInput.files;
                                             if (!files.length) {
-                                                alert('Please upload at least one photo.');
+                                                Swal.fire({
+                                                    icon: 'error',
+                                                    title: 'Please select at least one photo.',
+                                                    toast: true,
+                                                    position: 'top-end',
+                                                    showConfirmButton: false,
+                                                    timer: 3000
+                                                });
                                                 return;
                                             }
 
@@ -3820,14 +3897,36 @@
                                                 .then(result => {
                                                     if (result.success) {
                                                         console.log('Photos uploaded');
+                                                        Swal.fire({
+                                                            icon: 'success',
+                                                            title: 'Photos uploaded successfully',
+                                                            toast: true,
+                                                            position: 'top-end',
+                                                            showConfirmButton: false,
+                                                            timer: 3000
+                                                        });
                                                         this.step++;
                                                     } else {
-                                                        alert(result.message || 'Upload failed');
+                                                        Swal.fire({
+                                                            icon: 'error',
+                                                            title: 'Failed to upload photos: ' + result.message,
+                                                            toast: true,
+                                                            position: 'top-end',
+                                                            showConfirmButton: false,
+                                                            timer: 3000
+                                                        });
                                                     }
                                                 })
                                                 .catch(error => {
                                                     console.error('Upload error:', error);
-                                                    alert('Something went wrong while uploading photos.');
+                                                    Swal.fire({
+                                                        icon: 'error',
+                                                        title: 'Something went wrong while uploading photos.',
+                                                        toast: true,
+                                                        position: 'top-end',
+                                                        showConfirmButton: false,
+                                                        timer: 3000
+                                                    });
                                                 });
                                         } else if (this.step === 6 && this.selected === 'one') {
                                             try {
@@ -3845,9 +3944,25 @@
                                                 const result = await response.json();
                                                 if (result.success) {
                                                     console.log('Addtress saved:', result);
+                                                    Swal.fire({
+                                                        icon: 'success',
+                                                        title: 'Address saved successfully',
+                                                        toast: true,
+                                                        position: 'top-end',
+                                                        showConfirmButton: false,
+                                                        timer: 3000
+                                                    });
                                                     this.step++;
                                                 } else {
-                                                    alert('Failed to save address step: ' + result.message);
+                                                    Swal.fire({
+                                                        icon: 'error',
+                                                        title: 'Error',
+                                                        text: 'Failed to save address step: ' + result.message,
+                                                        toast: true,
+                                                        position: 'top-end',
+                                                        showConfirmButton: false,
+                                                        timer: 3000
+                                                    });
                                                 }
                                             } catch (e) {
                                                 console.error('Error saving step 2:', e);
@@ -3875,9 +3990,25 @@
 
                                                 if (result.success) {
                                                     console.log('Amenities saved:', result);
-                                                    this.step++; // go to next step
+                                                    Swal.fire({
+                                                        icon: 'success',
+                                                        title: 'Amenities saved successfully',
+                                                        toast: true,
+                                                        position: 'top-end',
+                                                        showConfirmButton: false,
+                                                        timer: 3000
+                                                    });
+                                                    this.step++;
                                                 } else {
-                                                    alert('Failed to save amenities: ' + result.message);
+                                                    Swal.fire({
+                                                        icon: 'error',
+                                                        title: 'Error',
+                                                        text: 'Failed to save amenities: ' + result.message,
+                                                        toast: true,
+                                                        position: 'top-end',
+                                                        showConfirmButton: false,
+                                                        timer: 3000
+                                                    })
                                                 }
                                             } catch (e) {
                                                 console.error('Error saving amenities:', e);
@@ -3917,7 +4048,7 @@
                                                         icon: 'success',
                                                         title: 'Services saved successfully!',
                                                         showConfirmButton: false,
-                                                        timer: 2500
+                                                        timer: 3000
                                                     });
                                                     this.step++;
                                                 } else {
@@ -3937,6 +4068,7 @@
                                                     icon: 'error',
                                                     title: 'Error saving services',
                                                     text: error.message,
+                                                    toast: true,
                                                     showConfirmButton: false,
                                                     timer: 3000
                                                 });
@@ -3965,9 +4097,22 @@
 
                                                 if (result.success) {
                                                     console.log('Languages saved:', result);
+                                                    Swal.fire({
+                                                        toast: true,
+                                                        position: 'top-end',
+                                                        icon: 'success',
+                                                        title: 'Languages saved successfully!',
+                                                        showConfirmButton: false
+                                                    });
                                                     this.step++; // go to next step
                                                 } else {
-                                                    alert('Failed to save languages: ' + result.message);
+                                                    Swal.fire({
+                                                        toast: true,
+                                                        position: 'top-end',
+                                                        icon: 'error',
+                                                        title: result.message || 'Failed to save languages',
+                                                        showConfirmButton: false
+                                                    });
                                                 }
                                             } catch (e) {
                                                 console.error('Error saving languages:', e);
@@ -4008,9 +4153,22 @@
 
                                                 if (result.success) {
                                                     console.log('Policy saved:', result);
+                                                    Swal.fire({
+                                                        toast: true,
+                                                        position: 'top-end',
+                                                        icon: 'success',
+                                                        title: 'Policy saved successfully!',
+                                                        showConfirmButton: false
+                                                    });
                                                     this.step++;
                                                 } else {
-                                                    alert('Failed to save policy: ' + result.message);
+                                                    Swal.fire({
+                                                        toast: true,
+                                                        position: 'top-end',
+                                                        icon: 'error',
+                                                        title: result.message || 'Failed to save policy',
+                                                        showConfirmButton: false
+                                                    });
                                                 }
                                             } catch (e) {
                                                 console.error('Error saving policy:', e);
@@ -4044,10 +4202,23 @@
 
                                                 if (result.success) {
                                                     console.log('✅ Host profile saved:', result.message);
-                                                    // Optionally move to next step
+                                                    Swal.fire({
+                                                        toast: true,
+                                                        position: 'top-end',
+                                                        icon: 'success',
+                                                        title: 'Host profile saved successfully!',
+                                                        showConfirmButton: false
+                                                    });
                                                     this.step++;
                                                 } else {
                                                     console.error('❌ Save failed:', result.message);
+                                                    Swal.fire({
+                                                        toast: true,
+                                                        position: 'top-end',
+                                                        icon: 'error',
+                                                        title: 'Failed to save host profile' + result.message,
+                                                        showConfirmButton: false
+                                                    })
                                                 }
                                             } catch (error) {
                                                 console.error('❌ Error submitting host profile:', error);
@@ -4102,9 +4273,22 @@
                                                 .then(result => {
                                                     if (result.success) {
                                                         console.log('Room saved:', result);
-                                                        this.step++; // Move to step 15
+                                                        Swal.fire({
+                                                            toast: true,
+                                                            position: 'top-end',
+                                                            icon: 'success',
+                                                            title: 'Room saved successfully!',
+                                                            showConfirmButton: false
+                                                        });
+                                                        this.step++;
                                                     } else {
-                                                        alert(result.message || 'Failed to save room.');
+                                                        Swal.fire({
+                                                            toast: true,
+                                                            position: 'top-end',
+                                                            icon: 'error',
+                                                            showConfirmButton: false,
+                                                            title: 'Failed to save room' + result.message,
+                                                        });
                                                     }
                                                 })
                                                 .catch(error => {
@@ -4119,15 +4303,20 @@
                                                         icon: 'error',
                                                         title: 'Error',
                                                         text: 'National ID is required.',
+                                                        toast: true,
+                                                        position: 'top-end',
+                                                        showConfirmButton: false,
                                                     });
                                                     return;
                                                 }
                                                 if (this.individual.national_id.length !== 12) {
                                                     Swal.fire({
                                                         icon: 'error',
-                                                        title: 'Error',
-                                                        text: 'National ID must be 12 digits.',
-                                                    })
+                                                        title: 'National ID must be 12 digits.',
+                                                        toast: true,
+                                                        position: 'top-end',
+                                                        showConfirmButton: false,
+                                                    });
                                                     return;
                                                 }
                                             }
@@ -4152,12 +4341,25 @@
                                                 .then(response => response.json())
                                                 .then(data => {
                                                     console.log(data);
-                                                    alert('Partner verification details saved successfully');
-                                                    window.location.href = '/partner/list-your-property';
+                                                    window.location.href = `/partner-homes-complete-registration/${this.propertyId}`;
+                                                    Swal.fire({
+                                                        toast: true,
+                                                        position: 'top-end',
+                                                        icon: 'success',
+                                                        title: 'Partner verification successfully!',
+                                                        showConfirmButton: false
+                                                    });
 
                                                 })
                                                 .catch(error => {
                                                     console.error('Error:', error);
+                                                    Swal.fire({
+                                                        toast: true,
+                                                        position: 'top-end',
+                                                        icon: 'error',
+                                                        title: 'Failed to save property',
+                                                        showConfirmButton: false
+                                                    });
                                                 });
                                         } else if (this.step === 4 && this.selected === 'multiple') {
                                             if (this.sameAddress === 'yes') {
