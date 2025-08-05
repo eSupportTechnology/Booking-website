@@ -8,23 +8,33 @@ class ViewPropertyAction
 {
     public function execute(int $id): array
     {
-        $property = Property::with([
+        // Load basic property first
+        $property = Property::find($id);
+        
+        if (!$property) {
+            return ['property' => null];
+        }
+        
+        // Try to load each relationship individually with error handling
+        $relationships = [
             'amenities',
-            'additionalDetails',
+            'additionalDetails', 
             'policies',
             'services',
             'languages',
             'hostProfile',
             'pricing',
             'facilities',
-            'bedrooms'
-        ])->find($id);
+            'bedrooms',
+            'photos'
+        ];
         
-        // Try to load photos if table exists
-        try {
-            $property->load('photos');
-        } catch (\Exception $e) {
-            // Photos table doesn't exist, continue without photos
+        foreach ($relationships as $relationship) {
+            try {
+                $property->load($relationship);
+            } catch (\Exception $e) {
+                // Relationship table doesn't exist, continue without it
+            }
         }
 
         return [

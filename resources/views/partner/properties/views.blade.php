@@ -1,11 +1,73 @@
-@extends('partner.master')
+<!DOCTYPE html>
+<html lang="en">
 
-@section('content')
-<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+<head>
+    <meta charset="UTF-8" />
+    <title>Partner Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body class="bg-blue-50 text-gray-800">
+
+    <!-- Top Navbar -->
+    <nav class="bg-[#1F8FB2] text-white fixed w-full z-50 shadow">
+        <div class="max-w-full mx-auto px-4">
+            <div class="flex justify-between h-16 items-center">
+
+                <!-- Left: Logo + Hamburger -->
+                <div class="flex items-center space-x-4">
+                    <!-- Hamburger -->
+                    <button id="menuToggle" class="text-white focus:outline-none block md:hidden">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <a href="#" class="text-xl font-bold">Partner Panel</a>
+                </div>
+
+                <!-- Center: Search -->
+                <div class="hidden md:flex">
+                    <input type="text" placeholder="Search..."
+                        class="px-3 py-1 rounded bg-[#3CC0E9] placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-yellow-300 text-sm" />
+                </div>
+
+                <!-- Right: Notifications + Profile -->
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <button class="text-white">
+                            <i class="fas fa-bell"></i>
+                        </button>
+                        <span class="absolute -top-1 -right-2 bg-red-500 text-xs px-1.5 rounded-full">3</span>
+                    </div>
+                    <div class="relative group">
+                        <button class="text-white flex items-center space-x-1">
+                            <i class="fas fa-user-circle text-lg"></i>
+                            <span class="text-sm">{{ Auth::user()->name ?? 'Partner' }}</span>
+                        </button>
+                        <div
+                            class="absolute right-0 bg-white text-black shadow-lg rounded hidden group-hover:block min-w-[150px] z-50">
+                            <a href="#" class="block px-4 py-2 hover:bg-gray-100 rounded">Profile</a>
+                            <a href="#" class="block px-4 py-2 hover:bg-gray-100 rounded">Settings</a>
+                            <div class="border-t"></div>
+                            <form method="POST" action="{{ route('partner.logout') }}">
+                                @csrf
+                                <button type="submit"
+                                    class="block w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100 rounded">Logout</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+
 
 
     <section class="py-6 bg-white">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-6xl mt-16 mx-auto px-4 sm:px-6 lg:px-8">
             Home > Nuwara Elliya > Search Results
             <div class="border-b sticky top-0 bg-white">
                 <div
@@ -32,7 +94,8 @@
                 class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 p-4 bg-white rounded-lg shadow-sm">
                 <!-- Left: Title and Info -->
                 <div>
-                    <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">{{ $property->title ?? 'Property Title' }}</h1>
+                    <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
+                        {{ $property->title ?? 'Property Title' }}</h1>
                     <div class="flex items-center mb-2">
                         @for ($i = 0; $i < 4; $i++)
                             <svg class="w-5 h-5 text-yellow-500" viewBox="0 0 24 24" fill="currentColor">
@@ -46,7 +109,8 @@
                             <path
                                 d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z" />
                         </svg>
-                        {{ $property->address ?? 'Address' }}, {{ $property->city ?? 'City' }}, {{ $property->country ?? 'Country' }}
+                        {{ $property->address ?? 'Address' }}, {{ $property->city ?? 'City' }},
+                        {{ $property->country ?? 'Country' }}
                     </div>
                 </div>
 
@@ -74,7 +138,8 @@
                         </button>
                     </div>
                     <div class="flex items-center text-[#3CC0E9] text-sm">
-                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.007 12.007 0 002.944 12c0 2.873.996 5.474 2.618 7.594L12 22.944l6.438-3.35C20.004 17.474 21 14.873 21 12a12.007 12.007 0 00-2.382-7.016z" />
                         </svg>
@@ -126,16 +191,32 @@
                         @php
                             $photos = $property->photos ?? collect();
                             $visiblePhotos = $photos->take(8);
-                            $remainingCount = $photos->count() - 8;
+                            $remainingCount = max(0, $photos->count() - 8);
                             // Fallback images if no photos
-                            $fallbackImages = ['h1.jpg', 'h2.jpg', 'h3.jpg', 'h4.jpg', 'h5.jpg', 'h6.jpg', 'h7.jpg', 'h8.jpg'];
+                            $fallbackImages = [
+                                'h1.jpg',
+                                'h2.jpg',
+                                'h3.jpg',
+                                'h4.jpg',
+                                'h5.jpg',
+                                'h6.jpg',
+                                'h7.jpg',
+                                'h8.jpg',
+                            ];
                         @endphp
-                        @if($visiblePhotos->count() > 0)
-                            @foreach($visiblePhotos as $index => $photo)
-                                <div class="{{ $positions[$index] ?? '' }} relative overflow-hidden">
-                                    <img src="{{ asset('storage/' . $photo->photo_url) }}" class="w-full h-full object-cover rounded-lg" alt="Gallery Image {{ $index + 1 }}">
-                                    @if($loop->last && $remainingCount > 0)
-                                        <div onclick="openGalleryModal({{ $index + 1 }})"
+                        @if ($photos->count() > 0)
+                            @php
+                                $visiblePhotos = $photos->take(8);
+                                $remainingCount = max(0, $photos->count() - 8);
+                            @endphp
+                            @foreach ($visiblePhotos as $index => $photo)
+                                <div class="{{ $positions[$index] ?? '' }} relative overflow-hidden"
+                                    onclick="openGalleryModal({{ $index }})">
+                                    <img src="{{ asset('storage/' . $photo->photo_url) }}"
+                                        class="w-full h-full object-cover rounded-lg cursor-pointer"
+                                        alt="Property Image {{ $index + 1 }}">
+                                    @if ($loop->last && $remainingCount > 0)
+                                        <div
                                             class="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center text-white text-lg font-bold cursor-pointer hover:bg-opacity-70 transition rounded-lg">
                                             {{ $remainingCount }}+ more
                                         </div>
@@ -143,17 +224,9 @@
                                 </div>
                             @endforeach
                         @else
-                            @foreach($fallbackImages as $index => $img)
-                                <div class="{{ $positions[$index] ?? '' }} relative overflow-hidden">
-                                    <img src="{{ asset('images/' . $img) }}" class="w-full h-full object-cover rounded-lg" alt="Gallery Image {{ $index + 1 }}">
-                                    @if($index === 7)
-                                        <div onclick="openGalleryModal({{ $index + 1 }})"
-                                            class="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center text-white text-lg font-bold cursor-pointer hover:bg-opacity-70 transition rounded-lg">
-                                            2+ more
-                                        </div>
-                                    @endif
-                                </div>
-                            @endforeach
+                            <div class="col-span-10 row-span-8 flex items-center justify-center bg-gray-200 rounded-lg">
+                                <p class="text-gray-500 text-lg">No images uploaded for this property</p>
+                            </div>
                         @endif
                     </div>
 
@@ -164,15 +237,22 @@
 
                         @php
                             $mobilePhotos = $photos->take(3);
-                            $mobileRemainingCount = $photos->count() - 3;
+                            $mobileRemainingCount = max(0, $photos->count() - 3);
                             $mobileFallback = ['h1.jpg', 'h2.jpg', 'h3.jpg'];
                         @endphp
-                        @if($mobilePhotos->count() > 0)
-                            @foreach($mobilePhotos as $index => $photo)
-                                <div class="{{ $mobilePositions[$index] ?? '' }} relative overflow-hidden">
-                                    <img src="{{ asset('storage/' . $photo->photo_url) }}" class="w-full h-full object-cover rounded-md" alt="Gallery Image {{ $index + 1 }}">
-                                    @if($loop->last && $mobileRemainingCount > 0)
-                                        <div onclick="openGalleryModal({{ $index + 1 }})"
+                        @if ($photos->count() > 0)
+                            @php
+                                $mobilePhotos = $photos->take(3);
+                                $mobileRemainingCount = max(0, $photos->count() - 3);
+                            @endphp
+                            @foreach ($mobilePhotos as $index => $photo)
+                                <div class="{{ $mobilePositions[$index] ?? '' }} relative overflow-hidden"
+                                    onclick="openGalleryModal({{ $index }})">
+                                    <img src="{{ asset('storage/' . $photo->photo_url) }}"
+                                        class="w-full h-full object-cover rounded-md cursor-pointer"
+                                        alt="Property Image {{ $index + 1 }}">
+                                    @if ($loop->last && $mobileRemainingCount > 0)
+                                        <div
                                             class="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center text-white text-base font-semibold rounded-md cursor-pointer">
                                             {{ $mobileRemainingCount }}+ more
                                         </div>
@@ -180,17 +260,9 @@
                                 </div>
                             @endforeach
                         @else
-                            @foreach($mobileFallback as $index => $img)
-                                <div class="{{ $mobilePositions[$index] ?? '' }} relative overflow-hidden">
-                                    <img src="{{ asset('images/' . $img) }}" class="w-full h-full object-cover rounded-md" alt="Gallery Image {{ $index + 1 }}">
-                                    @if($index === 2)
-                                        <div onclick="openGalleryModal({{ $index + 1 }})"
-                                            class="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center text-white text-base font-semibold rounded-md cursor-pointer">
-                                            7+ more
-                                        </div>
-                                    @endif
-                                </div>
-                            @endforeach
+                            <div class="col-span-4 row-span-2 flex items-center justify-center bg-gray-200 rounded-md">
+                                <p class="text-gray-500 text-sm">No images uploaded</p>
+                            </div>
                         @endif
                     </div>
                 </div>
@@ -226,8 +298,8 @@
                                 <div class="flex items-center gap-8">
                                     <p class="font-medium text-gray-800 mb-0">Linton</p>
                                     <div class="flex justify-between items-center gap-1">
-                                        <img src="{{ asset('assets/net.svg') }}" class="w-5 h-3 object-cover rounded-sm"
-                                            alt="UK Flag">
+                                        <img src="{{ asset('assets/net.svg') }}"
+                                            class="w-5 h-3 object-cover rounded-sm" alt="UK Flag">
                                         <span class="text-gray-500 text-xs">United Kingdom</span>
                                     </div>
                                 </div>
@@ -236,7 +308,8 @@
                             <!-- Staff Rating -->
                             <div class="flex justify-between items-center pt-2 border-t">
                                 <span class="text-sm font-semibold text-gray-700">Staff</span>
-                                <div class="border border-gray-300 px-2 py-0.5 text-sm rounded-md text-gray-800">8.6</div>
+                                <div class="border border-gray-300 px-2 py-0.5 text-sm rounded-md text-gray-800">8.6
+                                </div>
                             </div>
                         </div>
 
@@ -298,7 +371,13 @@
 
 
         <script>
-            const images = @json($photos->count() > 0 ? $photos->pluck('photo_url')->toArray() : ['h1.jpg', 'h2.jpg', 'h3.jpg', 'h4.jpg', 'h5.jpg', 'h6.jpg', 'h7.jpg', 'h8.jpg', 'h9.jpg', 'h10.jpg']);
+            @php
+                $imageArray = [];
+                if ($property->photos && $property->photos->count() > 0) {
+                    $imageArray = $property->photos->pluck('photo_url')->toArray();
+                }
+            @endphp
+            const images = @json($imageArray);
             let currentIndex = 0;
 
             function openGalleryModal(startIndex = 0) {
@@ -316,13 +395,11 @@
             function updateModalImage() {
                 const img = document.getElementById('modalImage');
                 const counter = document.getElementById('imageCounter');
-                // Ensure images array is not empty before trying to access elements
                 if (images.length > 0) {
-                    img.src = images[currentIndex].includes('.jpg') ? `/images/${images[currentIndex]}` : `/storage/${images[currentIndex]}`;
+                    img.src = `/storage/${images[currentIndex]}`;
                     counter.textContent = `Image ${currentIndex + 1} of ${images.length}`;
                 } else {
-                    // Handle case where no images are loaded
-                    img.src = ''; // Or a placeholder
+                    img.src = '';
                     counter.textContent = 'No images available';
                 }
             }
@@ -457,62 +534,216 @@
             </div>
         </div>
     </section>
+
+    <!-- Database Details Section -->
+    <section class="py-4 bg-gray-50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-2xl font-bold text-black mb-6">Property Database Details</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Property Basic Info -->
+                <div class="bg-white p-4 rounded-lg shadow">
+                    <h3 class="font-bold text-lg mb-3">Property Information</h3>
+                    <div class="space-y-2 text-sm">
+                        <p><strong>Title:</strong> {{ $property->title ?? 'N/A' }}</p>
+                        <p><strong>Address:</strong> {{ $property->address ?? 'N/A' }}</p>
+                        <p><strong>City:</strong> {{ $property->city ?? 'N/A' }}</p>
+                        <p><strong>Country:</strong> {{ $property->country ?? 'N/A' }}</p>
+                        <p><strong>Zipcode:</strong> {{ $property->zipcode ?? 'N/A' }}</p>
+                        <p><strong>Status:</strong> {{ $property->status ?? 'N/A' }}</p>
+                        <p><strong>Stars:</strong> {{ $property->stars ?? 'N/A' }}</p>
+                    </div>
+                </div>
+
+                <!-- Additional Details -->
+                @if ($property->additionalDetails)
+                    <div class="bg-white p-4 rounded-lg shadow">
+                        <h3 class="font-bold text-lg mb-3">Additional Details</h3>
+                        <div class="space-y-2 text-sm">
+                            <p><strong>Details:</strong> {{ $property->additionalDetails->details ?? 'N/A' }}</p>
+                            <p><strong>Special Features:</strong>
+                                {{ $property->additionalDetails->special_features ?? 'N/A' }}</p>
+                        </div>
+                    </div>
+                @endif
+
+                <!-- Pricing -->
+                @if ($property->pricing)
+                    <div class="bg-white p-4 rounded-lg shadow">
+                        <h3 class="font-bold text-lg mb-3">Pricing Details</h3>
+                        <div class="space-y-2 text-sm">
+                            <p><strong>Base Price:</strong> LKR
+                                {{ number_format($property->pricing->base_price ?? 0) }}</p>
+                            <p><strong>Original Price:</strong> LKR
+                                {{ number_format($property->pricing->original_price ?? 0) }}</p>
+                            <p><strong>Discount:</strong> {{ $property->pricing->discount_percentage ?? 0 }}%</p>
+                            <p><strong>Tax Amount:</strong> LKR
+                                {{ number_format($property->pricing->tax_amount ?? 0) }}</p>
+                            <p><strong>Currency:</strong> {{ $property->pricing->currency ?? 'LKR' }}</p>
+                        </div>
+                    </div>
+                @endif
+
+                <!-- Services -->
+                @if ($property->services)
+                    <div class="bg-white p-4 rounded-lg shadow">
+                        <h3 class="font-bold text-lg mb-3">Services</h3>
+                        <div class="space-y-2 text-sm">
+                            <p><strong>Breakfast:</strong> {{ $property->services->breakfast_included ? 'Yes' : 'No' }}
+                            </p>
+                            <p><strong>WiFi:</strong> {{ $property->services->wifi_available ? 'Yes' : 'No' }}</p>
+                            <p><strong>Parking:</strong> {{ $property->services->parking_available ? 'Yes' : 'No' }}
+                            </p>
+                            <p><strong>Room Service:</strong> {{ $property->services->room_service ? 'Yes' : 'No' }}
+                            </p>
+                            <p><strong>Laundry:</strong> {{ $property->services->laundry_service ? 'Yes' : 'No' }}</p>
+                        </div>
+                    </div>
+                @endif
+
+                <!-- Policies -->
+                @if ($property->policies)
+                    <div class="bg-white p-4 rounded-lg shadow">
+                        <h3 class="font-bold text-lg mb-3">Policies</h3>
+                        <div class="space-y-2 text-sm">
+                            <p><strong>Check-in:</strong> {{ $property->policies->check_in_time ?? 'N/A' }}</p>
+                            <p><strong>Check-out:</strong> {{ $property->policies->check_out_time ?? 'N/A' }}</p>
+                            <p><strong>Cancellation:</strong>
+                                {{ $property->policies->flexible_cancellation ? 'Flexible' : 'Strict' }}</p>
+                            <p><strong>Children:</strong>
+                                {{ $property->policies->children_allowed ? 'Allowed' : 'Not allowed' }}</p>
+                            <p><strong>Pets:</strong>
+                                {{ $property->policies->pets_allowed ? 'Allowed' : 'Not allowed' }}</p>
+                            <p><strong>Smoking:</strong>
+                                {{ $property->policies->smoking_allowed ? 'Allowed' : 'Not allowed' }}</p>
+                            <p><strong>Pay at Property:</strong>
+                                {{ $property->policies->pay_at_property ? 'Yes' : 'No' }}</p>
+                        </div>
+                    </div>
+                @endif
+
+                <!-- Host Profile -->
+                @if ($property->hostProfile)
+                    <div class="bg-white p-4 rounded-lg shadow">
+                        <h3 class="font-bold text-lg mb-3">Host Information</h3>
+                        <div class="space-y-2 text-sm">
+                            <p><strong>Host Name:</strong> {{ $property->hostProfile->host_name ?? 'N/A' }}</p>
+                            <p><strong>Contact:</strong> {{ $property->hostProfile->contact_info ?? 'N/A' }}</p>
+                            <p><strong>Bio:</strong> {{ $property->hostProfile->bio ?? 'N/A' }}</p>
+                            <p><strong>Response Rate:</strong> {{ $property->hostProfile->response_rate ?? 'N/A' }}%
+                            </p>
+                        </div>
+                    </div>
+                @endif
+            </div>
+
+            <!-- Bedrooms -->
+            @if ($property->bedrooms && $property->bedrooms->count() > 0)
+                <div class="mt-6 bg-white p-4 rounded-lg shadow">
+                    <h3 class="font-bold text-lg mb-3">Bedrooms ({{ $property->bedrooms->count() }})</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        @foreach ($property->bedrooms as $bedroom)
+                            <div class="border p-3 rounded">
+                                <p><strong>Type:</strong> {{ $bedroom->bedroom_type ?? 'N/A' }}</p>
+                                <p><strong>Beds:</strong> {{ $bedroom->bed_count ?? 'N/A' }}</p>
+                                <p><strong>Bed Type:</strong> {{ $bedroom->bed_type ?? 'N/A' }}</p>
+                                <p><strong>Size:</strong> {{ $bedroom->room_size ?? 'N/A' }} sqm</p>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
+            <!-- Amenities -->
+            @if ($property->amenities && $property->amenities->count() > 0)
+                <div class="mt-6 bg-white p-4 rounded-lg shadow">
+                    <h3 class="font-bold text-lg mb-3">Amenities ({{ $property->amenities->count() }})</h3>
+                    <div class="flex flex-wrap gap-2">
+                        @foreach ($property->amenities as $amenity)
+                            <span
+                                class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">{{ $amenity->name }}</span>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
+            <!-- Languages -->
+            @if ($property->languages && $property->languages->count() > 0)
+                <div class="mt-6 bg-white p-4 rounded-lg shadow">
+                    <h3 class="font-bold text-lg mb-3">Languages Spoken ({{ $property->languages->count() }})</h3>
+                    <div class="flex flex-wrap gap-2">
+                        @foreach ($property->languages as $language)
+                            <span
+                                class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">{{ $language->name }}</span>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+        </div>
+    </section>
+
     <section class="py-4 bg-white">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col lg:flex-row gap-6">
 
                 <div class="flex-1 space-y-4">
-                    <h2 class="text-2xl font-bold text-black">Experience world-class service at {{ $property->title ?? 'Property' }}</h2>
+                    <h2 class="text-2xl font-bold text-black">Experience world-class service at
+                        {{ $property->title ?? 'Property' }}</h2>
 
-                    <p class="text-green-600 font-semibold" style="font-family: 'Noto Sans', sans-serif;">Reliable info:
+                    <p class="text-green-600 font-semibold" style="font-family: 'Noto Sans', sans-serif;">Reliable
+                        info:
                         <span class="text-gray-700">Guests say the description and photos for this property are very
                             accurate.</span>
                     </p>
 
                     <div class="space-y-3 text-gray-800">
-                        <p style="font-family: 'Noto Sans', sans-serif;" class="text-sm"><span class="font-bold"
-                                style="font-family: 'Noto Sans', sans-serif;">Property Description:</span> 
-                            {{ $property->description ?? 'Experience luxury accommodation with modern amenities and exceptional service.' }}</p>
+                        <p class="text-sm"><span class="font-bold">Property Description:</span>
+                            {{ $property->description ?? 'No description available' }}</p>
 
-                        <p style="font-family: 'Noto Sans', sans-serif;" class="text-sm"><span class="font-bold"
-                                style="font-family: 'Noto Sans', sans-serif;">Comfortable Amenities:</span> The property
-                            features a lounge, hot tub, concierge service, and family rooms. Additional amenities include a
-                            fitness centre, spa bath, and bicycle parking. Free on-site private parking is available for
-                            guests.</p>
+                        @if ($property->additionalDetails)
+                            <p class="text-sm"><span class="font-bold">Additional Details:</span>
+                                {{ $property->additionalDetails->details ?? 'No additional details' }}</p>
+                        @endif
 
-                        <p style="font-family: 'Noto Sans', sans-serif;" class="text-sm"><span class="font-bold"
-                                style="font-family: 'Noto Sans', sans-serif;">Dining Experience:</span> A family-friendly
-                            restaurant serves Indian, local, Asian, international, and European cuisines. Breakfast options
-                            include continental, vegetarian, halal, and gluten-free with pancakes and fruits. Lunch and
-                            dinner are also available.</p>
+                        @if ($property->bedrooms && $property->bedrooms->count() > 0)
+                            <div class="text-sm">
+                                <span class="font-bold">Bedrooms:</span>
+                                @foreach ($property->bedrooms as $bedroom)
+                                    <span
+                                        class="inline-block bg-gray-100 px-2 py-1 rounded mr-2 mb-1">{{ $bedroom->bedroom_type ?? 'Bedroom' }}
+                                        ({{ $bedroom->bed_count ?? 1 }} beds)</span>
+                                @endforeach
+                            </div>
+                        @endif
 
-                        <p style="font-family: 'Noto Sans', sans-serif;" class="text-sm"><span class="font-bold"
-                                style="font-family: 'Noto Sans', sans-serif;">Prime Location:</span> Located 48 km from
-                            Castlereigh Reservoir Seaplane Base and 3 km from Gregory Lake, La Grande Villa is near Hakgala
-                            Botanical Garden (9 km) and other attractions. Highly rated for its garden, hot tub, and
-                            attentive staff.</p>
+                        @if ($property->hostProfile)
+                            <p class="text-sm"><span class="font-bold">Host:</span>
+                                {{ $property->hostProfile->host_name ?? 'Host information available' }}</p>
+                        @endif
 
-                        <p class="text-sm text-gray-500" style="font-family: 'Noto Sans', sans-serif;">Distance in
-                            property description is calculated using © OpenStreetMap</p>
+                        @if ($property->languages && $property->languages->count() > 0)
+                            <div class="text-sm">
+                                <span class="font-bold">Languages Spoken:</span>
+                                @foreach ($property->languages as $language)
+                                    <span
+                                        class="inline-block bg-blue-100 px-2 py-1 rounded mr-2 mb-1">{{ $language->name }}</span>
+                                @endforeach
+                            </div>
+                        @endif
                     </div>
 
                     <div>
                         <h3 class="text-lg font-semibold text-black mt-6 mb-4">Most popular facilities</h3>
                         <div class="flex flex-wrap gap-4">
-                            @if($property->amenities && $property->amenities->count() > 0)
-                                @foreach($property->amenities->take(10) as $amenity)
-                                    <div class="flex items-center justify-center lg:justify-start p-2">
+                            @if ($property->amenities && $property->amenities->count() > 0)
+                                @foreach ($property->amenities as $amenity)
+                                    <div
+                                        class="flex items-center justify-center lg:justify-start p-2 bg-gray-50 rounded">
                                         <span class="text-sm text-gray-800 font-medium">{{ $amenity->name }}</span>
                                     </div>
                                 @endforeach
                             @else
-                                @foreach ([['icon' => 'Vector(30).svg', 'label' => 'Good free WiFi (32Mbps)'], ['icon' => 'Group(10).svg', 'label' => 'Family rooms'], ['icon' => 'Group(11).svg', 'label' => 'Free parking'], ['icon' => 'Vector(31).svg', 'label' => 'Restaurant'], ['icon' => 'Vector(32).svg', 'label' => 'Non-smoking rooms']] as $facility)
-                                    <div class="flex items-center justify-center lg:justify-start p-2">
-                                        <img src="{{ asset('assets/' . $facility['icon']) }}" alt="{{ $facility['label'] }}"
-                                            class="w-5 h-5 mr-4">
-                                        <span class="text-sm text-gray-800 font-medium">{{ $facility['label'] }}</span>
-                                    </div>
-                                @endforeach
+                                <p class="text-sm text-gray-500">No amenities listed</p>
                             @endif
                         </div>
                     </div>
@@ -520,24 +751,32 @@
 
                 <div class="w-full lg:w-auto lg:max-w-xs">
                     <div class="bg-blue-100 rounded-lg py-4 px-4 space-y-4">
-                        <div>
-                            <h3 class="font-bold text-xs" style="font-family: 'Noto Sans', sans-serif;">Property
-                                highlights</h3>
-                            <p class="text-xs" style="font-family: 'Noto Sans', sans-serif;">
-                                <span class="text-xs flex items-center gap-x-1">
-                                    <i class="fas fa-map-marker-alt"></i> Top location:
-                                </span>
-                                Highly rated by recent guests (9.1)
-                            </p>
-                        </div>
+                        @if ($property->pricing)
+                            <div>
+                                <h3 class="font-bold text-xs">Pricing Details</h3>
+                                <p class="text-xs">Base Price: LKR
+                                    {{ number_format($property->pricing->base_price ?? 0) }}</p>
+                                @if ($property->pricing->discount_percentage)
+                                    <p class="text-xs text-green-600">Discount:
+                                        {{ $property->pricing->discount_percentage }}%</p>
+                                @endif
+                            </div>
+                        @endif
 
-                        <div>
-                            <h3 class="font-bold text-xs" style="font-family: 'Noto Sans', sans-serif;">Breakfast info
-                            </h3>
-                            <p class="text-xs" style="font-family: 'Noto Sans', sans-serif;">
-                                Continental, Vegetarian, Halal, Gluten-free, Breakfast to go
-                            </p>
-                        </div>
+                        @if ($property->services)
+                            <div>
+                                <h3 class="font-bold text-xs">Services</h3>
+                                @if ($property->services->breakfast_included)
+                                    <p class="text-xs">✓ Breakfast included</p>
+                                @endif
+                                @if ($property->services->wifi_available)
+                                    <p class="text-xs">✓ WiFi available</p>
+                                @endif
+                                @if ($property->services->parking_available)
+                                    <p class="text-xs">✓ Parking available</p>
+                                @endif
+                            </div>
+                        @endif
 
                         <p class="text-xs flex items-center gap-x-1" style="font-family: 'Noto Sans', sans-serif;">
                             <img src="{{ asset('assets/parking.svg') }}" alt="Free Parking" class="w-4 h-4" />
@@ -620,7 +859,8 @@
                                 <img src="{{ asset('assets/calender.svg') }}" alt="Calendar" class="w-5 h-5" />
                                 <span class="text-gray-800 truncate">
                                     <template x-if="activeTab === 'check'">
-                                        <span><span x-text="checkIn ? checkIn : 'Check-in'" class="text-base"></span> —
+                                        <span><span x-text="checkIn ? checkIn : 'Check-in'" class="text-base"></span>
+                                            —
                                             <span x-text="checkOut ? checkOut : 'Check-out'"
                                                 class="text-base"></span></span>
                                     </template>
@@ -791,7 +1031,8 @@
                             <tr class="hover:bg-gray-50">
                                 <!-- Room Type -->
                                 <td class="p-3 align-top border border-blue-500">
-                                    <h3 class="text-blue-600 font-semibold underline">{{ $property->title ?? 'Private Villa by the Tea Resort' }}</h3>
+                                    <h3 class="text-blue-600 font-semibold underline">
+                                        {{ $property->title ?? 'Private Villa by the Tea Resort' }}</h3>
                                     <p class="text-gray-600 mt-1 text-sm">
                                         {{ $property->description ?? 'Guests will have a special experience at this property featuring modern amenities and comfortable accommodations.' }}
                                     </p>
@@ -809,12 +1050,14 @@
 
                                 <!-- Price -->
                                 <td class="p-3 align-top border border-blue-500">
-                                    @if($property->pricing)
-                                        @if($property->pricing->original_price)
-                                            <div class="text-red-500 line-through">LKR {{ number_format($property->pricing->original_price) }}</div>
+                                    @if ($property->pricing)
+                                        @if ($property->pricing->original_price)
+                                            <div class="text-red-500 line-through">LKR
+                                                {{ number_format($property->pricing->original_price) }}</div>
                                         @endif
-                                        <div class="text-lg font-bold text-green-600">LKR {{ number_format($property->pricing->base_price ?? 45600) }}</div>
-                                        @if($property->pricing->discount_percentage)
+                                        <div class="text-lg font-bold text-green-600">LKR
+                                            {{ number_format($property->pricing->base_price ?? 45600) }}</div>
+                                        @if ($property->pricing->discount_percentage)
                                             <div class="relative group inline-block">
                                                 <button class="text-xs text-white px-2 py-1 rounded mt-2"
                                                     style="background-color:#1D9D39; font-family: 'Noto Sans', sans-serif;">
@@ -822,8 +1065,10 @@
                                                 </button>
                                             </div>
                                         @endif
-                                        @if($property->pricing->tax_amount)
-                                            <div class="text-xs text-gray-500">+ LKR {{ number_format($property->pricing->tax_amount) }} taxes and fees</div>
+                                        @if ($property->pricing->tax_amount)
+                                            <div class="text-xs text-gray-500">+ LKR
+                                                {{ number_format($property->pricing->tax_amount) }} taxes and fees
+                                            </div>
                                         @endif
                                     @else
                                         <div class="text-lg font-bold text-green-600">LKR 45,600</div>
@@ -834,28 +1079,36 @@
                                 <!-- Choices -->
                                 <td class="p-3 align-top border border-blue-500 text-gray-700 text-sm">
                                     <ul class="space-y-1">
-                                        @if($property->services && $property->services->breakfast_included)
-                                            <li><strong>Breakfast included</strong></li>
+                                        @if ($property->services)
+                                            @if ($property->services->breakfast_included)
+                                                <li><strong>Breakfast included</strong></li>
+                                            @endif
+                                            @if ($property->services->wifi_available)
+                                                <li>✔ Free WiFi</li>
+                                            @endif
+                                            @if ($property->services->parking_available)
+                                                <li>✔ Free parking</li>
+                                            @endif
                                         @endif
-                                        @if($property->policies)
-                                            @if($property->policies->flexible_cancellation)
-                                                <li class="text-green-700">✔ Flexible to reschedule if plans change</li>
+                                        @if ($property->policies)
+                                            @if ($property->policies->flexible_cancellation)
+                                                <li class="text-green-700">✔ Flexible cancellation</li>
                                             @else
                                                 <li class="text-red-600">✘ Non-refundable</li>
                                             @endif
-                                            @if($property->policies->pay_at_property)
-                                                <li>✔ Pay the property before arrival</li>
+                                            @if ($property->policies->pay_at_property)
+                                                <li>✔ Pay at property</li>
                                             @endif
-                                        @else
-                                            <li class="text-green-700">✔ Flexible to reschedule if plans change</li>
-                                            <li>✔ Pay the property before arrival</li>
+                                            @if ($property->policies->children_allowed)
+                                                <li>✔ Children allowed</li>
+                                            @endif
+                                            @if ($property->policies->pets_allowed)
+                                                <li>✔ Pets allowed</li>
+                                            @endif
                                         @endif
-                                        @if($property->pricing && $property->pricing->discount_percentage)
-                                            <li class="text-green-700">✔ {{ $property->pricing->discount_percentage }}% discount applied</li>
-                                        @endif
-                                        <li>✔ Taxes and charges included</li>
-                                        @if($property->policies && $property->policies->children_allowed)
-                                            <li>✔ Free stay for your child</li>
+                                        @if ($property->pricing && $property->pricing->discount_percentage)
+                                            <li class="text-green-700">✔
+                                                {{ $property->pricing->discount_percentage }}% discount</li>
                                         @endif
                                     </ul>
                                 </td>
@@ -979,7 +1232,8 @@
                         </div>
                     </div>
                     <p class="text-sm text-gray-700 mb-2">
-                        “Really comfortable bed, and big spa bath. Enjoyed the pool table as was heavy rain outside, and the
+                        “Really comfortable bed, and big spa bath. Enjoyed the pool table as was heavy rain outside, and
+                        the
                         Sri Lankan breakfast was delicious!”
                     </p>
                     <a href="#" class="text-blue-600 text-sm underline">Read more</a>
@@ -1011,7 +1265,8 @@
                         </div>
                     </div>
                     <p class="text-sm text-gray-700 mb-2">
-                        “We didn’t realise it was a Muslim hotel and so there was no alcohol available. However they were
+                        “We didn’t realise it was a Muslim hotel and so there was no alcohol available. However they
+                        were
                         very accommodating... Food service was incredibly slow for dinner but all cooked fresh.”
                     </p>
                     <a href="#" class="text-blue-600 text-sm underline">Read more</a>
@@ -1046,10 +1301,22 @@
 
                     <!-- Host Details -->
                     <div class="space-y-2 text-sm text-gray-700">
-                        <p>This is a <span class="font-medium">Villa Type</span></p>
-                        <p>Extra activities are available</p>
-                        <p><span class="font-medium">Gregory Lake</span></p>
-                        <p>Languages spoken: <span class="font-bold">Arabic, English</span></p>
+                        @if ($property->hostProfile)
+                            <p><strong>Host:</strong> {{ $property->hostProfile->host_name ?? 'Host Name' }}</p>
+                            <p><strong>Contact:</strong>
+                                {{ $property->hostProfile->contact_info ?? 'Contact available' }}</p>
+                            <p><strong>Response Rate:</strong> {{ $property->hostProfile->response_rate ?? '95' }}%</p>
+                        @else
+                            <p>This is a <span class="font-medium">Villa Type</span></p>
+                            <p>Extra activities are available</p>
+                        @endif
+                        <p><strong>Location:</strong> {{ $property->city ?? 'Gregory Lake' }}</p>
+                        @if ($property->languages && $property->languages->count() > 0)
+                            <p>Languages spoken: <span
+                                    class="font-bold">{{ $property->languages->pluck('name')->join(', ') }}</span></p>
+                        @else
+                            <p>Languages spoken: <span class="font-bold">English</span></p>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -1105,7 +1372,11 @@
                                             'Children and beds',
                                             '<p class="font-semibold">Child policies</p><p>To see correct prices and occupancy information, please add the number of children in your group and their ages to your search.</p><p class="mt-2 font-semibold">Cot and extra bed policies</p><p>The number of cots allowed is dependent on the option you choose. Please check your selected option for more information.</p>',
                                         ],
-                                        ['noage.svg', 'No age restriction', 'There is no age requirement for check-in.'],
+                                        [
+                                            'noage.svg',
+                                            'No age restriction',
+                                            'There is no age requirement for check-in.',
+                                        ],
                                         [
                                             'payment.svg',
                                             'Accepted payment methods',
@@ -1150,7 +1421,8 @@
                         availability</button>
                 </div>
                 <div class="bg-gray-50 border rounded-lg p-4 text-lg text-gray-700">
-                    <p class="m-2">Please inform {{ $property->title ?? 'Property' }} in advance of your expected arrival time. You can use
+                    <p class="m-2">Please inform {{ $property->title ?? 'Property' }} in advance of your expected
+                        arrival time. You can use
                         the Special Requests
                         box when booking, or contact the property directly with the contact details provided in your
                         confirmation. </p>
@@ -1161,7 +1433,8 @@
             <!-- FAQ Placeholder -->
             <div>
                 <h2 class="text-lg font-semibold">FAQs about {{ $property->title ?? 'Property' }}</h2>
-                <p class="text-sm text-gray-600 mt-1">How much does it cost to rent a car in Sri Lanka for a week? • Which
+                <p class="text-sm text-gray-600 mt-1">How much does it cost to rent a car in Sri Lanka for a week? •
+                    Which
                     pickup locations in Sri Lanka are the most popular?</p>
             </div>
             <!-- Two column layout -->
@@ -1283,7 +1556,7 @@
             });
         });
     </script>
-    
+
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const links = document.querySelectorAll("a.scroll-link");
@@ -1331,4 +1604,7 @@
     </script>
 
 
-@endsection
+
+</body>
+
+</html>
