@@ -652,7 +652,7 @@
 
                                         <template x-if="step === 5 && selected === 'one'">
                                             <div class=" space-y-6">
-                                                <section >
+                                                <section>
                                                     <div class="w-full max-w-6xl">
                                                         <h2 class="text-xl md:text-2xl font-bold text-black mb-6 text-left mt-12">
                                                             What does your place look like?
@@ -695,7 +695,7 @@
                                                                     </p>
                                                                 </div>
 
-                                                               <!-- Previews -->
+                                                                <!-- Previews -->
                                                                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-4" x-show="previewFiles.length">
                                                                     <template x-for="(file, index) in previewFiles" :key="index">
                                                                         <div class="relative group border rounded overflow-hidden">
@@ -707,8 +707,8 @@
 
                                                                             <!-- Remove Button -->
                                                                             <button type="button"
-                                                                                    @click="removePhoto(index)"
-                                                                                    class="absolute top-1 right-1 bg-black bg-opacity-50 text-white rounded-full p-1 z-10 hover:bg-opacity-75">
+                                                                                @click="removePhoto(index)"
+                                                                                class="absolute top-1 right-1 bg-black bg-opacity-50 text-white rounded-full p-1 z-10 hover:bg-opacity-75">
                                                                                 &times;
                                                                             </button>
 
@@ -721,12 +721,12 @@
                                                                 <!-- Navigation Buttons -->
                                                                 <div class="mt-6 flex justify-between">
                                                                     <button type="button"
-                                                                            @click="prevStep"
-                                                                            class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
+                                                                        @click="prevStep"
+                                                                        class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
                                                                         ←
                                                                     </button>
 
-                                                                     <button
+                                                                    <button
                                                                         type="button"
                                                                         @click="nextStep"
                                                                         x-ref="continueBtn"
@@ -1266,15 +1266,14 @@
                                                         </h3>
                                                         <div class="space-y-2">
                                                             @php
-                                                                $initialLanguages = $languages->take(6);
-                                                                $additionalLanguages = $languages->slice(6);
+                                                            $initialLanguages = $languages->take(6);
+                                                            $additionalLanguages = $languages->slice(6);
                                                             @endphp
                                                             @foreach ($initialLanguages as $lang)
                                                             <label class="flex items-center cursor-pointer">
                                                                 <input type="checkbox"
                                                                     class="mr-2"
-                                                                    :value="'{{ $lang['id'] }}'"
-                                                                    />
+                                                                    :value="'{{ $lang['id'] }}'" />
                                                                 <span>{{ $lang['name'] }}</span>
                                                             </label>
                                                             @endforeach
@@ -1309,11 +1308,11 @@
                                                                 <ul id="languageDropdown"
                                                                     class="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded max-h-40 overflow-auto shadow-lg hidden">
                                                                     @foreach ($additionalLanguages as $lang)
-                                                                        <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                                            onclick="selectLanguage(this)"
-                                                                            data-id="{{ $lang['id'] }}">
-                                                                            {{ $lang['name'] }}
-                                                                        </li>
+                                                                    <li class="p-2 hover:bg-blue-100 cursor-pointer"
+                                                                        onclick="selectLanguage(this)"
+                                                                        data-id="{{ $lang['id'] }}">
+                                                                        {{ $lang['name'] }}
+                                                                    </li>
                                                                     @endforeach
                                                                 </ul>
 
@@ -1349,32 +1348,32 @@
 
                                                 <script>
                                                     function selectLanguage(element) {
-                                                            const input = document.getElementById("languageInput");
-                                                            const selectedContainer = document.getElementById("selectedAdditionalLanguages");
-                                                            const langName = element.textContent.trim();
-                                                            const langId = element.dataset.id;
+                                                        const input = document.getElementById("languageInput");
+                                                        const selectedContainer = document.getElementById("selectedAdditionalLanguages");
+                                                        const langName = element.textContent.trim();
+                                                        const langId = element.dataset.id;
 
-                                                            // Prevent duplicate
-                                                            if (document.getElementById(`lang-${langId}`)) {
-                                                                input.value = '';
-                                                                hideDropdown();
-                                                                return;
-                                                            }
+                                                        // Prevent duplicate
+                                                        if (document.getElementById(`lang-${langId}`)) {
+                                                            input.value = '';
+                                                            hideDropdown();
+                                                            return;
+                                                        }
 
-                                                            // Create checkbox dynamically
-                                                            const label = document.createElement('label');
-                                                            label.className = 'flex items-center cursor-pointer';
-                                                            label.id = `lang-${langId}`;
-                                                            label.innerHTML = `
+                                                        // Create checkbox dynamically
+                                                        const label = document.createElement('label');
+                                                        label.className = 'flex items-center cursor-pointer';
+                                                        label.id = `lang-${langId}`;
+                                                        label.innerHTML = `
                                                                 <input type="checkbox" class="mr-2" name="languages[]" value="${langId}" checked />
                                                                 <span>${langName}</span>
                                                             `;
 
-                                                            selectedContainer.appendChild(label);
+                                                        selectedContainer.appendChild(label);
 
-                                                            // Clear input and close dropdown
-                                                            input.value = '';
-                                                            hideDropdown();
+                                                        // Clear input and close dropdown
+                                                        input.value = '';
+                                                        hideDropdown();
                                                     }
 
                                                     function toggleAdditionalLanguages() {
@@ -1423,7 +1422,7 @@
                                                         }
                                                     }
 
-                                                 
+
 
                                                     // Close dropdown when clicking outside
                                                     document.addEventListener("click", function(event) {
@@ -1617,15 +1616,14 @@
 
 
                                         <template x-if="step === 12 && selected === 'one'">
-                                            <div 
+                                            <div
                                                 class="max-w-2xl mx-auto space-y-8 px-4 sm:px-6 lg:px-8 lg:ml-32 py-6"
                                                 x-data="{
                                                             showProperty: false,
                                                             showHost: false,
                                                             showNeighborhood: false,
                                                             showNone: false
-                                                        }"
-                                                    >
+                                                        }">
                                                 <h2 class="text-2xl font-bold mb-8 text-left">Host Profile</h2>
 
                                                 <div class="bg-white shadow-md rounded-lg p-4 space-y-6">
@@ -1646,8 +1644,7 @@
                                                                 x-ref="about_property"
                                                                 maxlength="1200"
                                                                 placeholder="What makes your place unique? What can guests expect?"
-                                                                class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"
-                                                            ></textarea>
+                                                                class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"></textarea>
                                                             <p class="text-right text-xs text-gray-500">0/1200</p>
                                                         </div>
                                                     </div>
@@ -1663,11 +1660,10 @@
                                                                 <label class="block text-sm font-semibold text-gray-700">Host name</label>
                                                                 <input
                                                                     type="text"
-                                                                    x-ref="host_name" 
+                                                                    x-ref="host_name"
                                                                     maxlength="80"
                                                                     placeholder="Your name"
-                                                                    class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
-                                                                >
+                                                                    class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
                                                                 <p class="text-right text-xs text-gray-500">0/80</p>
                                                             </div>
                                                             <div>
@@ -1677,8 +1673,7 @@
                                                                     maxlength="1200"
                                                                     x-ref="about_host"
                                                                     placeholder="What are your interests? What do you like about hosting?"
-                                                                    class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"
-                                                                ></textarea>
+                                                                    class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"></textarea>
                                                                 <p class="text-right text-xs text-gray-500">0/1200</p>
                                                             </div>
                                                         </div>
@@ -1697,8 +1692,7 @@
                                                                 rows="4"
                                                                 maxlength="1200"
                                                                 placeholder="What's the area like? Are there any attractions nearby?"
-                                                                class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"
-                                                            ></textarea>
+                                                                class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"></textarea>
                                                             <p class="text-right text-xs text-gray-500">0/1200</p>
                                                         </div>
                                                     </div>
@@ -1731,133 +1725,291 @@
 
                                         <template x-if="step === 13 && selected === 'one'"
                                             x-data="{
-                                                    newRoom: {
-                                                        room_type_id: '',
-                                                        name: '',
-                                                        price_per_night: 0,
-                                                        max_guests: 1,
-                                                        bathroom_count: 0,
-                                                        size_sq_m: 0,
-                                                        beds: {}
+                                                    rooms: {
+                                                        bedroom1: {key:'1',room_type_id: 2, name: 'Bedroom 1', beds: {} },
+                                                        livingRoom: {key:'2',room_type_id: 1,  name: 'Living Room', beds: {} },
+                                                        otherSpaces: {key:'3',room_type_id: 3, name: 'Other Spaces', beds: {} },
                                                     },
-                                                    rooms: [],
-                                                    roomTypes: [],
-                                                    bedTypes: [],
-                                                }"
-                                            x-init="
-                                                    roomTypes = @js($roomTypes);
-                                                    bedTypes = @js($bedTypes)
-                                                ">
-                                            <div>
-                                                <!-- Main Content -->
-                                                <main class="container mx-auto px-4 py-8 max-w-4xl">
-                                                    <h2 class="text-2xl md:text-3xl font-bold mb-6 text-left">
-                                                        Room Details
-                                                    </h2>
+                                                    allBedTypes: [
+                                                        { id: '1', name: 'Single', applicableTo: ['1', '3'] },
+                                                        { id: '2', name: 'Double', applicableTo: ['1', '3'] },
+                                                        { id: '3', name: 'King', applicableTo: ['1', '3'] },
+                                                        { id: '4', name: 'Super King', applicableTo: ['1', '3'] },
+                                                        { id: '5', name: 'Bunk', applicableTo: ['1', '3'] },
+                                                        { id: '6', name: 'Sofa Bed', applicableTo: ['1', '2', '3'] }
+                                                    ],
+                                                    guests: 1,
+                                                    bathrooms: 1,
+                                                    allowChildren: 'yes',
+                                                    offerCribs: 'no',
+                                                    apartmentSize: '',
+                                                    price_per_night: '',
+                                                    apartmentUnit: 'square meters',
+                                                    showRoomEditor: false,
 
-                                                    <div class="bg-white shadow-md rounded-lg p-6 md:p-8 space-y-6">
+                                                    currentEditingRoomKey: null,
+                                                    editingRoom: { name: '', beds: {} ,room_type_id: 1},
 
-                                                        <p class="text-gray-700 text-sm md:text-base">
-                                                            Add information about each room in your property. Include room type, number of guests it can host,
-                                                            price, and bed configuration.
-                                                        </p>
+                                                    openRoomEditor(key = null) {
+                                                        this.currentEditingRoomKey = key;
 
-                                                        <!-- Room Type -->
-                                                        <div>
-                                                            <label class="block text-sm font-medium text-gray-700 mb-1">Room Type</label>
-                                                            <select x-model="newRoom.room_type_id" class="w-full border rounded px-3 py-2">
-                                                                <template x-for="type in roomTypes" :key="type.id">
-                                                                    <option :value="type.id" x-text="type.name"></option>
+                                                        if (key && this.rooms[key]) {
+                                                            this.editingRoom = JSON.parse(JSON.stringify(this.rooms[key]));
+                                                        } else {
+                                                            // For new room
+                                                            const newKey = 'bedroom' + (Object.keys(this.rooms).filter(k => k.startsWith('bedroom')).length + 1);
+                                                            this.currentEditingRoomKey = newKey;
+                                                            this.editingRoom = { name: 'Bedroom', beds: {},room_type_id: 1 };
+                                                        }
+
+                                                        this.showRoomEditor = true;
+                                                    },
+
+                                                    saveRoomEditor() {
+                                                        this.rooms[this.currentEditingRoomKey] = JSON.parse(JSON.stringify(this.editingRoom));
+                                                        this.showRoomEditor = false;
+                                                    },
+
+                                                    cancelRoomEditor() {
+                                                        this.showRoomEditor = false;
+                                                    },
+
+                                                    getBedSummary(key) {
+                                                        const bedCounts = this.rooms[key]?.beds || {};
+                                                        return Object.entries(bedCounts)
+                                                            .filter(([_, count]) => count > 0)
+                                                            .map(([id, count]) => `${count} ${this.allBedTypes.find(bt => bt.id === id)?.name}`)
+                                                            .join(', ') || 'No beds selected';
+                                                    },
+
+                                                    hasBedCounts(key) {
+                                                        const beds = this.rooms[key]?.beds || {};
+                                                        return Object.values(beds).some(count => count > 0);
+                                                    },
+
+                                                   navigateToBedroom(key = null) {
+                                                        this.openRoomEditor(key);
+                                                    },
+
+                                                    editSavedRoom(key) {
+                                                        this.openRoomEditor(key);
+                                                    },
+                                                    getSavedRoomBedSummary(room) {
+                                                        return Object.entries(room.beds)
+                                                            .filter(([_, count]) => count > 0)
+                                                            .map(([id, count]) => `${count} ${this.allBedTypes.find(bt => bt.id === id)?.name}`)
+                                                            .join(', ');
+                                                    },
+                                                    deleteRoom(key) {
+                                                        if (confirm('Are you sure you want to delete this room?')) {
+                                                            delete this.rooms[key];
+                                                        }
+                                                    }
+                                                }">
+
+                                            <!-- Room Editor Modal -->
+
+
+
+                                            <div class="max-w-xl mx-auto space-y-8 lg:ml-32 px-4 py-6">
+                                                <h2 class="text-2xl font-bold text-gray-900 mt-8">What can guests use at your place?</h2>
+
+                                                <!-- Room Selector -->
+                                                <div class="bg-white p-4 rounded-lg shadow space-y-4">
+                                                    <h2 class="text-lg font-semibold">Where can people sleep?</h2>
+                                                    <div class="flex flex-col gap-4">
+
+                                                        <!-- Predefined Rooms -->
+                                                        <template x-for="key in ['bedroom1', 'livingRoom', 'otherSpaces']" :key="key">
+                                                            <div>
+                                                                <template x-if="hasBedCounts(key)">
+                                                                    <div class="border border-green-300 bg-green-50 rounded px-3 py-2 w-96 flex justify-between items-center">
+                                                                        <div>
+                                                                            <p class="text-sm font-medium" x-text="rooms[key]?.name || key"></p>
+                                                                            <p class="text-sm text-gray-600" x-text="getBedSummary(key)"></p>
+                                                                            <p class="text-xs text-green-600">✓ Saved</p>
+                                                                        </div>
+                                                                        <span class="text-xs text-blue-600 hover:underline cursor-pointer" @click="navigateToBedroom(key)">Edit</span>
+                                                                        <span class="text-xs text-red-600 hover:underline cursor-pointer" @click="deleteRoom(key)">Delete</span>
+
+                                                                    </div>
                                                                 </template>
-                                                            </select>
-                                                        </div>
+                                                                <template x-if="!hasBedCounts(key)">
+                                                                    <a href="#" @click.prevent="navigateToBedroom(key)" class="block">
+                                                                        <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer flex justify-between items-center">
+                                                                            <div>
+                                                                                <p class="text-sm" x-text="rooms[key]?.name || key"></p>
+                                                                                <p class="text-sm text-gray-600" x-text="getBedSummary(key)"></p>
+                                                                            </div>
+                                                                            <span class="text-xs text-blue-600 hover:underline">Edit</span>
+                                                                        </div>
+                                                                    </a>
+                                                                </template>
+                                                            </div>
+                                                        </template>
 
-                                                        <!-- Room Name -->
-                                                        <div>
-                                                            <label class="block text-sm font-medium text-gray-700 mb-1">Room Name</label>
-                                                            <input type="text" x-model="newRoom.name"
-                                                                class="w-full border border-gray-300 rounded px-3 py-2" placeholder="E.g. Master Bedroom" />
-                                                        </div>
-
-                                                        <!-- Price -->
-                                                        <div>
-                                                            <label class="block text-sm font-medium text-gray-700 mb-1">Price per Night (LKR)</label>
-                                                            <input type="number" x-model="newRoom.price_per_night" min="0" step="0.01"
-                                                                class="w-full border border-gray-300 rounded px-3 py-2" />
-                                                        </div>
-
-                                                        <!-- Max Guests -->
-                                                        <div>
-                                                            <label class="block text-sm font-medium text-gray-700 mb-1">Max Guests</label>
-                                                            <input type="number" x-model="newRoom.max_guests" min="1"
-                                                                class="w-full border border-gray-300 rounded px-3 py-2" />
-                                                        </div>
-
-                                                        <!-- Bathroom Count -->
-                                                        <div>
-                                                            <label class="block text-sm font-medium text-gray-700 mb-1">Bathroom Count</label>
-                                                            <input type="number" x-model="newRoom.bathroom_count" min="0"
-                                                                class="w-full border border-gray-300 rounded px-3 py-2" />
-                                                        </div>
-
-                                                        <!-- Size -->
-                                                        <div>
-                                                            <label class="block text-sm font-medium text-gray-700 mb-1">Size (sq. meters)</label>
-                                                            <input type="number" x-model="newRoom.size_sq_m" min="0"
-                                                                class="w-full border border-gray-300 rounded px-3 py-2" />
-                                                        </div>
-
-                                                        <!-- Bed Types -->
-                                                        <div>
-                                                            <label class="block text-sm font-medium text-gray-700 mb-1">Beds</label>
-                                                            <template x-for="(bedType, index) in bedTypes" :key="bedType.id">
-                                                                <div class="flex items-center mb-2">
-                                                                    <label class="w-1/2 text-gray-600 text-sm" x-text="bedType.name"></label>
-                                                                    <input type="number" min="0"
-                                                                        class="w-1/2 border border-gray-300 rounded px-3 py-1 ml-2"
-                                                                        @input="newRoom.beds[bedType.id] = +$event.target.value" />
+                                                        <!-- Dynamically Added Bedrooms -->
+                                                        <template x-for="(room, key) in rooms" :key="key">
+                                                            <template x-if="!['bedroom1', 'livingRoom', 'otherSpaces'].includes(key)">
+                                                                <div class="border border-green-300 bg-green-50 rounded px-3 py-2 w-96 flex justify-between items-center">
+                                                                    <div>
+                                                                        <p class="text-sm font-medium" x-text="room.name"></p>
+                                                                        <p class="text-sm text-gray-600" x-text="getSavedRoomBedSummary(room)"></p>
+                                                                        <p class="text-xs text-green-600">✓ Saved</p>
+                                                                    </div>
+                                                                    <span class="text-xs text-blue-600 hover:underline cursor-pointer" @click="editSavedRoom(key)">Edit</span>
+                                                                    <span class="text-xs text-red-600 hover:underline cursor-pointer" @click="deleteRoom(key)">Delete</span>
 
                                                                 </div>
                                                             </template>
+                                                        </template>
+
+                                                    </div>
+
+                                                    <!-- Add Bedroom Button -->
+                                                    <button @click="navigateToBedroom()" class="text-blue-600 hover:underline text-sm flex items-center space-x-1 mt-2">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                                        </svg>
+                                                        <span>Add Bedroom</span>
+                                                    </button>
+                                                </div>
+
+                                                <!-- Guests and Bathrooms -->
+                                                <div class="bg-white p-4 rounded-lg shadow space-y-4 w-full max-w-xl">
+                                                    <div>
+                                                        <label class="block text-sm text-gray-800">How many guests can stay?</label>
+                                                        <div class="flex items-center space-x-4 mt-1">
+                                                            <button @click="if (guests > 1) guests--" class="border px-3 py-1 rounded text-base">−</button>
+                                                            <span class="min-w-[2rem] text-center text-gray-700 text-base" x-text="guests"></span>
+                                                            <button @click="guests++" class="border px-3 py-1 rounded text-base">+</button>
                                                         </div>
                                                     </div>
-
-                                                    <!-- Navigation Buttons -->
-                                                    <div class="mt-8 flex justify-between">
-                                                        <button type="button" @click="prevStep"
-                                                            class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
-                                                            ←
-                                                        </button>
-                                                        <button type="button" @click="addRoom"
-                                                            class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
-                                                            + Add Room
-                                                        </button>
-                                                        <button type="button" @click="nextStep"
-                                                            class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
-                                                            Save Room & Continue
-                                                        </button>
+                                                    <div>
+                                                        <label class="block text-sm text-gray-800">How many bathrooms are there?</label>
+                                                        <div class="flex items-center space-x-4 mt-1">
+                                                            <button @click="if (bathrooms > 0) bathrooms--" class="border px-3 py-1 rounded text-base">−</button>
+                                                            <span class="min-w-[2rem] text-center text-gray-700 text-base" x-text="bathrooms"></span>
+                                                            <button @click="bathrooms++" class="border px-3 py-1 rounded text-base">+</button>
+                                                        </div>
                                                     </div>
+                                                </div>
 
-                                                    <div class="mt-6 border-t pt-4">
-                                                        <h3 class="font-semibold mb-2">Added Rooms:</h3>
-                                                        <template x-for="(room, index) in rooms" :key="index">
-                                                            <div class="border p-2 rounded mb-2 bg-gray-50">
-                                                                <p><strong>Name:</strong> <span x-text="room.name"></span></p>
-                                                                <p><strong>Type:</strong> <span x-text="roomTypes.find(rt => rt.id == room.room_type_id)?.name"></span></p>
-                                                                <p><strong>Price:</strong> Rs. <span x-text="room.price_per_night"></span></p>
+                                                <!-- Children Policy -->
+                                                <div class="bg-white p-4 rounded-lg shadow space-y-4">
+                                                    <div>
+                                                        <p class="font-medium text-sm">Do you allow children?</p>
+                                                        <label class="mr-4 text-sm">
+                                                            <input type="radio" name="children" value="yes" x-model="allowChildren"> Yes
+                                                        </label>
+                                                        <label class="text-sm">
+                                                            <input type="radio" name="children" value="no" x-model="allowChildren"> No
+                                                        </label>
+                                                    </div>
+                                                    <div>
+                                                        <p class="font-medium text-sm">Do you allow infants?</p>
+                                                        <p class="text-xs text-gray-500">cribs sleep most infants 0–3 years old and are available to guests on request.</p>
+                                                        <label class="mr-4 text-sm">
+                                                            <input type="radio" name="infants" value="yes" x-model="offerCribs"> Yes
+                                                        </label>
+                                                        <label class="text-sm">
+                                                            <input type="radio" name="infants" value="no" x-model="offerCribs"> No
+                                                        </label>
+                                                    </div>
+                                                </div>
 
-                                                                <button
-                                                                    @click="if(confirm('Are you sure you want to remove this room?')) rooms.splice(index, 1)"
-                                                                    class="ml-4 bg-red-100 hover:bg-red-200 text-red-700 font-semibold px-3 py-1 rounded">
-                                                                    ✕ Remove
-                                                                </button>
+                                                <!-- Room Size -->
+                                                <div class="lg:col-span-2 bg-white rounded-lg border border-gray-300 p-4 space-y-4 ">
+                                                    <div class="flex flex-col lg:flex-row gap-4 items-end">
+                                                        <div class="w-full lg:w-2/4">
+                                                            <label class="block text-sm text-gray-700 mb-1">How big is this room?</label>
+                                                            <p class="text-xs text-gray-500">Apartment size - optional</p>
+                                                            <input
+                                                                type="number"
+                                                                min="1"
+                                                                step="1"
+                                                                x-model="apartmentSize"
+                                                                name="apartment_size"
+                                                                class="w-full border border-gray-300 rounded-md shadow-sm text-sm mt-2 px-2 py-2">
+                                                        </div>
+                                                        <div class="w-full lg:w-1/4">
+                                                            <label class="block text-sm text-transparent mb-1">Unit</label>
+                                                            <select x-model="apartmentUnit" class="w-full bg-gray-300 text-black border border-gray-300 rounded-md shadow-sm text-sm mt-2 px-2 py-2">
+                                                                <option value="square meters">square meters</option>
+                                                                <option value="square feet">square feet</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Navigation Buttons -->
+                                                <div class="mt-8 flex justify-between">
+                                                    <button
+                                                        type="button"
+                                                        @click="propertyWizardStep--"
+                                                        :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
+                                                        class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                                                        ←
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        @click="nextStep"
+                                                        class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
+                                                        Continue
+                                                    </button>
+                                                </div>
+
+                                                <div x-show="showRoomEditor"
+                                                    style="background-color: rgba(0, 0, 0, 0.5);"
+                                                    class="fixed inset-0 z-50 flex items-center justify-center"
+                                                    x-transition>
+                                                    <div @click.outside="cancelRoomEditor"
+                                                        class="bg-white w-full max-w-2xl mx-auto rounded-lg shadow-lg p-6 relative">
+
+                                                        <!-- Header -->
+                                                        <h2 class="text-xl font-semibold mb-4" x-text="editingRoom.name || 'Edit Room'"></h2>
+
+                                                        <!-- Room Name -->
+                                                        <div class="mb-4">
+                                                            <label class="block text-sm font-medium text-gray-700 mb-1">Room Name</label>
+                                                            <input type="text" x-model="editingRoom.name"
+                                                                class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500">
+                                                        </div>
+
+                                                        <!-- Bed Types -->
+                                                        <div class="mb-4">
+                                                            <h3 class="text-sm font-semibold text-gray-800 mb-2">Bed Configuration</h3>
+                                                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                                                                <template x-for="bed in allBedTypes" :key="bed.id">
+                                                                    <div class="flex items-center space-x-3">
+                                                                        <label class="w-1/2 text-gray-700 text-sm" x-text="bed.name"></label>
+                                                                        <input type="number" min="0"
+                                                                            class="w-1/2 border border-gray-300 rounded px-2 py-1 text-sm focus:ring-blue-500 focus:border-blue-500"
+                                                                            :value="editingRoom.beds[bed.id] || 0"
+                                                                            @input="editingRoom.beds[bed.id] = +$event.target.value">
+                                                                    </div>
+                                                                </template>
                                                             </div>
-                                                        </template>
-                                                    </div>
+                                                        </div>
 
-                                                </main>
+                                                        <!-- Modal Actions -->
+                                                        <div class="flex justify-end gap-3 mt-6">
+                                                            <button @click="cancelRoomEditor"
+                                                                class="text-gray-600 border border-gray-300 px-4 py-2 rounded hover:bg-gray-100 text-sm">Cancel</button>
+                                                            <button @click="saveRoomEditor"
+                                                                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm font-semibold">Save</button>
+                                                        </div>
+
+                                                        <!-- Close Icon -->
+                                                        <button @click="cancelRoomEditor" class="absolute top-3 right-4 text-gray-400 hover:text-gray-600 text-lg">
+                                                            ✕
+                                                        </button>
+                                                    </div>
+                                                </div>
                                             </div>
+
                                         </template>
+
 
                                         <template x-if="step === 14 && selected === 'one'">
                                             <div>
@@ -3730,7 +3882,7 @@
                                             } catch (e) {
                                                 console.error('Error saving amenities:', e);
                                             }
-                                        }else if (this.step === 9 && this.selected === 'one') {
+                                        } else if (this.step === 9 && this.selected === 'one') {
                                             const propertyId = this.propertyId;
                                             const payload = {
                                                 property_id: parseInt(propertyId),
@@ -3739,8 +3891,8 @@
                                                 breakfast_type: this.selectedBreakfasts.length > 0 ? this.selectedBreakfasts : null,
                                                 breakfast_price: document.getElementById('breakfast_price')?.value || null,
                                                 parking_available: document.querySelector('input[name="parking"]:checked')?.value || null,
-                                                parking_cost: document.querySelector('input[name="parking"]:checked')?.value === 'paid'
-                                                    ? document.getElementById('parking_cost')?.value : '0',
+                                                parking_cost: document.querySelector('input[name="parking"]:checked')?.value === 'paid' ?
+                                                    document.getElementById('parking_cost')?.value : '0',
                                                 parking_reservation: document.querySelector('input[name="reservation_needed"]:checked')?.value || null,
                                                 parking_location: document.querySelector('input[name="location"]:checked')?.value || null,
                                                 parking_type: document.querySelector('input[name="type"]:checked')?.value || null
@@ -3789,9 +3941,7 @@
                                                     timer: 3000
                                                 });
                                             }
-                                        }
-
-                                        else if (this.step === 10 && this.selected === 'one') {
+                                        } else if (this.step === 10 && this.selected === 'one') {
                                             try {
                                                 // Get all selected languages (checked checkboxes)
                                                 const selectedLanguages = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
@@ -3822,8 +3972,7 @@
                                             } catch (e) {
                                                 console.error('Error saving languages:', e);
                                             }
-                                        }
-                                        else if (this.step === 11 && this.selected === 'one') {
+                                        } else if (this.step === 11 && this.selected === 'one') {
                                             try {
                                                 const smokingAllowed = document.querySelector('#smoking_allowed').checked;
                                                 const petsValue = document.querySelector('input[name="pets_allowed"]:checked')?.value || 'no';
@@ -3844,13 +3993,13 @@
                                                     body: JSON.stringify({
                                                         smoking_allowed: smokingAllowed,
                                                         parties_allowed: partiesAllowed,
-                                                        pets_allowed: petsValue, 
+                                                        pets_allowed: petsValue,
                                                         children_allowed: childrenAllowed,
                                                         check_in_from: checkInFromTime,
                                                         check_in_until: checkInUntilTime,
                                                         check_out_from: checkOutFromTime,
                                                         check_out_until: checkOutUntilTime,
-                                                        cancellation_policy: 'flexible', 
+                                                        cancellation_policy: 'flexible',
                                                         property_id: this.propertyId
                                                     }),
                                                 });
@@ -3866,8 +4015,8 @@
                                             } catch (e) {
                                                 console.error('Error saving policy:', e);
                                             }
-                                        }else if (this.step === 12 && this.selected === 'one') {
-                              
+                                        } else if (this.step === 12 && this.selected === 'one') {
+
 
                                             const payload = {
                                                 property_id: this.propertyId,
@@ -3903,21 +4052,40 @@
                                             } catch (error) {
                                                 console.error('❌ Error submitting host profile:', error);
                                             }
-                                        }
-
-                                         else if (this.step === 13 && this.selected === 'one') {
+                                        } else if (this.step === 13 && this.selected === 'one') {
                                             console.log('Saving room details for property ID:', this.propertyId);
 
-                                            if (this.rooms.length === 0) {
+                                            const roomKeys = Object.keys(this.rooms);
+
+                                            if (roomKeys.length === 0) {
                                                 alert('Please add at least one room before continuing.');
                                                 return;
                                             }
 
-                                            console.log('Saving room details:', {
-                                                rooms: this.rooms
-
+                                            const roomArray = roomKeys.map(key => {
+                                                const room = this.rooms[key];
+                                                return {
+                                                    key: key,
+                                                    room_type_id: room.room_type_id ?? '', // Ensure this field exists
+                                                    name: room.name,
+                                                    beds: room.beds,
+                                                    max_guests: this.guests,
+                                                    bathroom_count: this.bathrooms,
+                                                    size_sq_m: this.apartmentSize,
+                                                    price_per_night: room.price_per_night ?? '0',
+                                                };
                                             });
 
+                                            // Optional validation
+                                            const invalidRoom = roomArray.find(r => !r.room_type_id);
+                                            if (invalidRoom) {
+                                                alert(`Please select a Room Type for ${invalidRoom.key}`);
+                                                return;
+                                            }
+
+                                            console.log('Saving room details:', {
+                                                rooms: roomArray
+                                            });
 
                                             fetch(`/partner/save-rooms/${this.propertyId}`, {
                                                     method: 'POST',
@@ -3927,8 +4095,7 @@
                                                     },
                                                     body: JSON.stringify({
                                                         property_id: this.propertyId,
-                                                        rooms: this.rooms
-
+                                                        rooms: roomArray
                                                     })
                                                 })
                                                 .then(response => response.json())
@@ -3946,6 +4113,25 @@
                                                 });
                                         } else if (this.step === 14 && this.selected === 'one') {
                                             console.log('Submitting partner verification details for property ID:', this.propertyId);
+                                            if (this.type === 'individual') {
+                                                if (!this.individual.national_id) {
+                                                    Swal.fire({
+                                                        icon: 'error',
+                                                        title: 'Error',
+                                                        text: 'National ID is required.',
+                                                    });
+                                                    return;
+                                                }
+                                                if (this.individual.national_id.length !== 12) {
+                                                    Swal.fire({
+                                                        icon: 'error',
+                                                        title: 'Error',
+                                                        text: 'National ID must be 12 digits.',
+                                                    })
+                                                    return;
+                                                }
+                                            }
+
                                             const payload = {
                                                 property_id: this.propertyId,
                                                 type: this.type,
