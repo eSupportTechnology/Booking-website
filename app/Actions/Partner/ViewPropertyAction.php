@@ -26,7 +26,7 @@ class ViewPropertyAction
             'pricing',
             'facilities',
             'bedrooms',
-            'photos'
+            'files'
         ];
         
         foreach ($relationships as $relationship) {

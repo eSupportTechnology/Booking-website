@@ -189,32 +189,27 @@
                             ];
                         @endphp
                         @php
-                            $photos = $property->photos ?? collect();
-                            $visiblePhotos = $photos->take(8);
-                            $remainingCount = max(0, $photos->count() - 8);
-                            // Fallback images if no photos
-                            $fallbackImages = [
-                                'h1.jpg',
-                                'h2.jpg',
-                                'h3.jpg',
-                                'h4.jpg',
-                                'h5.jpg',
-                                'h6.jpg',
-                                'h7.jpg',
-                                'h8.jpg',
-                            ];
+                            $files = $property->files ?? collect();
+                            $visibleFiles = $files->take(8);
+                            $remainingCount = max(0, $files->count() - 8);
                         @endphp
-                        @if ($photos->count() > 0)
+
+                        @if ($files->count() > 0)
                             @php
-                                $visiblePhotos = $photos->take(8);
-                                $remainingCount = max(0, $photos->count() - 8);
+                                $visibleFiles = $files->take(8);
+                                $remainingCount = max(0, $files->count() - 8);
                             @endphp
-                            @foreach ($visiblePhotos as $index => $photo)
+                            @foreach ($visibleFiles as $index => $file)
                                 <div class="{{ $positions[$index] ?? '' }} relative overflow-hidden"
                                     onclick="openGalleryModal({{ $index }})">
-                                    <img src="{{ asset('storage/' . $photo->photo_url) }}"
+                                    <img src="{{ asset('storage/' . $file->path) }}"
                                         class="w-full h-full object-cover rounded-lg cursor-pointer"
-                                        alt="Property Image {{ $index + 1 }}">
+                                        alt="Property Image {{ $index + 1 }}"
+                                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                                        onload="console.log('Image loaded: {{ $file->path }}')">
+                                    <div class="w-full h-full bg-gray-200 rounded-lg flex items-center justify-center" style="display:none;">
+                                        <span class="text-gray-500 text-sm">Image not found</span>
+                                    </div>
                                     @if ($loop->last && $remainingCount > 0)
                                         <div
                                             class="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center text-white text-lg font-bold cursor-pointer hover:bg-opacity-70 transition rounded-lg">
@@ -236,19 +231,18 @@
                         @endphp
 
                         @php
-                            $mobilePhotos = $photos->take(3);
-                            $mobileRemainingCount = max(0, $photos->count() - 3);
-                            $mobileFallback = ['h1.jpg', 'h2.jpg', 'h3.jpg'];
+                            $mobileFiles = $files->take(3);
+                            $mobileRemainingCount = max(0, $files->count() - 3);
                         @endphp
-                        @if ($photos->count() > 0)
+                        @if ($files->count() > 0)
                             @php
-                                $mobilePhotos = $photos->take(3);
-                                $mobileRemainingCount = max(0, $photos->count() - 3);
+                                $mobileFiles = $files->take(3);
+                                $mobileRemainingCount = max(0, $files->count() - 3);
                             @endphp
-                            @foreach ($mobilePhotos as $index => $photo)
+                            @foreach ($mobileFiles as $index => $file)
                                 <div class="{{ $mobilePositions[$index] ?? '' }} relative overflow-hidden"
                                     onclick="openGalleryModal({{ $index }})">
-                                    <img src="{{ asset('storage/' . $photo->photo_url) }}"
+                                    <img src="{{ asset('storage/' . $file->path) }}"
                                         class="w-full h-full object-cover rounded-md cursor-pointer"
                                         alt="Property Image {{ $index + 1 }}">
                                     @if ($loop->last && $mobileRemainingCount > 0)
@@ -373,8 +367,8 @@
         <script>
             @php
                 $imageArray = [];
-                if ($property->photos && $property->photos->count() > 0) {
-                    $imageArray = $property->photos->pluck('photo_url')->toArray();
+                if ($property->files && $property->files->count() > 0) {
+                    $imageArray = $property->files->pluck('path')->toArray();
                 }
             @endphp
             const images = @json($imageArray);
