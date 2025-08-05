@@ -41,6 +41,6 @@ class PropertyListingController extends Controller
             abort(404);
         }
         
-        return view('partner.properties.view', $data);
+        return view('partner.properties.views', $data);
     }
 }

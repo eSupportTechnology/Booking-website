@@ -3,6 +3,8 @@
 namespace App\Services\Partner;
 
 use App\DTOs\Partner\PropertyListingsDTO;
+use App\Models\Property;
+use App\Models\PropertyCategory;
 use Illuminate\Support\Facades\Auth;
 
 class PropertyListingService
@@ -11,79 +13,100 @@ class PropertyListingService
     {
         $partnerId = Auth::id();
         
-        // Mock data - replace with actual database queries
+        $apartmentCategory = PropertyCategory::where('name', 'Apartment')->first();
+        $homeCategory = PropertyCategory::where('name', 'Home')->first();
+        $hotelCategory = PropertyCategory::where('name', 'Hotel')->first();
+        $alternativeCategory = PropertyCategory::where('name', 'Alternative Place')->first();
+        
         return PropertyListingsDTO::fromArray([
-            'apartments' => 3,
-            'homes' => 2,
-            'hotels' => 1,
-            'alternative_places' => 1
+            'apartments' => Property::where('user_id', $partnerId)
+                ->where('category_id', $apartmentCategory?->id)
+                ->count(),
+            'homes' => Property::where('user_id', $partnerId)
+                ->where('category_id', $homeCategory?->id)
+                ->count(),
+            'hotels' => Property::where('user_id', $partnerId)
+                ->where('category_id', $hotelCategory?->id)
+                ->count(),
+            'alternative_places' => Property::where('user_id', $partnerId)
+                ->where('category_id', $alternativeCategory?->id)
+                ->count()
         ]);
     }
 
     public function getApartments(?string $search = null): array
     {
-        $apartments = [
-            ['id' => 1, 'name' => 'Ocean View Apartment', 'location' => 'Colombo', 'status' => 'Active', 'bookings' => 8],
-            ['id' => 2, 'name' => 'City Center Studio', 'location' => 'Kandy', 'status' => 'Active', 'bookings' => 5],
-            ['id' => 3, 'name' => 'Beach Side Flat', 'location' => 'Galle', 'status' => 'Pending', 'bookings' => 0]
-        ];
+        $partnerId = Auth::id();
+        $apartmentCategory = PropertyCategory::where('name', 'Apartment')->first();
+        
+        $query = Property::where('user_id', $partnerId)
+            ->where('category_id', $apartmentCategory?->id);
         
         if ($search) {
-            return array_filter($apartments, fn($apt) => 
-                stripos($apt['name'], $search) !== false || 
-                stripos($apt['location'], $search) !== false
-            );
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('city', 'like', "%{$search}%")
+                  ->orWhere('address', 'like', "%{$search}%");
+            });
         }
         
-        return $apartments;
+        return $query->get()->toArray();
     }
 
     public function getHomes(?string $search = null): array
     {
-        $homes = [
-            ['id' => 4, 'name' => 'Mountain Villa', 'location' => 'Nuwara Eliya', 'status' => 'Active', 'bookings' => 12],
-            ['id' => 5, 'name' => 'Garden House', 'location' => 'Kandy', 'status' => 'Active', 'bookings' => 7]
-        ];
+        $partnerId = Auth::id();
+        $homeCategory = PropertyCategory::where('name', 'Home')->first();
+        
+        $query = Property::where('user_id', $partnerId)
+            ->where('category_id', $homeCategory?->id);
         
         if ($search) {
-            return array_filter($homes, fn($home) => 
-                stripos($home['name'], $search) !== false || 
-                stripos($home['location'], $search) !== false
-            );
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('city', 'like', "%{$search}%")
+                  ->orWhere('address', 'like', "%{$search}%");
+            });
         }
         
-        return $homes;
+        return $query->get()->toArray();
     }
 
     public function getHotels(?string $search = null): array
     {
-        $hotels = [
-            ['id' => 6, 'name' => 'Luxury Resort', 'location' => 'Bentota', 'status' => 'Active', 'bookings' => 25]
-        ];
+        $partnerId = Auth::id();
+        $hotelCategory = PropertyCategory::where('name', 'Hotel')->first();
+        
+        $query = Property::where('user_id', $partnerId)
+            ->where('category_id', $hotelCategory?->id);
         
         if ($search) {
-            return array_filter($hotels, fn($hotel) => 
-                stripos($hotel['name'], $search) !== false || 
-                stripos($hotel['location'], $search) !== false
-            );
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('city', 'like', "%{$search}%")
+                  ->orWhere('address', 'like', "%{$search}%");
+            });
         }
         
-        return $hotels;
+        return $query->get()->toArray();
     }
 
     public function getAlternativePlaces(?string $search = null): array
     {
-        $places = [
-            ['id' => 7, 'name' => 'Tree House', 'location' => 'Sigiriya', 'status' => 'Active', 'bookings' => 3]
-        ];
+        $partnerId = Auth::id();
+        $alternativeCategory = PropertyCategory::where('name', 'Alternative Place')->first();
+        
+        $query = Property::where('user_id', $partnerId)
+            ->where('category_id', $alternativeCategory?->id);
         
         if ($search) {
-            return array_filter($places, fn($place) => 
-                stripos($place['name'], $search) !== false || 
-                stripos($place['location'], $search) !== false
-            );
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('city', 'like', "%{$search}%")
+                  ->orWhere('address', 'like', "%{$search}%");
+            });
         }
         
-        return $places;
+        return $query->get()->toArray();
     }
 }

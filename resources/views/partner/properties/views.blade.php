@@ -1,225 +1,8 @@
 @extends('partner.master')
 
 @section('content')
-    {{-- Navigation Bar --}}
-    <section class="text-white py-8 bg-[#1F8FB2] relative z-0">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
-        </div>
-    </section>
-    <!-- Search Box: Overlapping both sections -->
-    <div class="relative z-10 -mt-8 px-4">
-        <!-- Alpine.js CDN (Required for Dropdowns) -->
-        <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-
-        <form method="GET"
-            class="bg-white rounded-xl px-2 py-1 shadow-lg flex flex-col md:flex-row items-center gap-1 md:gap-0 border-4 border-yellow-400 max-w-6xl mx-auto overflow-visible text-sm">
-
-            <!-- Destination Selector (Styled Like Guests) -->
-            <div x-data="{ open: false, destination: '' }" class="relative px-2 py-1 flex-1 border-r md:border-r border-gray-500">
-                <button @click="open = !open" type="button" class="flex items-center gap-2 w-full text-left text-sm">
-                    <img src="{{ asset('assets/stay.svg') }}" alt="Stay" class="w-6 h-6"
-                        style="filter: brightness(0) saturate(100%);" />
-
-                    <path d="M10 2a6 6 0 00-6 6c0 4.25 6 10 6 10s6-5.75 6-10a6 6 0 00-6-6zm0 8a2 2 0 110-4 2 2 0 010 4z" />
-                    </svg>
-                    <span x-text="destination || 'Where are you going?'" style="font-family: 'Noto Sans', sans-serif;"
-                        class="text-gray-800 truncate text-base"></span>
-                </button>
-
-                <!-- Dropdown Box -->
-                <div x-show="open" @click.away="open = false"
-                    class="absolute z-20 bg-white shadow-xl rounded-xl p-4 mt-2 w-72 right-0 text-gray-800 space-y-2 text-sm">
-                    <template x-for="city in ['New York', 'Los Angeles', 'London', 'Paris', 'Tokyo']"
-                        :key="city">
-                        <button type="button" @click="destination = city; open = false"
-                            class="block w-full text-left px-3 py-2 hover:bg-gray-100 rounded">
-                            <span x-text="city"></span>
-                        </button>
-                    </template>
-                </div>
-
-                <!-- Hidden field to submit the selected destination -->
-                <input type="hidden" name="destination" :value="destination">
-            </div>
-
-            <!-- Dates Selector -->
-            <!-- Include Alpine.js if not already -->
-            <!-- Include Alpine.js -->
-            <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-
-            <!-- Dropdown with two sections: Check-in/out & Flexible -->
-            <div x-data="{ open: false, activeTab: 'check', checkIn: '', checkOut: '', flexibleOption: '' }"
-                class="relative flex-1 border-t md:border-t-0 md:border-r border-gray-500 px-2 py-1">
-
-                <!-- Dropdown Trigger Button -->
-                <button @click="open = !open" type="button" class="flex items-center gap-2 w-full text-left text-sm">
-                    <img src="{{ asset('assets/calender.svg') }}" alt="Calendar" class="w-5 h-5" />
-                    <span class="text-gray-800 truncate">
-                        <template x-if="activeTab === 'check'">
-                            <span><span x-text="checkIn ? checkIn : 'Check-in'"
-                                    style="font-family: 'Noto Sans', sans-serif;" class="text-base"></span> — <span
-                                    x-text="checkOut ? checkOut : 'Check-out'" style="font-family: 'Noto Sans', sans-serif;"
-                                    class="text-base"></span></span>
-                        </template>
-                        <template x-if="activeTab === 'flexible'">
-                            <span x-text="flexibleOption ? flexibleOption : 'Flexible dates'"></span>
-                        </template>
-                    </span>
-                </button>
-
-                <!-- Dropdown Content -->
-                <div x-show="open" @click.away="open = false"
-                    class="absolute z-30 bg-white shadow-xl rounded-xl p-4 mt-2 w-96 right-0 text-gray-800 text-sm"
-                    x-transition>
-                    <!-- Tabs -->
-                    <nav class="flex border-b border-gray-200 mb-4">
-                        <button @click.prevent="activeTab = 'check'"
-                            :class="activeTab === 'check' ? 'border-blue-600 text-blue-600' : 'text-gray-500'"
-                            class="px-4 py-2 border-b-2 font-semibold focus:outline-none">
-                            Check-in / Check-out
-                        </button>
-                        <button @click.prevent="activeTab = 'flexible'"
-                            :class="activeTab === 'flexible' ? 'border-blue-600 text-blue-600' : 'text-gray-500'"
-                            class="px-4 py-2 border-b-2 font-semibold focus:outline-none">
-                            Flexible dates
-                        </button>
-                    </nav>
-
-                    <!-- Check-in / Check-out Section -->
-                    <div x-show="activeTab === 'check'" x-transition>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs text-gray-500 font-semibold mb-1">Check-in Date</label>
-                                <input type="date" x-model="checkIn"
-                                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none"
-                                    placeholder="Check-in" />
-                            </div>
-                            <div>
-                                <label class="block text-xs text-gray-500 font-semibold mb-1">Check-out Date</label>
-                                <input type="date" x-model="checkOut"
-                                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none"
-                                    placeholder="Check-out" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Flexible Dates Section -->
-                    <div x-show="activeTab === 'flexible'" x-transition>
-                        <label class="block text-xs text-gray-500 font-semibold mb-1">Select Flexible Dates</label>
-                        <select x-model="flexibleOption"
-                            class="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none">
-                            <option value="" disabled>Select option</option>
-                            <option value="Weekend Getaway">Weekend Getaway</option>
-                            <option value="Next Month">Next Month</option>
-                            <option value="Anytime">Anytime</option>
-                            <option value="Custom Range">Custom Range</option>
-                        </select>
-                    </div>
-
-                    <!-- Done Button -->
-                    <div class="mt-4 text-right">
-                        <button @click="open = false"
-                            class="bg-[#3CC0E9] text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">
-                            Done
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-
-
-
-            <!-- Guests Selector -->
-            <div x-data="{ open: false, adults: 2, children: 0, rooms: 1, pets: false }"
-                class="relative px-2 py-1 flex-1 border-t md:border-t-0 md:border-r border-gray-500">
-                <button @click="open = !open" type="button" class="flex items-center gap-2 w-full text-left text-sm">
-                    <img src="{{ asset('assets/user.svg') }}" alt="Calendar" class="w-5 h-5" />
-                    <span x-text="`${adults} adults · ${children} children · ${rooms} room${rooms > 1 ? 's' : ''}`"
-                        class="text-gray-800 text-base truncate" style="font-family: 'Noto Sans', sans-serif;"></span>
-                </button>
-
-                <!-- Guest Dropdown -->
-                <div x-show="open" @click.away="open = false"
-                    class="absolute z-20 bg-white shadow-xl rounded-xl p-4 mt-2 w-72 right-0 text-gray-800 space-y-4 text-sm">
-                    <!-- Adults -->
-                    <div class="flex items-center justify-between">
-                        <span style="font-family: 'Noto Sans', sans-serif;">Adults</span>
-                        <div class="flex items-center gap-2">
-                            <button type="button" @click="if(adults > 1) adults--" class="px-2 py-1 bg-gray-200 rounded"
-                                style="font-family: 'Noto Sans', sans-serif;">−</button>
-                            <span x-text="adults"></span>
-                            <button type="button" @click="adults++" class="px-2 py-1 bg-gray-200 rounded"
-                                style="font-family: 'Noto Sans', sans-serif;">+</button>
-                        </div>
-                    </div>
-
-                    <!-- Children -->
-                    <div class="flex items-center justify-between">
-                        <span>Children</span>
-                        <div class="flex items-center gap-2">
-                            <button type="button" @click="if(children > 0) children--"
-                                class="px-2 py-1 bg-gray-200 rounded">−</button>
-                            <span x-text="children"></span>
-                            <button type="button" @click="children++" class="px-2 py-1 bg-gray-200 rounded">+</button>
-                        </div>
-                    </div>
-
-                    <!-- Rooms -->
-                    <div class="flex items-center justify-between">
-                        <span>Rooms</span>
-                        <div class="flex items-center gap-2">
-                            <button type="button" @click="if(rooms > 1) rooms--"
-                                class="px-2 py-1 bg-gray-200 rounded">−</button>
-                            <span x-text="rooms"></span>
-                            <button type="button" @click="rooms++" class="px-2 py-1 bg-gray-200 rounded">+</button>
-                        </div>
-                    </div>
-
-                    <!-- Pets Toggle -->
-                    <div class="flex items-center justify-between">
-                        <span>Travelling with pets?</span>
-                        <label class="inline-flex items-center cursor-pointer">
-                            <input type="checkbox" x-model="pets" class="sr-only peer">
-                            <div
-                                class="w-10 h-6 bg-gray-300 rounded-full peer peer-checked:bg-blue-600 relative transition-all">
-                                <div
-                                    class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-all peer-checked:translate-x-4">
-                                </div>
-                            </div>
-                        </label>
-                    </div>
-
-                    <p class="text-xs text-gray-500">
-                        Assistance animals aren’t considered pets.<br>
-                        <a href="#" class="text-blue-600 underline">Read more about travelling with assistance
-                            animals</a>
-                    </p>
-
-                    <!-- Done Button -->
-                    <button type="button" @click="open = false"
-                        class="block w-full text-center bg-white border border-[#3CC0E9] text-[#3CC0E9] font-semibold py-2 rounded hover:bg-[#3CC0E9]/10">
-                        Done
-                    </button>
-                </div>
-            </div>
-
-            <!-- Search Button -->
-            <div class="px-2 py-1">
-                <button type="submit"
-                    class="w-full md:w-auto h-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg text-sm"
-                    style="background-color:#3CC0E9;">
-                    Search
-                </button>
-            </div>
-        </form>
-
-
-    </div>
-
-
-    <!-- AlpineJS -->
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
     <section class="py-6 bg-white">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -249,7 +32,7 @@
                 class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 p-4 bg-white rounded-lg shadow-sm">
                 <!-- Left: Title and Info -->
                 <div>
-                    <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">La Grande Villa</h1>
+                    <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">{{ $property->title ?? 'Property Title' }}</h1>
                     <div class="flex items-center mb-2">
                         @for ($i = 0; $i < 4; $i++)
                             <svg class="w-5 h-5 text-yellow-500" viewBox="0 0 24 24" fill="currentColor">
@@ -263,7 +46,7 @@
                             <path
                                 d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z" />
                         </svg>
-                        No.24, 22000 Nuwara Eliya, Sri Lanka
+                        {{ $property->address ?? 'Address' }}, {{ $property->city ?? 'City' }}, {{ $property->country ?? 'Country' }}
                     </div>
                 </div>
 
@@ -274,8 +57,8 @@
                         <div x-data="{ isLiked: false }" class="cursor-pointer">
                             <svg @click="isLiked = !isLiked" class="w-6 h-6 transition-colors duration-200"
                                 :class="isLiked ? 'text-red-500 fill-current' : 'text-blue-400 hover:text-blue-600'"
-                                :fill="isLiked ? 'currentColor' : 'none'"
-                                stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                :fill="isLiked ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="2"
+                                viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                             </svg>
@@ -291,8 +74,7 @@
                         </button>
                     </div>
                     <div class="flex items-center text-[#3CC0E9] text-sm">
-                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2"
-                            viewBox="0 0 24 24">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.007 12.007 0 002.944 12c0 2.873.996 5.474 2.618 7.594L12 22.944l6.438-3.35C20.004 17.474 21 14.873 21 12a12.007 12.007 0 00-2.382-7.016z" />
                         </svg>
@@ -341,18 +123,38 @@
                                 'col-span-2 row-span-2 col-start-9 row-start-7',
                             ];
                         @endphp
-                        @foreach ($desktopImages as $index => $img)
-                            <div class="{{ $positions[$index] }} relative overflow-hidden"> {{-- Added overflow-hidden for rounded corners --}}
-                                <img src="{{ asset('images/' . $img) }}" class="w-full h-full object-cover rounded-lg"
-                                    alt="Gallery Image {{ $index + 1 }}">
-                                @if ($index === $desktopVisibleImageCount - 1 && $remainingCount > 0)
-                                    <div onclick="openGalleryModal({{ $desktopVisibleImageCount }})"
-                                        class="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center text-white text-lg font-bold cursor-pointer hover:bg-opacity-70 transition rounded-lg">
-                                        {{ $remainingCount }}+ more
-                                    </div>
-                                @endif
-                            </div>
-                        @endforeach
+                        @php
+                            $photos = $property->photos ?? collect();
+                            $visiblePhotos = $photos->take(8);
+                            $remainingCount = $photos->count() - 8;
+                            // Fallback images if no photos
+                            $fallbackImages = ['h1.jpg', 'h2.jpg', 'h3.jpg', 'h4.jpg', 'h5.jpg', 'h6.jpg', 'h7.jpg', 'h8.jpg'];
+                        @endphp
+                        @if($visiblePhotos->count() > 0)
+                            @foreach($visiblePhotos as $index => $photo)
+                                <div class="{{ $positions[$index] ?? '' }} relative overflow-hidden">
+                                    <img src="{{ asset('storage/' . $photo->photo_url) }}" class="w-full h-full object-cover rounded-lg" alt="Gallery Image {{ $index + 1 }}">
+                                    @if($loop->last && $remainingCount > 0)
+                                        <div onclick="openGalleryModal({{ $index + 1 }})"
+                                            class="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center text-white text-lg font-bold cursor-pointer hover:bg-opacity-70 transition rounded-lg">
+                                            {{ $remainingCount }}+ more
+                                        </div>
+                                    @endif
+                                </div>
+                            @endforeach
+                        @else
+                            @foreach($fallbackImages as $index => $img)
+                                <div class="{{ $positions[$index] ?? '' }} relative overflow-hidden">
+                                    <img src="{{ asset('images/' . $img) }}" class="w-full h-full object-cover rounded-lg" alt="Gallery Image {{ $index + 1 }}">
+                                    @if($index === 7)
+                                        <div onclick="openGalleryModal({{ $index + 1 }})"
+                                            class="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center text-white text-lg font-bold cursor-pointer hover:bg-opacity-70 transition rounded-lg">
+                                            2+ more
+                                        </div>
+                                    @endif
+                                </div>
+                            @endforeach
+                        @endif
                     </div>
 
                     <div class="grid grid-cols-4 grid-rows-2 gap-2 lg:hidden h-[300px] sm:h-[400px]">
@@ -360,18 +162,36 @@
                             $mobilePositions = ['col-span-3 row-span-2', 'col-start-4', 'col-start-4 row-start-2'];
                         @endphp
 
-                        @foreach ($mobileImages as $index => $img)
-                            <div class="{{ $mobilePositions[$index] }} relative overflow-hidden"> {{-- Added overflow-hidden for rounded corners --}}
-                                <img src="{{ asset('images/' . $img) }}" class="w-full h-full object-cover rounded-md"
-                                    alt="Gallery Image {{ $index + 1 }}">
-                                @if ($index === $mobileVisibleImageCount - 1 && $remainingCount > 0)
-                                    <div onclick="openGalleryModal({{ $mobileVisibleImageCount }})"
-                                        class="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center text-white text-base font-semibold rounded-md cursor-pointer">
-                                        {{ $remainingCount }}+ more
-                                    </div>
-                                @endif
-                            </div>
-                        @endforeach
+                        @php
+                            $mobilePhotos = $photos->take(3);
+                            $mobileRemainingCount = $photos->count() - 3;
+                            $mobileFallback = ['h1.jpg', 'h2.jpg', 'h3.jpg'];
+                        @endphp
+                        @if($mobilePhotos->count() > 0)
+                            @foreach($mobilePhotos as $index => $photo)
+                                <div class="{{ $mobilePositions[$index] ?? '' }} relative overflow-hidden">
+                                    <img src="{{ asset('storage/' . $photo->photo_url) }}" class="w-full h-full object-cover rounded-md" alt="Gallery Image {{ $index + 1 }}">
+                                    @if($loop->last && $mobileRemainingCount > 0)
+                                        <div onclick="openGalleryModal({{ $index + 1 }})"
+                                            class="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center text-white text-base font-semibold rounded-md cursor-pointer">
+                                            {{ $mobileRemainingCount }}+ more
+                                        </div>
+                                    @endif
+                                </div>
+                            @endforeach
+                        @else
+                            @foreach($mobileFallback as $index => $img)
+                                <div class="{{ $mobilePositions[$index] ?? '' }} relative overflow-hidden">
+                                    <img src="{{ asset('images/' . $img) }}" class="w-full h-full object-cover rounded-md" alt="Gallery Image {{ $index + 1 }}">
+                                    @if($index === 2)
+                                        <div onclick="openGalleryModal({{ $index + 1 }})"
+                                            class="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center text-white text-base font-semibold rounded-md cursor-pointer">
+                                            7+ more
+                                        </div>
+                                    @endif
+                                </div>
+                            @endforeach
+                        @endif
                     </div>
                 </div>
 
@@ -478,7 +298,7 @@
 
 
         <script>
-            const images = @json($images);
+            const images = @json($photos->count() > 0 ? $photos->pluck('photo_url')->toArray() : ['h1.jpg', 'h2.jpg', 'h3.jpg', 'h4.jpg', 'h5.jpg', 'h6.jpg', 'h7.jpg', 'h8.jpg', 'h9.jpg', 'h10.jpg']);
             let currentIndex = 0;
 
             function openGalleryModal(startIndex = 0) {
@@ -498,7 +318,7 @@
                 const counter = document.getElementById('imageCounter');
                 // Ensure images array is not empty before trying to access elements
                 if (images.length > 0) {
-                    img.src = `/images/${images[currentIndex]}`;
+                    img.src = images[currentIndex].includes('.jpg') ? `/images/${images[currentIndex]}` : `/storage/${images[currentIndex]}`;
                     counter.textContent = `Image ${currentIndex + 1} of ${images.length}`;
                 } else {
                     // Handle case where no images are loaded
@@ -642,7 +462,7 @@
             <div class="flex flex-col lg:flex-row gap-6">
 
                 <div class="flex-1 space-y-4">
-                    <h2 class="text-2xl font-bold text-black">Experience world-class service at La Grande Villa</h2>
+                    <h2 class="text-2xl font-bold text-black">Experience world-class service at {{ $property->title ?? 'Property' }}</h2>
 
                     <p class="text-green-600 font-semibold" style="font-family: 'Noto Sans', sans-serif;">Reliable info:
                         <span class="text-gray-700">Guests say the description and photos for this property are very
@@ -651,10 +471,8 @@
 
                     <div class="space-y-3 text-gray-800">
                         <p style="font-family: 'Noto Sans', sans-serif;" class="text-sm"><span class="font-bold"
-                                style="font-family: 'Noto Sans', sans-serif;">Elegant Accommodation:</span> La Grande Villa
-                            in Nuwara Eliya offers a 5-star villa experience with a beautiful garden, terrace, and outdoor
-                            seating area. Guests enjoy free WiFi, private check-in and check-out services, and a paid
-                            shuttle service.</p>
+                                style="font-family: 'Noto Sans', sans-serif;">Property Description:</span> 
+                            {{ $property->description ?? 'Experience luxury accommodation with modern amenities and exceptional service.' }}</p>
 
                         <p style="font-family: 'Noto Sans', sans-serif;" class="text-sm"><span class="font-bold"
                                 style="font-family: 'Noto Sans', sans-serif;">Comfortable Amenities:</span> The property
@@ -681,25 +499,21 @@
                     <div>
                         <h3 class="text-lg font-semibold text-black mt-6 mb-4">Most popular facilities</h3>
                         <div class="flex flex-wrap gap-4">
-                            @foreach ([
-                                ['icon' => 'Vector(30).svg', 'label' => 'Good free WiFi (32Mbps)'],
-                                ['icon' => 'Group(10).svg', 'label' => 'Family rooms'],
-                                ['icon' => 'Group(11).svg', 'label' => 'Free parking'],
-                                ['icon' => 'Vector(31).svg', 'label' => 'Restaurant'],
-                                ['icon' => 'Vector(32).svg', 'label' => 'Non-smoking rooms'],
-                                ['icon' => 'Vector(33).svg', 'label' => 'Airport shuttle'],
-                                ['icon' => 'Group(12).svg', 'label' => 'Room service'],
-                                ['icon' => 'Group(13).svg', 'label' => 'Heating'],
-                                ['icon' => 'Vector(34).svg', 'label' => 'Facilities for disabled guests'],
-                                ['icon' => 'Vector(35).svg', 'label' => 'Good breakfast']
-                            ] as $facility)
-                                <div
-                                    class="flex items-center justify-center lg:justify-start p-2">
-                                    <img src="{{ asset('assets/' . $facility['icon']) }}" alt="{{ $facility['label'] }}"
-                                        class="w-5 h-5 mr-4">
-                                    <span class="text-sm text-gray-800 font-medium">{{ $facility['label'] }}</span>
-                                </div>
-                            @endforeach
+                            @if($property->amenities && $property->amenities->count() > 0)
+                                @foreach($property->amenities->take(10) as $amenity)
+                                    <div class="flex items-center justify-center lg:justify-start p-2">
+                                        <span class="text-sm text-gray-800 font-medium">{{ $amenity->name }}</span>
+                                    </div>
+                                @endforeach
+                            @else
+                                @foreach ([['icon' => 'Vector(30).svg', 'label' => 'Good free WiFi (32Mbps)'], ['icon' => 'Group(10).svg', 'label' => 'Family rooms'], ['icon' => 'Group(11).svg', 'label' => 'Free parking'], ['icon' => 'Vector(31).svg', 'label' => 'Restaurant'], ['icon' => 'Vector(32).svg', 'label' => 'Non-smoking rooms']] as $facility)
+                                    <div class="flex items-center justify-center lg:justify-start p-2">
+                                        <img src="{{ asset('assets/' . $facility['icon']) }}" alt="{{ $facility['label'] }}"
+                                            class="w-5 h-5 mr-4">
+                                        <span class="text-sm text-gray-800 font-medium">{{ $facility['label'] }}</span>
+                                    </div>
+                                @endforeach
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -977,11 +791,9 @@
                             <tr class="hover:bg-gray-50">
                                 <!-- Room Type -->
                                 <td class="p-3 align-top border border-blue-500">
-                                    <h3 class="text-blue-600 font-semibold underline">Private Villa by the Tea Resort</h3>
+                                    <h3 class="text-blue-600 font-semibold underline">{{ $property->title ?? 'Private Villa by the Tea Resort' }}</h3>
                                     <p class="text-gray-600 mt-1 text-sm">
-                                        Guests will have a special experience at this double room featuring a hot tub, spa
-                                        bath and fireplace. The spacious double room provides soundproof walls, a minibar, a
-                                        terrace with garden views as well as a private bathroom with a walk-in shower.
+                                        {{ $property->description ?? 'Guests will have a special experience at this property featuring modern amenities and comfortable accommodations.' }}
                                     </p>
                                 </td>
 
@@ -997,37 +809,54 @@
 
                                 <!-- Price -->
                                 <td class="p-3 align-top border border-blue-500">
-                                    <div class="text-red-500 line-through">LKR 52,000</div>
-                                    <div class="text-lg font-bold text-green-600">LKR 45,600</div>
-                                    <div class="relative group inline-block">
-                                        <!-- Tooltip box -->
-                                        <div
-                                            class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max px-3 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition duration-200 pointer-events-none z-10">
-                                            Limited-time offer! Save more with this deal.
-                                        </div>
-
-                                        <!-- Actual button -->
-                                        <button class="text-xs text-white px-2 py-1 rounded mt-2"
-                                            style="background-color:#1D9D39; font-family: 'Noto Sans', sans-serif;">
-                                            Getaway Deal
-                                        </button>
-                                        <span class="text-white px-2 py-1 rounded text-xs"
-                                            style="background-color: rgb(31, 143, 178); font-family: 'Lato', sans-serif;">Genius</span>
-                                    </div>
-
-                                    <div class="text-xs text-gray-500">+ LKR 2,374 taxes and fees</div>
+                                    @if($property->pricing)
+                                        @if($property->pricing->original_price)
+                                            <div class="text-red-500 line-through">LKR {{ number_format($property->pricing->original_price) }}</div>
+                                        @endif
+                                        <div class="text-lg font-bold text-green-600">LKR {{ number_format($property->pricing->base_price ?? 45600) }}</div>
+                                        @if($property->pricing->discount_percentage)
+                                            <div class="relative group inline-block">
+                                                <button class="text-xs text-white px-2 py-1 rounded mt-2"
+                                                    style="background-color:#1D9D39; font-family: 'Noto Sans', sans-serif;">
+                                                    {{ $property->pricing->discount_percentage }}% Off
+                                                </button>
+                                            </div>
+                                        @endif
+                                        @if($property->pricing->tax_amount)
+                                            <div class="text-xs text-gray-500">+ LKR {{ number_format($property->pricing->tax_amount) }} taxes and fees</div>
+                                        @endif
+                                    @else
+                                        <div class="text-lg font-bold text-green-600">LKR 45,600</div>
+                                        <div class="text-xs text-gray-500">+ LKR 2,374 taxes and fees</div>
+                                    @endif
                                 </td>
 
                                 <!-- Choices -->
                                 <td class="p-3 align-top border border-blue-500 text-gray-700 text-sm">
                                     <ul class="space-y-1">
-                                        <li><strong>Good breakfast</strong> LKR 2,394</li>
-                                        <li class="text-green-700">✔ Flexible to reschedule if plans change</li>
-                                        <li class="text-red-600">✘ Non-refundable</li>
-                                        <li>✔ Pay the property before arrival</li>
-                                        <li class="text-green-700">✔ 10% Genius discount applied</li>
+                                        @if($property->services && $property->services->breakfast_included)
+                                            <li><strong>Breakfast included</strong></li>
+                                        @endif
+                                        @if($property->policies)
+                                            @if($property->policies->flexible_cancellation)
+                                                <li class="text-green-700">✔ Flexible to reschedule if plans change</li>
+                                            @else
+                                                <li class="text-red-600">✘ Non-refundable</li>
+                                            @endif
+                                            @if($property->policies->pay_at_property)
+                                                <li>✔ Pay the property before arrival</li>
+                                            @endif
+                                        @else
+                                            <li class="text-green-700">✔ Flexible to reschedule if plans change</li>
+                                            <li>✔ Pay the property before arrival</li>
+                                        @endif
+                                        @if($property->pricing && $property->pricing->discount_percentage)
+                                            <li class="text-green-700">✔ {{ $property->pricing->discount_percentage }}% discount applied</li>
+                                        @endif
                                         <li>✔ Taxes and charges included</li>
-                                        <li>✔ Free stay for your child</li>
+                                        @if($property->policies && $property->policies->children_allowed)
+                                            <li>✔ Free stay for your child</li>
+                                        @endif
                                     </ul>
                                 </td>
 
@@ -1212,7 +1041,8 @@
 
                 <div class="mt-4 flex flex-col sm:flex-row items-start sm:items-center gap-4">
                     <!-- Host Image -->
-                    <img src="{{ asset('images/h3.jpg') }}" alt="Host" class="w-32 h-32 object-cover rounded-full border">
+                    <img src="{{ asset('images/h3.jpg') }}" alt="Host"
+                        class="w-32 h-32 object-cover rounded-full border">
 
                     <!-- Host Details -->
                     <div class="space-y-2 text-sm text-gray-700">
@@ -1243,7 +1073,7 @@
                     </div>
                     <div class="">
                         <p class="text-xs sm:text-sm md:text-base text-gray-500 truncate">
-                            La Grande Villa takes special requests - add in the next step!
+                            {{ $property->title ?? 'Property' }} takes special requests - add in the next step!
                         </p>
                     </div>
                 </div>
@@ -1259,26 +1089,48 @@
                             <tbody class="divide-y divide-gray-200">
                                 @php
                                     $rows = [
-                                        ['check-in.svg', 'Check in', '<p>From 14:00 to 23:30</p><p class="text-gray-500">You\'ll need to let the property know in advance what time you\'ll arrive.</p>'],
+                                        [
+                                            'check-in.svg',
+                                            'Check in',
+                                            '<p>From 14:00 to 23:30</p><p class="text-gray-500">You\'ll need to let the property know in advance what time you\'ll arrive.</p>',
+                                        ],
                                         ['check-out.svg', 'Check out', 'From 05:00 to 11:00'],
-                                        ['prepayment.svg', 'Cancellation/ prepayment', 'Cancellation and prepayment policies vary according to accommodation type. Please check what may apply to each option when making your selection.'],
-                                        ['children.svg', 'Children and beds', '<p class="font-semibold">Child policies</p><p>To see correct prices and occupancy information, please add the number of children in your group and their ages to your search.</p><p class="mt-2 font-semibold">Cot and extra bed policies</p><p>The number of cots allowed is dependent on the option you choose. Please check your selected option for more information.</p>'],
+                                        [
+                                            'prepayment.svg',
+                                            'Cancellation/ prepayment',
+                                            'Cancellation and prepayment policies vary according to accommodation type. Please check what may apply to each option when making your selection.',
+                                        ],
+                                        [
+                                            'children.svg',
+                                            'Children and beds',
+                                            '<p class="font-semibold">Child policies</p><p>To see correct prices and occupancy information, please add the number of children in your group and their ages to your search.</p><p class="mt-2 font-semibold">Cot and extra bed policies</p><p>The number of cots allowed is dependent on the option you choose. Please check your selected option for more information.</p>',
+                                        ],
                                         ['noage.svg', 'No age restriction', 'There is no age requirement for check-in.'],
-                                        ['payment.svg', 'Accepted payment methods', '<div class="flex flex-wrap items-center gap-4 mt-1"><img src="' . asset('images/visa.png') . '" alt="Visa" class="h-10 p-1 border rounded-md"><img src="' . asset('images/mastercard.png') . '" alt="MasterCard" class="h-10 p-1 border rounded-md"></div>'],
+                                        [
+                                            'payment.svg',
+                                            'Accepted payment methods',
+                                            '<div class="flex flex-wrap items-center gap-4 mt-1"><img src="' .
+                                            asset('images/visa.png') .
+                                            '" alt="Visa" class="h-10 p-1 border rounded-md"><img src="' .
+                                            asset('images/mastercard.png') .
+                                            '" alt="MasterCard" class="h-10 p-1 border rounded-md"></div>',
+                                        ],
                                         ['nosmoking.svg', 'Smoking', 'Smoking is not allowed.'],
                                         ['quiet.svg', 'Quiet hours', 'Guests must be quiet between 22:00 and 06:00.'],
                                         ['pets.svg', 'Pets', 'Pets are not allowed.'],
                                     ];
                                 @endphp
 
-                                @foreach($rows as [$icon, $label, $content])
-                                <tr class="align-top">
-                                    <th class="p-4 font-bold whitespace-normal flex items-center justify-start lg:justify-start gap-2">
-                                        <img src="/assets/{{ $icon }}" class="w-4 h-4 mt-1 shrink-0" alt="{{ $label }}">
-                                        <span>{{ $label }}</span>
-                                    </th>
-                                    <td class="p-4">{!! $content !!}</td>
-                                </tr>
+                                @foreach ($rows as [$icon, $label, $content])
+                                    <tr class="align-top">
+                                        <th
+                                            class="p-4 font-bold whitespace-normal flex items-center justify-start lg:justify-start gap-2">
+                                            <img src="/assets/{{ $icon }}" class="w-4 h-4 mt-1 shrink-0"
+                                                alt="{{ $label }}">
+                                            <span>{{ $label }}</span>
+                                        </th>
+                                        <td class="p-4">{!! $content !!}</td>
+                                    </tr>
                                 @endforeach
                             </tbody>
                         </table>
@@ -1298,16 +1150,17 @@
                         availability</button>
                 </div>
                 <div class="bg-gray-50 border rounded-lg p-4 text-lg text-gray-700">
-                    <p class="m-2">Please inform La Grande Villa in advance of your expected arrival time. You can use the Special Requests
-                    box when booking, or contact the property directly with the contact details provided in your
-                    confirmation. </p>
+                    <p class="m-2">Please inform {{ $property->title ?? 'Property' }} in advance of your expected arrival time. You can use
+                        the Special Requests
+                        box when booking, or contact the property directly with the contact details provided in your
+                        confirmation. </p>
                     <p class="m-2"> Quiet hours are between 22:00 and 06:00.</p>
                 </div>
             </div>
 
             <!-- FAQ Placeholder -->
             <div>
-                <h2 class="text-lg font-semibold">FAQs about La Grande Villa</h2>
+                <h2 class="text-lg font-semibold">FAQs about {{ $property->title ?? 'Property' }}</h2>
                 <p class="text-sm text-gray-600 mt-1">How much does it cost to rent a car in Sri Lanka for a week? • Which
                     pickup locations in Sri Lanka are the most popular?</p>
             </div>
@@ -1387,7 +1240,8 @@
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <!-- TAGS -->
             <div class="mt-10">
-                <div class="text-xs sm:text-sm text-gray-700 flex flex-wrap items-center justify-center gap-x-1 gap-y-1 leading-relaxed">
+                <div
+                    class="text-xs sm:text-sm text-gray-700 flex flex-wrap items-center justify-center gap-x-1 gap-y-1 leading-relaxed">
                     <span>Countries</span><span>&middot;</span>
                     <span>Regions</span><span>&middot;</span>
                     <span>Cities</span><span>&middot;</span>
@@ -1429,49 +1283,52 @@
             });
         });
     </script>
-@endsection
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const links = document.querySelectorAll("a.scroll-link");
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const links = document.querySelectorAll("a.scroll-link");
 
-        // Mark the first link (Overview) as active by default
-        if (links.length > 0) {
-            links[0].classList.add("border-b-2", "border-blue-500", "text-blue-600", "font-semibold");
-        }
+            // Mark the first link (Overview) as active by default
+            if (links.length > 0) {
+                links[0].classList.add("border-b-2", "border-blue-500", "text-blue-600", "font-semibold");
+            }
 
-        // Get section IDs from hrefs
-        const sectionIds = Array.from(links).map(link => link.getAttribute("href").substring(1));
-        const sections = sectionIds.map(id => document.getElementById(id)).filter(Boolean);
+            // Get section IDs from hrefs
+            const sectionIds = Array.from(links).map(link => link.getAttribute("href").substring(1));
+            const sections = sectionIds.map(id => document.getElementById(id)).filter(Boolean);
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    links.forEach(link => {
-                        link.classList.remove("border-b-2", "border-blue-500",
-                            "text-blue-600", "font-semibold");
-                        if (link.getAttribute("href") === `#${entry.target.id}`) {
-                            link.classList.add("border-b-2", "border-blue-500",
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        links.forEach(link => {
+                            link.classList.remove("border-b-2", "border-blue-500",
                                 "text-blue-600", "font-semibold");
-                        }
-                    });
-                }
+                            if (link.getAttribute("href") === `#${entry.target.id}`) {
+                                link.classList.add("border-b-2", "border-blue-500",
+                                    "text-blue-600", "font-semibold");
+                            }
+                        });
+                    }
+                });
+            }, {
+                threshold: 0.6
             });
-        }, {
-            threshold: 0.6
-        });
 
-        sections.forEach(section => observer.observe(section));
+            sections.forEach(section => observer.observe(section));
 
-        links.forEach(link => {
-            link.addEventListener("click", (e) => {
-                e.preventDefault();
-                const target = document.querySelector(link.getAttribute("href"));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: "smooth"
-                    });
-                }
+            links.forEach(link => {
+                link.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    const target = document.querySelector(link.getAttribute("href"));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: "smooth"
+                        });
+                    }
+                });
             });
         });
-    });
-</script>
+    </script>
+
+
+@endsection

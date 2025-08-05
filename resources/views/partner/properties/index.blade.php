@@ -53,8 +53,9 @@
                         </td>
                         <td class="px-4 py-2">{{ $property['bookings'] }}</td>
                         <td class="px-4 py-2 text-right">
-                            <button class="text-blue-600 hover:underline mr-2">Edit</button>
-                            <button class="text-red-600 hover:underline">Delete</button>
+                            <a href="{{ route('partner.properties.views', $property['id']) }}" class="bg-[#1F8FB2] text-white px-3 py-1 rounded text-xs hover:opacity-90 transition mr-2">View Details</a>
+                            <button class="bg-blue-500 text-white px-3 py-1 rounded text-xs hover:bg-blue-600 transition mr-2">Edit</button>
+                            <button class="bg-red-500 text-white px-3 py-1 rounded text-xs hover:bg-red-600 transition">Delete</button>
                         </td>
                     </tr>
                     @endforeach
