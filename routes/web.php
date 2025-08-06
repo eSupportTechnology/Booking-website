@@ -260,6 +260,22 @@ Route::get('/partner/alternative/Single/Campsite/room', function () {
     return view('frontend.partner-alternative-campsite-room');
 })->name('partner.alternative.single.campsite.room');
 
+Route::get('/partner/alternative/Single/Campsite/cancel-policies', function () {
+    return view('frontend.partner-alternative-campsite-cancel-policies');
+})->name('partner.alternative.single.campsite.cancel-policies');
+
+Route::get('/partner/alternative/Single/Campsite/cancel-policies', function () {
+    return view('frontend.partner-alternative-campsite-cancel-policies');
+})->name('partner.alternative.single.campsite.cancel-policies');
+
+Route::get('/partner/alternative/form', function () {
+    return view('frontend.partner-alternative-form-1');
+})->name('partner.alternative.form');
+
+Route::get('/partner/alternative/single/boat', function () {
+    return view('frontend.partner-alternative-single-boat');
+})->name('partner.alternative.single.boat');
+
 Route::get('/partner-apartment-multiple', function () {
     return view('frontend.partner-multiple-apartment');
 })->name('partner.apartment.multiple');
