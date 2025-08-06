@@ -38,7 +38,7 @@ Route::get('/login', [LoginController::class, 'show'])->name('login');
 //     return view('frontend.login');
 // });
 
-Route::get('change', [LanguageController::class, 'change'])->name('lang.change');
+Route::post('change-language', [LanguageController::class, 'change'])->name('lang.change');
 
 Route::prefix('customer')->group(function () {
     Route::get('/login', [CustomerAuthController::class, 'showLoginForm'])->name('customer.login');
@@ -220,6 +220,9 @@ Route::get('/partner-hotels-rooms', function () {
     return view('frontend.partner-hotels-rooms');
 })->name('partner.hotels.rooms');
 
+
+
+
 Route::get('/partner-hotels-create-2', function () {
     return view('frontend.partner-hotels-create-2');
 })->name('partner.hotels.create.2');
@@ -242,6 +245,20 @@ Route::get('/partner-alternative-entireplace', function () {
 Route::get('/partner-alternative-privateroom', function () {
     return view('frontend.partner-alternative-privateroom');
 })->name('partner.alternative.privateroom');
+
+Route::get('/partner/alternative/entireplace/step/2', function () {
+    return view('frontend.partner-alternative-entireplace-step-02');
+})->name('partner.alternative.entireplace.step.2');
+
+
+
+Route::get('/partner/alternative/Single/Campsite', function () {
+    return view('frontend.partner-alternative-one-campsite');
+})->name('partner.alternative.single.campsite');
+
+Route::get('/partner/alternative/Single/Campsite/room', function () {
+    return view('frontend.partner-alternative-campsite-room');
+})->name('partner.alternative.single.campsite.room');
 
 Route::get('/partner-apartment-multiple', function () {
     return view('frontend.partner-multiple-apartment');
@@ -272,6 +289,31 @@ Route::get('/partner-apartments-final/{property?}', [PropertyController::class, 
 Route::get('/partner-hotels-edit', function () {
     return view('frontend.partner-hotels-edit');
 })->name('partner.hotels.edit');
+
+Route::get('/partner-hotels-cancel-policies', function () {
+    return view('frontend.partner-hotels-cancel-policies');
+})->name('partner.hotels.cancel.policies');
+
+Route::get('/partner-hotels-priceper-group', function () {
+    return view('frontend.partner-hotels-price-per-group');
+})->name('partner.hotels.price.per.group');
+
+Route::get('/partner-hotels-weekly-rate', function () {
+    return view('frontend.partner-hotels-weekly-rate');
+})->name('partner.hotels.weekly.rate');
+
+Route::get('/partner-hotels-non-refundable-rate', function () {
+    return view('frontend.partner-hotels-non-refundable');
+})->name('partner.hotels.non.refundable.rate');
+
+
+Route::get('/partner-hotels-complete-registration', function () {
+    return view('frontend.partner-hotels-complete-registration');
+})->name('partner.hotels.complete.registration');
+
+Route::get('/partner-hotels-multiple', function () {
+    return view('frontend.partner-hotels-multiple');
+})->name('partner.hotels.multiple');
 
 // Route::get('/email-verify', function () {
 //     return view('frontend.verify-email');
@@ -516,31 +558,79 @@ Route::post('/partner/property/{property}/rate-plans', [PropertyController::clas
 require __DIR__ . '/auth.php';
 
 
-Route::get('/admin/dashboard', function () {
-    return view('frontend.admin.dashboard');
-})->name('admin.dashboard');
+// Admin Portal Routes
+Route::prefix('admin')->name('admin.')->group(function () {
+    // Guest routes
+    Route::middleware('guest')->group(function () {
+        Route::get('/admin-login', [\App\Http\Controllers\Admin\AuthController::class, 'showLogin'])->name('login');
+        Route::post('/admin-login', [\App\Http\Controllers\Admin\AuthController::class, 'login']);
+        Route::get('/admin-registration', [\App\Http\Controllers\Admin\AuthController::class, 'showRegister'])->name('register');
+        Route::post('/admin-registration', [\App\Http\Controllers\Admin\AuthController::class, 'register']);
+        Route::get('/admin-forgot-password', [\App\Http\Controllers\Admin\AuthController::class, 'showForgotPassword'])->name('forgot-password');
+        Route::post('/admin-forgot-password', [\App\Http\Controllers\Admin\AdminPasswordResetLinkController::class, 'store'])->name('password.email');
+        Route::get('/admin-reset-password/{token}', function ($token) {
+            return view('admin.admin-reset-password', [
+                'token' => $token,
+                'email' => request('email')
+            ]);
+        })->name('password.reset');
+        Route::post('/admin-reset-password', [\App\Http\Controllers\Admin\AdminNewPasswordController::class, 'store'])->name('password.store');
+    });
 
+        // Protected admin routes
+        Route::middleware(['auth:admin', \App\Http\Middleware\AdminMiddleware::class, \App\Http\Middleware\PreventBackHistory::class])->group(function () {
+        Route::get('/center', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
+        Route::post('/exit', [\App\Http\Controllers\Admin\AuthController::class, 'logout'])->name('logout');
 
-Route::get('/admin/customers', function () {
-    return view('frontend.admin.customers');
-})->name('admin.customers');
+        // Property management
+        Route::get('/units', function () {
+            return view('admin.admin-apartments');
+        })->name('apartments');
+        Route::get('/residences', function () {
+            return view('admin.admin-homes');
+        })->name('homes');
+        Route::get('/venues', function () {
+            return view('admin.admin-hotels');
+        })->name('hotels');
+        Route::get('/unique-stays', function () {
+            return view('admin.admin-alternative-places');
+        })->name('alternative.places');
 
-Route::get('/admin/customer-view', function () {
-    return view('frontend.admin.customer-view');
+        // Customer management
+        Route::get('/accounts', function () {
+            return view('admin.admin-customers');
+        })->name('customers');
+        Route::post('/account-details', [\App\Http\Controllers\Admin\CustomerViewController::class, 'show'])->name('customer.view');
+
+        // Partner management
+        Route::get('/partners', function () {
+            return view('admin.admin-partners');
+        })->name('partners');
+        Route::post('/partner-details', [\App\Http\Controllers\Admin\PartnerViewController::class, 'show'])->name('partner.view');
+
+        // Settings
+        Route::get('/settings', function () {
+            return view('admin.admin-settings');
+        })->name('settings');
+
+        // Super admin only routes
+        Route::middleware(\App\Http\Middleware\SuperAdminMiddleware::class)->group(function () {
+            Route::get('/pending', [\App\Http\Controllers\Admin\AdminApprovalController::class, 'index'])->name('approvals.index');
+            Route::post('/pending/{admin}/approve', [\App\Http\Controllers\Admin\AdminApprovalController::class, 'approve'])->name('approvals.approve');
+            Route::post('/pending/{admin}/reject', [\App\Http\Controllers\Admin\AdminApprovalController::class, 'reject'])->name('approvals.reject');
+        });
+    });
 });
 
 
+Route::get('/partner-home-final-steps', function () {
+    return view('frontend.partner-home-final-steps');
+})->name('frontend.partner-home-final-steps');
 
 
-
-
-
-
-
-
-
-
-
+Route::get('/apartment/final', function () {
+    return view('frontend.partner-apartment-final');
+})->name('partner.apartment.final');
 
 
 

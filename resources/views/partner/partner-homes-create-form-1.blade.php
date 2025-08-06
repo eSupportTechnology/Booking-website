@@ -1,11 +1,10 @@
-<!DOCTYPE html>
-<html lang="en" x-data="{ step: 1, selectedBox: null }" xmlns:x-bind="http://www.w3.org/1999/xlink">
+@extends('partner.partner-layout')
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>create homes</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+@section('title', ' Homes Create | ' . config('domains.app_name'))
+
+@section('content')
+
+
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -127,8 +126,9 @@
         </section>
     </header>
 
+   <div x-data="{ step: 1, selectedBox: null }">
     <!-- Start Form -->
-    <div class="max-w-6xl p-4 ml-14 bg-gray-100" x-data="{ propertyId: null, selected: '',  propertyName: '',description: '',availableLanguages: {{ Js::from($languages) }} }">
+    <div class="max-w-6xl p-4 ml-14" x-data="{ propertyId: null, selected: '',  propertyName: '',description: '',availableLanguages: {{ Js::from($languages) }} }">
 
         <!-- Step 1: Main Form Step -->
         <form class="p-6 rounded-lg space-y-6" @submit.prevent>
@@ -245,7 +245,7 @@
                             <div class="flex items-center justify-between pt-4">
                                 <button type="button"
                                     @click="window.location.href = '{{ route('partner.property.category') }}'"
-                                    class="border border-[#3CC0E9] text-blue-600 hover:bg-[#29ACD5] font-semibold py-2 px-4 rounded">
+                                    class="border border-[#3CC0E9] text-blue-600 hover:bg-sky-50 font-semibold py-2 px-4 rounded">
                                     ←
                                 </button>
                                 <button type="button" @click="submitStep1()"
@@ -354,7 +354,7 @@
                 <template x-if="step === 2">
                     <div class="flex items-center justify-between pt-4">
                         <button type="button" @click="step = 1"
-                            class="border border-[#3CC0E9] text-blue-600  font-semibold py-2 px-4 rounded">
+                            class="border border-[#3CC0E9] text-blue-600 hover:bg-sky-50 font-semibold py-2 px-4 rounded">
                             ←
                         </button>
 
@@ -463,7 +463,7 @@
                                     <div class="flex items-center justify-between pt-4">
                                         <button type="button"
                                             @click="$dispatch('step-change', 2)"
-                                            class="border border-[#3CC0E9] text-blue-600  font-semibold py-2 px-4 rounded">
+                                            class="border border-[#3CC0E9] text-blue-600 hover:bg-sky-50  font-semibold py-2 px-4 rounded">
                                             ←
                                         </button>
 
@@ -617,7 +617,7 @@
                                                     <template x-if="step === 3">
                                                         <div class="flex items-center justify-between pt-4">
                                                             <button type="button" @click="prevStep"
-                                                                class="border border-[#3CC0E9] text-blue-600 hover:bg-[#29ACD5] font-semibold py-2 px-4 rounded  ">
+                                                                class="border border-[#3CC0E9] text-blue-600 hover:bg-sky-50 font-semibold py-2 px-4 rounded  ">
                                                                 ←
                                                             </button>
                                                             <button type="button" @click="nextStep"
@@ -4876,6 +4876,6 @@
         }
     </script>
 
-</body>
+</div>
 
-</html>
+@endsection

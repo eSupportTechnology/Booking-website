@@ -1,25 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>create apartment</title>
-    </title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+@extends('partner.partner-layout')
 
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet" />
-    <!-- Vite assets (optional for Laravel Mix setup) -->
-    @vite(['resources/js/app.js'])
-    <style>
-        body {
-            font-family: 'Noto Sans', sans-serif;
-        }
-    </style>
-</head>
+@section('title', 'Apartment Create | ' . config('domains.app_name'))
 
 <body class="bg-gray-100 text-gray-800">
     <!-- Header -->
@@ -36,7 +18,8 @@
                         @php
                             $host = config('domains.app_name');
 
-                        @endphp
+   
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
                         <a href="{{ url('/') }}" class="text-2xl font-bold flex items-center">
                             @if ($host == 'BookinTour')
@@ -335,7 +318,7 @@
 </script>
 
     <!--Start Form-->
-    <div class="max-w-6xl p-4 ml-14  bg-gray-100" x-data="{
+    <div class="max-w-6xl p-4 ml-14  " x-data="{
         step: 1,
         categoryId: null,
         addressTypeId: null,
@@ -700,6 +683,4 @@
 
         </form>
     </div>
-</body>
-
-</html>
+@endsection

@@ -86,7 +86,7 @@
           @endif
       </div>
 
-      <nav class="space-y-20 text-sm font-medium">
+      <nav class="space-y-5 text-sm font-medium">
 
         <!-- MAIN SECTION -->
         <div>
@@ -109,8 +109,9 @@
             <i :class="openUsers ? 'fa-chevron-up' : 'fa-chevron-down'" class="fas text-xs"></i>
           </button>
           <div x-show="openUsers" x-collapse class="ml-8 mt-2 space-y-1 border-l border-blue-300 pl-4">
-            <a href="{{ route('admin.customers') }}" class="block py-1 hover:text-blue-700 font-semibold">Create Customer</a>
-            <a href="#" class="block py-1 hover:text-blue-700 font-semibold">Partners</a>
+            <a href="{{ route('admin.customers') }}" class="block py-1 hover:text-blue-700 font-semibold">Customer</a>
+            <a href="{{ route('admin.partners') }}" class="block py-1 hover:text-blue-700 font-semibold">Partners</a>
+
           </div>
         </div>
 
@@ -126,16 +127,17 @@
             <i :class="openProperty ? 'fa-chevron-up' : 'fa-chevron-down'" class="fas text-xs"></i>
           </button>
           <div x-show="openProperty" x-collapse class="ml-8 mt-2 space-y-1 border-l border-blue-300 pl-4">
-            <a href="#" class="block py-1 hover:text-blue-700 font-semibold">Apartments</a>
-            <a href="#" class="block py-1 hover:text-blue-700 font-semibold">Homes</a>
-            <a href="#" class="block py-1 hover:text-blue-700 font-semibold">Hotels</a>
-            <a href="#" class="block py-1 hover:text-blue-700 font-semibold">Alternative Places</a>
-          </div>
+            <a href="{{ route('admin.apartments') }}" class="block py-1 hover:text-blue-700 font-semibold">Apartments</a>
+            <a href="{{ route('admin.homes') }}" class="block py-1 hover:text-blue-700 font-semibold">Homes</a>
+            <a href="{{ route('admin.hotels') }}" class="block py-1 hover:text-blue-700 font-semibold">Hotels</a>
+            <a href="{{ route('admin.alternative.places') }}" class="block py-1 hover:text-blue-700 font-semibold">Alternative Places</a>
+        </div>
+
         </div>
 
         <!-- SETTINGS -->
         <div>
-          <a href="#" class="flex items-center px-4 py-2 rounded hover:bg-blue-200 transition text-blue-800 font-bold text-base">
+          <a href="{{ route('admin.settings') }}" class="flex items-center px-4 py-2 rounded hover:bg-blue-200 transition text-blue-800 font-bold text-base">
             <i class="fas fa-cog mr-3 text-bg-[#1F8FB2] text-lg"></i> Settings
           </a>
         </div>

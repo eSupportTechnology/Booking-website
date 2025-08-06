@@ -1,3 +1,4 @@
+@extends('partner.partner-layout')
 
 <!DOCTYPE html>
 <html lang="en">
@@ -479,13 +480,5 @@
 </div>
 
 
+@endsection
 
-
-
-
-
-
-
-
-    </body>
-    </html>

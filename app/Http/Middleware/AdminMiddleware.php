@@ -11,7 +11,7 @@ class AdminMiddleware
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::guard('admin')->check()) {
+        if (Auth::guard('admin')->check() && Auth::guard('admin')->user()->isApproved()) {
             return $next($request);
         }
 
