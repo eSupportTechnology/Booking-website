@@ -553,6 +553,25 @@ Route::get('/customer-myAccount', function () {
 })->name('account.myAccount');
 
 
+Route::get('/rewards-wallet', function () {
+    return view('frontend.rewards-wallet');
+})->name('rewards.wallet');
+
+Route::get('/my-next-trip', function () {
+    return view('frontend.my-next-trip');
+})->name('my.next.trip');
+
+Route::get('/bookings-trips', function () {
+    return view('frontend.bookings-trips');
+})->name('bookings.trips');
+
+Route::get('/my-reviews', function () {
+    return view('frontend.reviews');
+})->name('reviews');
+
+
+
+
 Route::get('/partner/apartment/bedrooms/{property}', function ($propertyId) {
     $property = \App\Models\Property::findOrFail($propertyId);
     $bedTypes = \App\Models\BedType::all();
