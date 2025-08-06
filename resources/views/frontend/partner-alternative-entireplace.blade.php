@@ -318,7 +318,7 @@
             } else if (this.category === 'boat' && this.selected === 'multiple') {
                 route = '/partner/boat/multiple';
             } else if (this.category === 'campsite' && this.selected === 'one') {
-                route = '/partner/campsite/one';
+                route = '/partner/alternative/Single/Campsite';
             } else if (this.category === 'campsite' && this.selected === 'multiple') {
                 route = '/partner/campsite/multiple';
             } else if (this.category === 'luxury_tent' && this.selected === 'one') {
