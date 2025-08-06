@@ -1,24 +1,22 @@
-@extends('partner.partner-layout')
+@extends('frontend.partner-layout')
 
-@section('title', ' Hotels Create | ' . config('domains.app_name'))
+@section('title', 'Alternative Places Entire Types')
 
 @section('content')
 
+<script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
-  <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
- 
+<!-- Alpine Data Scope -->
+<div x-data="{ step: 1, channelManager: 'yes' }">
 
-  
-  <div x-data="{ step: 1 }">
-    <!-- Progress Bar -->
-    <div class="w-full bg-gray-200 h-2">
-        <div class="bg-[#3CC0E9] h-2 transition-all duration-500" :style="'width:' + (step * 100 / 8) + '%'"></div>
+     <!-- Full-width Progress Bar (just under header) -->
+    <div class="w-full bg-gray-200 h-2 ">
+    <div class="bg-[#3CC0E9] h-2 transition-all duration-500"
+         :style="'width:' + (step * 100 / 9) + '%'">
     </div>
-
-    <!-- Step Content Wrapper -->
-    <div x-data>
-
-        <template x-if="step === 1">
+</div>
+    <!-- Step 1 -->
+    <template x-if="step === 1">
             <div class="relative w-[1200px] h-auto overflow-hidden rounded-lg shadow mx-auto my-10 ">
                 <!-- Google Maps iframe full background -->
                 <iframe class="absolute inset-0 w-full h-full" loading="lazy"
@@ -120,12 +118,8 @@
     <!--end basic info step 2-->
 
     </template>
-
-
-
-
-    <template x-if="step === 2">
-        <div>
+<template x-if="step === 2">
+   <div>
             <section class="mb-12" x-data="{ channelManager: 'yes' }">
                 <div class="max-w-5xl mx-auto px-4 py-8">
                     <h1 class="text-2xl font-bold mb-4 mt-4">Connect to a channel manager</h1>
@@ -184,7 +178,7 @@
                         <div class="flex justify-between mt-6">
                             <!-- Back Button (Left) -->
 
-                            <button type="button" @click="step > 1 ? step-- : step"
+                            <button type="button" @click="step = Math.max(step - 1, 1)"
                                 :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
                                 class="border border-[#3CC0E9]  text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
                                 ←
@@ -192,7 +186,7 @@
 
 
                             <!-- Continue Button (Right) -->
-                            <button type="submit" @click="step < 9 ? step++ : step"
+                            <button type="submit"  @click="step = Math.min(step + 1, 13)"
                                 :class="step === 9 ? 'opacity-50 cursor-not-allowed' : 'bg-[#3CC0E9] hover:bg-sky-500'"
                                 :disabled="step === 9"
                                 class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300">
@@ -202,200 +196,228 @@
                     </div>
             </section>
         </div>
-    </template>
-    
+</template>
 
-    <template x-if="step === 3">
-    <div x-data="{ groupAnswer: 'no' }">
-        <div class="max-w-2xl ml-40 px-4 py-8 bg-white rounded shadow mt-10">
-            <h1 class="text-2xl font-bold mb-6">Tell us about your hotel</h1>
 
-            <!-- Hotel Name -->
-            <div class="mb-6">
-                <label class="block font-medium text-gray-800 mb-1" for="hotelName">What's the name of your hotel?</label>
-                <input type="text" id="hotelName" placeholder="Property name"
-                    class="w-full border rounded px-4 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-200" />
-                <p class="text-xs text-gray-500 mt-1">This name will be seen by guests when they search for a place to stay.</p>
+<template x-if="step === 3">
+    <div class="max-w-4xl  lg:ml-24 mx-auto px-4 py-10">
+        <!-- Heading -->
+        <h1 class="text-3xl font-bold text-gray-900 mb-6">
+            What's the name of your property?
+        </h1>
+
+        <!-- Input Container (taller white box) -->
+        <div class="bg-white p-8 rounded shadow-md w-full max-w-2xl min-h-[220px] flex flex-col justify-between">
+            <div>
+                <label for="property_name" class="block text-gray-700 text-base font-medium mb-3">
+                    Property name
+                </label>
+                <input
+                    type="text"
+                    id="property_name"
+                    name="property_name"
+                    value="ccc"
+                    class="w-full border border-gray-300 rounded-md px-4 py-4 text-lg focus:outline-none focus:border-blue-500"
+                    placeholder="e.g., Sunset Villa"
+                    required
+                >
+                <p class="text-sm text-gray-500 mt-3">
+                    This name will be seen by guests when they search for a place to stay.
+                </p>
             </div>
+        </div>
 
-            <hr class="my-6" />
+        <!-- Navigation Buttons -->
+        <div class="mt-10 flex justify-between items-center max-w-2xl">
+            <!-- Back Button -->
+            <button
+                type="button"
+                @click="step = Math.max(step - 1, 1)"
+                class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-6 h-12 flex items-center justify-center rounded">
+                ←
+            </button>
 
-            <!-- Star Rating -->
-            <div class="mb-6">
-                <label class="block font-medium text-gray-800 mb-2">What is the star rating of your hotel?</label>
-                <div class="space-y-2 text-sm text-gray-700">
-                    <label class="flex items-center gap-2"><input type="radio" name="stars" checked /> N/A</label>
-                    <label class="flex items-center gap-2"><input type="radio" name="stars" /> 1 star <span class="text-yellow-400">★</span></label>
-                    <label class="flex items-center gap-2"><input type="radio" name="stars" /> 2 stars <span class="text-yellow-400">★★</span></label>
-                    <label class="flex items-center gap-2"><input type="radio" name="stars" /> 3 stars <span class="text-yellow-400">★★★</span></label>
-                    <label class="flex items-center gap-2"><input type="radio" name="stars" /> 4 stars <span class="text-yellow-400">★★★★</span></label>
-                    <label class="flex items-center gap-2"><input type="radio" name="stars" /> 5 stars <span class="text-yellow-400">★★★★★</span></label>
-                </div>
-            </div>
-
-            <hr class="my-6" />
-
-            <!-- Management Question -->
-            <div class="mb-6">
-                <label class="block font-medium text-gray-800 mb-2">Are you a property management company or part of a group or chain?</label>
-                <div class="space-y-2 text-sm text-gray-700">
-                    <label class="flex items-center gap-2">
-                        <input type="radio" name="group" value="yes" x-model="groupAnswer" />
-                        Yes
-                    </label>
-                    <label class="flex items-center gap-2">
-                        <input type="radio" name="group" value="no" x-model="groupAnswer" checked />
-                        No
-                    </label>
-                </div>
-            </div>
-
-            <!-- Conditionally Displayed Company/Group Field -->
-            <div class="mb-6" x-show="groupAnswer === 'yes'" x-transition>
-                <label class="block font-medium text-gray-800 mb-1" for="companyName">Name of company, group or chain</label>
-                <input type="text" id="companyName" placeholder="Company / Group Name"
-                    class="w-full border rounded px-4 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-200" />
-            </div>
-
-            <!-- Navigation -->
-            <div class="flex justify-between items-center mt-8">
-                <button type="button" @click="step--"
-                    class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">←</button>
-                <button type="button" @click="step++"
-                    class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300">Continue</button>
-            </div>
+            <!-- Continue Button -->
+            <button
+                type="button"
+                @click="step = Math.min(step + 1, 10)"
+                class="bg-[#3CC0E9] text-white font-semibold px-6 h-12 rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
+                Continue 
+            </button>
         </div>
     </div>
 </template>
 
 
+    
+
     <template x-if="step === 4">
-        <div class="max-w-4xl ml-40 px-4 py-8    mt-10">
+        <div class="max-w-4xl mx-auto lg:ml-24 px-4 py-10">
             <section class="mb-8">
                 <h1 class="text-xl text-gray-700 font-bold mb-4">What can guests use at your place?</h1>
 
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-    <!-- Property Name Input + Checkboxes (2/3 Width) -->
-    <div class="md:col-span-2 flex">
-      <div class="w-full bg-white p-6 rounded shadow-md flex flex-col text-base">
+                                <!-- Property Name Input + Checkboxes (2/3 Width) -->
+                                <div class="md:col-span-2 flex">
+                                                                    <div
+                                                                        class="w-full bg-white p-6 rounded shadow-md flex flex-col text-base">
 
 
-        <!-- 9 Checkboxes Section -->
+                                                                        <!-- 9 Checkboxes Section -->
 
-        <div class="mt-2">
-          <h3 class="text-gray-700 font-semibold mb-2">Select property type(s)</h3>
-          <div class="grid grid-cols-1 sm:grid-cols-1 gap-2 text-sm text-gray-700">
-            <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Apartment" class="text-blue-500" />
-              <span>Restaurant</span>
-            </label>
-             <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Apartment" class="text-blue-500" />
-              <span>Room service</span>
-            </label>
-             <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Apartment" class="text-blue-500" />
-              <span>Bar</span>
-            </label>
-             <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Apartment" class="text-blue-500" />
-              <span>24-hour front desk</span>
-            </label>
-             <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Apartment" class="text-blue-500" />
-              <span>Sauna</span>
-            </label>
-            <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Villa" class="text-blue-500" />
-              <span>Fitness centre</span>
-            </label>
-            <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Holiday Home" class="text-blue-500" />
-              <span>Garden</span>
-            </label>
-            <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Chalet" class="text-blue-500" />
-              <span>Terrace</span>
-            </label>
-            <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Cottage" class="text-blue-500" />
-              <span>Non-smoking rooms</span>
-            </label>
-            <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Cabin" class="text-blue-500" />
-              <span>Airport shuttle</span>
-            </label>
-            <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Bungalow" class="text-blue-500" />
-              <span>Family rooms</span>
-            </label>
-            <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Farm Stay" class="text-blue-500" />
-              <span>Spa and wellness centre</span>
-            </label>
-            <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Houseboat" class="text-blue-500" />
-              <span>Hot tub/Jacuzzi</span>
-            </label>
-              <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Houseboat" class="text-blue-500" />
-              <span>Free WiFi</span>
-            </label>
-              <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Houseboat" class="text-blue-500" />
-              <span>Air conditioning</span>
-            </label>
-              <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Houseboat" class="text-blue-500" />
-              <span>Water park</span>
-            </label>
-              <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Houseboat" class="text-blue-500" />
-              <span>Electric vehicle charging station</span>
-            </label>
-                 <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Houseboat" class="text-blue-500" />
-              <span>Swimming pool</span>
-            </label>
-              <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Houseboat" class="text-blue-500" />
-              <span>Beach</span>
-            </label>
-          </div>
+                                                                        <div class="mt-2">
+                                                                            <h3
+                                                                                class="text-gray-700 font-semibold mb-2">
+                                                                                Select property type(s)</h3>
+                                                                            <div
+                                                                                class="grid grid-cols-1 sm:grid-cols-1 gap-2 text-sm text-gray-700">
+                                                                                <label
+                                                                                    class="flex items-center space-x-2">
+                                                                                    <input type="checkbox"
+                                                                                        name="property_types[]"
+                                                                                        value="Apartment"
+                                                                                        class="text-blue-500" />
+                                                                                    <span>Bar</span>
+                                                                                </label>
+                                                                                <label
+                                                                                    class="flex items-center space-x-2">
+                                                                                    <input type="checkbox"
+                                                                                        name="property_types[]"
+                                                                                        value="Villa"
+                                                                                        class="text-blue-500" />
+                                                                                    <span>Sauna</span>
+                                                                                </label>
+                                                                                <label
+                                                                                    class="flex items-center space-x-2">
+                                                                                    <input type="checkbox"
+                                                                                        name="property_types[]"
+                                                                                        value="Holiday Home"
+                                                                                        class="text-blue-500" />
+                                                                                    <span>Garden</span>
+                                                                                </label>
+                                                                                <label
+                                                                                    class="flex items-center space-x-2">
+                                                                                    <input type="checkbox"
+                                                                                        name="property_types[]"
+                                                                                        value="Chalet"
+                                                                                        class="text-blue-500" />
+                                                                                    <span>Terrace</span>
+                                                                                </label>
+                                                                                <label
+                                                                                    class="flex items-center space-x-2">
+                                                                                    <input type="checkbox"
+                                                                                        name="property_types[]"
+                                                                                        value="Cottage"
+                                                                                        class="text-blue-500" />
+                                                                                    <span>Hot tub/Jacuzzi</span>
+                                                                                </label>
+                                                                                <label
+                                                                                    class="flex items-center space-x-2">
+                                                                                    <input type="checkbox"
+                                                                                        name="property_types[]"
+                                                                                        value="Cabin"
+                                                                                        class="text-blue-500" />
+                                                                                    <span>Heating</span>
+                                                                                </label>
+                                                                                <label
+                                                                                    class="flex items-center space-x-2">
+                                                                                    <input type="checkbox"
+                                                                                        name="property_types[]"
+                                                                                        value="Bungalow"
+                                                                                        class="text-blue-500" />
+                                                                                    <span>Free WiFi</span>
+                                                                                </label>
+                                                                                <label
+                                                                                    class="flex items-center space-x-2">
+                                                                                    <input type="checkbox"
+                                                                                        name="property_types[]"
+                                                                                        value="Farm Stay"
+                                                                                        class="text-blue-500" />
+                                                                                    <span>Air conditioning</span>
+                                                                                </label>
+                                                                                <label
+                                                                                    class="flex items-center space-x-2">
+                                                                                    <input type="checkbox"
+                                                                                        name="property_types[]"
+                                                                                        value="Houseboat"
+                                                                                        class="text-blue-500" />
+                                                                                    <span>Swimming pool</span>
+                                                                                </label>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <!-- Tips and Information (1/3 Width) -->
+                                                                <div class="flex flex-col gap-4">
+
+                                                                    <!-- Tip Box 1 -->
+                                                                    <div x-data="{ show: true }" x-show="show"
+                                                                        class="bg-white p-4 border border-gray-200 rounded w-full md:w-[350px] lg:w-[400px]">
+
+                                                                        <div
+                                                                            class="flex items-center justify-between mb-2">
+                                                                            <div class="flex items-center space-x-2">
+                                                                                <img src="{{ asset('assets/system-uicons_lightbulb-on.svg') }}"
+                                                                                    alt="Help"
+                                                                                    class="w-6 h-6 md:w-7 md:h-7 cursor-pointer" />
+                                                                                <h3
+                                                                                    class="text-gray-700 text-sm text-bold">
+                                                                                    What if I don’t see a facility I
+                                                                                    offer?</h3>
+                                                                            </div>
+                                                                            <button @click="show = false"
+                                                                                class="text-gray-500 hover:text-gray-700">
+                                                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                                                    class="h-5 w-5"
+                                                                                    viewBox="0 0 20 20"
+                                                                                    fill="currentColor">
+                                                                                    <path fill-rule="evenodd"
+                                                                                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                                                                        clip-rule="evenodd" />
+                                                                                </svg>
+                                                                            </button>
+                                                                        </div>
+                                                                        <p class="text-sm text-gray-700">
+                                                                            The facilities listed here are the ones most
+                                                                            searched for by guests. After you complete
+                                                                            your registration, you can add more
+                                                                            facilities from a larger list in the
+                                                                            extranet, the platform you'll use to manage
+                                                                            your property.
+                                                                            <br>
+                                                                            The ones selected here will apply to all of
+                                                                            your holiday homes.
+                                                                        </p>
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Navigation Buttons -->
+        <div class="mt-10 flex justify-between items-center max-w-2xl">
+            <!-- Back Button -->
+            <button
+                type="button"
+                @click="step = Math.max(step - 1, 1)"
+                class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-6 h-12 flex items-center justify-center rounded">
+                ←
+            </button>
+
+            <!-- Continue Button -->
+            <button
+                type="button"
+                @click="step = Math.min(step + 1, 10)"
+                class="bg-[#3CC0E9] text-white font-semibold px-6 h-12 rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
+                Continue 
+            </button>
         </div>
-   </div>
-
-    
-</div>
-    </div>
-    </section>
-      <div class="mt-8 flex justify-between max-w-xl ">
-<button type="button"    @click="step > 1 ? step-- : step"
-        :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-              class="border border-[#3CC0E9]  text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
-        ←
-      </button>
-
-
-  <!-- Continue Button (Right) -->
-  <button type="submit"
-          @click="step < 9 ? step++ : step"
-        :class="step === 9 ? 'opacity-50 cursor-not-allowed' : 'bg-[#3CC0E9] hover:bg-sky-500'"
-
-        :disabled="step === 9"
-          class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300">
-    Continue
-  </button>
-</div>
-    </div>
+                                                    </div>
     </template>
 
-
-
-
     <template x-if="step === 5">
-           <div x-data="{
+         <div x-data="{
             servesBreakfast: false,
             breakfastIncluded: '',
             selectedBreakfasts: [],
@@ -565,34 +587,21 @@
     </div>
 
     <!-- Paid Parking - Cost Input -->
-   <div x-show="parking === 'paid'" x-transition class="mt-4">
-    <label class="block text-gray-700 font-semibold mb-1">How much does parking cost?</label>
-    
-    <div class="flex gap-2">
-        <!-- Cost Input -->
-        <input type="text" name="cost" placeholder="e.g., 10$" 
-               class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
-        
-        <!-- Unit Selection -->
-        <select name="cost_unit" class="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
-            <option value="per_day">per day</option>
-            <option value="per_hour">per hour</option>
-            <option value="per_stay">per stay</option>
-        </select>
+    <div x-show="parking === 'paid'" x-transition class="mt-4">
+        <label class="block text-gray-700 font-semibold mb-1">How much does parking cost?</label>
+        <input type="text" name="cost" placeholder="e.g., $10 per day" class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
     </div>
-</div>
-
 </div>
 
         </div>
 
         <!-- Navigation Buttons -->
         <div class="mt-8 flex justify-between max-w-xl ml-6">
-            <button type="button" @click="step > 1 ? step-- : step"
+            <button type="button" @click="step = Math.max(step - 1, 1)"
                 class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
                 ←
             </button>
-            <button type="button" @click="step > 1 ? step++ : step"
+            <button type="button" @click="step = Math.min(step + 1, 13)"
                 class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
                 Continue
             </button>
@@ -600,8 +609,11 @@
     </div>
     </template>
 
+
+
+
     <template x-if="step === 6">
-       <div>
+        <div>
                                                         <div class="container mx-auto px-4 py-8 max-w-2xl lg:ml-24">
                                                             <!-- Header -->
                                                             <h2 class="text-2xl font-bold mb-8 text-left">
@@ -778,144 +790,252 @@
                                                     </div>
     </template>
 
-   <template x-if="step === 7">
-    <div>
-        <div class="container mx-auto px-4 py-8 max-w-4xl lg:ml-24" x-data="{ petPolicy: 'no' }">
-            <!-- Header -->
-            <h2 class="text-2xl font-bold mb-8 text-left">House rules</h2>
+    <template x-if="step === 7">
+       <div>
+    <div class="container mx-auto px-4 py-8 max-w-4xl lg:ml-24" x-data="{ petPolicy: 'no' }">
+        <!-- Header -->
+        <h2 class="text-2xl font-bold mb-8 text-left">House rules</h2>
 
-            <div class="flex flex-col md:flex-row gap-6">
-                <!-- Left Section -->
-                <div class="bg-white shadow-md rounded-lg p-6 w-full md:w-2/3">
-
-                    <!-- Check-in -->
-                    <div class="mt-6">
-                        <h3 class="text-base font-semibold mb-4">What are your check-in and check-out times?</h3>
-                        <h3 class="text-base font-semibold mb-2">Check in</h3>
-                        <div class="flex space-x-4">
-                            <div class="w-full">
-                                <label class="block text-sm font-medium mb-1">From</label>
-                                <input type="time" value="15:00" class="w-full border rounded p-2" />
-                            </div>
-                            <div class="w-full">
-                                <label class="block text-sm font-medium mb-1">Until</label>
-                                <input type="time" value="18:00" class="w-full border rounded p-2" />
-                            </div>
+        <div class="flex flex-col md:flex-row gap-6">
+            <!-- Left Section -->
+            <div class="bg-white shadow-md rounded-lg p-6 w-full md:w-2/3">
+                <!-- Toggle Switches -->
+                <div class="space-y-4">
+                    <label class="flex items-center justify-between cursor-pointer">
+                        <span>Smoking allowed</span>
+                        <div class="relative">
+                            <input type="checkbox" class="sr-only peer" />
+                            <div class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition"></div>
+                            <div class="absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-4"></div>
                         </div>
+                    </label>
+
+                    <label class="flex items-center justify-between cursor-pointer">
+                        <span>Children allowed</span>
+                        <div class="relative">
+                            <input type="checkbox" class="sr-only peer" checked />
+                            <div class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition"></div>
+                            <div class="absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-4"></div>
+                        </div>
+                    </label>
+
+                    <label class="flex items-center justify-between cursor-pointer">
+                        <span>Parties/events allowed</span>
+                        <div class="relative">
+                            <input type="checkbox" class="sr-only peer" />
+                            <div class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition"></div>
+                            <div class="absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-4"></div>
+                        </div>
+                    </label>
+                </div>
+
+                <hr class="my-6 border-t border-gray-300">
+
+                <!-- Pet Policy -->
+                <div class="mt-6">
+                    <h3 class="text-base font-semibold mb-2">Do you allow pets?</h3>
+                    <div class="space-y-2">
+                        <label class="flex items-center cursor-pointer">
+                            <input type="radio" name="pets" value="yes" x-model="petPolicy" class="mr-2">
+                            <span>Yes</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="radio" name="pets" value="upon_request" x-model="petPolicy" class="mr-2">
+                            <span>Upon request</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="radio" name="pets" value="no" x-model="petPolicy" class="mr-2">
+                            <span>No</span>
+                        </label>
                     </div>
 
-                    <!-- Check-out -->
-                    <div class="mt-6">
-                        <h3 class="text-base font-semibold mb-2">Check out</h3>
-                        <div class="flex space-x-4">
-                            <div class="w-full">
-                                <label class="block text-sm font-medium mb-1">From</label>
-                                <input type="time" value="08:00" class="w-full border rounded p-2" />
-                            </div>
-                            <div class="w-full">
-                                <label class="block text-sm font-medium mb-1">Until</label>
-                                <input type="time" value="11:00" class="w-full border rounded p-2" />
-                            </div>
+                    <!-- Conditional Field -->
+                    <div x-show="petPolicy === 'yes' || petPolicy === 'upon_request'" x-transition class="mt-4 space-y-2">
+                        <label class="block text-base font-semibold mb-1">Are there additional charges for pets?</label>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="radio" name="pet_charges" value="free" class="mr-2">
+                            <span>Pets can stay for free</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="radio" name="pet_charges" value="charges_apply" class="mr-2">
+                            <span>Charges may apply</span>
+                        </label>
+                    </div>
+                </div>
+
+                <hr class="my-6 border-t border-gray-300">
+
+                <!-- Check-in -->
+                <div class="mt-6">
+                    <h3 class="text-base font-semibold mb-2">Check in</h3>
+                    <div class="flex space-x-4">
+                        <div class="w-full">
+                            <label class="block text-sm font-medium mb-1">From</label>
+                            <input type="time" value="15:00" class="w-full border rounded p-2" />
+                        </div>
+                        <div class="w-full">
+                            <label class="block text-sm font-medium mb-1">Until</label>
+                            <input type="time" value="18:00" class="w-full border rounded p-2" />
                         </div>
                     </div>
+                </div>
 
-                    <hr class="my-6 border-t border-gray-300">
-<!-- Allow Children Section -->
-<div class="mb-6">
-    <label class="block font-semibold text-base text-gray-800 mb-2">Do you allow children?</label>
-    <div class="space-y-2 text-sm text-gray-700">
-        <label class="flex items-center gap-2">
-            <input type="radio" name="allowChildren" value="yes" />
-            Yes
-        </label>
-        <label class="flex items-center gap-2">
-            <input type="radio" name="allowChildren" value="no" />
-            No
-        </label>
+                <!-- Check-out -->
+                <div class="mt-6">
+                    <h3 class="text-base font-semibold mb-2">Check out</h3>
+                    <div class="flex space-x-4">
+                        <div class="w-full">
+                            <label class="block text-sm font-medium mb-1">From</label>
+                            <input type="time" value="08:00" class="w-full border rounded p-2" />
+                        </div>
+                        <div class="w-full">
+                            <label class="block text-sm font-medium mb-1">Until</label>
+                            <input type="time" value="11:00" class="w-full border rounded p-2" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Section: Tip Box -->
+            <div x-data="{ show: true }" x-show="show"
+                class="bg-white shadow-md rounded-lg p-6 w-full h-[300px] md:w-1/3 relative">
+                <div class="flex justify-between items-start">
+                    <div class="flex items-center space-x-2">
+                        <img src="{{ asset('assets/system-uicons_lightbulb-on.svg') }}"
+                             alt="Help"
+                             class="w-6 h-6 md:w-7 md:h-7 cursor-pointer" />
+                        <h3 class="text-gray-800 font-semibold text-base">
+                            What if my house rules change?</h3>
+                    </div>
+                    <button @click="show = false" class="text-gray-400 hover:text-gray-600">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             class="h-5 w-5" viewBox="0 0 20 20"
+                             fill="currentColor">
+                            <path fill-rule="evenodd"
+                                  d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                  clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+                <p class="text-sm text-gray-700 mt-3">
+                    You can easily customise these house rules later and additional house rules can be set on the
+                    Policies page of the extranet after you complete registration.
+                </p>
+            </div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="mt-8 flex">
+            <button type="button" @click="step = Math.max(step - 1, 1)"
+                class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                ←
+            </button>
+            <button type="button" @click="step = Math.min(step + 1, 13)"
+                class="px-6 h-12 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ml-[395px]">
+                Continue
+            </button>
+        </div>
     </div>
 </div>
 
-                    <!-- Pet Policy -->
-                    <div class="mt-6">
-                        <h3 class="text-base font-semibold mb-2">Do you allow pets?</h3>
-                        <div class="space-y-2">
-                            <label class="flex items-center cursor-pointer">
-                                <input type="radio" name="pets" value="yes" x-model="petPolicy" class="mr-2">
-                                <span>Yes</span>
-                            </label>
-                            <label class="flex items-center cursor-pointer">
-                                <input type="radio" name="pets" value="upon_request" x-model="petPolicy" class="mr-2">
-                                <span>Upon request</span>
-                            </label>
-                            <label class="flex items-center cursor-pointer">
-                                <input type="radio" name="pets" value="no" x-model="petPolicy" class="mr-2">
-                                <span>No</span>
-                            </label>
-                        </div>
-                           
-                        <!-- Conditional Field -->
-                        <div x-show="petPolicy === 'yes' || petPolicy === 'upon_request'" x-transition class="mt-4 space-y-2">
-                            <label class="block text-base font-semibold mb-1">Are there additional charges for pets?</label>
-                            <label class="flex items-center cursor-pointer">
-                                <input type="radio" name="pet_charges" value="free" class="mr-2">
-                                <span>Pets can stay for free</span>
-                            </label>
-                            <label class="flex items-center cursor-pointer">
-                                <input type="radio" name="pet_charges" value="charges_apply" class="mr-2">
-                                <span>Charges may apply</span>
-                            </label>
-                        </div>
-                    </div>
-
-               
-
-                </div>
-
-                <!-- Right Section: Tip Box -->
-                <div x-data="{ show: true }" x-show="show"
-                     class="bg-white shadow-md rounded-lg p-6 w-full h-[300px] md:w-1/3 relative">
-                    <div class="flex justify-between items-start">
-                        <div class="flex items-center space-x-2">
-                            <img src="{{ asset('assets/system-uicons_lightbulb-on.svg') }}"
-                                 alt="Help"
-                                 class="w-6 h-6 md:w-7 md:h-7 cursor-pointer" />
-                            <h3 class="text-gray-800 font-semibold text-base">
-                                What if my house rules change?</h3>
-                        </div>
-                        <button @click="show = false" class="text-gray-400 hover:text-gray-600">
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                 class="h-5 w-5" viewBox="0 0 20 20"
-                                 fill="currentColor">
-                                <path fill-rule="evenodd"
-                                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                      clip-rule="evenodd" />
-                            </svg>
-                        </button>
-                    </div>
-                    <p class="text-sm text-gray-700 mt-3">
-                        You can easily customise these house rules later and additional house rules can be set on the
-                        Policies page of the extranet after you complete registration.
-                    </p>
-                </div>
-            </div>
-
-            <!-- Navigation Buttons -->
-            <div class="mt-8 flex">
-                <button type="button" @click="step = Math.max(step - 1, 1)"
-                        class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
-                    ←
-                </button>
-                <button type="button" @click="step = Math.min(step + 1, 13)"
-                        class="px-6 h-12 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ml-[395px]">
-                    Continue
-                </button>
-            </div>
-        </div>
-    </div>
-</template>
-
+    </template>
 
     <template x-if="step === 8">
+     <div x-data="{
+    showProperty: false,
+    showHost: false,
+    showNeighborhood: false,
+    showNone: false,
+}" class="max-w-2xl mx-auto space-y-8 px-4 sm:px-6 lg:px-8 lg:ml-32 py-6">
+
+    <h2 class="text-2xl font-bold mb-8 text-left">Host Profile</h2>
+
+    <div class="bg-white shadow-md rounded-lg p-4 space-y-6">
+        <h2 class="text-base text-gray-800">
+            Help your listing stand out by telling potential guests a little more about yourself, your property, and your neighborhood. This info will appear on your property page.
+        </h2>
+
+        <!-- The Property Section -->
+        <div>
+            <label class="inline-flex items-center space-x-2">
+                <input type="checkbox" class="form-checkbox text-blue-600" x-model="showProperty">
+                <span class="text-gray-800 font-sm">The property</span>
+            </label>
+
+            <div x-show="showProperty" x-transition class="mt-2">
+                <label class="block text-sm font-semibold text-gray-700">About the property</label>
+                <textarea rows="4" maxlength="1200" placeholder="What makes your place unique? What can guests expect?"
+                    class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"></textarea>
+                <p class="text-right text-xs text-gray-500">0/1200</p>
+            </div>
+        </div>
+
+        <!-- The Host Section -->
+        <div>
+            <label class="inline-flex items-center space-x-2">
+                <input type="checkbox" class="form-checkbox text-blue-600" x-model="showHost">
+                <span class="text-gray-800 font-medium">The host</span>
+            </label>
+
+            <div x-show="showHost" x-transition class="mt-2 space-y-2">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700">Host name</label>
+                    <input type="text" maxlength="80"
+                        class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
+                    <p class="text-right text-xs text-gray-500">0/80</p>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700">About the host</label>
+                    <textarea rows="4" maxlength="1200" placeholder="What are your interests? What do you like about hosting?"
+                        class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"></textarea>
+                    <p class="text-right text-xs text-gray-500">0/1200</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- The Neighborhood Section -->
+        <div>
+            <label class="inline-flex items-center space-x-2">
+                <input type="checkbox" class="form-checkbox text-blue-600" x-model="showNeighborhood">
+                <span class="text-gray-800 font-medium">The neighborhood</span>
+            </label>
+
+            <div x-show="showNeighborhood" x-transition class="mt-2">
+                <label class="block text-sm font-semibold text-gray-700">About the neighborhood</label>
+                <textarea rows="4" maxlength="1200" placeholder="What's the area like? Are there any attractions nearby?"
+                    class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"></textarea>
+                <p class="text-right text-xs text-gray-500">0/1200</p>
+            </div>
+        </div>
+
+        <!-- None of the Above Option -->
+        <div>
+            <label class="inline-flex items-center space-x-2">
+                <input type="checkbox" class="form-checkbox text-blue-600" x-model="showNone">
+                <span class="text-gray-800 font-medium">None of the above / I'll add these later</span>
+            </label>
+        </div>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="mt-12 flex justify-between">
+        <button type="button" @click="step = Math.max(step - 1, 1)"
+            :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
+            class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+            ←
+        </button>
+
+        <button type="button" @click="step = Math.min(step + 1, 13)"
+            class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
+            Continue
+        </button>
+    </div>
+</div>
+
+    </template>
+
+    <template x-if="step === 9">
         <div class="mt-16">
             <div class="max-w-3xl mx-auto p-4 space-y-4 ">
 
@@ -931,7 +1051,7 @@
                                 and more</p>
                         </div>
                     </div>
-                    <a href="#" class="text-sky-600 font-medium text-sm hover:underline">Edit</a>
+                    <a href="{{ route('partner.homes.multiple') }}" class="text-sky-600 font-medium text-sm hover:underline">Edit</a>
                 </div>
 
                 <!-- Step 2 -->
@@ -946,7 +1066,7 @@
                                 can add more.</p>
                         </div>
                     </div>
-                    <a href="{{ route('partner.hotels.rooms') }}"
+                    <a href="{{ route('partner.homes.rooms') }}"
                         class=" bg-sky-400 border border-sky-400 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-sky-500">
                         Add room
                     </a>
@@ -964,7 +1084,7 @@
                                 expect.</p>
                         </div>
                     </div>
-                    <a href="{{ route('partner.hotels.photos') }}"
+                    <a href="{{ route('partner.homes.images') }}"
                         class="border border-sky-400 text-sky-400 text-sm font-semibold px-4 py-2 rounded hover:bg-sky-50">
                         Add Photos
                     </a>
@@ -983,7 +1103,7 @@
                                 bookings.</p>
                         </div>
                     </div>
-                    <a href="{{ route('partner.hotels.payments') }}"
+                    <a href="{{ route('partner.homes.payments') }}"
                         class=" bg-sky-400 border border-sky-400 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-sky-500">
                         Add final details
                     </a>
@@ -994,17 +1114,10 @@
     </template>
 
 
-    <template x-if="step === 9">
-        <div>
-            <h2 class="text-xl font-bold mb-4">Step 9: Review & Submit</h2>
-            <p class="text-sm text-gray-600 mb-4">Review your details before submission.</p>
-            <button
-                class="mt-4 bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded font-semibold">Submit</button>
-        </div>
-    </template>
+    
 
 
   </div>
     </div>
-</div>
+
 @endsection

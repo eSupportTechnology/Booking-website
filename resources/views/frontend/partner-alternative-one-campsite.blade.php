@@ -1,134 +1,142 @@
-@extends('partner.partner-layout')
+@extends('frontend.partner-layout')
 
-@section('title', ' Hotels Create | ' . config('domains.app_name'))
+@section('title', 'Alternative Places One Campsite')
 
 @section('content')
 
+<script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
-  <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
- 
+<!-- Alpine Data Scope -->
+<div x-data="{ step: 1}">
 
-  
-  <div x-data="{ step: 1 }">
-    <!-- Progress Bar -->
+    <!-- Full-width Progress Bar (just under header) -->
     <div class="w-full bg-gray-200 h-2">
-        <div class="bg-[#3CC0E9] h-2 transition-all duration-500" :style="'width:' + (step * 100 / 8) + '%'"></div>
+        <div class="bg-[#3CC0E9] h-2 transition-all duration-500"
+             :style="'width:' + (step * 100 / 8) + '%'">
+        </div>
     </div>
 
-    <!-- Step Content Wrapper -->
-    <div x-data>
+  <!-- Step 1 -->
+<template x-if="step === 1">
+    <div>
+        <div class="relative w-[1400px] h-auto overflow-hidden rounded-lg shadow mx-auto mt-4 mx-auto">
 
-        <template x-if="step === 1">
-            <div class="relative w-[1200px] h-auto overflow-hidden rounded-lg shadow mx-auto my-10 ">
-                <!-- Google Maps iframe full background -->
-                <iframe class="absolute inset-0 w-full h-full" loading="lazy"
-                    src="https://www.google.com/maps?q=La+Grande+Villa+Nuwara+Eliya&output=embed" allowfullscreen>
-                </iframe>
+            <!-- Google Maps iframe full background -->
+            <iframe class="absolute inset-0 w-full h-full"
+                loading="lazy"
+                src="https://www.google.com/maps?q=La+Grande+Villa+Nuwara+Eliya&output=embed"
+                allowfullscreen>
+            </iframe>
 
-                <!-- Optional overlay for readability -->
-                <div class="absolute inset-0 "></div>
+            <!-- Optional overlay for readability -->
+            <div class="absolute inset-0"></div>
 
-                <!-- Form content centered on map -->
-                <div class="relative z-10 flex items-center justify-start h-auto p-4 mt-[110px]">
-                    <div class="bg-white bg-opacity-95 rounded-lg shadow-lg w-full max-w-md p-6 md:p-8 h-auto mb-4">
-                        <h2 class="text-2xl font-semibold mb-4 text-gray-800">Where is your property?</h2>
-                        <form action="#" method="POST">
-                            <div class="mb-4">
-                                <label for="address" class="block text-sm font-medium text-gray-700">Find your
-                                    address</label>
-                                <input type="text" id="address" name="address" value="Sri Lanka"
+            <!-- Form content centered on map -->
+            <div class="relative z-10 flex items-center justify-start h-auto p-4 mt-[110px]">
+                <div class="bg-white bg-opacity-95 rounded-lg shadow-lg w-full max-w-md p-6 md:p-8 h-auto mb-4">
+                    <h2 class="text-2xl font-semibold mb-4 text-gray-800">
+                        Where is your property?
+                    </h2>
+                    <form>
+                        <div class="mb-4">
+                            <label for="address" class="block text-sm font-medium text-gray-700">
+                                Find your address
+                            </label>
+                            <input type="text" id="address" name="address" value="Sri Lanka"
+                                class="mt-1 p-2 w-full border border-gray-300 rounded">
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="apartment" class="block text-sm font-medium text-gray-700">
+                                Apartment or floor number (optional)
+                            </label>
+                            <input type="text" id="apartment" name="apartment" value="aaa"
+                                class="mt-1 p-2 w-full border border-gray-300 rounded">
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="country" class="block text-sm font-medium text-gray-700">
+                                Country/region
+                            </label>
+                            <select id="country" name="country"
+                                class="mt-1 p-2 w-full border border-gray-300 rounded">
+                                <option selected>Sri Lanka</option>
+                            </select>
+                        </div>
+
+                        <div class="flex flex-col md:flex-row gap-4">
+                            <div class="flex-1">
+                                <label for="city" class="block text-sm font-medium text-gray-700">
+                                    City
+                                </label>
+                                <input type="text" id="city" name="city" value="a"
                                     class="mt-1 p-2 w-full border border-gray-300 rounded">
                             </div>
-                            <div class="mb-4">
-                                <label for="apartment" class="block text-sm font-medium text-gray-700">Apartment or
-                                    floor number (optional)</label>
-                                <input type="text" id="apartment" name="apartment" value="aaa"
+
+                            <div class="flex-1">
+                                <label for="postcode" class="block text-sm font-medium text-gray-700">
+                                    Post code / Zip code
+                                </label>
+                                <input type="text" id="postcode" name="postcode" value="80400"
                                     class="mt-1 p-2 w-full border border-gray-300 rounded">
                             </div>
-                            <div class="mb-4">
-                                <label for="country"
-                                    class="block text-sm font-medium text-gray-700">Country/region</label>
-                                <select id="country" name="country"
-                                    class="mt-1 p-2 w-full border border-gray-300 rounded">
-                                    <option selected>Sri Lanka</option>
-                                </select>
-                            </div>
-                            <div class="flex flex-col md:flex-row gap-4">
-                                <div class="flex-1">
-                                    <label for="city" class="block text-sm font-medium text-gray-700">City</label>
-                                    <input type="text" id="city" name="city" value="a"
-                                        class="mt-1 p-2 w-full border border-gray-300 rounded">
-                                </div>
-                                <div class="flex-1">
-                                    <label for="postcode" class="block text-sm font-medium text-gray-700">Post code /
-                                        Zip code</label>
-                                    <input type="text" id="postcode" name="postcode" value="80400"
-                                        class="mt-1 p-2 w-full border border-gray-300 rounded">
-                                </div>
-                            </div>
-                            <div class="flex items-center mt-4">
-                                <input id="update_address" type="checkbox" name="update_address" checked
-                                    class="mr-2">
-                                <label for="update_address" class="text-sm text-gray-700">Update the address when
-                                    moving the pin on the map.</label>
-                            </div>
-                            <!-- Dismissible message box -->
-                            <div x-data="{ showMessage: true }" x-show="showMessage"
-                                class="mt-4 bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded relative"
-                                role="alert">
-                                <strong class="font-bold">Note:</strong>
-                                <span class="block sm:inline">Make sure the pin location is accurate before
-                                    continuing.</span>
-                                <span @click="showMessage = false"
-                                    class="absolute top-0 bottom-0 right-0 px-4 py-3 cursor-pointer">
-                                    <svg class="fill-current h-6 w-6 text-yellow-800" role="button"
-                                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                        <title>Close</title>
-                                        <path
-                                            d="M14.348 5.652a1 1 0 00-1.414 0L10 8.586 7.066 5.652a1 1 0 10-1.414 1.414L8.586 10l-2.934 2.934a1 1 0 101.414 1.414L10 11.414l2.934 2.934a1 1 0 001.414-1.414L11.414 10l2.934-2.934a1 1 0 000-1.414z" />
-                                    </svg>
-                                </span>
-                            </div>
+                        </div>
 
-                            <p class="text-sm text-gray-600 mt-2">
-                                Is the red pin location incorrect? Uncheck the option above and click or press on the
-                                map to move the pin.
-                            </p>
-                            <div class="flex justify-between mt-6">
-                                <!-- Back Button (Left) -->
-                                <button type="button" @click="step > 1 ? step-- : step"
-                                    :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-                                    class="border border-[#3CC0E9]  text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
-                                    ←
-                                </button>
+                        <div class="flex items-center mt-4">
+                            <input id="update_address" type="checkbox" name="update_address" checked class="mr-2">
+                            <label for="update_address" class="text-sm text-gray-700">
+                                Update the address when moving the pin on the map.
+                            </label>
+                        </div>
 
+                        <!-- Dismissible message box -->
+                        <div x-data="{ showMessage: true }" x-show="showMessage"
+                            class="mt-4 bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded relative"
+                            role="alert">
+                            <strong class="font-bold">Note:</strong>
+                            <span class="block sm:inline">
+                                Make sure the pin location is accurate before continuing.
+                            </span>
+                            <span @click="showMessage = false"
+                                class="absolute top-0 bottom-0 right-0 px-4 py-3 cursor-pointer">
+                                <svg class="fill-current h-6 w-6 text-yellow-800" role="button"
+                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                    <title>Close</title>
+                                    <path
+                                        d="M14.348 5.652a1 1 0 00-1.414 0L10 8.586 7.066 5.652a1 1 0 10-1.414 1.414L8.586 10l-2.934 2.934a1 1 0 101.414 1.414L10 11.414l2.934 2.934a1 1 0 001.414-1.414L11.414 10l2.934-2.934a1 1 0 000-1.414z" />
+                                </svg>
+                            </span>
+                        </div>
 
-                                <!-- Continue Button (Right) -->
-                                <button type="submit" @click="step < 8 ? step++ : step"
-                                    :class="step === 8 ? 'opacity-50 cursor-not-allowed' : 'bg-[#3CC0E9] hover:bg-sky-500'"
-                                    :disabled="step === 8"
-                                    class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300">
-                                    Continue
-                                </button>
-                            </div>
+                        <p class="text-sm text-gray-600 mt-2">
+                            Is the red pin location incorrect? Uncheck the option above and click or press on the map to move the pin.
+                        </p>
 
-                        </form>
-                    </div>
+                        <!-- Buttons -->
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6">
+                            <button type="button" @click="step++"
+                                class="w-full sm:w-auto border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
+                                ←
+                            </button>
+                            <button type="button" @click="step++"
+                                class="w-full sm:w-auto px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
+                                Continue
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
+        </div>
     </div>
-    <!--end basic info step 2-->
-
-    </template>
+</template>
 
 
-
-
-    <template x-if="step === 2">
-        <div>
+    <!-- Step 2 -->
+  <template x-if="step === 2">
+     <div class="mx-auto lg:ml-32 ">
             <section class="mb-12" x-data="{ channelManager: 'yes' }">
-                <div class="max-w-5xl mx-auto px-4 py-8">
-                    <h1 class="text-2xl font-bold mb-4 mt-4">Connect to a channel manager</h1>
+                <div class="max-w-5xl  px-4 py-8">
+                    <h1 class="text-2xl md:text-3xl font-bold mb-6 mt-4">Connect to a channel manager</h1>
 
                     <!-- Question Section -->
                     <div class="bg-white p-4 max-w-2xl border border-gray-200 rounded mb-8">
@@ -192,7 +200,7 @@
 
 
                             <!-- Continue Button (Right) -->
-                            <button type="submit" @click="step < 9 ? step++ : step"
+                            <button type="submit" type="button" @click="step++"
                                 :class="step === 9 ? 'opacity-50 cursor-not-allowed' : 'bg-[#3CC0E9] hover:bg-sky-500'"
                                 :disabled="step === 9"
                                 class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300">
@@ -202,200 +210,197 @@
                     </div>
             </section>
         </div>
-    </template>
-    
+</template>
 
-    <template x-if="step === 3">
-    <div x-data="{ groupAnswer: 'no' }">
-        <div class="max-w-2xl ml-40 px-4 py-8 bg-white rounded shadow mt-10">
-            <h1 class="text-2xl font-bold mb-6">Tell us about your hotel</h1>
 
-            <!-- Hotel Name -->
-            <div class="mb-6">
-                <label class="block font-medium text-gray-800 mb-1" for="hotelName">What's the name of your hotel?</label>
-                <input type="text" id="hotelName" placeholder="Property name"
-                    class="w-full border rounded px-4 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-200" />
-                <p class="text-xs text-gray-500 mt-1">This name will be seen by guests when they search for a place to stay.</p>
-            </div>
 
-            <hr class="my-6" />
+    <!-- Step 3 -->
+   <template x-if="step === 3">
+    <div class="w-full px-4 py-8 md:px-16 lg:px-3 mx-auto lg:ml-32 ">
+        <div class="max-w-5xl ">
+            <h1 class="text-2xl md:text-3xl font-semibold text-gray-800 mb-8 mt-4">
+                What's the name of your place?
+            </h1>
 
-            <!-- Star Rating -->
-            <div class="mb-6">
-                <label class="block font-medium text-gray-800 mb-2">What is the star rating of your hotel?</label>
-                <div class="space-y-2 text-sm text-gray-700">
-                    <label class="flex items-center gap-2"><input type="radio" name="stars" checked /> N/A</label>
-                    <label class="flex items-center gap-2"><input type="radio" name="stars" /> 1 star <span class="text-yellow-400">★</span></label>
-                    <label class="flex items-center gap-2"><input type="radio" name="stars" /> 2 stars <span class="text-yellow-400">★★</span></label>
-                    <label class="flex items-center gap-2"><input type="radio" name="stars" /> 3 stars <span class="text-yellow-400">★★★</span></label>
-                    <label class="flex items-center gap-2"><input type="radio" name="stars" /> 4 stars <span class="text-yellow-400">★★★★</span></label>
-                    <label class="flex items-center gap-2"><input type="radio" name="stars" /> 5 stars <span class="text-yellow-400">★★★★★</span></label>
-                </div>
-            </div>
+            <div class="flex flex-col lg:flex-row gap-8">
+                <!-- Left: Form -->
+                <div class="flex-1">
+                 <div class="bg-white p-6 rounded-lg shadow-md 
+            min-h-[220px] sm:min-h-[250px] md:min-h-[300px] lg:min-h-[350px]">
+    <label for="property_name" class="block text-sm font-medium text-gray-700 mb-2">
+        Property name
+    </label>
+    <input id="property_name" name="property_name" type="text" value="ccc"
+        class="w-full border border-gray-300 rounded px-4 py-2 text-gray-800"
+        placeholder="Enter property name">
 
-            <hr class="my-6" />
+    <p class="text-sm text-gray-500 mt-2">
+        This name will be seen by guests when they search for a place to stay.
+    </p>
+</div>
 
-            <!-- Management Question -->
-            <div class="mb-6">
-                <label class="block font-medium text-gray-800 mb-2">Are you a property management company or part of a group or chain?</label>
-                <div class="space-y-2 text-sm text-gray-700">
-                    <label class="flex items-center gap-2">
-                        <input type="radio" name="group" value="yes" x-model="groupAnswer" />
-                        Yes
-                    </label>
-                    <label class="flex items-center gap-2">
-                        <input type="radio" name="group" value="no" x-model="groupAnswer" checked />
-                        No
-                    </label>
-                </div>
-            </div>
-
-            <!-- Conditionally Displayed Company/Group Field -->
-            <div class="mb-6" x-show="groupAnswer === 'yes'" x-transition>
-                <label class="block font-medium text-gray-800 mb-1" for="companyName">Name of company, group or chain</label>
-                <input type="text" id="companyName" placeholder="Company / Group Name"
-                    class="w-full border rounded px-4 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-200" />
-            </div>
-
-            <!-- Navigation -->
-            <div class="flex justify-between items-center mt-8">
+                    <!-- Buttons -->
+            <div class="flex justify-between items-center mt-10">
                 <button type="button" @click="step--"
-                    class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">←</button>
+                    class="border border-[#3CC0E9] text-blue-600 font-medium px-4 py-2 rounded hover:bg-sky-50">
+                    ←
+                </button>
                 <button type="button" @click="step++"
-                    class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300">Continue</button>
+                    class="bg-[#3CC0E9] hover:bg-sky-500 text-white font-semibold px-6 py-3 rounded ">
+                    Continue
+                </button>
+            </div>
+                </div>
+
+                
+
+               <!-- Right: Tips -->
+<div class="flex-1 flex flex-col gap-4 max-w-md w-full">
+    <!-- Tip 1 -->
+    <div x-data="{ show: true }" x-show="show"
+        class="relative border border-gray-200 rounded-lg p-4 bg-white shadow w-full  max-w-xs">
+        <button @click="show = false"
+            class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">
+            ✕
+        </button>
+        <h2 class="font-semibold text-gray-800 text-sm mb-2">
+            What should I consider when choosing a name?
+        </h2>
+        <ul class="text-sm text-gray-600 list-disc pl-5 space-y-1">
+            <li>Keep it short and catchy</li>
+            <li>Avoid abbreviations</li>
+            <li>Stick to the facts</li>
+        </ul>
+    </div>
+
+    <!-- Tip 2 -->
+    <div x-data="{ show: true }" x-show="show"
+        class="relative border border-gray-200 rounded-lg p-4 bg-white shadow w-full  max-w-xs">
+        <button @click="show = false"
+            class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">
+            ✕
+        </button>
+        <h2 class="font-semibold text-gray-800 text-sm mb-2">
+            Why do I need to name my property?
+        </h2>
+        <p class="text-sm text-gray-600">
+            This is the name that will appear as the title of your listing on our site. It should tell
+            guests something specific about your place, where it is or what you offer.
+            This will be visible to anyone visiting our site, so don't include your address in the name.
+        </p>
+    </div>
+</div>
+
+
+            
+        </div>
+    </div>
+</template>
+
+
+  <template x-if="step === 4">
+    <div>
+        <div class="max-w-5xl  mx-auto lg:ml-32 mt-12 ">
+            <h1 class="text-2xl md:text-3xl font-semibold text-gray-800 mb-8">
+                What can guests use at your campsite?
+            </h1>
+
+            <div class="flex flex-col lg:flex-row gap-8">
+                <!-- Left: Facility checklist -->
+               <div class="flex-1">
+    <div class="bg-white p-6 rounded-lg shadow-md 
+        min-h-[220px] sm:min-h-[250px] md:min-h-[300px] lg:min-h-[350px]">
+        <!-- Removed sm:grid-cols-2 to keep one column -->
+        <form class="grid grid-cols-1 gap-4 text-sm text-gray-800">
+            <label class="flex items-center space-x-2">
+                <input type="checkbox" class="form-checkbox" />
+                <span>Garden</span>
+            </label>
+            <label class="flex items-center space-x-2">
+                <input type="checkbox" class="form-checkbox" />
+                <span>Terrace</span>
+            </label>
+            <label class="flex items-center space-x-2">
+                <input type="checkbox" class="form-checkbox" checked />
+                <span>Non-smoking rooms</span>
+            </label>
+            <label class="flex items-center space-x-2">
+                <input type="checkbox" class="form-checkbox" />
+                <span>Family rooms</span>
+            </label>
+            <label class="flex items-center space-x-2">
+                <input type="checkbox" class="form-checkbox" />
+                <span>Swimming pool</span>
+            </label>
+            <label class="flex items-center space-x-2">
+                <input type="checkbox" class="form-checkbox" />
+                <span>Bar</span>
+            </label>
+            <label class="flex items-center space-x-2">
+                <input type="checkbox" class="form-checkbox" />
+                <span>Air conditioning</span>
+            </label>
+            <label class="flex items-center space-x-2">
+                <input type="checkbox" class="form-checkbox" />
+                <span>Beach</span>
+            </label>
+            <label class="flex items-center space-x-2">
+                <input type="checkbox" class="form-checkbox" />
+                <span>Free WiFi</span>
+            </label>
+            <label class="flex items-center space-x-2">
+                <input type="checkbox" class="form-checkbox" />
+                <span>Hot tub/Jacuzzi</span>
+            </label>
+            <label class="flex items-center space-x-2">
+                <input type="checkbox" class="form-checkbox" />
+                <span>Sauna</span>
+            </label>
+            <label class="flex items-center space-x-2">
+                <input type="checkbox" class="form-checkbox" />
+                <span>Electric vehicle charging station</span>
+            </label>
+        </form>
+    </div>
+                    <!-- Buttons -->
+                    <div class="flex justify-between items-center mt-10">
+                        <button type="button" @click="step--"
+                            class="border border-blue-500 text-blue-600 font-medium px-4 py-2 rounded hover:bg-sky-50">
+                            ←
+                        </button>
+                        <button type="button" @click="step++"
+                            class="bg-[#3CC0E9] hover:bg-sky-500 text-white font-semibold px-6 py-3 rounded">
+                            Continue
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right: Tips -->
+                <div class="flex-1 flex flex-col gap-4 max-w-md w-full">
+                    <div x-data="{ show: true }" x-show="show"
+                        class="relative border border-gray-200 rounded-lg p-4 bg-white shadow w-full  max-w-xs">
+                        <button @click="show = false"
+                            class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">
+                            ✕
+                        </button>
+                        <h2 class="font-semibold text-gray-800 text-sm mb-2">
+                            What if I don’t see a facility I offer?
+                        </h2>
+                        <p class="text-sm text-gray-600">
+                            The facilities listed here are the ones most searched for by guests. After you complete your
+                            registration, you can add more facilities from a larger list in the extranet, the platform
+                            you'll use to manage your property.
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </template>
 
 
-    <template x-if="step === 4">
-        <div class="max-w-4xl ml-40 px-4 py-8    mt-10">
-            <section class="mb-8">
-                <h1 class="text-xl text-gray-700 font-bold mb-4">What can guests use at your place?</h1>
-
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-
-    <!-- Property Name Input + Checkboxes (2/3 Width) -->
-    <div class="md:col-span-2 flex">
-      <div class="w-full bg-white p-6 rounded shadow-md flex flex-col text-base">
-
-
-        <!-- 9 Checkboxes Section -->
-
-        <div class="mt-2">
-          <h3 class="text-gray-700 font-semibold mb-2">Select property type(s)</h3>
-          <div class="grid grid-cols-1 sm:grid-cols-1 gap-2 text-sm text-gray-700">
-            <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Apartment" class="text-blue-500" />
-              <span>Restaurant</span>
-            </label>
-             <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Apartment" class="text-blue-500" />
-              <span>Room service</span>
-            </label>
-             <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Apartment" class="text-blue-500" />
-              <span>Bar</span>
-            </label>
-             <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Apartment" class="text-blue-500" />
-              <span>24-hour front desk</span>
-            </label>
-             <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Apartment" class="text-blue-500" />
-              <span>Sauna</span>
-            </label>
-            <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Villa" class="text-blue-500" />
-              <span>Fitness centre</span>
-            </label>
-            <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Holiday Home" class="text-blue-500" />
-              <span>Garden</span>
-            </label>
-            <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Chalet" class="text-blue-500" />
-              <span>Terrace</span>
-            </label>
-            <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Cottage" class="text-blue-500" />
-              <span>Non-smoking rooms</span>
-            </label>
-            <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Cabin" class="text-blue-500" />
-              <span>Airport shuttle</span>
-            </label>
-            <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Bungalow" class="text-blue-500" />
-              <span>Family rooms</span>
-            </label>
-            <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Farm Stay" class="text-blue-500" />
-              <span>Spa and wellness centre</span>
-            </label>
-            <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Houseboat" class="text-blue-500" />
-              <span>Hot tub/Jacuzzi</span>
-            </label>
-              <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Houseboat" class="text-blue-500" />
-              <span>Free WiFi</span>
-            </label>
-              <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Houseboat" class="text-blue-500" />
-              <span>Air conditioning</span>
-            </label>
-              <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Houseboat" class="text-blue-500" />
-              <span>Water park</span>
-            </label>
-              <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Houseboat" class="text-blue-500" />
-              <span>Electric vehicle charging station</span>
-            </label>
-                 <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Houseboat" class="text-blue-500" />
-              <span>Swimming pool</span>
-            </label>
-              <label class="flex items-center space-x-2">
-              <input type="checkbox" name="property_types[]" value="Houseboat" class="text-blue-500" />
-              <span>Beach</span>
-            </label>
-          </div>
-        </div>
-   </div>
-
-    
-</div>
-    </div>
-    </section>
-      <div class="mt-8 flex justify-between max-w-xl ">
-<button type="button"    @click="step > 1 ? step-- : step"
-        :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-              class="border border-[#3CC0E9]  text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
-        ←
-      </button>
-
-
-  <!-- Continue Button (Right) -->
-  <button type="submit"
-          @click="step < 9 ? step++ : step"
-        :class="step === 9 ? 'opacity-50 cursor-not-allowed' : 'bg-[#3CC0E9] hover:bg-sky-500'"
-
-        :disabled="step === 9"
-          class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300">
-    Continue
-  </button>
-</div>
-    </div>
-    </template>
-
-
-
-
-    <template x-if="step === 5">
-           <div x-data="{
+ <template x-if="step === 5">
+    <div x-data="{
             servesBreakfast: false,
             breakfastIncluded: '',
             selectedBreakfasts: [],
@@ -409,10 +414,10 @@
                 }
             }
         }"
-        class="container mx-auto px-4 py-4 max-w-6xl mb-8">
+        class="container mx-auto lg:ml-24 px-4 py-4 max-w-6xl mt-6 ">
 
         <!-- Header -->
-        <h2 class="text-2xl font-bold mb-4 text-left ml-6 max-w-xl">
+        <h2 class="text-2xl md:text-3xl font-bold mb-4 text-left ml-6 mb-6 max-w-xl">
             Services at your property
         </h2>
 
@@ -588,23 +593,23 @@
 
         <!-- Navigation Buttons -->
         <div class="mt-8 flex justify-between max-w-xl ml-6">
-            <button type="button" @click="step > 1 ? step-- : step"
+            <button type="button" @click="step--"
                 class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
                 ←
             </button>
-            <button type="button" @click="step > 1 ? step++ : step"
+            <button type="button" @click="step++"
                 class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
                 Continue
             </button>
         </div>
     </div>
-    </template>
+</template>
 
-    <template x-if="step === 6">
-       <div>
+      <template x-if="step === 6">
+         <div>
                                                         <div class="container mx-auto px-4 py-8 max-w-2xl lg:ml-24">
                                                             <!-- Header -->
-                                                            <h2 class="text-2xl font-bold mb-8 text-left">
+                                                            <h2 class="text-2xl md:text-3xl font-bold mb-8 text-left">
                                                                 What languages do you or your staff speak?
                                                             </h2>
 
@@ -696,13 +701,13 @@
                                                             <!-- Navigation Buttons -->
                                                             <div class="mt-8 flex justify-between">
                                                                 <!-- Back Button on the left -->
-                                                                <button type="button"  @click="step = Math.max(step - 1, 1)"
+                                                                <button type="button"  @click="step--"
                                                                     class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
                                                                     ←
                                                                 </button>
 
                                                                 <!-- Continue Button on the right -->
-                                                                <button type="button"    @click="step = Math.min(step + 1, 13)"
+                                                                <button type="button"    @click="step++"
                                                                     class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
                                                                     Continue
                                                                 </button>
@@ -776,18 +781,17 @@
                                                             });
                                                         </script>
                                                     </div>
-    </template>
+</template>
 
-   <template x-if="step === 7">
+     <template x-if="step === 7">
     <div>
-        <div class="container mx-auto px-4 py-8 max-w-4xl lg:ml-24" x-data="{ petPolicy: 'no' }">
+        <div class="container mx-auto px-4 py-8 max-w-4xl lg:ml-32" x-data="{ petPolicy: 'no' }">
             <!-- Header -->
-            <h2 class="text-2xl font-bold mb-8 text-left">House rules</h2>
+            <h2 class="text-2xl md:text-3xl font-bold mb-8 text-left">House rules</h2>
 
             <div class="flex flex-col md:flex-row gap-6">
                 <!-- Left Section -->
                 <div class="bg-white shadow-md rounded-lg p-6 w-full md:w-2/3">
-
                     <!-- Check-in -->
                     <div class="mt-6">
                         <h3 class="text-base font-semibold mb-4">What are your check-in and check-out times?</h3>
@@ -820,20 +824,21 @@
                     </div>
 
                     <hr class="my-6 border-t border-gray-300">
-<!-- Allow Children Section -->
-<div class="mb-6">
-    <label class="block font-semibold text-base text-gray-800 mb-2">Do you allow children?</label>
-    <div class="space-y-2 text-sm text-gray-700">
-        <label class="flex items-center gap-2">
-            <input type="radio" name="allowChildren" value="yes" />
-            Yes
-        </label>
-        <label class="flex items-center gap-2">
-            <input type="radio" name="allowChildren" value="no" />
-            No
-        </label>
-    </div>
-</div>
+
+                    <!-- Allow Children Section -->
+                    <div class="mb-6">
+                        <label class="block font-semibold text-base text-gray-800 mb-2">Do you allow children?</label>
+                        <div class="space-y-2 text-sm text-gray-700">
+                            <label class="flex items-center gap-2">
+                                <input type="radio" name="allowChildren" value="yes" />
+                                Yes
+                            </label>
+                            <label class="flex items-center gap-2">
+                                <input type="radio" name="allowChildren" value="no" />
+                                No
+                            </label>
+                        </div>
+                    </div>
 
                     <!-- Pet Policy -->
                     <div class="mt-6">
@@ -852,7 +857,7 @@
                                 <span>No</span>
                             </label>
                         </div>
-                           
+
                         <!-- Conditional Field -->
                         <div x-show="petPolicy === 'yes' || petPolicy === 'upon_request'" x-transition class="mt-4 space-y-2">
                             <label class="block text-base font-semibold mb-1">Are there additional charges for pets?</label>
@@ -866,21 +871,34 @@
                             </label>
                         </div>
                     </div>
+                    <div class="mt-8 flex justify-between">
+                                                                <!-- Back Button on the left -->
+                                                                <button type="button"  @click="step--"
+                                                                    class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                                                                    ←
+                                                                </button>
 
-               
+                                                                <!-- Continue Button on the right -->
+                                                                <button type="button"    @click="step++"
+                                                                    class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
+                                                                    Continue
+                                                                </button>
+                                                            </div>
+
 
                 </div>
 
                 <!-- Right Section: Tip Box -->
                 <div x-data="{ show: true }" x-show="show"
-                     class="bg-white shadow-md rounded-lg p-6 w-full h-[300px] md:w-1/3 relative">
+                     class="bg-white shadow-md rounded-lg p-6 w-full h-[200px] md:w-1/3 relative">
                     <div class="flex justify-between items-start">
                         <div class="flex items-center space-x-2">
                             <img src="{{ asset('assets/system-uicons_lightbulb-on.svg') }}"
                                  alt="Help"
                                  class="w-6 h-6 md:w-7 md:h-7 cursor-pointer" />
                             <h3 class="text-gray-800 font-semibold text-base">
-                                What if my house rules change?</h3>
+                                What if my house rules change?
+                            </h3>
                         </div>
                         <button @click="show = false" class="text-gray-400 hover:text-gray-600">
                             <svg xmlns="http://www.w3.org/2000/svg"
@@ -900,23 +918,16 @@
             </div>
 
             <!-- Navigation Buttons -->
-            <div class="mt-8 flex">
-                <button type="button" @click="step = Math.max(step - 1, 1)"
-                        class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
-                    ←
-                </button>
-                <button type="button" @click="step = Math.min(step + 1, 13)"
-                        class="px-6 h-12 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ml-[395px]">
-                    Continue
-                </button>
-            </div>
+         
+
         </div>
+        
     </div>
 </template>
 
-
-    <template x-if="step === 8">
-        <div class="mt-16">
+                                                      
+      <template x-if="step === 8">
+         <div class="mt-16">
             <div class="max-w-3xl mx-auto p-4 space-y-4 ">
 
                 <!-- Step 1 - Completed -->
@@ -991,20 +1002,8 @@
 
             </div>
         </div>
-    </template>
-
-
-    <template x-if="step === 9">
-        <div>
-            <h2 class="text-xl font-bold mb-4">Step 9: Review & Submit</h2>
-            <p class="text-sm text-gray-600 mb-4">Review your details before submission.</p>
-            <button
-                class="mt-4 bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded font-semibold">Submit</button>
-        </div>
-    </template>
-
-
-  </div>
-    </div>
+        
+ </template>
 </div>
+
 @endsection

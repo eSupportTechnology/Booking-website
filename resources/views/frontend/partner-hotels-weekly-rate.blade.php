@@ -1,11 +1,12 @@
 @extends('partner.partner-layout')
 
-@section('title', ' Apartment Weekly Rate | ' . config('domains.app_name'))
+@section('title', ' Hotels Weekly Rate | ' . config('domains.app_name'))
 
 @section('content')
+
   <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
   
-  
+ 
 
 <div x-data="{ enabled: true }" class="max-w-xl mx-auto space-y-8 lg:ml-32 px-4 py-6">
   <!-- Header -->

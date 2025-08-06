@@ -1,63 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Partner Registration - {{ config('domains.domain') }}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    @vite(['resources/js/app.js'])
 
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+@extends('partner.partner-layout')
 
-    <style>
-        body {
-            font-family: 'Noto Sans', sans-serif;
-        }
-    </style>
-</head>
-<body class="bg-white min-h-screen">
+@section('title', ' Partner Registration | ' . config('domains.app_name'))
 
-<!-- Header -->
-<header class="text-white px-4 py-2" style="background-color:#1F8FB2;">
-    <section class="py-4">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
-                <!-- Logo -->
-                <div class="w-full md:w-auto md:ml-6">
-                     @php
-                            $host = config('domains.app_name');
+@section('content')
 
-                        @endphp
+    
 
-                        <a href="{{ url('/') }}" class="text-2xl font-bold flex items-center">
-                            @if($host == 'BookinTour')
-                                <h1>Bookintour.com</h1>
-                            @elseif ($host == 'Inselor')
-                                <img src="{{ asset('images/inselor-logo.png') }}" alt="Inselor" class="h-12 w-auto align-middle" />
-                            @endif
-                        </a>
-                </div>
-
-                <!-- Right Section -->
-                <div class="flex items-center space-x-4 text-sm font-medium md:ml-auto">
-                    <!-- Help Icon -->
-                    <a href="/help" title="Help">
-                        <img src="{{ asset('assets/question.svg') }}" alt="Help" class="w-6 h-6 md:w-7 md:h-7 cursor-pointer" />
-                    </a>
-
-                    <!-- Language Button -->
-                    <button id="language-button" type="button"
-                        class="flex items-center justify-center w-8 h-8 bg-white rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-hidden"
-                        title="Change Language">
-                        <img src="{{ asset('images/uk.png') }}" alt="UK Flag" class="w-full h-full object-cover rounded-full" />
-                    </button>
-                </div>
-            </div>
-        </div>
-    </section>
-</header>
 
 <!-- Main Content -->
 <main class="container mx-auto px-4 py-12">
@@ -148,5 +97,4 @@
     });
 </script>
 
-</body>
-</html>
+@endsection

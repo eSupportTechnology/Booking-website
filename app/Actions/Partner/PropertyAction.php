@@ -13,6 +13,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use App\DTOs\Partner\PropertyStep1DTO;
 use App\DTOs\Partner\PropertyStep2DTO;
+use App\DTOs\Partner\ApartmentStep1DTO;
 use App\Models\Languages;
 use Illuminate\Support\Facades\Log;
 use App\DTOs\Partner\UploadPropertyPhotosDTO;
@@ -121,6 +122,30 @@ class PropertyAction
         session(['current_property_id' => $property->id]);
 
         Log::info('Property created successfully', [
+            'property_id' => $property->id,
+            'property_data' => $property->toArray(),
+        ]);
+
+        return $property;
+    }
+
+    public function createApartmentStep1(ApartmentStep1DTO $dto)
+    {
+        Log::info('createApartmentStep1 called', [
+            'dto_data' => $dto->toArray(),
+            'address_type_id' => $dto->address_type_id,
+        ]);
+
+        // Create property data without subcategory_id
+        $propertyData = $dto->toArray();
+        $propertyData['subcategory_id'] = null; // Set to null for apartments
+
+        $property = \App\Models\Property::create($propertyData);
+
+        // Store property ID in session for form navigation
+        session(['current_property_id' => $property->id]);
+
+        Log::info('Apartment property created successfully', [
             'property_id' => $property->id,
             'property_data' => $property->toArray(),
         ]);

@@ -1,6 +1,6 @@
-@extends('frontend.partner-layout')
+@extends('partner.partner-layout')
 
-@section('title', 'Alternative Places Entire Types')
+@section('title', ' Homes Edit | ' . config('domains.app_name'))
 
 @section('content')
 <script>
