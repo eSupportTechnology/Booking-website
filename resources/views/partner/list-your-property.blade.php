@@ -5,6 +5,31 @@
 
 @section('content')
 
+<!-- Success Toast for Registration -->
+@if(request()->get('registration') === 'success')
+<div id="success-toast" class="fixed top-4 right-4 z-50 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center space-x-2 transform transition-all duration-300">
+    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+    </svg>
+    <span class="text-sm font-medium">Registration completed successfully! Your property is now live.</span>
+    <button onclick="document.getElementById('success-toast').style.display='none'" class="ml-4 text-white hover:text-gray-200">
+        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+        </svg>
+    </button>
+</div>
+
+<script>
+    // Auto-hide the toast after 5 seconds
+    setTimeout(() => {
+        const toast = document.getElementById('success-toast');
+        if (toast) {
+            toast.style.display = 'none';
+        }
+    }, 5000);
+</script>
+@endif
+
 <!-- MAIN SECTION -->
 <section class="bg-[#1F8FB2] text-white py-12 px-4 md:px-12 relative z-0">
     <div class="container px-4 md:px-8 max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">

@@ -5,6 +5,64 @@
 
 @section('content')
 <body class="bg-gray-100 text-gray-800">
+    <!-- Toast Notification System -->
+    <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
+    
+    <script>
+    // Toast notification system
+    function showToast(message, type = 'info') {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        
+        // Base classes
+        let bgColor = 'bg-blue-500';
+        let textColor = 'text-white';
+        let icon = 'ℹ️';
+        
+        // Type-specific styling
+        switch(type) {
+            case 'success':
+                bgColor = 'bg-green-500';
+                icon = '✅';
+                break;
+            case 'error':
+                bgColor = 'bg-red-500';
+                icon = '❌';
+                break;
+            case 'warning':
+                bgColor = 'bg-orange-500';
+                textColor = 'text-white';
+                icon = '⚠️';
+                break;
+        }
+        
+        toast.className = `${bgColor} ${textColor} px-6 py-3 rounded-lg shadow-lg flex items-center space-x-2 transform transition-all duration-300 translate-x-full`;
+        toast.innerHTML = `
+            <span class="text-lg">${icon}</span>
+            <span class="flex-1">${message}</span>
+            <button onclick="this.parentElement.remove()" class="text-white hover:text-gray-200 text-xl font-bold">&times;</button>
+        `;
+        
+        container.appendChild(toast);
+        
+        // Animate in
+        setTimeout(() => {
+            toast.classList.remove('translate-x-full');
+        }, 100);
+        
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            if (toast.parentElement) {
+                toast.classList.add('translate-x-full');
+                setTimeout(() => {
+                    if (toast.parentElement) {
+                        toast.remove();
+                    }
+                }, 300);
+            }
+        }, 5000);
+    }
+    </script>
     <!-- Header -->
 
     <script>
@@ -132,16 +190,18 @@
                     .then(data => {
                         console.log('Form submission response:', data);
                         if (data.success) {
+                            // Show success message
+                            showToast('Property created successfully!', 'success');
                             // Redirect to multiple apartment form with property ID
                             console.log('Redirecting to multiple apartment form with property ID:', data.property_id);
                             window.location.href = '/partner/partner-multiple-apartment/' + data.property_id;
                         } else {
-                            alert('Error: ' + data.message);
+                            showToast('Error: ' + data.message, 'error');
                         }
                     })
                     .catch(error => {
                         console.error('Error:', error);
-                        alert('An error occurred while saving the property.');
+                        showToast('An error occurred while saving the property.', 'error');
                     });
                 }
             ">

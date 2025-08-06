@@ -1,23 +1,68 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Create Apartment</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+@extends('partner.partner-layout')
 
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet" />
+@section('title', 'Apartment Create Step 2 | ' . config('domains.app_name'))
+
+@section('content')
+<body class="bg-gray-50 text-gray-800">
+    <!-- Toast Notification System -->
+    <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
     
-    <style>
-      body {
-        font-family: 'Noto Sans', sans-serif;
-      }
-    </style>
+    <script>
+    // Toast notification system
+    function showToast(message, type = 'info') {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        
+        // Base classes
+        let bgColor = 'bg-blue-500';
+        let textColor = 'text-white';
+        let icon = 'ℹ️';
+        
+        // Type-specific styling
+        switch(type) {
+            case 'success':
+                bgColor = 'bg-green-500';
+                icon = '✅';
+                break;
+            case 'error':
+                bgColor = 'bg-red-500';
+                icon = '❌';
+                break;
+            case 'warning':
+                bgColor = 'bg-orange-500';
+                textColor = 'text-white';
+                icon = '⚠️';
+                break;
+        }
+        
+        toast.className = `${bgColor} ${textColor} px-6 py-3 rounded-lg shadow-lg flex items-center space-x-2 transform transition-all duration-300 translate-x-full`;
+        toast.innerHTML = `
+            <span class="text-lg">${icon}</span>
+            <span class="flex-1">${message}</span>
+            <button onclick="this.parentElement.remove()" class="text-white hover:text-gray-200 text-xl font-bold">&times;</button>
+        `;
+        
+        container.appendChild(toast);
+        
+        // Animate in
+        setTimeout(() => {
+            toast.classList.remove('translate-x-full');
+        }, 100);
+        
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            if (toast.parentElement) {
+                toast.classList.add('translate-x-full');
+                setTimeout(() => {
+                    if (toast.parentElement) {
+                        toast.remove();
+                    }
+                }, 300);
+            }
+        }, 5000);
+    }
+    </script>
     
-    <meta name="csrf-token" content="{{ csrf_token() }}">
     <script>
       // Ensure CSRF token is always sent with fetch/AJAX requests
       document.addEventListener('DOMContentLoaded', function () {
@@ -35,8 +80,7 @@
         }
       });
     </script>
-  </head>
-  <body class="bg-gray-50 text-gray-800">
+    
     <!-- Property Data from Backend -->
     @if(isset($propertyData) && $propertyData)
     <script id="property-data" type="application/json">
@@ -52,84 +96,7 @@
     @endif
     
     <!-- Header -->
-    <header class="text-white px-4 py-2" style="background-color:#1F8FB2;">
-        <section class="py-4">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div
-                    class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
-                    <!-- Logo -->
-                    <div class="w-full md:w-auto md:ml-6">
-                        @php
-                            $host = config('domains.app_name');
-
-                        @endphp
-
-                        <a href="{{ url('/') }}" class="text-2xl font-bold flex items-center">
-                            @if ($host == 'BookinTour')
-                                <h1>Bookintour.com</h1>
-                            @elseif ($host == 'Inselor')
-                                <img src="{{ asset('images/inselor-logo.png') }}" alt="Inselor"
-                                    class="h-12 w-auto align-middle" />
-                            @endif
-                        </a>
-                    </div>
-
-                    <!-- Right Section -->
-                    <div class="flex items-center space-x-4 text-sm font-medium md:ml-auto font-sans">
-                        <!-- Help Icon -->
-                        <a href="/help" title="Help">
-                            <img src="{{ asset('assets/question.svg') }}" alt="Help"
-                                class="w-6 h-6 md:w-7 md:h-7 cursor-pointer" />
-                        </a>
-
-                        <!-- Language Button -->
-                        <button id="language-button" type="button"
-                            class="flex items-center justify-center w-8 h-8 bg-white rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-hidden"
-                            title="Change Language">
-                            <img src="{{ asset('images/uk.png') }}" alt="UK Flag"
-                                class="w-full h-full object-cover rounded-full" />
-                        </button>
-
-                        <!-- Language Modal -->
-                        <div id="language-modal"
-                            class="fixed inset-0 hidden z-50 overflow-y-auto flex items-start justify-center px-4 py-8 bg-black bg-opacity-50">
-                            <div class="relative w-full max-w-md p-6 bg-white rounded-lg shadow">
-                                <!-- Modal Header -->
-                                <div class="flex items-start justify-between">
-                                    <h3 class="text-xl font-semibold text-gray-900">Select your language</h3>
-                                    <button type="button"
-                                        class="close-btn text-gray-400 hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center">
-                                        <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd"
-                                                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                                clip-rule="evenodd" />
-                                        </svg>
-                                        <span class="sr-only">Close modal</span>
-                                    </button>
-                                </div>
-
-                                <!-- Modal Body -->
-                                <div class="mt-4">
-                                    <p class="mb-4 text-base text-gray-500">Suggested for you</p>
-                                    <div class="grid grid-cols-2 gap-4">
-                                        <button class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100">
-                                            <img src="https://flagcdn.com/w40/gb.png" alt="English (UK)"
-                                                class="h-5 w-5" />
-                                            <span>English (UK)</span>
-                                        </button>
-                                        <button class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100">
-                                            <img src="https://flagcdn.com/w40/de.png" alt="Deutsch" class="h-5 w-5" />
-                                            <span>Deutsch</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </header>
+    
     
     <!-- Main Alpine.js Application -->
     <div
@@ -1382,8 +1349,8 @@
       this.uploadedPhotos.splice(index, 1);
     },
     async uploadPhotosAndContinue() {
-      if (this.uploadedPhotos.length < 3) {
-        alert('Please upload at least 3 photos.');
+      if (this.uploadedPhotos.length < 1) {
+        showToast('Please upload at least 1 photo.', 'warning');
         return;
       }
       this.isUploading = true;
@@ -1404,10 +1371,10 @@
         if (data.success) {
           this.step = 4;
         } else {
-          alert(data.message || 'Upload failed');
+          showToast(data.message || 'Upload failed', 'error');
         }
       } catch (err) {
-        alert('Upload error: ' + err.message);
+        showToast('Upload error: ' + err.message, 'error');
       } finally {
         this.isUploading = false;
       }
@@ -1421,7 +1388,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6 items-start">
               <!-- 📸 Photo Upload Area -->
         <div class="border rounded-lg p-6 bg-white shadow-sm">
-          <p class="font-semibold text-gray-800 mb-2">Upload at least 3 photos of your property.</p>
+          <p class="font-semibold text-gray-800 mb-2">Upload at least 1 photo of your property.</p>
           <p class="text-sm text-gray-600 mb-4">
             The more you upload, the more likely you are to get bookings. You can add more later.
           </p>
@@ -1445,7 +1412,7 @@
               </div>
               <div class="ml-3">
                 <p class="text-sm text-red-800">
-                  <strong>Photo requirement:</strong> You need to upload at least 3 photos to continue to the next step.
+                  <strong>Photo requirement:</strong> You need to upload at least 1 photo to continue to the next step.
                 </p>
               </div>
             </div>
@@ -1469,14 +1436,14 @@
               </div>
               <div class="ml-3">
                 <p class="text-sm text-yellow-800">
-                  <strong>Photo requirement:</strong> You need to upload at least 2 more photos (3 total) to continue to the next step.
+                  <strong>Photo requirement:</strong> You have uploaded 1 photo. You can continue or add more photos for better results.
                 </p>
               </div>
             </div>
           </div>
           
           <div 
-            x-show="uploadedPhotos.length >= 3" 
+            x-show="uploadedPhotos.length >= 1" 
             x-transition:enter="transition ease-out duration-300"
             x-transition:enter-start="opacity-0 transform translate-y-2"
             x-transition:enter-end="opacity-100 transform translate-y-0"
@@ -1493,7 +1460,7 @@
               </div>
               <div class="ml-3">
                 <p class="text-sm text-green-800">
-                  <strong>Great!</strong> You have uploaded enough photos to continue.
+                  <strong>Great!</strong> You have uploaded at least 1 photo. You can now continue to the next step.
                 </p>
               </div>
             </div>
@@ -1583,11 +1550,11 @@
                   </button>
                   <button
                     @click="uploadPhotosAndContinue"
-                    :disabled="uploadedPhotos.length < 3 || isUploading"
+                    :disabled="uploadedPhotos.length < 1 || isUploading"
                     :class="{
                       'px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700cursor-pointer opacity-100 hover:bg-blue-700':
-                        uploadedPhotos.length >= 3,
-                      'bg-gray-400 rounded cursor-not-allowed opacity-50': uploadedPhotos.length < 3,
+                        uploadedPhotos.length >= 1,
+                      'bg-gray-400 rounded cursor-not-allowed opacity-50': uploadedPhotos.length < 1,
                     }"
                     class="px-6 py-2 text-white rounded"
                   >
@@ -2589,7 +2556,7 @@ function wizardApp() {
                 case 1: // Property Setup
                     return this.stepCompletionStatus.propertySetup || this.propertyWizardStep >= 6;
                 case 2: // Photos
-                    return this.stepCompletionStatus.photos || (this.uploadedPhotos && this.uploadedPhotos.length >= 3);
+                    return this.stepCompletionStatus.photos || (this.uploadedPhotos && this.uploadedPhotos.length >= 1);
                 case 3: // Pricing and Calendar
                     return this.stepCompletionStatus.pricing || this.pricingWizardStep >= 4;
                 case 4: // Legal Information
@@ -3067,7 +3034,7 @@ function wizardApp() {
         async saveName() {
             this.log('Saving name');
             if (!this.title.trim()) {
-                alert('Please enter a property name');
+                showToast('Please enter a property name', 'warning');
                 return;
             }
             
@@ -3087,6 +3054,7 @@ function wizardApp() {
                     this.wizardStep++;
                     this.saveWizardState();
                     console.log('Property name saved successfully');
+                    showToast('Property name saved successfully!', 'success');
                     
                     // Mark basic info as completed if all required fields are saved
                     if (this.wizardStep >= 3) {
@@ -3104,7 +3072,7 @@ function wizardApp() {
         async saveLocation() {
             this.log('Saving location');
             if (!this.address.trim() || !this.city.trim()) {
-                alert('Please enter both address and city');
+                showToast('Please enter both address and city', 'warning');
                 return;
             }
             
@@ -3128,6 +3096,7 @@ function wizardApp() {
                     this.wizardStep++;
                     this.saveWizardState();
                     console.log('Property location saved successfully');
+                    showToast('Property location saved successfully!', 'success');
                 } else {
                     console.error('Failed to save property location');
                 }
@@ -3168,22 +3137,22 @@ function wizardApp() {
             
             // Validate required fields
             if (!this.guests || this.guests < 1) {
-                alert('Please set the number of guests (minimum 1)');
+                showToast('Please set the number of guests (minimum 1)', 'warning');
                 return;
             }
             
             if (!this.bathrooms || this.bathrooms < 0) {
-                alert('Please set the number of bathrooms');
+                showToast('Please set the number of bathrooms', 'warning');
                 return;
             }
             
             if (!this.allowChildren) {
-                alert('Please select whether children are allowed');
+                showToast('Please select whether children are allowed', 'warning');
                 return;
             }
             
             if (!this.offerCribs) {
-                alert('Please select whether infants are allowed');
+                showToast('Please select whether infants are allowed', 'warning');
                 return;
             }
             
@@ -3216,16 +3185,17 @@ function wizardApp() {
                 if (response.ok) {
                     const result = await response.json();
                     console.log('Property details saved successfully:', result);
+                    showToast('Property details saved successfully!', 'success');
                     this.propertyWizardStep++;
                     this.saveWizardState();
                 } else {
                     const errorData = await response.json();
                     console.error('Failed to save property details:', errorData);
-                    alert('Failed to save property details: ' + (errorData.message || 'Unknown error'));
+                    showToast('Failed to save property details: ' + (errorData.message || 'Unknown error'), 'error');
                 }
             } catch (error) {
                 console.error('Error saving property details:', error);
-                alert('Error saving property details: ' + error.message);
+                showToast('Error saving property details: ' + error.message, 'error');
             }
         },
 
@@ -3618,7 +3588,7 @@ function wizardApp() {
             // Check if propertyId is valid
             if (!this.propertyId || this.propertyId === 'new') {
                 this.log('Validation failed: Property ID is missing');
-                alert('Property ID is missing. Please refresh the page.');
+                showToast('Property ID is missing. Please refresh the page.', 'error');
                 return;
             }
             
@@ -3644,16 +3614,17 @@ function wizardApp() {
                     const data = await res.json();
                     if (res.ok && data.success) {
                         this.log('Languages saved successfully: ' + data);
+                    showToast('Languages saved successfully!', 'success');
                         this.log('Moving from propertyWizardStep ' + this.propertyWizardStep + ' to ' + (this.propertyWizardStep + 1));
                         this.propertyWizardStep++;
                         this.logCurrentState();
                     } else {
                         this.log('Language save error: ' + data);
-                        alert('Error: ' + (data.message || 'Could not save languages.'));
+                        showToast('Error: ' + (data.message || 'Could not save languages.'), 'error');
                     }
                 } catch (err) {
                     this.log('AJAX error in language save: ' + err);
-                    alert('AJAX error: ' + err.message);
+                    showToast('AJAX error: ' + err.message, 'error');
                 } finally {
                     this.isLoading = false;
                 }
@@ -3701,7 +3672,7 @@ function wizardApp() {
                         data = JSON.parse(text);
                     } catch (e) {
                         this.log('Non-JSON response from services POST: ' + text);
-                        alert('Server error (services save):\n' + text.substring(0, 500));
+                        showToast('Server error (services save):\n' + text.substring(0, 500), 'error');
                         throw new Error('Non-JSON response from services POST');
                     }
                     
@@ -3711,11 +3682,11 @@ function wizardApp() {
                         this.logCurrentState();
                     } else {
                         this.log('Services save error: ' + data);
-                        alert('Error: ' + (data && data.message ? data.message : 'Could not save services.'));
+                        showToast('Error: ' + (data && data.message ? data.message : 'Could not save services.'), 'error');
                     }
                 } catch (err) {
                     this.log('AJAX error in services save: ' + err);
-                    alert('AJAX error: ' + err.message);
+                    showToast('AJAX error: ' + err.message, 'error');
                 } finally {
                     this.isLoading = false;
                 }
@@ -3738,11 +3709,11 @@ function wizardApp() {
                         this.logCurrentState();
                     } else {
                         this.log('Additional details save error: ' + data);
-                        alert('Error: ' + (data.message || 'Could not save additional details.'));
+                        showToast('Error: ' + (data.message || 'Could not save additional details.'), 'error');
                     }
                 } catch (err) {
                     this.log('AJAX error in additional details save: ' + err);
-                    alert('AJAX error: ' + err.message);
+                    showToast('AJAX error: ' + err.message, 'error');
                 } finally {
                     this.isLoading = false;
                 }
@@ -3784,16 +3755,17 @@ function wizardApp() {
                 if (response.ok) {
                     const result = await response.json();
                     console.log('House rules saved successfully:', result);
+                    showToast('House rules saved successfully!', 'success');
                     this.propertyWizardStep++;
                     this.saveWizardState();
                 } else {
                     const errorData = await response.json();
                     console.error('Failed to save house rules:', errorData);
-                    alert('Failed to save house rules: ' + (errorData.message || 'Unknown error'));
+                    showToast('Failed to save house rules: ' + (errorData.message || 'Unknown error'), 'error');
                 }
             } catch (error) {
                 console.error('Error saving house rules:', error);
-                alert('Error saving house rules: ' + error.message);
+                showToast('Error saving house rules: ' + error.message, 'error');
             } finally {
                 this.isLoading = false;
             }
@@ -3833,6 +3805,7 @@ function wizardApp() {
                 if (response.ok) {
                     const result = await response.json();
                     console.log('Pricing saved successfully:', result);
+                    showToast('Pricing saved successfully!', 'success');
                     
                     console.log('Pricing saved successfully, current pricingWizardStep:', this.pricingWizardStep);
                     if (this.pricingWizardStep < 4) {
@@ -3847,11 +3820,11 @@ function wizardApp() {
                 } else {
                     const errorData = await response.json();
                     console.error('Failed to save pricing:', errorData);
-                    alert('Failed to save pricing: ' + (errorData.message || 'Unknown error'));
+                    showToast('Failed to save pricing: ' + (errorData.message || 'Unknown error'), 'error');
                 }
             } catch (error) {
                 console.error('Error saving pricing:', error);
-                alert('Error saving pricing: ' + error.message);
+                showToast('Error saving pricing: ' + error.message, 'error');
             } finally {
                 this.isLoading = false;
             }
@@ -3921,21 +3894,24 @@ function wizardApp() {
                     const result = await response.json();
                     console.log('Legal info saved successfully:', result);
                     
-                    // Redirect to list-your-property page with success message
-                    const successMessage = encodeURIComponent('🎉 Congratulations! Your property has been successfully listed and is now live on our platform. You can start receiving bookings from guests worldwide!');
-                    const redirectUrl = `/list-your-property?success=true&message=${successMessage}`;
+                    // Show success toast and redirect to list-your-property page
+                    showToast('🎉 Congratulations! Your property has been successfully listed and is now live on our platform!', 'success');
                     
-                    console.log('Redirecting to:', redirectUrl);
-                    window.location.href = redirectUrl;
+                    // Wait for toast to be visible, then redirect
+                    setTimeout(() => {
+                        const redirectUrl = '{{ route("partner.list-your-property") }}?registration=success';
+                        console.log('Redirecting to:', redirectUrl);
+                        window.location.href = redirectUrl;
+                    }, 2000);
                     console.log('Legal info saved successfully, redirecting to list-your-property');
                 } else {
                     const errorData = await response.json();
                     console.error('Failed to save legal info:', errorData);
-                    alert('Failed to save legal info: ' + (errorData.message || 'Unknown error'));
+                    showToast('Failed to save legal info: ' + (errorData.message || 'Unknown error'), 'error');
                 }
             } catch (error) {
                 console.error('Error saving legal info:', error);
-                alert('Error saving legal info: ' + error.message);
+                showToast('Error saving legal info: ' + error.message, 'error');
             } finally {
                 this.isLoading = false;
             }
@@ -4074,5 +4050,5 @@ function wizardApp() {
 }
 </script>
 
-  </body>
-</html>
+</body>
+@endsection

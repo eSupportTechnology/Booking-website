@@ -577,8 +577,62 @@ class PropertyController extends Controller
     public function showBedrooms($category, $property)
     {
         // $property is the ID from the route
+        $propertyModel = \App\Models\Property::findOrFail($property);
+        
+        // Fetch existing bedrooms for this property
+        $existingBedrooms = \App\Models\PropertyBedroom::where('property_id', $property)->get();
+        
+        // Convert to rooms structure for frontend
+        $rooms = [
+            'bedroom1' => ['name' => 'Bedroom 1', 'twin' => 0, 'full' => 1, 'queen' => 0, 'king' => 0, 'bunk' => 0, 'sofa' => 0, 'futon' => 0],
+            'livingRoom' => ['name' => 'Living room', 'twin' => 0, 'full' => 0, 'queen' => 0, 'king' => 0, 'bunk' => 0, 'sofa' => 0, 'futon' => 0],
+            'otherSpaces' => ['name' => 'Other spaces', 'twin' => 0, 'full' => 0, 'queen' => 0, 'king' => 0, 'bunk' => 0, 'sofa' => 0, 'futon' => 0]
+        ];
+        
+        foreach ($existingBedrooms as $room) {
+            // Create a consistent key format for bedrooms
+            if (str_contains(strtolower($room->name), 'bedroom')) {
+                // Extract bedroom number
+                if (preg_match('/bedroom\s*(\d+)/i', $room->name, $matches)) {
+                    $bedroomNumber = $matches[1];
+                    $roomKey = 'bedroom' . $bedroomNumber;
+                } else {
+                    // If no number found, use 'bedroom1'
+                    $roomKey = 'bedroom1';
+                }
+            } else {
+                // For non-bedroom rooms, use the original logic
+                $roomKey = strtolower(str_replace(' ', '', $room->name));
+            }
+            
+            Log::info('Processing existing room', [
+                'room_name' => $room->name,
+                'room_key' => $roomKey,
+                'room_type' => $room->room_type
+            ]);
+            
+            $rooms[$roomKey] = [
+                'name' => $room->name,
+                'twin' => $room->twin ?? 0,
+                'full' => $room->full ?? 0,
+                'queen' => $room->queen ?? 0,
+                'king' => $room->king ?? 0,
+                'bunk' => $room->bunk ?? 0,
+                'sofa' => $room->sofa ?? 0,
+                'futon' => $room->futon ?? 0
+            ];
+        }
+        
+        Log::info('Final rooms data for frontend', [
+            'property_id' => $property,
+            'rooms_keys' => array_keys($rooms),
+            'rooms_data' => $rooms
+        ]);
+        
         return view('partner.partner-apartments-bedrooms', [
+            'property' => $propertyModel,
             'propertyId' => $property,
+            'rooms' => $rooms
         ]);
     }
 
@@ -1001,7 +1055,30 @@ class PropertyController extends Controller
                 $totalBeds += $room->futon;
             }
             
-            $roomDisplayData[$room->room_type] = [
+            // Create a unique key for each room
+            $displayKey = $room->room_type;
+            if ($room->room_type === 'bedroom') {
+                // For bedrooms, use the room name as the key to distinguish between Bedroom 1, Bedroom 2, etc.
+                $displayKey = strtolower(str_replace(' ', '', $room->name));
+            } elseif ($room->room_type === 'living_room') {
+                // For living room, use consistent key
+                $displayKey = 'livingroom';
+            } elseif ($room->room_type === 'other') {
+                // For other spaces, use consistent key
+                $displayKey = 'otherspaces';
+            }
+            
+            Log::info('Processing room for display', [
+                'room_id' => $room->id,
+                'room_name' => $room->name,
+                'room_type' => $room->room_type,
+                'display_key' => $displayKey,
+                'bed_summary' => implode(', ', $bedSummary),
+                'total_beds' => $totalBeds,
+                'has_beds' => $totalBeds > 0
+            ]);
+            
+            $roomDisplayData[$displayKey] = [
                 'name' => $room->name,
                 'bed_summary' => implode(', ', $bedSummary),
                 'total_beds' => $totalBeds,
@@ -1018,8 +1095,20 @@ class PropertyController extends Controller
             } elseif (strpos($normalizedName, 'other') !== false) {
                 $roomKey = 'otherSpaces';
             } else {
-                // For other rooms, use the original logic
-                $roomKey = strtolower(str_replace(' ', '', $room->name));
+                // For bedrooms, create consistent keys
+                if (strpos($normalizedName, 'bedroom') !== false) {
+                    // Extract bedroom number and create key like 'bedroom1', 'bedroom2', etc.
+                    if (preg_match('/bedroom\s*(\d+)/i', $room->name, $matches)) {
+                        $bedroomNumber = $matches[1];
+                        $roomKey = 'bedroom' . $bedroomNumber;
+                    } else {
+                        // If no number found, use 'bedroom1'
+                        $roomKey = 'bedroom1';
+                    }
+                } else {
+                    // For other rooms, use the original logic
+                    $roomKey = strtolower(str_replace(' ', '', $room->name));
+                }
             }
             
             // Log the room key mapping for debugging
@@ -1059,7 +1148,8 @@ class PropertyController extends Controller
             'existing_amenities_count' => count($existingAmenities),
             'existing_photos_count' => count($existingPhotos),
             'saved_rooms_count' => $savedRooms->count(),
-            'room_display_data' => $roomDisplayData
+            'room_display_data' => $roomDisplayData,
+            'room_display_keys' => array_keys($roomDisplayData)
         ]);
         
         return view('partner.partner-multiple-apartment-2', compact('amenities', 'languages', 'propertyId', 'propertyData', 'roomDisplayData', 'rooms'));
