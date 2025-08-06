@@ -151,30 +151,6 @@
             <div class="flex flex-col lg:grid lg:grid-cols-7 lg:grid-rows-5 gap-4 mt-6 h-auto lg:h-[600px]">
 
                 <div class="w-full lg:col-span-5 lg:row-span-5 space-y-4">
-                    @php
-                        $images = [
-                            'h1.jpg',
-                            'h2.jpg',
-                            'h3.jpg',
-                            'h4.jpg',
-                            'h5.jpg',
-                            'h6.jpg',
-                            'h7.jpg',
-                            'h8.jpg',
-                            'h9.jpg',
-                            'h10.jpg',
-                        ];
-
-                        $desktopVisibleImageCount = 8;
-                        $mobileVisibleImageCount = 3;
-
-                        $desktopImages = array_slice($images, 0, $desktopVisibleImageCount);
-                        $mobileImages = array_slice($images, 0, $mobileVisibleImageCount);
-
-                        $remainingCount = count($images) - $desktopVisibleImageCount;
-                    @endphp
-
-
                     <div class="hidden lg:grid grid-cols-10 grid-rows-8 gap-2 h-full">
                         @php
                             $positions = [
@@ -207,7 +183,8 @@
                                         alt="Property Image {{ $index + 1 }}"
                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
                                         onload="console.log('Image loaded: {{ $file->path }}')">
-                                    <div class="w-full h-full bg-gray-200 rounded-lg flex items-center justify-center" style="display:none;">
+                                    <div class="w-full h-full bg-gray-200 rounded-lg flex items-center justify-center"
+                                        style="display:none;">
                                         <span class="text-gray-500 text-sm">Image not found</span>
                                     </div>
                                     @if ($loop->last && $remainingCount > 0)
@@ -219,7 +196,8 @@
                                 </div>
                             @endforeach
                         @else
-                            <div class="col-span-10 row-span-8 flex items-center justify-center bg-gray-200 rounded-lg">
+                            <div
+                                class="col-span-10 row-span-8 flex items-center justify-center bg-gray-200 rounded-lg">
                                 <p class="text-gray-500 text-lg">No images uploaded for this property</p>
                             </div>
                         @endif
@@ -705,7 +683,8 @@
                                 @foreach ($property->bedrooms as $bedroom)
                                     <span
                                         class="inline-block bg-gray-100 px-2 py-1 rounded mr-2 mb-1">{{ $bedroom->bedroom_type ?? 'Bedroom' }}
-                                        ({{ $bedroom->bed_count ?? 1 }} beds)</span>
+                                        ({{ $bedroom->bed_count ?? 1 }} beds)
+                                    </span>
                                 @endforeach
                             </div>
                         @endif
@@ -1306,10 +1285,9 @@
                         @endif
                         <p><strong>Location:</strong> {{ $property->city ?? 'Gregory Lake' }}</p>
                         @if ($property->languages && $property->languages->count() > 0)
-                            <p>Languages spoken: <span
-                                    class="font-bold">{{ $property->languages->pluck('name')->join(', ') }}</span></p>
+                            <p><strong>Languages spoken:</strong> <span>{{ $property->languages->pluck('name')->join(', ') }}</spanlass=></p>
                         @else
-                            <p>Languages spoken: <span class="font-bold">English</span></p>
+                            <p><strong>Languages spoken:</strong> <span>English</span></p>
                         @endif
                     </div>
                 </div>
