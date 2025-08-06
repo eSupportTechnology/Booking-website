@@ -114,7 +114,7 @@ class PropertyController extends Controller
                 if ($subcategories->isEmpty()) {
                     return redirect()->back()->withErrors(['error' => 'No subcategories found for this category.']);
                 }
-                return view('frontend.partner-hotels-create-1', [
+                return view('partner.partner-hotels-create-1', [
                     'amenities' => $amenities,
                     'languages' => $languages,
                     'roomTypes' => $roomTypes,
