@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use App\DTOs\Partner\PropertyStep1DTO;
 use App\DTOs\Partner\PropertyStep2DTO;
+use App\DTOs\Partner\ApartmentStep1DTO;
 
 
 use Illuminate\Support\Facades\DB;
@@ -77,11 +78,11 @@ class PropertyController extends Controller
         $roomTypes = $action->getRoomTypes();
         $bedTypes = $action->getBedTypes();
         $languages = $action->getLanguages();
-        Log::info('Fetching subcategories for category ID: ' . $categoryId, ['subcategories' => $subcategories]);
-        Log::info('Available amenities', ['amenities' => $amenities]);
-        Log::info('Available room types', ['roomTypes' => $roomTypes]);
-        Log::info('Available bed types', ['bedTypes' => $bedTypes]);
-        Log::info('Available languages', ['languages' => $languages]);
+        // Log::info('Fetching subcategories for category ID: ' . $categoryId, ['subcategories' => $subcategories]);
+        // Log::info('Available amenities', ['amenities' => $amenities]);
+        // Log::info('Available room types', ['roomTypes' => $roomTypes]);
+        // Log::info('Available bed types', ['bedTypes' => $bedTypes]);
+        // Log::info('Available languages', ['languages' => $languages]);
 
         switch ($categoryId) {
             case 1:  // Homes
@@ -113,7 +114,7 @@ class PropertyController extends Controller
                 if ($subcategories->isEmpty()) {
                     return redirect()->back()->withErrors(['error' => 'No subcategories found for this category.']);
                 }
-                return view('partner.partner-hotels-create-1', [
+                return view('frontend.partner-hotels-create-1', [
                     'amenities' => $amenities,
                     'languages' => $languages,
                     'roomTypes' => $roomTypes,
@@ -219,13 +220,26 @@ class PropertyController extends Controller
         $category = $request->input('category_id');
 
         try {
-            $dto = PropertyStep1DTO::fromRequest($request);
-            if (Auth::check()) {
-                $dto->user_id = Auth::id();
-            }
-            $dto->category = $category;
+            // Check if this is an apartment form (category_id = 2 for apartments)
+            if ($category == 2) {
+                // Use ApartmentStep1DTO for apartments (no subcategory_id required)
+                $dto = ApartmentStep1DTO::fromRequest($request);
+                if (Auth::check()) {
+                    $dto->user_id = Auth::id();
+                }
+                $dto->category = $category;
 
-            $property = $action->createPropertyStep1($dto);
+                $property = $action->createApartmentStep1($dto);
+            } else {
+                // Use PropertyStep1DTO for other categories (homes, hotels, etc.)
+                $dto = PropertyStep1DTO::fromRequest($request);
+                if (Auth::check()) {
+                    $dto->user_id = Auth::id();
+                }
+                $dto->category = $category;
+
+                $property = $action->createPropertyStep1($dto);
+            }
 
             session(['property_id' => $property->id]);
 
@@ -375,22 +389,22 @@ class PropertyController extends Controller
         try {
             $dto = PropertyAdditionalDetailsDTO::fromRequest($request);
             
-            Log::info('DTO created', [
-                'dto_data' => $dto->toArray()
-            ]);
+            // Log::info('DTO created', [
+            //     'dto_data' => $dto->toArray()
+            // ]);
 
             $result = $action->execute($property, $dto);
             
-            Log::info('Additional details saved', [
-                'result' => $result
-            ]);
+            // Log::info('Additional details saved', [
+            //     'result' => $result
+            // ]);
 
             return response()->json(['success' => true, 'message' => 'Additional details saved successfully.']);
         } catch (\Exception $e) {
-            Log::error('Error saving additional details', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
+            // Log::error('Error saving additional details', [
+            //     'message' => $e->getMessage(),
+            //     'trace' => $e->getTraceAsString()
+            // ]);
             
             return response()->json([
                 'success' => false, 
@@ -402,36 +416,36 @@ class PropertyController extends Controller
 
     public function storeAccommodationDetails(Request $request, StoreAccommodationDetailsAction $action)
     {
-        Log::info('storeAccommodationDetails called', [
-            'request' => $request->all(),
-        ]);
+        // Log::info('storeAccommodationDetails called', [
+        //     'request' => $request->all(),
+        // ]);
         try {
             $dto = AccommodationDetailsDTO::fromRequest($request);
-            Log::info('AccommodationDetailsDTO created', [
-                'dto' => (array) $dto,
-            ]);
+            // Log::info('AccommodationDetailsDTO created', [
+            //     'dto' => (array) $dto,
+            // ]);
             $accommodation = $action->execute($dto);
-            Log::info('Accommodation created', [
-                'accommodation_id' => $accommodation->id,
-            ]);
+            // Log::info('Accommodation created', [
+            //     'accommodation_id' => $accommodation->id,
+            // ]);
             return response()->json([
                 'success' => true,
                 'accommodation_id' => $accommodation->id,
                 'message' => 'Accommodation details saved successfully.'
             ], 201);
         } catch (\Illuminate\Validation\ValidationException $e) {
-            Log::error('ValidationException in storeAccommodationDetails', [
-                'errors' => $e->errors(),
-            ]);
+            // Log::error('ValidationException in storeAccommodationDetails', [
+            //     'errors' => $e->errors(),
+            // ]);
             return response()->json([
                 'success' => false,
                 'errors' => $e->errors(),
             ], 422);
         } catch (\Exception $e) {
-            Log::error('Exception in storeAccommodationDetails', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
+            // Log::error('Exception in storeAccommodationDetails', [
+            //     'message' => $e->getMessage(),
+            //     'trace' => $e->getTraceAsString(),
+            // ]);
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage(),
@@ -442,19 +456,19 @@ class PropertyController extends Controller
 
     public function saveAmenities(Request $request, $propertyId, PropertyAction $propertyAction)
     {
-        Log::info('saveAmenities called', [
-            'property_id' => $propertyId,
-            'request_data' => $request->all(),
-            'request_method' => $request->method(),
-            'url' => $request->url()
-        ]);
+        // Log::info('saveAmenities called', [
+        //     'property_id' => $propertyId,
+        //     'request_data' => $request->all(),
+        //     'request_method' => $request->method(),
+        //     'url' => $request->url()
+        // ]);
         
         try {
             $property = Property::findOrFail($propertyId);
-            Log::info('Property found', ['property_id' => $property->id]);
+            // Log::info('Property found', ['property_id' => $property->id]);
             
             $dto = SaveAmenitiesDTO::fromRequest($request);
-            Log::info('DTO created successfully', ['dto_data' => $dto->toArray()]);
+            // Log::info('DTO created successfully', ['dto_data' => $dto->toArray()]);
             
             $propertyAction->saveAmenities($property, $dto);
             
@@ -463,12 +477,12 @@ class PropertyController extends Controller
                 'message' => 'Amenities saved successfully'
             ]);
         } catch (\Exception $e) {
-            Log::error('Error saving amenities', [
-                'message' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'trace' => $e->getTraceAsString()
-            ]);
+            // Log::error('Error saving amenities', [
+            //     'message' => $e->getMessage(),
+            //     'file' => $e->getFile(),
+            //     'line' => $e->getLine(),
+            //     'trace' => $e->getTraceAsString()
+            // ]);
             return response()->json([
                 'success' => false,
                 'message' => 'Error saving amenities: ' . $e->getMessage()
@@ -487,7 +501,7 @@ class PropertyController extends Controller
                 'message' => 'Facilities saved successfully'
             ]);
         } catch (\Exception $e) {
-            Log::error('Error saving facilities: ' . $e->getMessage());
+            // Log::error('Error saving facilities: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Error saving facilities: ' . $e->getMessage()
@@ -500,24 +514,24 @@ class PropertyController extends Controller
 
     public function savePolicy(Request $request, Property $property, PropertyAction $propertyAction)
     {
-        Log::info('savePolicy called', [
-            'property_id' => $property->id,
-            'request' => $request->all(),
-        ]);
+        // Log::info('savePolicy called', [
+        //     'property_id' => $property->id,
+        //     'request' => $request->all(),
+        // ]);
 
         try {
             $dto = SavePolicyDTO::fromRequest($request);
 
-            Log::info('savePolicy validated', $dto->toArray());
+            // Log::info('savePolicy validated', $dto->toArray());
 
             $propertyAction->savePolicy($property, $dto);
 
             return response()->json(['success' => true, 'message' => 'Policy saved']);
         } catch (\Exception $e) {
-            Log::error('savePolicy error', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
+            // Log::error('savePolicy error', [
+            //     'message' => $e->getMessage(),
+            //     'trace' => $e->getTraceAsString(),
+            // ]);
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
@@ -995,7 +1009,34 @@ class PropertyController extends Controller
             ];
             
             // Convert to rooms object structure for frontend
-            $roomKey = strtolower(str_replace(' ', '', $room->name));
+            // Map room names to frontend keys
+            $roomKey = null;
+            $normalizedName = strtolower(trim($room->name));
+            
+            if (strpos($normalizedName, 'living') !== false) {
+                $roomKey = 'livingRoom';
+            } elseif (strpos($normalizedName, 'other') !== false) {
+                $roomKey = 'otherSpaces';
+            } else {
+                // For other rooms, use the original logic
+                $roomKey = strtolower(str_replace(' ', '', $room->name));
+            }
+            
+            // Log the room key mapping for debugging
+            Log::info('Added room to rooms object', [
+                'room_key' => $roomKey,
+                'room_data' => [
+                    'name' => $room->name,
+                    'twin' => $room->twin ?? 0,
+                    'full' => $room->full ?? 0,
+                    'queen' => $room->queen ?? 0,
+                    'king' => $room->king ?? 0,
+                    'bunk' => $room->bunk ?? 0,
+                    'sofa' => $room->sofa ?? 0,
+                    'futon' => $room->futon ?? 0
+                ]
+            ]);
+            
             $rooms[$roomKey] = [
                 'name' => $room->name,
                 'twin' => $room->twin ?? 0,
@@ -1211,6 +1252,52 @@ class PropertyController extends Controller
                 'trace' => $e->getTraceAsString()
             ]);
             return response()->json(['success' => false, 'message' => 'Error saving host profile: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function checkBasicInfoCompletion(Property $property)
+    {
+        Log::info('Checking basic info completion for property', ['property_id' => $property->id]);
+        
+        try {
+            // Check if all required basic information fields are filled
+            $hasTitle = !empty($property->title);
+            $hasAddress = !empty($property->address) && !empty($property->city);
+            $hasChannelManager = !empty($property->channel_manager);
+            
+            // Check if property details are saved
+            $hasPropertyDetails = !empty($property->description) || 
+                                !empty($property->guests) || 
+                                !empty($property->bathrooms) ||
+                                !empty($property->apartment_size);
+            
+            $completed = $hasTitle && $hasAddress && $hasChannelManager && $hasPropertyDetails;
+            
+            Log::info('Basic info completion check result', [
+                'property_id' => $property->id,
+                'hasTitle' => $hasTitle,
+                'hasAddress' => $hasAddress,
+                'hasChannelManager' => $hasChannelManager,
+                'hasPropertyDetails' => $hasPropertyDetails,
+                'completed' => $completed
+            ]);
+            
+            return response()->json([
+                'completed' => $completed,
+                'details' => [
+                    'hasTitle' => $hasTitle,
+                    'hasAddress' => $hasAddress,
+                    'hasChannelManager' => $hasChannelManager,
+                    'hasPropertyDetails' => $hasPropertyDetails
+                ]
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error checking basic info completion', ['error' => $e->getMessage()]);
+            
+            return response()->json([
+                'completed' => false,
+                'error' => 'Failed to check completion status'
+            ], 500);
         }
     }
 

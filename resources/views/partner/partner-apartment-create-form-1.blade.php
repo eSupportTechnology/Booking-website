@@ -4,17 +4,74 @@
 @section('title', 'Apartment Create | ' . config('domains.app_name'))
 
 @section('content')
+<body class="bg-gray-100 text-gray-800">
+    <!-- Header -->
 
-   
-<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        // Currency modal logic
+        const currentCurrency = document.getElementById("current-currency");
+        const currencyModal = document.getElementById("currency-modal");
+        const currencyCloseBtn = document.getElementById("currency-close-btn");
 
-   
+        if (currentCurrency && currencyModal && currencyCloseBtn) {
+            // Open currency modal on clicking the currency span
+            currentCurrency.addEventListener("click", () => {
+                currencyModal.classList.remove("hidden");
+            });
+
+            // Close currency modal on close button click
+            currencyCloseBtn.addEventListener("click", () => {
+                currencyModal.classList.add("hidden");
+            });
+
+            // Close currency modal on clicking outside the modal content
+            window.addEventListener("click", (e) => {
+                if (e.target === currencyModal) {
+                    currencyModal.classList.add("hidden");
+                }
+            });
+
+            // Change currency when a currency button is clicked
+            currencyModal.querySelectorAll("button[data-currency]").forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    const selectedCurrency = btn.getAttribute("data-currency");
+                    currentCurrency.textContent = selectedCurrency;
+                    currencyModal.classList.add("hidden");
+                });
+            });
+        }
+
+        // Language modal logic
+        const languageButton = document.getElementById("language-button");
+        const languageModal = document.getElementById("language-modal");
+        const closeBtn = languageModal ? languageModal.querySelector(".close-btn") : null;
+
+        if (languageButton && languageModal && closeBtn) {
+            // Open the language modal
+            languageButton.addEventListener("click", () => {
+                languageModal.classList.remove("hidden");
+            });
+
+            // Close language modal on close button click
+            closeBtn.addEventListener("click", () => {
+                languageModal.classList.add("hidden");
+            });
+
+            // Close language modal on clicking outside the modal content
+            window.addEventListener("click", (event) => {
+                if (event.target === languageModal) {
+                    languageModal.classList.add("hidden");
+                }
+            });
+        }
+    });
+</script>
 
     <!--Start Form-->
     <div class="max-w-6xl p-4 ml-14  " x-data="{
         step: 1,
         categoryId: null,
-        subcategoryId: null,
         addressTypeId: null,
         showProgress: false,
         selected: '',
@@ -47,7 +104,6 @@
                 console.log('Form action:', event.target.action);
                 console.log('Form data being submitted:', {
                     categoryId: categoryId,
-                    subcategoryId: subcategoryId,
                     propertyCount: propertyCount,
                     addressTypeId: addressTypeId,
                     selectedChannels: selectedChannels
@@ -93,7 +149,6 @@
 
             <!-- Hidden fields for DTO data -->
             <input type="hidden" name="category_id" :value="categoryId">
-            <input type="hidden" name="subcategory_id" :value="subcategoryId">
             <input type="hidden" name="property_count" :value="propertyCount">
             <input type="hidden" name="address_type_id" :value="addressTypeId">
             <input type="hidden" name="selected_channels" :value="selectedChannels.join(',')">
@@ -122,7 +177,7 @@
                                     :class="selected === '{{ $subcategory->name }}' ? 'border-blue-600 border-2' :
                                         'border border-gray-300'"
                                     class="block rounded p-4 cursor-pointer transition bg-white"
-                                    @click="selected = '{{ $subcategory->name }}'; subcategoryId = {{ $subcategory->id }}; categoryId = {{ $subcategory->category_id ?? 'null' }}; addressTypeId = {{ $subcategory->name === 'One' ? 1 : 2 }}">
+                                    @click="selected = '{{ $subcategory->name }}'; categoryId = {{ $subcategory->category_id ?? 'null' }}; addressTypeId = {{ $subcategory->name === 'One' ? 1 : 2 }}">
                                     <div class="flex items-center justify-between">
                                         <div class="flex items-center space-x-4">
                                             @if ($subcategory->name === 'One')
@@ -379,4 +434,5 @@
 
         </form>
     </div>
+</body>
 @endsection

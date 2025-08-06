@@ -365,11 +365,11 @@ Route::get('/airport-taxis', function () {
 // Partner Registration Routes (Public - No Auth Required)
 Route::prefix('partner')->group(function () {
     // Partner Login Routes
-    Route::get('/login', [LoginController::class, 'show'])->name('partner.login');
+    Route::get('/login', [LoginController::class, 'show'])->middleware('App\Http\Middleware\PreventBackHistory')->name('partner.login');
     Route::post('/login', [LoginController::class, 'login'])->name('partner.login.submit');
-    Route::get('/sign-in', [LoginController::class, 'showEmailForm'])->name('partner.login.email');
+    Route::get('/sign-in', [LoginController::class, 'showEmailForm'])->middleware('App\Http\Middleware\PreventBackHistory')->name('partner.login.email');
     Route::post('/sign-in', [LoginController::class, 'storeEmail']);
-    Route::get('/password', [LoginController::class, 'showPasswordForm'])->name('partner.login.password');
+    Route::get('/password', [LoginController::class, 'showPasswordForm'])->middleware('App\Http\Middleware\PreventBackHistory')->name('partner.login.password');
     Route::post('/password', [LoginController::class, 'loginWithPassword']);
 
     // Show email registration form
@@ -427,7 +427,32 @@ Route::prefix('partner')->group(function () {
 });
 
 // Partner Routes (Protected - Auth Required)
-Route::prefix('partner')->middleware('auth')->group(function () {
+Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddleware::class])->group(function () {
+    // Partner Dashboard
+    Route::get('/dashboard', [\App\Http\Controllers\Partner\DashboardController::class, 'index'])->name('partner.dashboard');
+
+    // Properties
+    Route::get('/properties', [\App\Http\Controllers\Partner\PropertyController::class, 'index'])->name('partner.properties');
+    Route::get('/bookings', [\App\Http\Controllers\Partner\PropertyController::class, 'bookings'])->name('partner.bookings');
+
+    // Property Listings
+    Route::get('/properties/apartments', [\App\Http\Controllers\Partner\PropertyListingController::class, 'apartments'])->name('partner.properties.apartments');
+    Route::get('/properties/homes', [\App\Http\Controllers\Partner\PropertyListingController::class, 'homes'])->name('partner.properties.homes');
+    Route::get('/properties/hotels', [\App\Http\Controllers\Partner\PropertyListingController::class, 'hotels'])->name('partner.properties.hotels');
+    Route::get('/properties/alternative-places', [\App\Http\Controllers\Partner\PropertyListingController::class, 'alternativePlaces'])->name('partner.properties.alternative-places');
+    Route::get('/properties/views/{id}', [\App\Http\Controllers\Partner\PropertyListingController::class, 'view'])->name('partner.properties.views');
+
+    // Earnings
+    Route::get('/earnings', [\App\Http\Controllers\Partner\EarningsController::class, 'index'])->name('partner.earnings');
+
+    // Messages
+    Route::get('/messages', [\App\Http\Controllers\Partner\MessageController::class, 'index'])->name('partner.messages');
+
+    // Reviews
+    Route::get('/reviews', [\App\Http\Controllers\Partner\ReviewController::class, 'index'])->name('partner.reviews');
+
+    // Settings
+    Route::get('/settings', [\App\Http\Controllers\Partner\SettingsController::class, 'index'])->name('partner.settings');
     Route::get('/property_category', [PropertyController::class, 'categories'])->name('partner.property.category');
     Route::get('/property_subcategory/{id}', [PropertyController::class, 'subcategories'])->name('partner.property.subcategory');
     Route::get('/hotels/rooms/{id}', [PropertyController::class, 'rooms'])->name('partner.hotels.room');
@@ -660,17 +685,17 @@ Route::get('/customer-myAccount', function () {
 Route::get('/partner/apartment/bedrooms/{property}', function ($propertyId) {
     $property = \App\Models\Property::findOrFail($propertyId);
     $bedTypes = \App\Models\BedType::all();
-    
+
     // Fetch existing bedrooms for this property
     $existingBedrooms = \App\Models\PropertyBedroom::where('property_id', $propertyId)->get();
-    
+
     // Convert to rooms structure for frontend
     $rooms = [
         'bedroom1' => ['name' => 'Bedroom 1', 'twin' => 0, 'full' => 1, 'queen' => 0, 'king' => 0, 'bunk' => 0, 'sofa' => 0, 'futon' => 0],
         'livingRoom' => ['name' => 'Living room', 'twin' => 0, 'full' => 0, 'queen' => 0, 'king' => 0, 'bunk' => 0, 'sofa' => 0, 'futon' => 0],
         'otherSpaces' => ['name' => 'Other spaces', 'twin' => 0, 'full' => 0, 'queen' => 0, 'king' => 0, 'bunk' => 0, 'sofa' => 0, 'futon' => 0]
     ];
-    
+
     foreach ($existingBedrooms as $room) {
         $roomKey = strtolower(str_replace(' ', '', $room->name));
         $rooms[$roomKey] = [
@@ -684,7 +709,7 @@ Route::get('/partner/apartment/bedrooms/{property}', function ($propertyId) {
             'futon' => $room->futon ?? 0
         ];
     }
-    
+
     return view('partner.partner-apartments-bedrooms', compact('property', 'bedTypes', 'rooms'));
 })->name('partner.apartment.bedrooms');
 
@@ -704,6 +729,8 @@ Route::post('/partner/property/bedroom/{property}', [PropertyController::class, 
 Route::post('/partner/property/{property}/policy', [\App\Http\Controllers\PropertyController::class, 'savePolicy']);
 
 Route::post('/partner/property/{property}/host-profile', [PropertyController::class, 'saveHostProfile']);
+
+Route::get('/partner/property/{property}/check-basic-info', [PropertyController::class, 'checkBasicInfoCompletion'])->name('partner.property.check-basic-info');
 
 Route::post('/partner/property/{property}/pricing', [PropertyController::class, 'savePricing']);
 Route::post('/partner/property/{property}/address-type', [PropertyController::class, 'saveAddressType']);

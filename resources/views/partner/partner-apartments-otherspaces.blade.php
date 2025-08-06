@@ -142,12 +142,62 @@
         return;
       }
       
+      // Get wizard state from URL parameters
+      const urlParams = new URLSearchParams(window.location.search);
+      const wizardStateParam = urlParams.get('wizardState');
+      let wizardState = null;
+      
+      if (wizardStateParam) {
+        try {
+          wizardState = JSON.parse(decodeURIComponent(wizardStateParam));
+          console.log('Wizard state found:', wizardState);
+        } catch (error) {
+          console.error('Error parsing wizard state:', error);
+        }
+      }
+      
       const payload = {
-        room_name: 'Other Space',
+                  room_name: 'otherSpaces',
         beds: selectedBeds,
         source: '{{ request('source') }}',
         step: '{{ request('step') }}'
       };
+      
+      // Update wizard state with bed counts
+      if (wizardState && wizardState.rooms) {
+        if (!wizardState.rooms.otherSpaces) {
+          wizardState.rooms.otherSpaces = { name: 'Other spaces', twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 };
+        }
+        
+        // Map bed types to wizard state fields
+        this.beds.forEach(bed => {
+          switch(bed.name) {
+            case 'Twin':
+              wizardState.rooms.otherSpaces.twin = bed.count;
+              break;
+            case 'Full':
+              wizardState.rooms.otherSpaces.full = bed.count;
+              break;
+            case 'Queen':
+              wizardState.rooms.otherSpaces.queen = bed.count;
+              break;
+            case 'King':
+              wizardState.rooms.otherSpaces.king = bed.count;
+              break;
+            case 'Sofa Bed':
+              wizardState.rooms.otherSpaces.sofa = bed.count;
+              break;
+            case 'Bunk Bed':
+              wizardState.rooms.otherSpaces.bunk = bed.count;
+              break;
+            case 'Murphy Bed':
+              wizardState.rooms.otherSpaces.futon = bed.count; // Map Murphy to futon
+              break;
+          }
+        });
+        
+        console.log('Updated wizard state with bed counts:', wizardState.rooms.otherSpaces);
+      }
       
       console.log('Prepared payload:', JSON.stringify(payload, null, 2));
       
@@ -181,15 +231,77 @@
         
         console.log('Source:', source, 'Step:', step);
         
-        if (source === 'multiple') {
-          console.log('Redirecting to multiple apartment step 2');
-          window.location.href = 'http://127.0.0.1:8000/partner/multiple-apartment-2/{{ $property->id ?? 116 }}';
-        } else if (source === 'single') {
-          console.log('Redirecting to single apartment step 2');
-          window.location.href = 'http://127.0.0.1:8000/partner/property/apartment/step2/{{ $property->id ?? 116 }}';
+        // Get wizard state from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const wizardStateParam = urlParams.get('wizardState');
+        
+        if (wizardStateParam) {
+          try {
+            const wizardState = JSON.parse(decodeURIComponent(wizardStateParam));
+            console.log('Wizard state found:', wizardState);
+            
+            // Update the wizard state with the bed counts
+            if (wizardState.rooms && wizardState.rooms.otherSpaces) {
+              // Map bed types to wizard state fields
+              this.beds.forEach(bed => {
+                switch(bed.name) {
+                  case 'Twin':
+                    wizardState.rooms.otherSpaces.twin = bed.count;
+                    break;
+                  case 'Full':
+                    wizardState.rooms.otherSpaces.full = bed.count;
+                    break;
+                  case 'Queen':
+                    wizardState.rooms.otherSpaces.queen = bed.count;
+                    break;
+                  case 'King':
+                    wizardState.rooms.otherSpaces.king = bed.count;
+                    break;
+                  case 'Sofa Bed':
+                    wizardState.rooms.otherSpaces.sofa = bed.count;
+                    break;
+                  case 'Bunk Bed':
+                    wizardState.rooms.otherSpaces.bunk = bed.count;
+                    break;
+                  case 'Murphy Bed':
+                    wizardState.rooms.otherSpaces.futon = bed.count; // Map Murphy to futon
+                    break;
+                }
+              });
+              console.log('Updated wizard state with bed counts:', wizardState.rooms.otherSpaces);
+            }
+            
+            // Navigate back to the original form with the updated wizard state
+            const updatedWizardState = encodeURIComponent(JSON.stringify(wizardState));
+            const returnUrl = `/partner-apartment-create-2?wizardState=${updatedWizardState}&step=${wizardState.step || 2}`;
+            console.log('Redirecting to:', returnUrl);
+            window.location.href = returnUrl;
+          } catch (error) {
+            console.error('Error parsing wizard state:', error);
+            // Fallback to original logic
+            if (source === 'multiple') {
+              console.log('Redirecting to multiple apartment step 2');
+              window.location.href = 'http://127.0.0.1:8000/partner/multiple-apartment-2/{{ $property->id ?? 116 }}';
+            } else if (source === 'single') {
+              console.log('Redirecting to single apartment step 2');
+              window.location.href = 'http://127.0.0.1:8000/partner/property/apartment/step2/{{ $property->id ?? 116 }}';
+            } else {
+              console.log('Fallback redirect to step 2');
+              window.location.href = 'http://127.0.0.1:8000/partner/property/apartment/step2/{{ $property->id ?? 116 }}';
+            }
+          }
         } else {
-          console.log('Fallback redirect to step 2');
-          window.location.href = 'http://127.0.0.1:8000/partner/property/apartment/step2/{{ $property->id ?? 116 }}';
+          // Fallback to original logic if no wizard state
+          if (source === 'multiple') {
+            console.log('Redirecting to multiple apartment step 2');
+            window.location.href = 'http://127.0.0.1:8000/partner/multiple-apartment-2/{{ $property->id ?? 116 }}';
+          } else if (source === 'single') {
+            console.log('Redirecting to single apartment step 2');
+            window.location.href = 'http://127.0.0.1:8000/partner/property/apartment/step2/{{ $property->id ?? 116 }}';
+          } else {
+            console.log('Fallback redirect to step 2');
+            window.location.href = 'http://127.0.0.1:8000/partner/property/apartment/step2/{{ $property->id ?? 116 }}';
+          }
         }
         
       } else {
@@ -233,20 +345,20 @@
   <h2 class="text-3xl font-bold text-gray-900 mt-8">Other spaces</h2>
 
   <!-- Debug Info -->
-  <div class="text-xs text-gray-500 mb-4 p-2 bg-gray-100 rounded">
+  <!-- <div class="text-xs text-gray-500 mb-4 p-2 bg-gray-100 rounded">
     <div>Selected beds: <span x-text="selectedBedsCount"></span></div>
     <div>Total bed count: <span x-text="totalBeds"></span></div>
     <div>Loading: <span x-text="isLoading"></span></div>
     <div x-show="lastError" class="text-red-600 mt-1">
       Last error: <span x-text="lastError"></span>
     </div>
-  </div>
+  </div> -->
 
   <!-- Test Button -->
-  <button @click="console.log('Test button clicked'); alert('Alpine.js is working!')" 
+  <!-- <button @click="console.log('Test button clicked'); alert('Alpine.js is working!')" 
           class="bg-green-500 text-white px-3 py-1 rounded text-xs mb-4 hover:bg-green-600">
       Test Alpine.js
-  </button>
+  </button> -->
 
   <div class="bg-white p-6 rounded-lg shadow border border-gray-200">
     <p class="text-lg font-medium text-gray-800 mb-4">Which beds are available in this room?</p>

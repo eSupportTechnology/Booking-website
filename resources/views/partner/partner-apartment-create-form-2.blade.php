@@ -52,35 +52,83 @@
     @endif
     
     <!-- Header -->
-    <header class="text-white px-4 py-2" style="background-color: #1f8fb2">
-      <section class="py-4">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
-            <!-- Logo -->
-            <div class="w-full md:w-auto md:ml-6">
-              <a href="/" class="text-2xl font-bold font-poppins">Bookintour.com</a>
+    <header class="text-white px-4 py-2" style="background-color:#1F8FB2;">
+        <section class="py-4">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div
+                    class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
+                    <!-- Logo -->
+                    <div class="w-full md:w-auto md:ml-6">
+                        @php
+                            $host = config('domains.app_name');
+
+                        @endphp
+
+                        <a href="{{ url('/') }}" class="text-2xl font-bold flex items-center">
+                            @if ($host == 'BookinTour')
+                                <h1>Bookintour.com</h1>
+                            @elseif ($host == 'Inselor')
+                                <img src="{{ asset('images/inselor-logo.png') }}" alt="Inselor"
+                                    class="h-12 w-auto align-middle" />
+                            @endif
+                        </a>
+                    </div>
+
+                    <!-- Right Section -->
+                    <div class="flex items-center space-x-4 text-sm font-medium md:ml-auto font-sans">
+                        <!-- Help Icon -->
+                        <a href="/help" title="Help">
+                            <img src="{{ asset('assets/question.svg') }}" alt="Help"
+                                class="w-6 h-6 md:w-7 md:h-7 cursor-pointer" />
+                        </a>
+
+                        <!-- Language Button -->
+                        <button id="language-button" type="button"
+                            class="flex items-center justify-center w-8 h-8 bg-white rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-hidden"
+                            title="Change Language">
+                            <img src="{{ asset('images/uk.png') }}" alt="UK Flag"
+                                class="w-full h-full object-cover rounded-full" />
+                        </button>
+
+                        <!-- Language Modal -->
+                        <div id="language-modal"
+                            class="fixed inset-0 hidden z-50 overflow-y-auto flex items-start justify-center px-4 py-8 bg-black bg-opacity-50">
+                            <div class="relative w-full max-w-md p-6 bg-white rounded-lg shadow">
+                                <!-- Modal Header -->
+                                <div class="flex items-start justify-between">
+                                    <h3 class="text-xl font-semibold text-gray-900">Select your language</h3>
+                                    <button type="button"
+                                        class="close-btn text-gray-400 hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center">
+                                        <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd"
+                                                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                                clip-rule="evenodd" />
+                                        </svg>
+                                        <span class="sr-only">Close modal</span>
+                                    </button>
+                                </div>
+
+                                <!-- Modal Body -->
+                                <div class="mt-4">
+                                    <p class="mb-4 text-base text-gray-500">Suggested for you</p>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <button class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100">
+                                            <img src="https://flagcdn.com/w40/gb.png" alt="English (UK)"
+                                                class="h-5 w-5" />
+                                            <span>English (UK)</span>
+                                        </button>
+                                        <button class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100">
+                                            <img src="https://flagcdn.com/w40/de.png" alt="Deutsch" class="h-5 w-5" />
+                                            <span>Deutsch</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <!-- Right Section -->
-            <div class="flex items-center space-x-4 text-sm font-medium md:ml-auto font-sans">
-              <!-- Help Icon -->
-              <a href="/help" title="Help">
-                <svg class="w-6 h-6 md:w-7 md:h-7 cursor-pointer" fill="white" viewBox="0 0 24 24">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/>
-                </svg>
-              </a>
-              <!-- Language Button -->
-              <button
-                type="button"
-                class="flex items-center justify-center w-8 h-8 bg-white rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-hidden"
-                title="Change Language"
-                @click="showLanguageModal = !showLanguageModal"
-              >
-                <span class="text-sm font-medium text-gray-800">EN</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
+        </section>
     </header>
     
     <!-- Main Alpine.js Application -->
@@ -88,25 +136,7 @@
       x-data="wizardApp()"
       x-init="console.log('Alpine.js initialized'); console.log('testValue:', testValue);"
     >
-        <!-- Debug Panel (remove in production) -->
-        <div x-data="{ showDebug: false }" class="fixed top-4 right-4 z-50">
-          <button @click="showDebug = !showDebug" class="bg-blue-600 text-white px-3 py-1 rounded text-sm">
-            Debug Panel
-          </button>
-          <div x-show="showDebug" x-transition class="bg-white border rounded-lg p-4 mt-2 shadow-lg max-w-md">
-            <h3 class="font-bold mb-2">Wizard State</h3>
-            <div class="text-xs space-y-1">
-              <div>Main Step: <span x-text="step"></span></div>
-              <div>Wizard Step: <span x-text="wizardStep"></span></div>
-              <div>Property Wizard Step: <span x-text="propertyWizardStep"></span></div>
-              <div>Pricing Wizard Step: <span x-text="pricingWizardStep"></span></div>
-              <div>Bedroom Step: <span x-text="bedroomStep"></span></div>
-            </div>
-            <button @click="logCurrentState()" class="mt-2 bg-gray-600 text-white px-2 py-1 rounded text-xs">
-              Log Current State
-            </button>
-          </div>
-        </div>
+
         <!-- Sticky Top Navbar -->
         <nav class="border-b shadow-sm sticky top-0 z-50 bg-white">
           <div class="max-w-full mx-auto px-4 py-3 overflow-x-auto">
@@ -127,14 +157,9 @@
                     :class="step === index + 1 ? 'text-blue-600' : 'text-gray-700'"
                   >
                     <span x-text="label"></span>
-                    <!-- Optional checkmark -->
-                    <template x-if="index === 0 && wizardStep === 3">
-                      <span class="text-green-600">✔️</span>
-                    </template>
-
-                     <!-- Optional checkmark -->
-                    <template x-if="index === 1 && propertyWizardStep === 6">
-                      <span class="text-green-600">✔️</span>
+                    <!-- Checkmark for completed steps -->
+                    <template x-if="isStepCompleted(index)">
+                      <span class="text-green-600 ml-1" title="Step completed">✔️</span>
                     </template>
                   </div>
                   <!-- 🔵 Progress bar only under "Basic information" when active -->
@@ -545,23 +570,75 @@
           <h2 class="text-lg font-semibold">Where can people sleep?</h2>
           <div class="flex flex-col gap-4">
             <!-- Default rooms (bedroom1, livingRoom, otherSpaces) -->
-            <template x-for="(room, roomId) in rooms" :key="roomId">
-              <template x-if="roomId === 'bedroom1' || roomId === 'livingRoom' || roomId === 'otherSpaces'">
-                <a
-                  @click.prevent="navigateToBedroom(roomId)"
-                  href="#"
-                  class="block"
-                >
-                  <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer flex justify-between items-center">
-                    <div>
-                      <p class="text-sm" x-text="room.name"></p>
-                      <p class="text-sm text-gray-600" x-text="getBedSummary(roomId)"></p>
-                    </div>
-                    <span class="text-xs text-blue-600 hover:underline">Edit</span>
+            <!-- Force show default rooms -->
+            <!-- Bedroom 1 -->
+            <div>
+              <a
+                @click.prevent="navigateToBedroom('bedroom1')"
+                href="#"
+                class="block"
+              >
+                <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer flex justify-between items-center">
+                  <div>
+                    <p class="text-sm" x-text="rooms.bedroom1?.name || 'Bedroom 1'"></p>
+                    <p class="text-sm text-gray-600" x-text="getBedSummary('bedroom1')"></p>
                   </div>
-                </a>
-              </template>
-            </template>
+                  <span class="text-xs text-blue-600 hover:underline">Edit</span>
+                </div>
+              </a>
+            </div>
+            
+            <!-- Living Room -->
+            <div>
+              <div x-show="hasBedCounts('livingRoom')" class="border border-green-300 bg-green-50 rounded px-3 py-2 w-96 flex justify-between items-center">
+                <div>
+                  <p class="text-sm font-medium" x-text="rooms.livingRoom?.name || 'Living room'"></p>
+                  <p class="text-sm text-gray-600" x-text="getBedSummary('livingRoom')"></p>
+                  <p class="text-xs text-green-600">✓ Saved</p>
+                </div>
+                <span class="text-xs text-blue-600 hover:underline cursor-pointer" @click="navigateToBedroom('livingRoom')">Edit</span>
+              </div>
+              <a
+                x-show="!hasBedCounts('livingRoom')"
+                @click.prevent="navigateToBedroom('livingRoom')"
+                href="#"
+                class="block"
+              >
+                <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer flex justify-between items-center">
+                  <div>
+                    <p class="text-sm" x-text="rooms.livingRoom?.name || 'Living room'"></p>
+                    <p class="text-sm text-gray-600" x-text="getBedSummary('livingRoom')"></p>
+                  </div>
+                  <span class="text-xs text-blue-600 hover:underline">Edit</span>
+                </div>
+              </a>
+            </div>
+            
+            <!-- Other Spaces -->
+            <div>
+              <div x-show="hasBedCounts('otherSpaces')" class="border border-green-300 bg-green-50 rounded px-3 py-2 w-96 flex justify-between items-center">
+                <div>
+                  <p class="text-sm font-medium" x-text="rooms.otherSpaces?.name || 'Other spaces'"></p>
+                  <p class="text-sm text-gray-600" x-text="getBedSummary('otherSpaces')"></p>
+                  <p class="text-xs text-green-600">✓ Saved</p>
+                </div>
+                <span class="text-xs text-blue-600 hover:underline cursor-pointer" @click="navigateToBedroom('otherSpaces')">Edit</span>
+              </div>
+              <a
+                x-show="!hasBedCounts('otherSpaces')"
+                @click.prevent="navigateToBedroom('otherSpaces')"
+                href="#"
+                class="block"
+              >
+                <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer flex justify-between items-center">
+                  <div>
+                    <p class="text-sm" x-text="rooms.otherSpaces?.name || 'Other spaces'"></p>
+                    <p class="text-sm text-gray-600" x-text="getBedSummary('otherSpaces')"></p>
+                  </div>
+                  <span class="text-xs text-blue-600 hover:underline">Edit</span>
+                </div>
+              </a>
+            </div>
             
             <!-- Additional bedrooms from bedroom page -->
             <template x-for="(room, key) in rooms" :key="key">
@@ -814,67 +891,70 @@
               </label>
             </div>
           </div>
-          <hr class="my-6 border-t border-gray-300">
-          <!-- Parking cost -->
-          <div>
-            <p class="text-sm font-semibold text-gray-800 mb-2">How much does parking cost?</p>
-            <div class="flex flex-col sm:flex-row items-center gap-4">
-              <!-- Input + Currency Select Wrapper -->
-              <div class="relative w-full max-w-xs">
-                <select x-model="parkingCurrency" @change="logParkingChange('parkingCurrency', $event.target.value)" class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-transparent text-gray-700 text-sm pr-1 pl-1 focus:outline-none">
-                  <option value="usd">US$</option>
-                  <option value="eur">€</option>
-                  <option value="gbp">£</option>
-                  <option value="lkr">Rs</option>
+          <!-- Parking details - only show if parking is available -->
+          <div x-show="parkingAvailable !== 'no'" x-transition>
+            <hr class="my-6 border-t border-gray-300">
+            <!-- Parking cost - only show if parking is paid -->
+            <div x-show="parkingAvailable === 'paid'">
+              <p class="text-sm font-semibold text-gray-800 mb-2">How much does parking cost?</p>
+              <div class="flex flex-col sm:flex-row items-center gap-4">
+                <!-- Input + Currency Select Wrapper -->
+                <div class="relative w-full max-w-xs">
+                  <select x-model="parkingCurrency" @change="logParkingChange('parkingCurrency', $event.target.value)" class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-transparent text-gray-700 text-sm pr-1 pl-1 focus:outline-none">
+                    <option value="usd">US$</option>
+                    <option value="eur">€</option>
+                    <option value="gbp">£</option>
+                    <option value="lkr">Rs</option>
+                  </select>
+                  <input
+                    type="text"
+                    x-model="parkingCost"
+                  @input="logParkingChange('parkingCost', $event.target.value)"
+                    class="w-full border border-gray-400 rounded-md pl-16 pr-2 py-2 text-gray-700 font-semibold focus:ring-2 focus:ring-blue-300 focus:outline-none"
+                  />
+                </div>
+                <!-- Rate Select -->
+                                <select x-model="parkingRate" @change="logParkingChange('parkingRate', $event.target.value)" class="border border-gray-300 rounded px-3 py-2 w-32 text-sm text-gray-700">
+                  <option value="per_day">Per day</option>
+                  <option value="per_stay">Per stay</option>
                 </select>
-                <input
-                  type="text"
-                  x-model="parkingCost"
-                @input="logParkingChange('parkingCost', $event.target.value)"
-                  class="w-full border border-gray-400 rounded-md pl-16 pr-2 py-2 text-gray-700 font-semibold focus:ring-2 focus:ring-blue-300 focus:outline-none"
-                />
               </div>
-              <!-- Rate Select -->
-                              <select x-model="parkingRate" @change="logParkingChange('parkingRate', $event.target.value)" class="border border-gray-300 rounded px-3 py-2 w-32 text-sm text-gray-700">
-                <option value="per_day">Per day</option>
-                <option value="per_stay">Per stay</option>
-              </select>
             </div>
-          </div>
-          <!-- Reservation needed -->
-          <div>
-            <p class="font-semibold text-sm text-gray-800 mb-2">Do guests need to reserve a parking spot?</p>
-            <div class="flex flex-col text-sm gap-2">
-              <label>
-                <input type="radio" name="parking_reservation" value="needed" x-model="parkingReservation" @change="logParkingChange('parkingReservation', $event.target.value)" class="mr-2"> Reservation needed
+            <!-- Reservation needed -->
+            <div>
+              <p class="font-semibold text-sm text-gray-800 mb-2">Do guests need to reserve a parking spot?</p>
+              <div class="flex flex-col text-sm gap-2">
+                              <label>
+                <input type="radio" name="parking_reservation" value="yes" x-model="parkingReservation" @change="logParkingChange('parkingReservation', $event.target.value)" class="mr-2"> Reservation needed
               </label>
               <label>
-                <input type="radio" name="parking_reservation" value="not_needed" x-model="parkingReservation" @change="logParkingChange('parkingReservation', $event.target.value)" class="mr-2"> No reservation needed
+                <input type="radio" name="parking_reservation" value="no" x-model="parkingReservation" @change="logParkingChange('parkingReservation', $event.target.value)" class="mr-2"> No reservation needed
               </label>
+              </div>
             </div>
-          </div>
-          <!-- Parking location -->
-          <div>
-            <p class="font-semibold text-sm text-gray-800 mb-2">Where is the parking located?</p>
-            <div class="flex flex-col text-sm gap-2">
-              <label>
-                <input type="radio" name="parking_location" value="on_site" x-model="parkingLocation" @change="logParkingChange('parkingLocation', $event.target.value)" class="mr-2"> On site
-              </label>
-              <label>
-                <input type="radio" name="parking_location" value="off_site" x-model="parkingLocation" @change="logParkingChange('parkingLocation', $event.target.value)" class="mr-2"> Off site
-              </label>
+            <!-- Parking location -->
+            <div>
+              <p class="font-semibold text-sm text-gray-800 mb-2">Where is the parking located?</p>
+              <div class="flex flex-col text-sm gap-2">
+                <label>
+                  <input type="radio" name="parking_location" value="on_site" x-model="parkingLocation" @change="logParkingChange('parkingLocation', $event.target.value)" class="mr-2"> On site
+                </label>
+                <label>
+                  <input type="radio" name="parking_location" value="off_site" x-model="parkingLocation" @change="logParkingChange('parkingLocation', $event.target.value)" class="mr-2"> Off site
+                </label>
+              </div>
             </div>
-          </div>
-          <!-- Parking type -->
-          <div>
-            <p class="font-semibold text-sm text-gray-800 mb-2">What type of parking is it?</p>
-            <div class="flex flex-col text-sm gap-2">
-              <label>
-                <input type="radio" name="parking_type" value="private" x-model="parkingType" @change="logParkingChange('parkingType', $event.target.value)" class="mr-2"> Private
-              </label>
-              <label>
-                <input type="radio" name="parking_type" value="public" x-model="parkingType" @change="logParkingChange('parkingType', $event.target.value)" class="mr-2"> Public
-              </label>
+            <!-- Parking type -->
+            <div>
+              <p class="font-semibold text-sm text-gray-800 mb-2">What type of parking is it?</p>
+              <div class="flex flex-col text-sm gap-2">
+                <label>
+                  <input type="radio" name="parking_type" value="private" x-model="parkingType" @change="logParkingChange('parkingType', $event.target.value)" class="mr-2"> Private
+                </label>
+                <label>
+                  <input type="radio" name="parking_type" value="public" x-model="parkingType" @change="logParkingChange('parkingType', $event.target.value)" class="mr-2"> Public
+                </label>
+              </div>
             </div>
           </div>
         </div>
@@ -911,20 +991,30 @@
         <h3 class="text-lg mb-4 font-bold">Select languages</h3>
         
         <!-- Common Languages (hardcoded for quick selection) -->
-        <div class="space-y-2 mb-4">
+        <div class="space-y-2 mb-4" x-show="availableLanguages.length > 0">
           <template x-for="commonLang in ['English', 'French', 'German', 'Hindi']" :key="commonLang">
             <label class="flex items-center cursor-pointer">
               <input 
                 type="checkbox" 
                 class="mr-2" 
-                :value="availableLanguages.find(lang => lang.name === commonLang)?.id"
+                :value="getLanguageIdByName(commonLang)"
                 x-model="selectedLanguages" 
-                :disabled="!availableLanguages.find(lang => lang.name === commonLang)"
+                :disabled="!getLanguageIdByName(commonLang)"
               />
               <span x-text="commonLang"></span>
             </label>
           </template>
         </div>
+        
+        <!-- Loading indicator for languages -->
+        <div x-show="availableLanguages.length === 0" class="text-sm text-gray-500 mb-4">
+          Loading languages...
+        </div>
+        
+        <!-- Debug: Show available languages -->
+        <!-- <div class="text-xs text-gray-500 mb-2">
+          Debug - Available languages: <span x-text="JSON.stringify(availableLanguages)"></span>
+        </div> -->
 
         <!-- Selected Languages Display -->
         <template x-if="selectedLanguages.length > 0">
@@ -950,6 +1040,12 @@
         <!-- Add Additional Languages -->
         <div x-show="showAdditionalLanguages" class="mt-4 relative">
           <h3 class="text-lg font-medium mb-2">Add additional languages</h3>
+          <!-- Debug info -->
+          <div class="text-xs text-gray-500 mb-2">
+            Available languages: <span x-text="availableLanguages.length"></span> | 
+            Filtered languages: <span x-text="filteredLanguages.length"></span> | 
+            Show dropdown: <span x-text="showDropdown"></span>
+          </div>
           <!-- Searchable dropdown container -->
           <div class="relative w-full max-w-md">
             <input
@@ -977,6 +1073,7 @@
               x-transition
               class="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded max-h-40 overflow-auto shadow-lg"
               @click.away="showDropdown = false"
+              x-init="console.log('Dropdown languages count:', filteredLanguages.length)"
             >
               <template x-for="language in filteredLanguages" :key="language.id">
                 <li 
@@ -1322,12 +1419,86 @@
       What does your place look like?
     </h2>
     <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6 items-start">
-      <!-- 📸 Photo Upload Area -->
-      <div class="border rounded-lg p-6 bg-white shadow-sm">
-        <p class="font-semibold text-gray-800 mb-2">Upload at least 5 photos of your property.</p>
+              <!-- 📸 Photo Upload Area -->
+        <div class="border rounded-lg p-6 bg-white shadow-sm">
+          <p class="font-semibold text-gray-800 mb-2">Upload at least 3 photos of your property.</p>
           <p class="text-sm text-gray-600 mb-4">
             The more you upload, the more likely you are to get bookings. You can add more later.
           </p>
+          
+          <!-- Toast notification for photo requirement -->
+          <div 
+            x-show="uploadedPhotos.length === 0" 
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0 transform translate-y-2"
+            x-transition:enter-end="opacity-100 transform translate-y-0"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100 transform translate-y-0"
+            x-transition:leave-end="opacity-0 transform translate-y-2"
+            class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg"
+          >
+            <div class="flex items-center">
+              <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <div class="ml-3">
+                <p class="text-sm text-red-800">
+                  <strong>Photo requirement:</strong> You need to upload at least 3 photos to continue to the next step.
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <div 
+            x-show="uploadedPhotos.length === 1" 
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0 transform translate-y-2"
+            x-transition:enter-end="opacity-100 transform translate-y-0"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100 transform translate-y-0"
+            x-transition:leave-end="opacity-0 transform translate-y-2"
+            class="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg"
+          >
+            <div class="flex items-center">
+              <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <div class="ml-3">
+                <p class="text-sm text-yellow-800">
+                  <strong>Photo requirement:</strong> You need to upload at least 2 more photos (3 total) to continue to the next step.
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <div 
+            x-show="uploadedPhotos.length >= 3" 
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0 transform translate-y-2"
+            x-transition:enter-end="opacity-100 transform translate-y-0"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100 transform translate-y-0"
+            x-transition:leave-end="opacity-0 transform translate-y-2"
+            class="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg"
+          >
+            <div class="flex items-center">
+              <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <div class="ml-3">
+                <p class="text-sm text-green-800">
+                  <strong>Great!</strong> You have uploaded enough photos to continue.
+                </p>
+              </div>
+            </div>
+          </div>
+          
           <!-- Upload box with drag and drop -->
           <div
             class="border border-dashed border-gray-400 rounded-lg p-6 text-center bg-gray-50 mb-6"
@@ -1508,7 +1679,7 @@
     <div class="flex justify-between items-center">
       <button  @click="pricingWizardStep--"      class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
           ←</button>
-      <button  @click="savePricing()" class="  px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500">Continue</button>
+      <button  @click="pricingWizardStep++" class="  px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500">Continue</button>
     </div>
   </div>
 </template>
@@ -2087,7 +2258,7 @@ function calendarComponent() {
 
   <!-- Continue Button -->
   
-  <button       @click="pricingWizardStep++" class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-sky-500 transition w-full sm:w-auto">
+  <button       @click="savePricing()" class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-sky-500 transition w-full sm:w-auto">
     Continue
   </button>
 
@@ -2275,19 +2446,31 @@ function wizardApp() {
 
         // Step tracking
         testValue: 'Alpine.js is working',
+        currentSubStep: 1,   // 1 = wizardStep, 2 = propertyWizardStep, 3 = pricingWizardStep
         propertyWizardStep: 1,
         step: 1,
         wizardStep: 1,
         pricingWizardStep: 1,
         bedroomStep: 1,
         
+        
         // Initialize watchers
-        init() {
+        async init() {
             this.log('Alpine.js initialized');
             this.loadLanguages();
+            console.log('Before restoreWizardState - step:', this.step);
             this.restoreWizardState();
+            console.log('After restoreWizardState - step:', this.step);
             this.handleBedroomReturn();
-            this.loadPropertyData();
+            console.log('After handleBedroomReturn - step:', this.step);
+            await this.loadPropertyData();
+            console.log('After loadPropertyData - step:', this.step);
+            
+            // Check completion status for existing properties
+            if (this.propertyId !== 'new') {
+                await this.checkBasicInfoCompletion();
+            }
+            
             this.logCurrentState();
             console.log('Initial rooms state:', this.rooms);
             console.log('Final wizard state after initialization:', {
@@ -2298,7 +2481,7 @@ function wizardApp() {
                 bedroomStep: this.bedroomStep
             });
             
-            // Watch for step changes
+            // Re-enabled basic watchers without saveWizardState calls
             this.$watch('step', (newVal, oldVal) => {
                 if (oldVal !== undefined) {
                     this.logStepChange(oldVal, newVal, 'main step');
@@ -2309,12 +2492,21 @@ function wizardApp() {
                 if (oldVal !== undefined) {
                     this.logStepChange(oldVal, newVal, 'wizard step');
                 }
+                this.currentSubStep = newVal;
             });
             
             this.$watch('propertyWizardStep', (newVal, oldVal) => {
                 if (oldVal !== undefined) {
                     this.logStepChange(oldVal, newVal, 'property wizard step');
                 }
+                this.currentSubStep = newVal;
+            });
+            
+            this.$watch('pricingWizardStep', (newVal, oldVal) => {
+                if (oldVal !== undefined) {
+                    this.logStepChange(oldVal, newVal, 'pricing wizard step');
+                }
+                this.currentSubStep = newVal;
             });
             
             this.$watch('bedroomStep', (newVal, oldVal) => {
@@ -2322,22 +2514,116 @@ function wizardApp() {
                     this.logStepChange(oldVal, newVal, 'bedroom step');
                 }
             });
+            
+            // Watch for step changes to check completion status
+            this.$watch('step', async (newStep, oldStep) => {
+                if (oldStep !== undefined && newStep === 1 && this.propertyId !== 'new') {
+                    // Check completion status when navigating to basic info step
+                    await this.checkBasicInfoCompletion();
+                }
+            });
+            
+            // Ensure default rooms are always present
+            this.$watch('rooms', (newRooms) => {
+                if (newRooms) {
+                    const defaultRooms = {
+                        'bedroom1': { name: 'Bedroom 1', twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 },
+                        'livingRoom': { name: 'Living room', twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 },
+                        'otherSpaces': { name: 'Other spaces', twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 }
+                    };
+                    
+                    // Ensure default rooms are always present
+                    this.rooms = { ...defaultRooms, ...newRooms };
+                    console.log('Rooms watcher triggered. Current rooms:', this.rooms);
+                }
+            }, { deep: true });
         },
 
         // Navigation helpers
-        goToStep(stepNumber, context = '') {
+        async goToStep(stepNumber, context = '') {
             this.log('Navigating to step ' + stepNumber + ' ' + context);
             this.step = stepNumber;
+            
+            // Check completion status when navigating to basic info step
+            if (stepNumber === 1 && this.propertyId !== 'new') {
+                await this.checkBasicInfoCompletion();
+            }
+            
+            this.saveWizardState();
         },
 
         goToPropertyStep(stepNumber) {
             this.log('Navigating to property step ' + stepNumber);
             this.propertyWizardStep = stepNumber;
+            this.saveWizardState();
         },
 
         goToPricingStep(stepNumber) {
             this.log('Navigating to pricing step ' + stepNumber);
             this.pricingWizardStep = stepNumber;
+            this.saveWizardState();
+        },
+
+        // Track completion status for each step
+        stepCompletionStatus: {
+            basicInfo: false,
+            propertySetup: false,
+            photos: false,
+            pricing: false,
+            legalInfo: false
+        },
+
+        // Helper function to check if a step is completed
+        isStepCompleted(stepIndex) {
+            switch(stepIndex) {
+                case 0: // Basic Information
+                    // Check database completion status first, then fallback to wizard step
+                    const basicInfoCompleted = this.stepCompletionStatus.basicInfo || this.wizardStep >= 3;
+                    console.log('Basic info completion check:', {
+                        stepIndex,
+                        stepCompletionStatus: this.stepCompletionStatus.basicInfo,
+                        wizardStep: this.wizardStep,
+                        completed: basicInfoCompleted
+                    });
+                    return basicInfoCompleted;
+                case 1: // Property Setup
+                    return this.stepCompletionStatus.propertySetup || this.propertyWizardStep >= 6;
+                case 2: // Photos
+                    return this.stepCompletionStatus.photos || (this.uploadedPhotos && this.uploadedPhotos.length >= 3);
+                case 3: // Pricing and Calendar
+                    return this.stepCompletionStatus.pricing || this.pricingWizardStep >= 4;
+                case 4: // Legal Information
+                    return this.stepCompletionStatus.legalInfo || this.step >= 6 || (this.ownershipType && (this.individual.firstName || this.business.businessName));
+                default:
+                    return false;
+            }
+        },
+
+        // Check if basic information is completed in database
+        async checkBasicInfoCompletion() {
+            if (this.propertyId === 'new') {
+                return false;
+            }
+            
+            try {
+                const response = await fetch(`/partner/property/${this.propertyId}/check-basic-info`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    this.stepCompletionStatus.basicInfo = data.completed;
+                    this.log('Basic info completion status: ' + data.completed);
+                } else {
+                    this.log('Failed to check basic info completion');
+                }
+            } catch (error) {
+                this.log('Error checking basic info completion: ' + error.message);
+            }
         },
 
         // Property data
@@ -2363,7 +2649,7 @@ function wizardApp() {
         
         // Rooms data - using single rooms object for all bedrooms
         rooms: {
-            'bedroom1': { name: 'Bedroom 1', twin: 0, full: 1, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 },
+            'bedroom1': { name: 'Bedroom 1', twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 },
             'livingRoom': { name: 'Living room', twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 },
             'otherSpaces': { name: 'Other spaces', twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 }
         },
@@ -2496,6 +2782,7 @@ function wizardApp() {
 
         getBedSummary(roomId) {
             const beds = this.rooms[roomId];
+            console.log(`Getting bed summary for ${roomId}:`, beds);
             if (!beds) return '0 beds';
             const summaryParts = [];
             if (beds.twin > 0) summaryParts.push(beds.twin + ' twin bed' + (beds.twin > 1 ? 's' : ''));
@@ -2505,19 +2792,156 @@ function wizardApp() {
             if (beds.bunk > 0) summaryParts.push(beds.bunk + ' bunk bed' + (beds.bunk > 1 ? 's' : ''));
             if (beds.sofa > 0) summaryParts.push(beds.sofa + ' sofa bed' + (beds.sofa > 1 ? 's' : ''));
             if (beds.futon > 0) summaryParts.push(beds.futon + ' futon bed' + (beds.futon > 1 ? 's' : ''));
-            return summaryParts.length > 0 ? summaryParts.join(', ') : '0 beds';
+            const summary = summaryParts.length > 0 ? summaryParts.join(', ') : '0 beds';
+            console.log(`Bed summary for ${roomId}:`, summary);
+            return summary;
+        },
+
+        hasBedCounts(roomId) {
+            const beds = this.rooms[roomId];
+            if (!beds) return false;
+            return (beds.twin > 0 || beds.full > 0 || beds.queen > 0 || beds.king > 0 || 
+                    beds.bunk > 0 || beds.sofa > 0 || beds.futon > 0);
         },
 
         // Language management methods
         async loadLanguages() {
             this.log('Loading languages...');
             try {
-                // Simulate API call - replace with actual endpoint
-                await new Promise(resolve => setTimeout(resolve, 100));
-                this.filteredLanguages = this.availableLanguages;
-                this.log('Languages loaded: ' + this.availableLanguages.length);
+                const response = await fetch('/partner/languages', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                });
+                
+                console.log('Languages API response status:', response.status);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Languages API response data:', data);
+                    this.availableLanguages = data || [];
+                    this.filteredLanguages = this.availableLanguages;
+                    this.log('Languages loaded from database: ' + this.availableLanguages.length);
+                    console.log('Available languages after loading:', this.availableLanguages);
+                    
+                    // Clear selected languages to prevent ID mismatches
+                    this.selectedLanguages = [];
+                    console.log('Cleared selected languages to prevent ID mismatches');
+                } else {
+                    this.log('Failed to load languages from database, using fallback');
+                    console.log('Response not ok, status:', response.status);
+                    // Use hardcoded languages as fallback
+                    this.availableLanguages = [
+                        { id: 1, name: 'English' },
+                        { id: 2, name: 'Spanish' },
+                        { id: 3, name: 'French' },
+                        { id: 4, name: 'German' },
+                        { id: 5, name: 'Italian' },
+                        { id: 6, name: 'Portuguese' },
+                        { id: 7, name: 'Dutch' },
+                        { id: 8, name: 'Russian' },
+                        { id: 9, name: 'Chinese' },
+                        { id: 10, name: 'Japanese' },
+                        { id: 11, name: 'Korean' },
+                        { id: 12, name: 'Thai' },
+                        { id: 13, name: 'Vietnamese' },
+                        { id: 14, name: 'Turkish' },
+                        { id: 15, name: 'Greek' },
+                        { id: 16, name: 'Hebrew' },
+                        { id: 17, name: 'Polish' },
+                        { id: 18, name: 'Swedish' },
+                        { id: 19, name: 'Norwegian' },
+                        { id: 20, name: 'Finnish' },
+                        { id: 21, name: 'Hungarian' },
+                        { id: 22, name: 'Romanian' },
+                        { id: 23, name: 'Ukrainian' },
+                        { id: 24, name: 'Indonesian' },
+                        { id: 25, name: 'Malay' },
+                        { id: 26, name: 'Tagalog' },
+                        { id: 27, name: 'Swahili' },
+                        { id: 28, name: 'Urdu' },
+                        { id: 29, name: 'Bengali' },
+                        { id: 30, name: 'Tamil' },
+                        { id: 31, name: 'Telugu' },
+                        { id: 32, name: 'Marathi' },
+                        { id: 33, name: 'Gujarati' },
+                        { id: 34, name: 'Punjabi' },
+                        { id: 35, name: 'Kannada' },
+                        { id: 36, name: 'Malayalam' },
+                        { id: 37, name: 'Sinhala' },
+                        { id: 38, name: 'Hindi' },
+                        { id: 39, name: 'Arabic' },
+                        { id: 40, name: 'Bulgarian' },
+                        { id: 41, name: 'Catalan' },
+                        { id: 42, name: 'Croatian' },
+                        { id: 43, name: 'Czech' },
+                        { id: 44, name: 'Danish' }
+                    ];
+                    this.filteredLanguages = this.availableLanguages;
+                    this.log('Using fallback languages: ' + this.availableLanguages.length);
+                    
+                    // Clear selected languages to prevent ID mismatches
+                    this.selectedLanguages = [];
+                    console.log('Cleared selected languages to prevent ID mismatches');
+                }
             } catch (error) {
                 this.log('Error loading languages: ' + error);
+                console.error('Error loading languages:', error);
+                // Use hardcoded languages as fallback
+                this.availableLanguages = [
+                    { id: 1, name: 'English' },
+                    { id: 2, name: 'Spanish' },
+                    { id: 3, name: 'French' },
+                    { id: 4, name: 'German' },
+                    { id: 5, name: 'Italian' },
+                    { id: 6, name: 'Portuguese' },
+                    { id: 7, name: 'Dutch' },
+                    { id: 8, name: 'Russian' },
+                    { id: 9, name: 'Chinese' },
+                    { id: 10, name: 'Japanese' },
+                    { id: 11, name: 'Korean' },
+                    { id: 12, name: 'Thai' },
+                    { id: 13, name: 'Vietnamese' },
+                    { id: 14, name: 'Turkish' },
+                    { id: 15, name: 'Greek' },
+                    { id: 16, name: 'Hebrew' },
+                    { id: 17, name: 'Polish' },
+                    { id: 18, name: 'Swedish' },
+                    { id: 19, name: 'Norwegian' },
+                    { id: 20, name: 'Finnish' },
+                    { id: 21, name: 'Hungarian' },
+                    { id: 22, name: 'Romanian' },
+                    { id: 23, name: 'Ukrainian' },
+                    { id: 24, name: 'Indonesian' },
+                    { id: 25, name: 'Malay' },
+                    { id: 26, name: 'Tagalog' },
+                    { id: 27, name: 'Swahili' },
+                    { id: 28, name: 'Urdu' },
+                    { id: 29, name: 'Bengali' },
+                    { id: 30, name: 'Tamil' },
+                    { id: 31, name: 'Telugu' },
+                    { id: 32, name: 'Marathi' },
+                    { id: 33, name: 'Gujarati' },
+                    { id: 34, name: 'Punjabi' },
+                    { id: 35, name: 'Kannada' },
+                    { id: 36, name: 'Malayalam' },
+                    { id: 37, name: 'Sinhala' },
+                    { id: 38, name: 'Hindi' },
+                    { id: 39, name: 'Arabic' },
+                    { id: 40, name: 'Bulgarian' },
+                    { id: 41, name: 'Catalan' },
+                    { id: 42, name: 'Croatian' },
+                    { id: 43, name: 'Czech' },
+                    { id: 44, name: 'Danish' }
+                ];
+                this.filteredLanguages = this.availableLanguages;
+                this.log('Using fallback languages: ' + this.availableLanguages.length);
+                
+                // Clear selected languages to prevent ID mismatches
+                this.selectedLanguages = [];
+                console.log('Cleared selected languages to prevent ID mismatches');
             }
         },
 
@@ -2534,29 +2958,86 @@ function wizardApp() {
 
         selectLanguage(languageId, languageName) {
             this.log('Selecting language: ' + languageId + ', ' + languageName);
-            if (!this.selectedLanguages.includes(languageId)) {
-                this.selectedLanguages.push(languageId);
-                this.log('Language added');
+            
+            // Ensure languageId is a number
+            const numericId = parseInt(languageId);
+            if (isNaN(numericId)) {
+                console.error('Invalid language ID:', languageId);
+                return;
+            }
+            
+            if (!this.selectedLanguages.includes(numericId)) {
+                this.selectedLanguages.push(numericId);
+                this.log('Language added with ID: ' + numericId);
             }
             this.showDropdown = false;
         },
 
         removeLanguage(languageId) {
             this.log('Removing language: ' + languageId);
-            const index = this.selectedLanguages.indexOf(languageId);
+            
+            // Ensure languageId is a number
+            const numericId = parseInt(languageId);
+            if (isNaN(numericId)) {
+                console.error('Invalid language ID for removal:', languageId);
+                return;
+            }
+            
+            const index = this.selectedLanguages.indexOf(numericId);
             if (index > -1) {
                 this.selectedLanguages.splice(index, 1);
-                this.log('Language removed');
+                this.log('Language removed with ID: ' + numericId);
             }
         },
 
         getLanguageName(languageId) {
-            const language = this.availableLanguages.find(l => l.id === languageId);
-            return language ? language.name : 'Unknown';
+            console.log('Getting language name for ID:', languageId);
+            console.log('Available languages:', this.availableLanguages);
+            
+            // Ensure languageId is a number
+            const numericId = parseInt(languageId);
+            if (isNaN(numericId)) {
+                console.error('Invalid language ID for name lookup:', languageId);
+                return 'Unknown';
+            }
+            
+            const language = this.availableLanguages.find(l => l.id === numericId);
+            console.log('Found language:', language);
+            
+            if (language) {
+                return language.name;
+            } else {
+                console.warn('Language not found for ID:', numericId);
+                return 'Unknown';
+            }
+        },
+
+        getLanguageIdByName(languageName) {
+            console.log('Getting language ID for name:', languageName);
+            console.log('Available languages:', this.availableLanguages);
+            
+            const language = this.availableLanguages.find(l => l.name === languageName);
+            console.log('Found language for name:', language);
+            
+            return language ? language.id : null;
         },
 
         isLanguageSelected(languageId) {
-            return this.selectedLanguages.includes(languageId);
+            // Ensure languageId is a number
+            const numericId = parseInt(languageId);
+            if (isNaN(numericId)) {
+                return false;
+            }
+            return this.selectedLanguages.includes(numericId);
+        },
+
+        toggleAdditionalLanguages() {
+            this.showAdditionalLanguages = !this.showAdditionalLanguages;
+            this.log('Toggled additional languages: ' + this.showAdditionalLanguages);
+        },
+
+        logLanguageChange(field, value) {
+            this.log('Language field changed: ' + field + ' = ' + value);
         },
 
         // Photo upload methods
@@ -2606,6 +3087,12 @@ function wizardApp() {
                     this.wizardStep++;
                     this.saveWizardState();
                     console.log('Property name saved successfully');
+                    
+                    // Mark basic info as completed if all required fields are saved
+                    if (this.wizardStep >= 3) {
+                        this.stepCompletionStatus.basicInfo = true;
+                        this.log('Basic info marked as completed');
+                    }
                 } else {
                     console.error('Failed to save property name');
                 }
@@ -2794,17 +3281,49 @@ function wizardApp() {
 
         logParkingChange(fieldName, value) {
             this.log('Parking field changed: ' + fieldName + ' = ' + value);
+            
+            // Clear parking details when "No" is selected
+            if (fieldName === 'parkingAvailable' && value === 'no') {
+                this.clearParkingDetails();
+            }
+            
+            // Clear parking cost when switching to "free"
+            if (fieldName === 'parkingAvailable' && value === 'free') {
+                this.clearParkingCost();
+            }
+        },
+        
+        clearParkingDetails() {
+            this.parkingCost = '';
+            this.parkingReservation = '';
+            this.parkingLocation = '';
+            this.parkingType = '';
+            this.log('Parking details cleared');
+        },
+        
+        clearParkingCost() {
+            this.parkingCost = '';
+            this.log('Parking cost cleared');
         },
 
         // State persistence
         saveWizardState() {
+            console.log('=== SAVING WIZARD STATE ===');
+            console.log('Saving step:', this.step);
+            console.log('Saving wizardStep:', this.wizardStep);
+            console.log('Saving propertyWizardStep:', this.propertyWizardStep);
+            console.log('Saving pricingWizardStep:', this.pricingWizardStep);
+            console.log('Saving propertyId:', this.propertyId);
+            
             const state = {
                 propertyId: this.propertyId, // Add property ID to saved state
+                currentSubStep: this.currentSubStep,
                 step: this.step,
                 wizardStep: this.wizardStep,
                 propertyWizardStep: this.propertyWizardStep,
                 pricingWizardStep: this.pricingWizardStep,
                 bedroomStep: this.bedroomStep,
+                stepCompletionStatus: this.stepCompletionStatus,
                 title: this.title,
                 address: this.address,
                 city: this.city,
@@ -2849,169 +3368,54 @@ function wizardApp() {
             };
             sessionStorage.setItem('wizardState', JSON.stringify(state));
             this.log('Wizard state saved for property: ' + this.propertyId);
+            console.log('State saved to sessionStorage:', JSON.stringify(state));
+            console.log('SessionStorage after save:', sessionStorage.getItem('wizardState'));
+            console.log('=== END SAVING WIZARD STATE ===');
         },
 
         restoreWizardState() {
-            // First check sessionStorage for wizard state (prioritize this)
-            const savedState = sessionStorage.getItem('wizardState');
-            console.log('Attempting to restore wizard state from sessionStorage. Saved state:', savedState);
-            console.log('Current property ID:', this.propertyId);
+            console.log('=== SIMPLE WIZARD STATE RESTORATION ===');
             
-            if (savedState) {
-                try {
+            try {
+                const savedState = sessionStorage.getItem('wizardState');
+                console.log('Saved state from sessionStorage:', savedState);
+                
+                if (savedState) {
                     const state = JSON.parse(savedState);
-                    console.log('Parsed wizard state from sessionStorage:', state);
+                    console.log('Parsed state:', state);
                     
-                    // Check if the saved state is for the current property
-                    if (state.propertyId && state.propertyId !== this.propertyId) {
-                        this.log('Property ID mismatch - clearing old state. Saved: ' + state.propertyId + ', Current: ' + this.propertyId);
-                        sessionStorage.removeItem('wizardState');
-                        console.log('Cleared old wizard state for different property');
-                        return; // Don't restore state for different property
+                    // Simple property ID check
+                    if (state.propertyId && this.propertyId === 'new' && state.propertyId !== 'new') {
+                        this.propertyId = state.propertyId;
+                        console.log('Updated propertyId to:', this.propertyId);
                     }
                     
-                    // For new properties, start with fresh state
-                    if (this.propertyId === 'new' || !this.propertyId) {
-                        console.log('New property detected - starting with fresh wizard state');
-                        sessionStorage.removeItem('wizardState');
-                        return;
+                    // Restore basic wizard state
+                    if (state.step) this.step = state.step;
+                    if (state.wizardStep) this.wizardStep = state.wizardStep;
+                    if (state.propertyWizardStep) this.propertyWizardStep = state.propertyWizardStep;
+                    if (state.pricingWizardStep) this.pricingWizardStep = state.pricingWizardStep;
+                    if (state.bedroomStep) this.bedroomStep = state.bedroomStep;
+                    if (state.currentSubStep) this.currentSubStep = state.currentSubStep;
+                    
+                    // Restore completion status
+                    if (state.stepCompletionStatus) {
+                        this.stepCompletionStatus = { ...this.stepCompletionStatus, ...state.stepCompletionStatus };
+                        console.log('Restored completion status:', this.stepCompletionStatus);
                     }
                     
-                    console.log('Restoring wizard state from sessionStorage for property:', this.propertyId);
-                    this.step = state.step || 1;
-                    this.wizardStep = state.wizardStep || 1;
-                    this.propertyWizardStep = state.propertyWizardStep || 1;
-                    this.pricingWizardStep = state.pricingWizardStep || 1;
-                    this.bedroomStep = state.bedroomStep || 1;
-                    
-                    console.log('Wizard state restored from sessionStorage');
-                    return;
-                } catch (error) {
-                    console.error('Error parsing wizard state from sessionStorage:', error);
+                    console.log('Restored state - step:', this.step, 'wizardStep:', this.wizardStep);
+                } else {
+                    console.log('No saved state found');
                 }
+            } catch (error) {
+                console.error('Error in restoreWizardState:', error);
             }
             
-            // Fallback to URL parameters for wizard state
-            const urlParams = new URLSearchParams(window.location.search);
-            const wizardStateParam = urlParams.get('wizardState');
-            
-            console.log('Checking URL parameters for wizard state:', wizardStateParam);
-            
-            if (wizardStateParam) {
-                try {
-                    // Handle double-encoded URL parameters
-                    let decodedParam = decodeURIComponent(wizardStateParam);
-                    // If it's still encoded, decode again
-                    if (decodedParam.includes('%')) {
-                        decodedParam = decodeURIComponent(decodedParam);
-                    }
-                    console.log('Raw wizard state param:', wizardStateParam);
-                    console.log('Decoded wizard state param:', decodedParam);
-                    
-                    const state = JSON.parse(decodedParam);
-                    console.log('Parsed wizard state from URL:', state);
-                    
-                    // Check if the saved state is for the current property
-                    if (state.propertyId && state.propertyId !== this.propertyId) {
-                        console.log('Property ID mismatch in URL state. Saved: ' + state.propertyId + ', Current: ' + this.propertyId);
-                        return; // Don't restore state for different property
-                    }
-                    
-                    console.log('Restoring wizard state from URL for property:', this.propertyId);
-                    this.step = state.step || 1;
-                    this.wizardStep = state.wizardStep || 1;
-                    this.propertyWizardStep = state.propertyWizardStep || 1;
-                    this.pricingWizardStep = state.pricingWizardStep || 1;
-                    this.bedroomStep = state.bedroomStep || 1;
-                    
-                    // Clean up URL parameters
-                    const newUrl = new URL(window.location);
-                    newUrl.searchParams.delete('wizardState');
-                    window.history.replaceState({}, '', newUrl);
-                    
-                    console.log('Wizard state restored from URL and URL cleaned up');
-                    return;
-                } catch (error) {
-                    console.error('Error parsing wizard state from URL:', error);
-                }
-            }
-            
-            if (savedState) {
-                try {
-                    const state = JSON.parse(savedState);
-                    console.log('Parsed wizard state from sessionStorage:', state);
-                    
-                    // Check if the saved state is for the current property
-                    if (state.propertyId && state.propertyId !== this.propertyId) {
-                        this.log('Property ID mismatch - clearing old state. Saved: ' + state.propertyId + ', Current: ' + this.propertyId);
-                        sessionStorage.removeItem('wizardState');
-                        console.log('Cleared old wizard state for different property');
-                        return; // Don't restore state for different property
-                    }
-                    
-                    // For new properties, start with fresh state
-                    if (this.propertyId === 'new' || !this.propertyId) {
-                        console.log('New property detected - starting with fresh wizard state');
-                        sessionStorage.removeItem('wizardState');
-                        return;
-                    }
-                    
-                    console.log('Restoring wizard state from sessionStorage for property:', this.propertyId);
-                    this.step = state.step || 1;
-                    this.wizardStep = state.wizardStep || 1;
-                    this.propertyWizardStep = state.propertyWizardStep || 1;
-                    this.pricingWizardStep = state.pricingWizardStep || 1;
-                    this.bedroomStep = state.bedroomStep || 1;
-                    this.title = state.title || '';
-                    this.address = state.address || '';
-                    this.city = state.city || '';
-                    this.country = state.country || 'Sri Lanka';
-                    this.apartment = state.apartment || '';
-                    this.zipcode = state.zipcode || '';
-                    this.description = state.description || '';
-                    this.channelManager = state.channelManager || 'yes';
-                    this.guests = state.guests || 4;
-                    this.bathrooms = state.bathrooms || 2;
-                    this.allowChildren = state.allowChildren || 'yes';
-                    this.offerCribs = state.offerCribs || 'no';
-                    this.apartmentSize = state.apartmentSize || 100;
-                    this.apartmentUnit = state.apartmentUnit || 'square_meters';
-                    this.selectedAmenities = state.selectedAmenities || [];
-                    this.rooms = state.rooms || this.rooms;
-                    this.parkingAvailable = state.parkingAvailable || '';
-                    this.parkingCurrency = state.parkingCurrency || 'USD';
-                    this.parkingCost = state.parkingCost || '';
-                    this.parkingRate = state.parkingRate || 'per_day';
-                    this.parkingReservation = state.parkingReservation || '';
-                    this.parkingLocation = state.parkingLocation || '';
-                    this.parkingType = state.parkingType || '';
-                    this.breakfastServed = state.breakfastServed || '';
-                    this.breakfastIncluded = state.breakfastIncluded || '';
-                    this.breakfastTypes = state.breakfastTypes || [];
-                    this.selectedLanguages = state.selectedLanguages || [];
-                    this.ownershipType = state.ownershipType || '';
-                    this.individual = state.individual || this.individual;
-                    this.business = state.business || this.business;
-                    this.smokingAllowed = state.smokingAllowed || false;
-                    this.partiesAllowed = state.partiesAllowed || false;
-                    this.petsAllowed = state.petsAllowed || 'no';
-                    this.petsFees = state.petsFees || 'free';
-                    this.checkInFrom = state.checkInFrom || '15:00';
-                    this.checkInUntil = state.checkInUntil || '18:00';
-                    this.checkOutFrom = state.checkOutFrom || '08:00';
-                    this.checkOutUntil = state.checkOutUntil || '11:00';
-                    this.pricing = state.pricing || this.pricing;
-                    this.hostProfile = state.hostProfile || this.hostProfile;
-                    this.uploadedPhotos = state.uploadedPhotos || [];
-                    this.log('Wizard state restored for property: ' + this.propertyId);
-                } catch (error) {
-                    this.log('Error restoring wizard state: ' + error);
-                }
-            } else {
-                console.log('No saved wizard state found - starting fresh');
-                this.resetWizardState();
-            }
+            console.log('=== END SIMPLE RESTORATION ===');
         },
+
+
 
         resetWizardState() {
             console.log('Resetting wizard state to defaults');
@@ -3020,12 +3424,14 @@ function wizardApp() {
             this.propertyWizardStep = 1;
             this.pricingWizardStep = 1;
             this.bedroomStep = 1;
+            this.currentSubStep = 1;
             console.log('Wizard state reset to:', {
                 step: this.step,
                 wizardStep: this.wizardStep,
                 propertyWizardStep: this.propertyWizardStep,
                 pricingWizardStep: this.pricingWizardStep,
-                bedroomStep: this.bedroomStep
+                bedroomStep: this.bedroomStep,
+                currentSubStep: this.currentSubStep
             });
         },
 
@@ -3152,7 +3558,16 @@ function wizardApp() {
                     this.apartmentUnit = propertyData.apartment_unit || 'square_meters';
                     this.selectedAmenities = propertyData.selected_amenities || [];
                     console.log('Full propertyData from backend:', propertyData);
-                    this.rooms = propertyData.rooms || this.rooms;
+                    
+                    // Ensure default rooms are always present
+                    const defaultRooms = {
+                        'bedroom1': { name: 'Bedroom 1', twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 },
+                        'livingRoom': { name: 'Living room', twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 },
+                        'otherSpaces': { name: 'Other spaces', twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 }
+                    };
+                    
+                    // Merge backend rooms with default rooms
+                    this.rooms = { ...defaultRooms, ...(propertyData.rooms || {}) };
                     console.log('Loaded rooms from backend:', this.rooms);
                     console.log('Room keys:', Object.keys(this.rooms));
                     console.log('Additional bedrooms found:', Object.keys(this.rooms).filter(key => key !== 'bedroom1' && key !== 'livingRoom' && key !== 'otherSpaces'));
@@ -3181,6 +3596,7 @@ function wizardApp() {
                     this.pricing = propertyData.pricing || this.pricing;
                     this.hostProfile = propertyData.host_profile || this.hostProfile;
                     this.uploadedPhotos = propertyData.uploaded_photos || [];
+                    
                     this.log('Updated form fields:', {
                         propertyId: this.propertyId,
                         title: this.title,
@@ -3262,7 +3678,7 @@ function wizardApp() {
                 parking_type: this.parkingType,
             };
             
-            this.log('Additional details payload: ' + payload);
+            this.log('Additional details payload: ' + JSON.stringify(payload, null, 2));
             this.isLoading = true;
             
             // If on the services step, POST to /services, otherwise PATCH additional-details
@@ -3385,6 +3801,7 @@ function wizardApp() {
 
         async savePricing() {
             this.log('Saving pricing');
+            console.log('Current pricingWizardStep before saving:', this.pricingWizardStep);
             this.isLoading = true;
             
             try {
@@ -3417,10 +3834,14 @@ function wizardApp() {
                     const result = await response.json();
                     console.log('Pricing saved successfully:', result);
                     
+                    console.log('Pricing saved successfully, current pricingWizardStep:', this.pricingWizardStep);
                     if (this.pricingWizardStep < 4) {
                         this.pricingWizardStep++;
+                        console.log('Incremented pricingWizardStep to:', this.pricingWizardStep);
                     } else {
+                        console.log('Moving to step 5 (legal info)');
                         this.step = 5; // Move to legal info
+                        this.pricingWizardStep = 1; // Reset for next time
                     }
                     this.saveWizardState();
                 } else {
@@ -3438,6 +3859,11 @@ function wizardApp() {
 
         async saveLegalInfo() {
             this.log('Saving legal information');
+            console.log('=== SAVE LEGAL INFO CALLED ===');
+            console.log('Property ID:', this.propertyId);
+            console.log('Ownership Type:', this.ownershipType);
+            console.log('Individual Data:', this.individual);
+            console.log('Business Data:', this.business);
             this.isLoading = true;
             try {
                 console.log('Saving legal info with data:', {
@@ -3488,11 +3914,20 @@ function wizardApp() {
                     body: JSON.stringify(requestData)
                 });
                 
+                console.log('Response status:', response.status);
+                console.log('Response ok:', response.ok);
+                
                 if (response.ok) {
                     const result = await response.json();
                     console.log('Legal info saved successfully:', result);
-                    this.step = 6; // Move to final step
-                    this.saveWizardState();
+                    
+                    // Redirect to list-your-property page with success message
+                    const successMessage = encodeURIComponent('🎉 Congratulations! Your property has been successfully listed and is now live on our platform. You can start receiving bookings from guests worldwide!');
+                    const redirectUrl = `/list-your-property?success=true&message=${successMessage}`;
+                    
+                    console.log('Redirecting to:', redirectUrl);
+                    window.location.href = redirectUrl;
+                    console.log('Legal info saved successfully, redirecting to list-your-property');
                 } else {
                     const errorData = await response.json();
                     console.error('Failed to save legal info:', errorData);
@@ -3512,7 +3947,7 @@ function wizardApp() {
         },
 
         navigateToBedroom(roomId = null) {
-            this.log('Navigating to bedroom page for new bedroom');
+            this.log('Navigating to room page for: ' + roomId);
             
             // Save current wizard state
             this.saveWizardState();
@@ -3551,7 +3986,7 @@ function wizardApp() {
             console.log('  - Bedroom count:', bedroomCount);
             console.log('  - Next bedroom number:', nextBedroomNumber);
             
-            // Prepare wizard state for bedroom page
+            // Prepare wizard state for room page
             const wizardState = {
                 step: this.step,
                 wizardStep: this.wizardStep,
@@ -3568,7 +4003,18 @@ function wizardApp() {
             
             // Build URL with parameters
             const propertyId = this.propertyId || 'new';
-            let url = `/partner/apartment/bedrooms/${propertyId}?source=single`;
+            let url = '';
+            
+            // Route to different pages based on room type
+            if (roomId === 'livingRoom') {
+                url = `/partner/apartment/livingroom/${propertyId}?source=single`;
+            } else if (roomId === 'otherSpaces') {
+                url = `/partner/apartment/otherspaces/${propertyId}?source=single`;
+            } else {
+                // Default to bedrooms page for bedroom1 and other bedrooms
+                url = `/partner/apartment/bedrooms/${propertyId}?source=single`;
+            }
+            
             url += '&step=' + this.step;
             url += '&wizardState=' + encodeURIComponent(JSON.stringify(wizardState));
             
@@ -3577,6 +4023,7 @@ function wizardApp() {
             }
             
             console.log('=== URL DEBUG ===');
+            console.log('Room ID:', roomId);
             console.log('Property ID:', propertyId);
             console.log('Step:', this.step);
             console.log('Wizard State JSON:', JSON.stringify(wizardState));
@@ -3588,11 +4035,8 @@ function wizardApp() {
             window.location.href = url;
         },
 
-        navigateToStep(stepNumber) {
+        async navigateToStep(stepNumber) {
             this.log('Navigating to step: ' + stepNumber);
-            
-            // Save current wizard state before navigation
-            this.saveWizardState();
             
             // Set the main step
             this.step = stepNumber;
@@ -3615,6 +4059,14 @@ function wizardApp() {
                     // Legal info doesn't have sub-steps, so no reset needed
                     break;
             }
+            
+            // Check completion status when navigating to basic info step
+            if (stepNumber === 1 && this.propertyId !== 'new') {
+                await this.checkBasicInfoCompletion();
+            }
+            
+            // Save wizard state after setting the new step
+            this.saveWizardState();
             
             this.log('Navigation complete - Step: ' + this.step + ', PropertyWizardStep: ' + this.propertyWizardStep);
         }

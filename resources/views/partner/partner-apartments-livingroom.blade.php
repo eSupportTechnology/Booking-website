@@ -135,14 +135,37 @@
           return;
         }
         
+        // Get wizard state from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const wizardStateParam = urlParams.get('wizardState');
+        let wizardState = null;
+        
+        if (wizardStateParam) {
+          try {
+            wizardState = JSON.parse(decodeURIComponent(wizardStateParam));
+            console.log('Wizard state found:', wizardState);
+          } catch (error) {
+            console.error('Error parsing wizard state:', error);
+          }
+        }
+        
         const payload = {
-          room_name: 'Living Room',
+          room_name: 'livingRoom',
           beds: [
             { id: 5, name: 'Sofa Bed', count: this.sofaCount }
           ],
           source: 'multiple',
           step: '2'
         };
+        
+        // Update wizard state with sofa bed count
+        if (wizardState && wizardState.rooms) {
+          if (!wizardState.rooms.livingRoom) {
+            wizardState.rooms.livingRoom = { name: 'Living room', twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 };
+          }
+          wizardState.rooms.livingRoom.sofa = this.sofaCount;
+          console.log('Updated wizard state with sofa count:', this.sofaCount);
+        }
         
         console.log('Prepared payload:', JSON.stringify(payload, null, 2));
         
@@ -176,15 +199,52 @@
            
            console.log('Source:', source, 'Step:', step);
            
-           if (source === 'multiple') {
-             console.log('Redirecting to multiple apartment step 2');
-             window.location.href = 'http://127.0.0.1:8000/partner/multiple-apartment-2/{{ $property->id }}';
-           } else if (source === 'single') {
-             console.log('Redirecting to single apartment step 2');
-             window.location.href = 'http://127.0.0.1:8000/partner/property/apartment/step2/{{ $property->id }}';
+           // Get wizard state from URL parameters
+           const urlParams = new URLSearchParams(window.location.search);
+           const wizardStateParam = urlParams.get('wizardState');
+           
+           if (wizardStateParam) {
+             try {
+               const wizardState = JSON.parse(decodeURIComponent(wizardStateParam));
+               console.log('Wizard state found:', wizardState);
+               
+               // Update the wizard state with the sofa bed count
+               if (wizardState.rooms && wizardState.rooms.livingRoom) {
+                 wizardState.rooms.livingRoom.sofa = this.sofaCount;
+                 console.log('Updated wizard state with sofa count:', this.sofaCount);
+               }
+               
+               // Navigate back to the original form with the updated wizard state
+               const updatedWizardState = encodeURIComponent(JSON.stringify(wizardState));
+               const returnUrl = `/partner-apartment-create-2?wizardState=${updatedWizardState}&step=${wizardState.step || 2}`;
+               console.log('Redirecting to:', returnUrl);
+               window.location.href = returnUrl;
+             } catch (error) {
+               console.error('Error parsing wizard state:', error);
+               // Fallback to original logic
+               if (source === 'multiple') {
+                 console.log('Redirecting to multiple apartment step 2');
+                 window.location.href = 'http://127.0.0.1:8000/partner/multiple-apartment-2/{{ $property->id }}';
+               } else if (source === 'single') {
+                 console.log('Redirecting to single apartment step 2');
+                 window.location.href = 'http://127.0.0.1:8000/partner/property/apartment/step2/{{ $property->id }}';
+               } else {
+                 console.log('Fallback redirect to step 2');
+                 window.location.href = 'http://127.0.0.1:8000/partner/property/apartment/step2/{{ $property->id }}';
+               }
+             }
            } else {
-             console.log('Fallback redirect to step 2');
-             window.location.href = 'http://127.0.0.1:8000/partner/property/apartment/step2/{{ $property->id }}';
+             // Fallback to original logic if no wizard state
+             if (source === 'multiple') {
+               console.log('Redirecting to multiple apartment step 2');
+               window.location.href = 'http://127.0.0.1:8000/partner/multiple-apartment-2/{{ $property->id }}';
+             } else if (source === 'single') {
+               console.log('Redirecting to single apartment step 2');
+               window.location.href = 'http://127.0.0.1:8000/partner/property/apartment/step2/{{ $property->id }}';
+             } else {
+               console.log('Fallback redirect to step 2');
+               window.location.href = 'http://127.0.0.1:8000/partner/property/apartment/step2/{{ $property->id }}';
+             }
            }
           
                  } else {
@@ -216,14 +276,14 @@
     
     <h2 class="text-3xl font-bold text-gray-900 mt-8 mb-8">Living room</h2>
     
-    <!-- Alpine.js Test Button -->
+    <!-- Alpine.js Test Button
     <button @click="console.log('Test button clicked'); alert('Alpine.js is working!')" 
             class="bg-green-500 text-white px-3 py-1 rounded text-xs mb-4 hover:bg-green-600">
         Test Alpine.js
-    </button>
+    </button> -->
     
     <!-- Debug Info -->
-    <div class="text-xs text-gray-500 mb-4 p-3 bg-gray-100 rounded border">
+    <!-- <div class="text-xs text-gray-500 mb-4 p-3 bg-gray-100 rounded border">
       <div class="mb-1"><strong>Debug Info:</strong></div>
       <div>Sofa count: <span x-text="sofaCount" class="font-semibold text-blue-600"></span></div>
       <div>Loading: <span x-text="isLoading" class="font-semibold" :class="isLoading ? 'text-orange-600' : 'text-green-600'"></span></div>
@@ -231,7 +291,7 @@
       <div x-show="lastError" class="text-red-600 mt-1">
         Last error: <span x-text="lastError"></span>
       </div>
-    </div>
+    </div> -->
     
     <!-- Sofa Bed Selection -->
     <div class="bg-white border border-gray-300 rounded-lg p-6 flex justify-between items-center shadow-sm hover:shadow-md transition-shadow">
@@ -299,7 +359,7 @@
     </div>
 
     <!-- Additional Action Buttons for Testing -->
-    <div class="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+    <!-- <div class="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
       <h4 class="text-sm font-semibold text-yellow-800 mb-2">Testing Controls:</h4>
       <div class="flex gap-2 flex-wrap">
         <button @click="sofaCount = 0; console.log('Reset sofa count to 0')" 
@@ -315,7 +375,7 @@
           Log State
         </button>
       </div>
-    </div>
+    </div> -->
   </div>
 
   <script>
