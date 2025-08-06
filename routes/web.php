@@ -155,7 +155,7 @@ Route::get('/partner-hotels-payments', function () {
 })->name('partner.hotels.payments');
 
 Route::get('/partner-hotels-photos', function () {
-    return view('frontend.partner-hotels-photos');
+    return view('partner.partner-hotels-photos');
 })->name('partner.hotels.photos');
 
 

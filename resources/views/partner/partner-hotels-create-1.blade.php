@@ -843,71 +843,96 @@
 
                         </div>
 
-                        <script>
-                            function toggleAdditionalLanguages() {
-                                const section = document.getElementById("additionalLanguagesSection");
-                                section.classList.toggle("hidden");
-                                if (!section.classList.contains("hidden")) {
-                                    document.getElementById("languageInput").focus();
-                                    showDropdown();
-                                } else {
+                            <script>
+                                function selectLanguage(element) {
+                                    const input = document.getElementById("languageInput");
+                                    const selectedContainer = document.getElementById("selectedAdditionalLanguages");
+                                    const langName = element.textContent.trim();
+                                    const langId = element.dataset.id;
+
+                                    // Prevent duplicate
+                                    if (document.getElementById(`lang-${langId}`)) {
+                                        input.value = '';
+                                        hideDropdown();
+                                        return;
+                                    }
+
+                                    // Create checkbox dynamically
+                                    const label = document.createElement('label');
+                                    label.className = 'flex items-center cursor-pointer';
+                                    label.id = `lang-${langId}`;
+                                    label.innerHTML = `
+                                            <input type="checkbox" class="mr-2" name="languages[]" value="${langId}" checked />
+                                            <span>${langName}</span>
+                                        `;
+
+                                    selectedContainer.appendChild(label);
+
+                                    // Clear input and close dropdown
+                                    input.value = '';
                                     hideDropdown();
                                 }
-                            }
 
-                            function toggleDropdown() {
-                                const dropdown = document.getElementById("languageDropdown");
-                                dropdown.classList.toggle("hidden");
-                            }
-
-                            function showDropdown() {
-                                document.getElementById("languageDropdown").classList.remove("hidden");
-                            }
-
-                            function hideDropdown() {
-                                document.getElementById("languageDropdown").classList.add("hidden");
-                            }
-
-                            function filterDropdown() {
-                                const input = document.getElementById("languageInput");
-                                const filter = input.value.toLowerCase();
-                                const ul = document.getElementById("languageDropdown");
-                                const items = ul.getElementsByTagName("li");
-                                ul.classList.remove("hidden");
-                                let visibleCount = 0;
-                                for (let i = 0; i < items.length; i++) {
-                                    const txtValue = items[i].textContent || items[i].innerText;
-                                    if (txtValue.toLowerCase().indexOf(filter) > -1) {
-                                        items[i].style.display = "";
-                                        visibleCount++;
+                                function toggleAdditionalLanguages() {
+                                    const section = document.getElementById("additionalLanguagesSection");
+                                    section.classList.toggle("hidden");
+                                    if (!section.classList.contains("hidden")) {
+                                        document.getElementById("languageInput").focus();
+                                        showDropdown();
                                     } else {
-                                        items[i].style.display = "none";
+                                        hideDropdown();
                                     }
                                 }
-                                // Hide dropdown if no matches
-                                if (visibleCount === 0) {
-                                    ul.classList.add("hidden");
-                                }
-                            }
 
-                            function selectLanguage(element) {
-                                const input = document.getElementById("languageInput");
-                                input.value = element.textContent;
-                                hideDropdown();
-                            }
-
-                            // Close dropdown when clicking outside
-                            document.addEventListener("click", function(event) {
-                                const dropdown = document.getElementById("languageDropdown");
-                                const input = document.getElementById("languageInput");
-                                const container = document.getElementById("additionalLanguagesSection");
-                                if (
-                                    !container.contains(event.target)
-                                ) {
-                                    hideDropdown();
+                                function toggleDropdown() {
+                                    const dropdown = document.getElementById("languageDropdown");
+                                    dropdown.classList.toggle("hidden");
                                 }
-                            });
-                        </script>
+
+                                function showDropdown() {
+                                    document.getElementById("languageDropdown").classList.remove("hidden");
+                                }
+
+                                function hideDropdown() {
+                                    document.getElementById("languageDropdown").classList.add("hidden");
+                                }
+
+                                function filterDropdown() {
+                                    const input = document.getElementById("languageInput");
+                                    const filter = input.value.toLowerCase();
+                                    const ul = document.getElementById("languageDropdown");
+                                    const items = ul.getElementsByTagName("li");
+                                    ul.classList.remove("hidden");
+                                    let visibleCount = 0;
+                                    for (let i = 0; i < items.length; i++) {
+                                        const txtValue = items[i].textContent || items[i].innerText;
+                                        if (txtValue.toLowerCase().indexOf(filter) > -1) {
+                                            items[i].style.display = "";
+                                            visibleCount++;
+                                        } else {
+                                            items[i].style.display = "none";
+                                        }
+                                    }
+                                    // Hide dropdown if no matches
+                                    if (visibleCount === 0) {
+                                        ul.classList.add("hidden");
+                                    }
+                                }
+
+
+
+                                // Close dropdown when clicking outside
+                                document.addEventListener("click", function(event) {
+                                    const dropdown = document.getElementById("languageDropdown");
+                                    const input = document.getElementById("languageInput");
+                                    const container = document.getElementById("additionalLanguagesSection");
+                                    if (
+                                        !container.contains(event.target)
+                                    ) {
+                                        hideDropdown();
+                                    }
+                                });
+                            </script>
                     </div>
                 </form>
             </template>
@@ -1246,7 +1271,7 @@
                     children_allowed: false,
                     parties_allowed: false,
                     pets_allowed: '',
-                    pets_fees: 'free',
+                    pets_fees: this.pets_fees,
                     check_in_from: '15:00',
                     check_in_until: '18:00',
                     check_out_from: '08:00',
@@ -1707,7 +1732,13 @@
                         // Validate pets_allowed
                         const validPets = ['yes', 'no', 'upon_request'];
                         if (!validPets.includes(this.property.pets_allowed)) {
-                            alert('Please select a valid pet policy.');
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'error',
+                                title: 'Please select a valid pet policy.',
+                                showConfirmButton: false
+                            })
                             return;
                         }
 
@@ -1721,7 +1752,26 @@
                             body: JSON.stringify(this.property),
                         });
 
-                        if (!response.ok) throw new Error('Failed to save step 11');
+                        if (response.ok) {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'Policy saved successfully!',
+                                showConfirmButton: false
+                            });
+                            setTimeout(() => {
+                                window.location.href = `/partner-homes-edit/${this.propertyId}`
+                            })
+                        }else {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'error',
+                                title: 'Failed to save policy',
+                                showConfirmButton: false
+                            });
+                        };
 
                         const data = await response.json();
 
@@ -1729,7 +1779,7 @@
                             this.propertyId = data.propertyId;
                         }
 
-                        this.step = 12;
+                 
                     } catch (error) {
                         console.error('Step 11 save failed:', error);
                     }

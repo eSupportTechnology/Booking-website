@@ -1627,7 +1627,10 @@ class PropertyController extends Controller
     public function showPrivateHomesImages($propertyId)
     {
         $property = Property::findOrFail($propertyId);
-        return view('partner.partner-homes-images', compact('property'));
+        if($property->category_id == 1){
+            return view('partner.partner-homes-images', compact('property'));
+        }
+        return view('partner.partner-hotels-photos', compact('property'));
     }
 
     public function showPrivateHomesPayments($propertyId)
@@ -1639,7 +1642,10 @@ class PropertyController extends Controller
     public function showPrivateHomesEdit($propertyId)
     {
         $property = Property::findOrFail($propertyId);
-        return view('partner.partner-homes-edit', compact('property'));
+        if($property->category_id == 1){
+            return view('partner.partner-homes-edit', compact('property'));
+        }
+        return view('partner.partner-hotels-edit', compact('property'));
     }
 
     public function savePaymentMethod(Request $request, PropertyAction $action)
