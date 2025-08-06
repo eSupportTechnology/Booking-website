@@ -105,7 +105,7 @@ class PropertyController extends Controller
                         'name' => 'Multiple',
                     ],
                 ]);
-                return view('partner.partner-apartment-create-form-1', [
+                return view('frontend.partner-apartment-create-form-1', [
                     'subcategories' => $subcategories,
                     'category' => 'apartment',
                 ]);
