@@ -28,25 +28,26 @@
                 <div class="bg-white p-6 rounded-lg shadow">
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         <!-- Limit subcategories shown unless showMore is true -->
+                         
                         <template x-for="(subcategory, index) in showMore ? subcategories : subcategories.slice(0, 6)"
                             :key="subcategory.id">
                             <div @click="selectedBox = subcategory.id"
-                                :class="selectedBox === subcategory.id ? 'border-2 border-blue-500 bg-blue-50' :
-                                    'border border-gray-300'"
+                                :class="selectedBox === subcategory.id ? 'border-2 border-blue-500 bg-blue-50' : 'border border-gray-300'"
                                 class="block rounded p-4 cursor-pointer transition bg-white relative">
                                 <div>
                                     <h3 class="font-semibold text-gray-900 mb-2" x-text="subcategory.name"></h3>
-                                    <p class="text-sm text-gray-700">Choose this type</p>
+                                    <p class="text-sm text-gray-700"
+                                    x-text="subcategoryDescriptions[subcategory.id] || 'Choose this type'"></p>
                                 </div>
                                 <div class="absolute top-2 right-2" x-show="selectedBox === subcategory.id">
-                                    <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
+                                    <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M5 13l4 4L19 7" />
                                     </svg>
                                 </div>
                             </div>
                         </template>
+
 
                         <!-- Show More / Less Button -->
                         <div @click="showMore = !showMore"
@@ -1090,6 +1091,24 @@
                 subtypes: [],
                 subcategories: @json($subcategories),
                 showMore: false,
+                subcategoryDescriptions: {
+                    3: 'Accommodation for travellers often offering restaurants, meeting rooms and other guest services',
+                    4: 'Private home with separate living facilities for host and guest',
+                    5: 'Private home offering overnight stays and breakfast',
+                    6: 'Private home with shared living facilities for host and guest',
+                    7: 'Budget accommodation with mostly dorm-style bedding and a social atmosphere',
+                    8: 'A self-catering apartment with some hotel facilities like a reception desk',
+                    9: 'Extremely small units or capsules offering cheap and basic overnight accommodation',
+                    10: 'Private home with simple accommodation in the countryside',
+                    11: 'Private farm with simple accommodation',
+                    12: 'Small and basic accommodation with a rustic feel',
+                    13: 'Adult-only accommodation rented per hour or night',
+                    14: 'Roadside hotel usually for motorists, with direct access to parking and little to no amenities',
+                    15: 'A place for relaxation with onsite restaurants, activities and often with a luxury feel',
+                    16: 'Traditional Moroccan accommodation with a courtyard and luxury feel',
+                    17: 'Traditional Japanese-style accommodation with meal options',
+                    18: 'Private home with accommodation surrounded by nature, such as mountains or forest',
+                },
 
                 property: {
                     address: '',
