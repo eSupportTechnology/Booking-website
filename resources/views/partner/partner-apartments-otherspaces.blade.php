@@ -1,38 +1,8 @@
 @extends('partner.partner-layout')
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>create apartment</title></title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js?v={{ time() }}" defer></script>
-  <meta name="csrf-token" content="{{ csrf_token() }}">
-  <script>
-    console.log('Other spaces page script loaded');
-    document.addEventListener('alpine:init', () => {
-      console.log('Alpine.js initialized on other spaces page');
-    });
-    
-    // Error handling
-    window.addEventListener('error', function(e) {
-      console.error('JavaScript error on other spaces page:', e.error);
-    });
-  </script>
-  
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet" />
-  <!-- Vite assets (optional for Laravel Mix setup) -->
-  @vite(['resources/js/app.js'])
-  <style>
-    body {
-      font-family: 'Noto Sans', sans-serif;
-    }
-  </style>
-</head>
-<body class="bg-gray-50 text-gray-800">
+@section('title', 'Other Spaces - Create Apartment')
+
+@section('content')
 <!-- Header -->
   <header class="text-white px-4 py-2" style="background-color:#1F8FB2;">
     <section class="py-4">
@@ -204,17 +174,31 @@
       // Check if CSRF token exists
       const csrfToken = document.querySelector('meta[name=csrf-token]');
       if (!csrfToken) {
+        console.error('CSRF token meta tag not found');
         throw new Error('CSRF token not found');
       }
       console.log('CSRF Token found:', csrfToken.content);
       
+      // Also check if the token is valid
+      if (!csrfToken.content || csrfToken.content.trim() === '') {
+        console.error('CSRF token is empty');
+        throw new Error('CSRF token is empty');
+      }
+      
       // Make real API call
-      let res = await fetch('http://127.0.0.1:8000/partner/property/bedroom/{{ $property->id ?? 116 }}', {
+      const url = 'http://127.0.0.1:8000/partner/property/bedroom/{{ $property->id ?? 116 }}';
+      const headers = {
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+      };
+      
+      console.log('Making fetch request to:', url);
+      console.log('Headers:', headers);
+      console.log('Payload:', JSON.stringify(payload, null, 2));
+      
+      let res = await fetch(url, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
-        },
+        headers: headers,
         body: JSON.stringify(payload)
       });
       
@@ -305,13 +289,24 @@
         }
         
       } else {
-        throw new Error(data.message || 'Could not save other space.');
+        console.error('Server returned error:', data);
+        throw new Error(data.message || `Server error: ${res.status} - Could not save other space.`);
       }
       
     } catch (err) {
       console.error('Save error:', err);
+      console.error('Error stack:', err.stack);
       this.lastError = err.message;
-      alert('Error saving other space configuration: ' + err.message);
+      
+      // Show more detailed error message
+      let errorMessage = 'Error saving other space configuration: ' + err.message;
+      if (err.name === 'TypeError' && err.message.includes('fetch')) {
+        errorMessage = 'Network error: Unable to connect to the server. Please check your internet connection.';
+      } else if (err.message.includes('CSRF token')) {
+        errorMessage = 'Security error: Please refresh the page and try again.';
+      }
+      
+      alert(errorMessage);
     } finally {
       console.log('=== OTHER SPACES SAVE FUNCTION END ===');
       this.isLoading = false;

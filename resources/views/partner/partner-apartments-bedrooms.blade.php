@@ -536,10 +536,17 @@
             } else {
               // Creating new bedroom - calculate next number from backend rooms data
               const backendRooms = @json($rooms ?? []);
+              console.log('Backend rooms data:', backendRooms);
               let nextBedroomNumber = 1;
+              
+              // Check if this is explicitly a create action
+              const urlParams = new URLSearchParams(window.location.search);
+              const action = urlParams.get('action');
+              const isCreateAction = action === 'create';
               
               if (backendRooms && Object.keys(backendRooms).length > 0) {
                 const bedroomKeys = Object.keys(backendRooms).filter(key => key.startsWith('bedroom'));
+                console.log('Bedroom keys found:', bedroomKeys);
                 
                 if (bedroomKeys.length > 0) {
                   const bedroomNumbers = bedroomKeys
@@ -549,12 +556,32 @@
                     })
                     .filter(num => num > 0);
                   
+                  console.log('Bedroom numbers found:', bedroomNumbers);
+                  
                   if (bedroomNumbers.length > 0) {
-                    nextBedroomNumber = Math.max(...bedroomNumbers) + 1;
+                    // Check if we have a gap in the sequence (e.g., missing Bedroom 1)
+                    const sortedNumbers = bedroomNumbers.sort((a, b) => a - b);
+                    let nextNumber = 1;
+                    
+                    // Find the first missing number in the sequence
+                    for (let i = 0; i < sortedNumbers.length; i++) {
+                      if (sortedNumbers[i] !== nextNumber) {
+                        nextBedroomNumber = nextNumber;
+                        break;
+                      }
+                      nextNumber++;
+                    }
+                    
+                    // If no gaps found, use the next number after the highest
+                    if (nextBedroomNumber === 1) {
+                      nextBedroomNumber = Math.max(...bedroomNumbers) + 1;
+                    }
                   }
                 }
               }
               
+              console.log('Calculated next bedroom number:', nextBedroomNumber);
+              console.log('Is create action:', isCreateAction);
               roomName = 'Bedroom ' + nextBedroomNumber;
             }
                 

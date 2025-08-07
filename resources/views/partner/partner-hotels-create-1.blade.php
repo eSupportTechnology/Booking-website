@@ -28,25 +28,26 @@
                 <div class="bg-white p-6 rounded-lg shadow">
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         <!-- Limit subcategories shown unless showMore is true -->
+                         
                         <template x-for="(subcategory, index) in showMore ? subcategories : subcategories.slice(0, 6)"
                             :key="subcategory.id">
                             <div @click="selectedBox = subcategory.id"
-                                :class="selectedBox === subcategory.id ? 'border-2 border-blue-500 bg-blue-50' :
-                                    'border border-gray-300'"
+                                :class="selectedBox === subcategory.id ? 'border-2 border-blue-500 bg-blue-50' : 'border border-gray-300'"
                                 class="block rounded p-4 cursor-pointer transition bg-white relative">
                                 <div>
                                     <h3 class="font-semibold text-gray-900 mb-2" x-text="subcategory.name"></h3>
-                                    <p class="text-sm text-gray-700">Choose this type</p>
+                                    <p class="text-sm text-gray-700"
+                                    x-text="subcategoryDescriptions[subcategory.id] || 'Choose this type'"></p>
                                 </div>
                                 <div class="absolute top-2 right-2" x-show="selectedBox === subcategory.id">
-                                    <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
+                                    <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M5 13l4 4L19 7" />
                                     </svg>
                                 </div>
                             </div>
                         </template>
+
 
                         <!-- Show More / Less Button -->
                         <div @click="showMore = !showMore"
@@ -174,24 +175,45 @@
 
             <template x-if="step === 4">
                 <form @submit.prevent="submitStep4">
-                    <div class="space-y-4">
-                        <label class="block">
-                            Property Title:
-                            <input type="text" x-model="formData.title" class="w-full border rounded p-2">
-                        </label>
-                        <label class="block">
-                            Description:
-                            <textarea x-model="formData.description" class="w-full border rounded p-2"></textarea>
-                        </label>
-                    </div>
+                    <div class="space-y-6">
+                        <h3 class="text-xl font-bold">Name Your Property</h3>
 
-                    <div class="flex justify-between mt-6">
-                        <button type="button" @click="step = 3" class="border text-blue-600 py-2 px-4 rounded">
-                            ← Back
-                        </button>
-                        <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded">
-                            Continue
-                        </button>
+                        <div>
+                            <label for="propertyTitle" class="block text-sm font-medium text-gray-700 mb-1">Property Name</label>
+                            <div class="relative rounded-md shadow-sm">
+                                <input
+                                    id="propertyTitle"
+                                    type="text"
+                                    x-model="formData.title"
+                                    placeholder="e.g., Ocean View Apartment"
+                                    class="pl-4 pr-4 py-2 border border-gray-300 rounded-md w-full focus:ring-blue-500 focus:border-blue-500" />
+                            </div>
+                            <p class="text-sm text-gray-500 mt-1">Choose a name that helps guests identify your property.</p>
+
+                            <textarea
+                                id="description"
+                                x-model="formData.description"
+                                class="pl-4 pr-4 py-2 border border-gray-300 rounded-md w-full focus:ring-blue-500 focus:border-blue-500"
+                                name="description"
+                                rows="4"
+                                placeholder="Enter your property description here..."></textarea>
+
+                            <p class="text-sm text-gray-500 mt-1">Provide a brief description of your property.</p>
+                        </div>
+
+                        <div class="flex justify-between pt-4">
+                            <button type="button"
+                                @click="step = 3"
+                                class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium px-5 py-2 rounded">
+                                ←
+                            </button>
+
+                            <button
+                                type="submit"
+                                class="bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold px-6 py-2 rounded shadow">
+                                Continue →
+                            </button>
+                        </div>
                     </div>
                 </form>
             </template>
@@ -553,7 +575,23 @@
             <template x-if="step === 9">
                 <form @submit.prevent="submitStep9">
                     <div>
-                        <div>
+                        <div  x-data="{
+                                        servesBreakfast: false,
+                                        breakfastIncluded: '',
+                                        selectedBreakfasts: [],
+                                        breakfastPrice: '',
+                                        breakfastOptions: ['Continental', 'Full English', 'Buffet', 'Vegetarian', 'Vegan', 'Gluten-free'],
+                                        parking: 'no',
+                                        parkingCost: '',
+                                        toggleBreakfastOption(option) {
+                                            const index = this.selectedBreakfasts.indexOf(option);
+                                            if (index > -1) {
+                                                this.selectedBreakfasts.splice(index, 1);
+                                            } else {
+                                                this.selectedBreakfasts.push(option);
+                                            }
+                                        }
+                                    }">
                             <div class="container mx-auto px-4 py-4 max-w-6xl mb-8">
 
                                 <!-- Header -->
@@ -565,48 +603,130 @@
                                 <div class="max-w-xl ml-6 flex flex-col space-y-8">
                                     <!-- Breakfast Section -->
                                     <div class="bg-white shadow-md rounded-lg p-6">
-                                        <h3 class="text-lg  mb-4 font-bold">Breakfast</h3>
+                                        <h3 class="text-lg mb-4 font-bold">Breakfast</h3>
                                         <hr class="border-gray-300 mb-4" />
-                                        <p class="text-gray-700 mb-2 font-bold text-base">
-                                            Do you serve guests breakfast?
-                                        </p>
+
+                                        <p class="text-gray-700 mb-2 font-bold text-base">Do you serve guests breakfast?</p>
                                         <div class="space-y-2">
                                             <label class="flex items-center cursor-pointer">
-                                                <input type="radio" name="breakfast" value="yes" class="mr-2"
-                                                    x-model="property.breakfast" />
+                                                <input type="radio" name="breakfast" x-model="servesBreakfast" value="yes" class="mr-2" />
                                                 <span>Yes</span>
                                             </label>
                                             <label class="flex items-center cursor-pointer">
-                                                <input type="radio" name="breakfast" value="no" class="mr-2"
-                                                    x-model="property.breakfast" checked />
+                                                <input type="radio" name="breakfast" x-model="servesBreakfast" value="no" class="mr-2"
+                                                    @click="breakfastIncluded=''; selectedBreakfasts=[]; breakfastPrice=''" />
                                                 <span>No</span>
                                             </label>
+                                        </div>
+
+                                        <div x-show="servesBreakfast" x-transition class="mt-6">
+                                            <p class="text-gray-700 mb-2 font-bold text-base">Is breakfast included in the price guests pay?</p>
+                                            <div class="space-y-2">
+                                                <label class="flex items-center cursor-pointer">
+                                                    <input type="radio" name="breakfast_included" x-model="breakfastIncluded" value="included" class="mr-2" />
+                                                    <span>Yes, it's included</span>
+                                                </label>
+                                                <label class="flex items-center cursor-pointer">
+                                                    <input type="radio" name="breakfast_included" x-model="breakfastIncluded" value="extra" class="mr-2" />
+                                                    <span>No, it costs extra</span>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div x-show="servesBreakfast && breakfastIncluded === 'extra'" x-transition class="mt-6">
+                                            <p class="text-gray-700 mb-2 font-bold text-base">Breakfast price per person, per day</p>
+                                            <input type="text" x-model="breakfastPrice"
+                                                class="border border-gray-300 px-3 py-2 rounded w-full mb-1" placeholder="US$" />
+                                            <p class="text-sm text-gray-500">Including all fees and taxes</p>
+                                        </div>
+
+                                        <div x-show="servesBreakfast" x-transition class="mt-6">
+                                            <p class="text-gray-700 mb-2 font-bold text-base">What type of breakfast do you offer?</p>
+                                            <p class="text-sm text-gray-500 mb-2">Select all that apply</p>
+                                            <div class="flex flex-wrap gap-2">
+                                                <template x-for="option in breakfastOptions" :key="option">
+                                                    <button type="button" @click="toggleBreakfastOption(option)"
+                                                        :class="selectedBreakfasts.includes(option) ? 'bg-blue-100 border-blue-500 text-blue-700' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
+                                                        class="border px-3 py-1 rounded-full text-sm flex items-center space-x-1 transition">
+                                                        <span x-text="option"></span>
+                                                        <template x-if="selectedBreakfasts.includes(option)">
+                                                            <span class="ml-1 font-bold text-lg leading-none">×</span>
+                                                        </template>
+                                                    </button>
+                                                </template>
+                                            </div>
                                         </div>
                                     </div>
 
                                     <!-- Parking Section -->
                                     <div class="bg-white shadow-md rounded-lg p-6">
-                                        <h3 class="text-lg  mb-4 font-bold">Parking</h3>
+                                        <h3 class="text-lg mb-4 font-bold">Parking</h3>
                                         <hr class="border-gray-300 mb-4" />
-                                        <p class="text-gray-700 mb-2 font-bold">
-                                            Is parking available to guests?
-                                        </p>
-                                        <div class="space-y-2">
+
+                                        <p class="text-gray-700 mb-2 font-bold">Is parking available to guests?</p>
+                                        <div class="space-y-2 mb-4">
                                             <label class="flex items-center cursor-pointer">
-                                                <input type="radio" name="parking" value="free" class="mr-2"
-                                                    x-model="property.parking" />
+                                                <input type="radio" name="parking" value="free" x-model="parking" class="mr-2" />
                                                 <span>Yes, free</span>
                                             </label>
                                             <label class="flex items-center cursor-pointer">
-                                                <input type="radio" name="parking" value="paid" class="mr-2"
-                                                    x-model="property.parking" />
+                                                <input type="radio" name="parking" value="paid" x-model="parking" class="mr-2" />
                                                 <span>Yes, paid</span>
                                             </label>
                                             <label class="flex items-center cursor-pointer">
-                                                <input type="radio" name="parking" value="no" class="mr-2"
-                                                    x-model="property.parking" checked />
+                                                <input type="radio" name="parking" value="no" x-model="parking" class="mr-2" />
                                                 <span>No</span>
                                             </label>
+                                        </div>
+
+                                        <div x-show="parking === 'free' || parking === 'paid'" x-transition class="space-y-4">
+                                            <div>
+                                                <p class="text-gray-700 font-semibold mb-1">Do they need to reserve a parking spot?</p>
+                                                <div class="space-y-2">
+                                                    <label class="flex items-center">
+                                                        <input type="radio" name="reservation_needed" value="yes" class="mr-2" />
+                                                        <span>Reservation needed</span>
+                                                    </label>
+                                                    <label class="flex items-center">
+                                                        <input type="radio" name="reservation_needed" value="no" class="mr-2" />
+                                                        <span>No reservation needed</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <div>
+                                                <p class="text-gray-700 font-semibold mb-1">Where is the parking located?</p>
+                                                <div class="space-y-2">
+                                                    <label class="flex items-center">
+                                                        <input type="radio" name="location" value="on_site" class="mr-2" />
+                                                        <span>On site</span>
+                                                    </label>
+                                                    <label class="flex items-center">
+                                                        <input type="radio" name="location" value="off_site" class="mr-2" />
+                                                        <span>Off site</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <div>
+                                                <p class="text-gray-700 font-semibold mb-1">What type of parking is it?</p>
+                                                <div class="space-y-2">
+                                                    <label class="flex items-center">
+                                                        <input type="radio" name="type" value="private" class="mr-2" />
+                                                        <span>Private</span>
+                                                    </label>
+                                                    <label class="flex items-center">
+                                                        <input type="radio" name="type" value="public" class="mr-2" />
+                                                        <span>Public</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div x-show="parking === 'paid'" x-transition class="mt-4">
+                                            <label class="block text-gray-700 font-semibold mb-1">How much does parking cost?</label>
+                                            <input type="text" x-model="parkingCost" placeholder="e.g., $10 per day"
+                                                class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
                                         </div>
                                     </div>
                                 </div>
@@ -639,29 +759,43 @@
 
                             <!-- Language Selection Section -->
                             <div class="bg-white shadow-md rounded-lg p-6 mb-8">
-                                <h3 class="text-lg  mb-4 font-bold">Select languages</h3>
+                                <h3 class="text-lg  mb-4 font-bold">Select languages
+                                </h3>
                                 <div class="space-y-2">
-                                    @foreach ($languages as $language)
-                                        <label class="flex items-center space-x-2">
-                                            <input type="checkbox" name="languages[]" value="{{ $language['id'] }}"
-                                                class="text-blue-500" />
-                                            <span>{{ $language['name'] }}</span>
-                                        </label>
+                                    @php
+                                    $initialLanguages = $languages->take(6);
+                                    $additionalLanguages = $languages->slice(6);
+                                    @endphp
+                                    @foreach ($initialLanguages as $lang)
+                                    <label class="flex items-center cursor-pointer">
+                                        <input type="checkbox"
+                                            class="mr-2"
+                                            :value="'{{ $lang['id'] }}'" />
+                                        <span>{{ $lang['name'] }}</span>
+                                    </label>
                                     @endforeach
+
+
                                 </div>
 
                                 <!-- Add Additional Languages -->
-                                <div id="additionalLanguagesSection" class="mt-4 hidden relative">
-                                    <h3 class="text-lg font-medium mb-2 ">Add additional languages</h3>
+                                <div id="additionalLanguagesSection"
+                                    class="mt-4 hidden relative">
+                                    <h3 class="text-lg font-medium mb-2 ">Add
+                                        additional languages</h3>
 
                                     <!-- Searchable dropdown container -->
                                     <div class="relative w-full max-w-md">
-                                        <input type="text" id="languageInput" oninput="filterDropdown()"
-                                            onclick="toggleDropdown()" placeholder="Search languages..."
-                                            autocomplete="off" class="w-full border rounded p-2 pr-10 cursor-pointer"
+                                        <input type="text" id="languageInput"
+                                            oninput="filterDropdown()"
+                                            onclick="toggleDropdown()"
+                                            placeholder="Search languages..."
+                                            autocomplete="off"
+                                            class="w-full border rounded p-2 pr-10 cursor-pointer"
                                             readonly />
                                         <!-- Dropdown arrow -->
-                                        <button type="button" onclick="toggleDropdown()"
+                                        <button type="button"
+                                            onclick="toggleDropdown()"
                                             class="absolute right-2 top-2.5 text-gray-600 hover:text-gray-900 focus:outline-none"
                                             tabindex="-1">
                                             ▼
@@ -670,36 +804,23 @@
                                         <!-- Dropdown list -->
                                         <ul id="languageDropdown"
                                             class="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded max-h-40 overflow-auto shadow-lg hidden">
+                                            @foreach ($additionalLanguages as $lang)
                                             <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                onclick="selectLanguage(this)">Arabic
+                                                onclick="selectLanguage(this)"
+                                                data-id="{{ $lang['id'] }}">
+                                                {{ $lang['name'] }}
                                             </li>
-                                            <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                onclick="selectLanguage(this)">
-                                                Bulgarian</li>
-                                            <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                onclick="selectLanguage(this)">
-                                                Catalan</li>
-                                            <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                onclick="selectLanguage(this)">
-                                                Chinese</li>
-                                            <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                onclick="selectLanguage(this)">
-                                                Croatian</li>
-                                            <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                onclick="selectLanguage(this)">Czech
-                                            </li>
-                                            <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                onclick="selectLanguage(this)">Danish
-                                            </li>
-                                            <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                onclick="selectLanguage(this)">Dutch
-                                            </li>
+                                            @endforeach
                                         </ul>
+
                                     </div>
                                 </div>
+                                <!-- Container to hold dynamically selected additional languages -->
+                                <div id="selectedAdditionalLanguages" class="mt-2 space-y-2"></div>
 
                                 <!-- Toggle Button for Additional Languages -->
-                                <a href="#" onclick="event.preventDefault(); toggleAdditionalLanguages();"
+                                <a href="#"
+                                    onclick="event.preventDefault(); toggleAdditionalLanguages();"
                                     class="text-blue-500 hover:underline mt-4 block">
                                     Add additional languages
                                 </a>
@@ -722,71 +843,96 @@
 
                         </div>
 
-                        <script>
-                            function toggleAdditionalLanguages() {
-                                const section = document.getElementById("additionalLanguagesSection");
-                                section.classList.toggle("hidden");
-                                if (!section.classList.contains("hidden")) {
-                                    document.getElementById("languageInput").focus();
-                                    showDropdown();
-                                } else {
+                            <script>
+                                function selectLanguage(element) {
+                                    const input = document.getElementById("languageInput");
+                                    const selectedContainer = document.getElementById("selectedAdditionalLanguages");
+                                    const langName = element.textContent.trim();
+                                    const langId = element.dataset.id;
+
+                                    // Prevent duplicate
+                                    if (document.getElementById(`lang-${langId}`)) {
+                                        input.value = '';
+                                        hideDropdown();
+                                        return;
+                                    }
+
+                                    // Create checkbox dynamically
+                                    const label = document.createElement('label');
+                                    label.className = 'flex items-center cursor-pointer';
+                                    label.id = `lang-${langId}`;
+                                    label.innerHTML = `
+                                            <input type="checkbox" class="mr-2" name="languages[]" value="${langId}" checked />
+                                            <span>${langName}</span>
+                                        `;
+
+                                    selectedContainer.appendChild(label);
+
+                                    // Clear input and close dropdown
+                                    input.value = '';
                                     hideDropdown();
                                 }
-                            }
 
-                            function toggleDropdown() {
-                                const dropdown = document.getElementById("languageDropdown");
-                                dropdown.classList.toggle("hidden");
-                            }
-
-                            function showDropdown() {
-                                document.getElementById("languageDropdown").classList.remove("hidden");
-                            }
-
-                            function hideDropdown() {
-                                document.getElementById("languageDropdown").classList.add("hidden");
-                            }
-
-                            function filterDropdown() {
-                                const input = document.getElementById("languageInput");
-                                const filter = input.value.toLowerCase();
-                                const ul = document.getElementById("languageDropdown");
-                                const items = ul.getElementsByTagName("li");
-                                ul.classList.remove("hidden");
-                                let visibleCount = 0;
-                                for (let i = 0; i < items.length; i++) {
-                                    const txtValue = items[i].textContent || items[i].innerText;
-                                    if (txtValue.toLowerCase().indexOf(filter) > -1) {
-                                        items[i].style.display = "";
-                                        visibleCount++;
+                                function toggleAdditionalLanguages() {
+                                    const section = document.getElementById("additionalLanguagesSection");
+                                    section.classList.toggle("hidden");
+                                    if (!section.classList.contains("hidden")) {
+                                        document.getElementById("languageInput").focus();
+                                        showDropdown();
                                     } else {
-                                        items[i].style.display = "none";
+                                        hideDropdown();
                                     }
                                 }
-                                // Hide dropdown if no matches
-                                if (visibleCount === 0) {
-                                    ul.classList.add("hidden");
-                                }
-                            }
 
-                            function selectLanguage(element) {
-                                const input = document.getElementById("languageInput");
-                                input.value = element.textContent;
-                                hideDropdown();
-                            }
-
-                            // Close dropdown when clicking outside
-                            document.addEventListener("click", function(event) {
-                                const dropdown = document.getElementById("languageDropdown");
-                                const input = document.getElementById("languageInput");
-                                const container = document.getElementById("additionalLanguagesSection");
-                                if (
-                                    !container.contains(event.target)
-                                ) {
-                                    hideDropdown();
+                                function toggleDropdown() {
+                                    const dropdown = document.getElementById("languageDropdown");
+                                    dropdown.classList.toggle("hidden");
                                 }
-                            });
-                        </script>
+
+                                function showDropdown() {
+                                    document.getElementById("languageDropdown").classList.remove("hidden");
+                                }
+
+                                function hideDropdown() {
+                                    document.getElementById("languageDropdown").classList.add("hidden");
+                                }
+
+                                function filterDropdown() {
+                                    const input = document.getElementById("languageInput");
+                                    const filter = input.value.toLowerCase();
+                                    const ul = document.getElementById("languageDropdown");
+                                    const items = ul.getElementsByTagName("li");
+                                    ul.classList.remove("hidden");
+                                    let visibleCount = 0;
+                                    for (let i = 0; i < items.length; i++) {
+                                        const txtValue = items[i].textContent || items[i].innerText;
+                                        if (txtValue.toLowerCase().indexOf(filter) > -1) {
+                                            items[i].style.display = "";
+                                            visibleCount++;
+                                        } else {
+                                            items[i].style.display = "none";
+                                        }
+                                    }
+                                    // Hide dropdown if no matches
+                                    if (visibleCount === 0) {
+                                        ul.classList.add("hidden");
+                                    }
+                                }
+
+
+
+                                // Close dropdown when clicking outside
+                                document.addEventListener("click", function(event) {
+                                    const dropdown = document.getElementById("languageDropdown");
+                                    const input = document.getElementById("languageInput");
+                                    const container = document.getElementById("additionalLanguagesSection");
+                                    if (
+                                        !container.contains(event.target)
+                                    ) {
+                                        hideDropdown();
+                                    }
+                                });
+                            </script>
                     </div>
                 </form>
             </template>
@@ -1083,6 +1229,7 @@
     <script>
         function stepForm() {
             return {
+                pets_fees: '',
                 step: 1,
                 selectedBox: '',
                 unitType: '',
@@ -1090,6 +1237,24 @@
                 subtypes: [],
                 subcategories: @json($subcategories),
                 showMore: false,
+                subcategoryDescriptions: {
+                    3: 'Accommodation for travellers often offering restaurants, meeting rooms and other guest services',
+                    4: 'Private home with separate living facilities for host and guest',
+                    5: 'Private home offering overnight stays and breakfast',
+                    6: 'Private home with shared living facilities for host and guest',
+                    7: 'Budget accommodation with mostly dorm-style bedding and a social atmosphere',
+                    8: 'A self-catering apartment with some hotel facilities like a reception desk',
+                    9: 'Extremely small units or capsules offering cheap and basic overnight accommodation',
+                    10: 'Private home with simple accommodation in the countryside',
+                    11: 'Private farm with simple accommodation',
+                    12: 'Small and basic accommodation with a rustic feel',
+                    13: 'Adult-only accommodation rented per hour or night',
+                    14: 'Roadside hotel usually for motorists, with direct access to parking and little to no amenities',
+                    15: 'A place for relaxation with onsite restaurants, activities and often with a luxury feel',
+                    16: 'Traditional Moroccan accommodation with a courtyard and luxury feel',
+                    17: 'Traditional Japanese-style accommodation with meal options',
+                    18: 'Private home with accommodation surrounded by nature, such as mountains or forest',
+                },
 
                 property: {
                     address: '',
@@ -1106,7 +1271,7 @@
                     children_allowed: false,
                     parties_allowed: false,
                     pets_allowed: '',
-                    pets_fees: 'free',
+                    pets_fees: this.pets_fees,
                     check_in_from: '15:00',
                     check_in_until: '18:00',
                     check_out_from: '08:00',
@@ -1142,9 +1307,21 @@
                         this.propertyId = data.property_id;
                         this.step = 2;
                         this.fetchSubtypes(this.selectedBox);
-                        alert(data.message || 'Property created successfully');
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Property created successfully!',
+                            showConfirmButton: false
+                        });
                     } catch (error) {
-                        alert('Error: ' + error.message);
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'error',
+                            title: 'Failed to create property',
+                            showConfirmButton: false
+                        })
                     }
                 },
 
@@ -1160,7 +1337,13 @@
 
                 async submitStep2() {
                     if (!this.unitType || !this.propertyId) {
-                        alert('Please select a unit type');
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'error',
+                            title: 'Missing required fields',
+                            showConfirmButton: false
+                        });
                         return;
                     }
 
@@ -1180,15 +1363,44 @@
 
                         const data = await response.json();
                         this.step = 3;
-                        alert(data.message || 'Step 2 saved successfully');
+                        if(response.ok) {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'Address type saved successfully!',
+                                showConfirmButton: false
+                            });
+                        }else {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'error',
+                                title: 'Failed to save address type',
+                                showConfirmButton: false
+                            });
+                        }
+                      
                     } catch (error) {
-                        alert('Error submitting step 2: ' + error.message);
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'error',
+                            title: 'Failed to save address type',
+                            showConfirmButton: false
+                        });
                     }
                 },
 
                 async submitStep3() {
                     if (!this.propertyId) {
-                        alert('Property ID missing!');
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'error',
+                            title: 'Missing required fields',
+                            showConfirmButton: false
+                        });
                         return;
                     }
 
@@ -1208,7 +1420,13 @@
                         this.step = 4;
 
                     } catch (error) {
-                        alert('Error submitting step 3: ' + error.message);
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'error',
+                            title: 'Failed to save address type',
+                            showConfirmButton: false
+                        });
                     }
                 },
 
@@ -1228,10 +1446,22 @@
                         const result = await response.json();
 
                         if (response.ok) {
-                            alert(result.message || 'Step 4 saved successfully');
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'Property name saved successfully!',
+                                showConfirmButton: false
+                            })
                             this.step = 5; // Move to next step if needed
                         } else {
-                            alert(result.message || 'Something went wrong while saving step 4.');
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'error',
+                                title: 'Failed to save step 4',
+                                showConfirmButton: false
+                            });
                         }
                     } catch (error) {
                         console.error('Error submitting step 4:', error);
@@ -1251,7 +1481,23 @@
                             body: JSON.stringify(this.property),
                         });
 
-                        if (!response.ok) throw new Error('Failed to save step 5');
+                        if (response.ok) {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'Property address saved successfully!',
+                                showConfirmButton: false
+                            })
+                        }else {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'error',
+                                title: 'Failed to save address',
+                                showConfirmButton: false
+                            });
+                        }
 
                         const data = await response.json();
 
@@ -1276,7 +1522,23 @@
                             body: JSON.stringify(this.property),
                         });
 
-                        if (!response.ok) throw new Error('Failed to save step 6');
+                        if (response.ok) {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'Property channel saved successfully!',
+                                showConfirmButton: false
+                            })
+                        }else {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'error',
+                                title: 'Failed to save channel',
+                                showConfirmButton: false
+                            });
+                        }
 
                         const data = await response.json();
 
@@ -1302,7 +1564,23 @@
                             body: JSON.stringify(this.property),
                         });
 
-                        if (!response.ok) throw new Error('Failed to save step 7');
+                        if (response.ok) {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'Property rating saved successfully!',
+                                showConfirmButton: false
+                            })
+                        }else {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'error',
+                                title: 'Failed to save rating',
+                                showConfirmButton: false
+                            });
+                        }
 
                         const data = await response.json();
 
@@ -1340,10 +1618,22 @@
                         const result = await response.json();
 
                         if (result.success) {
-                            console.log('Amenities saved:', result);
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'Amenities saved successfully!',
+                                showConfirmButton: false
+                            });
                             this.step = 9; // go to next step
                         } else {
-                            alert('Failed to save amenities: ' + result.message);
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'error',
+                                title: 'Failed to save amenities',
+                                showConfirmButton: false
+                            });
                         }
                     } catch (e) {
                         console.error('Error saving amenities:', e);
@@ -1362,7 +1652,23 @@
                             body: JSON.stringify(this.property),
                         });
 
-                        if (!response.ok) throw new Error('Failed to save step 9');
+                        if (response.ok) {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'Service details saved successfully!',
+                                showConfirmButton: false
+                            });
+                        }else {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'error',
+                                title: 'Failed to save service details',
+                                showConfirmButton: false
+                            });
+                        }
 
                         const data = await response.json();
 
@@ -1378,18 +1684,16 @@
 
                 async submitStep10() {
                     try {
-                        // Get all checked amenity IDs
-                        const selectedLanguages = Array.from(document.querySelectorAll(
-                                'input[name="languages[]"]:checked'))
-                            .map(input => parseInt(input.value));
+                        const selectedLanguages = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
+                                                    .map(input => input.value);
+
                         console.log('Selected languages:', selectedLanguages);
 
-                        const response = await fetch(`/partner/property/save-languages/${this.propertyId}`, {
+                        const response = await fetch(`/partner/save-languages/${this.propertyId}`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
-                                    'content')
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                             },
                             body: JSON.stringify({
                                 languages: selectedLanguages,
@@ -1401,9 +1705,22 @@
 
                         if (result.success) {
                             console.log('Languages saved:', result);
-                            this.step = 11; // go to next step
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'Languages saved successfully!',
+                                showConfirmButton: false
+                            });
+                            this.step++; // go to next step
                         } else {
-                            alert('Failed to save Languages: ' + result.message);
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'error',
+                                title: result.message || 'Failed to save languages',
+                                showConfirmButton: false
+                            });
                         }
                     } catch (e) {
                         console.error('Error saving Languages:', e);
@@ -1415,7 +1732,13 @@
                         // Validate pets_allowed
                         const validPets = ['yes', 'no', 'upon_request'];
                         if (!validPets.includes(this.property.pets_allowed)) {
-                            alert('Please select a valid pet policy.');
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'error',
+                                title: 'Please select a valid pet policy.',
+                                showConfirmButton: false
+                            })
                             return;
                         }
 
@@ -1429,7 +1752,26 @@
                             body: JSON.stringify(this.property),
                         });
 
-                        if (!response.ok) throw new Error('Failed to save step 11');
+                        if (response.ok) {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'Policy saved successfully!',
+                                showConfirmButton: false
+                            });
+                            setTimeout(() => {
+                                window.location.href = `/partner-homes-edit/${this.propertyId}`
+                            })
+                        }else {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'error',
+                                title: 'Failed to save policy',
+                                showConfirmButton: false
+                            });
+                        };
 
                         const data = await response.json();
 
@@ -1437,7 +1779,7 @@
                             this.propertyId = data.propertyId;
                         }
 
-                        this.step = 12;
+                 
                     } catch (error) {
                         console.error('Step 11 save failed:', error);
                     }

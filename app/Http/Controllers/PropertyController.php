@@ -114,7 +114,7 @@ class PropertyController extends Controller
                 if ($subcategories->isEmpty()) {
                     return redirect()->back()->withErrors(['error' => 'No subcategories found for this category.']);
                 }
-                return view('frontend.partner-hotels-create-1', [
+                return view('partner.partner-hotels-create-1', [
                     'amenities' => $amenities,
                     'languages' => $languages,
                     'roomTypes' => $roomTypes,
@@ -577,8 +577,62 @@ class PropertyController extends Controller
     public function showBedrooms($category, $property)
     {
         // $property is the ID from the route
+        $propertyModel = \App\Models\Property::findOrFail($property);
+        
+        // Fetch existing bedrooms for this property
+        $existingBedrooms = \App\Models\PropertyBedroom::where('property_id', $property)->get();
+        
+        // Convert to rooms structure for frontend
+        $rooms = [
+            'bedroom1' => ['name' => 'Bedroom 1', 'twin' => 0, 'full' => 1, 'queen' => 0, 'king' => 0, 'bunk' => 0, 'sofa' => 0, 'futon' => 0],
+            'livingRoom' => ['name' => 'Living room', 'twin' => 0, 'full' => 0, 'queen' => 0, 'king' => 0, 'bunk' => 0, 'sofa' => 0, 'futon' => 0],
+            'otherSpaces' => ['name' => 'Other spaces', 'twin' => 0, 'full' => 0, 'queen' => 0, 'king' => 0, 'bunk' => 0, 'sofa' => 0, 'futon' => 0]
+        ];
+        
+        foreach ($existingBedrooms as $room) {
+            // Create a consistent key format for bedrooms
+            if (str_contains(strtolower($room->name), 'bedroom')) {
+                // Extract bedroom number
+                if (preg_match('/bedroom\s*(\d+)/i', $room->name, $matches)) {
+                    $bedroomNumber = $matches[1];
+                    $roomKey = 'bedroom' . $bedroomNumber;
+                } else {
+                    // If no number found, use 'bedroom1'
+                    $roomKey = 'bedroom1';
+                }
+            } else {
+                // For non-bedroom rooms, use the original logic
+                $roomKey = strtolower(str_replace(' ', '', $room->name));
+            }
+            
+            Log::info('Processing existing room', [
+                'room_name' => $room->name,
+                'room_key' => $roomKey,
+                'room_type' => $room->room_type
+            ]);
+            
+            $rooms[$roomKey] = [
+                'name' => $room->name,
+                'twin' => $room->twin ?? 0,
+                'full' => $room->full ?? 0,
+                'queen' => $room->queen ?? 0,
+                'king' => $room->king ?? 0,
+                'bunk' => $room->bunk ?? 0,
+                'sofa' => $room->sofa ?? 0,
+                'futon' => $room->futon ?? 0
+            ];
+        }
+        
+        Log::info('Final rooms data for frontend', [
+            'property_id' => $property,
+            'rooms_keys' => array_keys($rooms),
+            'rooms_data' => $rooms
+        ]);
+        
         return view('partner.partner-apartments-bedrooms', [
+            'property' => $propertyModel,
             'propertyId' => $property,
+            'rooms' => $rooms
         ]);
     }
 
@@ -1001,7 +1055,30 @@ class PropertyController extends Controller
                 $totalBeds += $room->futon;
             }
             
-            $roomDisplayData[$room->room_type] = [
+            // Create a unique key for each room
+            $displayKey = $room->room_type;
+            if ($room->room_type === 'bedroom') {
+                // For bedrooms, use the room name as the key to distinguish between Bedroom 1, Bedroom 2, etc.
+                $displayKey = strtolower(str_replace(' ', '', $room->name));
+            } elseif ($room->room_type === 'living_room') {
+                // For living room, use consistent key
+                $displayKey = 'livingroom';
+            } elseif ($room->room_type === 'other') {
+                // For other spaces, use consistent key
+                $displayKey = 'otherspaces';
+            }
+            
+            // Log::info('Processing room for display', [
+            //     'room_id' => $room->id,
+            //     'room_name' => $room->name,
+            //     'room_type' => $room->room_type,
+            //     'display_key' => $displayKey,
+            //     'bed_summary' => implode(', ', $bedSummary),
+            //     'total_beds' => $totalBeds,
+            //     'has_beds' => $totalBeds > 0
+            // ]);
+            
+            $roomDisplayData[$displayKey] = [
                 'name' => $room->name,
                 'bed_summary' => implode(', ', $bedSummary),
                 'total_beds' => $totalBeds,
@@ -1018,24 +1095,36 @@ class PropertyController extends Controller
             } elseif (strpos($normalizedName, 'other') !== false) {
                 $roomKey = 'otherSpaces';
             } else {
-                // For other rooms, use the original logic
-                $roomKey = strtolower(str_replace(' ', '', $room->name));
+                // For bedrooms, create consistent keys
+                if (strpos($normalizedName, 'bedroom') !== false) {
+                    // Extract bedroom number and create key like 'bedroom1', 'bedroom2', etc.
+                    if (preg_match('/bedroom\s*(\d+)/i', $room->name, $matches)) {
+                        $bedroomNumber = $matches[1];
+                        $roomKey = 'bedroom' . $bedroomNumber;
+                    } else {
+                        // If no number found, use 'bedroom1'
+                        $roomKey = 'bedroom1';
+                    }
+                } else {
+                    // For other rooms, use the original logic
+                    $roomKey = strtolower(str_replace(' ', '', $room->name));
+                }
             }
             
             // Log the room key mapping for debugging
-            Log::info('Added room to rooms object', [
-                'room_key' => $roomKey,
-                'room_data' => [
-                    'name' => $room->name,
-                    'twin' => $room->twin ?? 0,
-                    'full' => $room->full ?? 0,
-                    'queen' => $room->queen ?? 0,
-                    'king' => $room->king ?? 0,
-                    'bunk' => $room->bunk ?? 0,
-                    'sofa' => $room->sofa ?? 0,
-                    'futon' => $room->futon ?? 0
-                ]
-            ]);
+            // Log::info('Added room to rooms object', [
+            //     'room_key' => $roomKey,
+            //     'room_data' => [
+            //         'name' => $room->name,
+            //         'twin' => $room->twin ?? 0,
+            //         'full' => $room->full ?? 0,
+            //         'queen' => $room->queen ?? 0,
+            //         'king' => $room->king ?? 0,
+            //         'bunk' => $room->bunk ?? 0,
+            //         'sofa' => $room->sofa ?? 0,
+            //         'futon' => $room->futon ?? 0
+            //     ]
+            // ]);
             
             $rooms[$roomKey] = [
                 'name' => $room->name,
@@ -1052,25 +1141,26 @@ class PropertyController extends Controller
         $amenities = $action->getAmenitiesByContext('apartment');
         $languages = $action->getLanguages();
         
-        Log::info('showMultipleApartmentForm2 returning', [
-            'property_id' => $propertyId,
-            'amenities_count' => $amenities->count(),
-            'languages_count' => $languages->count(),
-            'existing_amenities_count' => count($existingAmenities),
-            'existing_photos_count' => count($existingPhotos),
-            'saved_rooms_count' => $savedRooms->count(),
-            'room_display_data' => $roomDisplayData
-        ]);
+        // Log::info('showMultipleApartmentForm2 returning', [
+        //     'property_id' => $propertyId,
+        //     'amenities_count' => $amenities->count(),
+        //     'languages_count' => $languages->count(),
+        //     'existing_amenities_count' => count($existingAmenities),
+        //     'existing_photos_count' => count($existingPhotos),
+        //     'saved_rooms_count' => $savedRooms->count(),
+        //     'room_display_data' => $roomDisplayData,
+        //     'room_display_keys' => array_keys($roomDisplayData)
+        // ]);
         
         return view('partner.partner-multiple-apartment-2', compact('amenities', 'languages', 'propertyId', 'propertyData', 'roomDisplayData', 'rooms'));
     }
 
     public function saveStep1Data(Request $request, Property $property)
     {
-        Log::info('saveStep1Data called', [
-            'property_id' => $property->id,
-            'request_data' => $request->all()
-        ]);
+        // Log::info('saveStep1Data called', [
+        //     'property_id' => $property->id,
+        //     'request_data' => $request->all()
+        // ]);
 
         try {
             // Update property with step 1 data
@@ -1101,10 +1191,10 @@ class PropertyController extends Controller
                 'message' => 'Step 1 data saved successfully'
             ]);
         } catch (\Exception $e) {
-            Log::error('Error saving step 1 data', [
-                'error' => $e->getMessage(),
-                'property_id' => $property->id
-            ]);
+            // Log::error('Error saving step 1 data', [
+            //     'error' => $e->getMessage(),
+            //     'property_id' => $property->id
+            // ]);
 
             return response()->json([
                 'success' => false,
@@ -1115,7 +1205,7 @@ class PropertyController extends Controller
 
     public function showMultipleApartmentForm3(PropertyAction $action)
     {
-        Log::info('showMultipleApartmentForm3 called');
+        // Log::info('showMultipleApartmentForm3 called');
         
         // Redirect to dashboard or show a simple success message
         return redirect()->route('partner.multiple.apartment.initial')
@@ -1131,10 +1221,10 @@ class PropertyController extends Controller
      */
     public function saveLanguages(Request $request, Property $property, PropertyAction $propertyAction)
     {
-        Log::info('saveLanguages called', [
-            'property_id' => $property->id,
-            'request' => $request->all(),
-        ]);
+        // Log::info('saveLanguages called', [
+        //     'property_id' => $property->id,
+        //     'request' => $request->all(),
+        // ]);
 
         try {
             $dto = SaveLanguagesDTO::fromRequest($request);
@@ -1146,10 +1236,10 @@ class PropertyController extends Controller
                 'selected_languages' => $property->languages()->pluck('name')->toArray()
             ]);
         } catch (\Exception $e) {
-            Log::error('Error saving languages', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
+            // Log::error('Error saving languages', [
+            //     'message' => $e->getMessage(),
+            //     'trace' => $e->getTraceAsString(),
+            // ]);
 
             return response()->json([
                 'success' => false,
@@ -1163,9 +1253,9 @@ class PropertyController extends Controller
      */
     public function saveAdditionalDetails(Request $request, SaveAdditionalDetailsAction $action)
     {
-        Log::info('saveAdditionalDetails called', [
-            'request' => $request->all(),
-        ]);
+        // Log::info('saveAdditionalDetails called', [
+        //     'request' => $request->all(),
+        // ]);
 
         try {
             $dto = SaveAdditionalDetailsDTO::fromRequest($request);
@@ -1176,10 +1266,10 @@ class PropertyController extends Controller
                 'message' => 'Additional details saved successfully.',
             ]);
         } catch (\Exception $e) {
-            Log::error('Error saving additional details', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
+            // Log::error('Error saving additional details', [
+            //     'message' => $e->getMessage(),
+            //     'trace' => $e->getTraceAsString(),
+            // ]);
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage()
@@ -1190,7 +1280,7 @@ class PropertyController extends Controller
     public function saveAddressSame(Request $request, PropertyAction $propertyAction)
     {
         try {
-            Log::info('saveAddressSame called', ['request' => $request->all()]);
+            // Log::info('saveAddressSame called', ['request' => $request->all()]);
 
             $dto = SaveAddressSameDTO::fromRequest($request);
 
@@ -1227,12 +1317,12 @@ class PropertyController extends Controller
 
     public function saveHostProfile(Request $request, Property $property, SaveHostProfileAction $action)
     {
-        Log::info('saveHostProfile called', [
-            'property_id' => $property->id,
-            'request_data' => $request->all(),
-            'request_method' => $request->method(),
-            'content_type' => $request->header('Content-Type')
-        ]);
+        // Log::info('saveHostProfile called', [
+        //     'property_id' => $property->id,
+        //     'request_data' => $request->all(),
+        //     'request_method' => $request->method(),
+        //     'content_type' => $request->header('Content-Type')
+        // ]);
 
         try {
             // Merge property_id into request data since it comes from route parameter
@@ -1244,20 +1334,20 @@ class PropertyController extends Controller
 
             return response()->json(['success' => true, 'message' => 'Host profile saved successfully']);
         } catch (\Exception $e) {
-            Log::error('Error saving host profile', [
-                'error' => $e->getMessage(),
-                'property_id' => $property->id,
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'trace' => $e->getTraceAsString()
-            ]);
+            // Log::error('Error saving host profile', [
+            //     'error' => $e->getMessage(),
+            //     'property_id' => $property->id,
+            //     'file' => $e->getFile(),
+            //     'line' => $e->getLine(),
+            //     'trace' => $e->getTraceAsString()
+            // ]);
             return response()->json(['success' => false, 'message' => 'Error saving host profile: ' . $e->getMessage()], 500);
         }
     }
 
     public function checkBasicInfoCompletion(Property $property)
     {
-        Log::info('Checking basic info completion for property', ['property_id' => $property->id]);
+        // Log::info('Checking basic info completion for property', ['property_id' => $property->id]);
         
         try {
             // Check if all required basic information fields are filled
@@ -1273,14 +1363,14 @@ class PropertyController extends Controller
             
             $completed = $hasTitle && $hasAddress && $hasChannelManager && $hasPropertyDetails;
             
-            Log::info('Basic info completion check result', [
-                'property_id' => $property->id,
-                'hasTitle' => $hasTitle,
-                'hasAddress' => $hasAddress,
-                'hasChannelManager' => $hasChannelManager,
-                'hasPropertyDetails' => $hasPropertyDetails,
-                'completed' => $completed
-            ]);
+            // Log::info('Basic info completion check result', [
+            //     'property_id' => $property->id,
+            //     'hasTitle' => $hasTitle,
+            //     'hasAddress' => $hasAddress,
+            //     'hasChannelManager' => $hasChannelManager,
+            //     'hasPropertyDetails' => $hasPropertyDetails,
+            //     'completed' => $completed
+            // ]);
             
             return response()->json([
                 'completed' => $completed,
@@ -1292,8 +1382,8 @@ class PropertyController extends Controller
                 ]
             ]);
         } catch (\Exception $e) {
-            Log::error('Error checking basic info completion', ['error' => $e->getMessage()]);
-            
+                //Log::error('Error checking basic info completion', ['error' => $e->getMessage()]);
+                
             return response()->json([
                 'completed' => false,
                 'error' => 'Failed to check completion status'
@@ -1303,10 +1393,10 @@ class PropertyController extends Controller
 
     public function savePricing(Request $request, Property $property, SavePricingAction $action)
     {
-        Log::info('savePricing called', [
-            'property_id' => $property->id,
-            'request_data' => $request->all()
-        ]);
+        // Log::info('savePricing called', [
+        //     'property_id' => $property->id,
+        //     'request_data' => $request->all()
+        // ]);
         try {
             // Merge property_id into request data since it comes from route parameter
             $requestData = $request->all();
@@ -1331,11 +1421,11 @@ class PropertyController extends Controller
 
             return response()->json(['success' => true, 'message' => 'Pricing saved successfully']);
         } catch (\Exception $e) {
-            Log::error('Error saving pricing', [
-                'error' => $e->getMessage(),
-                'property_id' => $property->id,
-                'trace' => $e->getTraceAsString()
-            ]);
+            // Log::error('Error saving pricing', [
+            //     'error' => $e->getMessage(),
+            //     'property_id' => $property->id,
+            //     'trace' => $e->getTraceAsString()
+            // ]);
             return response()->json(['success' => false, 'message' => 'Error saving pricing: ' . $e->getMessage()], 500);
         }
     }
@@ -1420,25 +1510,24 @@ class PropertyController extends Controller
     {
         $property =Property::findOrFail($propertyId);
         $accommodation_type=Accommodation::where('property_id', $propertyId)->first()->ownership_type;
-        Log::info('Accommodation type found', ['accommodation_type' => $accommodation_type]);
         return view('partner.partner-homes-complete-registration', compact('propertyId', 'accommodation_type'));
     }
 
     public function saveServices(Request $request, Property $property, PropertyAction $propertyAction)
     {
-        Log::info('saveServices called', [
-            'property_id' => $property->id,
-            'request' => $request->all(),
-            'request_method' => $request->method(),
-            'content_type' => $request->header('Content-Type'),
-            'url' => $request->url(),
-        ]);
+        // Log::info('saveServices called', [
+        //     'property_id' => $property->id,
+        //     'request' => $request->all(),
+        //     'request_method' => $request->method(),
+        //     'content_type' => $request->header('Content-Type'),
+        //     'url' => $request->url(),
+        // ]);
 
         try {
             $dto = SaveServicesDTO::fromRequest($request);
-            Log::info('DTO created successfully', [
-                'dto_data' => $dto->toArray()
-            ]);
+            // Log::info('DTO created successfully', [
+            //     'dto_data' => $dto->toArray()
+            // ]);
 
             $propertyAction->saveServices($property, $dto);
 
@@ -1447,10 +1536,10 @@ class PropertyController extends Controller
                 'message' => 'Services saved successfully.',
             ]);
         } catch (\Exception $e) {
-            Log::error('Error saving services', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
+            // Log::error('Error saving services', [
+            //     'message' => $e->getMessage(),
+            //     'trace' => $e->getTraceAsString(),
+            // ]);
 
             return response()->json([
                 'success' => false,
@@ -1461,26 +1550,26 @@ class PropertyController extends Controller
 
     public function saveHouseRules(Request $request, Property $property, PropertyAction $propertyAction)
     {
-        Log::info('saveHouseRules called', [
-            'property_id' => $property->id,
-            'request' => $request->all(),
-            'request_method' => $request->method(),
-            'content_type' => $request->header('Content-Type'),
-            'url' => $request->url(),
-        ]);
+        // Log::info('saveHouseRules called', [
+        //     'property_id' => $property->id,
+        //     'request' => $request->all(),
+        //     'request_method' => $request->method(),
+        //     'content_type' => $request->header('Content-Type'),
+        //     'url' => $request->url(),
+        // ]);
 
         try {
             // Log the raw request data
-            Log::info('Raw request data', [
-                'all' => $request->all(),
-                'json' => $request->json()->all(),
-                'input' => $request->input(),
-            ]);
+            // Log::info('Raw request data', [
+            //     'all' => $request->all(),
+            //     'json' => $request->json()->all(),
+            //     'input' => $request->input(),
+            // ]);
 
             $dto = SaveHouseRulesDTO::fromRequest($request);
-            Log::info('DTO created successfully', [
-                'dto_data' => $dto->toArray()
-            ]);
+            // Log::info('DTO created successfully', [
+            //     'dto_data' => $dto->toArray()
+            // ]);
 
             $propertyAction->saveHouseRules($property, $dto);
 
@@ -1489,12 +1578,12 @@ class PropertyController extends Controller
                 'message' => 'House rules saved successfully.',
             ]);
         } catch (\Exception $e) {
-            Log::error('Error saving house rules', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-            ]);
+            // Log::error('Error saving house rules', [
+            //     'message' => $e->getMessage(),
+            //     'trace' => $e->getTraceAsString(),
+            //     'file' => $e->getFile(),
+            //     'line' => $e->getLine(),
+            // ]);
 
             return response()->json([
                 'success' => false,
@@ -1505,20 +1594,20 @@ class PropertyController extends Controller
 
     public function saveAvailabilitySettings(Request $request, Property $property, PropertyAction $propertyAction)
     {
-        Log::info('saveAvailabilitySettings called', [
-            'property_id' => $property->id,
-            'request' => $request->all(),
-        ]);
+        // Log::info('saveAvailabilitySettings called', [
+        //     'property_id' => $property->id,
+        //     'request' => $request->all(),
+        // ]);
 
         try {
             $dto = SaveAvailabilitySettingsDTO::fromRequest($request);
             $propertyAction->saveAvailabilitySettings($property, $dto);
             return response()->json(['success' => true, 'message' => 'Availability settings saved successfully']);
         } catch (\Exception $e) {
-            Log::error('Error saving availability settings', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
+            // Log::error('Error saving availability settings', [
+            //     'message' => $e->getMessage(),
+            //     'trace' => $e->getTraceAsString(),
+            // ]);
             return response()->json(['success' => false, 'message' => 'Error saving availability settings: ' . $e->getMessage()], 500);
         }
     }
@@ -1531,25 +1620,38 @@ class PropertyController extends Controller
         $amenities=Amenity::all();
         $groupedAmenities = $amenities->groupBy('category');
 
-        return view('partner.partner-homes-rooms', compact('property', 'roomTypes', 'bedTypes', 'groupedAmenities'));
+        if($property->category_id == 1){
+            return view('partner.partner-homes-rooms', compact('property', 'roomTypes', 'bedTypes', 'groupedAmenities'));
+        }
+        return view('partner.partner-hotels-rooms', compact('property', 'roomTypes', 'bedTypes', 'groupedAmenities'));
     }
 
     public function showPrivateHomesImages($propertyId)
     {
         $property = Property::findOrFail($propertyId);
-        return view('partner.partner-homes-images', compact('property'));
+        if($property->category_id == 1){
+            return view('partner.partner-homes-images', compact('property'));
+        }
+        return view('partner.partner-hotels-photos', compact('property'));
     }
 
     public function showPrivateHomesPayments($propertyId)
     {
         $property = Property::findOrFail($propertyId);
-        return view('partner.partner-homes-payments', compact('property'));
+
+        if($property->category_id == 1){
+            return view('partner.partner-homes-payments', compact('property'));
+        }
+        return view('partner.partner-hotels-payments', compact('property'));
     }
 
     public function showPrivateHomesEdit($propertyId)
     {
         $property = Property::findOrFail($propertyId);
-        return view('partner.partner-homes-edit', compact('property'));
+        if($property->category_id == 1){
+            return view('partner.partner-homes-edit', compact('property'));
+        }
+        return view('partner.partner-hotels-edit', compact('property'));
     }
 
     public function savePaymentMethod(Request $request, PropertyAction $action)
@@ -1673,19 +1775,19 @@ class PropertyController extends Controller
                     ];
                 }
                 
-                Log::info('Property data for final step', [
-                    'property_id' => $propertyId,
-                    'property_data' => $propertyData,
-                    'room_display_data' => $roomDisplayData,
-                    'bedrooms_count' => $bedrooms->count()
-                ]);
+                // Log::info('Property data for final step', [
+                //     'property_id' => $propertyId,
+                //     'property_data' => $propertyData,
+                //     'room_display_data' => $roomDisplayData,
+                //     'bedrooms_count' => $bedrooms->count()
+                // ]);
                 
             } catch (\Exception $e) {
-                Log::error('Error loading property for final step', [
-                    'property_id' => $propertyId,
-                    'error' => $e->getMessage(),
-                    'trace' => $e->getTraceAsString()
-                ]);
+                // Log::error('Error loading property for final step', [
+                //     'property_id' => $propertyId,
+                //     'error' => $e->getMessage(),
+                //     'trace' => $e->getTraceAsString()
+                // ]);
             }
         }
         
