@@ -1510,7 +1510,6 @@ class PropertyController extends Controller
     {
         $property =Property::findOrFail($propertyId);
         $accommodation_type=Accommodation::where('property_id', $propertyId)->first()->ownership_type;
-        Log::info('Accommodation type found', ['accommodation_type' => $accommodation_type]);
         return view('partner.partner-homes-complete-registration', compact('propertyId', 'accommodation_type'));
     }
 
@@ -1621,7 +1620,10 @@ class PropertyController extends Controller
         $amenities=Amenity::all();
         $groupedAmenities = $amenities->groupBy('category');
 
-        return view('partner.partner-homes-rooms', compact('property', 'roomTypes', 'bedTypes', 'groupedAmenities'));
+        if($property->category_id == 1){
+            return view('partner.partner-homes-rooms', compact('property', 'roomTypes', 'bedTypes', 'groupedAmenities'));
+        }
+        return view('partner.partner-hotels-rooms', compact('property', 'roomTypes', 'bedTypes', 'groupedAmenities'));
     }
 
     public function showPrivateHomesImages($propertyId)
@@ -1636,7 +1638,11 @@ class PropertyController extends Controller
     public function showPrivateHomesPayments($propertyId)
     {
         $property = Property::findOrFail($propertyId);
-        return view('partner.partner-homes-payments', compact('property'));
+
+        if($property->category_id == 1){
+            return view('partner.partner-homes-payments', compact('property'));
+        }
+        return view('partner.partner-hotels-payments', compact('property'));
     }
 
     public function showPrivateHomesEdit($propertyId)

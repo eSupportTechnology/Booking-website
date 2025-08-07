@@ -4,8 +4,117 @@
 
 @section('content')
 
-    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-  
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const uploaded = urlParams.get('uploaded');
+        const details = urlParams.get('details');
+        const rooms = urlParams.get('rooms');
+        const paymentDetails = urlParams.get('paymentDetails');
+        const detailsLink = document.getElementById('detailsEditLink');
+        const detailsIcon = document.getElementById('detailsStatusIcon');
+        const photoLink = document.getElementById('photoEditLink');
+        const icon = document.getElementById('statusIcon');
+        const finalicon = document.getElementById('finalStatusIcon');
+        const roomsStatusIcon = document.getElementById('roomsStatusIcon');
+        const paymenEditLink = document.getElementById('paymentEditLink');
+        const paymentEditLinkBtn = document.getElementById('paymentEditLinkBtn');
+        const roomsEditLink = document.getElementById('roomsEditLink');
+        const propertyType = urlParams.get('propertyType');
+        const propertyId = document.getElementById('propertyId').value;
+        const subtypeId = document.getElementById('subtypeId').value;
+        const completeRegistrationBtn = document.getElementById('completeRegistrationBtn');
+
+
+        photoLink.href = `/partner-homes-images/${propertyId}?details=true&propertyType=${encodeURIComponent(propertyType)}`;
+        roomsEditLink.href = `/partner-homes-rooms/${propertyId}?details=true&propertyType=${encodeURIComponent(propertyType)}`;
+        paymenEditLink.href = `/partner-homes-payments/${propertyId}?propertyType=${encodeURIComponent(propertyType)}`;
+        if (uploaded === 'true') {
+            // Update the icon (optional - if not already done)
+            if (icon) {
+                icon.src = "{{ asset('assets/flat-color-icons_ok.svg') }}";
+                icon.className = "w-6 h-6 md:w-7 md:h-7";
+            }
+
+            // Update the photo link
+            if (photoLink) {
+                // Clear previous content
+                photoLink.innerHTML = '';
+                photoLink.className = ''; // Remove old class if needed
+
+                // Create new button
+                const btn = document.createElement('button');
+                btn.className = "text-sky-600 font-medium text-sm hover:underline";
+                btn.innerText = "Edit";
+
+                photoLink.appendChild(btn);
+            }
+
+            if (paymentDetails === 'true') {
+                // Update the icon (optional - if not already done)
+                if (paymentEditLinkBtn) {
+                    paymentEditLinkBtn.innerText = "Edit";
+                    paymentEditLinkBtn.className = "text-sky-600 font-medium text-sm hover:underline";
+                }
+                if (finalicon) {
+                    finalicon.src = "{{ asset('assets/flat-color-icons_ok.svg') }}";
+                    finalicon.className = "w-6 h-6 md:w-7 md:h-7";
+                }
+            }
+
+            // Optional: clean up URL
+            // if (window.history.replaceState) {
+            //     const url = new URL(window.location);
+            //     url.searchParams.delete('uploaded');
+            //     url.searchParams.delete('details');
+            //     url.searchParams.delete('paymentDetails');
+            //     window.history.replaceState({}, document.title, url.pathname);
+            // }        
+
+        }
+
+        if (rooms === 'true') {
+            if (roomsStatusIcon) {
+                roomsStatusIcon.src = "{{ asset('assets/flat-color-icons_ok.svg') }}";
+                roomsStatusIcon.className = "w-6 h-6 md:w-7 md:h-7";
+            }
+            if (roomsEditLink) {
+                roomsEditLink.innerText = "Edit";
+                roomsEditLink.className = "text-sky-600 font-medium text-sm hover:underline";
+            }
+        }
+
+        let actionUrl = '';
+
+        if (propertyType === 'multiple') {
+            actionUrl = '/partner-homes-multiple';
+        } else if (propertyType === 'single') {
+            actionUrl = '/partner-homes-single';
+        } else {
+            alert('Unknown property type');
+            return;
+        }
+
+        const form = document.getElementById('editForm');
+        form.action = actionUrl;
+        document.getElementById('formPropertyId').value = propertyId;
+        document.getElementById('formSubtypeId').value = subtypeId;
+
+        detailsLink.addEventListener('click', () => {
+            form.submit();
+        })
+
+        completeRegistrationBtn.addEventListener('click', () => {
+            window.location.href = `/partner-homes-complete-registration/${propertyId}?propertyType=${encodeURIComponent(propertyType)}`;
+        })
+
+    });
+</script>
+<script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+<div>
+    <input type="hidden" id="propertyId" value="{{ $property->id }}">
+    <input type="hidden" id="subtypeId" value="{{ $property->subtype_id }}">
+</div>
 
 <div x-data="{ step: 1 }">
     <div class="mt-16">
@@ -14,7 +123,7 @@
             <!-- Step 1 - Completed -->
             <div class="border border-gray-300 border rounded-lg p-4 flex justify-between items-center">
                 <div class="flex items-center gap-4">
-                    <img src="{{ asset('assets/flat-color-icons_ok.svg') }}" alt="Icon"
+                    <img id="detailsStatusIcon" src="{{ asset('assets/flat-color-icons_ok.svg') }}" alt="Icon"
                         class="w-6 h-6 md:w-7 md:h-7" />
                     <div>
                         <p class="text-sm text-gray-500">Step 1</p>
@@ -25,6 +134,8 @@
                 </div>
                 <a href="{{ route('partner.hotels.create.2') }}"
                     class="text-sky-600 font-medium text-sm hover:underline">Edit</a>
+                <button id="detailsEditLink"
+                    class="text-sky-600 font-medium text-sm hover:underline">Edit</button>
             </div>
 
             <div class="border border-gray-300 rounded-lg p-4 flex flex-col gap-6">
@@ -32,7 +143,8 @@
                 <!-- Step 2 Header -->
                 <div class="flex justify-between items-center">
                     <div class="flex items-center gap-4">
-                        <img src="assets/Group 3926.svg" alt="Icon" class="w-6 h-6 md:w-7 md:h-7" />
+                        <img id="roomsStatusIcon" src="{{ asset('assets/Group 3926.svg') }}" alt="Icon"
+                            class="w-6 h-6 md:w-7 md:h-7" />
                         <div>
                             <p class="text-sm text-gray-500">Step 2</p>
                             <h2 class="text-base font-semibold">Rooms</h2>
@@ -91,11 +203,11 @@
                 <!-- Add Another Room -->
                 <div class="text-right">
 
-                    <a href="{{ route('partner.hotels.rooms') }}">
-                        <button
-                            class="mt-4  text-sky-600 text-sm font-semibold px-4 py-2 rounded border border-sky-300 hover:bg-sky-100">
-                            + Add another room
-                        </button></a>
+                    <a id="roomsEditLink"
+                        href="#"
+                        class=" bg-sky-400 border border-sky-400 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-sky-500">
+                        Add rooms
+                    </a>
                 </div>
             </div>
 
@@ -106,7 +218,7 @@
             <!-- Step 3 - Photos -->
             <div class="border border-gray-300 rounded-lg p-4 flex justify-between items-center ">
                 <div class="flex items-center gap-4">
-                    <img src="{{ asset('assets/Vector (40).svg') }}" alt="Icon"
+                    <img id="statusIcon" src="{{ asset('assets/Vector (40).svg') }}" alt="Icon"
                         class="w-4 h-4 md:w-5 md:h-5 cursor-pointer" />
                     <div>
                         <p class="text-sm text-gray-500">Step 3</p>
@@ -115,15 +227,16 @@
                             expect.</p>
                     </div>
                 </div>
-                <a href="{{ route('partner.hotels.photos') }}"
-                    class="text-sky-600 font-medium text-sm hover:underline">Edit</a>
+              
+                <a id="photoEditLink" href="#"
+                    class="mt-4 text-sky-600 text-sm font-semibold px-4 py-2 rounded border border-sky-300 hover:bg-sky-100">Add photos</a>
 
             </div>
 
             <!-- Step 4 - Final -->
             <div class=" border border-gray-300 rounded-lg p-4 flex justify-between items-center">
                 <div class="flex items-center gap-4">
-                    <img src="{{ asset('assets/Vector (41).svg') }}" alt="Icon"
+                    <img id="finalStatusIcon" src="{{ asset('assets/Vector (41).svg') }}" alt="Icon"
                         class="w-4 h-4 md:w-5 md:h-5 cursor-pointer" />
                     <div>
                         <p class="text-sm text-gray-500">Step 4</p>
@@ -133,19 +246,29 @@
                     </div>
                 </div>
 
-                <a href="{{ route('partner.hotels.payments') }}"
-                    class="text-sky-600 font-medium text-sm hover:underline">Edit</a>
-            </div>
-
-
-            <div class="flex justify-center">
-                <a href="{{ route('partner.hotels.complete.registration') }}"
-                  
-                        class="mt-4 w-full  bg-[#3CC0E9] font-semibold text-white text-center rounded hover:bg-sky-500 text-sm font-semibold px-6 py-2 rounded shadow">
-                        Complete Registration
-                  
+        
+                <a id="paymentEditLink" href="#">
+                    <button id="paymentEditLinkBtn" class=" bg-sky-400 border border-sky-400 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-sky-500">
+                        Add final details
+                    </button>
                 </a>
             </div>
+
+
+            <!-- <div class="flex justify-center">
+                <a href="{{ route('partner.hotels.complete.registration') }}"
+
+                    class="mt-4 w-full  bg-[#3CC0E9] font-semibold text-white text-center rounded hover:bg-sky-500 text-sm font-semibold px-6 py-2 rounded shadow">
+                    Complete Registration
+
+                </a>
+            </div> -->
+            <div class="flex justify-center">
+                <button id="completeRegistrationBtn"
+                    class="mt-4 w-full  bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 text-sm font-semibold px-6 py-2 rounded shadow">
+                    Complete Registration
+                </button>
+            </div>
         </div>
-</div>
-@endsection
+    </div>
+    @endsection
