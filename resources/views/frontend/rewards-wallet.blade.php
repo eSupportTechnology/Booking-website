@@ -16,8 +16,7 @@
   <header class="text-white py-4" style="background-color:#1F8FB2;">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-20">
       <div
-        class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0"
-      >
+        class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
         <!-- Logo -->
         <div class="w-full md:w-auto">
           <div class="flex flex-col items-start space-y-1">
@@ -34,7 +33,7 @@
 
         <!-- Controls -->
         <div
-          class="flex items-center gap-4 sm:gap-5 flex-wrap justify-center md:justify-end"
+          class="flex flex-wrap items-center gap-4 sm:gap-5 justify-center md:justify-end"
         >
           <span class="text-base sm:text-lg text-white whitespace-nowrap">LKR</span>
           <div class="w-5 h-5 sm:w-6 sm:h-6 rounded-full overflow-hidden">
@@ -68,61 +67,52 @@
     </div>
   </header>
 
-  <!-- Language Modal Script -->
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const languageButton = document.getElementById("language-button");
-      const languageModal = document.getElementById("language-modal");
-      const closeLanguageModal = document.getElementById("close-language-modal");
-
-      if (languageButton && languageModal && closeLanguageModal) {
-        languageButton.addEventListener("click", () =>
-          languageModal.classList.remove("hidden")
-        );
-        closeLanguageModal.addEventListener("click", () =>
-          languageModal.classList.add("hidden")
-        );
-      }
-    });
-  </script>
-
   <!-- Main Content -->
-  <main class="bg-[#1F8FB2] text-white py-10">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-20 text-center space-y-4">
-      <h1 class="text-2xl font-semibold">Rewards & Wallet</h1>
-      <p class="text-lg">
-        Save money on your next adventure with
-        <span class="font-bold">eSupport.com</span>
+  <main class="bg-[#1F8FB2] text-white h-48 sm:h-60 flex items-center justify-center text-center px-4">
+    <div>
+      <h1 class="text-2xl sm:text-3xl font-semibold lowercase">rewards & wallet</h1>
+      <p class="text-sm sm:text-base lowercase mt-1">
+        save money on your next adventure with
+        <span class="font-bold">esupport.com</span>
       </p>
     </div>
   </main>
 
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-20 mt-[-40px] relative z-10">
-    <div
-      class="bg-white rounded-lg shadow-md p-9 flex flex-wrap sm:flex-nowrap items-center justify-between gap-6"
-    >
-      <div class="flex items-center gap-6 flex-1 min-w-[240px]">
+  <!-- Section -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-20 mt-[-80px] relative z-10">
+    <div class="bg-white rounded-lg shadow-md p-6 sm:p-9 flex flex-col sm:flex-row items-center max-w-4xl mx-auto relative flex-wrap">
+      <!-- Left Section -->
+      <div class="flex items-center gap-6 flex-1 min-w-[240px] pr-0 sm:pr-6 mb-6 sm:mb-0">
         <img
           src="https://img.icons8.com/external-flat-juicy-fish/60/external-wallet-cyber-monday-flat-flat-juicy-fish.png"
           alt="Wallet Icon"
-          class="w-16 h-16 flex-shrink-0"
+          class="w-20 h-20 flex-shrink-0"
         />
-        <div class="space-y-3 text-gray-800">
+        <div class="space-y-2 text-gray-800">
           <h2 class="text-xl font-bold">Wallet Balance</h2>
           <p class="text-sm text-gray-500">Includes all spendable rewards</p>
           <h2 class="text-xl font-bold">LKR 0</h2>
         </div>
       </div>
-      <div class="text-right min-w-[200px]">
-        <div class="text-sm text-gray-700 mb-4">
-          Credits: <span class="font-medium">LKR 0</span>
+
+      <!-- Vertical Divider -->
+      <div class="hidden sm:block absolute top-6 bottom-6 left-1/2 border-l border-gray-300 transform -translate-x-1/2"></div>
+
+      <!-- Right Section -->
+      <div class="text-left sm:text-right min-w-[200px] sm:pl-6 pt-6 sm:pt-0 flex-1 max-w-[45%]">
+        <div class="flex justify-between text-sm text-gray-700 mb-4">
+          <span>Credits:</span>
+          <span class="font-medium">LKR 0</span>
         </div>
-        <div class="text-sm text-gray-700 mb-4">
-          Vouchers (0): <span class="font-medium">LKR 0</span>
+        <div class="flex justify-between text-sm text-gray-700 mb-4">
+          <span>Vouchers (0):</span>
+          <span class="font-medium">LKR 0</span>
         </div>
-        <a href="#" class="text-blue-600 text-sm hover:underline"
-          >Browse Rewards and Wallet activity</a
-        >
+        <div class="text-left">
+          <a href="#" class="text-blue-600 text-sm hover:underline">
+            Browse Rewards and Wallet activity
+          </a>
+        </div>
       </div>
     </div>
 
@@ -172,9 +162,7 @@
       </div>
     </div>
 
-    <div
-      class="text-xs text-gray-600 mt-10 border-t pt-4"
-    >
+    <div class="text-xs text-gray-600 mt-6 border-t pt-6 pb-6">
       Countries . Regions . Cities . Districts . Airports . Hotels . Places of interest .
       Holiday Homes . Apartments . Resorts . Villas . Hostels . B&amp;Bs . Guest Houses .
       Unique places to stay . All destinations. All flight destinations. All car hire
