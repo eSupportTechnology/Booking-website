@@ -1648,10 +1648,11 @@ class PropertyController extends Controller
     public function showPrivateHomesEdit($propertyId)
     {
         $property = Property::findOrFail($propertyId);
+        $rooms=Room::where('property_id', $propertyId)->get()->groupBy('room_type_id');
         if($property->category_id == 1){
-            return view('partner.partner-homes-edit', compact('property'));
+            return view('partner.partner-homes-edit', compact('property', 'rooms'));
         }
-        return view('partner.partner-hotels-edit', compact('property'));
+        return view('partner.partner-hotels-edit', compact('property', 'rooms'));
     }
 
     public function savePaymentMethod(Request $request, PropertyAction $action)
