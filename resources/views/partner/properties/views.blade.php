@@ -519,18 +519,18 @@
                 @endif
 
                 <!-- Pricing -->
-                @if ($property->pricing)
+                @if ($property->pricings)
                     <div class="bg-white p-4 rounded-lg shadow">
                         <h3 class="font-bold text-lg mb-3">Pricing Details</h3>
                         <div class="space-y-2 text-sm">
                             <p><strong>Base Price:</strong> LKR
-                                {{ number_format($property->pricing->base_price ?? 0) }}</p>
+                                {{ number_format($property->pricings->base_price ?? 0) }}</p>
                             <p><strong>Original Price:</strong> LKR
-                                {{ number_format($property->pricing->original_price ?? 0) }}</p>
-                            <p><strong>Discount:</strong> {{ $property->pricing->discount_percentage ?? 0 }}%</p>
+                                {{ number_format($property->pricings->original_price ?? 0) }}</p>
+                            <p><strong>Discount:</strong> {{ $property->pricings->discount_percentage ?? 0 }}%</p>
                             <p><strong>Tax Amount:</strong> LKR
-                                {{ number_format($property->pricing->tax_amount ?? 0) }}</p>
-                            <p><strong>Currency:</strong> {{ $property->pricing->currency ?? 'LKR' }}</p>
+                                {{ number_format($property->pricings->tax_amount ?? 0) }}</p>
+                            <p><strong>Currency:</strong> {{ $property->pricings->currency ?? 'LKR' }}</p>
                         </div>
                     </div>
                 @endif
@@ -557,8 +557,8 @@
                     <div class="bg-white p-4 rounded-lg shadow">
                         <h3 class="font-bold text-lg mb-3">Policies</h3>
                         <div class="space-y-2 text-sm">
-                            <p><strong>Check-in:</strong> {{ $property->policies->check_in_time ?? 'N/A' }}</p>
-                            <p><strong>Check-out:</strong> {{ $property->policies->check_out_time ?? 'N/A' }}</p>
+                            <p><strong>Check-in:</strong> From {{ $property->policies->check_in_from ?? 'No details provided' }} to {{ $property->policies->check_in_until ?? 'No details provided' }}</p>
+                            <p><strong>Check-out:</strong> From {{ $property->policies->check_out_from ?? 'No details provided' }} to {{ $property->policies->check_out_until ?? 'No details provided' }}</p>
                             <p><strong>Cancellation:</strong>
                                 {{ $property->policies->flexible_cancellation ? 'Flexible' : 'Strict' }}</p>
                             <p><strong>Children:</strong>
@@ -743,18 +743,6 @@
                                 <li>Billiards</li>
                             </ul>
                         </div>
-
-                        <button
-                            class="w-full bg-sky-500 text-white font-medium py-2 rounded hover:bg-sky-600 text-xs">Reserve</button>
-                        <button
-                            class="w-full border border-sky-500 text-sky-500 py-2 rounded hover:bg-sky-100 text-xs flex items-center justify-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                            </svg>
-                            Save the property
-                        </button>
                     </div>
                 </div>
             </div>
@@ -779,7 +767,6 @@
             </div>
 
             <div class="pt-4 sm:pt-6 lg:pt-10 bg-white">
-                <h2 class="text-xl sm:text-2xl font-bold mb-6">All available villas</h2>
 
                 <div class="w-full overflow-x-auto">
                     <table class="w-full border border-blue-500 border-collapse text-sm text-left min-w-[1000px]">
