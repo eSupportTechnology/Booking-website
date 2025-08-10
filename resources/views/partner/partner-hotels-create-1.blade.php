@@ -947,15 +947,14 @@
             </template>
 
             <template x-if="step === 11">
-                <form @submit.prevent="submitStep11">
-                    <div>
-                        <div class="container ml-32 px-4 py-8 max-w-4xl">
-                            <!-- Header -->
-                            <h2 class="text-2xl font-bold mb-8 text-left">House rules</h2>
+                <div>
+                    <div class="container ml-32 px-4 py-8 max-w-4xl">
+                        <!-- Header -->
+                        <h2 class="text-2xl font-bold mb-8 text-left">House rules</h2>
 
-                            <div class="flex flex-col md:flex-row gap-6">
-                                <!-- Left Section -->
-                                <div class="bg-white shadow-md rounded-lg p-6 w-full md:w-2/3">
+                        <div class="flex flex-col md:flex-row gap-6">
+                            <!-- Left Section -->
+                            <div class="bg-white shadow-md rounded-lg p-6 w-full md:w-2/3">
                                 
                                 <!-- Check-in -->
                                 <div class="mt-6">
@@ -1122,13 +1121,16 @@
                                     class="border border-[#3CC0E9] text-blue-600  hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
                                     ←
                                 </button>
+                                <button type="button" @click="logPropertyState()" class="bg-gray-500 text-white py-2 px-4 rounded mr-2">
+                                    Debug State
+                                </button>
                                 <button type="button" @click="submitStep11()" class="bg-blue-500 text-white py-2 px-4 rounded">
                                     Continue
                                 </button>
                             </div>
                         </div>
                     </div>
-                </form>
+                </div>
             </template>
 
             <template x-if="step === 12">
@@ -1749,15 +1751,36 @@
                     }
                 },
 
+                // Function to log property state for debugging
+                logPropertyState() {
+                    console.log('=== Property State Debug ===');
+                    console.log('Full property object:', this.property);
+                    console.log('pets_allowed:', this.property.pets_allowed, 'Type:', typeof this.property.pets_allowed);
+                    console.log('pets_fees:', this.property.pets_fees, 'Type:', typeof this.property.pets_fees);
+                    console.log('children_allowed:', this.property.children_allowed, 'Type:', typeof this.property.children_allowed);
+                    console.log('smoking_allowed:', this.property.smoking_allowed, 'Type:', typeof this.property.smoking_allowed);
+                    console.log('parties_allowed:', this.property.parties_allowed, 'Type:', typeof this.property.parties_allowed);
+                    console.log('cancellation_policy:', this.property.cancellation_policy, 'Type:', typeof this.property.cancellation_policy);
+                    console.log('check_in_from:', this.property.check_in_from);
+                    console.log('check_in_until:', this.property.check_in_until);
+                    console.log('check_out_from:', this.property.check_out_from);
+                    console.log('check_out_until:', this.property.check_out_until);
+                    console.log('========================');
+                },
+
                 async submitStep11() {
                     try {
+                        // Debug logging
+                        this.logPropertyState();
+                        
                         // Validate required fields
                         if (!this.property.pets_allowed || !['yes', 'no', 'upon_request'].includes(this.property.pets_allowed)) {
+                            console.log('Pet policy validation failed. Value:', this.property.pets_allowed);
                             Swal.fire({
                                 toast: true,
                                 position: 'top-end',
                                 icon: 'error',
-                                title: 'Please select a pet policy.',
+                                title: 'Please select a valid pet policy (Yes, No, or Upon request).',
                                 showConfirmButton: false
                             });
                             return;
@@ -1802,6 +1825,20 @@
                                 position: 'top-end',
                                 icon: 'error',
                                 title: 'Please select a cancellation policy.',
+                                showConfirmButton: false
+                            });
+                            return;
+                        }
+
+                        // Validate pet fees if pets are allowed
+                        if ((this.property.pets_allowed === 'yes' || this.property.pets_allowed === 'upon_request') && 
+                            (!this.property.pets_fees || !['free', 'charges_apply'].includes(this.property.pets_fees))) {
+                            console.log('Pet fees validation failed. Value:', this.property.pets_fees);
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'error',
+                                title: 'Please select whether there are additional charges for pets.',
                                 showConfirmButton: false
                             });
                             return;
