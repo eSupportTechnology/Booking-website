@@ -276,6 +276,38 @@ Route::get('/partner/alternative/single/boat', function () {
     return view('frontend.partner-alternative-single-boat');
 })->name('partner.alternative.single.boat');
 
+Route::get('/partner/alternative/multiple/boats/sameaddress', function () {
+    return view('frontend.partner-alternative-boat-multiple-sameaddress');
+})->name('partner.alternative.multiple.boats.sameaddress');
+
+Route::get('/partner/alternative/multiple/boat/room', function () {
+    return view('frontend.partner-alternative-boat-room');
+})->name('partner.alternative.multiple.boat.room');
+
+Route::get('/partner/boat/price-per-group', function () {
+    return view('frontend.partner-boat-pricepergroup');
+})->name('partner.boat.price.per.group');
+
+Route::get('/partner/boat/weekly-rate', function () {
+    return view('frontend.partner-boat-weekly-rate');
+})->name('partner.boat.weekly.rate');
+
+Route::get('/partner/boat/payment', function () {
+    return view('frontend.partner-alternative-boat-payments');
+})->name('partner.boat.payment');
+
+Route::get('/partner/boat/edit', function () {
+    return view('frontend.partner-alternative-boat-edit');
+})->name('partner.boat.edit');
+
+Route::get('/partner-boat-photos', function () {
+    return view('frontend.partner-alternative-boat-images');
+})->name('partner.boat.photos');
+
+Route::get('/partner-boat-compltete-registration', function () {
+    return view('frontend.partner-boat-complete-registration');
+})->name('partner.boat.complete.registration');
+
 Route::get('/partner-apartment-multiple', function () {
     return view('frontend.partner-multiple-apartment');
 })->name('partner.apartment.multiple');

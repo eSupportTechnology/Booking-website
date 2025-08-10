@@ -104,15 +104,16 @@
             class="border border-[#3CC0E9] text-[#3CC0E9] hover:bg-blue-50 font-semibold py-2 px-4 rounded">
             ← 
         </button>
+     
         <button type="button"
-            @click="if(selectedChannels.length > 0) window.location.href='{{ route('partner.apartment.create.2') }}'"
+            @click="if(selectedChannels.length > 0) window.location.href='{{ route('partner.alternative.single.boat') }}'"
             :disabled="selectedChannels.length === 0"
             :class="selectedChannels.length === 0 ?
                 'bg-gray-300 text-gray-400 cursor-not-allowed' :
                 'bg-[#3CC0E9] hover:bg-[#29ACD5] text-white cursor-pointer'"
             class="font-semibold py-3 px-6 rounded transition duration-200">
             Continue 
-        </button>
+        </button> 
     </div>
 </div>
 </div>
