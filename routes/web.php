@@ -292,9 +292,15 @@ Route::get('/partner/boat/price-per-group', function () {
     return view('frontend.partner-boat-pricepergroup');
 })->name('partner.boat.price.per.group');
 
+
+
 Route::get('/partner/boat/weekly-rate', function () {
     return view('frontend.partner-boat-weekly-rate');
 })->name('partner.boat.weekly.rate');
+
+Route::get('/partner/campsite/weekly-rate', function () {
+    return view('frontend.partner-alternative-campsite-weeklyrate');
+})->name('partner.campsite.weekly.rate');
 
 Route::get('/partner/boat/payment', function () {
     return view('frontend.partner-alternative-boat-payments');

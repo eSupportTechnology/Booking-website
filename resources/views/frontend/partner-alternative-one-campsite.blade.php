@@ -952,14 +952,14 @@
                             class="w-6 h-6 md:w-7 md:h-7" />
                         <div>
                             <p class="text-sm text-gray-500">Step 2</p>
-                            <h2 class="text-base font-semibold">Rooms</h2>
-                            <p class="text-xs text-gray-600">Tell us about your first room. Once you’ve set one up you
-                                can add more.</p>
+                            <h2 class="text-base font-semibold">Units</h2>
+                            <p class="text-xs text-gray-600">
+Tell us about your first unit. Once you’ve set one up you can add more.</p>
                         </div>
                     </div>
                     <a href="{{ route('partner.alternative.single.campsite.room') }}"
                         class=" bg-sky-400 border border-sky-400 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-sky-500">
-                        Add room
+                        Add unit
                     </a>
                 </div>
 
