@@ -18,29 +18,45 @@
         <template x-if="step === 1">
     <div class="max-w-xl mx-auto space-y-8 lg:ml-32 px-4 py-6">
 
-        <h2 class="text-2xl font-bold text-gray-900 mt-8">What can guests use at your place?</h2>
+        <h2 class="text-2xl font-bold text-gray-900 mt-8">Mobile home details</h2>
 
 
-        <div class="bg-white p-4 rounded-lg shadow space-y-4">
+        <div class="bg-white p-4 rounded-lg shadow ">
             
-             <div class="w-[500px]">
-                            <label class="block text-sm font-semibold text-gray-700 mb-1">What type of unit is
-                                this?</label>
-                            <select
-                                class="w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200 px-3 py-2">
-                                <option>Single</option>
-                                <option>Double</option>
-                                <option>Twin</option>
-                                <option>Twin/Double</option>
-                                 <option>Triple</option>
-                                  <option>Quadruple</option>
-                                   <option>Family</option>
-                                    <option>Bungalow</option>
-                                     <option>Chalet</option>
-                                      <option>Mobile Home</option>
-                                       <option>Tent</option>
-                            </select>
-                        </div>
+ <!-- Unit Type -->
+    <div class="w-full">
+      <label for="unit_type" class="block text-sm font-semibold text-gray-700 mb-1">
+        What type of unit is this?
+      </label>
+      <div class="relative">
+        <select
+          id="unit_type"
+          name="unit_type"
+          class="appearance-none w-full border border-gray-300 text-sm rounded-md shadow-sm bg-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200"
+        >
+          <option value="">Select a type</option>
+          <option value="Twin">Twin</option>
+          <option value="Single">Single</option>
+          <option value="Double">Double</option>
+          <option value="Twin/Double">Twin/Double</option>
+          <option value="Triple">Triple</option>
+          <option value="Quadruple">Quadruple</option>
+         <option value="Bungalow">Bungalow</option>
+          <option value="Chalet">Chalet</option>
+          <option value="Family">Family</option>
+          <option value="Mobile Home">Mobile Home</option>
+          <option value="Tent">Tent</option>
+        </select>
+
+        <!-- Optional: Custom dropdown arrow -->
+        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+          <svg class="h-4 w-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 14a1 1 0 01-.707-.293l-4-4a1 1 0 111.414-1.414L10 11.586l3.293-3.293a1 1 0 111.414 1.414l-4 4A1 1 0 0110 14z" clip-rule="evenodd" />
+          </svg>
+        </div>
+      </div>
+    </div>
+
 
 
                         <br>
@@ -253,26 +269,11 @@
                         <!-- Main Content Container -->
                         <div class="lg:col-span-2 bg-white p-6 rounded-lg border border-gray-300 space-y-6">
 
-                            <!-- Bathroom Privacy -->
-                            <div>
-                                <label class="block font-semibold text-gray-700 mb-3">Is the bathroom private?</label>
-                                <div class="space-y-2">
-                                    <label class="flex items-center gap-3 cursor-pointer">
-                                        <input type="radio" name="bathroom_private"
-                                            class="form-radio text-blue-500" checked>
-                                        <span class="text-sm">Yes</span>
-                                    </label>
-                                    <label class="flex items-center gap-3 cursor-pointer">
-                                        <input type="radio" name="bathroom_private"
-                                            class="form-radio text-blue-500">
-                                        <span class="text-sm">No, it's shared</span>
-                                    </label>
-                                </div>
-                            </div>
+                         
 
                             <!-- Bathroom Amenities -->
                             <div>
-                                <hr class="my-4">
+                            
                                 <label class="block font-semibold text-gray-700 mb-3">Which bathroom items are
                                     available in this room?</label>
 
@@ -350,7 +351,7 @@
                 <div class="max-w-6xl mx-auto p-4 space-y-6">
 
                     <!-- Title -->
-                    <h2 class="text-2xl font-bold">What can guests use in this room?</h2>
+                    <h2 class="text-2xl font-bold">What can guests use in this mobile home?</h2>
 
                     <!-- Two-Column Layout: Main Content + Tip -->
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -479,7 +480,7 @@
         <template x-if="step === 4">
             <div class="max-w-3xl ml-40 px-4 py-8 mt-10">
                 <section class="mb-8">
-                    <h1 class="text-2xl text-gray-700 font-bold mb-4">What’s the name of this room?</h1>
+                    <h1 class="text-2xl text-gray-700 font-bold mb-4">What’s the name of this mobile home?</h1>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
 
@@ -488,69 +489,15 @@
                             <div class="bg-white p-6 rounded shadow-md min-h-[450px] flex flex-col justify-start">
                                 <div class="w-full">
                                     <p class="text-sm mb-4">
-                                        This is the name that guests will see on your property page. Choose a name that
-                                        most accurately describes this room.
+                                        This is the name that guests will see on your property page. Choose a name that most accurately describes this mobile home.
                                     </p>
                                     <label class="block text-sm font-semibold text-gray-700 mb-1 mt-6">Room
                                         Name</label>
                                     <select
                                         class="w-full border border-gray-300 text-sm rounded-md shadow-sm focus:ring focus:ring-blue-200 px-3 py-2">
-                                        <option>Double Room</option>
-                                        <option>Double Room with Balcony</option>
-                                        <option>Double Room with Private Bathroom</option>
-                                        <option>Budget Double Room</option>
-                                        <option>Business Double Room with Gym Access</option>
-                                        <option>Deluxe Double Room</option>
-                                        <option>Deluxe Double Room (1 adult + 1 child)</option>
-                                        <option>Deluxe Double Room (1 adult + 2 children)</option>
-                                        <option>Deluxe Double Room (2 Adults + 1 Child)</option>
-                                        <option>Deluxe Double Room with Balcony</option>
-                                        <option>Deluxe Double Room with Balcony and Sea View</option>
-                                        <option>Deluxe Double Room with Bath</option>
-                                        <option>Deluxe Double Room with Castle View</option>
-                                        <option>Deluxe Double Room with Extra Bed</option>
-                                        <option>Deluxe Double Room with Sea View</option>
-                                        <option>Deluxe Double Room with Shower</option>
-                                        <option>Deluxe Double Room with Side Sea View</option>
-                                        <option>Deluxe Double or Twin Room</option>
-                                        <option>Deluxe King Room</option>
-                                        <option>Deluxe Queen Room</option>
-                                        <option>Deluxe Room</option>
-                                        <option>Deluxe Room (1 adult + 1 child)</option>
-                                        <option>Deluxe Room (1 adult + 2 children)</option>
-                                        <option>Deluxe Room (2 Adults + 1 Child)</option>
-                                        <option>Double Room (1 Adult + 1 Child)</option>
-                                        <option>Double Room - Disability Access</option>
-                                        <option>Double Room with Balcony (2 Adults + 1 Child)</option>
-                                        <option>Double Room with Balcony (3 Adults)</option>
-                                        <option>Double Room with Balcony and Sea View</option>
-                                        <option>Double Room with Garden View</option>
-                                        <option>Double Room with Lake View</option>
-                                        <option>Double Room with Mountain View</option>
-                                        <option>Double Room with Patio</option>
-                                        <option>Double Room with Pool View</option>
-                                        <option>Double Room with Private External Bathroom</option>
-                                        <option>Double Room with Sea View</option>
-                                        <option>Double Room with Shared Bathroom</option>
-                                        <option>Double Room with Shared Toilet</option>
-                                        <option>Double Room with Spa Bath</option>
-                                        <option>Double Room with Terrace</option>
-                                        <option>Queen Room - Disability Access</option>
-                                        <option>Queen Room with Balcony</option>
-                                        <option>Queen Room with Garden View</option>
-                                        <option>Queen Room with Pool View</option>
-                                        <option>Queen Room with Sea View</option>
-                                        <option>Queen Room with Shared Bathroom</option>
-                                        <option>Queen Room with Spa Bath</option>
-                                        <option>Small Double Room</option>
-                                        <option>Standard Double Room</option>
-                                        <option>Standard Double Room with Fan</option>
-                                        <option>Standard Double Room with Shared Bathroom</option>
-                                        <option>Standard King Room</option>
-                                        <option>Standard Queen Room</option>
-                                        <option>Superior Double Room</option>
-                                        <option>Superior King Room</option>
-                                        <option>Superior Queen Room</option>
+                                        <option>Caravan</option>
+                                        <option>Mobile Home</option>
+                                      
                                     </select>
                                 </div>
                             </div>
@@ -617,7 +564,7 @@
         <div class="max-w-4xl mx-auto px-4 py-8 space-y-6" x-data="{ showTip1: true, showTip2: true }">
 
             <!-- Title -->
-            <h2 class="text-2xl font-bold text-gray-800">Set the price per night for this room</h2>
+            <h2 class="text-2xl font-bold text-gray-800">Set the price per night for this mobile home</h2>
 
             <!-- Grid layout: Pricing insight + Tip box -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
@@ -738,8 +685,7 @@
                         </li>
                     </ul>
 
-                    <p class="text-sm text-gray-800 font-medium border-t pt-3">US$ 102.00 Your earnings
-                        (including taxes)</p>
+                    <p class="text-sm text-gray-800 font-medium border-t pt-3">US$17.00 Your earnings (including taxes)</p>
                 </div>
 
             
@@ -771,8 +717,8 @@
     <div>
       <hr class="my-4">
       <p class="text-sm text-gray-800">
-        <del class="text-gray-500">US$ 120.00</del>
-        <span class="text-green-600 font-semibold">US$ 96.00 per night</span>
+        <del class="text-gray-500">US$ 20.00</del>
+        <span class="text-green-600 font-semibold">US$ 16.00 per night</span>
       </p>
     </div>
   </template>
@@ -845,8 +791,10 @@
                                         alt="Tip Icon" class="w-5 h-5">
                                 </div>
                                 <p class="text-xs text-gray-500 mb-4">
-                                    This policy is set at the property level – any changes made will be applied to all
-                                    rooms.
+                                    This policy is set at the property level – any changes made will be applied to all mobile homes.
+                                </p>
+                                      <p class="text-xs text-green-600 mb-4">
+                                  You’re 91% more likely to get bookings with the pre-selected cancellation policy settings than with a 30-day cancellation policy
                                 </p>
                                   
                             </div>
@@ -863,7 +811,7 @@
                             <li class="flex items-start gap-2">
                                 <img src="{{ asset('assets/teenyicons_tick-circle-outline.svg') }}" alt="Tick"
                                     class="w-4 h-4 mt-1">
-                                <span>Guests can cancel their bookings for free before 18:00 on the day of arrival. The guests will be charged cost of the first night if they cancel after this.</span>
+                                <span>Guests can cancel their bookings for free up to 1 day before their arrival</span>
                             </li>
                             <li class="flex items-start gap-2">
                                 <img src="{{ asset('assets/teenyicons_tick-circle-outline.svg') }}" alt="Tick"
@@ -885,7 +833,7 @@
                            
                             </div>
 
-   <a href="{{ route('partner.hotels.price.per.group') }}">
+   <a href="{{ route('partner.boat.price.per.group') }}">
     <button class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">
         Edit
     </button>
@@ -895,7 +843,10 @@
                                 
                       
                             </div>
-                            
+                         <p class="text-xs text-amber-800 mb-4">
+  Set lower prices for smaller groups of guests to increase your chances of getting bookings
+</p>
+
                         <hr class="my-4">
                         <table class="table-auto border-separate border-spacing-x-2 w-full text-left text-gray-700">
                             <tbody>
@@ -956,7 +907,7 @@
                         <li class="flex items-start gap-2">
                             <img src="{{ asset('assets/teenyicons_tick-circle-outline.svg') }}" alt="Tick"
                                 class="w-4 h-4 mt-1">
-                            <span>Guests can't cancel their bookings for free anytime</span>
+                            <span>Guests cannot cancel their bookings for free at any time</span>
                         </li>
                     </ul>
                 </div>
@@ -975,7 +926,9 @@
                         <button
                             class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">Edit</button></a>
                     </div>
-                        
+                         <p class="text-xs text-green-600 mb-4 mt-4">
+You’re 16% more likely to get bookings with the 15% pre-selected weekly rate than with none
+</p>
                     <hr class="my-4">
                     <ul class="text-gray-900 text-sm space-y-2">
                         <li class="flex items-start gap-2">
@@ -986,7 +939,7 @@
                         <li class="flex items-start gap-2">
                             <img src="{{ asset('assets/teenyicons_tick-circle-outline.svg') }}" alt="Tick"
                                 class="w-4 h-4 mt-1">
-                            <span>Guests can cancel their bookings for free before 18:00 on the day of arrival. The guests will be charged cost of the first night if they cancel after this (based on the standard rate cancellation policy).</span>
+                            <span>Guests can cancel their bookings for free up to 1 day before their arrival (based on the standard rate cancellation policy)</span>
                         </li>
                     </ul>
                 </div>
@@ -1001,7 +954,7 @@
                     </button>
 
                     <!-- Continue Button -->
-                    <a href="{{ route('partner.hotels.edit') }}">
+                    <a href="{{ route('partner.boat.edit') }}">
                         <button
                             class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-sky-500 transition w-full sm:w-auto">
                             Continue
