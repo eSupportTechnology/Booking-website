@@ -332,7 +332,7 @@
     <div class="space-y-4">
         <label class="flex items-center space-x-2">
             <input type="radio" name="invoice_name" value="user" x-model="formData.invoice_name" class="form-radio text-sky-600">
-            <span>Dinidu Dananjaya</span>
+            <span>{{ auth()->user()->name }}</span>
         </label>
         <label class="flex items-center space-x-2">
             <input type="radio" name="invoice_name" value="property" x-model="formData.invoice_name" class="form-radio text-sky-600">
