@@ -1882,7 +1882,9 @@
                                 title: 'House rules saved successfully!',
                                 showConfirmButton: false
                             });
-                            this.step++; // Move to next step
+                              setTimeout(() => {
+                                window.location.href = `/partner-homes-edit/${this.propertyId}?propertyType=single`;
+                            })
                         } else {
                             Swal.fire({
                                 toast: true,

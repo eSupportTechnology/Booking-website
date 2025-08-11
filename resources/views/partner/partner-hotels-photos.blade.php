@@ -191,6 +191,8 @@
                         icon: 'success',
                         title: 'Photos uploaded successfully',
                         showConfirmButton: false,
+                        toast: true,
+                        position: 'top-end',
                         timer: 3000
                     });
                     setTimeout(() => {
