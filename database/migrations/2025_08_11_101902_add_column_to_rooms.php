@@ -12,7 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('rooms', function (Blueprint $table) {
-            $table->string('room_type')->nullable()->after('smoking_allowed');
+            $table->string('room_type')->nullable()->after('size_sq_m');
+            $table->boolean('smoking_allowed')->default(false)->after('room_type');
+
         });
     }
 

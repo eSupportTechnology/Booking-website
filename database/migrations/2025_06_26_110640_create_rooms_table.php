@@ -19,7 +19,6 @@ return new class extends Migration {
             $table->enum('bathroom_type', ['private', 'shared'])->nullable();
             $table->json('bathroom_amenities')->nullable();
             $table->integer('size_sq_m')->nullable();
-            $table->boolean('smoking_allowed')->default(false);
             
 
             $table->string('currency', 5)->nullable()->default('usd');
