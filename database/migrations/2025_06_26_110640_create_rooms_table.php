@@ -20,7 +20,7 @@ return new class extends Migration {
             $table->json('bathroom_amenities')->nullable();
             $table->integer('size_sq_m')->nullable();
             $table->boolean('smoking_allowed')->default(false);
-            $table->string('room_type')->nullable();
+            
 
             $table->string('currency', 5)->nullable()->default('usd');
             $table->boolean('discount_enabled')->default(false);
