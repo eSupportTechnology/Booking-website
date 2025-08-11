@@ -95,16 +95,10 @@
             return;
         }
 
-        const form = document.getElementById('editForm');
-        form.action = actionUrl;
-        document.getElementById('formPropertyId').value = propertyId;
-        document.getElementById('formSubtypeId').value = subtypeId;
 
-        detailsLink.addEventListener('click', () => {
-            form.submit();
-        })
-
+      
         completeRegistrationBtn.addEventListener('click', () => {
+            console.log('Navigating to complete registration page for property ID:', propertyId);
             window.location.href = `/partner-homes-complete-registration/${propertyId}?propertyType=${encodeURIComponent(propertyType)}`;
         })
 
@@ -134,8 +128,7 @@
                 </div>
                 <a href="{{ route('partner.hotels.create.1') }}"
                     class="text-sky-600 font-medium text-sm hover:underline">Edit</a>
-                <button id="detailsEditLink"
-                    class="text-sky-600 font-medium text-sm hover:underline">Edit</button>
+
             </div>
 
             <div class="border border-gray-300 rounded-lg p-4 flex flex-col gap-6">
@@ -271,7 +264,7 @@
             <div class="flex justify-center">
                 <button id="completeRegistrationBtn"
                     class="mt-4 w-full  bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 text-sm font-semibold px-6 py-2 rounded shadow">
-                    Complete Registration
+                    Complete Registrationnn
                 </button>
             </div>
         </div>
