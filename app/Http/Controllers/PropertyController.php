@@ -1645,6 +1645,25 @@ class PropertyController extends Controller
         return view('partner.partner-hotels-payments', compact('property'));
     }
 
+    public function showPaymentPage($property = null)
+    {
+        \Log::info('showPaymentPage called', [
+            'property_parameter' => $property,
+            'request_url' => request()->url(),
+            'request_path' => request()->path()
+        ]);
+        
+        $propertyModel = null;
+        if ($property) {
+            $propertyModel = Property::findOrFail($property);
+            \Log::info('Property found', ['property_id' => $propertyModel->id]);
+        } else {
+            \Log::info('No property parameter provided');
+        }
+        
+        return view('partner.partner-hotels-payment', compact('propertyModel'));
+    }
+
     public function showPrivateHomesEdit($propertyId)
     {
         $property = Property::findOrFail($propertyId);
@@ -1690,6 +1709,71 @@ class PropertyController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error saving invoicing info.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function savePaymentStep(Request $request, $propertyId)
+    {
+        try {
+            $property = Property::findOrFail($propertyId);
+            
+            $data = $request->validate([
+                'payment_method' => 'required|in:online,credit',
+            ]);
+
+            $property->payment_method = $data['payment_method'];
+            $property->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Payment method saved successfully.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error saving payment method.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function saveVerification(Request $request, $propertyId)
+    {
+        try {
+            $property = Property::findOrFail($propertyId);
+            
+            $data = $request->validate([
+                'ownership_type' => 'required|in:individual,business',
+                'owners' => 'required|array',
+                'owners.*.firstName' => 'required|string|max:255',
+                'owners.*.lastName' => 'required|string|max:255',
+                'owners.*.dob' => 'required|date',
+                'legal_company_name' => 'nullable|string|max:255',
+            ]);
+
+            // Save verification data to property_verifications table
+            $verificationData = [
+                'property_id' => $propertyId,
+                'ownership_type' => $data['ownership_type'],
+                'owners_data' => json_encode($data['owners']),
+                'legal_company_name' => $data['legal_company_name'] ?? null,
+            ];
+
+            $property->partnerVerification()->updateOrCreate(
+                ['property_id' => $propertyId],
+                $verificationData
+            );
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Verification data saved successfully.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error saving verification data.',
                 'error' => $e->getMessage(),
             ], 500);
         }
@@ -1793,5 +1877,33 @@ class PropertyController extends Controller
         }
         
         return view('partner.partner-apartment-final-step', compact('property', 'propertyData', 'roomDisplayData'));
+    }
+
+    public function completePaymentProcess(Request $request, $propertyId)
+    {
+        try {
+            $property = Property::findOrFail($propertyId);
+            
+            // Update property status to completed
+            $property->update([
+                'status' => 'completed'
+            ]);
+            
+            // You can add additional logic here like:
+            // - Sending confirmation emails
+            // - Creating notifications
+            // - Logging the completion
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Payment process completed successfully!'
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error completing payment process: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

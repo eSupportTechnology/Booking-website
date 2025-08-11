@@ -1207,8 +1207,10 @@
                                             bookings.</p>
                                     </div>
                                 </div>
-                                <a href="{{ route('partner.hotels.payments') }}"
-                                    class=" bg-sky-400 border border-sky-400 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-sky-500">
+                                <a :href="propertyId ? '{{ route('partner.hotels.payment.with.property', ':property') }}'.replace(':property', propertyId) : '#'"
+                                    :class="propertyId ? 'bg-sky-400 border border-sky-400 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-sky-500' : 'bg-gray-300 border border-gray-300 text-gray-500 text-sm font-semibold px-4 py-2 rounded cursor-not-allowed'"
+                                    :onclick="!propertyId ? 'event.preventDefault(); alert(\"Please complete the previous steps first.\")' : ''"
+                                    @click="console.log('Property ID in link:', propertyId)">
                                     Add final details
                                 </a>
                             </div>
@@ -1312,6 +1314,7 @@
 
                         const data = await response.json();
                         this.propertyId = data.property_id;
+                        console.log('Property ID set in submitStep1:', this.propertyId);
                         this.step = 2;
                         this.fetchSubtypes(this.selectedBox);
                         Swal.fire({
