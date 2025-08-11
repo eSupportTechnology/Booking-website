@@ -1121,9 +1121,7 @@
                                     class="border border-[#3CC0E9] text-blue-600  hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
                                     ←
                                 </button>
-                                <button type="button" @click="logPropertyState()" class="bg-gray-500 text-white py-2 px-4 rounded mr-2">
-                                    Debug State
-                                </button>
+                                
                                 <button type="button" @click="submitStep11()" class="bg-blue-500 text-white py-2 px-4 rounded">
                                     Continue
                                 </button>
