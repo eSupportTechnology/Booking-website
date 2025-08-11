@@ -31,7 +31,7 @@
                          
                         <template x-for="(subcategory, index) in showMore ? subcategories : subcategories.slice(0, 6)"
                             :key="subcategory.id">
-                            <div @click="selectedBox = subcategory.id"
+                            <div @click="selectedBox = subcategory.id,subtypeName = subcategory.name"
                                 :class="selectedBox === subcategory.id ? 'border-2 border-blue-500 bg-blue-50' : 'border border-gray-300'"
                                 class="block rounded p-4 cursor-pointer transition bg-white relative">
                                 <div>
@@ -75,7 +75,7 @@
             <!-- STEP 2 -->
             <div x-show="step === 2" x-cloak class="container mx-auto px-2 py-8 max-w-6xl mt-8">
                 <div class="bg-white max-w-2xl w-full p-6 rounded-lg shadow space-y-6">
-                    <h2 class="text-xl font-bold text-left">How many hotels are you listing?</h2>
+                    <h2 class="text-xl font-bold text-left">How many <span x-text="subtypeName.toLowerCase()"></span>s are you listing?</h2>
 
                     <div class="space-y-4">
                         <label :class="unitType === 'one' ? 'border-blue-500 border-2' : 'border-gray-300'"
@@ -83,7 +83,7 @@
                             <div class="flex justify-between items-center">
                                 <div class="flex items-center space-x-4">
                                     <img src="{{ asset('images/aprt-b.png') }}" class="w-14 h-10" />
-                                    <span class="text-base">One hotel with one or multiple rooms</span>
+                                    <span class="text-base">One <span x-text="subtypeName.toLowerCase()"></span> with one or multiple rooms</span>
                                 </div>
                                 <template x-if="unitType === 'one'">
                                     <span class="text-blue-500 font-bold text-xl">✔</span>
@@ -96,7 +96,7 @@
                             <div class="flex justify-between items-center">
                                 <div class="flex items-center space-x-4">
                                     <img src="{{ asset('images/aprt-a.png') }}" class="w-14 h-10" />
-                                    <span class="text-base">Multiple hotels with rooms</span>
+                                    <span class="text-base">Multiple <span x-text="subtypeName.toLowerCase()"></span>s with rooms</span>
                                 </div>
                                 <template x-if="unitType === 'multiple'">
                                     <span class="text-blue-500 font-bold text-xl">✔</span>
@@ -1243,6 +1243,7 @@
                 propertyId: null,
                 subtypes: [],
                 subcategories: @json($subcategories),
+                subtypeName: '',
                 showMore: false,
                 subcategoryDescriptions: {
                     3: 'Accommodation for travellers often offering restaurants, meeting rooms and other guest services',

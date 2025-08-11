@@ -286,7 +286,7 @@
             <div class="flex justify-center">
                 <button id="completeRegistrationBtn"
                     class="mt-4 w-full  bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 text-sm font-semibold px-6 py-2 rounded shadow">
-                    Complete Registrationnn
+                    Complete Registration
                 </button>
             </div>
         </div>
