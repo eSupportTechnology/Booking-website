@@ -274,7 +274,7 @@
             get categoryHeadingDescription() {
               switch (this.category) {
                 case 'campsite':
-                    return 'One campsite where guests can book a room';
+                    return 'One campsite where guests can book an entire place';
                 case 'boat':
                     return 'One boat where guests can book the entire place';
                 case 'luxury_tent':
@@ -325,17 +325,17 @@
         if (this.selected === 'one') {
             route = '/partner/alternative/Single/Campsite';
         } else if (this.sameAddress === 'yes') {
-            route = '/partner/campsite/multiple/same-address';
+            route = '/partner/alternative/Single/Campsite';
         } else {
-            route = '/partner/campsite/multiple/different-address';
+            route = '/partner/alternative/Single/Campsite';
         }
     } else if (this.category === 'luxury_tent') {
         if (this.selected === 'one') {
-            route = '/partner/luxury-tent/one';
+            route = '/partner/tent/single';
         } else if (this.sameAddress === 'yes') {
-            route = '/partner/luxury-tent/multiple/same-address';
+            route = '/partner/tent/multiple/sameaddress';
         } else {
-            route = '/partner/luxury-tent/multiple/different-address';
+            route = '/partner/tent/single';
         }
     }
 
