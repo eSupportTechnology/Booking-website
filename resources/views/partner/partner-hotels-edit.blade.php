@@ -1,6 +1,6 @@
 @extends('partner.partner-layout')
 
-@section('title', ' Hotels Edit | ' . config('domains.app_name'))
+@section('title', 'Hotels Edit | ' . config('domains.app_name'))
 
 @section('content')
 
@@ -28,7 +28,7 @@
 
         photoLink.href = `/partner-homes-images/${propertyId}?details=true&propertyType=${encodeURIComponent(propertyType)}`;
         roomsEditLink.href = `/partner-homes-rooms/${propertyId}?details=true&propertyType=${encodeURIComponent(propertyType)}`;
-        paymenEditLink.href = `/partner-homes-payments/${propertyId}?propertyType=${encodeURIComponent(propertyType)}`;
+        paymenEditLink.href = `/partner/partner-hotels-payment/${propertyId}?propertyType=${encodeURIComponent(propertyType)}`;
         if (uploaded === 'true') {
             // Update the icon (optional - if not already done)
             if (icon) {
@@ -132,7 +132,7 @@
                             more</p>
                     </div>
                 </div>
-                <a href="{{ route('partner.hotels.create.2') }}"
+                <a href="{{ route('partner.hotels.create.1') }}"
                     class="text-sky-600 font-medium text-sm hover:underline">Edit</a>
                 <button id="detailsEditLink"
                     class="text-sky-600 font-medium text-sm hover:underline">Edit</button>

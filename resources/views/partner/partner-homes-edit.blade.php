@@ -27,7 +27,25 @@
 
         photoLink.href = `/partner-homes-images/${propertyId}?details=true&propertyType=${encodeURIComponent(propertyType)}`;
         roomsEditLink.href = `/partner-homes-rooms/${propertyId}?details=true&propertyType=${encodeURIComponent(propertyType)}`;
-        paymenEditLink.href = `/partner-homes-payments/${propertyId}?propertyType=${encodeURIComponent(propertyType)}`;
+        
+        // Set payment route based on property category
+        // Get the property category from the backend
+        fetch(`/api/property/${propertyId}/category`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.category_id == 1) {
+                    // Homes - use homes payments route
+                    paymenEditLink.href = `/partner-homes-payments/${propertyId}?propertyType=${encodeURIComponent(propertyType)}`;
+                } else {
+                    // Hotels - use hotels payment route (partner view)
+                    paymenEditLink.href = `/partner/partner-hotels-payment/${propertyId}?propertyType=${encodeURIComponent(propertyType)}`;
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching property category:', error);
+                // Default to homes payments route if there's an error
+                paymenEditLink.href = `/partner-homes-payments/${propertyId}?propertyType=${encodeURIComponent(propertyType)}`;
+            });
         if (uploaded === 'true') {
             // Update the icon (optional - if not already done)
             if (icon) {

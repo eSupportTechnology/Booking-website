@@ -1640,9 +1640,12 @@ class PropertyController extends Controller
         $property = Property::findOrFail($propertyId);
 
         if($property->category_id == 1){
+            // Homes - use the homes payments view
             return view('partner.partner-homes-payments', compact('property'));
+        } else {
+            // Hotels - use the hotels payment view
+            return view('partner.partner-hotels-payment', compact('property'));
         }
-        return view('partner.partner-hotels-payments', compact('property'));
     }
 
     public function showPaymentPage($property = null)
@@ -1672,6 +1675,20 @@ class PropertyController extends Controller
             return view('partner.partner-homes-edit', compact('property', 'rooms'));
         }
         return view('partner.partner-hotels-edit', compact('property', 'rooms'));
+    }
+
+    public function getPropertyCategory($propertyId)
+    {
+        try {
+            $property = Property::findOrFail($propertyId);
+            return response()->json([
+                'category_id' => $property->category_id
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Property not found'
+            ], 404);
+        }
     }
 
     public function savePaymentMethod(Request $request, PropertyAction $action)
