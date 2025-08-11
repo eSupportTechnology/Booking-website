@@ -13,6 +13,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use App\DTOs\Partner\PropertyStep1DTO;
 use App\DTOs\Partner\PropertyStep2DTO;
+use App\DTOs\Partner\ApartmentStep1DTO;
 use App\Models\Languages;
 use Illuminate\Support\Facades\Log;
 use App\DTOs\Partner\UploadPropertyPhotosDTO;
@@ -121,6 +122,30 @@ class PropertyAction
         session(['current_property_id' => $property->id]);
 
         Log::info('Property created successfully', [
+            'property_id' => $property->id,
+            'property_data' => $property->toArray(),
+        ]);
+
+        return $property;
+    }
+
+    public function createApartmentStep1(ApartmentStep1DTO $dto)
+    {
+        Log::info('createApartmentStep1 called', [
+            'dto_data' => $dto->toArray(),
+            'address_type_id' => $dto->address_type_id,
+        ]);
+
+        // Create property data without subcategory_id
+        $propertyData = $dto->toArray();
+        $propertyData['subcategory_id'] = null; // Set to null for apartments
+
+        $property = \App\Models\Property::create($propertyData);
+
+        // Store property ID in session for form navigation
+        session(['current_property_id' => $property->id]);
+
+        Log::info('Apartment property created successfully', [
             'property_id' => $property->id,
             'property_data' => $property->toArray(),
         ]);
@@ -329,6 +354,18 @@ class PropertyAction
             'dto_data' => $dto->toArray()
         ]);
 
+        // Debug owners data
+        if ($dto->owners && is_array($dto->owners)) {
+            foreach ($dto->owners as $index => $owner) {
+                Log::info("Owner {$index} data:", [
+                    'first_name' => $owner['first_name'] ?? 'null',
+                    'last_name' => $owner['last_name'] ?? 'null',
+                    'dob' => $owner['dob'] ?? 'null',
+                    'dob_type' => gettype($owner['dob'] ?? null)
+                ]);
+            }
+        }
+
         // Check if accommodation record already exists
         $accommodation = Accommodation::where('property_id', $dto->property_id)->first();
         
@@ -354,6 +391,19 @@ class PropertyAction
             // Handle individual verification
             if ($dto->owners && is_array($dto->owners)) {
                 foreach ($dto->owners as $owner) {
+                    // Validate and format the date
+                    $dateOfBirth = null;
+                    if (!empty($owner['dob']) && $owner['dob'] !== '1') {
+                        try {
+                            $date = \DateTime::createFromFormat('Y-m-d', $owner['dob']);
+                            if ($date && $date->format('Y-m-d') === $owner['dob']) {
+                                $dateOfBirth = $owner['dob'];
+                            }
+                        } catch (\Exception $e) {
+                            Log::warning('Invalid date format for DOB:', ['dob' => $owner['dob']]);
+                        }
+                    }
+                    
                     $individual = Individual::updateOrCreate(
                         [
                             'accommodation_id' => $accommodation->id,
@@ -361,7 +411,7 @@ class PropertyAction
                             'last_name' => $owner['last_name'],
                         ],
                         [
-                            'date_of_birth' => $owner['dob']||"0000-00-00",
+                            'date_of_birth' => $dateOfBirth,
                         ]
                     );
 
@@ -378,7 +428,7 @@ class PropertyAction
                         'accommodation_id' => $accommodation->id,
                         'first_name' => $dto->full_name ? explode(' ', $dto->full_name)[0] : null,
                         'last_name' => $dto->full_name ? (explode(' ', $dto->full_name)[1] ?? '') : null,
-                        'date_of_birth' => $dto->national_id,
+                        'date_of_birth' => null, // This should be properly handled from the owners array
                     ]
                 );
 

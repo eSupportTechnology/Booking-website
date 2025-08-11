@@ -1,37 +1,8 @@
+@extends('partner.partner-layout')
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>create apartment</title></title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js?v={{ time() }}" defer></script>
-  <meta name="csrf-token" content="{{ csrf_token() }}">
-  <script>
-    console.log('Other spaces page script loaded');
-    document.addEventListener('alpine:init', () => {
-      console.log('Alpine.js initialized on other spaces page');
-    });
-    
-    // Error handling
-    window.addEventListener('error', function(e) {
-      console.error('JavaScript error on other spaces page:', e.error);
-    });
-  </script>
-  
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet" />
-  <!-- Vite assets (optional for Laravel Mix setup) -->
-  @vite(['resources/js/app.js'])
-  <style>
-    body {
-      font-family: 'Noto Sans', sans-serif;
-    }
-  </style>
-</head>
-<body class="bg-gray-50 text-gray-800">
+@section('title', 'Other Spaces - Create Apartment')
+
+@section('content')
 <!-- Header -->
   <header class="text-white px-4 py-2" style="background-color:#1F8FB2;">
     <section class="py-4">
@@ -141,29 +112,93 @@
         return;
       }
       
+      // Get wizard state from URL parameters
+      const urlParams = new URLSearchParams(window.location.search);
+      const wizardStateParam = urlParams.get('wizardState');
+      let wizardState = null;
+      
+      if (wizardStateParam) {
+        try {
+          wizardState = JSON.parse(decodeURIComponent(wizardStateParam));
+          console.log('Wizard state found:', wizardState);
+        } catch (error) {
+          console.error('Error parsing wizard state:', error);
+        }
+      }
+      
       const payload = {
-        room_name: 'Other Space',
+                  room_name: 'otherSpaces',
         beds: selectedBeds,
         source: '{{ request('source') }}',
         step: '{{ request('step') }}'
       };
+      
+      // Update wizard state with bed counts
+      if (wizardState && wizardState.rooms) {
+        if (!wizardState.rooms.otherSpaces) {
+          wizardState.rooms.otherSpaces = { name: 'Other spaces', twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 };
+        }
+        
+        // Map bed types to wizard state fields
+        this.beds.forEach(bed => {
+          switch(bed.name) {
+            case 'Twin':
+              wizardState.rooms.otherSpaces.twin = bed.count;
+              break;
+            case 'Full':
+              wizardState.rooms.otherSpaces.full = bed.count;
+              break;
+            case 'Queen':
+              wizardState.rooms.otherSpaces.queen = bed.count;
+              break;
+            case 'King':
+              wizardState.rooms.otherSpaces.king = bed.count;
+              break;
+            case 'Sofa Bed':
+              wizardState.rooms.otherSpaces.sofa = bed.count;
+              break;
+            case 'Bunk Bed':
+              wizardState.rooms.otherSpaces.bunk = bed.count;
+              break;
+            case 'Murphy Bed':
+              wizardState.rooms.otherSpaces.futon = bed.count; // Map Murphy to futon
+              break;
+          }
+        });
+        
+        console.log('Updated wizard state with bed counts:', wizardState.rooms.otherSpaces);
+      }
       
       console.log('Prepared payload:', JSON.stringify(payload, null, 2));
       
       // Check if CSRF token exists
       const csrfToken = document.querySelector('meta[name=csrf-token]');
       if (!csrfToken) {
+        console.error('CSRF token meta tag not found');
         throw new Error('CSRF token not found');
       }
       console.log('CSRF Token found:', csrfToken.content);
       
+      // Also check if the token is valid
+      if (!csrfToken.content || csrfToken.content.trim() === '') {
+        console.error('CSRF token is empty');
+        throw new Error('CSRF token is empty');
+      }
+      
       // Make real API call
-      let res = await fetch('http://127.0.0.1:8000/partner/property/bedroom/{{ $property->id ?? 116 }}', {
+      const url = 'http://127.0.0.1:8000/partner/property/bedroom/{{ $property->id ?? 116 }}';
+      const headers = {
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+      };
+      
+      console.log('Making fetch request to:', url);
+      console.log('Headers:', headers);
+      console.log('Payload:', JSON.stringify(payload, null, 2));
+      
+      let res = await fetch(url, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
-        },
+        headers: headers,
         body: JSON.stringify(payload)
       });
       
@@ -180,25 +215,98 @@
         
         console.log('Source:', source, 'Step:', step);
         
-        if (source === 'multiple') {
-          console.log('Redirecting to multiple apartment step 2');
-          window.location.href = 'http://127.0.0.1:8000/partner/multiple-apartment-2/{{ $property->id ?? 116 }}';
-        } else if (source === 'single') {
-          console.log('Redirecting to single apartment step 2');
-          window.location.href = 'http://127.0.0.1:8000/partner/property/apartment/step2/{{ $property->id ?? 116 }}';
+        // Get wizard state from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const wizardStateParam = urlParams.get('wizardState');
+        
+        if (wizardStateParam) {
+          try {
+            const wizardState = JSON.parse(decodeURIComponent(wizardStateParam));
+            console.log('Wizard state found:', wizardState);
+            
+            // Update the wizard state with the bed counts
+            if (wizardState.rooms && wizardState.rooms.otherSpaces) {
+              // Map bed types to wizard state fields
+              this.beds.forEach(bed => {
+                switch(bed.name) {
+                  case 'Twin':
+                    wizardState.rooms.otherSpaces.twin = bed.count;
+                    break;
+                  case 'Full':
+                    wizardState.rooms.otherSpaces.full = bed.count;
+                    break;
+                  case 'Queen':
+                    wizardState.rooms.otherSpaces.queen = bed.count;
+                    break;
+                  case 'King':
+                    wizardState.rooms.otherSpaces.king = bed.count;
+                    break;
+                  case 'Sofa Bed':
+                    wizardState.rooms.otherSpaces.sofa = bed.count;
+                    break;
+                  case 'Bunk Bed':
+                    wizardState.rooms.otherSpaces.bunk = bed.count;
+                    break;
+                  case 'Murphy Bed':
+                    wizardState.rooms.otherSpaces.futon = bed.count; // Map Murphy to futon
+                    break;
+                }
+              });
+              console.log('Updated wizard state with bed counts:', wizardState.rooms.otherSpaces);
+            }
+            
+            // Navigate back to the original form with the updated wizard state
+            const updatedWizardState = encodeURIComponent(JSON.stringify(wizardState));
+            const returnUrl = `/partner-apartment-create-2?wizardState=${updatedWizardState}&step=${wizardState.step || 2}`;
+            console.log('Redirecting to:', returnUrl);
+            window.location.href = returnUrl;
+          } catch (error) {
+            console.error('Error parsing wizard state:', error);
+            // Fallback to original logic
+            if (source === 'multiple') {
+              console.log('Redirecting to multiple apartment step 2');
+              window.location.href = 'http://127.0.0.1:8000/partner/multiple-apartment-2/{{ $property->id ?? 116 }}';
+            } else if (source === 'single') {
+              console.log('Redirecting to single apartment step 2');
+              window.location.href = 'http://127.0.0.1:8000/partner/property/apartment/step2/{{ $property->id ?? 116 }}';
+            } else {
+              console.log('Fallback redirect to step 2');
+              window.location.href = 'http://127.0.0.1:8000/partner/property/apartment/step2/{{ $property->id ?? 116 }}';
+            }
+          }
         } else {
-          console.log('Fallback redirect to step 2');
-          window.location.href = 'http://127.0.0.1:8000/partner/property/apartment/step2/{{ $property->id ?? 116 }}';
+          // Fallback to original logic if no wizard state
+          if (source === 'multiple') {
+            console.log('Redirecting to multiple apartment step 2');
+            window.location.href = 'http://127.0.0.1:8000/partner/multiple-apartment-2/{{ $property->id ?? 116 }}';
+          } else if (source === 'single') {
+            console.log('Redirecting to single apartment step 2');
+            window.location.href = 'http://127.0.0.1:8000/partner/property/apartment/step2/{{ $property->id ?? 116 }}';
+          } else {
+            console.log('Fallback redirect to step 2');
+            window.location.href = 'http://127.0.0.1:8000/partner/property/apartment/step2/{{ $property->id ?? 116 }}';
+          }
         }
         
       } else {
-        throw new Error(data.message || 'Could not save other space.');
+        console.error('Server returned error:', data);
+        throw new Error(data.message || `Server error: ${res.status} - Could not save other space.`);
       }
       
     } catch (err) {
       console.error('Save error:', err);
+      console.error('Error stack:', err.stack);
       this.lastError = err.message;
-      alert('Error saving other space configuration: ' + err.message);
+      
+      // Show more detailed error message
+      let errorMessage = 'Error saving other space configuration: ' + err.message;
+      if (err.name === 'TypeError' && err.message.includes('fetch')) {
+        errorMessage = 'Network error: Unable to connect to the server. Please check your internet connection.';
+      } else if (err.message.includes('CSRF token')) {
+        errorMessage = 'Security error: Please refresh the page and try again.';
+      }
+      
+      alert(errorMessage);
     } finally {
       console.log('=== OTHER SPACES SAVE FUNCTION END ===');
       this.isLoading = false;
@@ -232,20 +340,20 @@
   <h2 class="text-3xl font-bold text-gray-900 mt-8">Other spaces</h2>
 
   <!-- Debug Info -->
-  <div class="text-xs text-gray-500 mb-4 p-2 bg-gray-100 rounded">
+  <!-- <div class="text-xs text-gray-500 mb-4 p-2 bg-gray-100 rounded">
     <div>Selected beds: <span x-text="selectedBedsCount"></span></div>
     <div>Total bed count: <span x-text="totalBeds"></span></div>
     <div>Loading: <span x-text="isLoading"></span></div>
     <div x-show="lastError" class="text-red-600 mt-1">
       Last error: <span x-text="lastError"></span>
     </div>
-  </div>
+  </div> -->
 
   <!-- Test Button -->
-  <button @click="console.log('Test button clicked'); alert('Alpine.js is working!')" 
+  <!-- <button @click="console.log('Test button clicked'); alert('Alpine.js is working!')" 
           class="bg-green-500 text-white px-3 py-1 rounded text-xs mb-4 hover:bg-green-600">
       Test Alpine.js
-  </button>
+  </button> -->
 
   <div class="bg-white p-6 rounded-lg shadow border border-gray-200">
     <p class="text-lg font-medium text-gray-800 mb-4">Which beds are available in this room?</p>
@@ -367,13 +475,5 @@
 </div>
 
 
+@endsection
 
-
-
-
-
-
-
-
-    </body>
-    </html>

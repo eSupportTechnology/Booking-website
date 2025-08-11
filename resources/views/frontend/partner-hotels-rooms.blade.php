@@ -1,101 +1,12 @@
-<!DOCTYPE html>
-<html lang="en" x-data="{ step: 1 }">
+@extends('partner.partner-layout')
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>9-Step Wizard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+@section('title', ' Hotels Rooms | ' . config('domains.app_name'))
+
+@section('content')
+
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet" />
-
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet" />
-    <style>
-        body {
-            font-family: 'Noto Sans', sans-serif;
-        }
-    </style>
-</head>
-
-<body class="bg-gray-100 text-gray-800">
-    <header class="text-white px-4 py-2" style="background-color:#1F8FB2;">
-        <section class="py-4">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div
-                    class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
-                    <!-- Logo -->
-                    <div class="w-full md:w-auto md:ml-6">
-                        @php
-                            $host = config('domains.app_name');
-
-                        @endphp
-
-                        <a href="{{ url('/') }}" class="text-2xl font-bold flex items-center">
-                            @if ($host == 'BookinTour')
-                                <h1>Bookintour.com</h1>
-                            @elseif ($host == 'Inselor')
-                                <img src="{{ asset('images/inselor-logo.png') }}" alt="Inselor"
-                                    class="h-12 w-auto align-middle" />
-                            @endif
-                        </a>
-                    </div>
-
-                    <!-- Right Section -->
-                    <div class="flex items-center space-x-4 text-sm font-medium md:ml-auto font-sans">
-                        <!-- Help Icon -->
-                        <a href="/help" title="Help">
-                            <img src="{{ asset('assets/question.svg') }}" alt="Help"
-                                class="w-6 h-6 md:w-7 md:h-7 cursor-pointer" />
-                        </a>
-
-                        <!-- Language Button -->
-                        <button id="language-button" type="button"
-                            class="flex items-center justify-center w-8 h-8 bg-white rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-hidden"
-                            title="Change Language">
-                            <img src="{{ asset('images/uk.png') }}" alt="UK Flag"
-                                class="w-full h-full object-cover rounded-full" />
-                        </button>
-
-                        <!-- Language Modal -->
-                        <div id="language-modal"
-                            class="fixed inset-0 hidden z-50 overflow-y-auto flex items-start justify-center px-4 py-8 bg-black bg-opacity-50">
-                            <div class="relative w-full max-w-md p-6 bg-white rounded-lg shadow">
-                                <!-- Modal Header -->
-                                <div class="flex items-start justify-between">
-                                    <h3 class="text-xl font-semibold text-gray-900">Select your language</h3>
-                                    <button type="button"
-                                        class="close-btn text-gray-400 hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center">
-                                        <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd"
-                                                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                                clip-rule="evenodd" />
-                                        </svg>
-                                        <span class="sr-only">Close modal</span>
-                                    </button>
-                                </div>
-
-                                <!-- Modal Body -->
-                                <div class="mt-4">
-                                    <p class="mb-4 text-base text-gray-500">Suggested for you</p>
-                                    <div class="grid grid-cols-2 gap-4">
-                                        <button class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100">
-                                            <img src="https://flagcdn.com/w40/gb.png" alt="English (UK)"
-                                                class="h-5 w-5" />
-                                            <span>English (UK)</span>
-                                        </button>
-                                        <button class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100">
-                                            <img src="https://flagcdn.com/w40/de.png" alt="Deutsch" class="h-5 w-5" />
-                                            <span>Deutsch</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </header>
+    <div x-data="{ step: 1 }">
+  
     <!-- Progress Bar -->
     <div class="w-full bg-gray-200 h-2">
         <div class="bg-[#3CC0E9] h-2 transition-all duration-500" :style="'width:' + (step * 100 / 7) + '%'"></div>
@@ -109,36 +20,49 @@
 
 
 
-                <!-- Section Title -->
-                <h2 class="text-2xl font-bold ml-32">Room Details</h2>
-                <!-- Unit Type + Count Section -->
-                <div class="w-full max-w-xl bg-white rounded-lg border border-gray-200 p-4 shadow-sm ml-32">
+              <!-- Section Title -->
+<h2 class="text-2xl font-bold ml-32 mb-4">Room Details</h2>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-                        <!-- Unit Type -->
-                    <div class="w-[500px]">
-    <label class="block text-sm font-semibold text-gray-700 mb-1">
+<!-- Unit Type + Count Section -->
+<div class="w-full max-w-xl bg-white rounded-lg border border-gray-200 p-4 shadow-sm ml-32">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    
+    <!-- Unit Type -->
+    <div class="w-full">
+      <label for="unit_type" class="block text-sm font-semibold text-gray-700 mb-1">
         What type of unit is this?
-    </label>
-    <select
-        name="unit_type"
-        class="w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200 px-3 py-2">
-        <option value="">Select a type</option>
-        <option>Twin</option>
-        <option>Single</option>
-        <option>Double</option>
-        <option>Twin/Double</option>
-        <option>Triple</option>
-        <option>Quadruple</option>
-        <option>Suite</option>
-        <option>Family</option>
-        <option>Studio</option>
-        <option>Apartment</option>
-        <option>Dormitory Room</option>
-        <option>Bed in Dormitory</option>
-    </select>
-</div>
+      </label>
+      <div class="relative">
+        <select
+          id="unit_type"
+          name="unit_type"
+          class="appearance-none w-full border border-gray-300 text-sm rounded-md shadow-sm bg-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200"
+        >
+          <option value="">Select a type</option>
+          <option value="Twin">Twin</option>
+          <option value="Single">Single</option>
+          <option value="Double">Double</option>
+          <option value="Twin/Double">Twin/Double</option>
+          <option value="Triple">Triple</option>
+          <option value="Quadruple">Quadruple</option>
+          <option value="Suite">Suite</option>
+          <option value="Family">Family</option>
+          <option value="Studio">Studio</option>
+          <option value="Apartment">Apartment</option>
+          <option value="Dormitory Room">Dormitory Room</option>
+          <option value="Bed in Dormitory">Bed in Dormitory</option>
+        </select>
+
+        <!-- Optional: Custom dropdown arrow -->
+        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+          <svg class="h-4 w-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 14a1 1 0 01-.707-.293l-4-4a1 1 0 111.414-1.414L10 11.586l3.293-3.293a1 1 0 111.414 1.414l-4 4A1 1 0 0110 14z" clip-rule="evenodd" />
+          </svg>
+        </div>
+      </div>
+    </div>
+
+ 
 
 
                         <br>
@@ -163,7 +87,7 @@
                     <!-- Bed Types Container (2/3 width) -->
                     <div x-data="{ showMoreBeds: false }"
                         class="lg:col-span-2 bg-white rounded-lg border border-gray-300 p-4 space-y-4 max-w-xl ml-32">
-                        <label class="block font-medium text-gray-700 mb-2">Which beds are available in this
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Which beds are available in this
                             room?</label>
 
                         @php
@@ -662,14 +586,14 @@
                         <div class="md:col-span-2">
                             <div class="bg-white p-6 rounded shadow-md min-h-[450px] flex flex-col justify-start">
                                 <div class="w-full">
-                                    <p class="text-base mb-4">
+                                    <p class="text-sm mb-4">
                                         This is the name that guests will see on your property page. Choose a name that
                                         most accurately describes this room.
                                     </p>
                                     <label class="block text-sm font-semibold text-gray-700 mb-1 mt-6">Room
                                         Name</label>
                                     <select
-                                        class="w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200 px-3 py-2">
+                                        class="w-full border border-gray-300 text-sm rounded-md shadow-sm focus:ring focus:ring-blue-200 px-3 py-2">
                                         <option>Double Room</option>
                                         <option>Double Room with Balcony</option>
                                         <option>Double Room with Private Bathroom</option>
@@ -788,129 +712,205 @@
 
 
         <template x-if="step === 5">
-            <div class="max-w-4xl ml-40 px-4 py-8 mt-6">
-                <div class="max-w-4xl mx-auto px-4 py-8 space-y-6" x-data="{ showTip1: true, showTip2: true }">
+           <div class="max-w-4xl ml-40 px-4 py-8 mt-6">
+        <div class="max-w-4xl mx-auto px-4 py-8 space-y-6" x-data="{ showTip1: true, showTip2: true }">
 
-                    <!-- Title -->
-                    <h2 class="text-2xl font-bold text-gray-800">Set the price per night for this room</h2>
+            <!-- Title -->
+            <h2 class="text-2xl font-bold text-gray-800">Set the price per night for this room</h2>
 
-                    <!-- Price input and Tip 1 in two separate columns -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
+            <!-- Grid layout: Pricing insight + Tip box -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
 
-                        <!-- Price input card (2/3 width) -->
-                        <div class="md:col-span-2 bg-white border rounded-lg p-6 shadow-sm space-y-4">
-                            <label class="block font-semibold text-base text-gray-700">How much do you want to charge
-                                per night?</label>
-                            <div class="relative">
-                                <label class="block text-sm text-gray-700 mb-1">Price guests pay</label>
+                <!-- Pricing insight card (2/3 width) -->
+                <div class="md:col-span-2 bg-white border rounded-lg p-6 shadow-sm space-y-4">
+                    <h3 class="font-semibold text-gray-800 text-base">
+                        Make your price competitive to increase your chances of getting more bookings.
+                    </h3>
+                   <p class="text-xs text-gray-600 mt-4 mb-10">
+    This is the price range for properties similar to yours.
+    <a href="#" class="text-blue-600 underline hover:text-blue-800">Learn more</a>
+</p>
 
-                                <!-- Currency Select Dropdown -->
-                                <select
-                                    class="absolute left-3 top-1/2 transform -translate-y-1/2 bg-transparent text-gray-700 text-sm pr-1 focus:outline-none border border-gray-300 rounded-md">
-                                    <option value="usd">US$</option>
-                                    <option value="eur">€</option>
-                                    <option value="gbp">£</option>
-                                    <option value="lkr">Rs</option>
-                                </select>
+<!-- Price Range Display -->
+<div class="relative h-2 bg-gray-200 rounded-full mb-10">
+    <!-- Active Bar Range (optional highlight bar if needed) -->
+    <div class="absolute left-[15%] right-[15%] h-2 bg-blue-600 rounded-full"></div>
 
-                                <!-- Input Field -->
-                                <input type="text" value="120.00"
-                                    class="w-full border border-gray-400 rounded-md p-2 pl-16 text-gray-700 font-semibold focus:ring-2 focus:ring-blue-300 focus:outline-none" />
+    <!-- Median Tag -->
+    <div class="absolute left-1/2 transform -translate-x-1/2 -top-4 bg-blue-600 text-white text-xs px-1 py-1 rounded shadow">
+        Median: US$3.02
+    </div>
 
-                                <p class="text-sm text-gray-500 mt-2">Including taxes, commission, and fees</p>
-                            </div>
+    <!-- Min Price -->
+    <div class="absolute left-8 -bottom-6 text-sm bg-blue-600 text-white px-2 py-0.5 rounded font-medium shadow">
+        US$1.18
+    </div>
 
+    <!-- Max Price -->
+    <div class="absolute right-8 -bottom-6 text-sm bg-blue-600 text-white px-2 py-0.5 rounded font-medium shadow">
+        US$6.55
+    </div>
+</div>
 
-                            <!-- Topic paragraph -->
-                            <p class="text-sm text-gray-600 pl-4">
-                                <span class="text-gray-500">15.00%</span> {{ config('domains.subdomain') }} commission
-                            </p>
+<div x-data="{ feedback: null }" class="pt-2 text-sm text-gray-700">
+  <span>Did this help you decide on a price?</span>
 
-                            <!-- Sub-items under topic -->
-                            <ul class="text-sm text-gray-600 space-y-1 pl-8">
-                                <li><span class="text-green-600 font-semibold">✓</span> 24/7 help in your language</li>
-                                <li><span class="text-green-600 font-semibold">✓</span> Save time with automatically
-                                    confirmed bookings</li>
-                                <li><span class="text-green-600 font-semibold">✓</span> We promote your place on Google
-                                </li>
-                            </ul>
+  <!-- Like (Thumbs Up) -->
+   <button @click="feedback = 'like'" class="ml-2 focus:outline-none">
+    <img 
+      :src="feedback === 'like' 
+              ? '{{ asset('assets/iconamoon_like-thin (1).svg') }}' 
+              : '{{ asset('assets/iconamoon_like-thin.svg') }}'" 
+      alt="Like" class="w-5 h-5"
+    />
+  </button>
 
-                            <p class="text-sm text-gray-800 font-medium border-t pt-3">US$ 102.00 Your earnings
-                                (including taxes)</p>
-                        </div>
+  <!-- Dislike (Thumbs Down) -->
+    <!-- Dislike -->
+  <button @click="feedback = 'dislike'" class="ml-1 focus:outline-none">
+    <img 
+      :src="feedback === 'dislike' 
+              ? '{{ asset('assets/iconamoon_dislike-thin (1).svg') }}' 
+              : '{{ asset('assets/iconamoon_dislike-thin.svg') }}'" 
+      alt="Dislike" class="w-5 h-5"
+    />
+  </button>
+</div>
 
-                        <!-- Tip Box 1 (1/3 width, independent height) -->
-                        <div x-show="showTip1"
-                            class="relative bg-white border rounded-lg p-4 shadow-sm text-sm text-gray-700">
-                            <button @click="showTip1 = false"
-                                class="absolute top-2 right-2 text-gray-500 font-semibold">✕</button>
-
-                            <div class="flex items-center mb-2">
-                                <img src="{{ asset('assets/system-uicons_lightbulb-on.svg') }}" alt="Tip Icon"
-                                    class="w-6 h-6 mr-2">
-                                <strong>What if I’m not sure about my price?</strong>
-                            </div>
-
-                            <p>Don't worry, you can always change it later. You can even set weekend, midweek, and
-                                seasonal prices, giving you more control over what you earn.</p>
-                        </div>
-
-                    </div>
-
-                    <!-- Discount and Tip 2 -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-
-                        <!-- Discount card -->
-                        <div class="md:col-span-2 bg-white border rounded-lg p-6 shadow-sm space-y-3">
-                            <label class="inline-flex items-center">
-                                <input type="checkbox" class="form-checkbox text-blue-600 rounded-md" />
-                                <span class="ml-2 font-medium text-gray-700 font-semibold">Get guests’ attention with a
-                                    20% discount</span>
-                            </label>
-                            <p class="text-sm text-gray-600">
-                                Give 20% off your first 3 bookings or for 90 days, whichever comes first.
-                                <a href="#" class="text-blue-600 underline">Learn more</a>
-                            </p>
-                            <hr class="my-4">
-                            <p class="text-sm text-gray-800">
-                                <del class="text-gray-500">US$ 120.00</del>
-                                <span class="text-green-600 font-semibold">US$ 96.00 per night</span>
-                            </p>
-                        </div>
-
-                        <!-- Tip Box 2 (separate column) -->
-                        <div x-show="showTip2"
-                            class="relative bg-white border rounded-lg p-4 shadow-sm text-sm text-gray-700">
-                            <button @click="showTip2 = false"
-                                class="absolute top-2 right-3 text-gray-500 font-semibold mb-2">✕</button>
-                            <div class="flex items-center mb-2">
-                                <img src="{{ asset('assets/material-symbols-light_info-outline.svg') }}"
-                                    alt="Tip Icon" class="w-6 h-6 mr-2">
-                                <strong>Rules for setting up a promotion</strong>
-                            </div>
-                            <p>
-                                Make sure you're giving a genuine discount. It must represent a real discount in line
-                                with consumer protection rules.
-                                <a href="#" class="text-blue-600 underline">Learn More</a>
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Navigation Buttons -->
-                    <div class="flex mt-1">
-                        <button type="button" @click="step > 1 ? step-- : step"
-                            :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-                            class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
-                            ←
-                        </button>
-                        <button type="button" @click="step < 9 ? step++ : step"
-                            class="ml-auto px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300 ml-[402px]">
-                            Continue
-                        </button>
-                    </div>
 
                 </div>
+
+                <!-- Tip Box 1 (unchanged) -->
+                <div x-show="showTip1"
+                    class="relative bg-white border rounded-lg p-4 shadow-sm text-sm text-gray-700">
+                    <button @click="showTip1 = false"
+                        class="absolute top-2 right-2 text-gray-500 font-semibold">✕</button>
+
+                    <div class="flex items-center mb-2">
+                        <img src="{{ asset('assets/system-uicons_lightbulb-on.svg') }}" alt="Tip Icon"
+                            class="w-6 h-6 mr-2">
+                        <strong>What if I’m not sure about my price?</strong>
+                    </div>
+
+                    <p>Don't worry, you can always change it later. You can even set weekend, midweek, and
+                        seasonal prices, giving you more control over what you earn.</p>
+                </div>
             </div>
+
+            <!-- Price input and Tip 2 -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
+
+                <!-- Price input card (2/3 width) -->
+                <div class="md:col-span-2 bg-white border rounded-lg p-6 shadow-sm space-y-4">
+                    <label class="block font-semibold text-base text-gray-700">How much do you want to charge
+                        per night?</label>
+                    <div class="relative">
+                        <label class="block text-sm text-gray-700 mb-1">Price guests pay</label>
+
+                        <!-- Currency Select Dropdown -->
+                        <select
+                            class="absolute left-3 top-1/2 transform -translate-y-1/2 bg-transparent text-gray-700 text-sm pr-1 focus:outline-none border border-gray-300 rounded-md">
+                            <option value="usd">US$</option>
+                            <option value="eur">€</option>
+                            <option value="gbp">£</option>
+                            <option value="lkr">Rs</option>
+                        </select>
+
+                        <!-- Input Field -->
+                        <input type="text" value="120.00"
+                            class="w-full border border-gray-400 rounded-md p-2 pl-16 text-gray-700 font-semibold focus:ring-2 focus:ring-blue-300 focus:outline-none" />
+
+                        <p class="text-sm text-gray-500 mt-2">Including taxes, commission, and fees</p>
+                    </div>
+
+                    <!-- Topic paragraph -->
+                    <p class="text-sm text-gray-600 pl-4">
+                        <span class="text-gray-500">15.00%</span> {{ config('domains.subdomain') }} commission
+                    </p>
+
+                    <!-- Sub-items under topic -->
+                    <ul class="text-sm text-gray-600 space-y-1 pl-8">
+                        <li><span class="text-green-600 font-semibold">✓</span> 24/7 help in your language</li>
+                        <li><span class="text-green-600 font-semibold">✓</span> Save time with automatically
+                            confirmed bookings</li>
+                        <li><span class="text-green-600 font-semibold">✓</span> We promote your place on Google
+                        </li>
+                    </ul>
+
+                    <p class="text-sm text-gray-800 font-medium border-t pt-3">US$ 102.00 Your earnings
+                        (including taxes)</p>
+                </div>
+
+            
+            </div>
+
+            <!-- Discount and Tip 2 -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+               <!-- Discount card -->
+<div x-data="{ showDiscount: false }" class="md:col-span-2 bg-white border rounded-lg p-6 shadow-sm space-y-3">
+
+  <!-- Checkbox -->
+  <label class="inline-flex items-center">
+    <input type="checkbox" class="form-checkbox text-blue-600 rounded-md"
+           @change="showDiscount = !showDiscount" />
+    <span class="ml-2 font-medium text-gray-700 font-semibold">
+      Get guests’ attention with a 20% discount
+    </span>
+  </label>
+
+  <!-- Description -->
+  <p class="text-sm text-gray-600">
+    Give 20% off your first 3 bookings or for 90 days, whichever comes first.
+    <a href="#" class="text-blue-600 underline">Learn more</a>
+  </p>
+
+  <!-- Conditional discount section -->
+  <template x-if="showDiscount">
+    <div>
+      <hr class="my-4">
+      <p class="text-sm text-gray-800">
+        <del class="text-gray-500">US$ 120.00</del>
+        <span class="text-green-600 font-semibold">US$ 96.00 per night</span>
+      </p>
+    </div>
+  </template>
+</div>
+
+
+                <!-- Tip Box 2 (separate column) -->
+                <div x-show="showTip2"
+                    class="relative bg-white border rounded-lg p-4 shadow-sm text-sm text-gray-700">
+                    <button @click="showTip2 = false"
+                        class="absolute top-2 right-3 text-gray-500 font-semibold mb-2">✕</button>
+                    <div class="flex items-center mb-2">
+                        <img src="{{ asset('assets/material-symbols-light_info-outline.svg') }}"
+                            alt="Tip Icon" class="w-6 h-6 mr-2">
+                        <strong>Rules for setting up a promotion</strong>
+                    </div>
+                    <p>
+                        Make sure you're giving a genuine discount. It must represent a real discount in line
+                        with consumer protection rules.
+                        <a href="#" class="text-blue-600 underline">Learn More</a>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="flex mt-1">
+                <button type="button" @click="step > 1 ? step-- : step"
+                    :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
+                    class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
+                    ←
+                </button>
+                <button type="button" @click="step < 9 ? step++ : step"
+                    class="ml-auto px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300 ml-[402px]">
+                    Continue
+                </button>
+            </div>
+
+        </div>
+    </div>
         </template>
 
 
@@ -943,22 +943,26 @@
                                     <img src="{{ asset('assets/material-symbols-light_info-outline.svg') }}"
                                         alt="Tip Icon" class="w-5 h-5">
                                 </div>
-                                <p class="text-xs text-gray-500">
+                                <p class="text-xs text-gray-500 mb-4">
                                     This policy is set at the property level – any changes made will be applied to all
                                     rooms.
                                 </p>
+                                  
                             </div>
+                            
+   <a href="{{ route('partner.hotels.cancel.policies') }}">
+                            
                             <button @click="$refs.section1.scrollIntoView({ behavior: 'smooth' })"
                                 class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">
                                 Edit
-                            </button>
+                            </button></a>
                         </div>
                         <hr class="my-4">
                         <ul class="text-gray-900 text-sm space-y-2">
                             <li class="flex items-start gap-2">
                                 <img src="{{ asset('assets/teenyicons_tick-circle-outline.svg') }}" alt="Tick"
                                     class="w-4 h-4 mt-1">
-                                <span>Guests can cancel their bookings for free up to 1 day before their arrival</span>
+                                <span>Guests can cancel their bookings for free before 18:00 on the day of arrival. The guests will be charged cost of the first night if they cancel after this.</span>
                             </li>
                             <li class="flex items-start gap-2">
                                 <img src="{{ asset('assets/teenyicons_tick-circle-outline.svg') }}" alt="Tick"
@@ -977,11 +981,20 @@
                                 <h3 class="text-base font-semibold text-gray-700">Price per group size</h3>
                                 <img src="{{ asset('assets/material-symbols-light_info-outline.svg') }}"
                                     alt="Tip Icon" class="w-5 h-5">
+                           
                             </div>
-                            <button
-                                class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">Edit</button>
-                        </div>
 
+   <a href="{{ route('partner.hotels.price.per.group') }}">
+    <button class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">
+        Edit
+    </button>
+</a>
+
+
+                                
+                      
+                            </div>
+                            
                         <hr class="my-4">
                         <table class="table-auto border-separate border-spacing-x-2 w-full text-left text-gray-700">
                             <tbody>
@@ -997,7 +1010,7 @@
                                             <span>x 2</span>
                                         </div>
                                     </td>
-                                    <td class="py-2 text-sm">US$ 30.00</td>
+                                    <td class="py-2 text-sm">US$ 20.00</td>
                                 </tr>
                                 <tr>
                                     <td class="py-2">
@@ -1007,7 +1020,7 @@
                                             <span>x 1</span>
                                         </div>
                                     </td>
-                                    <td class="py-2 text-sm">US$ 27.00</td>
+                                    <td class="py-2 text-sm">US$ 20.00</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -1018,18 +1031,19 @@
 
                 </div>
 
-                <h2 class="text-xl font-semibold text-gray-800">Standard rate plan</h2>
+                <h2 class="text-xl font-semibold text-gray-800">Non-refundable rate plan</h2>
 
                 <!-- Second Rate Plan -->
                 <div class="bg-white border rounded-lg p-4 shadow-sm">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center gap-2">
-                            <h3 class="text-base font-semibold text-gray-700">Cancellation policy</h3>
+                            <h3 class="text-base font-semibold text-gray-700">Price and cancellation policy</h3>
                             <img src="{{ asset('assets/material-symbols-light_info-outline.svg') }}" alt="Tip Icon"
                                 class="w-5 h-5">
                         </div>
+                        <a href="{{ route('partner.hotels.non.refundable.rate') }}">
                         <button
-                            class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">Edit</button>
+                            class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">Edit</button></a>
                     </div>
                     <hr class="my-4">
                     <ul class="text-gray-900 text-sm space-y-2">
@@ -1046,33 +1060,32 @@
                     </ul>
                 </div>
 
-                <h2 class="text-xl font-semibold text-gray-800">Standard rate plan</h2>
+                <h2 class="text-xl font-semibold text-gray-800">Weekly rate plan</h2>
 
                 <!-- Third Rate Plan -->
                 <div class="bg-white border rounded-lg p-4 shadow-sm">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center gap-2">
-                            <h3 class="text-base font-semibold text-gray-700">Cancellation policy</h3>
+                            <h3 class="text-base font-semibold text-gray-700">Price and cancellation policy</h3>
                             <img src="{{ asset('assets/material-symbols-light_info-outline.svg') }}" alt="Tip Icon"
                                 class="w-5 h-5">
                         </div>
+                          <a href="{{ route('partner.hotels.weekly.rate') }}">
                         <button
-                            class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">Edit</button>
+                            class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">Edit</button></a>
                     </div>
+                        
                     <hr class="my-4">
                     <ul class="text-gray-900 text-sm space-y-2">
                         <li class="flex items-start gap-2">
                             <img src="{{ asset('assets/teenyicons_tick-circle-outline.svg') }}" alt="Tick"
                                 class="w-4 h-4 mt-1">
-                            <span>Guests will pay 15% less than the standard rate when they book for at least 7
-                                nights</span>
+                            <span>Guests will pay 15% less than the standard rate when they book for at least 7 nights</span>
                         </li>
                         <li class="flex items-start gap-2">
                             <img src="{{ asset('assets/teenyicons_tick-circle-outline.svg') }}" alt="Tick"
                                 class="w-4 h-4 mt-1">
-                            <span>Guests can cancel their bookings for free before 18:00 on the day of arrival. The
-                                guests will be charged cost of the first night if they cancel after this (based on the
-                                standard rate cancellation policy).</span>
+                            <span>Guests can cancel their bookings for free before 18:00 on the day of arrival. The guests will be charged cost of the first night if they cancel after this (based on the standard rate cancellation policy).</span>
                         </li>
                     </ul>
                 </div>
@@ -1105,6 +1118,5 @@
 
     </div>
 
-</body>
-
-</html>
+</div>
+@endsection

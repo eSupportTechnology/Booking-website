@@ -210,10 +210,11 @@
                     <!-- Buttons -->
                     <template x-if="step === 2">
                         <div class="space-y-2">
-                            <button @click="step++"
-                                class="w-full bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded">
-                                Continue
-                            </button>
+                           <button @click="finalContinue"
+    class="w-full bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded">
+    Continue
+</button>
+
                             <button @click="step--"
                                 class="w-full border border-[#3CC0E9] text-[#3CC0E9] hover:bg-[#29ACD5]font-semibold py-2 px-4 rounded mb-6">
                                 No, I need to make a change
@@ -282,18 +283,32 @@
                     return 'One property in the same location where guests can book an entire apartment';
               }
             },
-            get categoryHeadingDescriptionMultiple() {
-              switch (this.category) {
-                 case 'campsite':
-                     return 'Multiple campsites in the same location where guests can book an entire place';
-                 case 'boat':
-                     return 'Multiple boats in the same location where guests can book the entire place';
-                 case 'luxury_tent':
-                     return 'Multiple luxury tents at the same location where guests can book the entire place';
-                 default:
-                     return 'Multiple properties available for guests';
-              }
-            },
+           get categoryHeadingDescriptionMultiple() {
+    if (this.sameAddress === 'no') {
+        switch (this.category) {
+            case 'campsite':
+                return 'Multiple campsites at different locations where guests can book an entire place';
+            case 'boat':
+                return 'Multiple boats at different locations where guests can book the entire place';
+            case 'luxury_tent':
+                return 'Multiple luxury tents at different locations where guests can book the entire place';
+            default:
+                return 'Multiple properties at different locations available for guests';
+        }
+    } else {
+        switch (this.category) {
+            case 'campsite':
+                return 'Multiple campsites in the same location where guests can book an entire place';
+            case 'boat':
+                return 'Multiple boats in the same location where guests can book the entire place';
+            case 'luxury_tent':
+                return 'Multiple luxury tents at the same location where guests can book the entire place';
+            default:
+                return 'Multiple properties available for guests';
+        }
+    }
+},
+
 
             finalContinue() {
               let route = '';
@@ -303,7 +318,7 @@
             } else if (this.category === 'boat' && this.selected === 'multiple') {
                 route = '/partner/boat/multiple';
             } else if (this.category === 'campsite' && this.selected === 'one') {
-                route = '/partner/campsite/one';
+                route = '/partner/alternative/Single/Campsite';
             } else if (this.category === 'campsite' && this.selected === 'multiple') {
                 route = '/partner/campsite/multiple';
             } else if (this.category === 'luxury_tent' && this.selected === 'one') {

@@ -1,10 +1,22 @@
+@extends('layouts.app')
+
+@section('title', 'Partner Multiple Apartment')
+
 @php
     $amenities = $amenities ?? [];
 @endphp
-<!DOCTYPE html>
-<html lang="en"     x-data="{ 
+
+<script>
+    // Set languages data globally
+    window.languagesData = {{ Js::from($languages ?? []) }};
+</script>
+
+@section('content')
+<div x-data="{ 
     step: 1, 
     selectedBox: null,
+    
+
     // Amenities
     selectedAmenities: [],
     // Facilities
@@ -62,6 +74,38 @@
     // Channel manager data
     channelManager: 'yes',
     
+    // Toast system
+    toast: {
+        show: false,
+        message: '',
+        type: 'success', // success, error, warning, info
+        timeout: null
+    },
+    
+    // Toast methods
+    showToast(message, type = 'success', duration = 3000) {
+        this.toast.message = message;
+        this.toast.type = type;
+        this.toast.show = true;
+        
+        // Clear existing timeout
+        if (this.toast.timeout) {
+            clearTimeout(this.toast.timeout);
+        }
+        
+        // Auto hide after duration
+        this.toast.timeout = setTimeout(() => {
+            this.toast.show = false;
+        }, duration);
+    },
+    
+    hideToast() {
+        this.toast.show = false;
+        if (this.toast.timeout) {
+            clearTimeout(this.toast.timeout);
+        }
+    },
+    
     // Verification data
     verificationType: '',
     individualData: {
@@ -100,6 +144,7 @@
             
             if (response.ok) {
                 console.log('Property name saved successfully');
+                this.showToast('Property name saved successfully!', 'success');
                 this.step = Math.min(this.step + 1, 13);
             } else {
                 console.error('Failed to save property name');
@@ -133,6 +178,7 @@
             
             if (response.ok) {
                 console.log('Booking option saved successfully');
+                this.showToast('Booking option saved successfully!', 'success');
                 this.step = Math.min(this.step + 1, 13);
             } else {
                 console.error('Failed to save booking option');
@@ -170,19 +216,26 @@
             if (response.ok) {
                 const data = await response.json();
                 console.log('Address saved successfully:', data);
+                this.showToast('Address saved successfully!', 'success');
                 this.step = Math.min(this.step + 1, 13);
             } else {
                 console.error('Failed to save address');
                 const errorData = await response.json();
-                alert('Error: ' + (errorData.message || 'Failed to save address'));
+                this.showToast('Error: ' + (errorData.message || 'Failed to save address'), 'error');
             }
         } catch (error) {
             console.error('Error saving address:', error);
-            alert('An error occurred while saving the address.');
+            this.showToast('An error occurred while saving the address.', 'error');
         }
     },
     
     async saveLanguages() {
+        // Check if any languages are selected
+        if (!this.selectedLanguages || this.selectedLanguages.length === 0) {
+            this.showToast('Please select at least one language before continuing.', 'warning');
+            return;
+        }
+        
         try {
             const propertyId = @json($property->id ?? 'new');
             const response = await fetch(`/partner/property/${propertyId}/languages`, {
@@ -199,6 +252,7 @@
             
             if (response.ok) {
                 console.log('Languages saved successfully');
+                this.showToast('Languages saved successfully!', 'success');
                 this.step = Math.min(this.step + 1, 13);
             } else {
                 console.error('Failed to save languages');
@@ -284,11 +338,11 @@
             } else {
                 console.error('Failed to save channel manager');
                 const errorData = await response.json();
-                alert('Error: ' + (errorData.message || 'Failed to save channel manager'));
+                this.showToast('Error: ' + (errorData.message || 'Failed to save channel manager'), 'error');
             }
         } catch (error) {
             console.error('Error saving channel manager:', error);
-            alert('An error occurred while saving the channel manager.');
+            this.showToast('An error occurred while saving the channel manager.', 'error');
         }
     },
     
@@ -313,11 +367,11 @@
             } else {
                 console.error('Failed to save amenities');
                 const errorData = await response.json();
-                alert('Error: ' + (errorData.message || 'Failed to save amenities'));
+                this.showToast('Error: ' + (errorData.message || 'Failed to save amenities'), 'error');
             }
         } catch (error) {
             console.error('Error saving amenities:', error);
-            alert('An error occurred while saving the amenities.');
+            this.showToast('An error occurred while saving the amenities.', 'error');
         }
     },
     
@@ -342,11 +396,11 @@
             } else {
                 console.error('Failed to save facilities');
                 const errorData = await response.json();
-                alert('Error: ' + (errorData.message || 'Failed to save facilities'));
+                this.showToast('Error: ' + (errorData.message || 'Failed to save facilities'), 'error');
             }
         } catch (error) {
             console.error('Error saving facilities:', error);
-            alert('An error occurred while saving the facilities.');
+            this.showToast('An error occurred while saving the facilities.', 'error');
         }
     },
     
@@ -402,28 +456,298 @@
     },
 
     async loadLanguages() {
+        console.log('Loading languages...');
         try {
-            const propertyId = @json($property->id ?? 'new');
-            const response = await fetch(`/partner/property/${propertyId}/languages`, {
+            const response = await fetch('/partner/languages', {
                 method: 'GET',
                 headers: {
-                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
                 }
             });
             
+            console.log('Languages API response status:', response.status);
+            
             if (response.ok) {
                 const data = await response.json();
-                if (data.success && data.languages) {
-                    this.selectedLanguages = data.languages;
-                    console.log('Languages loaded successfully:', data.languages);
-                }
+                console.log('Languages API response data:', data);
+                this.availableLanguages = data || [];
+                this.filteredLanguages = this.availableLanguages;
+                console.log('Languages loaded from database: ' + this.availableLanguages.length);
+                console.log('Available languages after loading:', this.availableLanguages);
+                
+                // Clear selected languages to prevent ID mismatches
+                this.selectedLanguages = [];
+                console.log('Cleared selected languages to prevent ID mismatches');
             } else {
-                console.error('Failed to load languages');
+                console.log('Failed to load languages from database, using fallback');
+                console.log('Response not ok, status:', response.status);
+                // Use hardcoded languages as fallback
+                this.availableLanguages = [
+                    { id: 1, name: 'English' },
+                    { id: 2, name: 'Spanish' },
+                    { id: 3, name: 'French' },
+                    { id: 4, name: 'German' },
+                    { id: 5, name: 'Italian' },
+                    { id: 6, name: 'Portuguese' },
+                    { id: 7, name: 'Dutch' },
+                    { id: 8, name: 'Russian' },
+                    { id: 9, name: 'Chinese' },
+                    { id: 10, name: 'Japanese' },
+                    { id: 11, name: 'Korean' },
+                    { id: 12, name: 'Thai' },
+                    { id: 13, name: 'Vietnamese' },
+                    { id: 14, name: 'Turkish' },
+                    { id: 15, name: 'Greek' },
+                    { id: 16, name: 'Hebrew' },
+                    { id: 17, name: 'Polish' },
+                    { id: 18, name: 'Swedish' },
+                    { id: 19, name: 'Norwegian' },
+                    { id: 20, name: 'Finnish' },
+                    { id: 21, name: 'Hungarian' },
+                    { id: 22, name: 'Romanian' },
+                    { id: 23, name: 'Ukrainian' },
+                    { id: 24, name: 'Indonesian' },
+                    { id: 25, name: 'Malay' },
+                    { id: 26, name: 'Tagalog' },
+                    { id: 27, name: 'Swahili' },
+                    { id: 28, name: 'Urdu' },
+                    { id: 29, name: 'Bengali' },
+                    { id: 30, name: 'Tamil' },
+                    { id: 31, name: 'Telugu' },
+                    { id: 32, name: 'Marathi' },
+                    { id: 33, name: 'Gujarati' },
+                    { id: 34, name: 'Punjabi' },
+                    { id: 35, name: 'Kannada' },
+                    { id: 36, name: 'Malayalam' },
+                    { id: 37, name: 'Sinhala' },
+                    { id: 38, name: 'Hindi' },
+                    { id: 39, name: 'Arabic' },
+                    { id: 40, name: 'Bulgarian' },
+                    { id: 41, name: 'Catalan' },
+                    { id: 42, name: 'Croatian' },
+                    { id: 43, name: 'Czech' },
+                    { id: 44, name: 'Danish' }
+                ];
+                this.filteredLanguages = this.availableLanguages;
+                console.log('Using fallback languages: ' + this.availableLanguages.length);
+                
+                // Clear selected languages to prevent ID mismatches
+                this.selectedLanguages = [];
+                console.log('Cleared selected languages to prevent ID mismatches');
             }
         } catch (error) {
+            console.log('Error loading languages: ' + error);
             console.error('Error loading languages:', error);
+            // Use hardcoded languages as fallback
+            this.availableLanguages = [
+                { id: 1, name: 'English' },
+                { id: 2, name: 'Spanish' },
+                { id: 3, name: 'French' },
+                { id: 4, name: 'German' },
+                { id: 5, name: 'Italian' },
+                { id: 6, name: 'Portuguese' },
+                { id: 7, name: 'Dutch' },
+                { id: 8, name: 'Russian' },
+                { id: 9, name: 'Chinese' },
+                { id: 10, name: 'Japanese' },
+                { id: 11, name: 'Korean' },
+                { id: 12, name: 'Thai' },
+                { id: 13, name: 'Vietnamese' },
+                { id: 14, name: 'Turkish' },
+                { id: 15, name: 'Greek' },
+                { id: 16, name: 'Hebrew' },
+                { id: 17, name: 'Polish' },
+                { id: 18, name: 'Swedish' },
+                { id: 19, name: 'Norwegian' },
+                { id: 20, name: 'Finnish' },
+                { id: 21, name: 'Hungarian' },
+                { id: 22, name: 'Romanian' },
+                { id: 23, name: 'Ukrainian' },
+                { id: 24, name: 'Indonesian' },
+                { id: 25, name: 'Malay' },
+                { id: 26, name: 'Tagalog' },
+                { id: 27, name: 'Swahili' },
+                { id: 28, name: 'Urdu' },
+                { id: 29, name: 'Bengali' },
+                { id: 30, name: 'Tamil' },
+                { id: 31, name: 'Telugu' },
+                { id: 32, name: 'Marathi' },
+                { id: 33, name: 'Gujarati' },
+                { id: 34, name: 'Punjabi' },
+                { id: 35, name: 'Kannada' },
+                { id: 36, name: 'Malayalam' },
+                { id: 37, name: 'Sinhala' },
+                { id: 38, name: 'Hindi' },
+                { id: 39, name: 'Arabic' },
+                { id: 40, name: 'Bulgarian' },
+                { id: 41, name: 'Catalan' },
+                { id: 42, name: 'Croatian' },
+                { id: 43, name: 'Czech' },
+                { id: 44, name: 'Danish' }
+            ];
+            this.filteredLanguages = this.availableLanguages;
+            console.log('Using fallback languages: ' + this.availableLanguages.length);
+            
+            // Clear selected languages to prevent ID mismatches
+            this.selectedLanguages = [];
+            console.log('Cleared selected languages to prevent ID mismatches');
         }
+    },
+
+    filterLanguages() {
+        if (!this.searchTerm.trim()) {
+            this.filteredLanguages = this.availableLanguages;
+        } else {
+            this.filteredLanguages = this.availableLanguages.filter(language =>
+                language.name.toLowerCase().includes(this.searchTerm.toLowerCase())
+            );
+        }
+        console.log('Filtered languages: ' + this.filteredLanguages.length + ' results');
+    },
+
+    selectLanguage(languageId, languageName) {
+        console.log('Selecting language: ' + languageId + ', ' + languageName);
+        
+        // Ensure languageId is a number
+        const numericId = parseInt(languageId);
+        if (isNaN(numericId)) {
+            console.error('Invalid language ID:', languageId);
+            return;
+        }
+        
+        if (!this.selectedLanguages.includes(numericId)) {
+            this.selectedLanguages.push(numericId);
+            console.log('Language added with ID: ' + numericId);
+        }
+        this.showDropdown = false;
+    },
+
+    removeLanguage(languageId) {
+        console.log('Removing language: ' + languageId);
+        
+        // Ensure languageId is a number
+        const numericId = parseInt(languageId);
+        if (isNaN(numericId)) {
+            console.error('Invalid language ID for removal:', languageId);
+            return;
+        }
+        
+        const index = this.selectedLanguages.indexOf(numericId);
+        if (index > -1) {
+            this.selectedLanguages.splice(index, 1);
+            console.log('Language removed with ID: ' + numericId);
+        }
+    },
+
+    getLanguageName(languageId) {
+        console.log('Getting language name for ID:', languageId);
+        console.log('Available languages:', this.availableLanguages);
+        
+        // Ensure languageId is a number
+        const numericId = parseInt(languageId);
+        if (isNaN(numericId)) {
+            console.error('Invalid language ID for name lookup:', languageId);
+            return 'Unknown';
+        }
+        
+        // First try to find in availableLanguages
+        if (this.availableLanguages && this.availableLanguages.length > 0) {
+            const language = this.availableLanguages.find(l => l.id === numericId);
+            console.log('Found language in availableLanguages:', language);
+            if (language) {
+                return language.name;
+            }
+        }
+        
+        // Fallback to window.languagesData if available
+        if (window.languagesData && window.languagesData.length > 0) {
+            const language = window.languagesData.find(l => l.id === numericId);
+            console.log('Found language in window.languagesData:', language);
+            if (language) {
+                return language.name;
+            }
+        }
+        
+        // Hardcoded fallback for common languages
+        const commonLanguages = {
+            1: 'English',
+            2: 'Spanish', 
+            3: 'French',
+            4: 'German',
+            5: 'Italian',
+            6: 'Portuguese',
+            7: 'Dutch',
+            8: 'Russian',
+            9: 'Chinese',
+            10: 'Japanese',
+            11: 'Korean',
+            12: 'Thai',
+            13: 'Vietnamese',
+            14: 'Turkish',
+            15: 'Greek',
+            16: 'Hebrew',
+            17: 'Polish',
+            18: 'Swedish',
+            19: 'Norwegian',
+            20: 'Finnish',
+            21: 'Hungarian',
+            22: 'Romanian',
+            23: 'Ukrainian',
+            24: 'Indonesian',
+            25: 'Malay',
+            26: 'Tagalog',
+            27: 'Swahili',
+            28: 'Urdu',
+            29: 'Bengali',
+            30: 'Tamil',
+            31: 'Telugu',
+            32: 'Marathi',
+            33: 'Gujarati',
+            34: 'Punjabi',
+            35: 'Kannada',
+            36: 'Malayalam',
+            37: 'Sinhala',
+            38: 'Hindi',
+            39: 'Arabic',
+            40: 'Bulgarian',
+            41: 'Catalan',
+            42: 'Croatian',
+            43: 'Czech',
+            44: 'Danish'
+        };
+        
+        if (commonLanguages[numericId]) {
+            console.log('Found language in hardcoded fallback:', commonLanguages[numericId]);
+            return commonLanguages[numericId];
+        }
+        
+        console.warn('Language not found for ID:', numericId);
+        return 'Unknown';
+    },
+
+    getLanguageIdByName(languageName) {
+        console.log('Getting language ID for name:', languageName);
+        console.log('Available languages:', this.availableLanguages);
+        
+        const language = this.availableLanguages.find(l => l.name === languageName);
+        console.log('Found language for name:', language);
+        
+        return language ? language.id : null;
+    },
+
+    isLanguageSelected(languageId) {
+        // Ensure languageId is a number
+        const numericId = parseInt(languageId);
+        if (isNaN(numericId)) {
+            return false;
+        }
+        return this.selectedLanguages.includes(numericId);
+    },
+
+    toggleAdditionalLanguages() {
+        this.showAdditionalLanguages = !this.showAdditionalLanguages;
+        console.log('Toggled additional languages: ' + this.showAdditionalLanguages);
     },
 
     async loadVerificationData() {
@@ -755,7 +1079,43 @@
     }
 }" class="max-w-3xl mx-auto lg:ml-32 px-4 py-8 space-y-6">
 
-    
+    <!-- Toast Notification -->
+    <div x-show="toast.show" 
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 transform translate-y-2"
+         x-transition:enter-end="opacity-100 transform translate-y-0"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100 transform translate-y-0"
+         x-transition:leave-end="opacity-0 transform translate-y-2"
+         class="fixed top-4 right-4 z-50 max-w-sm w-full">
+        <div :class="{
+            'bg-green-500 text-white': toast.type === 'success',
+            'bg-red-500 text-white': toast.type === 'error',
+            'bg-yellow-500 text-white': toast.type === 'warning',
+            'bg-blue-500 text-white': toast.type === 'info'
+        }" class="rounded-lg shadow-lg p-4 flex items-center justify-between">
+            <div class="flex items-center">
+                <svg x-show="toast.type === 'success'" class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                </svg>
+                <svg x-show="toast.type === 'error'" class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                </svg>
+                <svg x-show="toast.type === 'warning'" class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                </svg>
+                <svg x-show="toast.type === 'info'" class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                </svg>
+                <span x-text="toast.message" class="text-sm font-medium"></span>
+            </div>
+            <button @click="hideToast()" class="ml-4 text-white hover:text-gray-200">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
 
     <!-- Step 1 - Welcome -->
     <template x-if="step === 1">
@@ -1307,200 +1667,132 @@
 
 
 <template x-if="step === 6">
-   <div>
-                                                        <div class="container mx-auto px-4 py-8 max-w-6xl">
-                                                            <!-- Header -->
-                                                            <h2 class="text-2xl font-bold mb-8 text-left">
-                                                                What languages do you or your staff speak?
-                                                            </h2>
+  <div class="max-w-4xl mx-auto space-y-8 lg:ml-32" x-init="loadLanguages()">
+    <div class="container ml-24 px-4 py-8 max-w-2xl">
+      <!-- Header -->
+      <h2 class="text-2xl font-bold mb-8 text-left">
+        What languages do you or your staff speak?
+      </h2>
+      <!-- Language Selection Section -->
+      <div class="bg-white shadow-md rounded-lg p-6 mb-8">
+        <h3 class="text-lg mb-4 font-bold">Select languages</h3>
+        
+        <!-- Common Languages (hardcoded for quick selection) -->
+        <div class="space-y-2 mb-4" x-show="availableLanguages.length > 0">
+          <template x-for="commonLang in ['English', 'French', 'German', 'Hindi']" :key="commonLang">
+            <label class="flex items-center cursor-pointer">
+              <input 
+                type="checkbox" 
+                class="mr-2" 
+                :value="getLanguageIdByName(commonLang)"
+                x-model="selectedLanguages" 
+                :disabled="!getLanguageIdByName(commonLang)"
+              />
+              <span x-text="commonLang"></span>
+            </label>
+          </template>
+        </div>
+        
+        <!-- Loading indicator for languages -->
+        <div x-show="availableLanguages.length === 0" class="text-sm text-gray-500 mb-4">
+          Loading languages...
+        </div>
 
-                                                            <!-- Language Selection Section -->
-                                                            <div class="bg-white shadow-md rounded-lg p-6 mb-8">
-                                                                <h3 class="text-lg  mb-4 font-bold">Select languages
-                                                                </h3>
-                                                                <div class="space-y-2">
-                                                                    <!-- Main Languages -->
-                                                                    @php
-                                                                        $mainLanguages = ['English', 'French', 'German', 'Hindi', 'Spanish', 'Italian'];
-                                                                        $mainLanguageIds = [];
-                                                                        $additionalLanguages = [];
-                                                                        
-                                                                        foreach($languages as $language) {
-                                                                            if (in_array($language['name'], $mainLanguages)) {
-                                                                                $mainLanguageIds[] = $language['id'];
-                                                                            } else {
-                                                                                $additionalLanguages[] = $language;
-                                                                            }
-                                                                        }
-                                                                    @endphp
-                                                                    
-                                                                    @foreach($languages as $language)
-                                                                        @if(in_array($language['name'], $mainLanguages))
-                                                                        <label class="flex items-center cursor-pointer">
-                                                                            <input type="checkbox" x-model="selectedLanguages" value="{{ $language['id'] }}" class="mr-2" />
-                                                                            <span>{{ $language['name'] }}</span>
-                                                                        </label>
-                                                                        @endif
-                                                                    @endforeach
-                                                                </div>
-
-                                                                <!-- Add Additional Languages -->
-                                                                <div id="additionalLanguagesSection"
-                                                                    class="mt-4 hidden relative">
-                                                                    <h3 class="text-lg font-medium mb-2 ">Add
-                                                                        additional languages</h3>
-
-                                                                    <!-- Searchable dropdown container -->
-                                                                    <div class="relative w-full max-w-md">
-                                                                        <input type="text" id="languageInput"
-                                                                            oninput="filterDropdown()"
-                                                                            onclick="toggleDropdown()"
-                                                                            placeholder="Search languages..."
-                                                                            autocomplete="off"
-                                                                            class="w-full border rounded p-2 pr-10 cursor-pointer"
-                                                                            readonly />
-                                                                        <!-- Dropdown arrow -->
-                                                                        <button type="button"
-                                                                            onclick="toggleDropdown()"
-                                                                            class="absolute right-2 top-2.5 text-gray-600 hover:text-gray-900 focus:outline-none"
-                                                                            tabindex="-1">
-                                                                            ▼
-                                                                        </button>
-
-                                                                        <!-- Dropdown list -->
-                                                                        <ul id="languageDropdown"
-                                                                            class="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded max-h-40 overflow-auto shadow-lg hidden">
-                                                                            @foreach($additionalLanguages as $language)
-                                                                            <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                                                onclick="selectLanguage(this, {{ $language['id'] }}, '{{ $language['name'] }}')"
-                                                                                data-id="{{ $language['id'] }}"
-                                                                                data-name="{{ $language['name'] }}">
-                                                                                {{ $language['name'] }}
-                                                                            </li>
-                                                                            @endforeach
-                                                                        </ul>
-                                                                    </div>
-                                                                </div>
-
-                                                                <!-- Toggle Button for Additional Languages -->
-                                                                <a href="#"
-                                                                    onclick="event.preventDefault(); toggleAdditionalLanguages();"
-                                                                    class="text-blue-500 hover:underline mt-4 block">
-                                                                    Add additional languages
-                                                                </a>
-                                                                
-                                                                <!-- Selected Additional Languages Display -->
-                                                                <div x-show="selectedLanguages.length > 0" class="mt-4">
-                                                                    <h4 class="text-sm font-medium text-gray-700 mb-2">Selected Additional Languages:</h4>
-                                                                    <div class="flex flex-wrap gap-2">
-                                                                        <template x-for="langId in selectedLanguages" :key="langId">
-                                                                            <template x-if="!['1', '2', '3', '4', '5', '6'].includes(langId.toString())">
-                                                                                <div class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm flex items-center">
-                                                                                    <span x-text="getLanguageName(langId)"></span>
-                                                                                    <button @click="removeLanguage(langId)" class="ml-1 text-blue-600 hover:text-blue-800">×</button>
-                                                                                </div>
-                                                                            </template>
-                                                                        </template>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-
-                                                            <!-- Navigation Buttons -->
-                                                            <div class="mt-8 flex justify-between">
-                                                                <!-- Back Button on the left -->
-                                                                <button type="button"  @click="step = Math.max(step - 1, 1)"
-                                                                    class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
-                                                                    ←
-                                                                </button>
-
-                                                                <!-- Continue Button on the right -->
-                                                                <button type="button"    @click="saveLanguages()"
-                                                                    class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
-                                                                    Continue
-                                                                </button>
-                                                            </div>
-
-                                                        </div>
-
-                                                        <script>
-                                                            // Set languages data globally
-                                                            window.languagesData = {{ Js::from($languages) }};
-                                                            
-
-                                                            function toggleAdditionalLanguages() {
-                                                                const section = document.getElementById("additionalLanguagesSection");
-                                                                section.classList.toggle("hidden");
-                                                                if (!section.classList.contains("hidden")) {
-                                                                    document.getElementById("languageInput").focus();
-                                                                    showDropdown();
-                                                                } else {
-                                                                    hideDropdown();
-                                                                }
-                                                            }
-
-                                                            function toggleDropdown() {
-                                                                const dropdown = document.getElementById("languageDropdown");
-                                                                dropdown.classList.toggle("hidden");
-                                                            }
-
-                                                            function showDropdown() {
-                                                                document.getElementById("languageDropdown").classList.remove("hidden");
-                                                            }
-
-                                                            function hideDropdown() {
-                                                                document.getElementById("languageDropdown").classList.add("hidden");
-                                                            }
-
-                                                            function filterDropdown() {
-                                                                const input = document.getElementById("languageInput");
-                                                                const filter = input.value.toLowerCase();
-                                                                const ul = document.getElementById("languageDropdown");
-                                                                const items = ul.getElementsByTagName("li");
-                                                                ul.classList.remove("hidden");
-                                                                let visibleCount = 0;
-                                                                for (let i = 0; i < items.length; i++) {
-                                                                    const txtValue = items[i].textContent || items[i].innerText;
-                                                                    if (txtValue.toLowerCase().indexOf(filter) > -1) {
-                                                                        items[i].style.display = "";
-                                                                        visibleCount++;
-                                                                    } else {
-                                                                        items[i].style.display = "none";
-                                                                    }
-                                                                }
-                                                                // Hide dropdown if no matches
-                                                                if (visibleCount === 0) {
-                                                                    ul.classList.add("hidden");
-                                                                }
-                                                            }
-
-                                                            function selectLanguage(element, languageId, languageName) {
-                                                                const input = document.getElementById("languageInput");
-                                                                input.value = languageName;
-                                                                hideDropdown();
-                                                                
-                                                                // Add the language to selectedLanguages if not already selected
-                                                                const mainData = Alpine.$data(document.querySelector('[x-data*="step"]'));
-                                                                if (mainData && !mainData.selectedLanguages.includes(languageId)) {
-                                                                    mainData.selectedLanguages.push(languageId);
-                                                                    console.log('Language added:', languageName, 'ID:', languageId);
-                                                                    console.log('Selected languages:', mainData.selectedLanguages);
-                                                                }
-                                                            }
-
-                                                            // Close dropdown when clicking outside
-                                                            document.addEventListener("click", function(event) {
-                                                                const dropdown = document.getElementById("languageDropdown");
-                                                                const input = document.getElementById("languageInput");
-                                                                const container = document.getElementById("additionalLanguagesSection");
-                                                                if (
-                                                                    container && !container.contains(event.target)
-                                                                ) {
-                                                                    hideDropdown();
-                                                                }
-                                                            });
-                                                        </script>
-                                                    </div>
+        <!-- Selected Languages Display -->
+        <template x-if="selectedLanguages.length > 0">
+          <div class="mb-4">
+            <h4 class="text-sm font-semibold text-gray-700 mb-2">Selected languages:</h4>
+            <div class="flex flex-wrap gap-2">
+              <template x-for="langId in selectedLanguages" :key="langId">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800">
+                  <span x-text="getLanguageName(langId)"></span>
+                  <button 
+                    @click="removeLanguage(langId)"
+                    class="ml-2 text-blue-600 hover:text-blue-800"
+                    type="button"
+                  >
+                    ×
+                  </button>
+                </span>
+              </template>
+            </div>
+          </div>
+        </template>
+        
+        <!-- Add Additional Languages -->
+        <div x-show="showAdditionalLanguages" class="mt-4 relative">
+          <h3 class="text-lg font-medium mb-2">Add additional languages</h3>
+          <!-- Searchable dropdown container -->
+          <div class="relative w-full max-w-md">
+            <input
+              type="text"
+              x-model="searchTerm"
+              @input="filterLanguages()"
+              @focus="showDropdown = true"
+              @click="showDropdown = true"
+              placeholder="Search languages..."
+              autocomplete="off"
+              class="w-full border rounded p-2 pr-10 cursor-pointer"
+            />
+            <!-- Dropdown arrow -->
+            <button
+              type="button"
+              @click="showDropdown = !showDropdown"
+              class="absolute right-2 top-2.5 text-gray-600 hover:text-gray-900 focus:outline-none"
+              tabindex="-1"
+            >
+              ▼
+            </button>
+            <!-- Dropdown list -->
+            <ul
+              x-show="showDropdown && filteredLanguages.length > 0"
+              x-transition
+              class="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded max-h-40 overflow-auto shadow-lg"
+              @click.away="showDropdown = false"
+            >
+              <template x-for="language in filteredLanguages" :key="language.id">
+                <li 
+                  @click="selectLanguage(language.id, language.name)"
+                  class="p-2 hover:bg-blue-100 cursor-pointer"
+                  :class="{ 'bg-gray-100 text-gray-500': isLanguageSelected(language.id) }"
+                  x-text="language.name"
+                ></li>
+              </template>
+            </ul>
+          </div>
+        </div>
+        
+        <!-- Toggle Button for Additional Languages -->
+        <button
+          type="button"
+          @click="toggleAdditionalLanguages()"
+          class="text-blue-500 hover:underline mt-4 block"
+        >
+          <span x-text="showAdditionalLanguages ? 'Hide additional languages' : 'Add additional languages'"></span>
+        </button>
+      </div>
+      
+      <!-- Navigation Buttons -->
+      <div class="mt-8 flex justify-between">
+        <!-- Back Button on the left -->
+        <button
+          type="button" @click="step = Math.max(step - 1, 1)"
+          class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+          ←
+        </button>
+        <!-- Continue Button on the right -->
+        <button
+          type="button"
+          @click="saveLanguages()"
+          class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300"
+        >
+          Continue
+        </button>
+      </div>
+    </div>
+  </div>
 </template>
+
     <template x-if="step === 7">
      <div x-data="{ 
          petPolicy: 'no',
@@ -2290,7 +2582,14 @@ You will be able to add more apartments or duplicate this one when you finish fi
                                 if (propertyId) {
                                     window.location.href = `/partner/multiple-apartment-2/${propertyId}`;
                                 } else {
-                                    alert('Please complete all steps before continuing.');
+                                    // Find the main Alpine component and show toast
+                                    const mainComponent = document.querySelector('[x-data*="step"]');
+                                    if (mainComponent) {
+                                        const mainData = Alpine.$data(mainComponent);
+                                        if (mainData && mainData.showToast) {
+                                            mainData.showToast('Please complete all steps before continuing.', 'warning');
+                                        }
+                                    }
                                 }
                             }
                             // Function to save languages data
@@ -2541,18 +2840,24 @@ You will be able to add more apartments or duplicate this one when you finish fi
                                         })
                                         .catch(error => {
                                             console.error('Error saving services:', error);
-                                            alert('Error saving services: ' + error);
+                                            alpineData.showToast('Error saving services: ' + error, 'error');
                                         });
                                 } else if (alpineData.step === 6 && propertyId) {
                                     console.log('Saving languages on step 6');
                                     saveLanguages(propertyId)
                                         .then(result => {
                                             console.log('Languages saved:', result);
+                                            console.log('Current step before update:', alpineData.step);
                                             alpineData.step = Math.min(alpineData.step + 1, 13);
+                                            console.log('Step updated to:', alpineData.step);
+                                            // Force Alpine.js to re-render
+                                            setTimeout(() => {
+                                                console.log('Step after timeout:', alpineData.step);
+                                            }, 100);
                                         })
                                         .catch(error => {
                                             console.error('Error saving languages:', error);
-                                            alert('Error saving languages: ' + error);
+                                            alpineData.showToast('Error saving languages: ' + error, 'error');
                                         });
                                 } else if (alpineData.step === 7 && propertyId) {
                                     console.log('Saving house rules on step 7');
@@ -2754,10 +3059,22 @@ You will be able to add more apartments or duplicate this one when you finish fi
                                             verificationData.full_name = `${step11Data.individual.firstName} ${step11Data.individual.lastName}`.trim();
                                             verificationData.national_id = step11Data.individual.dob; // Using DOB as national_id for now
                                             // Add owners array for individual
+                                            // Validate and format the date
+                                            let dobValue = null;
+                                            if (step11Data.individual.dob && step11Data.individual.dob !== '1') {
+                                                // Check if it's a valid date format
+                                                const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+                                                if (dateRegex.test(step11Data.individual.dob)) {
+                                                    dobValue = step11Data.individual.dob;
+                                                } else {
+                                                    console.warn('Invalid date format:', step11Data.individual.dob);
+                                                }
+                                            }
+                                            
                                             verificationData.owners = [{
                                                 first_name: step11Data.individual.firstName,
                                                 last_name: step11Data.individual.lastName,
-                                                dob: step11Data.individual.dob
+                                                dob: dobValue
                                             }];
                                         }
                                     } else if (step11Data.ownershipType === 'business') {
@@ -2767,16 +3084,32 @@ You will be able to add more apartments or duplicate this one when you finish fi
                                             verificationData.registration_number = step11Data.business.address; // Using address as registration_number for now
                                             // Add owners array for business if available
                                             if (step11Data.business.owners && step11Data.business.owners.length > 0) {
-                                                verificationData.owners = step11Data.business.owners.map(owner => ({
-                                                    first_name: owner.firstName,
-                                                    last_name: owner.lastName,
-                                                    dob: owner.dob
-                                                }));
+                                                verificationData.owners = step11Data.business.owners.map(owner => {
+                                                    // Validate and format the date for each owner
+                                                    let dobValue = null;
+                                                    if (owner.dob && owner.dob !== '1') {
+                                                        // Check if it's a valid date format
+                                                        const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+                                                        if (dateRegex.test(owner.dob)) {
+                                                            dobValue = owner.dob;
+                                                        } else {
+                                                            console.warn('Invalid date format for owner:', owner.dob);
+                                                        }
+                                                    }
+                                                    
+                                                    return {
+                                                        first_name: owner.firstName,
+                                                        last_name: owner.lastName,
+                                                        dob: dobValue
+                                                    };
+                                                });
                                             }
                                         }
                                     }
                                     
                                     console.log('Final verification data to be sent:', verificationData);
+                                    console.log('Individual DOB value:', step11Data.individual?.dob);
+                                    console.log('Individual DOB type:', typeof step11Data.individual?.dob);
                                     
                                     const response = await fetch(`/partner/store-verification`, {
                                         method: 'POST',
@@ -2805,4 +3138,5 @@ You will be able to add more apartments or duplicate this one when you finish fi
 
 
                         </script>
-                        </html>
+                    </div>
+@endsection

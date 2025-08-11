@@ -278,15 +278,41 @@
           const propertyId = '{{ $property->id ?? 'new' }}';
           const wizardState = '{{ request('wizardState') }}';
           
-          if (source === 'multiple') {
-            window.location.href = `/partner/multiple-apartment-2/${propertyId}`;
-          } else if (source === 'single') {
-            // Return with wizard state preservation
-            const returnUrl = `/partner/property/apartment/step2/${propertyId}?step=${step}&returnFromBedroom=true&wizardState=${encodeURIComponent(wizardState)}`;
-            window.location.href = returnUrl;
+          // Get wizard state from URL parameters
+          const urlParams = new URLSearchParams(window.location.search);
+          const wizardStateParam = urlParams.get('wizardState');
+          
+          if (wizardStateParam) {
+            try {
+              const wizardState = JSON.parse(decodeURIComponent(wizardStateParam));
+              console.log('Wizard state found:', wizardState);
+              
+              // Navigate back to the original form with the wizard state
+              const returnUrl = `/partner-apartment-create-2?wizardState=${encodeURIComponent(wizardStateParam)}&step=${wizardState.step || 2}`;
+              console.log('Redirecting to:', returnUrl);
+              window.location.href = returnUrl;
+            } catch (error) {
+              console.error('Error parsing wizard state:', error);
+              // Fallback to original logic
+              if (source === 'multiple') {
+                window.location.href = `/partner/multiple-apartment-2/${propertyId}`;
+              } else if (source === 'single') {
+                const returnUrl = `/partner/property/apartment/step2/${propertyId}?step=${step}&returnFromBedroom=true&wizardState=${encodeURIComponent(wizardState)}`;
+                window.location.href = returnUrl;
+              } else {
+                window.history.back();
+              }
+            }
           } else {
-            // Fallback to browser back
-            window.history.back();
+            // Fallback to original logic if no wizard state
+            if (source === 'multiple') {
+              window.location.href = `/partner/multiple-apartment-2/${propertyId}`;
+            } else if (source === 'single') {
+              const returnUrl = `/partner/property/apartment/step2/${propertyId}?step=${step}&returnFromBedroom=true&wizardState=${encodeURIComponent(wizardState)}`;
+              window.location.href = returnUrl;
+            } else {
+              window.history.back();
+            }
           }
         },
         
@@ -510,10 +536,17 @@
             } else {
               // Creating new bedroom - calculate next number from backend rooms data
               const backendRooms = @json($rooms ?? []);
+              console.log('Backend rooms data:', backendRooms);
               let nextBedroomNumber = 1;
+              
+              // Check if this is explicitly a create action
+              const urlParams = new URLSearchParams(window.location.search);
+              const action = urlParams.get('action');
+              const isCreateAction = action === 'create';
               
               if (backendRooms && Object.keys(backendRooms).length > 0) {
                 const bedroomKeys = Object.keys(backendRooms).filter(key => key.startsWith('bedroom'));
+                console.log('Bedroom keys found:', bedroomKeys);
                 
                 if (bedroomKeys.length > 0) {
                   const bedroomNumbers = bedroomKeys
@@ -523,12 +556,32 @@
                     })
                     .filter(num => num > 0);
                   
+                  console.log('Bedroom numbers found:', bedroomNumbers);
+                  
                   if (bedroomNumbers.length > 0) {
-                    nextBedroomNumber = Math.max(...bedroomNumbers) + 1;
+                    // Check if we have a gap in the sequence (e.g., missing Bedroom 1)
+                    const sortedNumbers = bedroomNumbers.sort((a, b) => a - b);
+                    let nextNumber = 1;
+                    
+                    // Find the first missing number in the sequence
+                    for (let i = 0; i < sortedNumbers.length; i++) {
+                      if (sortedNumbers[i] !== nextNumber) {
+                        nextBedroomNumber = nextNumber;
+                        break;
+                      }
+                      nextNumber++;
+                    }
+                    
+                    // If no gaps found, use the next number after the highest
+                    if (nextBedroomNumber === 1) {
+                      nextBedroomNumber = Math.max(...bedroomNumbers) + 1;
+                    }
                   }
                 }
               }
               
+              console.log('Calculated next bedroom number:', nextBedroomNumber);
+              console.log('Is create action:', isCreateAction);
               roomName = 'Bedroom ' + nextBedroomNumber;
             }
                 
