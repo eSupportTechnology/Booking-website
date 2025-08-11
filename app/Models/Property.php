@@ -109,5 +109,13 @@ class Property extends Model
         return $this->hasOne(PropertyAvailabilitySetting::class);
     }
 
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
 
+    public function hostReviews()
+    {
+        return $this->hasMany(HostReview::class);
+    }
 }
