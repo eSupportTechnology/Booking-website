@@ -38,7 +38,7 @@ class Property extends Model
     {
         return $this->hasMany(PropertyPhoto::class);
     }
-    
+
     public function files()
     {
         return $this->hasMany(File::class);
@@ -114,5 +114,13 @@ class Property extends Model
         return $this->hasOne(CancellationPolicy::class);
     }
 
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
 
+    public function hostReviews()
+    {
+        return $this->hasMany(HostReview::class);
+    }
 }
