@@ -28,25 +28,26 @@
                 <div class="bg-white p-6 rounded-lg shadow">
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         <!-- Limit subcategories shown unless showMore is true -->
+                         
                         <template x-for="(subcategory, index) in showMore ? subcategories : subcategories.slice(0, 6)"
                             :key="subcategory.id">
                             <div @click="selectedBox = subcategory.id"
-                                :class="selectedBox === subcategory.id ? 'border-2 border-blue-500 bg-blue-50' :
-                                    'border border-gray-300'"
+                                :class="selectedBox === subcategory.id ? 'border-2 border-blue-500 bg-blue-50' : 'border border-gray-300'"
                                 class="block rounded p-4 cursor-pointer transition bg-white relative">
                                 <div>
                                     <h3 class="font-semibold text-gray-900 mb-2" x-text="subcategory.name"></h3>
-                                    <p class="text-sm text-gray-700">Choose this type</p>
+                                    <p class="text-sm text-gray-700"
+                                    x-text="subcategoryDescriptions[subcategory.id] || 'Choose this type'"></p>
                                 </div>
                                 <div class="absolute top-2 right-2" x-show="selectedBox === subcategory.id">
-                                    <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
+                                    <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M5 13l4 4L19 7" />
                                     </svg>
                                 </div>
                             </div>
                         </template>
+
 
                         <!-- Show More / Less Button -->
                         <div @click="showMore = !showMore"
@@ -174,24 +175,45 @@
 
             <template x-if="step === 4">
                 <form @submit.prevent="submitStep4">
-                    <div class="space-y-4">
-                        <label class="block">
-                            Property Title:
-                            <input type="text" x-model="formData.title" class="w-full border rounded p-2">
-                        </label>
-                        <label class="block">
-                            Description:
-                            <textarea x-model="formData.description" class="w-full border rounded p-2"></textarea>
-                        </label>
-                    </div>
+                    <div class="space-y-6">
+                        <h3 class="text-xl font-bold">Name Your Property</h3>
 
-                    <div class="flex justify-between mt-6">
-                        <button type="button" @click="step = 3" class="border text-blue-600 py-2 px-4 rounded">
-                            ← Back
-                        </button>
-                        <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded">
-                            Continue
-                        </button>
+                        <div>
+                            <label for="propertyTitle" class="block text-sm font-medium text-gray-700 mb-1">Property Name</label>
+                            <div class="relative rounded-md shadow-sm">
+                                <input
+                                    id="propertyTitle"
+                                    type="text"
+                                    x-model="formData.title"
+                                    placeholder="e.g., Ocean View Apartment"
+                                    class="pl-4 pr-4 py-2 border border-gray-300 rounded-md w-full focus:ring-blue-500 focus:border-blue-500" />
+                            </div>
+                            <p class="text-sm text-gray-500 mt-1">Choose a name that helps guests identify your property.</p>
+
+                            <textarea
+                                id="description"
+                                x-model="formData.description"
+                                class="pl-4 pr-4 py-2 border border-gray-300 rounded-md w-full focus:ring-blue-500 focus:border-blue-500"
+                                name="description"
+                                rows="4"
+                                placeholder="Enter your property description here..."></textarea>
+
+                            <p class="text-sm text-gray-500 mt-1">Provide a brief description of your property.</p>
+                        </div>
+
+                        <div class="flex justify-between pt-4">
+                            <button type="button"
+                                @click="step = 3"
+                                class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium px-5 py-2 rounded">
+                                ←
+                            </button>
+
+                            <button
+                                type="submit"
+                                class="bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold px-6 py-2 rounded shadow">
+                                Continue →
+                            </button>
+                        </div>
                     </div>
                 </form>
             </template>
@@ -1090,6 +1112,24 @@
                 subtypes: [],
                 subcategories: @json($subcategories),
                 showMore: false,
+                subcategoryDescriptions: {
+                    3: 'Accommodation for travellers often offering restaurants, meeting rooms and other guest services',
+                    4: 'Private home with separate living facilities for host and guest',
+                    5: 'Private home offering overnight stays and breakfast',
+                    6: 'Private home with shared living facilities for host and guest',
+                    7: 'Budget accommodation with mostly dorm-style bedding and a social atmosphere',
+                    8: 'A self-catering apartment with some hotel facilities like a reception desk',
+                    9: 'Extremely small units or capsules offering cheap and basic overnight accommodation',
+                    10: 'Private home with simple accommodation in the countryside',
+                    11: 'Private farm with simple accommodation',
+                    12: 'Small and basic accommodation with a rustic feel',
+                    13: 'Adult-only accommodation rented per hour or night',
+                    14: 'Roadside hotel usually for motorists, with direct access to parking and little to no amenities',
+                    15: 'A place for relaxation with onsite restaurants, activities and often with a luxury feel',
+                    16: 'Traditional Moroccan accommodation with a courtyard and luxury feel',
+                    17: 'Traditional Japanese-style accommodation with meal options',
+                    18: 'Private home with accommodation surrounded by nature, such as mountains or forest',
+                },
 
                 property: {
                     address: '',
@@ -1142,9 +1182,21 @@
                         this.propertyId = data.property_id;
                         this.step = 2;
                         this.fetchSubtypes(this.selectedBox);
-                        alert(data.message || 'Property created successfully');
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Property created successfully!',
+                            showConfirmButton: false
+                        });
                     } catch (error) {
-                        alert('Error: ' + error.message);
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'error',
+                            title: 'Failed to create property',
+                            showConfirmButton: false
+                        })
                     }
                 },
 
@@ -1160,7 +1212,13 @@
 
                 async submitStep2() {
                     if (!this.unitType || !this.propertyId) {
-                        alert('Please select a unit type');
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'error',
+                            title: 'Missing required fields',
+                            showConfirmButton: false
+                        });
                         return;
                     }
 
@@ -1180,15 +1238,44 @@
 
                         const data = await response.json();
                         this.step = 3;
-                        alert(data.message || 'Step 2 saved successfully');
+                        if(response.ok) {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'Address type saved successfully!',
+                                showConfirmButton: false
+                            });
+                        }else {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'error',
+                                title: 'Failed to save address type',
+                                showConfirmButton: false
+                            });
+                        }
+                      
                     } catch (error) {
-                        alert('Error submitting step 2: ' + error.message);
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'error',
+                            title: 'Failed to save address type',
+                            showConfirmButton: false
+                        });
                     }
                 },
 
                 async submitStep3() {
                     if (!this.propertyId) {
-                        alert('Property ID missing!');
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'error',
+                            title: 'Missing required fields',
+                            showConfirmButton: false
+                        });
                         return;
                     }
 
@@ -1208,7 +1295,13 @@
                         this.step = 4;
 
                     } catch (error) {
-                        alert('Error submitting step 3: ' + error.message);
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'error',
+                            title: 'Failed to save address type',
+                            showConfirmButton: false
+                        });
                     }
                 },
 
@@ -1228,10 +1321,22 @@
                         const result = await response.json();
 
                         if (response.ok) {
-                            alert(result.message || 'Step 4 saved successfully');
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'Property name saved successfully!',
+                                showConfirmButton: false
+                            })
                             this.step = 5; // Move to next step if needed
                         } else {
-                            alert(result.message || 'Something went wrong while saving step 4.');
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'error',
+                                title: 'Failed to save step 4',
+                                showConfirmButton: false
+                            });
                         }
                     } catch (error) {
                         console.error('Error submitting step 4:', error);
@@ -1251,7 +1356,23 @@
                             body: JSON.stringify(this.property),
                         });
 
-                        if (!response.ok) throw new Error('Failed to save step 5');
+                        if (response.ok) {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'Property address saved successfully!',
+                                showConfirmButton: false
+                            })
+                        }else {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'error',
+                                title: 'Failed to save address',
+                                showConfirmButton: false
+                            });
+                        }
 
                         const data = await response.json();
 
@@ -1276,7 +1397,23 @@
                             body: JSON.stringify(this.property),
                         });
 
-                        if (!response.ok) throw new Error('Failed to save step 6');
+                        if (response.ok) {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'Property channel saved successfully!',
+                                showConfirmButton: false
+                            })
+                        }else {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'error',
+                                title: 'Failed to save channel',
+                                showConfirmButton: false
+                            });
+                        }
 
                         const data = await response.json();
 
@@ -1302,7 +1439,23 @@
                             body: JSON.stringify(this.property),
                         });
 
-                        if (!response.ok) throw new Error('Failed to save step 7');
+                        if (response.ok) {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'Property rating saved successfully!',
+                                showConfirmButton: false
+                            })
+                        }else {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'error',
+                                title: 'Failed to save rating',
+                                showConfirmButton: false
+                            });
+                        }
 
                         const data = await response.json();
 
@@ -1340,10 +1493,22 @@
                         const result = await response.json();
 
                         if (result.success) {
-                            console.log('Amenities saved:', result);
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'Amenities saved successfully!',
+                                showConfirmButton: false
+                            });
                             this.step = 9; // go to next step
                         } else {
-                            alert('Failed to save amenities: ' + result.message);
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'error',
+                                title: 'Failed to save amenities',
+                                showConfirmButton: false
+                            });
                         }
                     } catch (e) {
                         console.error('Error saving amenities:', e);
@@ -1362,7 +1527,23 @@
                             body: JSON.stringify(this.property),
                         });
 
-                        if (!response.ok) throw new Error('Failed to save step 9');
+                        if (response.ok) {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'Service details saved successfully!',
+                                showConfirmButton: false
+                            });
+                        }else {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'error',
+                                title: 'Failed to save service details',
+                                showConfirmButton: false
+                            });
+                        }
 
                         const data = await response.json();
 
@@ -1400,10 +1581,22 @@
                         const result = await response.json();
 
                         if (result.success) {
-                            console.log('Languages saved:', result);
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'Languages saved successfully!',
+                                showConfirmButton: false
+                            })
                             this.step = 11; // go to next step
                         } else {
-                            alert('Failed to save Languages: ' + result.message);
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'error',
+                                title: 'Failed to save languages',
+                                showConfirmButton: false
+                            })
                         }
                     } catch (e) {
                         console.error('Error saving Languages:', e);
