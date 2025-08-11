@@ -11,6 +11,7 @@
         const details = urlParams.get('details');
         const rooms = urlParams.get('rooms');
         const paymentDetails = urlParams.get('paymentDetails');
+        console.log('paymentDetails param:', paymentDetails);
         const detailsLink = document.getElementById('detailsEditLink');
         const detailsIcon = document.getElementById('detailsStatusIcon');
         const photoLink = document.getElementById('photoEditLink');
@@ -72,6 +73,27 @@
             // }        
 
         }
+//         const paymentEditLinkBtn = document.querySelector('#payment-edit-link-btn');
+// const finalicon = document.querySelector('#final-icon');
+
+// console.log('paymentEditLinkBtn:', paymentEditLinkBtn);
+// console.log('finalicon:', finalicon);
+
+        if (paymentDetails === 'true') {
+        if (paymentEditLinkBtn) {
+            paymentEditLinkBtn.innerText = "Edit";
+            paymentEditLinkBtn.className = "text-sky-600 font-medium text-sm hover:underline";
+        } else {
+            console.warn('paymentEditLinkBtn element NOT found');
+        }
+        if (finalicon) {
+            finalicon.src = "{{ asset('assets/flat-color-icons_ok.svg') }}";
+            finalicon.className = "w-6 h-6 md:w-7 md:h-7";
+        } else {
+            console.warn('finalicon element NOT found');
+        }
+        }
+
 
         if (rooms === 'true') {
             if (roomsStatusIcon) {
