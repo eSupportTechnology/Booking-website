@@ -1,6 +1,6 @@
 @extends('partner.partner-layout')
 
-@section('title', ' Hotels Edit | ' . config('domains.app_name'))
+@section('title', 'Hotels Edit | ' . config('domains.app_name'))
 
 @section('content')
 
@@ -11,6 +11,7 @@
         const details = urlParams.get('details');
         const rooms = urlParams.get('rooms');
         const paymentDetails = urlParams.get('paymentDetails');
+        console.log('paymentDetails param:', paymentDetails);
         const detailsLink = document.getElementById('detailsEditLink');
         const detailsIcon = document.getElementById('detailsStatusIcon');
         const photoLink = document.getElementById('photoEditLink');
@@ -28,7 +29,7 @@
 
         photoLink.href = `/partner-homes-images/${propertyId}?details=true&propertyType=${encodeURIComponent(propertyType)}`;
         roomsEditLink.href = `/partner-homes-rooms/${propertyId}?details=true&propertyType=${encodeURIComponent(propertyType)}`;
-        paymenEditLink.href = `/partner-homes-payments/${propertyId}?propertyType=${encodeURIComponent(propertyType)}`;
+        paymenEditLink.href = `/partner/partner-hotels-payment/${propertyId}?propertyType=${encodeURIComponent(propertyType)}`;
         if (uploaded === 'true') {
             // Update the icon (optional - if not already done)
             if (icon) {
@@ -72,6 +73,27 @@
             // }        
 
         }
+//         const paymentEditLinkBtn = document.querySelector('#payment-edit-link-btn');
+// const finalicon = document.querySelector('#final-icon');
+
+// console.log('paymentEditLinkBtn:', paymentEditLinkBtn);
+// console.log('finalicon:', finalicon);
+
+        if (paymentDetails === 'true') {
+        if (paymentEditLinkBtn) {
+            paymentEditLinkBtn.innerText = "Edit";
+            paymentEditLinkBtn.className = "text-sky-600 font-medium text-sm hover:underline";
+        } else {
+            console.warn('paymentEditLinkBtn element NOT found');
+        }
+        if (finalicon) {
+            finalicon.src = "{{ asset('assets/flat-color-icons_ok.svg') }}";
+            finalicon.className = "w-6 h-6 md:w-7 md:h-7";
+        } else {
+            console.warn('finalicon element NOT found');
+        }
+        }
+
 
         if (rooms === 'true') {
             if (roomsStatusIcon) {
@@ -95,16 +117,10 @@
             return;
         }
 
-        const form = document.getElementById('editForm');
-        form.action = actionUrl;
-        document.getElementById('formPropertyId').value = propertyId;
-        document.getElementById('formSubtypeId').value = subtypeId;
 
-        detailsLink.addEventListener('click', () => {
-            form.submit();
-        })
-
+      
         completeRegistrationBtn.addEventListener('click', () => {
+            console.log('Navigating to complete registration page for property ID:', propertyId);
             window.location.href = `/partner-homes-complete-registration/${propertyId}?propertyType=${encodeURIComponent(propertyType)}`;
         })
 
@@ -132,10 +148,9 @@
                             more</p>
                     </div>
                 </div>
-                <a href="{{ route('partner.hotels.create.2') }}"
+                <a href="{{ route('partner.hotels.create.1') }}"
                     class="text-sky-600 font-medium text-sm hover:underline">Edit</a>
-                <button id="detailsEditLink"
-                    class="text-sky-600 font-medium text-sm hover:underline">Edit</button>
+
             </div>
 
             <div class="border border-gray-300 rounded-lg p-4 flex flex-col gap-6">
@@ -155,50 +170,55 @@
 
                 </div>
 
-                <!-- Room Card -->
-                <div class="space-y-4 ">
+                <!-- Room Cards Container -->
+                <div class="space-y-4">
+                    @foreach ($rooms as $roomTypeId => $roomGroup)
+                    @php
+                    $firstRoom = $roomGroup->first();
+                    @endphp
 
-                    <!-- Room Card 1 -->
-                    <div
-                        class="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 border border-gray-200 rounded-lg shadow-sm bg-gray-100 ">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 border border-gray-200 rounded-lg shadow-sm bg-gray-100">
                         <!-- Room Image -->
                         <img src="{{ asset('images/room.jpg') }}" alt="Room Image"
                             class="w-24 h-24 object-cover rounded-md" />
 
-                        <!-- Horizontal Info Table -->
+                        <!-- Info Table -->
                         <div class="flex-1 overflow-x-auto">
-                            <p class="text-sm text-gray-600 font-semibold mb-2">Double Room</p>
-                            <table class="w-full text-xs b">
+                            <p class="text-sm text-gray-600 font-semibold mb-2">{{ $firstRoom->name }}</p>
+                            <table class="w-full text-xs">
                                 <thead>
                                     <tr class="text-gray-500 text-left whitespace-nowrap">
                                         <th class="pr-6 border-r border-gray-300">Guests</th>
                                         <th class="pr-6 border-r border-gray-300">Beds</th>
                                         <th class="pr-6 border-r border-gray-300">Bathroom</th>
                                         <th class="pr-6 border-r border-gray-300">Price</th>
-                                        <th class="pr-6 ">Rooms of this type</th>
+                                        <th class="pr-6">Rooms of this type</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr class="text-gray-800 text-xs">
-                                        <td class="pr-6 border-r border-gray-300">3</td>
-                                        <td class="pr-6 border-r border-gray-300">1</td>
-                                        <td class="pr-6 border-r border-gray-300">private</td>
-                                        <td class="pr-6 border-r border-gray-300">$20</td>
-                                        <td class="pr-6 border-gray-300">2</td>
+                                        <td class="pr-6 border-r border-gray-300">{{ $firstRoom->max_guests }}</td>
+                                        <td class="pr-6 border-r border-gray-300">{{ $firstRoom->bed_type }}</td>
+                                        <td class="pr-6 border-r border-gray-300">{{ $firstRoom->bathroom_type }}</td>
+                                        <td class="pr-6 border-r border-gray-300">
+                                            {{ $firstRoom->currency }} {{ $firstRoom->price_per_night }}
+                                        </td>
+                                        <td class="pr-6">{{ $roomGroup->count() }}</td>
                                     </tr>
                                 </tbody>
                             </table>
-
                         </div>
 
                         <!-- Actions -->
-                        <div class="flex gap-3 mt-4 sm:mt-0">
-                            <button class="text-sky-600 text-sm hover:underline">Edit</button>
-                            <button class="text-red-600 text-sm hover:underline">Delete</button>
+                        <div class="flex items-center gap-4">
+                            <a href="#"
+                                class="text-sky-600 font-medium text-sm hover:underline">Edit</a>
+                            <button class="text-red-600 font-medium danger text-sm hover:underline">Delete</button>
                         </div>
                     </div>
-
+                    @endforeach
                 </div>
+
 
                 <!-- Add Another Room -->
                 <div class="text-right">
@@ -227,7 +247,7 @@
                             expect.</p>
                     </div>
                 </div>
-              
+
                 <a id="photoEditLink" href="#"
                     class="mt-4 text-sky-600 text-sm font-semibold px-4 py-2 rounded border border-sky-300 hover:bg-sky-100">Add photos</a>
 
@@ -246,7 +266,7 @@
                     </div>
                 </div>
 
-        
+
                 <a id="paymentEditLink" href="#">
                     <button id="paymentEditLinkBtn" class=" bg-sky-400 border border-sky-400 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-sky-500">
                         Add final details

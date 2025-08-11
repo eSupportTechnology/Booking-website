@@ -31,7 +31,7 @@
                          
                         <template x-for="(subcategory, index) in showMore ? subcategories : subcategories.slice(0, 6)"
                             :key="subcategory.id">
-                            <div @click="selectedBox = subcategory.id"
+                            <div @click="selectedBox = subcategory.id,subtypeName = subcategory.name"
                                 :class="selectedBox === subcategory.id ? 'border-2 border-blue-500 bg-blue-50' : 'border border-gray-300'"
                                 class="block rounded p-4 cursor-pointer transition bg-white relative">
                                 <div>
@@ -75,7 +75,7 @@
             <!-- STEP 2 -->
             <div x-show="step === 2" x-cloak class="container mx-auto px-2 py-8 max-w-6xl mt-8">
                 <div class="bg-white max-w-2xl w-full p-6 rounded-lg shadow space-y-6">
-                    <h2 class="text-xl font-bold text-left">How many hotels are you listing?</h2>
+                    <h2 class="text-xl font-bold text-left">How many <span x-text="subtypeName.toLowerCase()"></span>s are you listing?</h2>
 
                     <div class="space-y-4">
                         <label :class="unitType === 'one' ? 'border-blue-500 border-2' : 'border-gray-300'"
@@ -83,7 +83,7 @@
                             <div class="flex justify-between items-center">
                                 <div class="flex items-center space-x-4">
                                     <img src="{{ asset('images/aprt-b.png') }}" class="w-14 h-10" />
-                                    <span class="text-base">One hotel with one or multiple rooms</span>
+                                    <span class="text-base">One <span x-text="subtypeName.toLowerCase()"></span> with one or multiple rooms</span>
                                 </div>
                                 <template x-if="unitType === 'one'">
                                     <span class="text-blue-500 font-bold text-xl">✔</span>
@@ -96,7 +96,7 @@
                             <div class="flex justify-between items-center">
                                 <div class="flex items-center space-x-4">
                                     <img src="{{ asset('images/aprt-a.png') }}" class="w-14 h-10" />
-                                    <span class="text-base">Multiple hotels with rooms</span>
+                                    <span class="text-base">Multiple <span x-text="subtypeName.toLowerCase()"></span>s with rooms</span>
                                 </div>
                                 <template x-if="unitType === 'multiple'">
                                     <span class="text-blue-500 font-bold text-xl">✔</span>
@@ -173,7 +173,7 @@
                 </template>
             </div>
 
-            <template x-if="step === 4">
+            <!-- <template x-if="step === 4">
                 <form @submit.prevent="submitStep4">
                     <div class="space-y-6">
                         <h3 class="text-xl font-bold">Name Your Property</h3>
@@ -216,7 +216,7 @@
                         </div>
                     </div>
                 </form>
-            </template>
+            </template> -->
 
             <template x-if="step === 5">
                 <form @submit.prevent="submitStep5">
@@ -409,6 +409,15 @@
                         <div class="max-w-2xl ml-40 px-4 py-8  bg-white  rounded shadow mt-10">
                             <h1 class="text-2xl font-bold mb-6">Tell us about your hotel</h1>
 
+                            <!-- Hotel Name -->
+                            <div class="mb-6">
+                                <label class="block font-medium text-gray-800 mb-1" for="hotelName">What's the name of your hotel?</label>
+                                <input type="text" id="hotelName" placeholder="Property name"
+                                    x-model="property.title"
+                                    class="w-full border rounded px-4 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-200" />
+                                <p class="text-xs text-gray-500 mt-1">This name will be seen by guests when they search for a place to stay.</p>
+                            </div>
+                            
                             <hr class="my-6" />
 
                             <!-- Star Rating -->
@@ -938,149 +947,144 @@
             </template>
 
             <template x-if="step === 11">
-                <form @submit.prevent="submitStep11">
-                    <div>
-                        <div class="container ml-32 px-4 py-8 max-w-4xl">
-                            <!-- Header -->
-                            <h2 class="text-2xl font-bold mb-8 text-left">House rules</h2>
+                <div>
+                    <div class="container ml-32 px-4 py-8 max-w-4xl">
+                        <!-- Header -->
+                        <h2 class="text-2xl font-bold mb-8 text-left">House rules</h2>
 
-                            <div class="flex flex-col md:flex-row gap-6">
-                                <!-- Left Section -->
-                                <div class="bg-white shadow-md rounded-lg p-6 w-full md:w-2/3">
-                                    <!-- Toggle Switches -->
-                                    <div class="space-y-4">
-                                        <label class="flex items-center justify-between cursor-pointer">
-                                            <span>Smoking allowed</span>
-                                            <div class="relative">
-                                                <input type="checkbox" class="sr-only peer"
-                                                    x-model="property.smoking_allowed" />
-                                                <div
-                                                    class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition">
-                                                </div>
-                                                <div
-                                                    class="absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-4">
-                                                </div>
-                                            </div>
+                        <div class="flex flex-col md:flex-row gap-6">
+                            <!-- Left Section -->
+                            <div class="bg-white shadow-md rounded-lg p-6 w-full md:w-2/3">
+                                
+                                <!-- Check-in -->
+                                <div class="mt-6">
+                                    <h3 class="text-base font-semibold mb-4">What are your check-in and check-out times?</h3>
+                                    <h3 class="text-base font-semibold mb-2">Check in</h3>
+                                    <div class="flex space-x-4">
+                                        <div class="w-full">
+                                            <label class="block text-sm font-medium mb-1">From</label>
+                                            <input type="time" x-model="property.check_in_from" class="w-full border rounded p-2" />
+                                        </div>
+                                        <div class="w-full">
+                                            <label class="block text-sm font-medium mb-1">Until</label>
+                                            <input type="time" x-model="property.check_in_until" class="w-full border rounded p-2" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Check-out -->
+                                <div class="mt-6">
+                                    <h3 class="text-base font-semibold mb-2">Check out</h3>
+                                    <div class="flex space-x-4">
+                                        <div class="w-full">
+                                            <label class="block text-sm font-medium mb-1">From</label>
+                                            <input type="time" x-model="property.check_out_from" class="w-full border rounded p-2" />
+                                        </div>
+                                        <div class="w-full">
+                                            <label class="block text-sm font-medium mb-1">Until</label>
+                                            <input type="time" x-model="property.check_out_until" class="w-full border rounded p-2" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <hr class="my-6 border-t border-gray-300">
+
+                                <!-- Allow Children Section -->
+                                <div class="mb-6">
+                                    <label class="block font-semibold text-base text-gray-800 mb-2">Do you allow children?</label>
+                                    <div class="space-y-2 text-sm text-gray-700">
+                                        <label class="flex items-center gap-2">
+                                            <input type="radio" name="allowChildren" value="yes" x-model="property.children_allowed" />
+                                            Yes
                                         </label>
-
-                                        <label class="flex items-center justify-between cursor-pointer">
-                                            <span>Children allowed</span>
-                                            <div class="relative">
-                                                <input type="checkbox" class="sr-only peer"
-                                                    x-model="property.children_allowed" />
-                                                <div
-                                                    class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition">
-                                                </div>
-                                                <div
-                                                    class="absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-4">
-                                                </div>
-                                            </div>
-                                        </label>
-
-                                        <label class="flex items-center justify-between cursor-pointer">
-                                            <span>Parties/events allowed</span>
-                                            <div class="relative">
-                                                <input type="checkbox" class="sr-only peer"
-                                                    x-model="property.parties_allowed" />
-                                                <div
-                                                    class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition">
-                                                </div>
-                                                <div
-                                                    class="absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-4">
-                                                </div>
-                                            </div>
+                                        <label class="flex items-center gap-2">
+                                            <input type="radio" name="allowChildren" value="no" x-model="property.children_allowed" />
+                                            No
                                         </label>
                                     </div>
+                                </div>
 
-                                    <hr class="my-6 border-t border-gray-300">
-                                    <!-- Pet Policy -->
-                                    <div class="mt-6">
-                                        <h3 class="text-base font-semibold mb-2">Do you allow pets?</h3>
-                                        <div class="space-y-2">
-                                            <label class="flex items-center cursor-pointer">
-                                                <input type="radio" name="pets_allowed" value="yes"
-                                                    x-model="property.pets_allowed" class="mr-2">
-                                                <span>Yes</span>
-                                            </label>
-                                            <label class="flex items-center cursor-pointer">
-                                                <input type="radio" name="pets_allowed" value="upon_request"
-                                                    x-model="property.pets_allowed" class="mr-2">
-                                                <span>Upon request</span>
-                                            </label>
-                                            <label class="flex items-center cursor-pointer">
-                                                <input type="radio" name="pets_allowed" value="no"
-                                                    x-model="property.pets_allowed" class="mr-2">
-                                                <span>No</span>
-                                            </label>
-                                        </div>
+                                <!-- Pet Policy -->
+                                <div class="mt-6">
+                                    <h3 class="text-base font-semibold mb-2">Do you allow pets?</h3>
+                                    <div class="space-y-2">
+                                        <label class="flex items-center cursor-pointer">
+                                            <input type="radio" name="pets" value="yes" x-model="property.pets_allowed" class="mr-2">
+                                            <span>Yes</span>
+                                        </label>
+                                        <label class="flex items-center cursor-pointer">
+                                            <input type="radio" name="pets" value="upon_request" x-model="property.pets_allowed" class="mr-2">
+                                            <span>Upon request</span>
+                                        </label>
+                                        <label class="flex items-center cursor-pointer">
+                                            <input type="radio" name="pets" value="no" x-model="property.pets_allowed" class="mr-2">
+                                            <span>No</span>
+                                        </label>
                                     </div>
-
-
-                                    <div class="mt-6">
-                                        <h3 class="text-base font-semibold mb-2">Are there additional fees for pets?
-                                        </h3>
-                                        <div class="space-y-2">
-                                            <label class="flex items-center cursor-pointer">
-                                                <input type="radio" name="pets_fees" value="free"
-                                                    x-model="pets_fees" class="mr-2">
-                                                <span>Pets can stay for free</span>
-                                            </label>
-                                            <label class="flex items-center cursor-pointer">
-                                                <input type="radio" name="pets_fees" value="fees"
-                                                    x-model="pets_fees" class="mr-2">
-                                                <span>Fees may apply</span>
-                                            </label>
-                                        </div>
+                                    
+                                    <!-- Conditional Field -->
+                                    <div x-show="property.pets_allowed === 'yes' || property.pets_allowed === 'upon_request'" x-transition class="mt-4 space-y-2">
+                                        <label class="block text-base font-semibold mb-1">Are there additional charges for pets?</label>
+                                        <label class="flex items-center cursor-pointer">
+                                            <input type="radio" name="pet_charges" value="free" x-model="property.pets_fees" class="mr-2">
+                                            <span>Pets can stay for free</span>
+                                        </label>
+                                        <label class="flex items-center cursor-pointer">
+                                            <input type="radio" name="pet_charges" value="charges_apply" x-model="property.pets_fees" class="mr-2">
+                                            <span>Charges may apply</span>
+                                        </label>
                                     </div>
+                                </div>
 
-                                    <div class="mt-6">
-                                        <h3 class="text-base font-semibold mb-2">Cancellation Policy</h3>
-                                        <select x-model="property.cancellation_policy"
-                                            class="w-full border rounded p-2">
-                                            <option value="flexible">Flexible</option>
-                                            <option value="moderate">Moderate</option>
-                                            <option value="strict">Strict</option>
-                                        </select>
+                                <!-- Smoking Policy -->
+                                <div class="mt-6">
+                                    <h3 class="text-base font-semibold mb-2">Do you allow smoking?</h3>
+                                    <div class="space-y-2">
+                                        <label class="flex items-center cursor-pointer">
+                                            <input type="radio" name="smoking" value="yes" x-model="property.smoking_allowed" class="mr-2">
+                                            <span>Yes</span>
+                                        </label>
+                                        <label class="flex items-center cursor-pointer">
+                                            <input type="radio" name="smoking" value="no" x-model="property.smoking_allowed" class="mr-2">
+                                            <span>No</span>
+                                        </label>
                                     </div>
+                                </div>
 
-                                    <hr class="my-6 border-t border-gray-300">
-
-                                    <!-- Check-in -->
-                                    <div class="mt-6">
-                                        <h3 class="text-base font-semibold mb-2">Check in</h3>
-                                        <div class="flex space-x-4">
-                                            <div class="w-full">
-                                                <label class="block text-sm font-medium mb-1">From</label>
-                                                <input type="time" value="15:00" x-model="property.check_in_from"
-                                                    class="w-full border rounded p-2" />
-                                            </div>
-                                            <div class="w-full">
-                                                <label class="block text-sm font-medium mb-1">Until</label>
-                                                <input type="time" value="18:00"
-                                                    x-model="property.check_in_until"
-                                                    class="w-full border rounded p-2" />
-                                            </div>
-                                        </div>
+                                <!-- Parties Policy -->
+                                <div class="mt-6">
+                                    <h3 class="text-base font-semibold mb-2">Do you allow parties?</h3>
+                                    <div class="space-y-2">
+                                        <label class="flex items-center cursor-pointer">
+                                            <input type="radio" name="parties" value="yes" x-model="property.parties_allowed" class="mr-2">
+                                            <span>Yes</span>
+                                        </label>
+                                        <label class="flex items-center cursor-pointer">
+                                            <input type="radio" name="parties" value="no" x-model="property.parties_allowed" class="mr-2">
+                                            <span>No</span>
+                                        </label>
                                     </div>
+                                </div>
 
-                                    <!-- Check-out -->
-                                    <div class="mt-6">
-                                        <h3 class="text-base font-semibold mb-2">Check out</h3>
-                                        <div class="flex space-x-4">
-                                            <div class="w-full">
-                                                <label class="block text-sm font-medium mb-1">From</label>
-                                                <input type="time" value="08:00"
-                                                    x-model="property.check_out_from"
-                                                    class="w-full border rounded p-2" />
-                                            </div>
-                                            <div class="w-full">
-                                                <label class="block text-sm font-medium mb-1">Until</label>
-                                                <input type="time" value="11:00"
-                                                    x-model="property.check_out_until"
-                                                    class="w-full border rounded p-2" />
-                                            </div>
-                                        </div>
+                                <!-- Cancellation Policy -->
+                                <div class="mt-6">
+                                    <h3 class="text-base font-semibold mb-2">What's your cancellation policy?</h3>
+                                    <div class="space-y-2">
+                                        <label class="flex items-center cursor-pointer">
+                                            <input type="radio" name="cancellation" value="flexible" x-model="property.cancellation_policy" class="mr-2">
+                                            <span>Flexible</span>
+                                        </label>
+                                        <label class="flex items-center cursor-pointer">
+                                            <input type="radio" name="cancellation" value="moderate" x-model="property.cancellation_policy" class="mr-2">
+                                            <span>Moderate</span>
+                                        </label>
+                                        <label class="flex items-center cursor-pointer">
+                                            <input type="radio" name="cancellation" value="strict" x-model="property.cancellation_policy" class="mr-2">
+                                            <span>Strict</span>
+                                        </label>
                                     </div>
+                                </div>
+                    
                                 </div>
 
                                 <!-- Right Section: Tip Box -->
@@ -1113,17 +1117,18 @@
                             <!-- Navigation Buttons -->
                             <div class="mt-8 flex justify-between">
                                 <button type="button" @click="step > 1 ? step-- : step"
-                                    :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
+                                    :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-100'"
                                     class="border border-[#3CC0E9] text-blue-600  hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
                                     ←
                                 </button>
-                                <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded">
+                                
+                                <button type="button" @click="submitStep11()" class="bg-blue-500 text-white py-2 px-4 rounded">
                                     Continue
                                 </button>
                             </div>
                         </div>
                     </div>
-                </form>
+                </div>
             </template>
 
             <template x-if="step === 12">
@@ -1200,8 +1205,10 @@
                                             bookings.</p>
                                     </div>
                                 </div>
-                                <a href="{{ route('partner.hotels.payments') }}"
-                                    class=" bg-sky-400 border border-sky-400 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-sky-500">
+                                <a :href="propertyId ? '{{ route('partner.hotels.payment.with.property', ':property') }}'.replace(':property', propertyId) : '#'"
+                                    :class="propertyId ? 'bg-sky-400 border border-sky-400 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-sky-500' : 'bg-gray-300 border border-gray-300 text-gray-500 text-sm font-semibold px-4 py-2 rounded cursor-not-allowed'"
+                                    :onclick="!propertyId ? 'event.preventDefault(); alert(\"Please complete the previous steps first.\")' : ''"
+                                    @click="console.log('Property ID in link:', propertyId)">
                                     Add final details
                                 </a>
                             </div>
@@ -1236,6 +1243,7 @@
                 propertyId: null,
                 subtypes: [],
                 subcategories: @json($subcategories),
+                subtypeName: '',
                 showMore: false,
                 subcategoryDescriptions: {
                     3: 'Accommodation for travellers often offering restaurants, meeting rooms and other guest services',
@@ -1267,11 +1275,11 @@
                     group: '',
                     breakfast: 'no',
                     parking: 'no',
-                    smoking_allowed: false,
-                    children_allowed: false,
-                    parties_allowed: false,
-                    pets_allowed: '',
-                    pets_fees: this.pets_fees,
+                    smoking_allowed: 'no',
+                    children_allowed: 'no',
+                    parties_allowed: 'no',
+                    pets_allowed: 'no',
+                    pets_fees: 'free',
                     check_in_from: '15:00',
                     check_in_until: '18:00',
                     check_out_from: '08:00',
@@ -1305,6 +1313,7 @@
 
                         const data = await response.json();
                         this.propertyId = data.property_id;
+                        console.log('Property ID set in submitStep1:', this.propertyId);
                         this.step = 2;
                         this.fetchSubtypes(this.selectedBox);
                         Swal.fire({
@@ -1417,7 +1426,7 @@
                             }),
                         });
 
-                        this.step = 4;
+                        this.step = 5;
 
                     } catch (error) {
                         Swal.fire({
@@ -1554,43 +1563,60 @@
 
                 async submitStep7() {
                     try {
-                        const response = await fetch(`/partner/property/step3/${this.propertyId}`, {
-                            method: 'POST',
+                        // Validate required fields
+                        if (!this.property.title || !this.property.stars || !this.property.group) {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'error',
+                                title: 'Please fill in all required fields',
+                                showConfirmButton: false
+                            });
+                            return;
+                        }
+
+                        const response = await fetch(`/partner/property/${this.propertyId}`, {
+                            method: 'PATCH',
                             headers: {
                                 'Content-Type': 'application/json',
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
                                     'content')
                             },
-                            body: JSON.stringify(this.property),
+                            body: JSON.stringify({
+                                title: this.property.title,
+                                stars: this.property.stars,
+                                group: this.property.group
+                            }),
                         });
 
                         if (response.ok) {
-                            Swal.fire({
-                                toast: true,
-                                position: 'top-end',
-                                icon: 'success',
-                                title: 'Property rating saved successfully!',
-                                showConfirmButton: false
-                            })
-                        }else {
-                            Swal.fire({
-                                toast: true,
-                                position: 'top-end',
-                                icon: 'error',
-                                title: 'Failed to save rating',
-                                showConfirmButton: false
-                            });
+                            const data = await response.json();
+                            
+                            if (data.success) {
+                                Swal.fire({
+                                    toast: true,
+                                    position: 'top-end',
+                                    icon: 'success',
+                                    title: 'Property details saved successfully!',
+                                    showConfirmButton: false
+                                });
+                                
+                                this.step = 8; // Go to next step
+                            } else {
+                                throw new Error(data.message || 'Failed to save property details');
+                            }
+                        } else {
+                            throw new Error('Failed to save property details');
                         }
-
-                        const data = await response.json();
-
-                        if (data.propertyId) {
-                            this.propertyId = data.propertyId;
-                        }
-
-                        this.step = 8; // Go to next step
                     } catch (error) {
                         console.error('Step 7 save failed:', error);
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'error',
+                            title: error.message || 'Failed to save property details',
+                            showConfirmButton: false
+                        });
                     }
                 },
 
@@ -1727,61 +1753,157 @@
                     }
                 },
 
+                // Function to log property state for debugging
+                logPropertyState() {
+                    console.log('=== Property State Debug ===');
+                    console.log('Full property object:', this.property);
+                    console.log('pets_allowed:', this.property.pets_allowed, 'Type:', typeof this.property.pets_allowed);
+                    console.log('pets_fees:', this.property.pets_fees, 'Type:', typeof this.property.pets_fees);
+                    console.log('children_allowed:', this.property.children_allowed, 'Type:', typeof this.property.children_allowed);
+                    console.log('smoking_allowed:', this.property.smoking_allowed, 'Type:', typeof this.property.smoking_allowed);
+                    console.log('parties_allowed:', this.property.parties_allowed, 'Type:', typeof this.property.parties_allowed);
+                    console.log('cancellation_policy:', this.property.cancellation_policy, 'Type:', typeof this.property.cancellation_policy);
+                    console.log('check_in_from:', this.property.check_in_from);
+                    console.log('check_in_until:', this.property.check_in_until);
+                    console.log('check_out_from:', this.property.check_out_from);
+                    console.log('check_out_until:', this.property.check_out_until);
+                    console.log('========================');
+                },
+
                 async submitStep11() {
                     try {
-                        // Validate pets_allowed
-                        const validPets = ['yes', 'no', 'upon_request'];
-                        if (!validPets.includes(this.property.pets_allowed)) {
+                        // Debug logging
+                        this.logPropertyState();
+                        
+                        // Validate required fields
+                        if (!this.property.pets_allowed || !['yes', 'no', 'upon_request'].includes(this.property.pets_allowed)) {
+                            console.log('Pet policy validation failed. Value:', this.property.pets_allowed);
                             Swal.fire({
                                 toast: true,
                                 position: 'top-end',
                                 icon: 'error',
-                                title: 'Please select a valid pet policy.',
+                                title: 'Please select a valid pet policy (Yes, No, or Upon request).',
                                 showConfirmButton: false
-                            })
+                            });
                             return;
                         }
+
+                        if (!this.property.children_allowed || !['yes', 'no'].includes(this.property.children_allowed)) {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'error',
+                                title: 'Please select whether children are allowed.',
+                                showConfirmButton: false
+                            });
+                            return;
+                        }
+
+                        if (!this.property.smoking_allowed || !['yes', 'no'].includes(this.property.smoking_allowed)) {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'error',
+                                title: 'Please select whether smoking is allowed.',
+                                showConfirmButton: false
+                            });
+                            return;
+                        }
+
+                        if (!this.property.parties_allowed || !['yes', 'no'].includes(this.property.parties_allowed)) {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'error',
+                                title: 'Please select whether parties are allowed.',
+                                showConfirmButton: false
+                            });
+                            return;
+                        }
+
+                        if (!this.property.cancellation_policy || !['flexible', 'moderate', 'strict'].includes(this.property.cancellation_policy)) {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'error',
+                                title: 'Please select a cancellation policy.',
+                                showConfirmButton: false
+                            });
+                            return;
+                        }
+
+                        // Validate pet fees if pets are allowed
+                        if ((this.property.pets_allowed === 'yes' || this.property.pets_allowed === 'upon_request') && 
+                            (!this.property.pets_fees || !['free', 'charges_apply'].includes(this.property.pets_fees))) {
+                            console.log('Pet fees validation failed. Value:', this.property.pets_fees);
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'error',
+                                title: 'Please select whether there are additional charges for pets.',
+                                showConfirmButton: false
+                            });
+                            return;
+                        }
+
+                        // Prepare the data for the API
+                        const policyData = {
+                            pets_allowed: this.property.pets_allowed,
+                            pets_fees: this.property.pets_fees || 'free',
+                            children_allowed: this.property.children_allowed === 'yes',
+                            smoking_allowed: this.property.smoking_allowed === 'yes',
+                            parties_allowed: this.property.parties_allowed === 'yes',
+                            check_in_from: this.property.check_in_from || '15:00',
+                            check_in_until: this.property.check_in_until || '18:00',
+                            check_out_from: this.property.check_out_from || '08:00',
+                            check_out_until: this.property.check_out_until || '11:00',
+                            cancellation_policy: this.property.cancellation_policy || 'flexible'
+                        };
+
+                        console.log('Submitting policy data:', policyData);
+                        console.log('Current property state:', this.property);
 
                         const response = await fetch(`/partner/property/save-policy/${this.propertyId}`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
-                                    'content')
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                                'Accept': 'application/json'
                             },
-                            body: JSON.stringify(this.property),
+                            body: JSON.stringify(policyData)
                         });
 
-                        if (response.ok) {
+                        const data = await response.json();
+
+                        if (response.ok && data.success) {
                             Swal.fire({
                                 toast: true,
                                 position: 'top-end',
                                 icon: 'success',
-                                title: 'Policy saved successfully!',
+                                title: 'House rules saved successfully!',
                                 showConfirmButton: false
                             });
-                            setTimeout(() => {
-                                window.location.href = `/partner-homes-edit/${this.propertyId}`
+                              setTimeout(() => {
+                                window.location.href = `/partner-homes-edit/${this.propertyId}?propertyType=single`;
                             })
-                        }else {
+                        } else {
                             Swal.fire({
                                 toast: true,
                                 position: 'top-end',
                                 icon: 'error',
-                                title: 'Failed to save policy',
+                                title: data.message || 'Failed to save house rules',
                                 showConfirmButton: false
                             });
-                        };
-
-                        const data = await response.json();
-
-                        if (data.propertyId) {
-                            this.propertyId = data.propertyId;
                         }
-
-                 
                     } catch (error) {
                         console.error('Step 11 save failed:', error);
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'error',
+                            title: 'An error occurred while saving house rules',
+                            showConfirmButton: false
+                        });
                     }
                 },
 

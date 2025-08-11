@@ -1,6 +1,6 @@
 @extends('frontend.partner-layout')
 
-@section('title', 'List Your Property')
+@section('title', '  Complete Registration | ' . config('domains.app_name'))
 
 @section('content')
 <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -524,11 +524,29 @@
           timer: 3000
         });
         console.log(result);
-        setTimeout(() => {
-          // window.location.href = `/open-booking/${payload.property_id}`;
-    window.location.href = `/partner/list-your-property?property_id=${propertyId}`;
+        fetch(`/properties/${propertyId}/open-for-bookings`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') // if using Laravel
+            },
+            body: JSON.stringify({
+              open_for_bookings: true
+            })
+          })
+          .then(response => response.json())
+          .then(data => {
+            console.log('Booking status updated:', data);
+            setTimeout(() => {
+              // window.location.href = `/open-booking/${payload.property_id}`;
+              window.location.href = `/partner/list-your-property?property_id=${propertyId}`;
 
-        }, 3000);
+            }, 3000);
+          })
+          .catch(error => {
+            console.error('Error updating booking status:', error);
+          });
+
       } else {
         console.error('Validation error:', result.errors);
         Swal.fire({
@@ -552,24 +570,7 @@
     const propertyId = parseInt(document.getElementById('propertyId').value);
 
     submitForm();
-      // fetch(`/properties/${propertyId}/open-for-bookings`, {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') // if using Laravel
-      //   },
-      //   body: JSON.stringify({
-      //     open_for_bookings: true
-      //   })
-      // })
-      // .then(response => response.json())
-      // .then(data => {
-      //   console.log('Booking status updated:', data);
 
-      // })
-      // .catch(error => {
-      //   console.error('Error updating booking status:', error);
-      // });
   });
 </script>
 @endsection
