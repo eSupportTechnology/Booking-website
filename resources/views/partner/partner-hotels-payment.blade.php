@@ -170,7 +170,7 @@
                     showToast('Payment process completed successfully!', 'success');
                     // Redirect to a GET route after successful completion
                     setTimeout(() => {
-                        window.location.href = '/partner/list-your-property'; // or another appropriate GET route
+                        window.location.href = `/partner-homes-edit/${this.propertyId}?propertyType=single`;
                     }, 2000);
                 } else {
                     showToast('Error: ' + data.message, 'error');
