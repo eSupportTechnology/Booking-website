@@ -23,7 +23,7 @@
                             more</p>
                     </div>
                 </div>
-                <a href="{{ route('partner.hotels.create.2') }}"
+                <a href="{{ route('partner.alternative.multiple.boats.sameaddress') }}"
                     class="text-sky-600 font-medium text-sm hover:underline">Edit</a>
             </div>
 
@@ -91,7 +91,7 @@
                 <!-- Add Another Room -->
                 <div class="text-right">
 
-                    <a href="{{ route('partner.hotels.rooms') }}">
+                    <a href="{{ route('partner.alternative.multiple.boat.room') }}">
                         <button
                             class="mt-4  text-sky-600 text-sm font-semibold px-4 py-2 rounded border border-sky-300 hover:bg-sky-100">
                             + Add another room
@@ -115,7 +115,7 @@
                             expect.</p>
                     </div>
                 </div>
-                <a href="{{ route('partner.hotels.photos') }}"
+                <a href="{{ route('partner.boat.photos') }}"
                     class="text-sky-600 font-medium text-sm hover:underline">Edit</a>
 
             </div>
@@ -133,13 +133,13 @@
                     </div>
                 </div>
 
-                <a href="{{ route('partner.hotels.payments') }}"
+                <a href="{{ route('partner.boat.payment') }}"
                     class="text-sky-600 font-medium text-sm hover:underline">Edit</a>
             </div>
 
 
             <div class="flex justify-center">
-                <a href="{{ route('partner.hotels.complete.registration') }}"
+                <a href="{{ route('partner.boat.complete.registration') }}"
                   
                         class="mt-4 w-full  bg-[#3CC0E9] font-semibold text-white text-center rounded hover:bg-sky-500 text-sm font-semibold px-6 py-2 rounded shadow">
                         Complete Registration

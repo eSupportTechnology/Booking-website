@@ -16,138 +16,203 @@
     <div x-data>
 
         <template x-if="step === 1">
-    <div class="max-w-xl mx-auto space-y-8 lg:ml-32 px-4 py-6">
-
-        <h2 class="text-2xl font-bold text-gray-900 mt-8">Mobile home details</h2>
+            <form class="p-4 space-y-6 mt-8 ml-">
 
 
-        <div class="bg-white p-4 rounded-lg shadow ">
-            
- <!-- Unit Type -->
-    <div class="w-full">
-      <label for="unit_type" class="block text-sm font-semibold text-gray-700 mb-1">
-        What type of unit is this?
-      </label>
-      <div class="relative">
-        <select
-          id="unit_type"
-          name="unit_type"
-          class="appearance-none w-full border border-gray-300 text-sm rounded-md shadow-sm bg-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200"
-        >
-          <option value="">Select a type</option>
-          <option value="Twin">Twin</option>
-          <option value="Single">Single</option>
-          <option value="Double">Double</option>
-          <option value="Twin/Double">Twin/Double</option>
-          <option value="Triple">Triple</option>
-          <option value="Quadruple">Quadruple</option>
-         <option value="Bungalow">Bungalow</option>
-          <option value="Chalet">Chalet</option>
-          <option value="Family">Family</option>
-          <option value="Mobile Home">Mobile Home</option>
-          <option value="Tent">Tent</option>
-        </select>
 
-        <!-- Optional: Custom dropdown arrow -->
-        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-          <svg class="h-4 w-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M10 14a1 1 0 01-.707-.293l-4-4a1 1 0 111.414-1.414L10 11.586l3.293-3.293a1 1 0 111.414 1.414l-4 4A1 1 0 0110 14z" clip-rule="evenodd" />
-          </svg>
-        </div>
-      </div>
+              <!-- Section Title -->
+<h2 class="text-2xl font-bold ml-32 mb-4">Tent Details</h2>
+
+<!-- Unit Type + Count Section -->
+<div class="w-full max-w-xl bg-white rounded-lg border border-gray-200 shadow-sm ml-32 p-6">
+    <!-- Room Count -->
+    <div class="mb-4">
+        <label class="block text-sm font-semibold text-gray-700 mb-2 whitespace-nowrap">
+            How many tents of this type do you have?
+        </label>
+
+        <input type="number" min="1" step="1" inputmode="numeric" pattern="\d*"
+            x-model="propertyCount" name="property_count"
+            class="w-[40%] border border-gray-300 rounded-md shadow-sm px-3 py-2" />
     </div>
-
-
-
-                        <br>
-                        <!-- Room Count -->
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-1 whitespace-nowrap">
-                             How many mobile homes of this type do you have?
-                            </label>
-
-                            <input type="number" min="1" step="1" inputmode="numeric" pattern="\d*"
-                                x-model="propertyCount" name="property_count"
-                                class="w-[20%] border border-gray-300 rounded-md shadow-sm px-3 py-2" />
-                        </div>
 </div>
 
-        <!-- Where can people sleep -->
-        <div class="bg-white p-4 rounded-lg shadow space-y-4">
-            <h2 class="text-sm font-semibold text-gray-700 mb-1">Where can people sleep?</h2>
 
-            <div class="flex flex-col gap-4">
-                <!-- Bedroom -->
-                <a href="#">
-                    <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer">
-                        <p class="text-sm">Bedroom 1</p>
-                        <p class="text-sm text-gray-600">No beds added</p>
+
+                <!-- Horizontal Layout Container -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+
+                    <!-- Bed Types Container (2/3 width) -->
+                    <div x-data="{ showMoreBeds: false }"
+                        class="lg:col-span-2 bg-white rounded-lg border border-gray-300 p-4 space-y-4 max-w-xl ml-32">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Which beds are available in this
+                            room?</label>
+
+                        @php
+                            $mainBeds = [
+                                ['label' => 'Single bed', 'desc' => '90 - 130 cm wide'],
+                                ['label' => 'Double bed', 'desc' => '131 - 150 cm wide'],
+                                ['label' => 'Large bed (King size)', 'desc' => '151 - 180 cm wide'],
+                                ['label' => 'Extra-large double bed (Super-king size)', 'desc' => '181 - 210 cm wide'],
+                            ];
+
+                            $extraBeds = [
+                                ['label' => 'Bunk bed', 'desc' => 'Variable size'],
+                                ['label' => 'Sofa bed', 'desc' => 'Variable size'],
+                                ['label' => 'Futon bed(s)', 'desc' => 'Variable size'],
+                            ];
+                        @endphp
+
+
+                        @foreach ($mainBeds as $bed)
+                            @php
+                                $labelLower = strtolower($bed['label']);
+                                $icon = 'famicons_bed.svg'; // default
+
+                                if (str_contains($labelLower, 'sofa')) {
+                                    $icon = 'famicons_sofa.svg';
+                                } elseif (str_contains($labelLower, 'bunk')) {
+                                    $icon = 'famicons_bunk-bed.svg';
+                                }
+                            @endphp
+
+                            <div x-data="{ guests: 0 }"
+                                class="flex items-center justify-between border rounded-md px-3 py-2 mb-2">
+                                <div class="flex items-start gap-2">
+                                    <img src="{{ asset('assets/' . $icon) }}" alt="Icon" class="w-5 h-5" />
+
+                                    <div>
+                                        <p class="text-sm font-medium">{{ $bed['label'] }}</p>
+                                        <p class="text-xs text-gray-500">{{ $bed['desc'] }}</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center gap-2">
+                                    <button type="button" @click="if (guests > 0) guests--"
+                                        class="text-xl text-gray-600 hover:text-gray-800 focus:outline-none">−</button>
+                                    <span class="mx-4 text-sm font-semibold" x-text="guests"></span>
+                                    <button type="button" @click="guests++"
+                                        class="text-xl text-gray-600 hover:text-gray-800 focus:outline-none">+</button>
+                                </div>
+                            </div>
+                        @endforeach
+
+
+
+
+
+
+                        <!-- Toggle Link -->
+                        <button type="button" @click="showMoreBeds = !showMoreBeds"
+                            class="text-sm text-blue-600 hover:underline focus:outline-none">
+                            <span x-show="!showMoreBeds">More bed options ▼</span>
+                            <span x-show="showMoreBeds">Fewer bed options ▲</span>
+                        </button>
+
+                        <!-- Extra Beds -->
+                        <div x-show="showMoreBeds" x-transition:enter="transition ease-out duration-300"
+                            x-transition:enter-start="opacity-0 max-h-0"
+                            x-transition:enter-end="opacity-100 max-h-screen"
+                            x-transition:leave="transition ease-in duration-200"
+                            x-transition:leave-start="opacity-100 max-h-screen"
+                            x-transition:leave-end="opacity-0 max-h-0 overflow-hidden" class="space-y-4 pt-2">
+                            @foreach ($extraBeds as $bed)
+                                @php
+                                    $labelLower = strtolower($bed['label']);
+                                    $icon = 'famicons_bed.svg'; // default
+
+                                    if (str_contains($labelLower, 'sofa')) {
+                                        $icon = 'mdi_sofa.svg';
+                                    } elseif (str_contains($labelLower, 'bunk')) {
+                                        $icon = 'mdi_bunk-bed.svg';
+                                    }
+                                @endphp
+
+                                <div x-data="{ guests: 0 }"
+                                    class="flex items-center justify-between border rounded-md px-3 py-2 mb-2">
+                                    <div class="flex items-start gap-2">
+                                        <img src="{{ asset('assets/' . $icon) }}" alt="Icon" class="w-5 h-5" />
+
+                                        <div>
+                                            <p class="text-sm font-medium">{{ $bed['label'] }}</p>
+                                            <p class="text-xs text-gray-500">{{ $bed['desc'] }}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-center gap-2">
+                                        <button type="button" @click="if (guests > 0) guests--"
+                                            class="text-xl text-gray-600 hover:text-gray-800 focus:outline-none">−</button>
+                                        <span class="mx-4 text-sm font-semibold" x-text="guests"></span>
+                                        <button type="button" @click="guests++"
+                                            class="text-xl text-gray-600 hover:text-gray-800 focus:outline-none">+</button>
+                                    </div>
+                                </div>
+                            @endforeach
+
+                        </div>
                     </div>
-                </a>
 
-                <!-- Living Room -->
-                <a href="#">
-                    <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer">
-                        <p class="text-sm">Living Room</p>
-                        <p class="text-sm text-gray-600">No beds added</p>
+
+
+                    <!-- Tip Box Container (1/3 width) -->
+                    <div x-data="{ showTip: true }" x-show="showTip" x-transition:leave="transition ease duration-300"
+                        x-transition:leave-start="opacity-100 max-h-screen"
+                        x-transition:leave-end="opacity-0 max-h-0 overflow-hidden"
+                        class="bg-white border border-gray-300 rounded-lg p-4 text-sm text-gray-700 h-fit max-w-[300px] -ml-64">
+
+                        <!-- Header Row -->
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center space-x-2">
+                                <img src="{{ asset('assets/system-uicons_lightbulb-on.svg') }}" alt="Help"
+                                    class="w-6 h-6 md:w-7 md:h-7 cursor-pointer" />
+                                <h3 class="text-gray-700 text-sm font-bold">Do you offer other sleeping arrangements?
+                                </h3>
+                            </div>
+                            <button @click="show = false" class="text-gray-500 hover:text-gray-700">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                    fill="currentColor">
+                                    <path fill-rule="evenodd"
+                                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        <!-- Text Content Column -->
+                        <div class="flex flex-col gap-4">
+                            <p class="text-xs text-gray-700">
+                                Right now, you just need to add your basic sleeping arrangements.
+                                Cots, additional beds and other sleeping arrangements can be added in the extranet, the
+                                platform you’ll use to manage your property.
+                            </p>
+
+                            <h3 class="text-gray-700 text-sm font-bold">Do you have specific policies for children?
+                            </h3>
+
+                            <p class="text-xs text-gray-700">
+                                You can set up your property’s child policies, including maximum age and price
+                                adjustments, in the extranet after you finish registration.
+                            </p>
+                        </div>
                     </div>
-                </a>
 
-                <!-- Other Spaces -->
-                <a href="#">
-                    <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer">
-                        <p class="text-sm">Other spaces</p>
-                        <p class="text-sm text-gray-600">No beds added</p>
-                    </div>
-                </a>
-            </div>
 
-            <!-- Add Bedroom Button -->
-            <a href="#" class="text-blue-600 hover:underline text-sm flex items-center space-x-1 mt-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
-                    viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 4v16m8-8H4" />
-                </svg>
-                <span>Add Bedroom</span>
-            </a>
-        </div>
 
-        <!-- Alpine.js -->
-        <script src="//unpkg.com/alpinejs" defer></script>
+                    <div x-data="{ guests: 2,offerCots: 'yes', costType: 'Fixed', cotsAvailable: 1 }"
+                        class="lg:col-span-2 bg-white rounded-lg border border-gray-300 p-4 space-y-4 max-w-xl ml-32">
+                        <label class="block font-semibold text-sm text-gray-700 mb-2">How many guests can stay in this tent?</label>
 
-        <!-- Guests and Bathrooms -->
-        <div x-data="{ guests: 2, bathrooms: 1 }"
-            class="bg-white p-4 rounded-lg shadow space-y-4 w-full max-w-xl">
-            <!-- Guests -->
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">How many guests can stay in this mobile home?</label>
-                <div class="flex items-center space-x-4 mt-1">
-                    <button @click="if (guests > 1) guests--"
-                        class="border px-3 py-1 rounded text-base">−</button>
-                    <span class="min-w-[2rem] text-center text-gray-700 text-base"
-                        x-text="guests"></span>
-                    <button @click="guests++"
-                        class="border px-3 py-1 rounded text-base">+</button>
-                </div>
-            </div>
+                        <div class="flex items-center w-20 border rounded-md px-2 py-1">
+                            <button type="button" @click="if (guests > 1) guests--"
+                                class="text-xl text-gray-600 hover:text-gray-800 focus:outline-none">−</button>
 
-            <!-- Bathrooms -->
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">How many bathrooms are there in this mobile home?</label>
-                <div class="flex items-center space-x-4 mt-1">
-                    <button @click="if (bathrooms > 0) bathrooms--"
-                        class="border px-3 py-1 rounded text-base">−</button>
-                    <span class="min-w-[2rem] text-center text-gray-700 text-base"
-                        x-text="bathrooms"></span>
-                    <button @click="bathrooms++"
-                        class="border px-3 py-1 rounded text-base">+</button>
-                </div>
-            </div>
-        </div>
+                            <span class="mx-4 text-lg font-semibold" x-text="guests"></span>
 
-        <!-- Children Policy -->
-      <div x-data="{ offerCots: 'yes', costType: 'Fixed', cotsAvailable: 1 }" class="bg-white p-4 rounded-lg shadow space-y-4">
+                            <button type="button" @click="guests++"
+                                class="text-xl text-gray-600 hover:text-gray-800 focus:outline-none">+</button>
+                        </div>
+                         <!-- Children Policy -->
+
     
     <!-- Do you offer cots? -->
     <div>
@@ -201,55 +266,87 @@
         </div>
     </template>
 </div>
+                    </div>
+                    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
-        <!-- Room Size -->
-        <div class="lg:col-span-2 bg-white rounded-lg border border-gray-300 p-4 space-y-4">
-            <div class="flex flex-col lg:flex-row gap-4 items-end">
-                <!-- Apartment Size Input -->
-                <div class="w-full lg:w-2/4">
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">How big is this mobile home?</label>
-                    <p class="text-xs text-gray-500">Mobile home size - optional</p>
-                    <input type="number" min="1" step="1" inputmode="numeric" pattern="\d*"
-                        class="w-full border border-gray-300 rounded-md shadow-sm text-sm mt-2 px-2 py-2">
-                </div>
 
-                <!-- Size Unit Dropdown -->
-                <div class="w-full lg:w-1/4">
-                    <label class="block text-sm text-transparent mb-1">Unit</label>
-                    <select
-                        class="w-full bg-gray-300 text-black border border-gray-300 rounded-md shadow-sm text-sm mt-2 px-2 py-2">
-                        <option>square meters</option>
-                        <option>square feet</option>
-                    </select>
 
-                    
-                </div>
-                
-            </div>
-            <div>
-                <p class="text-sm font-semibold text-gray-700 mb-1">Is smoking allowed in this mobile home?</p>
-                <label class="mr-4 text-sm"><input type="radio" name="children" checked> Yes</label>
-                <label class="text-sm"><input type="radio" name="children"> No</label>
-            </div>
-        </div>
 
-        <!-- Navigation Buttons -->
-        <div class="mt-8 flex justify-between">
-            <!-- Back Button -->
-            <button type="button" @click="propertyWizardStep--"
-                :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-                class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
-                ←
-            </button>
 
-            <!-- Continue Button -->
-            <button type="button"  @click="step < 9 ? step++ : step"
-                class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
-                Continue
-            </button>
-        </div>
-    </div>
-</template>
+
+                    <!-- Room Size -->
+                    <div class="lg:col-span-2 bg-white rounded-lg border border-gray-300 p-4 space-y-4 max-w-xl ml-32">
+                        <div class="flex flex-col lg:flex-row gap-4 items-end"> <!-- ensure vertical alignment -->
+
+                            <!-- Apartment Size Dropdown -->
+                            <div class="w-full lg:w-2/4">
+                                <label class="block font-semibold text-sm text-gray-700 mb-1">How big is this
+                                    tent?</label>
+                                <p class="text-xs text-gray-500 ">Tent size - optional</p>
+
+                                <input type="number" min="1" step="1" inputmode="numeric"
+                                    pattern="\d*" x-model="propertyCount" name="property_count"
+                                    class="w-full border border-gray-300 rounded-md shadow-sm text-sm mt-2 px-2 py-2">
+
+
+
+                            </div>
+
+                            <!-- Size Unit Dropdown -->
+                            <div class="w-full lg:w-1/4">
+                                <label class="block text-sm text-transparent mb-1">Unit</label>
+                                <!-- invisible label for spacing -->
+                                <select
+                                    class="w-full bg-gray-300 text-black border border-gray-300 rounded-md shadow-sm text-sm mt-2  px-2 py-2">
+                                    <option>square meters</option>
+                                    <option>square feet</option>
+                                </select>
+                            </div>
+
+                        </div>
+                          
+                        <label class="block font-semibold text-sm text-gray-700 mb-1">Is smoking allowed in this
+                            tent?</label>
+                        <div class="flex gap-6 mt-1">
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="smoking" class="form-radio text-blue-500" checked>
+                                <span class="ml-2">Yes</span>
+                            </label>
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="smoking" class="form-radio text-blue-500">
+                                <span class="ml-2">No</span>
+                            </label>
+                       
+                    </div>
+                    <!-- Smoking Allowed -->
+                 
+                    </div>
+
+
+
+                    <!-- Navigation Buttons -->
+                    <div class="lg:col-span-2  max-w-xl ml-32">
+                        <div class="flex justify-between mt-6">
+
+                            <!-- Back Button (Left-aligned) -->
+                            <a href="{{ route('partner.hotels.create.2') }}">
+                                <button type="button" @click="step > 1 ? step-- : step"
+                                    :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
+                                    class="border border-[#3CC0E9] text-blue-600 font-semibold py-2 px-4 rounded">
+                                    ←
+                                </button></a>
+
+                            <!-- Continue Button (Right-aligned) -->
+                            <button type="submit" @click="step < 9 ? step++ : step" :disabled="step === 9"
+                                class="px-6 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300">
+                                Continue
+                            </button>
+
+                        </div>
+                    </div>
+
+            </form>
+        </template>
 
 
 
@@ -269,13 +366,28 @@
                         <!-- Main Content Container -->
                         <div class="lg:col-span-2 bg-white p-6 rounded-lg border border-gray-300 space-y-6">
 
-                         
+                            <!-- Bathroom Privacy -->
+                            <div>
+                                <label class="block font-semibold text-gray-700 mb-3">Is the bathroom private?</label>
+                                <div class="space-y-2">
+                                    <label class="flex items-center gap-3 cursor-pointer">
+                                        <input type="radio" name="bathroom_private"
+                                            class="form-radio text-blue-500" checked>
+                                        <span class="text-sm">Yes</span>
+                                    </label>
+                                    <label class="flex items-center gap-3 cursor-pointer">
+                                        <input type="radio" name="bathroom_private"
+                                            class="form-radio text-blue-500">
+                                        <span class="text-sm">No, it's shared</span>
+                                    </label>
+                                </div>
+                            </div>
 
                             <!-- Bathroom Amenities -->
                             <div>
-                            
+                                <hr class="my-4">
                                 <label class="block font-semibold text-gray-700 mb-3">Which bathroom items are
-                                    available in this room?</label>
+                                    available in this tent?</label>
 
                                 @php
                                     $amenities = [
@@ -345,142 +457,160 @@
         </template>
 
 
-        <template x-if="step === 3">
-            <div class="max-w-3xl ml-32 mt-16">
-                <!-- Bathroom Details Wrapper -->
-                <div class="max-w-6xl mx-auto p-4 space-y-6">
+    <template x-if="step === 3">
+    <div class="max-w-3xl ml-32 mt-16">
+        <!-- Bathroom Details Wrapper -->
+        <div class="max-w-6xl mx-auto p-4 space-y-6">
 
-                    <!-- Title -->
-                    <h2 class="text-2xl font-bold">What can guests use in this mobile home?</h2>
+            <!-- Title -->
+            <h2 class="text-2xl font-bold">What can guests use in this room?</h2>
 
-                    <!-- Two-Column Layout: Main Content + Tip -->
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Two-Column Layout: Main Content + Tip -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6" x-data="{ viewSelected: false }">
 
-                        <!-- Main Content Container -->
-                        <div class="lg:col-span-2 bg-white p-6 rounded-lg border border-gray-300 space-y-6">
+                <!-- Main Content Container -->
+                <div class="lg:col-span-2 bg-white p-6 rounded-lg border border-gray-300 space-y-6">
 
+                    <!-- Bathroom Amenities -->
+                    <div>
+                        <label class="block font-semibold text-sm text-gray-700 mb-3">General Amenities</label>
 
+                        @php
+                            $amenities = [
+                                'Towels',
+                                'Linen',
+                                'Seating Area',
+                                'Heating',
+                                'Air conditioning',
+                                'Wardrobe or closet',
+                                'Clothes rack',
+                                'Flat-screen TV',
+                            ];
+                        @endphp
 
-                            <!-- Bathroom Amenities -->
-                            <div>
-
-                                <label class="block font-semibold text-sm text-gray-700 mb-3">General Amenities</label>
-
-                                @php
-                                    $amenities = [
-                                        'Towels',
-                                        'Linen',
-                                        'Seating Area',
-                                        
-                                        'Heating',
-                                        'Air conditioning',
-                                        
-                                        'Wardrobe or closet',
-                                        'Clothes rack',
-                                        'Flat-screen TV',
-                                        
-                                    ];
-                                @endphp
-
-                                <div class="space-y-2">
-                                    @foreach ($amenities as $item)
-                                        <label class="flex items-center gap-3 cursor-pointer">
-                                            <input type="checkbox" class="form-checkbox text-blue-500">
-                                            <span class="text-sm">{{ $item }}</span>
-                                        </label>
-                                    @endforeach
-                                </div>
-                            </div>
-
-                            <div>
-                                <hr class="my-4">
-                                <label class="block font-semibold text-sm text-gray-700 mb-3">Outdoors and
-                                    Views</label>
-
-                                @php
-                                    $amenities = ['Outdoor dining area', 'Outdoor furniture', 'View'];
-                                @endphp
-
-                                <div class="space-y-2">
-                                    @foreach ($amenities as $item)
-                                        <label class="flex items-center gap-3 cursor-pointer">
-                                            <input type="checkbox" class="form-checkbox text-blue-500">
-                                            <span class="text-sm">{{ $item }}</span>
-                                        </label>
-                                    @endforeach
-                                </div>
-                            </div>
-                            <div>
-                                <hr class="my-4">
-                                <label class="block font-semibold text-sm text-gray-700 mb-3">Food and Drink</label>
-
-                                @php
-                                    $amenities = [
-                                        'Barbecue',
-                                        
-                                        'Dining area',
-                                        'Dining table',
-                                        'Electric kettle',
-                                        'Tea/Coffee maker',
-                                        'Refrigerator',
-                                        'Kitchenware',
-                                    ];
-                                @endphp
-
-                                <div class="space-y-2">
-                                    @foreach ($amenities as $item)
-                                        <label class="flex items-center gap-3 cursor-pointer">
-                                            <input type="checkbox" class="form-checkbox text-blue-500">
-                                            <span class="text-sm">{{ $item }}</span>
-                                        </label>
-                                    @endforeach
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Tip Box Outside of Main Box -->
-                        <div x-data="{ showTip: true }" x-show="showTip"
-                            x-transition:leave="transition ease duration-300"
-                            x-transition:leave-start="opacity-100 max-h-screen"
-                            x-transition:leave-end="opacity-0 max-h-0 overflow-hidden"
-                            class="bg-white border border-gray-300 rounded-lg p-4 text-sm text-gray-700 h-fit">
-                            <div class="flex justify-between items-start">
-                                <div class="flex items-center gap-2">
-                                    <img src="{{ asset('assets/system-uicons_lightbulb-on.svg') }}" alt="Tip Icon"
-                                        class="w-5 h-5" />
-                                    <strong class="font-semibold">Still deciding?</strong>
-                                </div>
-                                <button type="button" @click="showTip = false"
-                                    class="text-gray-400 hover:text-black text-sm font-bold text-xl leading-none">
-                                    &times;
-                                </button>
-                            </div>
-                            <p class="mt-2">Don’t worry, you can update the bathroom items available at your place
-                                later.</p>
+                        <div class="space-y-2">
+                            @foreach ($amenities as $item)
+                                <label class="flex items-center gap-3 cursor-pointer">
+                                    <input type="checkbox" class="form-checkbox text-blue-500">
+                                    <span class="text-sm">{{ $item }}</span>
+                                </label>
+                            @endforeach
                         </div>
                     </div>
 
-                    <!-- Navigation Buttons -->
-                    <div class="flex  mt-6">
-                        <!-- Back Button -->
-                        <button type="button" @click="step < 9 ? step-- : step"
-                            class="border border-[#3CC0E9] text-blue-600 font-semibold py-2 px-4 rounded hover:bg-blue-50">
-                            ←
-                        </button>
+                    <div>
+                        <hr class="my-4">
+                        <label class="block font-semibold text-sm text-gray-700 mb-3">Outdoors and Views</label>
 
-                        <!-- Continue Button -->
-                        <button type="submit" @click="step < 9 ? step++ : step"
-                            class="px-6 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300 ml-[315px]">
-                            Continue
-                        </button>
+                        @php
+                            $outdoorAmenities = ['Outdoor dining area', 'Outdoor furniture', 'View'];
+                        @endphp
+
+                        <div class="space-y-2">
+                            @foreach ($outdoorAmenities as $item)
+                                <label class="flex items-center gap-3 cursor-pointer">
+                                    <input type="checkbox"
+                                           class="form-checkbox text-blue-500"
+                                           @if ($item === 'View')
+                                               @click="viewSelected = $event.target.checked"
+                                           @endif
+                                    >
+                                    <span class="text-sm">{{ $item }}</span>
+                                </label>
+                            @endforeach
+
+                            <!-- Dropdown for View (Only shown if 'View' is checked) -->
+                            <div x-show="viewSelected" x-transition>
+                                <label class="block font-semibold text-sm text-gray-700">Select View Type</label>
+                                <select class="form-select mt-1 block w-full border border-gray-300 rounded-lg p-2 text-sm">
+                                    <option value="">Select view type</option>
+                                   <option value="Sea view">Sea view</option>
+<option value="Mountain view">Mountain view</option>
+<option value="City view">City view</option>
+<option value="Garden view">Garden view</option>
+<option value="Pool view">Pool view</option>
+<option value="Lake view">Lake view</option>
+<option value="Landmark view">Landmark view</option>
+<option value="River view">River view</option>
+<option value="Inner courtyard view">Inner courtyard view</option>
+<option value="Quiet street view">Quiet street view</option>
+
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <hr class="my-4">
+                        <label class="block font-semibold text-sm text-gray-700 mb-3">Food and Drink</label>
+
+                        @php
+                            $foodAmenities = [
+                                'Barbecue',
+                                'Dining table',
+                                'Dining area',
+                                'Electric kettle',
+                                'Tea/Coffee maker',
+                                'Refrigerator',
+                                'Kitchenware',
+                            ];
+                        @endphp
+
+                        <div class="space-y-2">
+                            @foreach ($foodAmenities as $item)
+                                <label class="flex items-center gap-3 cursor-pointer">
+                                    <input type="checkbox" class="form-checkbox text-blue-500">
+                                    <span class="text-sm">{{ $item }}</span>
+                                </label>
+                            @endforeach
+                        </div>
                     </div>
                 </div>
+
+                <!-- Tip Box -->
+                <div x-data="{ showTip: true }" x-show="showTip"
+                    x-transition:leave="transition ease duration-300"
+                    x-transition:leave-start="opacity-100 max-h-screen"
+                    x-transition:leave-end="opacity-0 max-h-0 overflow-hidden"
+                    class="bg-white border border-gray-300 rounded-lg p-4 text-sm text-gray-700 h-fit">
+                    <div class="flex justify-between items-start">
+                        <div class="flex items-center gap-2">
+                            <img src="{{ asset('assets/system-uicons_lightbulb-on.svg') }}" alt="Tip Icon"
+                                class="w-5 h-5" />
+                            <strong class="font-semibold">Still deciding?</strong>
+                        </div>
+                        <button type="button" @click="showTip = false"
+                            class="text-gray-400 hover:text-black text-sm font-bold text-xl leading-none">
+                            &times;
+                        </button>
+                    </div>
+                    <p class="mt-2">Don’t worry, you can update the bathroom items available at your place later.</p>
+                </div>
             </div>
-        </template>
+
+            <!-- Navigation Buttons -->
+            <div class="flex mt-6">
+                <!-- Back Button -->
+                <button type="button" @click="step < 9 ? step-- : step"
+                    class="border border-[#3CC0E9] text-blue-600 font-semibold py-2 px-4 rounded hover:bg-blue-50">
+                    ←
+                </button>
+
+                <!-- Continue Button -->
+                <button type="submit" @click="step < 9 ? step++ : step"
+                    class="px-6 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300 ml-[315px]">
+                    Continue
+                </button>
+            </div>
+        </div>
+    </div>
+</template>
+
+
         <template x-if="step === 4">
             <div class="max-w-3xl ml-40 px-4 py-8 mt-10">
                 <section class="mb-8">
-                    <h1 class="text-2xl text-gray-700 font-bold mb-4">What’s the name of this mobile home?</h1>
+                    <h1 class="text-2xl text-gray-700 font-bold mb-4">What’s the name of this tent?</h1>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
 
@@ -489,15 +619,14 @@
                             <div class="bg-white p-6 rounded shadow-md min-h-[450px] flex flex-col justify-start">
                                 <div class="w-full">
                                     <p class="text-sm mb-4">
-                                        This is the name that guests will see on your property page. Choose a name that most accurately describes this mobile home.
+                                        This is the name that guests will see on your property page. Choose a name that most accurately describes this tent.
                                     </p>
-                                    <label class="block text-sm font-semibold text-gray-700 mb-1 mt-6">Mobile home name
-                                        </label>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-1 mt-6">Tent
+                                        Name</label>
                                     <select
                                         class="w-full border border-gray-300 text-sm rounded-md shadow-sm focus:ring focus:ring-blue-200 px-3 py-2">
-                                        <option>Caravan</option>
-                                        <option>Mobile Home</option>
-                                      
+                                        <option>Tent</option>
+                                       
                                     </select>
                                 </div>
                             </div>
@@ -564,7 +693,7 @@
         <div class="max-w-4xl mx-auto px-4 py-8 space-y-6" x-data="{ showTip1: true, showTip2: true }">
 
             <!-- Title -->
-            <h2 class="text-2xl font-bold text-gray-800">Set the price per night for this mobile home</h2>
+            <h2 class="text-2xl font-bold text-gray-800">Set the price per night for this room</h2>
 
             <!-- Grid layout: Pricing insight + Tip box -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
@@ -685,7 +814,8 @@
                         </li>
                     </ul>
 
-                    <p class="text-sm text-gray-800 font-medium border-t pt-3">US$17.00 Your earnings (including taxes)</p>
+                    <p class="text-sm text-gray-800 font-medium border-t pt-3">US$ 102.00 Your earnings
+                        (including taxes)</p>
                 </div>
 
             
@@ -717,8 +847,8 @@
     <div>
       <hr class="my-4">
       <p class="text-sm text-gray-800">
-        <del class="text-gray-500">US$ 20.00</del>
-        <span class="text-green-600 font-semibold">US$ 16.00 per night</span>
+        <del class="text-gray-500">US$ 120.00</del>
+        <span class="text-green-600 font-semibold">US$ 96.00 per night</span>
       </p>
     </div>
   </template>
@@ -762,7 +892,7 @@
 
 
         <template x-if="step === 6">
-            <div class="px-4 py-8 mt-6 w-full max-w-2xl mx-auto lg:ml-24 space-y-6">
+          <div class="px-4 py-8 mt-6 w-full max-w-2xl mx-auto lg:ml-24 space-y-6">
 
                 <!-- Main Title -->
                 <h2 class="text-3xl font-bold text-gray-800">Rate plans</h2>
@@ -922,7 +1052,7 @@
                             <img src="{{ asset('assets/material-symbols-light_info-outline.svg') }}" alt="Tip Icon"
                                 class="w-5 h-5">
                         </div>
-                          <a href="{{ route('partner.campsite.weekly.rate') }}">
+                          <a href="{{ route('partner.hotels.weekly.rate') }}">
                         <button
                             class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">Edit</button></a>
                     </div>
@@ -954,7 +1084,7 @@ You’re 16% more likely to get bookings with the 15% pre-selected weekly rate t
                     </button>
 
                     <!-- Continue Button -->
-                    <a href="{{ route('partner.alternative.single.campsite.edit') }}">
+                    <a href="{{ route('partner.boat.edit') }}">
                         <button
                             class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-sky-500 transition w-full sm:w-auto">
                             Continue
