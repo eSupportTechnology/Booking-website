@@ -575,7 +575,23 @@
             <template x-if="step === 9">
                 <form @submit.prevent="submitStep9">
                     <div>
-                        <div>
+                        <div  x-data="{
+                                        servesBreakfast: false,
+                                        breakfastIncluded: '',
+                                        selectedBreakfasts: [],
+                                        breakfastPrice: '',
+                                        breakfastOptions: ['Continental', 'Full English', 'Buffet', 'Vegetarian', 'Vegan', 'Gluten-free'],
+                                        parking: 'no',
+                                        parkingCost: '',
+                                        toggleBreakfastOption(option) {
+                                            const index = this.selectedBreakfasts.indexOf(option);
+                                            if (index > -1) {
+                                                this.selectedBreakfasts.splice(index, 1);
+                                            } else {
+                                                this.selectedBreakfasts.push(option);
+                                            }
+                                        }
+                                    }">
                             <div class="container mx-auto px-4 py-4 max-w-6xl mb-8">
 
                                 <!-- Header -->
@@ -587,48 +603,130 @@
                                 <div class="max-w-xl ml-6 flex flex-col space-y-8">
                                     <!-- Breakfast Section -->
                                     <div class="bg-white shadow-md rounded-lg p-6">
-                                        <h3 class="text-lg  mb-4 font-bold">Breakfast</h3>
+                                        <h3 class="text-lg mb-4 font-bold">Breakfast</h3>
                                         <hr class="border-gray-300 mb-4" />
-                                        <p class="text-gray-700 mb-2 font-bold text-base">
-                                            Do you serve guests breakfast?
-                                        </p>
+
+                                        <p class="text-gray-700 mb-2 font-bold text-base">Do you serve guests breakfast?</p>
                                         <div class="space-y-2">
                                             <label class="flex items-center cursor-pointer">
-                                                <input type="radio" name="breakfast" value="yes" class="mr-2"
-                                                    x-model="property.breakfast" />
+                                                <input type="radio" name="breakfast" x-model="servesBreakfast" value="yes" class="mr-2" />
                                                 <span>Yes</span>
                                             </label>
                                             <label class="flex items-center cursor-pointer">
-                                                <input type="radio" name="breakfast" value="no" class="mr-2"
-                                                    x-model="property.breakfast" checked />
+                                                <input type="radio" name="breakfast" x-model="servesBreakfast" value="no" class="mr-2"
+                                                    @click="breakfastIncluded=''; selectedBreakfasts=[]; breakfastPrice=''" />
                                                 <span>No</span>
                                             </label>
+                                        </div>
+
+                                        <div x-show="servesBreakfast" x-transition class="mt-6">
+                                            <p class="text-gray-700 mb-2 font-bold text-base">Is breakfast included in the price guests pay?</p>
+                                            <div class="space-y-2">
+                                                <label class="flex items-center cursor-pointer">
+                                                    <input type="radio" name="breakfast_included" x-model="breakfastIncluded" value="included" class="mr-2" />
+                                                    <span>Yes, it's included</span>
+                                                </label>
+                                                <label class="flex items-center cursor-pointer">
+                                                    <input type="radio" name="breakfast_included" x-model="breakfastIncluded" value="extra" class="mr-2" />
+                                                    <span>No, it costs extra</span>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div x-show="servesBreakfast && breakfastIncluded === 'extra'" x-transition class="mt-6">
+                                            <p class="text-gray-700 mb-2 font-bold text-base">Breakfast price per person, per day</p>
+                                            <input type="text" x-model="breakfastPrice"
+                                                class="border border-gray-300 px-3 py-2 rounded w-full mb-1" placeholder="US$" />
+                                            <p class="text-sm text-gray-500">Including all fees and taxes</p>
+                                        </div>
+
+                                        <div x-show="servesBreakfast" x-transition class="mt-6">
+                                            <p class="text-gray-700 mb-2 font-bold text-base">What type of breakfast do you offer?</p>
+                                            <p class="text-sm text-gray-500 mb-2">Select all that apply</p>
+                                            <div class="flex flex-wrap gap-2">
+                                                <template x-for="option in breakfastOptions" :key="option">
+                                                    <button type="button" @click="toggleBreakfastOption(option)"
+                                                        :class="selectedBreakfasts.includes(option) ? 'bg-blue-100 border-blue-500 text-blue-700' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
+                                                        class="border px-3 py-1 rounded-full text-sm flex items-center space-x-1 transition">
+                                                        <span x-text="option"></span>
+                                                        <template x-if="selectedBreakfasts.includes(option)">
+                                                            <span class="ml-1 font-bold text-lg leading-none">×</span>
+                                                        </template>
+                                                    </button>
+                                                </template>
+                                            </div>
                                         </div>
                                     </div>
 
                                     <!-- Parking Section -->
                                     <div class="bg-white shadow-md rounded-lg p-6">
-                                        <h3 class="text-lg  mb-4 font-bold">Parking</h3>
+                                        <h3 class="text-lg mb-4 font-bold">Parking</h3>
                                         <hr class="border-gray-300 mb-4" />
-                                        <p class="text-gray-700 mb-2 font-bold">
-                                            Is parking available to guests?
-                                        </p>
-                                        <div class="space-y-2">
+
+                                        <p class="text-gray-700 mb-2 font-bold">Is parking available to guests?</p>
+                                        <div class="space-y-2 mb-4">
                                             <label class="flex items-center cursor-pointer">
-                                                <input type="radio" name="parking" value="free" class="mr-2"
-                                                    x-model="property.parking" />
+                                                <input type="radio" name="parking" value="free" x-model="parking" class="mr-2" />
                                                 <span>Yes, free</span>
                                             </label>
                                             <label class="flex items-center cursor-pointer">
-                                                <input type="radio" name="parking" value="paid" class="mr-2"
-                                                    x-model="property.parking" />
+                                                <input type="radio" name="parking" value="paid" x-model="parking" class="mr-2" />
                                                 <span>Yes, paid</span>
                                             </label>
                                             <label class="flex items-center cursor-pointer">
-                                                <input type="radio" name="parking" value="no" class="mr-2"
-                                                    x-model="property.parking" checked />
+                                                <input type="radio" name="parking" value="no" x-model="parking" class="mr-2" />
                                                 <span>No</span>
                                             </label>
+                                        </div>
+
+                                        <div x-show="parking === 'free' || parking === 'paid'" x-transition class="space-y-4">
+                                            <div>
+                                                <p class="text-gray-700 font-semibold mb-1">Do they need to reserve a parking spot?</p>
+                                                <div class="space-y-2">
+                                                    <label class="flex items-center">
+                                                        <input type="radio" name="reservation_needed" value="yes" class="mr-2" />
+                                                        <span>Reservation needed</span>
+                                                    </label>
+                                                    <label class="flex items-center">
+                                                        <input type="radio" name="reservation_needed" value="no" class="mr-2" />
+                                                        <span>No reservation needed</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <div>
+                                                <p class="text-gray-700 font-semibold mb-1">Where is the parking located?</p>
+                                                <div class="space-y-2">
+                                                    <label class="flex items-center">
+                                                        <input type="radio" name="location" value="on_site" class="mr-2" />
+                                                        <span>On site</span>
+                                                    </label>
+                                                    <label class="flex items-center">
+                                                        <input type="radio" name="location" value="off_site" class="mr-2" />
+                                                        <span>Off site</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <div>
+                                                <p class="text-gray-700 font-semibold mb-1">What type of parking is it?</p>
+                                                <div class="space-y-2">
+                                                    <label class="flex items-center">
+                                                        <input type="radio" name="type" value="private" class="mr-2" />
+                                                        <span>Private</span>
+                                                    </label>
+                                                    <label class="flex items-center">
+                                                        <input type="radio" name="type" value="public" class="mr-2" />
+                                                        <span>Public</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div x-show="parking === 'paid'" x-transition class="mt-4">
+                                            <label class="block text-gray-700 font-semibold mb-1">How much does parking cost?</label>
+                                            <input type="text" x-model="parkingCost" placeholder="e.g., $10 per day"
+                                                class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
                                         </div>
                                     </div>
                                 </div>
@@ -661,29 +759,43 @@
 
                             <!-- Language Selection Section -->
                             <div class="bg-white shadow-md rounded-lg p-6 mb-8">
-                                <h3 class="text-lg  mb-4 font-bold">Select languages</h3>
+                                <h3 class="text-lg  mb-4 font-bold">Select languages
+                                </h3>
                                 <div class="space-y-2">
-                                    @foreach ($languages as $language)
-                                        <label class="flex items-center space-x-2">
-                                            <input type="checkbox" name="languages[]" value="{{ $language['id'] }}"
-                                                class="text-blue-500" />
-                                            <span>{{ $language['name'] }}</span>
-                                        </label>
+                                    @php
+                                    $initialLanguages = $languages->take(6);
+                                    $additionalLanguages = $languages->slice(6);
+                                    @endphp
+                                    @foreach ($initialLanguages as $lang)
+                                    <label class="flex items-center cursor-pointer">
+                                        <input type="checkbox"
+                                            class="mr-2"
+                                            :value="'{{ $lang['id'] }}'" />
+                                        <span>{{ $lang['name'] }}</span>
+                                    </label>
                                     @endforeach
+
+
                                 </div>
 
                                 <!-- Add Additional Languages -->
-                                <div id="additionalLanguagesSection" class="mt-4 hidden relative">
-                                    <h3 class="text-lg font-medium mb-2 ">Add additional languages</h3>
+                                <div id="additionalLanguagesSection"
+                                    class="mt-4 hidden relative">
+                                    <h3 class="text-lg font-medium mb-2 ">Add
+                                        additional languages</h3>
 
                                     <!-- Searchable dropdown container -->
                                     <div class="relative w-full max-w-md">
-                                        <input type="text" id="languageInput" oninput="filterDropdown()"
-                                            onclick="toggleDropdown()" placeholder="Search languages..."
-                                            autocomplete="off" class="w-full border rounded p-2 pr-10 cursor-pointer"
+                                        <input type="text" id="languageInput"
+                                            oninput="filterDropdown()"
+                                            onclick="toggleDropdown()"
+                                            placeholder="Search languages..."
+                                            autocomplete="off"
+                                            class="w-full border rounded p-2 pr-10 cursor-pointer"
                                             readonly />
                                         <!-- Dropdown arrow -->
-                                        <button type="button" onclick="toggleDropdown()"
+                                        <button type="button"
+                                            onclick="toggleDropdown()"
                                             class="absolute right-2 top-2.5 text-gray-600 hover:text-gray-900 focus:outline-none"
                                             tabindex="-1">
                                             ▼
@@ -692,36 +804,23 @@
                                         <!-- Dropdown list -->
                                         <ul id="languageDropdown"
                                             class="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded max-h-40 overflow-auto shadow-lg hidden">
+                                            @foreach ($additionalLanguages as $lang)
                                             <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                onclick="selectLanguage(this)">Arabic
+                                                onclick="selectLanguage(this)"
+                                                data-id="{{ $lang['id'] }}">
+                                                {{ $lang['name'] }}
                                             </li>
-                                            <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                onclick="selectLanguage(this)">
-                                                Bulgarian</li>
-                                            <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                onclick="selectLanguage(this)">
-                                                Catalan</li>
-                                            <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                onclick="selectLanguage(this)">
-                                                Chinese</li>
-                                            <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                onclick="selectLanguage(this)">
-                                                Croatian</li>
-                                            <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                onclick="selectLanguage(this)">Czech
-                                            </li>
-                                            <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                onclick="selectLanguage(this)">Danish
-                                            </li>
-                                            <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                onclick="selectLanguage(this)">Dutch
-                                            </li>
+                                            @endforeach
                                         </ul>
+
                                     </div>
                                 </div>
+                                <!-- Container to hold dynamically selected additional languages -->
+                                <div id="selectedAdditionalLanguages" class="mt-2 space-y-2"></div>
 
                                 <!-- Toggle Button for Additional Languages -->
-                                <a href="#" onclick="event.preventDefault(); toggleAdditionalLanguages();"
+                                <a href="#"
+                                    onclick="event.preventDefault(); toggleAdditionalLanguages();"
                                     class="text-blue-500 hover:underline mt-4 block">
                                     Add additional languages
                                 </a>
@@ -744,71 +843,96 @@
 
                         </div>
 
-                        <script>
-                            function toggleAdditionalLanguages() {
-                                const section = document.getElementById("additionalLanguagesSection");
-                                section.classList.toggle("hidden");
-                                if (!section.classList.contains("hidden")) {
-                                    document.getElementById("languageInput").focus();
-                                    showDropdown();
-                                } else {
+                            <script>
+                                function selectLanguage(element) {
+                                    const input = document.getElementById("languageInput");
+                                    const selectedContainer = document.getElementById("selectedAdditionalLanguages");
+                                    const langName = element.textContent.trim();
+                                    const langId = element.dataset.id;
+
+                                    // Prevent duplicate
+                                    if (document.getElementById(`lang-${langId}`)) {
+                                        input.value = '';
+                                        hideDropdown();
+                                        return;
+                                    }
+
+                                    // Create checkbox dynamically
+                                    const label = document.createElement('label');
+                                    label.className = 'flex items-center cursor-pointer';
+                                    label.id = `lang-${langId}`;
+                                    label.innerHTML = `
+                                            <input type="checkbox" class="mr-2" name="languages[]" value="${langId}" checked />
+                                            <span>${langName}</span>
+                                        `;
+
+                                    selectedContainer.appendChild(label);
+
+                                    // Clear input and close dropdown
+                                    input.value = '';
                                     hideDropdown();
                                 }
-                            }
 
-                            function toggleDropdown() {
-                                const dropdown = document.getElementById("languageDropdown");
-                                dropdown.classList.toggle("hidden");
-                            }
-
-                            function showDropdown() {
-                                document.getElementById("languageDropdown").classList.remove("hidden");
-                            }
-
-                            function hideDropdown() {
-                                document.getElementById("languageDropdown").classList.add("hidden");
-                            }
-
-                            function filterDropdown() {
-                                const input = document.getElementById("languageInput");
-                                const filter = input.value.toLowerCase();
-                                const ul = document.getElementById("languageDropdown");
-                                const items = ul.getElementsByTagName("li");
-                                ul.classList.remove("hidden");
-                                let visibleCount = 0;
-                                for (let i = 0; i < items.length; i++) {
-                                    const txtValue = items[i].textContent || items[i].innerText;
-                                    if (txtValue.toLowerCase().indexOf(filter) > -1) {
-                                        items[i].style.display = "";
-                                        visibleCount++;
+                                function toggleAdditionalLanguages() {
+                                    const section = document.getElementById("additionalLanguagesSection");
+                                    section.classList.toggle("hidden");
+                                    if (!section.classList.contains("hidden")) {
+                                        document.getElementById("languageInput").focus();
+                                        showDropdown();
                                     } else {
-                                        items[i].style.display = "none";
+                                        hideDropdown();
                                     }
                                 }
-                                // Hide dropdown if no matches
-                                if (visibleCount === 0) {
-                                    ul.classList.add("hidden");
-                                }
-                            }
 
-                            function selectLanguage(element) {
-                                const input = document.getElementById("languageInput");
-                                input.value = element.textContent;
-                                hideDropdown();
-                            }
-
-                            // Close dropdown when clicking outside
-                            document.addEventListener("click", function(event) {
-                                const dropdown = document.getElementById("languageDropdown");
-                                const input = document.getElementById("languageInput");
-                                const container = document.getElementById("additionalLanguagesSection");
-                                if (
-                                    !container.contains(event.target)
-                                ) {
-                                    hideDropdown();
+                                function toggleDropdown() {
+                                    const dropdown = document.getElementById("languageDropdown");
+                                    dropdown.classList.toggle("hidden");
                                 }
-                            });
-                        </script>
+
+                                function showDropdown() {
+                                    document.getElementById("languageDropdown").classList.remove("hidden");
+                                }
+
+                                function hideDropdown() {
+                                    document.getElementById("languageDropdown").classList.add("hidden");
+                                }
+
+                                function filterDropdown() {
+                                    const input = document.getElementById("languageInput");
+                                    const filter = input.value.toLowerCase();
+                                    const ul = document.getElementById("languageDropdown");
+                                    const items = ul.getElementsByTagName("li");
+                                    ul.classList.remove("hidden");
+                                    let visibleCount = 0;
+                                    for (let i = 0; i < items.length; i++) {
+                                        const txtValue = items[i].textContent || items[i].innerText;
+                                        if (txtValue.toLowerCase().indexOf(filter) > -1) {
+                                            items[i].style.display = "";
+                                            visibleCount++;
+                                        } else {
+                                            items[i].style.display = "none";
+                                        }
+                                    }
+                                    // Hide dropdown if no matches
+                                    if (visibleCount === 0) {
+                                        ul.classList.add("hidden");
+                                    }
+                                }
+
+
+
+                                // Close dropdown when clicking outside
+                                document.addEventListener("click", function(event) {
+                                    const dropdown = document.getElementById("languageDropdown");
+                                    const input = document.getElementById("languageInput");
+                                    const container = document.getElementById("additionalLanguagesSection");
+                                    if (
+                                        !container.contains(event.target)
+                                    ) {
+                                        hideDropdown();
+                                    }
+                                });
+                            </script>
                     </div>
                 </form>
             </template>
@@ -1105,6 +1229,7 @@
     <script>
         function stepForm() {
             return {
+                pets_fees: '',
                 step: 1,
                 selectedBox: '',
                 unitType: '',
@@ -1146,7 +1271,7 @@
                     children_allowed: false,
                     parties_allowed: false,
                     pets_allowed: '',
-                    pets_fees: 'free',
+                    pets_fees: this.pets_fees,
                     check_in_from: '15:00',
                     check_in_until: '18:00',
                     check_out_from: '08:00',
@@ -1559,18 +1684,16 @@
 
                 async submitStep10() {
                     try {
-                        // Get all checked amenity IDs
-                        const selectedLanguages = Array.from(document.querySelectorAll(
-                                'input[name="languages[]"]:checked'))
-                            .map(input => parseInt(input.value));
+                        const selectedLanguages = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
+                                                    .map(input => input.value);
+
                         console.log('Selected languages:', selectedLanguages);
 
-                        const response = await fetch(`/partner/property/save-languages/${this.propertyId}`, {
+                        const response = await fetch(`/partner/save-languages/${this.propertyId}`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
-                                    'content')
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                             },
                             body: JSON.stringify({
                                 languages: selectedLanguages,
@@ -1581,22 +1704,23 @@
                         const result = await response.json();
 
                         if (result.success) {
+                            console.log('Languages saved:', result);
                             Swal.fire({
                                 toast: true,
                                 position: 'top-end',
                                 icon: 'success',
                                 title: 'Languages saved successfully!',
                                 showConfirmButton: false
-                            })
-                            this.step = 11; // go to next step
+                            });
+                            this.step++; // go to next step
                         } else {
                             Swal.fire({
                                 toast: true,
                                 position: 'top-end',
                                 icon: 'error',
-                                title: 'Failed to save languages',
+                                title: result.message || 'Failed to save languages',
                                 showConfirmButton: false
-                            })
+                            });
                         }
                     } catch (e) {
                         console.error('Error saving Languages:', e);
@@ -1608,7 +1732,13 @@
                         // Validate pets_allowed
                         const validPets = ['yes', 'no', 'upon_request'];
                         if (!validPets.includes(this.property.pets_allowed)) {
-                            alert('Please select a valid pet policy.');
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'error',
+                                title: 'Please select a valid pet policy.',
+                                showConfirmButton: false
+                            })
                             return;
                         }
 
@@ -1622,7 +1752,26 @@
                             body: JSON.stringify(this.property),
                         });
 
-                        if (!response.ok) throw new Error('Failed to save step 11');
+                        if (response.ok) {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'Policy saved successfully!',
+                                showConfirmButton: false
+                            });
+                            setTimeout(() => {
+                                window.location.href = `/partner-homes-edit/${this.propertyId}`
+                            })
+                        }else {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'error',
+                                title: 'Failed to save policy',
+                                showConfirmButton: false
+                            });
+                        };
 
                         const data = await response.json();
 
@@ -1630,7 +1779,7 @@
                             this.propertyId = data.propertyId;
                         }
 
-                        this.step = 12;
+                 
                     } catch (error) {
                         console.error('Step 11 save failed:', error);
                     }

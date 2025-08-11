@@ -24,10 +24,10 @@
         const subtypeId = document.getElementById('subtypeId').value;
         const completeRegistrationBtn = document.getElementById('completeRegistrationBtn');
 
-        
+
         photoLink.href = `/partner-homes-images/${propertyId}?details=true&propertyType=${encodeURIComponent(propertyType)}`;
         roomsEditLink.href = `/partner-homes-rooms/${propertyId}?details=true&propertyType=${encodeURIComponent(propertyType)}`;
-        paymenEditLink.href =  `/partner-homes-payments/${propertyId}?propertyType=${encodeURIComponent(propertyType)}`;
+        paymenEditLink.href = `/partner-homes-payments/${propertyId}?propertyType=${encodeURIComponent(propertyType)}`;
         if (uploaded === 'true') {
             // Update the icon (optional - if not already done)
             if (icon) {
@@ -49,10 +49,10 @@
                 photoLink.appendChild(btn);
             }
 
-            if(paymentDetails === 'true') {
+            if (paymentDetails === 'true') {
                 // Update the icon (optional - if not already done)
                 if (paymentEditLinkBtn) {
-                    paymentEditLinkBtn.innerText = "Edit";  
+                    paymentEditLinkBtn.innerText = "Edit";
                     paymentEditLinkBtn.className = "text-sky-600 font-medium text-sm hover:underline";
                 }
                 if (finalicon) {
@@ -69,16 +69,16 @@
             //     url.searchParams.delete('paymentDetails');
             //     window.history.replaceState({}, document.title, url.pathname);
             // }        
-        
+
         }
 
-        if(rooms === 'true') {
+        if (rooms === 'true') {
             if (roomsStatusIcon) {
                 roomsStatusIcon.src = "{{ asset('assets/flat-color-icons_ok.svg') }}";
                 roomsStatusIcon.className = "w-6 h-6 md:w-7 md:h-7";
-            }            
+            }
             if (roomsEditLink) {
-                roomsEditLink.innerText = "Edit";  
+                roomsEditLink.innerText = "Edit";
                 roomsEditLink.className = "text-sky-600 font-medium text-sm hover:underline";
             }
         }
@@ -134,32 +134,32 @@
                         more</p>
                 </div>
             </div>
-            <button id="detailsEditLink" 
-                                class="text-sky-600 font-medium text-sm hover:underline">Edit</button>
+            <button id="detailsEditLink"
+                class="text-sky-600 font-medium text-sm hover:underline">Edit</button>
         </div>
 
         <div class="border border-gray-300 rounded-lg p-4 flex flex-col gap-6">
 
             <!-- Step 2 Header -->
-           <div class="border border-gray-300  rounded-lg p-4 flex justify-between items-center ">
-                    <div class="flex items-center gap-4">
-                        <img id="roomsStatusIcon" src="{{ asset('assets/Group 3926.svg') }}" alt="Icon"
-                            class="w-6 h-6 md:w-7 md:h-7" />
-                        <div>
-                            <p class="text-sm text-gray-500">Step 2</p>
-                            <h2 class="text-base font-semibold">Rooms</h2>
-                            <p class="text-xs text-gray-600">Tell us about your first room. Once you’ve set one up you
-                                can add more.</p>
-                        </div>
+            <div class="border border-gray-300  rounded-lg p-4 flex justify-between items-center ">
+                <div class="flex items-center gap-4">
+                    <img id="roomsStatusIcon" src="{{ asset('assets/Group 3926.svg') }}" alt="Icon"
+                        class="w-6 h-6 md:w-7 md:h-7" />
+                    <div>
+                        <p class="text-sm text-gray-500">Step 2</p>
+                        <h2 class="text-base font-semibold">Rooms</h2>
+                        <p class="text-xs text-gray-600">Tell us about your first room. Once you’ve set one up you
+                            can add more.</p>
                     </div>
-                    <a  id="roomsEditLink"
-                      href="#"
-                    class=" bg-sky-400 border border-sky-400 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-sky-500">
-                            Add rooms
-                    </a>
                 </div>
+                <a id="roomsEditLink"
+                    href="#"
+                    class=" bg-sky-400 border border-sky-400 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-sky-500">
+                    Add rooms
+                </a>
+            </div>
 
-           
+
         </div>
 
 
@@ -179,7 +179,7 @@
                 </div>
             </div>
             <a id="photoEditLink" href="#"
-                 class="mt-4 text-sky-600 text-sm font-semibold px-4 py-2 rounded border border-sky-300 hover:bg-sky-100">Add photos</a>
+                class="mt-4 text-sky-600 text-sm font-semibold px-4 py-2 rounded border border-sky-300 hover:bg-sky-100">Add photos</a>
 
         </div>
 
@@ -198,7 +198,7 @@
 
             <a id="paymentEditLink" href="#">
                 <button id="paymentEditLinkBtn" class=" bg-sky-400 border border-sky-400 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-sky-500">
-                        Add final details
+                    Add final details
                 </button>
             </a>
         </div>
@@ -211,5 +211,6 @@
             </button>
         </div>
     </div>
+</div>
 
-    @endsection
+@endsection

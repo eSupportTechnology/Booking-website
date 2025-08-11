@@ -116,27 +116,6 @@
 
                 <!-- Right: Actions -->
                 <div class="flex flex-col items-start sm:items-end space-y-2">
-                    <div class="flex items-center gap-4">
-                        <!-- Heart Icon with click functionality -->
-                        <div x-data="{ isLiked: false }" class="cursor-pointer">
-                            <svg @click="isLiked = !isLiked" class="w-6 h-6 transition-colors duration-200"
-                                :class="isLiked ? 'text-red-500 fill-current' : 'text-blue-400 hover:text-blue-600'"
-                                :fill="isLiked ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="2"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                            </svg>
-                        </div>
-                        <!-- Share Icon -->
-                        <svg class="w-6 h-6 text-blue-400 hover:text-blue-600 cursor-pointer" fill="none"
-                            stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-                        </svg>
-                        <button class="bg-[#3CC0E9] hover:bg-sky-600 text-white font-bold py-2 px-4 rounded-md shadow">
-                            Reserve
-                        </button>
-                    </div>
                     <div class="flex items-center text-[#3CC0E9] text-sm">
                         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2"
                             viewBox="0 0 24 24">
@@ -151,30 +130,6 @@
             <div class="flex flex-col lg:grid lg:grid-cols-7 lg:grid-rows-5 gap-4 mt-6 h-auto lg:h-[600px]">
 
                 <div class="w-full lg:col-span-5 lg:row-span-5 space-y-4">
-                    @php
-                        $images = [
-                            'h1.jpg',
-                            'h2.jpg',
-                            'h3.jpg',
-                            'h4.jpg',
-                            'h5.jpg',
-                            'h6.jpg',
-                            'h7.jpg',
-                            'h8.jpg',
-                            'h9.jpg',
-                            'h10.jpg',
-                        ];
-
-                        $desktopVisibleImageCount = 8;
-                        $mobileVisibleImageCount = 3;
-
-                        $desktopImages = array_slice($images, 0, $desktopVisibleImageCount);
-                        $mobileImages = array_slice($images, 0, $mobileVisibleImageCount);
-
-                        $remainingCount = count($images) - $desktopVisibleImageCount;
-                    @endphp
-
-
                     <div class="hidden lg:grid grid-cols-10 grid-rows-8 gap-2 h-full">
                         @php
                             $positions = [
@@ -207,7 +162,8 @@
                                         alt="Property Image {{ $index + 1 }}"
                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
                                         onload="console.log('Image loaded: {{ $file->path }}')">
-                                    <div class="w-full h-full bg-gray-200 rounded-lg flex items-center justify-center" style="display:none;">
+                                    <div class="w-full h-full bg-gray-200 rounded-lg flex items-center justify-center"
+                                        style="display:none;">
                                         <span class="text-gray-500 text-sm">Image not found</span>
                                     </div>
                                     @if ($loop->last && $remainingCount > 0)
@@ -219,7 +175,8 @@
                                 </div>
                             @endforeach
                         @else
-                            <div class="col-span-10 row-span-8 flex items-center justify-center bg-gray-200 rounded-lg">
+                            <div
+                                class="col-span-10 row-span-8 flex items-center justify-center bg-gray-200 rounded-lg">
                                 <p class="text-gray-500 text-lg">No images uploaded for this property</p>
                             </div>
                         @endif
@@ -562,18 +519,18 @@
                 @endif
 
                 <!-- Pricing -->
-                @if ($property->pricing)
+                @if ($property->pricings)
                     <div class="bg-white p-4 rounded-lg shadow">
                         <h3 class="font-bold text-lg mb-3">Pricing Details</h3>
                         <div class="space-y-2 text-sm">
                             <p><strong>Base Price:</strong> LKR
-                                {{ number_format($property->pricing->base_price ?? 0) }}</p>
+                                {{ number_format($property->pricings->base_price ?? 0) }}</p>
                             <p><strong>Original Price:</strong> LKR
-                                {{ number_format($property->pricing->original_price ?? 0) }}</p>
-                            <p><strong>Discount:</strong> {{ $property->pricing->discount_percentage ?? 0 }}%</p>
+                                {{ number_format($property->pricings->original_price ?? 0) }}</p>
+                            <p><strong>Discount:</strong> {{ $property->pricings->discount_percentage ?? 0 }}%</p>
                             <p><strong>Tax Amount:</strong> LKR
-                                {{ number_format($property->pricing->tax_amount ?? 0) }}</p>
-                            <p><strong>Currency:</strong> {{ $property->pricing->currency ?? 'LKR' }}</p>
+                                {{ number_format($property->pricings->tax_amount ?? 0) }}</p>
+                            <p><strong>Currency:</strong> {{ $property->pricings->currency ?? 'LKR' }}</p>
                         </div>
                     </div>
                 @endif
@@ -600,8 +557,8 @@
                     <div class="bg-white p-4 rounded-lg shadow">
                         <h3 class="font-bold text-lg mb-3">Policies</h3>
                         <div class="space-y-2 text-sm">
-                            <p><strong>Check-in:</strong> {{ $property->policies->check_in_time ?? 'N/A' }}</p>
-                            <p><strong>Check-out:</strong> {{ $property->policies->check_out_time ?? 'N/A' }}</p>
+                            <p><strong>Check-in:</strong> From {{ $property->policies->check_in_from ?? 'No details provided' }} to {{ $property->policies->check_in_until ?? 'No details provided' }}</p>
+                            <p><strong>Check-out:</strong> From {{ $property->policies->check_out_from ?? 'No details provided' }} to {{ $property->policies->check_out_until ?? 'No details provided' }}</p>
                             <p><strong>Cancellation:</strong>
                                 {{ $property->policies->flexible_cancellation ? 'Flexible' : 'Strict' }}</p>
                             <p><strong>Children:</strong>
@@ -705,7 +662,8 @@
                                 @foreach ($property->bedrooms as $bedroom)
                                     <span
                                         class="inline-block bg-gray-100 px-2 py-1 rounded mr-2 mb-1">{{ $bedroom->bedroom_type ?? 'Bedroom' }}
-                                        ({{ $bedroom->bed_count ?? 1 }} beds)</span>
+                                        ({{ $bedroom->bed_count ?? 1 }} beds)
+                                    </span>
                                 @endforeach
                             </div>
                         @endif
@@ -785,18 +743,6 @@
                                 <li>Billiards</li>
                             </ul>
                         </div>
-
-                        <button
-                            class="w-full bg-sky-500 text-white font-medium py-2 rounded hover:bg-sky-600 text-xs">Reserve</button>
-                        <button
-                            class="w-full border border-sky-500 text-sky-500 py-2 rounded hover:bg-sky-100 text-xs flex items-center justify-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                            </svg>
-                            Save the property
-                        </button>
                     </div>
                 </div>
             </div>
@@ -820,193 +766,7 @@
                 </div>
             </div>
 
-
-            <!-- Alert Message -->
-            <div class="flex items-start gap-2 mb-6">
-                <svg class="w-5 h-5 text-red-600 mt-1" fill="none" stroke="currentColor" stroke-width="2"
-                    viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M12 9v2m0 4h.01M12 5a7 7 0 100 14 7 7 0 000-14z" />
-                </svg>
-                <p class="text-red-600 text- mb-6">
-                    Select dates to see this property's availability and prices (may include Genius rates)
-                </p>
-            </div>
-
-
-
-            <!-- Search Box: Overlapping both sections -->
-            <!-- Alpine.js CDN -->
-            <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-
-            <!-- FORM Section: Aligned with the table section -->
-            <div class="relative z-10 -mt-8 bg-white">
-                <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-10">
-                    <form method="GET"
-                        class="w-full max-w-3xl bg-white rounded-xl px-2 py-1 shadow-lg flex flex-col md:flex-row items-center gap-1 md:gap-0 border-4 border-yellow-400 text-sm">
-
-                        <!-- Check-in/out Dropdown -->
-                        <div x-data="{ open: false, activeTab: 'check', checkIn: '', checkOut: '', flexibleOption: '' }"
-                            class="relative flex-1 border-t md:border-t-0 md:border-r border-gray-500 px-2 py-1">
-                            <button @click="open = !open" type="button"
-                                class="flex items-center gap-2 w-full text-left text-sm">
-                                <img src="{{ asset('assets/calender.svg') }}" alt="Calendar" class="w-5 h-5" />
-                                <span class="text-gray-800 truncate">
-                                    <template x-if="activeTab === 'check'">
-                                        <span><span x-text="checkIn ? checkIn : 'Check-in'" class="text-base"></span>
-                                            —
-                                            <span x-text="checkOut ? checkOut : 'Check-out'"
-                                                class="text-base"></span></span>
-                                    </template>
-                                    <template x-if="activeTab === 'flexible'">
-                                        <span x-text="flexibleOption ? flexibleOption : 'Flexible dates'"></span>
-                                    </template>
-                                </span>
-                            </button>
-
-                            <!-- Dropdown Panel -->
-                            <div x-show="open" @click.away="open = false"
-                                class="absolute z-30 bg-white shadow-xl rounded-xl p-4 mt-2 w-96 right-0 text-gray-800 text-sm"
-                                x-transition>
-                                <!-- Tabs -->
-                                <nav class="flex border-b border-gray-200 mb-4">
-                                    <button @click.prevent="activeTab = 'check'"
-                                        :class="activeTab === 'check' ? 'border-[#3CC0E9] text-[#3CC0E9]' : 'text-gray-500'"
-                                        class="px-4 py-2 border-b-2 font-semibold">Check-in / Check-out</button>
-                                    <button @click.prevent="activeTab = 'flexible'"
-                                        :class="activeTab === 'flexible' ? 'border-[#3CC0E9] text-[#3CC0E9]' : 'text-gray-500'"
-                                        class="px-4 py-2 border-b-2 font-semibold">Flexible dates</button>
-                                </nav>
-
-                                <!-- Check-in/out Inputs -->
-                                <div x-show="activeTab === 'check'" x-transition>
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div>
-                                            <label class="block text-xs text-gray-500 font-semibold mb-1">Check-in
-                                                Date</label>
-                                            <input type="date" x-model="checkIn"
-                                                class="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none" />
-                                        </div>
-                                        <div>
-                                            <label class="block text-xs text-gray-500 font-semibold mb-1">Check-out
-                                                Date</label>
-                                            <input type="date" x-model="checkOut"
-                                                class="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none" />
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Flexible Options -->
-                                <div x-show="activeTab === 'flexible'" x-transition>
-                                    <label class="block text-xs text-gray-500 font-semibold mb-1">Select Flexible
-                                        Dates</label>
-                                    <select x-model="flexibleOption"
-                                        class="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none">
-                                        <option value="" disabled>Select option</option>
-                                        <option value="Weekend Getaway">Weekend Getaway</option>
-                                        <option value="Next Month">Next Month</option>
-                                        <option value="Anytime">Anytime</option>
-                                        <option value="Custom Range">Custom Range</option>
-                                    </select>
-                                </div>
-
-                                <!-- Done -->
-                                <div class="mt-4 text-right">
-                                    <button @click="open = false"
-                                        class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">Done</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Guests Dropdown -->
-                        <div x-data="{ open: false, adults: 2, children: 0, rooms: 1, pets: false }"
-                            class="relative px-2 py-1 flex-1 border-t md:border-t-0 md:border-r border-gray-500">
-                            <button @click="open = !open" type="button"
-                                class="flex items-center gap-2 w-full text-left text-sm">
-                                <img src="{{ asset('assets/user.svg') }}" alt="Guests" class="w-5 h-5" />
-                                <span
-                                    x-text="`${adults} adults · ${children} children · ${rooms} room${rooms > 1 ? 's' : ''}`"
-                                    class="text-gray-800 text-base truncate"></span>
-                            </button>
-
-                            <!-- Guest Dropdown Panel -->
-                            <div x-show="open" @click.away="open = false"
-                                class="absolute z-20 bg-white shadow-xl rounded-xl p-4 mt-2 w-72 right-0 text-gray-800 space-y-4 text-sm">
-                                <!-- Adults -->
-                                <div class="flex items-center justify-between">
-                                    <span>Adults</span>
-                                    <div class="flex items-center gap-2">
-                                        <button type="button" @click="if(adults > 1) adults--"
-                                            class="px-2 py-1 bg-gray-200 rounded">−</button>
-                                        <span x-text="adults"></span>
-                                        <button type="button" @click="adults++"
-                                            class="px-2 py-1 bg-gray-200 rounded">+</button>
-                                    </div>
-                                </div>
-
-                                <!-- Children -->
-                                <div class="flex items-center justify-between">
-                                    <span>Children</span>
-                                    <div class="flex items-center gap-2">
-                                        <button type="button" @click="if(children > 0) children--"
-                                            class="px-2 py-1 bg-gray-200 rounded">−</button>
-                                        <span x-text="children"></span>
-                                        <button type="button" @click="children++"
-                                            class="px-2 py-1 bg-gray-200 rounded">+</button>
-                                    </div>
-                                </div>
-
-                                <!-- Rooms -->
-                                <div class="flex items-center justify-between">
-                                    <span>Rooms</span>
-                                    <div class="flex items-center gap-2">
-                                        <button type="button" @click="if(rooms > 1) rooms--"
-                                            class="px-2 py-1 bg-gray-200 rounded">−</button>
-                                        <span x-text="rooms"></span>
-                                        <button type="button" @click="rooms++"
-                                            class="px-2 py-1 bg-gray-200 rounded">+</button>
-                                    </div>
-                                </div>
-
-                                <!-- Pets -->
-                                <div class="flex items-center justify-between">
-                                    <span>Travelling with pets?</span>
-                                    <label class="inline-flex items-center cursor-pointer">
-                                        <input type="checkbox" x-model="pets" class="sr-only peer">
-                                        <div
-                                            class="w-10 h-6 bg-gray-300 rounded-full peer peer-checked:bg-blue-600 relative transition-all">
-                                            <div
-                                                class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-all peer-checked:translate-x-4">
-                                            </div>
-                                        </div>
-                                    </label>
-                                </div>
-
-                                <p class="text-xs text-gray-500">
-                                    Assistance animals aren’t considered pets.<br>
-                                    <a href="#" class="text-[#3CC0E9] underline">Read more</a>
-                                </p>
-
-                                <!-- Done -->
-                                <button type="button" @click="open = false"
-                                    class="w-full bg-white border border-blue-600 text-blue-600 font-semibold py-2 rounded hover:bg-blue-50">Done</button>
-                            </div>
-                        </div>
-
-                        <!-- Submit -->
-                        <div class="px-2 py-1">
-                            <button type="submit"
-                                class="w-full md:w-auto h-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg text-sm"
-                                style="background-color:#3CC0E9;">
-                                Search
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
             <div class="pt-4 sm:pt-6 lg:pt-10 bg-white">
-                <h2 class="text-xl sm:text-2xl font-bold mb-6">All available villas</h2>
 
                 <div class="w-full overflow-x-auto">
                     <table class="w-full border border-blue-500 border-collapse text-sm text-left min-w-[1000px]">
@@ -1016,8 +776,6 @@
                                 <th class="p-3 font-semibold border border-blue-500 w-[150px]">Number of guests</th>
                                 <th class="p-3 font-semibold border border-blue-500 w-[160px]">Today's Price</th>
                                 <th class="p-3 font-semibold border border-blue-500 w-[300px]">Your choices</th>
-                                <th class="p-3 font-semibold border border-blue-500 w-[120px]">Select amount</th>
-                                <th class="p-3 font-semibold border border-blue-500 w-[150px]">Reserve</th>
                             </tr>
                         </thead>
 
@@ -1026,9 +784,9 @@
                                 <!-- Room Type -->
                                 <td class="p-3 align-top border border-blue-500">
                                     <h3 class="text-blue-600 font-semibold underline">
-                                        {{ $property->title ?? 'Private Villa by the Tea Resort' }}</h3>
+                                        {{ $property->title ?? 'No details provided' }}</h3>
                                     <p class="text-gray-600 mt-1 text-sm">
-                                        {{ $property->description ?? 'Guests will have a special experience at this property featuring modern amenities and comfortable accommodations.' }}
+                                        {{ $property->description ?? 'No details provided' }}
                                     </p>
                                 </td>
 
@@ -1065,8 +823,7 @@
                                             </div>
                                         @endif
                                     @else
-                                        <div class="text-lg font-bold text-green-600">LKR 45,600</div>
-                                        <div class="text-xs text-gray-500">+ LKR 2,374 taxes and fees</div>
+                                        <div class="text-lg font-bold text-gray-600">No details provided</div>
                                     @endif
                                 </td>
 
@@ -1105,27 +862,6 @@
                                                 {{ $property->pricing->discount_percentage }}% discount</li>
                                         @endif
                                     </ul>
-                                </td>
-
-                                <!-- Amount -->
-                                <td class="p-3 align-top border border-blue-500 text-center">
-                                    <select class="border p-1 w-full rounded">
-                                        <option>0</option>
-                                        <option>1</option>
-                                        <option>2</option>
-                                    </select>
-                                </td>
-
-                                <!-- Reserve -->
-                                <td class="p-3 align-top border border-blue-500 text-center">
-                                    <button
-                                        class="mt-2 w-full bg-blue-600 text-white text-sm py-1.5 rounded hover:bg-blue-700">
-                                        I'll reserve
-                                    </button>
-                                    <p class="text-xs mt-1 text-gray-500">
-                                        ✓ It only takes 2 minutes<br>
-                                        ✓ You won’t be charged yet
-                                    </p>
                                 </td>
                             </tr>
                         </tbody>
@@ -1306,10 +1042,9 @@
                         @endif
                         <p><strong>Location:</strong> {{ $property->city ?? 'Gregory Lake' }}</p>
                         @if ($property->languages && $property->languages->count() > 0)
-                            <p>Languages spoken: <span
-                                    class="font-bold">{{ $property->languages->pluck('name')->join(', ') }}</span></p>
+                            <p><strong>Languages spoken:</strong> <span>{{ $property->languages->pluck('name')->join(', ') }}</spanlass=></p>
                         @else
-                            <p>Languages spoken: <span class="font-bold">English</span></p>
+                            <p><strong>Languages spoken:</strong> <span>English</span></p>
                         @endif
                     </div>
                 </div>
@@ -1348,55 +1083,65 @@
                                 <col class="w-2/3">
                             </colgroup>
                             <tbody class="divide-y divide-gray-200">
-                                @php
-                                    $rows = [
-                                        [
-                                            'check-in.svg',
-                                            'Check in',
-                                            '<p>From 14:00 to 23:30</p><p class="text-gray-500">You\'ll need to let the property know in advance what time you\'ll arrive.</p>',
-                                        ],
-                                        ['check-out.svg', 'Check out', 'From 05:00 to 11:00'],
-                                        [
-                                            'prepayment.svg',
-                                            'Cancellation/ prepayment',
-                                            'Cancellation and prepayment policies vary according to accommodation type. Please check what may apply to each option when making your selection.',
-                                        ],
-                                        [
-                                            'children.svg',
-                                            'Children and beds',
-                                            '<p class="font-semibold">Child policies</p><p>To see correct prices and occupancy information, please add the number of children in your group and their ages to your search.</p><p class="mt-2 font-semibold">Cot and extra bed policies</p><p>The number of cots allowed is dependent on the option you choose. Please check your selected option for more information.</p>',
-                                        ],
-                                        [
-                                            'noage.svg',
-                                            'No age restriction',
-                                            'There is no age requirement for check-in.',
-                                        ],
-                                        [
-                                            'payment.svg',
-                                            'Accepted payment methods',
-                                            '<div class="flex flex-wrap items-center gap-4 mt-1"><img src="' .
-                                            asset('images/visa.png') .
-                                            '" alt="Visa" class="h-10 p-1 border rounded-md"><img src="' .
-                                            asset('images/mastercard.png') .
-                                            '" alt="MasterCard" class="h-10 p-1 border rounded-md"></div>',
-                                        ],
-                                        ['nosmoking.svg', 'Smoking', 'Smoking is not allowed.'],
-                                        ['quiet.svg', 'Quiet hours', 'Guests must be quiet between 22:00 and 06:00.'],
-                                        ['pets.svg', 'Pets', 'Pets are not allowed.'],
-                                    ];
-                                @endphp
-
-                                @foreach ($rows as [$icon, $label, $content])
+                                @if($property->policies)
                                     <tr class="align-top">
-                                        <th
-                                            class="p-4 font-bold whitespace-normal flex items-center justify-start lg:justify-start gap-2">
-                                            <img src="/assets/{{ $icon }}" class="w-4 h-4 mt-1 shrink-0"
-                                                alt="{{ $label }}">
-                                            <span>{{ $label }}</span>
+                                        <th class="p-4 font-bold whitespace-normal flex items-center justify-start lg:justify-start gap-2">
+                                            <img src="/assets/check-in.svg" class="w-4 h-4 mt-1 shrink-0" alt="Check in">
+                                            <span>Check in</span>
                                         </th>
-                                        <td class="p-4">{!! $content !!}</td>
+                                        <td class="p-4">
+                                            <p>From {{ $property->policies->check_in_from ?? 'No details provided' }} to {{ $property->policies->check_in_until ?? 'No details provided' }}</p>
+                                            <p class="text-gray-500">You'll need to let the property know in advance what time you'll arrive.</p>
+                                        </td>
                                     </tr>
-                                @endforeach
+                                    <tr class="align-top">
+                                        <th class="p-4 font-bold whitespace-normal flex items-center justify-start lg:justify-start gap-2">
+                                            <img src="/assets/check-out.svg" class="w-4 h-4 mt-1 shrink-0" alt="Check out">
+                                            <span>Check out</span>
+                                        </th>
+                                        <td class="p-4">From {{ $property->policies->check_out_from ?? 'No details provided' }} to {{ $property->policies->check_out_until ?? 'No details provided' }}</td>
+                                    </tr>
+                                    <tr class="align-top">
+                                        <th class="p-4 font-bold whitespace-normal flex items-center justify-start lg:justify-start gap-2">
+                                            <img src="/assets/prepayment.svg" class="w-4 h-4 mt-1 shrink-0" alt="Cancellation">
+                                            <span>Cancellation/ prepayment</span>
+                                        </th>
+                                        <td class="p-4">{{ $property->policies->cancellation_policy ?? 'No details provided' }}</td>
+                                    </tr>
+                                    <tr class="align-top">
+                                        <th class="p-4 font-bold whitespace-normal flex items-center justify-start lg:justify-start gap-2">
+                                            <img src="/assets/children.svg" class="w-4 h-4 mt-1 shrink-0" alt="Children">
+                                            <span>Children</span>
+                                        </th>
+                                        <td class="p-4">{{ $property->policies->children_allowed ? 'Children are allowed' : 'Children are not allowed' }}</td>
+                                    </tr>
+                                    <tr class="align-top">
+                                        <th class="p-4 font-bold whitespace-normal flex items-center justify-start lg:justify-start gap-2">
+                                            <img src="/assets/nosmoking.svg" class="w-4 h-4 mt-1 shrink-0" alt="Smoking">
+                                            <span>Smoking</span>
+                                        </th>
+                                        <td class="p-4">{{ $property->policies->smoking_allowed ? 'Smoking is allowed' : 'Smoking is not allowed' }}</td>
+                                    </tr>
+                                    <tr class="align-top">
+                                        <th class="p-4 font-bold whitespace-normal flex items-center justify-start lg:justify-start gap-2">
+                                            <img src="/assets/pets.svg" class="w-4 h-4 mt-1 shrink-0" alt="Pets">
+                                            <span>Pets</span>
+                                        </th>
+                                        <td class="p-4">{{ $property->policies->pets_allowed ? 'Pets are allowed' : 'Pets are not allowed' }}</td>
+                                    </tr>
+                                    <tr class="align-top">
+                                        <th class="p-4 font-bold whitespace-normal flex items-center justify-start lg:justify-start gap-2">
+                                            <img src="/assets/payment.svg" class="w-4 h-4 mt-1 shrink-0" alt="Parties">
+                                            <span>Parties</span>
+                                        </th>
+                                        <td class="p-4">{{ $property->policies->parties_allowed ? 'Parties are allowed' : 'Parties are not allowed' }}</td>
+                                    </tr>
+                                @else
+                                    <tr class="align-top">
+                                        <td colspan="2" class="p-4 text-center text-gray-500">No policy details provided</td>
+                                    </tr>
+                                @endif
+
                             </tbody>
                         </table>
                     </div>
@@ -1405,104 +1150,7 @@
         </div>
     </section>
 
-    <section id="fineprint" class="min-h-screen bg-white">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <!-- Fine Print -->
-            <div class="mb-10 space-y-6">
-                <div class="flex items-center justify-between mb-3">
-                    <h2 class="text-xl font-semibold">The fine print</h2>
-                    <button class="bg-sky-500 hover:bg-sky-600 text-white text-sm px-4 py-2 rounded">See
-                        availability</button>
-                </div>
-                <div class="bg-gray-50 border rounded-lg p-4 text-lg text-gray-700">
-                    <p class="m-2">Please inform {{ $property->title ?? 'Property' }} in advance of your expected
-                        arrival time. You can use
-                        the Special Requests
-                        box when booking, or contact the property directly with the contact details provided in your
-                        confirmation. </p>
-                    <p class="m-2"> Quiet hours are between 22:00 and 06:00.</p>
-                </div>
-            </div>
 
-            <!-- FAQ Placeholder -->
-            <div>
-                <h2 class="text-lg font-semibold">FAQs about {{ $property->title ?? 'Property' }}</h2>
-                <p class="text-sm text-gray-600 mt-1">How much does it cost to rent a car in Sri Lanka for a week? •
-                    Which
-                    pickup locations in Sri Lanka are the most popular?</p>
-            </div>
-            <!-- Two column layout -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Left Column -->
-                <div class="space-y-4">
-                    <div class="border border-gray-200 rounded-lg p-4">
-                        <button
-                            class="w-full flex justify-between items-center text-left font-medium text-gray-800 toggle-answer focus:outline-none"
-                            style="font-family: 'Noto Sans', sans-serif;">
-                            What is your refund policy?
-                            <svg class="w-5 h-5 transform transition-transform" xmlns="http://www.w3.org/2000/svg"
-                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </button>
-                        <p class="mt-2 text-gray-600 hidden answer" style="font-family: 'Noto Sans', sans-serif;">
-                            We offer a full refund within the first 14 days of your purchase.
-                        </p>
-                    </div>
-                    <div class="border border-gray-200 rounded-lg p-4">
-                        <button
-                            class="w-full flex justify-between items-center text-left font-medium text-gray-800 toggle-answer focus:outline-none"
-                            style="font-family: 'Noto Sans', sans-serif;">
-                            What is your refund policy?
-                            <svg class="w-5 h-5 transform transition-transform" xmlns="http://www.w3.org/2000/svg"
-                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </button>
-                        <p class="mt-2 text-gray-600 hidden answer" style="font-family: 'Noto Sans', sans-serif;">
-                            We offer a full refund within the first 14 days of your purchase.
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Right Column -->
-                <div class="space-y-4">
-                    <div class="border border-gray-200 rounded-lg p-4">
-                        <button
-                            class="w-full flex justify-between items-center text-left font-medium text-gray-800 toggle-answer focus:outline-none"
-                            style="font-family: 'Noto Sans', sans-serif;">
-                            Is there a free trial available?
-                            <svg class="w-5 h-5 transform transition-transform" xmlns="http://www.w3.org/2000/svg"
-                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </button>
-                        <p class="mt-2 text-gray-600 hidden answer" style="font-family: 'Noto Sans', sans-serif;">
-                            Yes, we offer a 7-day free trial with access to all features.
-                        </p>
-                    </div>
-                    <div class="border border-gray-200 rounded-lg p-4">
-                        <button
-                            class="w-full text-base text-bold flex justify-between items-center text-left  text-gray-800 toggle-answer focus:outline-none"
-                            style="font-family: 'Noto Sans', sans-serif;">
-                            Is there a free trial available?
-                            <svg class="w-5 h-5 transform transition-transform" xmlns="http://www.w3.org/2000/svg"
-                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </button>
-                        <p class="mt-2 text-gray-600 hidden answer" style="font-family: 'Noto Sans', sans-serif;">
-                            Yes, we offer a 7-day free trial with access to all features.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
     <section class="bg-white">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <!-- TAGS -->

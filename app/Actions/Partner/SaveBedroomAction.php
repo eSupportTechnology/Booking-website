@@ -123,57 +123,129 @@ class SaveBedroomAction
         
         $existingRoom = null;
         
-        // First try to find by room type (this is the most reliable method)
-        if ($roomType) {
-            $existingRoom = PropertyBedroom::where('property_id', $property->id)
-                ->where('room_type', $roomType)
-                ->first();
-            Log::info('Looking for existing room by room_type', [
-                'property_id' => $property->id,
-                'room_type' => $roomType,
-                'found' => $existingRoom ? $existingRoom->name : 'not found'
-            ]);
-        }
+        // For bedrooms, we need to check if this is a new bedroom or updating an existing one
+        // Check if the room name contains a number (e.g., "Bedroom 2", "Bedroom 3")
+        $isNewBedroom = false;
         
-        // If not found by room type, try by name variations
-        if (!$existingRoom) {
-            $existingRoom = PropertyBedroom::where('property_id', $property->id)
-                ->whereIn('name', $roomNameVariations)
-                ->first();
-            Log::info('Looking for existing room by name variations', [
-                'property_id' => $property->id,
-                'name_variations' => $roomNameVariations,
-                'found' => $existingRoom ? $existingRoom->name : 'not found'
-            ]);
-        }
+        // Check if this is explicitly a create action (from URL parameter)
+        $request = request();
+        $isCreateAction = $request->has('action') && $request->get('action') === 'create';
         
-        // If still not found, try a more flexible search by room type and any name that contains the key words
-        if (!$existingRoom && $roomType) {
-            if ($roomType === 'living_room') {
-                $existingRoom = PropertyBedroom::where('property_id', $property->id)
-                    ->where('room_type', $roomType)
-                    ->where(function($query) {
-                        $query->where('name', 'like', '%living%')
-                              ->orWhere('name', 'like', '%lounge%');
-                    })
-                    ->first();
-            } elseif ($roomType === 'other') {
-                $existingRoom = PropertyBedroom::where('property_id', $property->id)
-                    ->where('room_type', $roomType)
-                    ->where('name', 'like', '%other%')
-                    ->first();
+        if ($roomType === 'bedroom') {
+            // If this is explicitly a create action, force new bedroom creation
+            if ($isCreateAction) {
+                $isNewBedroom = true;
+                $existingRoom = null;
+                Log::info('Explicit create action detected, forcing new bedroom creation', [
+                    'room_name' => $dto->room_name
+                ]);
+            } else {
+                // Check if this is a new bedroom by looking for a number in the name
+                if (preg_match('/bedroom\s*(\d+)/i', $dto->room_name, $matches)) {
+                    $bedroomNumber = (int)$matches[1];
+                    
+                    // Look for existing bedroom with this specific number
+                    $existingRoom = PropertyBedroom::where('property_id', $property->id)
+                        ->where('room_type', 'bedroom')
+                        ->where('name', 'like', "%Bedroom $bedroomNumber%")
+                        ->first();
+                    
+                    Log::info('Looking for specific bedroom number', [
+                        'property_id' => $property->id,
+                        'bedroom_number' => $bedroomNumber,
+                        'room_name' => $dto->room_name,
+                        'search_pattern' => "%Bedroom $bedroomNumber%",
+                        'found' => $existingRoom ? $existingRoom->name : 'not found'
+                    ]);
+                    
+                    // If not found, this is a new bedroom
+                    if (!$existingRoom) {
+                        $isNewBedroom = true;
+                        Log::info('This is a new bedroom', [
+                            'bedroom_number' => $bedroomNumber,
+                            'room_name' => $dto->room_name
+                        ]);
+                    } else {
+                        Log::info('Found existing bedroom, will update', [
+                            'existing_room_id' => $existingRoom->id,
+                            'existing_room_name' => $existingRoom->name,
+                            'new_room_name' => $dto->room_name
+                        ]);
+                    }
+                } else {
+                    // If no number in name, look for any existing bedroom
+                    $existingRoom = PropertyBedroom::where('property_id', $property->id)
+                        ->where('room_type', 'bedroom')
+                        ->first();
+                    
+                    Log::info('No bedroom number in name, looking for any bedroom', [
+                        'room_name' => $dto->room_name,
+                        'found' => $existingRoom ? $existingRoom->name : 'not found'
+                    ]);
+                }
             }
-            
-            if ($existingRoom) {
-                Log::info('Found existing room by flexible search', [
+        } else {
+            // For non-bedroom rooms (living room, other spaces), use the original logic
+            // First try to find by room type (this is the most reliable method)
+            if ($roomType) {
+                $existingRoom = PropertyBedroom::where('property_id', $property->id)
+                    ->where('room_type', $roomType)
+                    ->first();
+                Log::info('Looking for existing room by room_type', [
                     'property_id' => $property->id,
                     'room_type' => $roomType,
-                    'found' => $existingRoom->name
+                    'found' => $existingRoom ? $existingRoom->name : 'not found'
                 ]);
+            }
+            
+            // If not found by room type, try by name variations
+            if (!$existingRoom) {
+                $existingRoom = PropertyBedroom::where('property_id', $property->id)
+                    ->whereIn('name', $roomNameVariations)
+                    ->first();
+                Log::info('Looking for existing room by name variations', [
+                    'property_id' => $property->id,
+                    'name_variations' => $roomNameVariations,
+                    'found' => $existingRoom ? $existingRoom->name : 'not found'
+                ]);
+            }
+            
+            // If still not found, try a more flexible search by room type and any name that contains the key words
+            if (!$existingRoom && $roomType) {
+                if ($roomType === 'living_room') {
+                    $existingRoom = PropertyBedroom::where('property_id', $property->id)
+                        ->where('room_type', $roomType)
+                        ->where(function($query) {
+                            $query->where('name', 'like', '%living%')
+                                  ->orWhere('name', 'like', '%lounge%');
+                        })
+                        ->first();
+                } elseif ($roomType === 'other') {
+                    $existingRoom = PropertyBedroom::where('property_id', $property->id)
+                        ->where('room_type', $roomType)
+                        ->where('name', 'like', '%other%')
+                        ->first();
+                }
+                
+                if ($existingRoom) {
+                    Log::info('Found existing room by flexible search', [
+                        'property_id' => $property->id,
+                        'room_type' => $roomType,
+                        'found' => $existingRoom->name
+                    ]);
+                }
             }
         }
 
-        if ($existingRoom) {
+        Log::info('Final decision for room save', [
+            'existing_room_found' => $existingRoom ? true : false,
+            'is_new_bedroom' => $isNewBedroom,
+            'will_update' => $existingRoom && !$isNewBedroom,
+            'will_create' => !$existingRoom || $isNewBedroom,
+            'room_name' => $dto->room_name
+        ]);
+        
+        if ($existingRoom && !$isNewBedroom) {
             // Update existing room
             $existingRoom->update($roomData);
             $room = $existingRoom;
@@ -188,10 +260,11 @@ class SaveBedroomAction
         } else {
             // Log all existing rooms for this property to debug
             $allExistingRooms = PropertyBedroom::where('property_id', $property->id)->get();
-            Log::info('No existing room found. All rooms for this property:', [
+            Log::info('Creating new room. All rooms for this property:', [
                 'property_id' => $property->id,
                 'room_name' => $dto->room_name,
                 'room_type' => $roomType,
+                'is_new_bedroom' => $isNewBedroom,
                 'all_existing_rooms' => $allExistingRooms->map(function($r) {
                     return [
                         'id' => $r->id,
