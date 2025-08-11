@@ -22,7 +22,9 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use App\Http\Controllers\AccommodationController;
 
+Route::post('/accommodation/save-verification/{propertyId}', [AccommodationController::class, 'saveVerification']);
 
 
 Route::get('/login/email', [LoginController::class, 'showEmailForm'])->name('login.email');
@@ -310,9 +312,9 @@ Route::get('/partner-hotels-non-refundable-rate', function () {
 })->name('partner.hotels.non.refundable.rate');
 
 
-Route::get('/partner-hotels-complete-registration', function () {
-    return view('frontend.partner-hotels-complete-registration');
-})->name('partner.hotels.complete.registration');
+// Route::get('/partner-hotels-complete-registration', function () {
+//     return view('frontend.partner-hotels-complete-registration');
+// })->name('partner.hotels.complete.registration');
 
 Route::get('/partner-hotels-multiple', function () {
     return view('frontend.partner-hotels-multiple');
@@ -491,6 +493,9 @@ Route::prefix('partner')->middleware('auth')->group(function () {
     Route::get('/partner-hotels-payment', function () {
         return view('partner.partner-hotels-payment');
     })->name('partner.hotels.payment');
+    Route::get('/partner-hotels-complete-registration', function () {
+        return view('partner.partner-hotels-complete-registration');
+    })->name('partner.hotels.complete.registration');
 
     // Add new routes for loading saved data
     Route::get('/property/{property}/details', [PropertyDataController::class, 'getPropertyDetails'])->name('partner.property.details.get');

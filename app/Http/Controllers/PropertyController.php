@@ -1923,4 +1923,59 @@ class PropertyController extends Controller
             ], 500);
         }
     }
+
+    public function saveAccommodationVerification(Request $request, $propertyId)
+    {
+        try {
+            $data = $request->validate([
+                'ownership_type' => 'required|in:individual,business',
+                'owners' => 'required|array',
+                'owners.*.firstName' => 'required|string|max:255',
+                'owners.*.lastName' => 'required|string|max:255',
+                'owners.*.dob' => 'required|date',
+                'legal_company_name' => 'nullable|string|max:255',
+            ]);
+
+            // Save main accommodation record
+            $accommodation = Accommodation::updateOrCreate(
+                ['property_id' => $propertyId],
+                ['ownership_type' => $data['ownership_type']]
+            );
+
+            // Clear existing related records
+            $accommodation->individuals()->delete();
+            $accommodation->businessEntities()->delete();
+
+            if ($data['ownership_type'] === 'individual') {
+                foreach ($data['owners'] as $owner) {
+                    $accommodation->individuals()->create([
+                        'first_name' => $owner['firstName'],
+                        'last_name' => $owner['lastName'],
+                        'date_of_birth' => $owner['dob'],
+                    ]);
+                }
+            } elseif ($data['ownership_type'] === 'business') {
+                $accommodation->businessEntities()->create([
+                    'business_name' => $data['legal_company_name'],
+                    'trading_name' => $data['legal_company_name'], // adjust if needed
+                    'address' => $request->input('address', ''),
+                    'zip_code' => $request->input('zip_code', ''),
+                    'city' => $request->input('city', ''),
+                    'country' => $request->input('country', ''),
+                ]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Accommodation verification data saved successfully.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error saving accommodation verification data.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
 }

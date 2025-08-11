@@ -95,29 +95,48 @@
         },
 
         submitStep3() {
-            if (!this.propertyId) {
-                showToast('Property ID is required. Please go back and complete the previous steps first.', 'error');
-                return;
-            }
+    console.log('step 3 called');
 
-            if (!this.formData.ownership_type) {
-                showToast('Please select ownership type', 'error');
-                return;
-            }
+    if (!this.propertyId) {
+        showToast('Property ID is required. Please go back and complete the previous steps first.', 'error');
+        return;
+    }
 
-            if (!this.formData.owners || this.formData.owners.length === 0) {
-                showToast('Please add at least one owner', 'error');
-                return;
-            }
+    if (!this.formData.ownership_type) {
+        showToast('Please select ownership type', 'error');
+        return;
+    }
 
-            for (let owner of this.formData.owners) {
-                if (!owner.firstName || !owner.lastName || !owner.dob) {
-                    showToast('Please fill in all owner details (First Name, Last Name, Date of Birth)', 'error');
-                    return;
-                }
-            }
+    if (!this.formData.owners || this.formData.owners.length === 0) {
+        showToast('Please add at least one owner', 'error');
+        return;
+    }
 
-            fetch('/partner/property/save-verification/' + this.propertyId, {
+    for (let owner of this.formData.owners) {
+        if (!owner.firstName || !owner.lastName || !owner.dob) {
+            showToast('Please fill in all owner details (First Name, Last Name, Date of Birth)', 'error');
+            return;
+        }
+    }
+
+    // Step 1: Call existing save-verification endpoint
+    fetch('/partner/property/save-verification/' + this.propertyId, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+        },
+        body: JSON.stringify({
+            ownership_type: this.formData.ownership_type,
+            owners: this.formData.owners,
+            legal_company_name: this.formData.legal_company_name
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Step 2: Also save into accommodations / individuals / business_entities
+            return fetch('/accommodation/save-verification/' + this.propertyId, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -128,23 +147,30 @@
                     owners: this.formData.owners,
                     legal_company_name: this.formData.legal_company_name
                 })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showToast('Verification information saved successfully!', 'success');
-                    setTimeout(() => {
-                        this.step++;
-                    }, 1000);
-                } else {
-                    showToast('Error: ' + data.message, 'error');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showToast('An error occurred while saving verification data', 'error');
             });
-        },
+        } else {
+            throw new Error(data.message);
+        }
+    })
+    .then(response => {
+        if (response) return response.json();
+    })
+    .then(data2 => {
+        if (data2 && data2.success) {
+            showToast('Verification information saved successfully!', 'success');
+            setTimeout(() => {
+                this.step++;
+            }, 1000);
+        } else if (data2) {
+            throw new Error(data2.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showToast('An error occurred while saving verification data', 'error');
+    });
+},
+
 
         completePaymentProcess() {
             if (!this.propertyId) {
@@ -619,7 +645,7 @@
 
                     ←
                 </button>
-                <button @click="completePaymentProcess()"
+                <button @click="submitStep3()"
                     class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition ">
                     Complete
                 </button>
@@ -683,7 +709,7 @@
 
                     ←
                 </button>
-                <button @click="submitStep3()"
+                <button @click="completePaymentProcess()"
                     class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition ">
                     Continue
                 </button>
