@@ -279,8 +279,8 @@ Route::get('/partner-homes-form2', function () {
 })->name('partner.homes.form2');
 
 
-Route::post('/partner-homes-single', [PropertyController::class, 'showPrivateHomesSingle'])->name('partner.homes.single');
-Route::post('/partner-homes-multiple', [PropertyController::class, 'showPrivateHomesMultiple'])->name('partner.homes.multiple');
+Route::post('/partner-homes-single/{id?}', [PropertyController::class, 'showPrivateHomesSingle'])->name('partner.homes.single');
+Route::post('/partner-homes-multiple/{id?}', [PropertyController::class, 'showPrivateHomesMultiple'])->name('partner.homes.multiple');
 
 
 Route::get('/partner-homes-rooms/{id}', [PropertyController::class, 'showPrivateHomesRooms'])->name('partner.homes.rooms');
