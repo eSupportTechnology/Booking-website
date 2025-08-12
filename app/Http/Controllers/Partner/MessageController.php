@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Partner;
 
 use App\Http\Controllers\Controller;
+use App\Actions\Partner\GetMessagesDataAction;
 
 class MessageController extends Controller
 {
-    public function index()
+    public function index(GetMessagesDataAction $action)
     {
-        return view('partner.messages.index');
+        $data = $action->execute();
+        
+        return view('partner.messages.index', $data);
     }
 }
