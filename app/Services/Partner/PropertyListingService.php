@@ -14,9 +14,9 @@ class PropertyListingService
         $partnerId = Auth::id();
         
         $apartmentCategory = PropertyCategory::where('name', 'Apartment')->first();
-        $homeCategory = PropertyCategory::where('name', 'Home')->first();
-        $hotelCategory = PropertyCategory::where('name', 'Hotel')->first();
-        $alternativeCategory = PropertyCategory::where('name', 'Alternative Place')->first();
+        $homeCategory = PropertyCategory::where('name', 'Homes')->first();
+        $hotelCategory = PropertyCategory::where('name', 'Hotel, B&Bs, and more')->first();
+        $alternativeCategory = PropertyCategory::where('name', 'Alternative places')->first();
         
         return PropertyListingsDTO::fromArray([
             'apartments' => Property::where('user_id', $partnerId)
@@ -34,7 +34,7 @@ class PropertyListingService
         ]);
     }
 
-    public function getApartments(?string $search = null): array
+    public function getApartments(?string $search = null, ?string $status = null): array
     {
         $partnerId = Auth::id();
         $apartmentCategory = PropertyCategory::where('name', 'Apartment')->first();
@@ -50,13 +50,23 @@ class PropertyListingService
             });
         }
         
-        return $query->get()->toArray();
+        if ($status) {
+            $query->where('status', $status);
+        }
+        
+        $properties = $query->with('files')->get();
+        
+        return $properties->map(function($property) {
+            $propertyArray = $property->toArray();
+            $propertyArray['image'] = $property->files->first()?->path ?? null;
+            return $propertyArray;
+        })->toArray();
     }
 
-    public function getHomes(?string $search = null): array
+    public function getHomes(?string $search = null, ?string $status = null): array
     {
         $partnerId = Auth::id();
-        $homeCategory = PropertyCategory::where('name', 'Home')->first();
+        $homeCategory = PropertyCategory::where('name', 'Homes')->first();
         
         $query = Property::where('user_id', $partnerId)
             ->where('category_id', $homeCategory?->id);
@@ -69,13 +79,23 @@ class PropertyListingService
             });
         }
         
-        return $query->get()->toArray();
+        if ($status) {
+            $query->where('status', $status);
+        }
+        
+        $properties = $query->with('files')->get();
+        
+        return $properties->map(function($property) {
+            $propertyArray = $property->toArray();
+            $propertyArray['image'] = $property->files->first()?->path ?? null;
+            return $propertyArray;
+        })->toArray();
     }
 
-    public function getHotels(?string $search = null): array
+    public function getHotels(?string $search = null, ?string $status = null): array
     {
         $partnerId = Auth::id();
-        $hotelCategory = PropertyCategory::where('name', 'Hotel')->first();
+        $hotelCategory = PropertyCategory::where('name', 'Hotel, B&Bs, and more')->first();
         
         $query = Property::where('user_id', $partnerId)
             ->where('category_id', $hotelCategory?->id);
@@ -88,13 +108,23 @@ class PropertyListingService
             });
         }
         
-        return $query->get()->toArray();
+        if ($status) {
+            $query->where('status', $status);
+        }
+        
+        $properties = $query->with('files')->get();
+        
+        return $properties->map(function($property) {
+            $propertyArray = $property->toArray();
+            $propertyArray['image'] = $property->files->first()?->path ?? null;
+            return $propertyArray;
+        })->toArray();
     }
 
-    public function getAlternativePlaces(?string $search = null): array
+    public function getAlternativePlaces(?string $search = null, ?string $status = null): array
     {
         $partnerId = Auth::id();
-        $alternativeCategory = PropertyCategory::where('name', 'Alternative Place')->first();
+        $alternativeCategory = PropertyCategory::where('name', 'Alternative places')->first();
         
         $query = Property::where('user_id', $partnerId)
             ->where('category_id', $alternativeCategory?->id);
@@ -107,6 +137,16 @@ class PropertyListingService
             });
         }
         
-        return $query->get()->toArray();
+        if ($status) {
+            $query->where('status', $status);
+        }
+        
+        $properties = $query->with('files')->get();
+        
+        return $properties->map(function($property) {
+            $propertyArray = $property->toArray();
+            $propertyArray['image'] = $property->files->first()?->path ?? null;
+            return $propertyArray;
+        })->toArray();
     }
 }

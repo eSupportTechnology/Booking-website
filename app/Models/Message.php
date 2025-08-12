@@ -10,4 +10,9 @@ class Message extends Model
     use HasFactory;
     public $timestamps = false;
     protected $fillable = ['sender_id', 'receiver_id', 'booking_id', 'content', 'is_read'];
+
+    public function booking()
+    {
+        return $this->belongsTo(Booking::class);
+    }
 }

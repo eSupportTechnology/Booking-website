@@ -11,25 +11,25 @@ class PropertyListingController extends Controller
 {
     public function apartments(Request $request, GetPropertyListingsAction $action)
     {
-        $data = $action->execute('apartments', $request->get('search'));
+        $data = $action->execute('apartments', $request->get('search'), $request->get('status'));
         return view('partner.properties.apartments', $data);
     }
 
     public function homes(Request $request, GetPropertyListingsAction $action)
     {
-        $data = $action->execute('homes', $request->get('search'));
+        $data = $action->execute('homes', $request->get('search'), $request->get('status'));
         return view('partner.properties.homes', $data);
     }
 
     public function hotels(Request $request, GetPropertyListingsAction $action)
     {
-        $data = $action->execute('hotels', $request->get('search'));
+        $data = $action->execute('hotels', $request->get('search'), $request->get('status'));
         return view('partner.properties.hotels', $data);
     }
 
     public function alternativePlaces(Request $request, GetPropertyListingsAction $action)
     {
-        $data = $action->execute('alternativePlaces', $request->get('search'));
+        $data = $action->execute('alternativePlaces', $request->get('search'), $request->get('status'));
         return view('partner.properties.alternative-places', $data);
     }
 
