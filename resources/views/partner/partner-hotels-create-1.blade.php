@@ -510,7 +510,7 @@
                                             <div class="grid grid-cols-1 sm:grid-cols-1 gap-2 text-sm text-gray-700">
                                                 <div x-data="{ selectedAmenities: JSON.parse(localStorage.getItem('selectedAmenities')) || [] }"
                                                     x-init="$watch('selectedAmenities', val => localStorage.setItem('selectedAmenities', JSON.stringify(val)))">
-                                                    
+
                                                     @foreach ($amenities as $amenity)
                                                         <label class="flex items-center space-x-2">
                                                             <input type="checkbox" name="amenities[]" value="{{ $amenity['id'] }}" x-model="selectedAmenities" />
@@ -596,7 +596,7 @@
                                         reservationNeeded: '',
                                         parkingLocation: '',
                                         parkingType: '',
-                                        
+
                                         init() {
                                             // Load data from localStorage (will be empty on page load due to script above)
                                             const saved = localStorage.getItem('servicesFormData');
@@ -612,7 +612,7 @@
                                                 this.parkingLocation = data.parkingLocation || '';
                                                 this.parkingType = data.parkingType || '';
                                             }
-                                            
+
                                             // Watch for changes and save to localStorage
                                             this.$watch('servesBreakfast', () => this.saveToStorage());
                                             this.$watch('breakfastIncluded', () => this.saveToStorage());
@@ -624,7 +624,7 @@
                                             this.$watch('parkingLocation', () => this.saveToStorage());
                                             this.$watch('parkingType', () => this.saveToStorage());
                                         },
-                                        
+
                                         saveToStorage() {
                                             const data = {
                                                 servesBreakfast: this.servesBreakfast,
@@ -639,7 +639,7 @@
                                             };
                                             localStorage.setItem('servicesFormData', JSON.stringify(data));
                                         },
-                                        
+
                                         toggleBreakfastOption(option) {
                                             const index = this.selectedBreakfasts.indexOf(option);
                                             if (index > -1) {
@@ -648,7 +648,7 @@
                                                 this.selectedBreakfasts.push(option);
                                             }
                                         },
-                                        
+
                                         clearBreakfastData() {
                                             this.breakfastIncluded = '';
                                             this.selectedBreakfasts = [];
