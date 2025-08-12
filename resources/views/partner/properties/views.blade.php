@@ -470,179 +470,54 @@
                     @if ($topAmenities->count() > 0)
                         @foreach ($topAmenities as $amenity)
                             <div
-                                class="group relative bg-white rounded-lg shadow-sm p-4 flex items-center justify-center lg:justify-start border border-gray-300 hover:shadow-md transition duration-300">
+                                class="group relative bg-white rounded-lg shadow-sm p-2 flex items-center justify-center lg:justify-start border border-gray-300 hover:shadow-md transition duration-300">
                                 <!-- SVG Icon -->
                                 @php
-                                    $amenityIcons = [
-                                        'Private bathroom' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <title>Private bathroom</title>
-                                            <path d="M8 3v4" />
-                                            <path d="M16 3v4" />
-                                            <path d="M8 7h8" />
-                                            <path d="M10 11a2 2 0 1 0 4 0" />
-                                            <path d="M12 13v6" />
-                                            <path d="M6 20h12" />
-                                            </svg>',
-                                        'Sea views' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <title>Sea views</title>
-                                            <path d="M2 15c2 0 2-3 4-3s2 3 4 3 2-3 4-3 2 3 4 3" />
-                                            <path d="M2 19c2 0 2-2 4-2s2 2 4 2 2-2 4-2 2 2 4 2" />
-                                            <circle cx="20" cy="6" r="2" />
-                                            </svg>',
-                                        'Family rooms' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <title>Family rooms</title>
-                                            <circle cx="8" cy="8" r="2" />
-                                            <circle cx="16" cy="8" r="2" />
-                                            <path d="M8 12c-2 0-3 1.5-3 3v1h6v-1c0-1.5-1-3-3-3z" />
-                                            <path d="M16 12c-1.5 0-2 1-2 2v1h4v-1c0-1-0.5-2-2-2z" />
-                                            </svg>',
-                                        'Airport shuttle' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <title>Airport shuttle</title>
-                                            <rect x="2" y="6" width="16" height="8" rx="2" />
-                                            <path d="M6 14v2" />
-                                            <path d="M14 14v2" />
-                                            <path d="M20 8l2-1-3-1-1 1 2 1z" />
-                                            <circle cx="6" cy="18" r="1.5" />
-                                            <circle cx="14" cy="18" r="1.5" />
-                                            </svg>',
-                                        'Spa and wellness center' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <title>Spa and wellness center</title>
-                                            <path d="M12 21s-4-4-6-6 2-6 6-6 8 4 6 6-6 6-6 6z" />
-                                            <path d="M5 11s3-4 7-4 7 4 7 4" />
-                                            <path d="M8 8s1.5-3 4-3 4 3 4 3" />
-                                            </svg>',
-                                        'Air conditioning' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <title>Air conditioning</title>
-                                            <path d="M12 2v6" />
-                                            <path d="M12 16v6" />
-                                            <path d="M4.5 7.5l3 3" />
-                                            <path d="M16.5 13.5l3 3" />
-                                            <path d="M4.5 16.5l3-3" />
-                                            <path d="M16.5 10.5l3-3" />
-                                            <circle cx="12" cy="12" r="2.5" />
-                                            </svg>',
-                                        'Heating' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <title>Heating</title>
-                                            <path d="M14 10c0-2 2-3 2-5 0-2-3-2-4-1s-2 3-2 4c0 1 0 2 1 3" />
-                                            <path d="M12 14v6" />
-                                            <circle cx="12" cy="18" r="2" />
-                                            </svg>',
-                                        'Free WiFi' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <title>Free WiFi</title>
-                                            <path d="M2 8c6-4 16-4 20 0" />
-                                            <path d="M5 11c4-3 10-3 14 0" />
-                                            <path d="M8 14c2-1.5 6-1.5 8 0" />
-                                            <circle cx="12" cy="18" r="1.5" />
-                                            </svg>',
-                                        'Electric vehicle charging station' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <title>EV charging station</title>
-                                            <rect x="3" y="4" width="12" height="16" rx="2" />
-                                            <path d="M9 4v4" />
-                                            <path d="M15 10h3v6h-3" />
-                                            <path d="M17 8l-3 5h2l-1 4" />
-                                            </svg>',
-                                        'Kitchen' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <title>Kitchen</title>
-                                            <path d="M7 2v8" />
-                                            <path d="M10 2v8" />
-                                            <path d="M6 18h8" />
-                                            <path d="M20 3l-2 2 2 2" />
-                                            <path d="M18 5v6" />
-                                            </svg>',
-                                        'Microwave' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <title>Microwave</title>
-                                            <rect x="2" y="5" width="16" height="12" rx="2" />
-                                            <rect x="20" y="7" width="2" height="6" rx="1" />
-                                            <path d="M4 9h10v6H4z" />
-                                            <path d="M6 11c1 0 1 1 2 1s1-1 2-1" />
-                                            </svg>',
-                                        'Washing machine' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <title>Washing machine</title>
-                                            <rect x="3" y="3" width="14" height="18" rx="2" />
-                                            <circle cx="10" cy="12" r="4" />
-                                            <path d="M18 8v6" />
-                                            </svg>',
-                                        'Flat-screen TV' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <title>Flat-screen TV</title>
-                                            <rect x="2" y="4" width="20" height="14" rx="1" />
-                                            <path d="M8 20h8" />
-                                            <path d="M12 18v2" />
-                                            </svg>',
-                                        'Swimming Pool' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <title>Swimming Pool</title>
-                                            <rect x="2" y="6" width="20" height="10" rx="2" />
-                                            <path d="M3 9c3 2 5-2 8 0s5-2 8 0" />
-                                            </svg>',
-                                        'Hot tub' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <title>Hot tub</title>
-                                            <ellipse cx="12" cy="14" rx="8" ry="3" />
-                                            <path d="M4 14v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
-                                            <path d="M8 6s1-2 2-2" />
-                                            <path d="M12 6s1-2 2-2" />
-                                            </svg>',
-                                        'Minibar' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <title>Minibar</title>
-                                            <rect x="3" y="3" width="8" height="18" rx="1" />
-                                            <path d="M6 2v2" />
-                                            <path d="M17 8v6" />
-                                            <path d="M14 20h6" />
-                                            <path d="M17 8h3v6h-3z" />
-                                            </svg>',
-                                        'Sauna' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <title>Sauna</title>
-                                            <path d="M3 21h18" />
-                                            <path d="M4 10l8-6 8 6" />
-                                            <rect x="6" y="10" width="12" height="9" rx="1" />
-                                            <path d="M9 7c0 1-1 1-1 2s1 1 1 2" />
-                                            </svg>',
-                                        'Balcony' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <title>Balcony</title>
-                                            <rect x="3" y="6" width="18" height="12" rx="1" />
-                                            <path d="M3 10h18" />
-                                            <path d="M7 6v12" />
-                                            <path d="M12 6v12" />
-                                            <path d="M17 6v12" />
-                                            </svg>',
-                                        'Garden view' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <title>Garden view</title>
-                                            <path d="M12 3s4 1 6 4-2 6-6 8c-4-2-8-6-6-9 2-3 6-3 6-3z" />
-                                            <path d="M2 21h20" />
-                                            </svg>',
-                                        'Terrace' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <title>Terrace</title>
-                                            <rect x="3" y="6" width="18" height="12" rx="1" />
-                                            <path d="M7 10h4v6H7z" />
-                                            <circle cx="16" cy="14" r="2" />
-                                            <path d="M16 12v4" />
-                                            </svg>',
-                                        'View' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <title>View</title>
-                                            <path d="M2 12s4-6 10-6 10 6 10 6-4 6-10 6-10-6-10-6z" />
-                                            <circle cx="12" cy="12" r="3" />
-                                            </svg>',
-                                        'Kitchenette' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <title>Kitchenette</title>
-                                            <rect x="3" y="6" width="18" height="12" rx="1" />
-                                            <path d="M5 8h4" />
-                                            <path d="M5 12h4" />
-                                            <path d="M15 8h4" />
-                                            <path d="M15 12h4" />
-                                            </svg>',
-                                        'Private pool' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <title>Private pool</title>
-                                            <rect x="2" y="6" width="16" height="10" rx="2" />
-                                            <path d="M3 9c3 2 5-2 8 0s5-2 8 0" />
-                                            <rect x="19" y="8" width="3" height="4" rx="1" />
-                                            <path d="M20.5 8v-1a1.5 1.5 0 0 1 3 0v1" />
-                                            <path d="M20.5 10h3" />
-                                            </svg>',
+                                    $amenityFiles = [
+                                        'Private bathroom' => 'Private_bathroom.svg',
+                                        'Sea views' => 'Sea_view.svg',
+                                        'Family rooms' => 'Family_rooms.svg',
+                                        'Airport shuttle' => 'Airport_shuttle.svg',
+                                        'Spa and wellness center' => 'Spa_and_wellness_centre.svg',
+                                        'Air conditioning' => 'Air_conditioning.svg',
+                                        'Heating' => 'Heating.svg',
+                                        'Free WiFi' => 'In_all_areas_78_Mbps.svg',
+                                        'Kitchen' => 'Kitchen.svg',
+                                        'Kitchenette' => 'Kitchen.svg',
+                                        'Washing machine' => 'Washing_machine.svg',
+                                        'Flat-screen TV' => 'Flat-screen_TV.svg',
+                                        'Balcony' => 'Balcony.svg',
+                                        'View' => 'View.svg',
+                                        'Bath' => 'Bath.svg',
+                                        'Apartments' => 'Apartments.svg',
+                                        'Pets allowed' => 'Pets_allowed.svg',
+                                        'Non-smoking rooms' => 'Non-smoking_rooms.svg',
+                                        'Free on-site parking' => 'Free_on-site_parking.svg',
+                                        'Private parking' => 'Private_parking.svg',
+                                        'Very good breakfast' => 'Very_good_breakfast.svg',
+                                        'Private pool' => '2_swimming_pools.svg',
+                                        '4 restaurants' => '4_restaurants.svg',
+                                        '64 m size' => '64_m_size.svg',
+                                        'Swimming Pool' => 'Swimming_Pool.svg',
+                                        'Hot tub' => 'Hot_tub.svg',
+                                        'Minibar' => 'Minibar.svg',
+                                        'Sauna' => 'Sauna.svg',
+                                        'Garden view' => 'Garden_view.svg',
+                                        'Terrace' => 'Terrace.svg',
                                     ];
 
-                                    $iconSvg =
-                                        $amenityIcons[$amenity->name] ??
-                                        '<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"/></svg>';
+                                    $svgFile = $amenityFiles[$amenity->name] ?? null;
                                 @endphp
-                                {!! $iconSvg !!}
+
+                                @if($svgFile && file_exists(public_path('assets/amenities/' . $svgFile)))
+                                    <img src="{{ asset('assets/amenities/' . $svgFile) }}"
+                                         alt="{{ $amenity->name }}"
+                                         class="w-8 h-8 object-contain">
+                                @else
+                                    <svg class="w-8 h-8 object-contain" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"/>
+                                    </svg>
+                                @endif
 
                                 <!-- Label for desktop -->
                                 <span class="hidden lg:inline-block ml-3 text-gray-800 text-sm font-medium"
@@ -700,176 +575,52 @@
                                 class="group relative bg-white rounded-lg shadow-sm p-4 flex items-center justify-center lg:justify-start border border-gray-300 hover:shadow-md transition duration-300">
                                 <!-- SVG Icon -->
                                 @php
-                                    $amenityIcons = [
-                                        'Private bathroom' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <title>Private bathroom</title>
-                                            <path d="M8 3v4" />
-                                            <path d="M16 3v4" />
-                                            <path d="M8 7h8" />
-                                            <path d="M10 11a2 2 0 1 0 4 0" />
-                                            <path d="M12 13v6" />
-                                            <path d="M6 20h12" />
-                                            </svg>',
-                                        'Sea views' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <title>Sea views</title>
-                                            <path d="M2 15c2 0 2-3 4-3s2 3 4 3 2-3 4-3 2 3 4 3" />
-                                            <path d="M2 19c2 0 2-2 4-2s2 2 4 2 2-2 4-2 2 2 4 2" />
-                                            <circle cx="20" cy="6" r="2" />
-                                            </svg>',
-                                        'Family rooms' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <title>Family rooms</title>
-                                            <circle cx="8" cy="8" r="2" />
-                                            <circle cx="16" cy="8" r="2" />
-                                            <path d="M8 12c-2 0-3 1.5-3 3v1h6v-1c0-1.5-1-3-3-3z" />
-                                            <path d="M16 12c-1.5 0-2 1-2 2v1h4v-1c0-1-0.5-2-2-2z" />
-                                            </svg>',
-                                        'Airport shuttle' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <title>Airport shuttle</title>
-                                            <rect x="2" y="6" width="16" height="8" rx="2" />
-                                            <path d="M6 14v2" />
-                                            <path d="M14 14v2" />
-                                            <path d="M20 8l2-1-3-1-1 1 2 1z" />
-                                            <circle cx="6" cy="18" r="1.5" />
-                                            <circle cx="14" cy="18" r="1.5" />
-                                            </svg>',
-                                        'Spa and wellness center' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <title>Spa and wellness center</title>
-                                            <path d="M12 21s-4-4-6-6 2-6 6-6 8 4 6 6-6 6-6 6z" />
-                                            <path d="M5 11s3-4 7-4 7 4 7 4" />
-                                            <path d="M8 8s1.5-3 4-3 4 3 4 3" />
-                                            </svg>',
-                                        'Air conditioning' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <title>Air conditioning</title>
-                                            <path d="M12 2v6" />
-                                            <path d="M12 16v6" />
-                                            <path d="M4.5 7.5l3 3" />
-                                            <path d="M16.5 13.5l3 3" />
-                                            <path d="M4.5 16.5l3-3" />
-                                            <path d="M16.5 10.5l3-3" />
-                                            <circle cx="12" cy="12" r="2.5" />
-                                            </svg>',
-                                        'Heating' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <title>Heating</title>
-                                            <path d="M14 10c0-2 2-3 2-5 0-2-3-2-4-1s-2 3-2 4c0 1 0 2 1 3" />
-                                            <path d="M12 14v6" />
-                                            <circle cx="12" cy="18" r="2" />
-                                            </svg>',
-                                        'Free WiFi' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <title>Free WiFi</title>
-                                            <path d="M2 8c6-4 16-4 20 0" />
-                                            <path d="M5 11c4-3 10-3 14 0" />
-                                            <path d="M8 14c2-1.5 6-1.5 8 0" />
-                                            <circle cx="12" cy="18" r="1.5" />
-                                            </svg>',
-                                        'Electric vehicle charging station' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <title>EV charging station</title>
-                                            <rect x="3" y="4" width="12" height="16" rx="2" />
-                                            <path d="M9 4v4" />
-                                            <path d="M15 10h3v6h-3" />
-                                            <path d="M17 8l-3 5h2l-1 4" />
-                                            </svg>',
-                                        'Kitchen' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <title>Kitchen</title>
-                                            <path d="M7 2v8" />
-                                            <path d="M10 2v8" />
-                                            <path d="M6 18h8" />
-                                            <path d="M20 3l-2 2 2 2" />
-                                            <path d="M18 5v6" />
-                                            </svg>',
-                                        'Microwave' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <title>Microwave</title>
-                                            <rect x="2" y="5" width="16" height="12" rx="2" />
-                                            <rect x="20" y="7" width="2" height="6" rx="1" />
-                                            <path d="M4 9h10v6H4z" />
-                                            <path d="M6 11c1 0 1 1 2 1s1-1 2-1" />
-                                            </svg>',
-                                        'Washing machine' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <title>Washing machine</title>
-                                            <rect x="3" y="3" width="14" height="18" rx="2" />
-                                            <circle cx="10" cy="12" r="4" />
-                                            <path d="M18 8v6" />
-                                            </svg>',
-                                        'Flat-screen TV' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <title>Flat-screen TV</title>
-                                            <rect x="2" y="4" width="20" height="14" rx="1" />
-                                            <path d="M8 20h8" />
-                                            <path d="M12 18v2" />
-                                            </svg>',
-                                        'Swimming Pool' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <title>Swimming Pool</title>
-                                            <rect x="2" y="6" width="20" height="10" rx="2" />
-                                            <path d="M3 9c3 2 5-2 8 0s5-2 8 0" />
-                                            </svg>',
-                                        'Hot tub' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <title>Hot tub</title>
-                                            <ellipse cx="12" cy="14" rx="8" ry="3" />
-                                            <path d="M4 14v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
-                                            <path d="M8 6s1-2 2-2" />
-                                            <path d="M12 6s1-2 2-2" />
-                                            </svg>',
-                                        'Minibar' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <title>Minibar</title>
-                                            <rect x="3" y="3" width="8" height="18" rx="1" />
-                                            <path d="M6 2v2" />
-                                            <path d="M17 8v6" />
-                                            <path d="M14 20h6" />
-                                            <path d="M17 8h3v6h-3z" />
-                                            </svg>',
-                                        'Sauna' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <title>Sauna</title>
-                                            <path d="M3 21h18" />
-                                            <path d="M4 10l8-6 8 6" />
-                                            <rect x="6" y="10" width="12" height="9" rx="1" />
-                                            <path d="M9 7c0 1-1 1-1 2s1 1 1 2" />
-                                            </svg>',
-                                        'Balcony' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <title>Balcony</title>
-                                            <rect x="3" y="6" width="18" height="12" rx="1" />
-                                            <path d="M3 10h18" />
-                                            <path d="M7 6v12" />
-                                            <path d="M12 6v12" />
-                                            <path d="M17 6v12" />
-                                            </svg>',
-                                        'Garden view' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <title>Garden view</title>
-                                            <path d="M12 3s4 1 6 4-2 6-6 8c-4-2-8-6-6-9 2-3 6-3 6-3z" />
-                                            <path d="M2 21h20" />
-                                            </svg>',
-                                        'Terrace' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <title>Terrace</title>
-                                            <rect x="3" y="6" width="18" height="12" rx="1" />
-                                            <path d="M7 10h4v6H7z" />
-                                            <circle cx="16" cy="14" r="2" />
-                                            <path d="M16 12v4" />
-                                            </svg>',
-                                        'View' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <title>View</title>
-                                            <path d="M2 12s4-6 10-6 10 6 10 6-4 6-10 6-10-6-10-6z" />
-                                            <circle cx="12" cy="12" r="3" />
-                                            </svg>',
-                                        'Kitchenette' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <title>Kitchenette</title>
-                                            <rect x="3" y="6" width="18" height="12" rx="1" />
-                                            <path d="M5 8h4" />
-                                            <path d="M5 12h4" />
-                                            <path d="M15 8h4" />
-                                            <path d="M15 12h4" />
-                                            </svg>',
-                                        'Private pool' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <title>Private pool</title>
-                                            <rect x="2" y="6" width="16" height="10" rx="2" />
-                                            <path d="M3 9c3 2 5-2 8 0s5-2 8 0" />
-                                            <rect x="19" y="8" width="3" height="4" rx="1" />
-                                            <path d="M20.5 8v-1a1.5 1.5 0 0 1 3 0v1" />
-                                            <path d="M20.5 10h3" />
-                                            </svg>',
+                                    $amenityFiles = [
+                                        'Private bathroom' => 'Private_bathroom.svg',
+                                        'Sea views' => 'Sea_view.svg',
+                                        'Family rooms' => 'Family_rooms.svg',
+                                        'Airport shuttle' => 'Airport_shuttle.svg',
+                                        'Spa and wellness center' => 'Spa_and_wellness_centre.svg',
+                                        'Air conditioning' => 'Air_conditioning.svg',
+                                        'Heating' => 'Heating.svg',
+                                        'Free WiFi' => 'In_all_areas_78_Mbps.svg',
+                                        'Kitchen' => 'Kitchen.svg',
+                                        'Kitchenette' => 'Kitchen.svg',
+                                        'Washing machine' => 'Washing_machine.svg',
+                                        'Flat-screen TV' => 'Flat-screen_TV.svg',
+                                        'Balcony' => 'Balcony.svg',
+                                        'View' => 'View.svg',
+                                        'Bath' => 'Bath.svg',
+                                        'Apartments' => 'Apartments.svg',
+                                        'Pets allowed' => 'Pets_allowed.svg',
+                                        'Non-smoking rooms' => 'Non-smoking_rooms.svg',
+                                        'Free on-site parking' => 'Free_on-site_parking.svg',
+                                        'Private parking' => 'Private_parking.svg',
+                                        'Very good breakfast' => 'Very_good_breakfast.svg',
+                                        'Private pool' => '2_swimming_pools.svg',
+                                        '4 restaurants' => '4_restaurants.svg',
+                                        '64 m size' => '64_m_size.svg',
+                                        'Swimming Pool' => 'Swimming_Pool.svg',
+                                        'Hot tub' => 'Hot_tub.svg',
+                                        'Minibar' => 'Minibar.svg',
+                                        'Sauna' => 'Sauna.svg',
+                                        'Garden view' => 'Garden_view.svg',
+                                        'Terrace' => 'Terrace.svg',
+
                                     ];
 
-                                    $iconSvg =
-                                        $amenityIcons[$amenity->name] ??
-                                        '<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"/></svg>';
+                                    $svgFile = $amenityFiles[$amenity->name] ?? null;
                                 @endphp
-                                {!! $iconSvg !!}
+
+                                @if($svgFile && file_exists(public_path('assets/amenities/' . $svgFile)))
+                                    <img src="{{ asset('assets/amenities/' . $svgFile) }}"
+                                         alt="{{ $amenity->name }}"
+                                         class="w-8 h-8 object-contain">
+                                @else
+                                    <svg class="w-8 h-8 object-contain" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"/>
+                                    </svg>
+                                @endif
 
                                 <!-- Label for desktop -->
                                 <span class="hidden lg:inline-block ml-3 text-gray-800 text-sm font-medium"
@@ -1000,32 +751,23 @@
                     <div>
                         <h3 class="text-lg font-semibold text-black mt-6 mb-4">Most popular facilities</h3>
                         <div class="flex flex-wrap gap-4">
-                            @if ($property->amenities && $property->amenities->count() > 0)
-                                @foreach ($property->amenities->take(8) as $amenity)
-                                    <div
-                                        class="flex items-center justify-center lg:justify-start p-2 bg-gray-50 rounded">
-                                        <span class="text-sm text-gray-800 font-medium">{{ $amenity->name }}</span>
-                                    </div>
-                                @endforeach
-                                @if ($property->amenities->count() > 8)
-                                    <div
-                                        class="flex items-center justify-center lg:justify-start p-2 bg-gray-50 rounded">
-                                        <span
-                                            class="text-sm text-gray-800 font-medium">+{{ $property->amenities->count() - 8 }}
-                                            more</span>
-                                    </div>
-                                @endif
-                            @elseif ($property->facilities && $property->facilities->count() > 0)
-                                @foreach ($property->facilities->take(8) as $facility)
-                                    <div
-                                        class="flex items-center justify-center lg:justify-start p-2 bg-gray-50 rounded">
-                                        <span
-                                            class="text-sm text-gray-800 font-medium">{{ $facility->facility_name }}</span>
-                                    </div>
-                                @endforeach
-                            @else
-                                <p class="text-sm text-gray-500">No amenities listed</p>
-                            @endif
+                            @foreach ([
+                                ['icon' => 'Vector(30).svg', 'label' => 'Good free WiFi (32Mbps)'],
+                                ['icon' => 'Group(10).svg', 'label' => 'Family rooms'],
+                                ['icon' => 'Group(11).svg', 'label' => 'Free parking'],
+                                ['icon' => 'Vector(31).svg', 'label' => 'Restaurant'],
+                                ['icon' => 'Vector(32).svg', 'label' => 'Non-smoking rooms'],
+                                ['icon' => 'Vector(33).svg', 'label' => 'Airport shuttle'],
+                                ['icon' => 'Group(12).svg', 'label' => 'Room service'],
+                                ['icon' => 'Group(13).svg', 'label' => 'Heating'],
+                                ['icon' => 'Vector(34).svg', 'label' => 'Facilities for disabled guests'],
+                                ['icon' => 'Vector(35).svg', 'label' => 'Good breakfast']
+                            ] as $facility)
+                                <div class="flex items-center justify-center lg:justify-start p-2">
+                                    <img src="{{ asset('assets/' . $facility['icon']) }}" alt="{{ $facility['label'] }}" class="w-5 h-5 mr-4">
+                                    <span class="text-sm text-gray-800 font-medium">{{ $facility['label'] }}</span>
+                                </div>
+                            @endforeach
                         </div>
                     </div>
                 </div>
@@ -2375,3 +2117,4 @@
 </body>
 
 </html>
+
