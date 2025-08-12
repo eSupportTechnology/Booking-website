@@ -196,7 +196,7 @@
                     showToast('Payment process completed successfully!', 'success');
                     // Redirect to a GET route after successful completion
                     setTimeout(() => {
-                        window.location.href =`/partner-homes-edit/${this.propertyId}?propertyType=single&paymentDetails=true$uploaded=true`;
+                        window.location.href =`/partner-homes-edit/${this.propertyId}?propertyType=single&paymentDetails=true&uploaded=true&rooms=true`;
                     }, 2000);
                 } else {
                     showToast('Error: ' + data.message, 'error');
