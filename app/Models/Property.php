@@ -118,4 +118,9 @@ class Property extends Model
     {
         return $this->hasMany(HostReview::class);
     }
+
+    public function category()
+    {
+        return $this->belongsTo(PropertyCategory::class, 'category_id');
+    }
 }
