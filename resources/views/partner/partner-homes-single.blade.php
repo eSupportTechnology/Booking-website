@@ -61,14 +61,37 @@
                     .then(data => {
                         if (data.success) {
                             console.log("Saved successfully!");
+                            Swal.fire({
+                                title: 'Success!',
+                                text: 'Your property location has been saved.',
+                                icon: 'success',
+                                showConfirmButton: false,
+                                toast: true,
+                                position: 'top-end',
+                                timer: 3000
+                            });
                             this.step++;
                         } else {
-                            alert("Failed to save: " + data.message);
+                            Swal.fire({
+                                title: 'Error!',
+                                text: data.message || 'Failed to save property location.',
+                                icon: 'error',
+                                showCancelButton: false, 
+                                toast: true,
+                                position: 'top-end',
+                            });
                         }
                     })
                     .catch(error => {
                         console.error("Error saving data:", error);
-                        alert("An error occurred while saving.");
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'An error occurred while saving your data.',
+                            icon: 'error',
+                            confirmButtonText: 'OK',
+                            toast: true,
+                            position: 'top-end',
+                        });
                     });
             },
 
@@ -95,14 +118,38 @@
                     .then(data => {
                         if (data.success) {
                             console.log("Step 3 saved successfully!");
+                            Swal.fire({
+                                title: 'Success!',
+                                text: 'Your property name has been saved.',
+                                icon: 'success',
+                                showConfirmButton: false,
+                                toast: true,
+                                position: 'top-end',
+                                timer: 3000
+                            });
                             this.step++;
                         } else {
-                            alert("Failed to save: " + data.message);
+                            Swal.fire({
+                                title: 'Error!',
+                                text: data.message || 'Failed to save property name.',
+                                icon: 'error',
+                                showConfirmButton: false,
+                                toast: true,
+                                position: 'top-end',
+                                timer: 3000
+                            });
                         }
                     })
                     .catch(error => {
                         console.error("Error saving step 3 data:", error);
-                        alert("An error occurred while saving step 3.");
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'An error occurred while saving your property name.',
+                            icon: 'error',
+                            showCancelButton: false,
+                            toast: true,
+                            position: 'top-end',
+                        }); 
                     });
             },
 
@@ -125,14 +172,38 @@
                     .then(data => {
                         if (data.success) {
                             console.log("Amenities saved successfully!");
+                            Swal.fire({
+                                title: 'Success!',
+                                text: 'Your property amenities have been saved.',
+                                icon: 'success',
+                                showConfirmButton: false,
+                                toast: true,
+                                position: 'top-end',
+                                timer: 3000
+                            });
                             this.step++;
                         } else {
-                            alert("Failed to save amenities");
+                            Swal.fire({
+                                title: 'Error!',
+                                text: data.message || 'Failed to save amenities.',
+                                icon: 'error',
+                                showConfirmButton: false,
+                                toast: true,
+                                position: 'top-end',
+                                timer: 3000
+                            });
                         }
                     })
                     .catch(error => {
                         console.error("Error saving amenities:", error);
-                        alert("An error occurred while saving amenities.");
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'An error occurred while saving your amenities.',
+                            icon: 'error',
+                            showConfirmButton: false,
+                            toast: true,
+                            position: 'top-end',
+                        });
                     });
             },
 
@@ -166,12 +237,38 @@
                     const result = await response.json();
                     if (result.success) {
                         console.log("✅ Services saved");
+                        Swal.fire({
+                            title: 'Success!',
+                            text: 'Your property services have been saved.',
+                            icon: 'success',
+                            showConfirmButton: false,
+                            toast: true,
+                            position: 'top-end',
+                            timer: 3000
+                        });
                         this.step++;
                     } else {
                         console.error("❌ Failed to save services:", result.message);
+                        Swal.fire({
+                            title: 'Error!',
+                            text: result.message || 'Failed to save services.',
+                            icon: 'error',
+                            showConfirmButton: false,
+                            toast: true,
+                            position: 'top-end',
+                            timer: 3000
+                        });
                     }
                 } catch (error) {
                     console.error("❌ Error saving services:", error);
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'An error occurred while saving your property services.',
+                        icon: 'error',
+                        showConfirmButton: false,
+                        toast: true,
+                        position: 'top-end',
+                    });
                 }
             },
 
@@ -197,15 +294,39 @@
                     .then(data => {
                         if (data.success) {
                             console.log("Languages saved:", data.selected_languages);
+                            Swal.fire({
+                                title: 'Success!',
+                                text: 'Your property languages have been saved.',
+                                icon: 'success',
+                                showConfirmButton: false,
+                                toast: true,
+                                position: 'top-end',
+                                timer: 3000
+                            });
                             this.step++;
                         } else {
                             console.error("Error saving languages:", data.message);
-                            alert("Error saving languages.");
+                            Swal.fire({
+                                title: 'Error!',
+                                text: data.message || 'Failed to save languages.',
+                                icon: 'error',
+                                showConfirmButton: false,
+                                toast: true,
+                                position: 'top-end',
+                                timer: 3000
+                            });
                         }
                     })
                     .catch(error => {
                         console.error("AJAX error:", error);
-                        alert("Request failed.");
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'An error occurred while saving your property languages.',
+                            icon: 'error',
+                            showConfirmButton: false,
+                            toast: true,
+                            position: 'top-end',
+                        });
                     });
             },
 
@@ -262,12 +383,38 @@
                     const data = await response.json();
                     if (data.success) {
                         console.log('Policy saved:', data);
+                        Swal.fire({
+                            title: 'Success!',
+                            text: 'Your property policy has been saved.',
+                            icon: 'success',
+                            showConfirmButton: false,
+                            toast: true,
+                            position: 'top-end',
+                            timer: 3000
+                        });
                         this.step++;
                     } else {
                         console.error('Error:', data.message);
+                        Swal.fire({
+                            title: 'Error!',
+                            text: data.message || 'Failed to save property policy.',
+                            icon: 'error',
+                            showConfirmButton: false,
+                            toast: true,
+                            position: 'top-end',
+                            timer: 3000
+                        });
                     }
                 } catch (error) {
                     console.error('Fetch error:', error);
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'An error occurred while saving your property policy.',
+                        icon: 'error',
+                        showConfirmButton: false,
+                        toast: true,
+                        position: 'top-end',
+                    });
                 }
             },
 
@@ -300,13 +447,40 @@
 
                     if (result.success) {
                         console.log('✅ Host profile saved:', result.message);
-                        // Optionally move to next step
-                        window.location.href = "{{ url('/partner-homes-edit/' . $propertyId) }}?details=true&propertyType=single";                    
+                        Swal.fire({
+                            title: 'Success!',
+                            text: 'Your host profile has been saved.',
+                            icon: 'success',
+                            showConfirmButton: false,
+                            toast: true,
+                            position: 'top-end',
+                            timer: 3000
+                        });
+                        setTimeout(() => {
+                            window.location.href = `/partner-homes-edit/${propertyId}?details=true&propertyType=single`;
+                        }, 2000);
                     } else {
                         console.error('❌ Save failed:', result.message);
+                        Swal.fire({
+                            title: 'Error!',
+                            text: result.message || 'Failed to save host profile.',
+                            icon: 'error',
+                            showConfirmButton: false,
+                            toast: true,
+                            position: 'top-end',
+                            timer: 3000
+                        });
                     }
                 } catch (error) {
                     console.error('❌ Error submitting host profile:', error);
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'An error occurred while saving your host profile.',
+                        icon: 'error',
+                        showConfirmButton: false,
+                        toast: true,
+                        position: 'top-end',
+                    });
                 }
             }
 
