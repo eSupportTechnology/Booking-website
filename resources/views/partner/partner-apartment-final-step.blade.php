@@ -97,7 +97,8 @@
     </div>
 
     <!-- Complete registration -->
-    <div class="bg-[#1F8FB2] text-white text-center py-2 text-base font-semibold rounded shadow-inner select-none cursor-default mt-6">
+    <div onclick="window.location.href='{{ route('partner.list-your-property') }}?registration=success'" 
+         class="bg-[#1F8FB2] text-white text-center py-2 text-base font-semibold rounded shadow-inner cursor-pointer hover:bg-[#1A7FA0] transition-colors mt-6">
       Complete registration
     </div>
   </div>

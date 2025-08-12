@@ -313,7 +313,7 @@ function apartmentForm2Data() {
 
                 <div class="flex flex-col gap-4">
                     <!-- Bedroom -->
-                    <a href="{{ route('partner.apartment.bedrooms', ['property' => $propertyId ?? 1]) }}?source=multiple&step=2">
+                    <a href="{{ route('partner.apartment.bedrooms', ['property' => $propertyId]) }}?source=multiple&step=2">
                         <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer">
                             <p class="text-sm">Bedroom 1</p>
                             <p class="text-sm text-gray-600">
@@ -327,7 +327,7 @@ function apartmentForm2Data() {
                     </a>
 
                     <!-- Living Room -->
-                    <a href="{{ route('partner.apartment.livingroom', ['property' => $propertyId ?? 1]) }}?source=multiple&step=2">
+                    <a href="{{ route('partner.apartment.livingroom', ['property' => $propertyId]) }}?source=multiple&step=2">
                         <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer">
                             <p class="text-sm">Living Room</p>
                             <p class="text-sm text-gray-600">
@@ -341,7 +341,7 @@ function apartmentForm2Data() {
                     </a>
 
                     <!-- Other Spaces -->
-                    <a href="{{ route('partner.apartment.otherspaces', ['property' => $propertyId ?? 1]) }}?source=multiple&step=2">
+                    <a href="{{ route('partner.apartment.otherspaces', ['property' => $propertyId]) }}?source=multiple&step=2">
                         <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer">
                             <p class="text-sm">Other spaces</p>
                             <p class="text-sm text-gray-600">
@@ -356,7 +356,7 @@ function apartmentForm2Data() {
                 </div>
 
                 <!-- Add Bedroom Button (navigate to 2nd page) -->
-                <a href="{{ route('partner.apartment.bedrooms', ['property' => $propertyId ?? 1]) }}?source=multiple&step=2" class="text-blue-600 hover:underline text-sm flex items-center space-x-1 mt-2">
+                <a href="{{ route('partner.apartment.bedrooms', ['property' => $propertyId]) }}?source=multiple&step=2" class="text-blue-600 hover:underline text-sm flex items-center space-x-1 mt-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
                          viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

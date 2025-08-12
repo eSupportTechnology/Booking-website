@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('property_policies', function (Blueprint $table) {
-            $table->boolean('children_allowed')->default(false)->after('pets_fees');
+        Schema::table('property_services', function (Blueprint $table) {
+            $table->string('breakfast_price')->nullable()->after('breakfast_type');
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('property_policies', function (Blueprint $table) {
-            $table->dropColumn('children_allowed');
+        Schema::table('property_services', function (Blueprint $table) {
+            $table->dropColumn('breakfast_price');
         });
     }
 };

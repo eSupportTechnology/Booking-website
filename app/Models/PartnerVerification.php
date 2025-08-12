@@ -14,6 +14,9 @@ class PartnerVerification extends Model
         'national_id',
         'company_name',
         'registration_number',
+        'ownership_type',
+        'owners_data',
+        'legal_company_name',
     ];
 
 

@@ -1,15 +1,22 @@
+@extends('layouts.app')
+
+@section('title', 'Partner Multiple Apartment')
+
 @php
     $amenities = $amenities ?? [];
 @endphp
-<!DOCTYPE html>
-<html lang="en">
+
 <script>
     // Set languages data globally
     window.languagesData = {{ Js::from($languages ?? []) }};
 </script>
-    x-data="{ 
+
+@section('content')
+<div x-data="{ 
     step: 1, 
     selectedBox: null,
+    
+
     // Amenities
     selectedAmenities: [],
     // Facilities
@@ -67,6 +74,38 @@
     // Channel manager data
     channelManager: 'yes',
     
+    // Toast system
+    toast: {
+        show: false,
+        message: '',
+        type: 'success', // success, error, warning, info
+        timeout: null
+    },
+    
+    // Toast methods
+    showToast(message, type = 'success', duration = 3000) {
+        this.toast.message = message;
+        this.toast.type = type;
+        this.toast.show = true;
+        
+        // Clear existing timeout
+        if (this.toast.timeout) {
+            clearTimeout(this.toast.timeout);
+        }
+        
+        // Auto hide after duration
+        this.toast.timeout = setTimeout(() => {
+            this.toast.show = false;
+        }, duration);
+    },
+    
+    hideToast() {
+        this.toast.show = false;
+        if (this.toast.timeout) {
+            clearTimeout(this.toast.timeout);
+        }
+    },
+    
     // Verification data
     verificationType: '',
     individualData: {
@@ -105,6 +144,7 @@
             
             if (response.ok) {
                 console.log('Property name saved successfully');
+                this.showToast('Property name saved successfully!', 'success');
                 this.step = Math.min(this.step + 1, 13);
             } else {
                 console.error('Failed to save property name');
@@ -138,6 +178,7 @@
             
             if (response.ok) {
                 console.log('Booking option saved successfully');
+                this.showToast('Booking option saved successfully!', 'success');
                 this.step = Math.min(this.step + 1, 13);
             } else {
                 console.error('Failed to save booking option');
@@ -175,19 +216,26 @@
             if (response.ok) {
                 const data = await response.json();
                 console.log('Address saved successfully:', data);
+                this.showToast('Address saved successfully!', 'success');
                 this.step = Math.min(this.step + 1, 13);
             } else {
                 console.error('Failed to save address');
                 const errorData = await response.json();
-                alert('Error: ' + (errorData.message || 'Failed to save address'));
+                this.showToast('Error: ' + (errorData.message || 'Failed to save address'), 'error');
             }
         } catch (error) {
             console.error('Error saving address:', error);
-            alert('An error occurred while saving the address.');
+            this.showToast('An error occurred while saving the address.', 'error');
         }
     },
     
     async saveLanguages() {
+        // Check if any languages are selected
+        if (!this.selectedLanguages || this.selectedLanguages.length === 0) {
+            this.showToast('Please select at least one language before continuing.', 'warning');
+            return;
+        }
+        
         try {
             const propertyId = @json($property->id ?? 'new');
             const response = await fetch(`/partner/property/${propertyId}/languages`, {
@@ -204,6 +252,7 @@
             
             if (response.ok) {
                 console.log('Languages saved successfully');
+                this.showToast('Languages saved successfully!', 'success');
                 this.step = Math.min(this.step + 1, 13);
             } else {
                 console.error('Failed to save languages');
@@ -289,11 +338,11 @@
             } else {
                 console.error('Failed to save channel manager');
                 const errorData = await response.json();
-                alert('Error: ' + (errorData.message || 'Failed to save channel manager'));
+                this.showToast('Error: ' + (errorData.message || 'Failed to save channel manager'), 'error');
             }
         } catch (error) {
             console.error('Error saving channel manager:', error);
-            alert('An error occurred while saving the channel manager.');
+            this.showToast('An error occurred while saving the channel manager.', 'error');
         }
     },
     
@@ -318,11 +367,11 @@
             } else {
                 console.error('Failed to save amenities');
                 const errorData = await response.json();
-                alert('Error: ' + (errorData.message || 'Failed to save amenities'));
+                this.showToast('Error: ' + (errorData.message || 'Failed to save amenities'), 'error');
             }
         } catch (error) {
             console.error('Error saving amenities:', error);
-            alert('An error occurred while saving the amenities.');
+            this.showToast('An error occurred while saving the amenities.', 'error');
         }
     },
     
@@ -347,11 +396,11 @@
             } else {
                 console.error('Failed to save facilities');
                 const errorData = await response.json();
-                alert('Error: ' + (errorData.message || 'Failed to save facilities'));
+                this.showToast('Error: ' + (errorData.message || 'Failed to save facilities'), 'error');
             }
         } catch (error) {
             console.error('Error saving facilities:', error);
-            alert('An error occurred while saving the facilities.');
+            this.showToast('An error occurred while saving the facilities.', 'error');
         }
     },
     
@@ -1030,7 +1079,43 @@
     }
 }" class="max-w-3xl mx-auto lg:ml-32 px-4 py-8 space-y-6">
 
-    
+    <!-- Toast Notification -->
+    <div x-show="toast.show" 
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 transform translate-y-2"
+         x-transition:enter-end="opacity-100 transform translate-y-0"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100 transform translate-y-0"
+         x-transition:leave-end="opacity-0 transform translate-y-2"
+         class="fixed top-4 right-4 z-50 max-w-sm w-full">
+        <div :class="{
+            'bg-green-500 text-white': toast.type === 'success',
+            'bg-red-500 text-white': toast.type === 'error',
+            'bg-yellow-500 text-white': toast.type === 'warning',
+            'bg-blue-500 text-white': toast.type === 'info'
+        }" class="rounded-lg shadow-lg p-4 flex items-center justify-between">
+            <div class="flex items-center">
+                <svg x-show="toast.type === 'success'" class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                </svg>
+                <svg x-show="toast.type === 'error'" class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                </svg>
+                <svg x-show="toast.type === 'warning'" class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                </svg>
+                <svg x-show="toast.type === 'info'" class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                </svg>
+                <span x-text="toast.message" class="text-sm font-medium"></span>
+            </div>
+            <button @click="hideToast()" class="ml-4 text-white hover:text-gray-200">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
 
     <!-- Step 1 - Welcome -->
     <template x-if="step === 1">
@@ -1707,9 +1792,7 @@
     </div>
   </div>
 </template>
-                                                        </script>
-                                                    </div>
-</template>
+
     <template x-if="step === 7">
      <div x-data="{ 
          petPolicy: 'no',
@@ -2499,7 +2582,14 @@ You will be able to add more apartments or duplicate this one when you finish fi
                                 if (propertyId) {
                                     window.location.href = `/partner/multiple-apartment-2/${propertyId}`;
                                 } else {
-                                    alert('Please complete all steps before continuing.');
+                                    // Find the main Alpine component and show toast
+                                    const mainComponent = document.querySelector('[x-data*="step"]');
+                                    if (mainComponent) {
+                                        const mainData = Alpine.$data(mainComponent);
+                                        if (mainData && mainData.showToast) {
+                                            mainData.showToast('Please complete all steps before continuing.', 'warning');
+                                        }
+                                    }
                                 }
                             }
                             // Function to save languages data
@@ -2750,18 +2840,24 @@ You will be able to add more apartments or duplicate this one when you finish fi
                                         })
                                         .catch(error => {
                                             console.error('Error saving services:', error);
-                                            alert('Error saving services: ' + error);
+                                            alpineData.showToast('Error saving services: ' + error, 'error');
                                         });
                                 } else if (alpineData.step === 6 && propertyId) {
                                     console.log('Saving languages on step 6');
                                     saveLanguages(propertyId)
                                         .then(result => {
                                             console.log('Languages saved:', result);
+                                            console.log('Current step before update:', alpineData.step);
                                             alpineData.step = Math.min(alpineData.step + 1, 13);
+                                            console.log('Step updated to:', alpineData.step);
+                                            // Force Alpine.js to re-render
+                                            setTimeout(() => {
+                                                console.log('Step after timeout:', alpineData.step);
+                                            }, 100);
                                         })
                                         .catch(error => {
                                             console.error('Error saving languages:', error);
-                                            alert('Error saving languages: ' + error);
+                                            alpineData.showToast('Error saving languages: ' + error, 'error');
                                         });
                                 } else if (alpineData.step === 7 && propertyId) {
                                     console.log('Saving house rules on step 7');
@@ -3042,4 +3138,5 @@ You will be able to add more apartments or duplicate this one when you finish fi
 
 
                         </script>
-                        </html>
+                    </div>
+@endsection

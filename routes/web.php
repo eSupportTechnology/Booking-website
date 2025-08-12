@@ -22,7 +22,9 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use App\Http\Controllers\AccommodationController;
 
+Route::post('/accommodation/save-verification/{propertyId}', [AccommodationController::class, 'saveVerification']);
 
 
 Route::get('/login/email', [LoginController::class, 'showEmailForm'])->name('login.email');
@@ -155,8 +157,10 @@ Route::get('/partner-hotels-payments', function () {
 })->name('partner.hotels.payments');
 
 Route::get('/partner-hotels-photos', function () {
-    return view('frontend.partner-hotels-photos');
+    return view('partner.partner-hotels-photos');
 })->name('partner.hotels.photos');
+
+
 
 
 Route::get('/partner-forgot-password', function () {
@@ -373,6 +377,7 @@ Route::post('/partner-homes-multiple', [PropertyController::class, 'showPrivateH
 Route::get('/partner-homes-rooms/{id}', [PropertyController::class, 'showPrivateHomesRooms'])->name('partner.homes.rooms');
 Route::get('/partner-homes-edit/{id}', [PropertyController::class, 'showPrivateHomesEdit'])->name('partner.homes.edit');
 Route::get('/partner-homes-payments/{id}', [PropertyController::class, 'showPrivateHomesPayments'])->name('partner.homes.payments');
+Route::get('/api/property/{id}/category', [PropertyController::class, 'getPropertyCategory']);
 Route::get('/partner-homes-images/{id}', [PropertyController::class, 'showPrivateHomesImages'])->name('partner.homes.images');
 
 Route::get('/partner-apartments-final/{property?}', [PropertyController::class, 'showFinalStep'])->name('partner.apartments.final');
@@ -398,9 +403,9 @@ Route::get('/partner-hotels-non-refundable-rate', function () {
 })->name('partner.hotels.non.refundable.rate');
 
 
-Route::get('/partner-hotels-complete-registration', function () {
-    return view('frontend.partner-hotels-complete-registration');
-})->name('partner.hotels.complete.registration');
+// Route::get('/partner-hotels-complete-registration', function () {
+//     return view('frontend.partner-hotels-complete-registration');
+// })->name('partner.hotels.complete.registration');
 
 Route::get('/partner-hotels-multiple', function () {
     return view('frontend.partner-hotels-multiple');
@@ -597,6 +602,17 @@ Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddle
     Route::get('/property/{property}/languages', [PropertyDataController::class, 'getPropertyLanguages'])->name('partner.property.languages.get');
     Route::get('/property/{property}/verification', [PropertyDataController::class, 'getVerification'])->name('partner.property.verification.get');
 
+    // Partner hotels payment route with property ID (must come first to avoid conflicts)
+    Route::get('/partner-hotels-payment/{property}', [PropertyController::class, 'showPaymentPage'])->name('partner.hotels.payment.with.property');
+    
+    // Partner hotels payment route (without property ID - must come after the parameterized route)
+    Route::get('/partner-hotels-payment', function () {
+        return view('partner.partner-hotels-payment');
+    })->name('partner.hotels.payment');
+    Route::get('/partner-hotels-complete-registration', function () {
+        return view('partner.partner-hotels-complete-registration');
+    })->name('partner.hotels.complete.registration');
+
     // Add new routes for loading saved data
     Route::get('/property/{property}/details', [PropertyDataController::class, 'getPropertyDetails'])->name('partner.property.details.get');
     Route::get('/property/{property}/amenities', [PropertyDataController::class, 'getAmenities'])->name('partner.property.amenities.get');
@@ -614,6 +630,9 @@ Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddle
     Route::post('/save-languages/{property}', [PropertyController::class, 'saveLanguages']);
     Route::post('/property/save-payment-method', [PropertyController::class, 'savePaymentMethod'])->name('partner.property.savePaymentMethod');
     Route::post('/property/save-invoicing/{property}', [PropertyController::class, 'saveInvoicing'])->name('partner.property.saveInvoicing');
+    Route::post('/property/save-payment-step/{property}', [PropertyController::class, 'savePaymentStep'])->name('partner.property.savePaymentStep');
+    Route::post('/property/save-verification/{property}', [PropertyController::class, 'saveVerification'])->name('partner.property.saveVerification');
+    Route::patch('/property/complete-payment/{property}', [PropertyController::class, 'completePaymentProcess'])->name('partner.property.completePayment');
 });
 
 Route::post('/save-amenities/{propertyId}', [PropertyController::class, 'saveAmenities']);
