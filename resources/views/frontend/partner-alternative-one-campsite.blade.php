@@ -785,142 +785,158 @@
 
      <template x-if="step === 7">
     <div>
-        <div class="container mx-auto px-4 py-8 max-w-4xl lg:ml-32" x-data="{ petPolicy: 'no' }">
-            <!-- Header -->
-            <h2 class="text-2xl md:text-3xl font-bold mb-8 text-left">House rules</h2>
+        <div class="max-w-4xl mx-auto space-y-8 lg:ml-24" x-data="{ pets: 'no' }">
+  <div class="container w-full max-w-4xl ml-4 md:ml-24 px-4 py-8">
+    <!-- Header -->
+    <h2 class="text-2xl md:text-3xl font-bold mb-8 text-left">House rules</h2>
 
-            <div class="flex flex-col md:flex-row gap-6">
-                <!-- Left Section -->
-                <div class="bg-white shadow-md rounded-lg p-6 w-full md:w-2/3">
-                    <!-- Check-in -->
-                    <div class="mt-6">
-                        <h3 class="text-base font-semibold mb-4">What are your check-in and check-out times?</h3>
-                        <h3 class="text-base font-semibold mb-2">Check in</h3>
-                        <div class="flex space-x-4">
-                            <div class="w-full">
-                                <label class="block text-sm font-medium mb-1">From</label>
-                                <input type="time" value="15:00" class="w-full border rounded p-2" />
-                            </div>
-                            <div class="w-full">
-                                <label class="block text-sm font-medium mb-1">Until</label>
-                                <input type="time" value="18:00" class="w-full border rounded p-2" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Check-out -->
-                    <div class="mt-6">
-                        <h3 class="text-base font-semibold mb-2">Check out</h3>
-                        <div class="flex space-x-4">
-                            <div class="w-full">
-                                <label class="block text-sm font-medium mb-1">From</label>
-                                <input type="time" value="08:00" class="w-full border rounded p-2" />
-                            </div>
-                            <div class="w-full">
-                                <label class="block text-sm font-medium mb-1">Until</label>
-                                <input type="time" value="11:00" class="w-full border rounded p-2" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <hr class="my-6 border-t border-gray-300">
-
-                    <!-- Allow Children Section -->
-                    <div class="mb-6">
-                        <label class="block font-semibold text-base text-gray-800 mb-2">Do you allow children?</label>
-                        <div class="space-y-2 text-sm text-gray-700">
-                            <label class="flex items-center gap-2">
-                                <input type="radio" name="allowChildren" value="yes" />
-                                Yes
-                            </label>
-                            <label class="flex items-center gap-2">
-                                <input type="radio" name="allowChildren" value="no" />
-                                No
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- Pet Policy -->
-                    <div class="mt-6">
-                        <h3 class="text-base font-semibold mb-2">Do you allow pets?</h3>
-                        <div class="space-y-2">
-                            <label class="flex items-center cursor-pointer">
-                                <input type="radio" name="pets" value="yes" x-model="petPolicy" class="mr-2">
-                                <span>Yes</span>
-                            </label>
-                            <label class="flex items-center cursor-pointer">
-                                <input type="radio" name="pets" value="upon_request" x-model="petPolicy" class="mr-2">
-                                <span>Upon request</span>
-                            </label>
-                            <label class="flex items-center cursor-pointer">
-                                <input type="radio" name="pets" value="no" x-model="petPolicy" class="mr-2">
-                                <span>No</span>
-                            </label>
-                        </div>
-
-                        <!-- Conditional Field -->
-                        <div x-show="petPolicy === 'yes' || petPolicy === 'upon_request'" x-transition class="mt-4 space-y-2">
-                            <label class="block text-base font-semibold mb-1">Are there additional charges for pets?</label>
-                            <label class="flex items-center cursor-pointer">
-                                <input type="radio" name="pet_charges" value="free" class="mr-2">
-                                <span>Pets can stay for free</span>
-                            </label>
-                            <label class="flex items-center cursor-pointer">
-                                <input type="radio" name="pet_charges" value="charges_apply" class="mr-2">
-                                <span>Charges may apply</span>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="mt-8 flex justify-between">
-                                                                <!-- Back Button on the left -->
-                                                                <button type="button"  @click="step--"
-                                                                    class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
-                                                                    ←
-                                                                </button>
-
-                                                                <!-- Continue Button on the right -->
-                                                                <button type="button"    @click="step++"
-                                                                    class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
-                                                                    Continue
-                                                                </button>
-                                                            </div>
-
-
-                </div>
-
-                <!-- Right Section: Tip Box -->
-                <div x-data="{ show: true }" x-show="show"
-                     class="bg-white shadow-md rounded-lg p-6 w-full h-[200px] md:w-1/3 relative">
-                    <div class="flex justify-between items-start">
-                        <div class="flex items-center space-x-2">
-                            <img src="{{ asset('assets/system-uicons_lightbulb-on.svg') }}"
-                                 alt="Help"
-                                 class="w-6 h-6 md:w-7 md:h-7 cursor-pointer" />
-                            <h3 class="text-gray-800 font-semibold text-base">
-                                What if my house rules change?
-                            </h3>
-                        </div>
-                        <button @click="show = false" class="text-gray-400 hover:text-gray-600">
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                 class="h-5 w-5" viewBox="0 0 20 20"
-                                 fill="currentColor">
-                                <path fill-rule="evenodd"
-                                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                      clip-rule="evenodd" />
-                            </svg>
-                        </button>
-                    </div>
-                    <p class="text-sm text-gray-700 mt-3">
-                        You can easily customise these house rules later and additional house rules can be set on the
-                        Policies page of the extranet after you complete registration.
-                    </p>
-                </div>
+    <div class="flex flex-col md:flex-row gap-6">
+      <!-- Left Section -->
+      <div class="bg-white shadow-md rounded-lg p-6 w-full md:w-2/3">
+        <!-- Toggle Switches -->
+        <div class="space-y-4">
+          <label class="flex items-center justify-between cursor-pointer">
+            <span>Smoking allowed</span>
+            <div class="relative">
+              <input type="checkbox" class="sr-only peer" />
+              <div class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition"></div>
+              <div class="absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-4"></div>
             </div>
+          </label>
+          <label class="flex items-center justify-between cursor-pointer">
+            <span>Children allowed</span>
+            <div class="relative">
+              <input type="checkbox" class="sr-only peer" />
+              <div class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition"></div>
+              <div class="absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-4"></div>
+            </div>
+          </label>
 
-            <!-- Navigation Buttons -->
-         
-
+          <label class="flex items-center justify-between cursor-pointer">
+            <span>Parties/events allowed</span>
+            <div class="relative">
+              <input type="checkbox" class="sr-only peer" />
+              <div class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition"></div>
+              <div class="absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-4"></div>
+            </div>
+          </label>
         </div>
+
+        <hr class="my-6 border-t border-gray-300">
+
+        <!-- Pet Policy -->
+        <div class="mt-6">
+          <h3 class="text-base font-semibold mb-2">Do you allow pets?</h3>
+          <div class="space-y-2">
+            <label class="flex items-center cursor-pointer">
+              <input type="radio" name="pets" value="yes" class="mr-2" x-model="pets">
+              <span>Yes</span>
+            </label>
+            <label class="flex items-center cursor-pointer">
+              <input type="radio" name="pets" value="upon_request" class="mr-2" x-model="pets">
+              <span>Upon request</span>
+            </label>
+            <label class="flex items-center cursor-pointer">
+              <input type="radio" name="pets" value="no" class="mr-2" x-model="pets">
+              <span>No</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Conditional: Pet Fees -->
+        <div class="mt-6" x-show="pets === 'yes' || pets === 'upon_request'" x-transition>
+          <h3 class="text-base font-semibold mb-2">Are there additional fees for pets?</h3>
+          <div class="space-y-2">
+            <label class="flex items-center cursor-pointer">
+              <input type="radio" name="pets_fees" value="free" class="mr-2">
+              <span>Pets can stay for free</span>
+            </label>
+            <label class="flex items-center cursor-pointer">
+              <input type="radio" name="pets_fees" value="fees" class="mr-2">
+              <span>Charges may apply</span>
+            </label>
+          </div>
+        </div>
+
+        <hr class="my-6 border-t border-gray-300">
+
+        <!-- Check-in -->
+        <div class="mt-6">
+          <h3 class="text-base font-semibold mb-2">Check in</h3>
+          <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+            <div class="w-full">
+              <label class="block text-sm font-medium mb-1">From</label>
+              <input type="time" value="15:00" class="w-full border rounded p-2" />
+            </div>
+            <div class="w-full">
+              <label class="block text-sm font-medium mb-1">Until</label>
+              <input type="time" value="18:00" class="w-full border rounded p-2" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Check-out -->
+        <div class="mt-6">
+          <h3 class="text-base font-semibold mb-2">Check out</h3>
+          <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+            <div class="w-full">
+              <label class="block text-sm font-medium mb-1">From</label>
+              <input type="time" value="08:00" class="w-full border rounded p-2" />
+            </div>
+            <div class="w-full">
+              <label class="block text-sm font-medium mb-1">Until</label>
+              <input type="time" value="11:00" class="w-full border rounded p-2" />
+            </div>
+          </div>
+        </div>
+
+   
+
+                 <!-- Navigation Buttons -->
+<div class="mt-12 flex justify-between">
+  <!-- Back Button on the left -->
+  <button
+   type="button" @click="step--"
+        :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
+  
+      class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+      ←
+  </button>
+
+  <!-- Continue Button on the right -->
+  <button
+   type="button"  @click="step++"
+     class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 "
+  >
+    Continue
+  </button>
+</div>
+        </div>
+
+        <!-- Right Section: Tip Box -->
+        <div x-data="{ show: true }" :class="show ? 'block' : 'invisible opacity-0'" class="bg-white shadow-md rounded-lg p-6 w-full h-[240px] md:w-1/3 relative">
+          <div class="flex justify-between items-start">
+            <div class="flex items-center space-x-2">
+              <img src="{{ asset('assets/system-uicons_lightbulb-on.svg') }}" alt="Help" class="w-6 h-6 md:w-7 md:h-7 cursor-pointer" />
+              <h3 class="text-gray-800 font-semibold text-base">What if my house rules change?</h3>
+            </div>
+            <button @click="show = false" class="text-gray-400 hover:text-gray-600">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+              </svg>
+            </button>
+          </div>
+          <p class="text-sm text-gray-700 mt-3">
+            You can easily customise these house rules later and additional house rules can be set on the Policies page of the extranet after you complete registration.
+          </p>
+
+          
+        </div>
+      </div>
+
+
+    </div>
+  </div>
         
     </div>
 </template>
