@@ -14,12 +14,7 @@ class GetBookingDataAction
     {
         return [
             'bookings' => $this->propertyService->getBookings(),
-            'stats' => [
-                'total_bookings' => 45,
-                'confirmed' => 38,
-                'pending' => 5,
-                'cancelled' => 2
-            ]
+            'stats' => $this->propertyService->getBookingStats()
         ];
     }
 }

@@ -10,15 +10,16 @@ class GetPropertyListingsAction
         private PropertyListingService $propertyListingService
     ) {}
 
-    public function execute(string $type, ?string $search = null): array
+    public function execute(string $type, ?string $search = null, ?string $status = null): array
     {
         $method = 'get' . ucfirst($type);
         
         return [
-            'properties' => $this->propertyListingService->$method($search),
+            'properties' => $this->propertyListingService->$method($search, $status),
             'counts' => $this->propertyListingService->getPropertyCounts(),
             'type' => $type,
-            'search' => $search
+            'search' => $search,
+            'status' => $status
         ];
     }
 }

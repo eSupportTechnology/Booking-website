@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Partner;
 
 use App\Http\Controllers\Controller;
+use App\Actions\Partner\GetReviewsDataAction;
 
 class ReviewController extends Controller
 {
-    public function index()
+    public function index(GetReviewsDataAction $action)
     {
-        return view('partner.reviews.index');
+        $data = $action->execute();
+        
+        return view('partner.reviews.index', $data);
     }
 }
