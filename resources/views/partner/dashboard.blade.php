@@ -1,62 +1,112 @@
 @extends('partner.master')
 
 @section('content')
-<div class="space-y-6">
-
+<div class="space-y-8">
     <!-- Header -->
-    <div class="flex justify-between items-center">
-        <h1 class="text-3xl font-semibold text-gray-800">Welcome back, <b>{{ Auth::user()->name ?? 'Partner' }} </b>👋</h1>
-        <a href="{{ route('partner.list-your-property') }}" class="text-white px-4 py-2 rounded shadow hover:opacity-90 transition" style="background-color: #1F8FB2;">
-            Add New Property
-        </a>
+    <div class="bg-gradient-to-r from-[#1F8FB2] to-[#3CC0E9] rounded-2xl p-8 text-white">
+        <div class="flex justify-between items-center">
+            <div>
+                <h1 class="text-4xl font-bold mb-2">Welcome back, {{ Auth::user()->name ?? 'Partner' }}! 👋</h1>
+                <p class="text-blue-100 text-lg">Manage your properties and track your success</p>
+            </div>
+            <a href="{{ route('partner.list-your-property') }}" class="bg-white text-[#1F8FB2] px-6 py-3 rounded-xl font-semibold hover:bg-blue-50 transition-all duration-200 shadow-lg">
+                <i class="fas fa-plus mr-2"></i>Add New Property
+            </a>
+        </div>
     </div>
 
     <!-- Statistics Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div class="bg-white p-6 rounded-lg shadow border-l-4" style="border-color: #1F8FB2;">
-            <h2 class="text-sm text-gray-500">Total Properties</h2>
-            <p class="text-2xl font-bold text-gray-800">{{ $stats->totalProperties }}</p>
+        <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Total Properties</p>
+                    <p class="text-3xl font-bold text-gray-800 mt-2">{{ $stats->totalProperties }}</p>
+                </div>
+                <div class="bg-[#1F8FB2] bg-opacity-10 p-3 rounded-xl">
+                    <i class="fas fa-building text-[#1F8FB2] text-2xl"></i>
+                </div>
+            </div>
         </div>
-        <div class="bg-white p-6 rounded-lg shadow border-l-4 border-green-500">
-            <h2 class="text-sm text-gray-500">Active Bookings</h2>
-            <p class="text-2xl font-bold text-gray-800">{{ $stats->activeBookings }}</p>
+        <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Active Bookings</p>
+                    <p class="text-3xl font-bold text-gray-800 mt-2">{{ $stats->activeBookings }}</p>
+                </div>
+                <div class="bg-green-100 p-3 rounded-xl">
+                    <i class="fas fa-calendar-check text-green-600 text-2xl"></i>
+                </div>
+            </div>
         </div>
-        <div class="bg-white p-6 rounded-lg shadow border-l-4 border-yellow-500">
-            <h2 class="text-sm text-gray-500">Monthly Earnings</h2>
-            <p class="text-2xl font-bold text-gray-800">${{ number_format($stats->monthlyEarnings) }}</p>
+        <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Monthly Earnings</p>
+                    <p class="text-3xl font-bold text-gray-800 mt-2">${{ number_format($stats->monthlyEarnings) }}</p>
+                </div>
+                <div class="bg-yellow-100 p-3 rounded-xl">
+                    <i class="fas fa-dollar-sign text-yellow-600 text-2xl"></i>
+                </div>
+            </div>
         </div>
-        <div class="bg-white p-6 rounded-lg shadow border-l-4 border-purple-500">
-            <h2 class="text-sm text-gray-500">Reviews</h2>
-            <p class="text-2xl font-bold text-gray-800">{{ $stats->averageRating }} ⭐</p>
+        <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Average Rating</p>
+                    <p class="text-3xl font-bold text-gray-800 mt-2">{{ $stats->averageRating }} ⭐</p>
+                </div>
+                <div class="bg-purple-100 p-3 rounded-xl">
+                    <i class="fas fa-star text-purple-600 text-2xl"></i>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- Recent Bookings Table -->
-    <div class="bg-white p-6 rounded-lg shadow">
-        <h2 class="text-lg font-semibold text-gray-700 mb-4">Recent Bookings</h2>
+    <div class="bg-white rounded-2xl shadow-lg border border-gray-100">
+        <div class="p-6 border-b border-gray-100">
+            <div class="flex items-center justify-between">
+                <h2 class="text-2xl font-bold text-gray-800">Recent Bookings</h2>
+                <a href="{{ route('partner.bookings') }}" class="text-[#1F8FB2] hover:text-[#3CC0E9] font-medium">
+                    View All <i class="fas fa-arrow-right ml-1"></i>
+                </a>
+            </div>
+        </div>
         <div class="overflow-x-auto">
-            <table class="min-w-full table-auto text-sm text-gray-700">
-                <thead>
-                    <tr class="bg-gray-100 text-left">
-                        <th class="px-4 py-2">Booking ID</th>
-                        <th class="px-4 py-2">Guest</th>
-                        <th class="px-4 py-2">Property</th>
-                        <th class="px-4 py-2">Check-in</th>
-                        <th class="px-4 py-2">Status</th>
-                        <th class="px-4 py-2 text-right">Earnings</th>
+            <table class="min-w-full">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Booking ID</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Guest</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Property</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Check-in</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Earnings</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="divide-y divide-gray-200">
                     @foreach($recentBookings as $booking)
-                    <tr class="border-b hover:bg-gray-50">
-                        <td class="px-4 py-2">{{ $booking['id'] }}</td>
-                        <td class="px-4 py-2">{{ $booking['guest_name'] }}</td>
-                        <td class="px-4 py-2">{{ $booking['property_name'] }}</td>
-                        <td class="px-4 py-2">{{ $booking['check_in'] }}</td>
-                        <td class="px-4 py-2">
-                            <span class="bg-green-100 text-green-700 text-xs font-medium px-2 py-1 rounded">{{ $booking['status'] }}</span>
+                    <tr class="hover:bg-gray-50 transition-colors duration-200">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#{{ $booking['id'] }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="h-8 w-8 bg-gray-300 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-user text-gray-600 text-sm"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <div class="text-sm font-medium text-gray-900">{{ $booking['guest_name'] }}</div>
+                                </div>
+                            </div>
                         </td>
-                        <td class="px-4 py-2 text-right font-semibold">${{ $booking['earnings'] }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $booking['property_name'] }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $booking['check_in'] }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                                {{ $booking['status'] }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-green-600">${{ $booking['earnings'] }}</td>
                     </tr>
                     @endforeach
                 </tbody>
@@ -65,30 +115,78 @@
     </div>
 
     <!-- Chart Section -->
-    <div class="bg-white p-6 rounded-lg shadow">
-        <h2 class="text-lg font-semibold text-gray-700 mb-4">Monthly Earnings Overview</h2>
-        <canvas id="earningsChart" height="40"></canvas>
+    <div class="bg-white rounded-2xl shadow-lg border border-gray-100">
+        <div class="p-6 border-b border-gray-100">
+            <h2 class="text-2xl font-bold text-gray-800">Monthly Earnings Overview</h2>
+            <p class="text-gray-600 mt-1">Track your earnings and booking trends</p>
+        </div>
+        <div class="p-6">
+            <canvas id="earningsChart" height="60"></canvas>
+        </div>
     </div>
 
-    <!-- Quick Actions -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="bg-white p-6 rounded-lg shadow">
-            <h3 class="text-lg font-semibold mb-2">Quick Actions</h3>
-            <div class="flex flex-col space-y-2">
-                <a href="{{ route('partner.list-your-property') }}" class="text-center text-white px-4 py-2 rounded hover:opacity-90 transition" style="background-color: #1F8FB2;">Add New Property</a>
-                <a href="#" class="text-center text-white px-4 py-2 rounded hover:opacity-90 transition" style="background-color: #3CC0E9;">Manage Bookings</a>
-                <a href="#" class="text-center bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition">View Earnings</a>
+    <!-- Quick Actions & Recent Activity -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="bg-white rounded-2xl shadow-lg border border-gray-100">
+            <div class="p-6 border-b border-gray-100">
+                <h3 class="text-xl font-bold text-gray-800">Quick Actions</h3>
+                <p class="text-gray-600 mt-1">Manage your business efficiently</p>
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-1 gap-4">
+                    <a href="{{ route('partner.list-your-property') }}" class="flex items-center p-4 bg-gradient-to-r from-[#1F8FB2] to-[#3CC0E9] text-white rounded-xl hover:shadow-lg transition-all duration-200">
+                        <i class="fas fa-plus-circle text-2xl mr-4"></i>
+                        <div>
+                            <div class="font-semibold">Add New Property</div>
+                            <div class="text-sm opacity-90">List a new property</div>
+                        </div>
+                    </a>
+                    <a href="{{ route('partner.bookings') }}" class="flex items-center p-4 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:shadow-lg transition-all duration-200">
+                        <i class="fas fa-calendar-alt text-2xl mr-4"></i>
+                        <div>
+                            <div class="font-semibold">Manage Bookings</div>
+                            <div class="text-sm opacity-90">View and manage reservations</div>
+                        </div>
+                    </a>
+                    <a href="{{ route('partner.earnings') }}" class="flex items-center p-4 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white rounded-xl hover:shadow-lg transition-all duration-200">
+                        <i class="fas fa-chart-line text-2xl mr-4"></i>
+                        <div>
+                            <div class="font-semibold">View Earnings</div>
+                            <div class="text-sm opacity-90">Track your revenue</div>
+                        </div>
+                    </a>
+                </div>
             </div>
         </div>
 
-        <div class="bg-white p-6 rounded-lg shadow">
-            <h3 class="text-lg font-semibold mb-2">Recent Activity</h3>
-            <ul class="list-disc list-inside text-gray-700 space-y-1">
-                <li>New booking received for Ocean View Apartment</li>
-                <li>Guest review: 5 stars for City Center Studio</li>
-                <li>Payment received: $180 for booking BK10234</li>
-                <li>Property photos updated successfully</li>
-            </ul>
+        <div class="bg-white rounded-2xl shadow-lg border border-gray-100">
+            <div class="p-6 border-b border-gray-100">
+                <h3 class="text-xl font-bold text-gray-800">Recent Activity</h3>
+                <p class="text-gray-600 mt-1">Latest updates and notifications</p>
+            </div>
+            <div class="p-6">
+                <div class="space-y-4">
+                    @if(count($recentActivity) > 0)
+                        @foreach($recentActivity as $activity)
+                            <div class="flex items-start space-x-3">
+                                <div class="bg-blue-100 p-2 rounded-full">
+                                    <i class="fas fa-bell text-blue-600 text-sm"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-gray-800">{{ $activity }}</p>
+                                    <p class="text-xs text-gray-500 mt-1">Just now</p>
+                                </div>
+                            </div>
+                        @endforeach
+                    @else
+                        <div class="text-center py-8">
+                            <i class="fas fa-inbox text-gray-300 text-4xl mb-4"></i>
+                            <p class="text-gray-500 mb-2">No recent activity</p>
+                            <p class="text-sm text-gray-400">Start by adding your first property</p>
+                        </div>
+                    @endif
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -98,9 +196,13 @@
 <script>
     const ctx = document.getElementById('earningsChart').getContext('2d');
 
-    const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-    gradient.addColorStop(0, 'rgba(31, 143, 178, 0.5)');
-    gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+    gradient.addColorStop(0, 'rgba(31, 143, 178, 0.8)');
+    gradient.addColorStop(1, 'rgba(31, 143, 178, 0.1)');
+
+    const gradient2 = ctx.createLinearGradient(0, 0, 0, 400);
+    gradient2.addColorStop(0, 'rgba(16, 185, 129, 0.8)');
+    gradient2.addColorStop(1, 'rgba(16, 185, 129, 0.1)');
 
     new Chart(ctx, {
         type: 'line',
@@ -114,57 +216,89 @@
                     backgroundColor: gradient,
                     borderColor: '#1F8FB2',
                     tension: 0.4,
-                    borderWidth: 3,
+                    borderWidth: 4,
                     pointBackgroundColor: '#1F8FB2',
-                    pointRadius: 4
+                    pointBorderColor: '#ffffff',
+                    pointBorderWidth: 3,
+                    pointRadius: 6,
+                    pointHoverRadius: 8
                 },
                 {
                     label: 'Bookings',
                     data: @json($chartData['bookings']),
-                    fill: false,
+                    fill: true,
+                    backgroundColor: gradient2,
                     borderColor: '#10b981',
-                    borderWidth: 2,
+                    borderWidth: 4,
                     tension: 0.4,
                     pointBackgroundColor: '#10b981',
-                    pointRadius: 4
+                    pointBorderColor: '#ffffff',
+                    pointBorderWidth: 3,
+                    pointRadius: 6,
+                    pointHoverRadius: 8
                 }
             ]
         },
         options: {
             responsive: true,
+            maintainAspectRatio: false,
             plugins: {
                 legend: {
+                    position: 'top',
                     labels: {
                         color: '#374151',
-                        font: { size: 14, weight: 'bold' }
+                        font: { size: 14, weight: '600' },
+                        usePointStyle: true,
+                        padding: 20
                     }
                 },
                 tooltip: {
-                    backgroundColor: '#111827',
+                    backgroundColor: 'rgba(17, 24, 39, 0.95)',
                     titleColor: '#fff',
                     bodyColor: '#d1d5db',
                     borderColor: '#1F8FB2',
-                    borderWidth: 1
+                    borderWidth: 2,
+                    cornerRadius: 12,
+                    displayColors: true,
+                    titleFont: { size: 14, weight: 'bold' },
+                    bodyFont: { size: 13 }
                 }
             },
             scales: {
                 x: {
-                    ticks: { color: '#6b7280', font: { weight: '600' } },
-                    grid: { display: false }
+                    ticks: { 
+                        color: '#6b7280', 
+                        font: { weight: '600', size: 12 } 
+                    },
+                    grid: { 
+                        display: false 
+                    },
+                    border: {
+                        display: false
+                    }
                 },
                 y: {
                     beginAtZero: true,
                     ticks: {
                         color: '#6b7280',
-                        stepSize: 500,
-                        font: { weight: '600' }
+                        font: { weight: '600', size: 12 },
+                        callback: function(value) {
+                            return '$' + value;
+                        }
                     },
                     grid: {
-                        color: '#e5e7eb',
+                        color: 'rgba(229, 231, 235, 0.8)',
                         lineWidth: 1,
                         borderDash: [5, 5]
+                    },
+                    border: {
+                        display: false
                     }
                 }
+            },
+            interaction: {
+                intersect: false,
+                mode: 'index'
             }
         }
     });

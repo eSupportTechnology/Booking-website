@@ -15,7 +15,8 @@ class GetDashboardDataAction
         return [
             'stats' => $this->dashboardService->getDashboardStats(),
             'recentBookings' => $this->dashboardService->getRecentBookings(),
-            'chartData' => $this->dashboardService->getChartData()
+            'chartData' => $this->dashboardService->getChartData(),
+            'recentActivity' => $this->dashboardService->getRecentActivity()
         ];
     }
 }
