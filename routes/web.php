@@ -335,6 +335,18 @@ Route::get('/partner/boat/payment', function () {
     return view('frontend.partner-alternative-boat-payments');
 })->name('partner.boat.payment');
 
+Route::get('/partner/campsite/bedrooms', function () {
+    return view('frontend.partner-campsite-bedroom');
+})->name('partner.campsite.bedrooms');
+
+Route::get('/partner/campsite/otherspaces', function () {
+    return view('frontend.partner-campsite-otherspaces');
+})->name('partner.campsite.otherspaces');
+
+Route::get('/partner/campsite/livingroom', function () {
+    return view('frontend.partner-campsite-livingroom');
+})->name('partner.campsite.livingroom');
+
 Route::get('/partner/boat/edit', function () {
     return view('frontend.partner-alternative-boat-edit');
 })->name('partner.boat.edit');

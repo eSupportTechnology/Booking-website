@@ -1830,7 +1830,7 @@ class="bg-white shadow rounded-lg p-6 space-y-4 border">
                            
                             </div>
 
-   <a href="{{ route('partner.hotels.price.per.group') }}">
+   <a href="{{ route('partner.boat.price.per.group') }}">
     <button class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">
         Edit
     </button>
@@ -1919,7 +1919,7 @@ class="bg-white shadow rounded-lg p-6 space-y-4 border">
                             <img src="{{ asset('assets/material-symbols-light_info-outline.svg') }}" alt="Tip Icon"
                                 class="w-5 h-5">
                         </div>
-                          <a href="{{ route('partner.hotels.weekly.rate') }}">
+                          <a href="{{ route('partner.campsite.weekly.rate') }}">
                         <button
                             class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">Edit</button></a>
                     </div>

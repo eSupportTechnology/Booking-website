@@ -59,7 +59,7 @@
 
     <!-- Steps 1 & 2 -->
     <template x-if="step > 0">
-        <div class="max-w-3xl mx-auto">
+        <div class="max-w-3xl ">
 
             <!-- Step 1 -->
             <template x-if="step === 1">
