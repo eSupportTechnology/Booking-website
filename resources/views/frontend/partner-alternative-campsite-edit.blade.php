@@ -139,7 +139,7 @@
 
 
             <div class="flex justify-center">
-                <a href="{{ route('partner.hotels.complete.registration') }}"
+                <a href="{{ route('partner.tent.complete.registration') }}"
                   
                         class="mt-4 w-full  bg-[#3CC0E9] font-semibold text-white text-center rounded hover:bg-sky-500 text-sm font-semibold px-6 py-2 rounded shadow">
                         Complete Registration
