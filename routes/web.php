@@ -459,7 +459,7 @@ Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddle
     // Settings
     Route::get('/settings', [\App\Http\Controllers\Partner\SettingsController::class, 'index'])->name('partner.settings');
     Route::get('/property_category', [PropertyController::class, 'categories'])->name('partner.property.category');
-    Route::get('/property_subcategory/{id}', [PropertyController::class, 'subcategories'])->name('partner.property.subcategory');
+    Route::get('/property_subcategory/{id}/{property_id?}', [PropertyController::class, 'subcategories'])->name('partner.property.subcategory');
     Route::get('/hotels/rooms/{id}', [PropertyController::class, 'rooms'])->name('partner.hotels.room');
     Route::get('/property_subtype/{id}', [PropertyController::class, 'subtypes'])->name('partner.property.subtype');
     Route::post('/property/register', [PropertyController::class, 'register'])->name('partner.property.register');
@@ -529,7 +529,7 @@ Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddle
 
     // Partner hotels payment route with property ID (must come first to avoid conflicts)
     Route::get('/partner-hotels-payment/{property}', [PropertyController::class, 'showPaymentPage'])->name('partner.hotels.payment.with.property');
-    
+
     // Partner hotels payment route (without property ID - must come after the parameterized route)
     Route::get('/partner-hotels-payment', function () {
         return view('partner.partner-hotels-payment');
@@ -637,8 +637,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/admin-reset-password', [\App\Http\Controllers\Admin\AdminNewPasswordController::class, 'store'])->name('password.store');
     });
 
-        // Protected admin routes
-        Route::middleware(['auth:admin', \App\Http\Middleware\AdminMiddleware::class, \App\Http\Middleware\PreventBackHistory::class])->group(function () {
+    // Protected admin routes
+    Route::middleware(['auth:admin', \App\Http\Middleware\AdminMiddleware::class, \App\Http\Middleware\PreventBackHistory::class])->group(function () {
         Route::get('/center', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
         Route::post('/exit', [\App\Http\Controllers\Admin\AuthController::class, 'logout'])->name('logout');
 

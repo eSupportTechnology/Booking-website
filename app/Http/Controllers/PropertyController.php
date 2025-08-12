@@ -71,18 +71,14 @@ class PropertyController extends Controller
         return view('partner.partner-property-types', compact('properties'));
     }
 
-    public function subcategories($categoryId, PropertyAction $action)
+    public function subcategories(PropertyAction $action, $categoryId, $propertyId = null)
     {
         $subcategories = $action->getPropertiesByCategory($categoryId);
         $amenities = $action->getAmenities();
         $roomTypes = $action->getRoomTypes();
         $bedTypes = $action->getBedTypes();
         $languages = $action->getLanguages();
-        // Log::info('Fetching subcategories for category ID: ' . $categoryId, ['subcategories' => $subcategories]);
-        // Log::info('Available amenities', ['amenities' => $amenities]);
-        // Log::info('Available room types', ['roomTypes' => $roomTypes]);
-        // Log::info('Available bed types', ['bedTypes' => $bedTypes]);
-        // Log::info('Available languages', ['languages' => $languages]);
+
 
         switch ($categoryId) {
             case 1:  // Homes
@@ -115,6 +111,7 @@ class PropertyController extends Controller
                     return redirect()->back()->withErrors(['error' => 'No subcategories found for this category.']);
                 }
                 return view('partner.partner-hotels-create-1', [
+                    'propertyId' => $propertyId,
                     'amenities' => $amenities,
                     'languages' => $languages,
                     'roomTypes' => $roomTypes,

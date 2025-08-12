@@ -1234,6 +1234,9 @@
 
     <!-- Alpine Component Script -->
     <script>
+        const pathParts = window.location.pathname.split('/');
+        const URLpropertyId = pathParts[4] || null;
+        console.log('Property ID from URL:', URLpropertyId);
         function stepForm() {
             return {
                 pets_fees: '',
@@ -1307,7 +1310,8 @@
                             body: JSON.stringify({
                                 apartment_type: this.selectedBox,
                                 subcategory_id: this.selectedBox,
-                                category_id: '{{ $categoryId }}'
+                                category_id: '{{ $categoryId }}',
+                                property_id: URLpropertyId ? URLpropertyId : null,
                             })
                         });
 

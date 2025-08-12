@@ -148,7 +148,7 @@
                             more</p>
                     </div>
                 </div>
-                <a href="{{ route('partner.hotels.create.1') }}"
+                <a href="{{ url('/partner/property_subcategory/' . $property->category_id . '/' . $property->id) }}"
                     class="text-sky-600 font-medium text-sm hover:underline">Edit</a>
 
             </div>
