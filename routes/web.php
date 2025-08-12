@@ -570,6 +570,16 @@ Route::get('/my-reviews', function () {
 })->name('reviews');
 
 
+Route::get('/single-hotel', function () {
+    return view('frontend.single-hotel');
+})->name('single-hotel');
+
+Route::get('/single-hotels', function () {
+    return view('frontend.single-hotels');
+})->name('single-hotels');
+
+
+
 
 
 Route::get('/partner/apartment/bedrooms/{property}', function ($propertyId) {
