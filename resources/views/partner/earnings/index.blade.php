@@ -221,10 +221,10 @@
     new Chart(ctx, {
         type: 'line',
         data: {
-            labels: ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan'],
+            labels: @json($chartData['labels']),
             datasets: [{
                 label: 'Earnings ($)',
-                data: [1200, 1800, 1500, 2200, 1900, 2400, 2450],
+                data: @json($chartData['earnings']),
                 fill: true,
                 backgroundColor: gradient,
                 borderColor: '#eab308',

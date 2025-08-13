@@ -120,8 +120,8 @@
             <h2 class="text-2xl font-bold text-gray-800">Monthly Earnings Overview</h2>
             <p class="text-gray-600 mt-1">Track your earnings and booking trends</p>
         </div>
-        <div class="p-6">
-            <canvas id="earningsChart" height="60"></canvas>
+        <div class="p-6" style="height: 400px;">
+            <canvas id="earningsChart"></canvas>
         </div>
     </div>
 
@@ -204,6 +204,8 @@
     gradient2.addColorStop(0, 'rgba(16, 185, 129, 0.8)');
     gradient2.addColorStop(1, 'rgba(16, 185, 129, 0.1)');
 
+    //console.log('Chart Data:', @json($chartData));
+
     new Chart(ctx, {
         type: 'line',
         data: {
@@ -212,28 +214,28 @@
                 {
                     label: 'Earnings ($)',
                     data: @json($chartData['earnings']),
-                    fill: true,
-                    backgroundColor: gradient,
                     borderColor: '#1F8FB2',
+                    backgroundColor: gradient,
+                    borderWidth: 3,
+                    fill: true,
                     tension: 0.4,
-                    borderWidth: 4,
                     pointBackgroundColor: '#1F8FB2',
                     pointBorderColor: '#ffffff',
-                    pointBorderWidth: 3,
+                    pointBorderWidth: 2,
                     pointRadius: 6,
                     pointHoverRadius: 8
                 },
                 {
                     label: 'Bookings',
                     data: @json($chartData['bookings']),
-                    fill: true,
+                    borderColor: '#10B981',
                     backgroundColor: gradient2,
-                    borderColor: '#10b981',
-                    borderWidth: 4,
+                    borderWidth: 3,
+                    fill: true,
                     tension: 0.4,
-                    pointBackgroundColor: '#10b981',
+                    pointBackgroundColor: '#10B981',
                     pointBorderColor: '#ffffff',
-                    pointBorderWidth: 3,
+                    pointBorderWidth: 2,
                     pointRadius: 6,
                     pointHoverRadius: 8
                 }
@@ -244,61 +246,72 @@
             maintainAspectRatio: false,
             plugins: {
                 legend: {
+                    display: true,
                     position: 'top',
                     labels: {
-                        color: '#374151',
-                        font: { size: 14, weight: '600' },
                         usePointStyle: true,
-                        padding: 20
+                        padding: 20,
+                        font: {
+                            size: 12,
+                            weight: '500'
+                        }
                     }
                 },
                 tooltip: {
-                    backgroundColor: 'rgba(17, 24, 39, 0.95)',
-                    titleColor: '#fff',
-                    bodyColor: '#d1d5db',
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    titleColor: '#ffffff',
+                    bodyColor: '#ffffff',
                     borderColor: '#1F8FB2',
-                    borderWidth: 2,
-                    cornerRadius: 12,
+                    borderWidth: 1,
+                    cornerRadius: 8,
                     displayColors: true,
-                    titleFont: { size: 14, weight: 'bold' },
-                    bodyFont: { size: 13 }
+                    callbacks: {
+                        label: function(context) {
+                            if (context.datasetIndex === 0) {
+                                return 'Earnings: $' + context.parsed.y.toLocaleString();
+                            } else {
+                                return 'Bookings: ' + context.parsed.y;
+                            }
+                        }
+                    }
                 }
             },
             scales: {
                 x: {
-                    ticks: { 
-                        color: '#6b7280', 
-                        font: { weight: '600', size: 12 } 
-                    },
-                    grid: { 
-                        display: false 
-                    },
-                    border: {
+                    grid: {
                         display: false
+                    },
+                    ticks: {
+                        font: {
+                            size: 11
+                        },
+                        color: '#6B7280'
                     }
                 },
                 y: {
                     beginAtZero: true,
-                    ticks: {
-                        color: '#6b7280',
-                        font: { weight: '600', size: 12 },
-                        callback: function(value) {
-                            return '$' + value;
-                        }
-                    },
                     grid: {
-                        color: 'rgba(229, 231, 235, 0.8)',
-                        lineWidth: 1,
-                        borderDash: [5, 5]
+                        color: 'rgba(0, 0, 0, 0.05)'
                     },
-                    border: {
-                        display: false
+                    ticks: {
+                        font: {
+                            size: 11
+                        },
+                        color: '#6B7280',
+                        callback: function(value) {
+                            return value.toLocaleString();
+                        }
                     }
                 }
             },
             interaction: {
                 intersect: false,
                 mode: 'index'
+            },
+            elements: {
+                point: {
+                    hoverBackgroundColor: '#ffffff'
+                }
             }
         }
     });
