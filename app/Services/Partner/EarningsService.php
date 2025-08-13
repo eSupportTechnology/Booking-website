@@ -59,4 +59,29 @@ class EarningsService
                 ];
             })->toArray();
     }
+
+    public function getChartData(): array
+    {
+        $partnerId = Auth::id();
+        
+        $monthlyData = Booking::whereHas('property', function($query) use ($partnerId) {
+            $query->where('user_id', $partnerId);
+        })->selectRaw('MONTH(created_at) as month, SUM(total_price) as earnings')
+          ->whereYear('created_at', Carbon::now()->year)
+          ->groupBy('month')
+          ->orderBy('month')
+          ->get();
+        
+        $labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        $earnings = array_fill(0, 12, 0);
+        
+        foreach ($monthlyData as $data) {
+            $earnings[$data->month - 1] = $data->earnings ?? 0;
+        }
+        
+        return [
+            'labels' => $labels,
+            'earnings' => $earnings
+        ];
+    }
 }
