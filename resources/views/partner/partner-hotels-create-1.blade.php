@@ -824,7 +824,8 @@
                             <div class="bg-white shadow-md rounded-lg p-6 mb-8">
                                 <h3 class="text-lg  mb-4 font-bold">Select languages
                                 </h3>
-                                <div class="space-y-2">
+                                <div class="space-y-2" x-data="{ selectedLanguages: JSON.parse(localStorage.getItem('selectedLanguages')) || [] }"
+                                                    x-init="$watch('selectedLanguages', val => localStorage.setItem('selectedLanguages', JSON.stringify(val)))">
                                     @php
                                     $initialLanguages = $languages->take(6);
                                     $additionalLanguages = $languages->slice(6);
@@ -833,7 +834,7 @@
                                     <label class="flex items-center cursor-pointer">
                                         <input type="checkbox"
                                             class="mr-2"
-                                            :value="'{{ $lang['id'] }}'" />
+                                            :value="'{{ $lang['id'] }}'" x-model="selectedLanguages" />
                                         <span>{{ $lang['name'] }}</span>
                                     </label>
                                     @endforeach
@@ -1293,6 +1294,7 @@
         console.log('Property ID from URL:', URLpropertyId);
     localStorage.removeItem('selectedAmenities');
         localStorage.removeItem('servicesFormData');
+        localStorage.removeItem('selectedLanguages');
 
         function stepForm() {
             return {
