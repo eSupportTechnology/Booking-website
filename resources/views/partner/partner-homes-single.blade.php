@@ -5,7 +5,6 @@
 
 @section('content')
 <script>
-
     function stepForm() {
         return {
             step: 1,
@@ -76,7 +75,7 @@
                                 title: 'Error!',
                                 text: data.message || 'Failed to save property location.',
                                 icon: 'error',
-                                showCancelButton: false, 
+                                showCancelButton: false,
                                 toast: true,
                                 position: 'top-end',
                             });
@@ -149,7 +148,7 @@
                             showCancelButton: false,
                             toast: true,
                             position: 'top-end',
-                        }); 
+                        });
                     });
             },
 
@@ -216,8 +215,8 @@
                     breakfast_type: this.selectedBreakfasts.length > 0 ? this.selectedBreakfasts : null, // array of strings or null
                     breakfast_price: document.getElementById('breakfast_price')?.value || null,
                     parking_available: document.querySelector('input[name="parking"]:checked')?.value || null, // 'free', 'paid', 'no'
-                    parking_cost: document.querySelector('input[name="parking"]:checked')?.value === 'paid'
-                        ? document.getElementById('parking_cost')?.value : '0',                        
+                    parking_cost: document.querySelector('input[name="parking"]:checked')?.value === 'paid' ?
+                        document.getElementById('parking_cost')?.value : '0',
                     parking_reservation: document.querySelector('input[name="reservation_needed"]:checked')?.value || null, // 'yes' / 'no'
                     parking_location: document.querySelector('input[name="location"]:checked')?.value || null, // 'on_site' / 'off_site'
                     parking_type: document.querySelector('input[name="type"]:checked')?.value || null // 'private' / 'public'
@@ -272,68 +271,56 @@
                 }
             },
 
-            saveStep6() {
-                const selectedLanguages = [];
-                const propertyId = document.getElementById('propertyId').value;
-                document.querySelectorAll('.language-checkbox:checked').forEach((checkbox) => {
-                    selectedLanguages.push(checkbox.value);
-                });
+            async saveStep6() {
+                try {
+                    const selectedLanguages = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
+                        .map(input => input.value);
+                    const propertyId = document.getElementById("propertyId").value;
 
-                fetch(`/partner/property/save-languages/${propertyId}`, {
+                    console.log('Selected languages:', selectedLanguages);
+
+                    const response = await fetch(`/partner/save-languages/${propertyId}`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                         },
                         body: JSON.stringify({
-                            property_id: propertyId,
-                            languages: selectedLanguages
+                            languages: selectedLanguages,
+                            property_id: propertyId
                         })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            console.log("Languages saved:", data.selected_languages);
-                            Swal.fire({
-                                title: 'Success!',
-                                text: 'Your property languages have been saved.',
-                                icon: 'success',
-                                showConfirmButton: false,
-                                toast: true,
-                                position: 'top-end',
-                                timer: 3000
-                            });
-                            this.step++;
-                        } else {
-                            console.error("Error saving languages:", data.message);
-                            Swal.fire({
-                                title: 'Error!',
-                                text: data.message || 'Failed to save languages.',
-                                icon: 'error',
-                                showConfirmButton: false,
-                                toast: true,
-                                position: 'top-end',
-                                timer: 3000
-                            });
-                        }
-                    })
-                    .catch(error => {
-                        console.error("AJAX error:", error);
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        console.log('Languages saved:', result);
                         Swal.fire({
-                            title: 'Error!',
-                            text: 'An error occurred while saving your property languages.',
-                            icon: 'error',
-                            showConfirmButton: false,
                             toast: true,
                             position: 'top-end',
+                            icon: 'success',
+                            title: 'Languages saved successfully!',
+                            showConfirmButton: false
                         });
-                    });
+                        this.step++; // go to next step
+                    } else {
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'error',
+                            title: result.message || 'Failed to save languages',
+                            showConfirmButton: false
+                        });
+                    }
+                } catch (e) {
+                    console.error('Error saving Languages:', e);
+                }
             },
 
             async saveStep7() {
                 const propertyId = document.getElementById('propertyId').value;
 
-                
+
                 const smokingAllowed = document.getElementById('smokingAllowed').checked;
                 const childrenAllowed = document.getElementById('childrenAllowed').checked;
                 const partiesAllowed = document.getElementById('partiesAllowed').checked;
@@ -978,7 +965,7 @@
 
     <template x-if="step === 6">
         <div>
-            <div class="container mx-auto px-4 py-8 max-w-2xl lg:ml-24">
+            <div class="container ml-32 px-4 py-8 max-w-2xl">
                 <!-- Header -->
                 <h2 class="text-2xl font-bold mb-8 text-left">
                     What languages do you or your staff speak?
@@ -989,14 +976,19 @@
                     <h3 class="text-lg  mb-4 font-bold">Select languages
                     </h3>
                     <div class="space-y-2">
-                        @foreach ($languages as $lang)
+                        @php
+                        $initialLanguages = $languages->take(6);
+                        $additionalLanguages = $languages->slice(6);
+                        @endphp
+                        @foreach ($initialLanguages as $lang)
                         <label class="flex items-center cursor-pointer">
                             <input type="checkbox"
-                                class="mr-2 language-checkbox"
+                                class="mr-2"
                                 :value="'{{ $lang['id'] }}'" />
                             <span>{{ $lang['name'] }}</span>
                         </label>
                         @endforeach
+
 
                     </div>
 
@@ -1026,33 +1018,19 @@
                             <!-- Dropdown list -->
                             <ul id="languageDropdown"
                                 class="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded max-h-40 overflow-auto shadow-lg hidden">
+                                @foreach ($additionalLanguages as $lang)
                                 <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                    onclick="selectLanguage(this)">Arabic
+                                    onclick="selectLanguage(this)"
+                                    data-id="{{ $lang['id'] }}">
+                                    {{ $lang['name'] }}
                                 </li>
-                                <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                    onclick="selectLanguage(this)">
-                                    Bulgarian</li>
-                                <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                    onclick="selectLanguage(this)">Catalan
-                                </li>
-                                <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                    onclick="selectLanguage(this)">Chinese
-                                </li>
-                                <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                    onclick="selectLanguage(this)">Croatian
-                                </li>
-                                <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                    onclick="selectLanguage(this)">Czech
-                                </li>
-                                <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                    onclick="selectLanguage(this)">Danish
-                                </li>
-                                <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                    onclick="selectLanguage(this)">Dutch
-                                </li>
+                                @endforeach
                             </ul>
+
                         </div>
                     </div>
+                    <!-- Container to hold dynamically selected additional languages -->
+                    <div id="selectedAdditionalLanguages" class="mt-2 space-y-2"></div>
 
                     <!-- Toggle Button for Additional Languages -->
                     <a href="#"
@@ -1063,16 +1041,13 @@
                 </div>
 
                 <!-- Navigation Buttons -->
-                <div class="mt-8 flex justify-between">
-                    <!-- Back Button on the left -->
+                <div class="mt-8 flex">
                     <button type="button" @click="step = Math.max(step - 1, 1)"
                         class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
                         ←
                     </button>
-
-                    <!-- Continue Button on the right -->
                     <button type="button" @click="saveStep6()"
-                        class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
+                        class="px-6 h-12 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ml-[395px]">
                         Continue
                     </button>
                 </div>
@@ -1080,6 +1055,35 @@
             </div>
 
             <script>
+                function selectLanguage(element) {
+                    const input = document.getElementById("languageInput");
+                    const selectedContainer = document.getElementById("selectedAdditionalLanguages");
+                    const langName = element.textContent.trim();
+                    const langId = element.dataset.id;
+
+                    // Prevent duplicate
+                    if (document.getElementById(`lang-${langId}`)) {
+                        input.value = '';
+                        hideDropdown();
+                        return;
+                    }
+
+                    // Create checkbox dynamically
+                    const label = document.createElement('label');
+                    label.className = 'flex items-center cursor-pointer';
+                    label.id = `lang-${langId}`;
+                    label.innerHTML = `
+                                            <input type="checkbox" class="mr-2" name="languages[]" value="${langId}" checked />
+                                            <span>${langName}</span>
+                                        `;
+
+                    selectedContainer.appendChild(label);
+
+                    // Clear input and close dropdown
+                    input.value = '';
+                    hideDropdown();
+                }
+
                 function toggleAdditionalLanguages() {
                     const section = document.getElementById("additionalLanguagesSection");
                     section.classList.toggle("hidden");
@@ -1126,11 +1130,7 @@
                     }
                 }
 
-                function selectLanguage(element) {
-                    const input = document.getElementById("languageInput");
-                    input.value = element.textContent;
-                    hideDropdown();
-                }
+
 
                 // Close dropdown when clicking outside
                 document.addEventListener("click", function(event) {
@@ -1298,7 +1298,7 @@
     </template>
 
     <template x-if="step === 8">
-        <div 
+        <div
             class="max-w-2xl mx-auto space-y-8 px-4 sm:px-6 lg:px-8 lg:ml-32 py-6">
 
             <h2 class="text-2xl font-bold mb-8 text-left">Host Profile</h2>
@@ -1333,7 +1333,7 @@
                     <div x-show="showHost" x-transition class="mt-2 space-y-2">
                         <div>
                             <label class="block text-sm font-semibold text-gray-700">Host name</label>
-                            <input type="text" maxlength="80"  x-ref="host_name" 
+                            <input type="text" maxlength="80" x-ref="host_name"
                                 class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
                             <p class="text-right text-xs text-gray-500">0/80</p>
                         </div>
@@ -1420,8 +1420,8 @@
                         </div>
                     </div>
                     <a href="{{ url('/partner-homes-rooms/' . $propertyId) }}"
-                    class=" bg-sky-400 border border-sky-400 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-sky-500">
-                            Add room
+                        class=" bg-sky-400 border border-sky-400 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-sky-500">
+                        Add room
                     </a>
                 </div>
 
@@ -1438,7 +1438,7 @@
                         </div>
                     </div>
                     <a href="{{ url('/partner-homes-images/' . $propertyId) }}"
-                    class="border border-sky-400 text-sky-400 text-sm font-semibold px-4 py-2 rounded hover:bg-sky-50">
+                        class="border border-sky-400 text-sky-400 text-sm font-semibold px-4 py-2 rounded hover:bg-sky-50">
                         Add Photos
                     </a>
 
@@ -1457,7 +1457,7 @@
                         </div>
                     </div>
                     <a href="{{ url('/partner-homes-payments/' . $propertyId) }}"
-                    class=" bg-sky-400 border border-sky-400 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-sky-500">
+                        class=" bg-sky-400 border border-sky-400 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-sky-500">
                         Add final details
                     </a>
                 </div>
