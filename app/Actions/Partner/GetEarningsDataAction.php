@@ -17,7 +17,8 @@ class GetEarningsDataAction
             'monthlyEarnings' => $this->earningsService->getMonthlyEarnings(),
             'pendingPayout' => $this->earningsService->getPendingPayout(),
             'averageBooking' => $this->earningsService->getAverageBooking(),
-            'transactions' => $this->earningsService->getTransactions()
+            'transactions' => $this->earningsService->getTransactions(),
+            'chartData' => $this->earningsService->getChartData()
         ];
     }
 }

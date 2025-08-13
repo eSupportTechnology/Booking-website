@@ -1053,11 +1053,11 @@
                         @if ($property->hostProfile)
                             <p><strong>Host:</strong> {{ $property->hostProfile->host_name ?? 'Host Name' }}</p>
                             <p><strong>Contact:</strong>
-                                {{ $property->hostProfile->contact_info ?? 'Contact available' }}</p>
-                            <p><strong>Response Rate:</strong> {{ $property->hostProfile->response_rate ?? '95' }}%</p>
+                                {{ $property->hostProfile->contact_info ?? 'Contact unavailable' }}</p>
+                            <p><strong>Response Rate:</strong> {{ $property->hostProfile->response_rate ?? 'n/a' }}%</p>
                         @else
                             <p>This is a <span class="font-medium">Villa Type</span></p>
-                            <p>Extra activities are available</p>
+                            <p>Extra activities are unavailable</p>
                         @endif
                         <p><strong>Location:</strong> {{ $property->city ?? 'Gregory Lake' }}</p>
                         @if ($property->languages && $property->languages->count() > 0)
