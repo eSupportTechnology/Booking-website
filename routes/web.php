@@ -327,6 +327,10 @@ Route::get('/partner/alternative/multiple/tent/room', function () {
     return view('frontend.partner-alternative-tent-room');
 })->name('partner.alternative.multiple.tent.room');
 
+Route::get('/partner/privateroom/boat/room', function () {
+    return view('frontend.partner-privaterooom-boat-room');
+})->name('partner.privateroom.boat.room');
+
 Route::get('/partner/tent/multiple/sameaddress', function () {
     return view('frontend.partner-tent-multiple-sameaddress');
 })->name('partner.tent.multiple.sameaddress');
@@ -362,6 +366,14 @@ Route::get('/partner-tent-edit', function () {
 Route::get('/partner-boat-compltete-registration', function () {
     return view('frontend.partner-boat-complete-registration');
 })->name('partner.boat.complete.registration');
+
+Route::get('/partner-privateroom-campsite-room', function () {
+    return view('frontend.partner-privateroom-campsite-room');
+})->name('partner.privateroom.campsite.room');
+
+Route::get('/partner-privateroom-tent-room', function () {
+    return view('frontend.partner-privateroom-tent-room');
+})->name('partner.privateroom.tent.room');
 
 Route::get('/partner-tent-compltete-registration', function () {
     return view('frontend.partner-alternative-tent-complete-registration');

@@ -971,7 +971,7 @@
                                 can add more.</p>
                         </div>
                     </div>
-                    <a href="{{ route('partner.alternative.multiple.boat.room') }}"
+                    <a href="{{ route('partner.alternative.multiple.tent.room') }}"
                         class=" bg-sky-400 border border-sky-400 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-sky-500">
                         Add room
                     </a>
@@ -989,7 +989,7 @@
                                 expect.</p>
                         </div>
                     </div>
-                    <a href="{{ route('partner.boat.photos') }}"
+                    <a href="{{ route('partner.tent.images') }}"
                         class="border border-sky-400 text-sky-400 text-sm font-semibold px-4 py-2 rounded hover:bg-sky-50">
                         Add Photos
                     </a>
@@ -1008,7 +1008,7 @@
                                 bookings.</p>
                         </div>
                     </div>
-                    <a href="{{ route('partner.boat.payment') }}"
+                    <a href="{{ route('partner.tent.payments') }}"
                         class=" bg-sky-400 border border-sky-400 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-sky-500">
                         Add final details
                     </a>
