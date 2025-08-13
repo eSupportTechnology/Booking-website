@@ -91,7 +91,7 @@
                 <!-- Add Another Room -->
                 <div class="text-right">
 
-                    <a href="{{ route('partner.alternative.multiple.boat.room') }}">
+                    <a href="{{ route('partner.alternative.multiple.tent.room') }}">
                         <button
                             class="mt-4  text-sky-600 text-sm font-semibold px-4 py-2 rounded border border-sky-300 hover:bg-sky-100">
                             + Add another room
@@ -115,7 +115,7 @@
                             expect.</p>
                     </div>
                 </div>
-                <a href="{{ route('partner.boat.photos') }}"
+                <a href="{{ route('partner.tent.images') }}"
                     class="text-sky-600 font-medium text-sm hover:underline">Edit</a>
 
             </div>
@@ -133,7 +133,7 @@
                     </div>
                 </div>
 
-                <a href="{{ route('partner.boat.payment') }}"
+                <a href="{{ route('partner.tent.payments') }}"
                     class="text-sky-600 font-medium text-sm hover:underline">Edit</a>
             </div>
 
