@@ -219,16 +219,16 @@
                 let route = '';
                 if (this.category === 'boat') {
                     route = (this.selected === 'one')
-                        ? '/partner/alternative/form'
-                        : '/partner/alternative/multiple/boats';
+                        ? '/partner/alternative/multiple/boats/sameaddress'
+                        : '/partner/alternative/multiple/boats/sameaddress';
                 } else if (this.category === 'campsite') {
                     route = (this.selected === 'one')
                         ? '/partner/alternative/Single/Campsite'
-                        : '/partner/alternative/Multiple/Campsite';
+                        : '/partner/alternative/Single/Campsite';
                 } else if (this.category === 'luxury_tent') {
                     route = (this.selected === 'one')
                         ? '/partner/tent/multiple/sameaddress'
-                        : '/partner/tent/multiple';
+                        : '/partner/tent/multiple/sameaddress';
                 }
                 if (route) window.location.href = route;
             },
