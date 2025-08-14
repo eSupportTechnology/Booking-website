@@ -147,4 +147,17 @@ class RoomController extends Controller
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
+
+    public function destroyByType($propertyId, $roomTypeId)
+    {
+        // Delete all rooms matching the property_id and room_type_id
+        Room::where('property_id', $propertyId)
+            ->where('room_type_id', $roomTypeId)
+            ->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'All rooms of this type deleted successfully.'
+        ]);
+    }
 }
