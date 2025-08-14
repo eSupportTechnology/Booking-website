@@ -1750,8 +1750,8 @@
 
                 async submitStep9() {
                     try {
-                        const response = await fetch(`/partner/property/${this.propertyId}/additional-details`, {
-                            method: 'PATCH',
+                        const response = await fetch(`/partner/property/${this.propertyId}/services`, {
+                            method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
