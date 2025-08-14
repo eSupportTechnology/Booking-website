@@ -304,7 +304,7 @@
                                 </p>
                                 <div class="flex justify-between mt-6">
                                     <!-- Back Button (Left) -->
-                                    <button type="button" @click="step > 1 ? step-- : step"
+                                    <button type="button" @click="step > 2 ? step -= 2 : step = 1"
                                         :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
                                         class="border border-[#3CC0E9]  text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
                                         ←
