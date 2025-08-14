@@ -23,6 +23,8 @@
             showTip2: true,
             showDiscount: false,
             price: 120.00, // default value
+            selectedAmenities: [],
+            selectedRoomAmenities: [],
 
             get discountedPrice() {
                 return (this.price * 0.8).toFixed(2);
@@ -107,14 +109,7 @@
                 const bathroomType = bathroomPrivate === 'yes' ? 'private' : 'shared';
 
                 const amenityCheckboxes = document.querySelectorAll('input[type="checkbox"]');
-                const selectedAmenities = [];
-
-                amenityCheckboxes.forEach(checkbox => {
-                    if (checkbox.checked) {
-                        const label = checkbox.nextElementSibling?.innerText.trim();
-                        if (label) selectedAmenities.push(label);
-                    }
-                });
+                
 
                 // `this.rooms` should be accessible from Alpine — pass to JS if needed
                 const rooms = this.rooms || [] // make sure you assign this somewhere
@@ -132,7 +127,7 @@
                     rooms: rooms.map(roomId => ({
                         id: roomId,
                         bathroom_type: bathroomType,
-                        bathroom_amenities: selectedAmenities
+                        bathroom_amenities: this.selectedAmenities
                     }))
                 };
 
@@ -752,7 +747,7 @@
                             <div class="space-y-2">
                                 @foreach ($amenities as $item)
                                 <label class="flex items-center gap-3 cursor-pointer">
-                                    <input type="checkbox" class="form-checkbox text-blue-500">
+                                    <input type="checkbox" x-model="selectedAmenities" name="amenities[]" value="{{ $item }}" class="form-checkbox text-blue-500">
                                     <span class="text-sm">{{ $item }}</span>
                                 </label>
                                 @endforeach
@@ -830,7 +825,8 @@
                                         type="checkbox"
                                         class="form-checkbox text-blue-500"
                                         name="amenities[]"
-                                        value="{{ $amenity->id }}">
+                                        value="{{ $amenity->id }}"
+                                        x-model="selectedRoomAmenities">
                                     <span class="text-sm">{{ $amenity->name }}</span>
                                 </label>
                                 @endforeach
