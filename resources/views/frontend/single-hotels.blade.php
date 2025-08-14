@@ -755,7 +755,7 @@
                     <p class="text-gray-600">Languages spoken: Arabic, <span class="font-semibold">English</span></p>
                 </div>
             </div>
-        </section>
+        </section><br>
 
         <!-- Tour Reviews -->
        <section>
