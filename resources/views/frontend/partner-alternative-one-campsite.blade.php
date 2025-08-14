@@ -216,8 +216,8 @@
 
     <!-- Step 3 -->
    <template x-if="step === 3">
-    <div class="w-full px-4 py-8 md:px-16 lg:px-3 mx-auto lg:ml-32 ">
-        <div class="max-w-5xl ">
+    <div class="w-full px-4 py-8 md:px-16 lg:px-3 mx-auto ">
+        <div class="max-w-5xl lg:ml-32">
             <h1 class="text-2xl md:text-3xl font-semibold text-gray-800 mb-8 mt-4">
                 What's the name of your place?
             </h1>
