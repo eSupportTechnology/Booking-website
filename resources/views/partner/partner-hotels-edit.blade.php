@@ -73,25 +73,25 @@
             // }        
 
         }
-//         const paymentEditLinkBtn = document.querySelector('#payment-edit-link-btn');
-// const finalicon = document.querySelector('#final-icon');
+        //         const paymentEditLinkBtn = document.querySelector('#payment-edit-link-btn');
+        // const finalicon = document.querySelector('#final-icon');
 
-// console.log('paymentEditLinkBtn:', paymentEditLinkBtn);
-// console.log('finalicon:', finalicon);
+        // console.log('paymentEditLinkBtn:', paymentEditLinkBtn);
+        // console.log('finalicon:', finalicon);
 
         if (paymentDetails === 'true') {
-        if (paymentEditLinkBtn) {
-            paymentEditLinkBtn.innerText = "Edit";
-            paymentEditLinkBtn.className = "text-sky-600 font-medium text-sm hover:underline";
-        } else {
-            console.warn('paymentEditLinkBtn element NOT found');
-        }
-        if (finalicon) {
-            finalicon.src = "{{ asset('assets/flat-color-icons_ok.svg') }}";
-            finalicon.className = "w-6 h-6 md:w-7 md:h-7";
-        } else {
-            console.warn('finalicon element NOT found');
-        }
+            if (paymentEditLinkBtn) {
+                paymentEditLinkBtn.innerText = "Edit";
+                paymentEditLinkBtn.className = "text-sky-600 font-medium text-sm hover:underline";
+            } else {
+                console.warn('paymentEditLinkBtn element NOT found');
+            }
+            if (finalicon) {
+                finalicon.src = "{{ asset('assets/flat-color-icons_ok.svg') }}";
+                finalicon.className = "w-6 h-6 md:w-7 md:h-7";
+            } else {
+                console.warn('finalicon element NOT found');
+            }
         }
 
 
@@ -101,7 +101,7 @@
                 roomsStatusIcon.className = "w-6 h-6 md:w-7 md:h-7";
             }
             if (roomsEditLink) {
-                roomsEditLink.innerText = "Edit";
+                roomsEditLink.innerText = "Add more rooms";
                 roomsEditLink.className = "text-sky-600 font-medium text-sm hover:underline";
             }
         }
@@ -118,12 +118,57 @@
         }
 
 
-      
+
         completeRegistrationBtn.addEventListener('click', () => {
             console.log('Navigating to complete registration page for property ID:', propertyId);
             window.location.href = `/partner-homes-complete-registration/${propertyId}?propertyType=${encodeURIComponent(propertyType)}`;
         })
 
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.delete-rooms-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                let propertyId = this.dataset.propertyId;
+                let roomTypeId = this.dataset.roomTypeId;
+                let parentCard = this.closest('.flex'); // To remove element without reload later
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "This will delete all rooms of this type for the selected property.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch(`/rooms/${propertyId}/${roomTypeId}`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                    'Accept': 'application/json'
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    Swal.fire(
+                                        'Deleted!',
+                                        'All rooms of this type have been deleted.',
+                                        'success'
+                                    );
+                                    // Remove card from DOM without reloading
+                                    parentCard.remove();
+                                } else {
+                                    Swal.fire('Error', 'Something went wrong.', 'error');
+                                }
+                            });
+                    }
+                });
+            });
+        });
     });
 </script>
 <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
@@ -213,7 +258,13 @@
                         <div class="flex items-center gap-4">
                             <a href="#"
                                 class="text-sky-600 font-medium text-sm hover:underline">Edit</a>
-                            <button class="text-red-600 font-medium danger text-sm hover:underline">Delete</button>
+                            <button
+                                class="text-red-600 font-medium danger text-sm hover:underline delete-rooms-btn"
+                                data-property-id="{{ $firstRoom->property_id }}"
+                                data-room-type-id="{{ $firstRoom->room_type_id }}">
+                                Delete
+                            </button>
+
                         </div>
                     </div>
                     @endforeach
