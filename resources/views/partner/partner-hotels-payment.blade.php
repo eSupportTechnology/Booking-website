@@ -329,7 +329,7 @@
 
         <!-- Continue Button -->
         <div class="flex justify-between items-center pt-4">
-            <button @click="step--"
+            <button @click="window.location.href =`/partner-homes-edit/${propertyId}?propertyType=single&uploaded=true&rooms=true`"
                 class="flex items-center border border-[#3CC0E9] rounded text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12">
                 ←
             </button>
