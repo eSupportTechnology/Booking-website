@@ -818,57 +818,67 @@
     </div>
 
     <div class="max-w-7xl mx-auto p-4 space-y-0">
-            <h2 class="text-xl font-bold mb-4">Review Lists</h2>
+      <h2 class="text-xl font-bold mb-4">Review Lists</h2>
 
-            <!-- Tabs -->
-            <div class="flex space-x-2 mb-6">
-              <button class="px-4 py-2 bg-blue-500 text-white rounded border border-blue-500">All Reviews</button>
-              <button class="px-4 py-2 bg-white text-gray-800 border rounded hover:bg-gray-100">Add Review</button>
-            </div>
+      <!-- Tabs -->
+      <div class="flex space-x-2 mb-6">
+        <button class="px-4 py-2 bg-blue-500 text-white rounded border border-blue-500">All Reviews</button>
+        <button class="px-4 py-2 bg-white text-gray-800 border rounded hover:bg-gray-100">Add Review</button>
+      </div>
 
-            <!-- Review List -->
-            @for($i = 0; $i < 4; $i++)
-            <div class="border-b border-dotted pb-4 mb-4">
-              <!-- Stars -->
-              <div class="flex text-yellow-400 mb-2 space-x-0.5">
-                @for($s = 0; $s < 5; $s++)
-                  <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
-                    <path d="M10 15l-5.878 3.09 1.122-6.545L.488 6.91l6.564-.955L10 0l2.948 5.955 6.564.955-4.756 4.635 1.122 6.545z"/>
-                  </svg>
-                @endfor
-              </div>
+      <!-- Review List -->
+      @for($i = 0; $i < 4; $i++)
+      <br>
+      <div class="border-b border-dotted pb-4 mb-4">
 
-              <!-- Review text -->
-              <p class="text-sm mb-1">This is amazing tour I have.</p>
-              <p class="text-xs text-gray-500 mb-3">July 2, 2020 03:29 PM</p>
+        <!-- Stars -->
+        <!-- Stars -->
+        <div class="flex text-yellow-400 mb-3 space-x-0.5">
+          @for($s = 0; $s < 5; $s++)
+            <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+              <path d="M10 15l-5.878 3.09 1.122-6.545L.488 6.91l6.564-.955L10 0l2.948 5.955 6.564.955-4.756 4.635 1.122 6.545z"/>
+            </svg>
+          @endfor
+        </div>
 
-              <!-- Reviewer -->
-              <div class="flex items-center space-x-2 mb-4">
-                <img src="{{ asset('images/' . ($img ?? 'default-avatar.png')) }}" alt="Reviewer avatar" class="w-8 h-8 rounded-full object-cover">
-                <p class="font-medium">Darrell Steward</p>
-              </div>
 
-              <!-- Like/Unlike Buttons -->
-              <div class="flex justify-end space-x-6 text-sm items-center">
-                <!-- Like button -->
-                <button type="button" class="flex items-center space-x-1 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-black font-bold" fill="currentColor" viewBox="0 0 24 24" stroke="none" aria-hidden="true" focusable="false">
-                    <path d="M2 21h4V9H2v12zM23 10c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32a1 1 0 0 0-.29-.7L14 2 7.59 8.41C7.22 8.78 7 9.3 7 9.83V19c0 1.1.9 2 2 2h7c.83 0 1.54-.5 1.85-1.22l3.02-7.05c.09-.23.13-.47.13-.73v-1z"/>
-                  </svg>
-                  <span class="font-semibold text-black select-none">128</span>
-                </button>
+        <!-- Review text -->
+        <p class="text-sm mb-1">This is amazing tour I have.</p>
+        <p class="text-xs text-gray-500 mb-3">July 2, 2020 03:29 PM</p>
 
-                <!-- Unlike button -->
-                <button type="button" class="flex items-center space-x-1 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 rounded">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" stroke="none" aria-hidden="true" focusable="false">
-                    <path d="M2 3h4v12H2V3zm19 7c0 1.1-.9 2-2 2h-6.31l.95 4.57.03.32a1 1 0 0 1-.29.7L14 22l-6.41-6.41c-.37-.37-.59-.89-.59-1.42V5c0-1.1.9-2 2-2h7c.83 0 1.54.5 1.85 1.22l3.02 7.05c.09.23.13.47.13.73v1z"/>
-                  </svg>
-                </button>
-              </div>
-            </div>
-            @endfor
+        <!-- Reviewer + Like/Unlike in one row -->
+        <div class="flex items-center justify-between">
 
+          <!-- Reviewer -->
+          <div class="flex items-center space-x-2">
+            <img src="{{ asset('images/' . ($img ?? 'default-avatar.png')) }}"
+                 alt="Reviewer avatar"
+                 class="w-8 h-8 rounded-full object-cover">
+            <p class="font-medium">Darrell Steward</p>
           </div>
+
+          <!-- Like/Unlike Buttons -->
+          <div class="flex space-x-6 text-sm items-center">
+            <!-- Like button -->
+            <button type="button" class="flex items-center space-x-1 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-black font-bold" fill="currentColor" viewBox="0 0 24 24" stroke="none" aria-hidden="true" focusable="false">
+                <path d="M2 21h4V9H2v12zM23 10c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32a1 1 0 0 0-.29-.7L14 2 7.59 8.41C7.22 8.78 7 9.3 7 9.83V19c0 1.1.9 2 2 2h7c.83 0 1.54-.5 1.85-1.22l3.02-7.05c.09-.23.13-.47.13-.73v-1z"/>
+              </svg>
+              <span class="font-semibold text-black select-none">128</span>
+            </button>
+
+            <!-- Unlike button -->
+            <button type="button" class="flex items-center space-x-1 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 rounded">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" stroke="none" aria-hidden="true" focusable="false">
+                <path d="M2 3h4v12H2V3zm19 7c0 1.1-.9 2-2 2h-6.31l.95 4.57.03.32a1 1 0 0 1-.29.7L14 22l-6.41-6.41c-.37-.37-.59-.89-.59-1.42V5c0-1.1.9-2 2-2h7c.83 0 1.54.5 1.85-1.22l3.02 7.05c.09.23.13.47.13.73v1z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+      @endfor
+    </div>
+
 
 
   </main>
