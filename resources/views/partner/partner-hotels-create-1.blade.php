@@ -672,11 +672,11 @@
                                         <p class="text-gray-700 mb-2 font-bold text-base">Do you serve guests breakfast?</p>
                                         <div class="space-y-2">
                                             <label class="flex items-center cursor-pointer">
-                                                <input type="radio" name="breakfast" x-model="servesBreakfast" value="yes" class="mr-2" />
+                                                <input type="radio" name="serve_breakfast" x-model="servesBreakfast" value="yes" class="mr-2" />
                                                 <span>Yes</span>
                                             </label>
                                             <label class="flex items-center cursor-pointer">
-                                                <input type="radio" name="breakfast" x-model="servesBreakfast" value="no" class="mr-2"
+                                                <input type="radio" name="serve_breakfast" x-model="servesBreakfast" value="no" class="mr-2"
                                                     @click="breakfastIncluded=''; selectedBreakfasts=[]; breakfastPrice=''" />
                                                 <span>No</span>
                                             </label>
@@ -729,15 +729,15 @@
                                         <p class="text-gray-700 mb-2 font-bold">Is parking available to guests?</p>
                                         <div class="space-y-2 mb-4">
                                             <label class="flex items-center cursor-pointer">
-                                                <input type="radio" name="parking" value="free" x-model="parking" class="mr-2" />
+                                                <input type="radio" name="parking_available" value="free" x-model="parking" class="mr-2" />
                                                 <span>Yes, free</span>
                                             </label>
                                             <label class="flex items-center cursor-pointer">
-                                                <input type="radio" name="parking" value="paid" x-model="parking" class="mr-2" />
+                                                <input type="radio" name="parking_available" value="paid" x-model="parking" class="mr-2" />
                                                 <span>Yes, paid</span>
                                             </label>
                                             <label class="flex items-center cursor-pointer">
-                                                <input type="radio" name="parking" value="no" x-model="parking" class="mr-2" />
+                                                <input type="radio" name="parking_available" value="no" x-model="parking" class="mr-2" />
                                                 <span>No</span>
                                             </label>
                                         </div>
@@ -761,11 +761,11 @@
                                                 <p class="text-gray-700 font-semibold mb-1">Where is the parking located?</p>
                                                 <div class="space-y-2">
                                                     <label class="flex items-center">
-                                                        <input type="radio" name="location" x-model="parkingLocation" value="on_site" class="mr-2" />
+                                                        <input type="radio" name="parking_location" x-model="parkingLocation" value="on_site" class="mr-2" />
                                                         <span>On site</span>
                                                     </label>
                                                     <label class="flex items-center">
-                                                        <input type="radio" name="location" x-model="parkingLocation" value="off_site" class="mr-2" />
+                                                        <input type="radio" name="parking_location" x-model="parkingLocation" value="off_site" class="mr-2" />
                                                         <span>Off site</span>
                                                     </label>
                                                 </div>
@@ -775,11 +775,11 @@
                                                 <p class="text-gray-700 font-semibold mb-1">What type of parking is it?</p>
                                                 <div class="space-y-2">
                                                     <label class="flex items-center">
-                                                        <input type="radio" name="type" x-model="parkingType" value="private" class="mr-2" />
+                                                        <input type="radio" name="parking_type" x-model="parkingType" value="private" class="mr-2" />
                                                         <span>Private</span>
                                                     </label>
                                                     <label class="flex items-center">
-                                                        <input type="radio" name="type" x-model="parkingType" value="public" class="mr-2" />
+                                                        <input type="radio" name="parking_type" x-model="parkingType" value="public" class="mr-2" />
                                                         <span>Public</span>
                                                     </label>
                                                 </div>
