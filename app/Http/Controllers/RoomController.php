@@ -150,7 +150,6 @@ class RoomController extends Controller
 
     public function destroyByType($propertyId, $roomTypeId)
     {
-        // Delete all rooms matching the property_id and room_type_id
         Room::where('property_id', $propertyId)
             ->where('room_type_id', $roomTypeId)
             ->delete();
@@ -159,5 +158,57 @@ class RoomController extends Controller
             'success' => true,
             'message' => 'All rooms of this type deleted successfully.'
         ]);
+    }
+
+    public function update(Request $request, $roomTypeId)
+    {
+        Log::info('Updating room details for room_type_id: ' . $roomTypeId, $request->all());
+        $validated = $request->validate([
+            'max_guests' => 'required|integer|min:1',
+            'bed_count' => 'required|integer|min:1',
+            'bathroom_type' => 'required|in:private,shared',
+            'currency' => 'required|string|max:10',
+            'price_per_night' => 'required|numeric|min:0',
+            'room_count' => 'required|integer|min:1',
+        ]);
+
+        $currentRooms = Room::where('room_type_id', $roomTypeId)->where('property_id', $request->property_id)->orderBy('id', 'desc')->get();
+        $currentCount = $currentRooms->count();
+        $newCount = $validated['room_count'];
+
+        $attributesToUpdate = [
+            'max_guests' => $validated['max_guests'],
+            'bed_count' => $validated['bed_count'],
+            'bathroom_type' => $validated['bathroom_type'],
+            'currency' => $validated['currency'],
+            'price_per_night' => $validated['price_per_night'],
+        ];
+
+        Room::where('room_type_id', $roomTypeId)->where('property_id', $request->property_id)->update($attributesToUpdate);
+
+        if ($newCount < $currentCount) {
+            $roomsToDelete = $currentRooms->slice($newCount);
+            foreach ($roomsToDelete as $room) {
+                $room->delete();
+            }
+        } elseif ($newCount > $currentCount) {
+            $roomTemplate = Room::where('property_id', $request->property_id)
+                ->where('room_type_id', $roomTypeId)
+                ->first();
+
+            if ($roomTemplate) {
+                for ($i = $currentCount; $i < $newCount; $i++) {
+                    $newRoomData = $roomTemplate->toArray();
+                    unset($newRoomData['id']); // remove primary key
+                    $newRoomData['created_at'] = now();
+                    $newRoomData['updated_at'] = now();
+
+                    Room::create($newRoomData);
+                }
+            }
+        }
+
+
+        return response()->json(['message' => 'Room updated successfully'], 200);
     }
 }

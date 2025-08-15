@@ -531,7 +531,7 @@ Route::post('/save-step-4-room-name', [RoomController::class, 'saveStep4RoomName
 Route::post('/save-step-5-room-prices', [RoomController::class, 'saveStep5RoomPrices']);
 Route::post('/save-step-6-room-rate-plans', [RoomController::class, 'storeRatePlans'])->name('rooms.ratePlans');
 Route::delete('/rooms/{propertyId}/{roomTypeId}', [RoomController::class, 'destroyByType'])->name('rooms.destroyByType');
-
+Route::post('/rooms/{roomTypeId}', [RoomController::class, 'update'])->name('rooms.update');
 Route::post('/properties/{id}/open-for-bookings', [RoomController::class, 'updateBookingStatus']);
 
 Route::post('/store-step', function (\Illuminate\Http\Request $request) {
