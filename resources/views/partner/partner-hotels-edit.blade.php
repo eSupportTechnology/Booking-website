@@ -169,6 +169,97 @@
                 });
             });
         });
+        document.querySelectorAll('.edit-room-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const roomTypeId = this.getAttribute('data-room-type-id');
+                const row = document.querySelector(`tr[data-room-type-id="${roomTypeId}"]`);
+                const editables = row.querySelectorAll('.editable');
+                const saveButton = document.querySelector(`.save-room-btn[data-room-type-id="${roomTypeId}"]`);
+                const editButton = this;
+
+                // Make fields editable
+                editables.forEach(cell => {
+                    const field = cell.getAttribute('data-field');
+                    const value = field === 'price_per_night' ?
+                        cell.textContent.split(' ')[1] 
+                        :
+                        cell.textContent;
+
+                    if (field === 'max_guests' || field === 'bed_count' || field === 'room_count') {
+                        cell.innerHTML = `<input type="number" value="${value}" class="w-full border border-gray-300 rounded p-1 text-xs" step="1" min="1">`;
+                    } else if (field === 'price_per_night') {
+                        cell.innerHTML = `<input type="number" value="${value}" class="w-full border border-gray-300 rounded p-1 text-xs" step="0.01" min="0">`;
+                    } else if (field === 'bathroom_type') {
+                        cell.innerHTML = `
+                            <select class="w-full border border-gray-300 rounded p-1 text-xs">
+                                <option value="private" ${value === 'private' ? 'selected' : ''}>Private</option>
+                                <option value="shared" ${value === 'shared' ? 'selected' : ''}>Shared</option>
+                            </select>`;
+                    }
+                });
+
+                // Toggle buttons
+                editButton.classList.add('hidden');
+                saveButton.classList.remove('hidden');
+            });
+        });
+
+        // Handle Save button click
+        document.querySelectorAll('.save-room-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const roomTypeId = this.getAttribute('data-room-type-id');
+                const row = document.querySelector(`tr[data-room-type-id="${roomTypeId}"]`);
+                const editables = row.querySelectorAll('.editable');
+                const propertyId = row.getAttribute('data-property-id');
+                const saveButton = this;
+                const editButton = document.querySelector(`.edit-room-btn[data-room-type-id="${roomTypeId}"]`);
+
+                // Collect updated data
+                const formData = new FormData();
+                formData.append('_token', '{{ csrf_token() }}');
+                formData.append('property_id', propertyId);
+
+                editables.forEach(cell => {
+                    const field = cell.getAttribute('data-field');
+                    let value;
+
+                    if (field === 'bathroom_type') {
+                        value = cell.querySelector('select').value;
+                    } else {
+                        value = cell.querySelector('input').value;
+                    }
+
+                    if (field === 'price_per_night') {
+                        const currency = cell.getAttribute('data-currency');
+                        formData.append('currency', currency);
+                        formData.append(field, value);
+                        cell.textContent = `${currency} ${value}`;
+                    } else {
+                        formData.append(field, value);
+                        cell.textContent = value;
+                    }
+                });
+
+                axios.post(`/rooms/${roomTypeId}`, formData)
+                    .then(response => {
+                        Swal.fire(
+                            'Success',
+                            'Room details updated successfully.',
+                            'success'   
+                        );
+                        saveButton.classList.add('hidden');
+                        editButton.classList.remove('hidden');
+                    })
+                    .catch(error => {
+                        console.error('Error updating room:', error);
+                        Swal.fire(
+                            'Error',
+                            'Failed to update room details. Please try again.',
+                            'error'
+                        );
+                    });
+            });
+        });
     });
 </script>
 <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
@@ -241,14 +332,14 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr class="text-gray-800 text-xs">
-                                        <td class="pr-6 border-r border-gray-300">{{ $firstRoom->max_guests }}</td>
-                                        <td class="pr-6 border-r border-gray-300">{{ $firstRoom->bed_type }}</td>
-                                        <td class="pr-6 border-r border-gray-300">{{ $firstRoom->bathroom_type }}</td>
-                                        <td class="pr-6 border-r border-gray-300">
-                                            {{ $firstRoom->currency }} {{ $firstRoom->price_per_night }}
-                                        </td>
-                                        <td class="pr-6">{{ $roomGroup->count() }}</td>
+                                    <tr class="text-gray-800 text-xs" data-room-type-id="{{ $firstRoom->room_type_id }}"
+                                        data-property-id="{{ $firstRoom->property_id }}">
+                                        <td class="pr-6 border-r border-gray-300 editable" data-field="max_guests">{{ $firstRoom->max_guests }}</td>
+                                        <td class="pr-6 border-r border-gray-300 editable" data-field="bed_count">{{ $firstRoom->bed_count }}</td>
+                                        <td class="pr-6 border-r border-gray-300 editable" data-field="bathroom_type">{{ $firstRoom->bathroom_type }}</td>
+                                        <td class="pr-6 border-r border-gray-300 editable" data-field="price_per_night"
+                                            data-currency="{{ $firstRoom->currency }}">{{ $firstRoom->currency }} {{ $firstRoom->price_per_night }}</td>
+                                        <td class="pr-6 editable" data-field="room_count">{{ $roomGroup->count() }}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -256,20 +347,17 @@
 
                         <!-- Actions -->
                         <div class="flex items-center gap-4">
-                            <a href="#"
-                                class="text-sky-600 font-medium text-sm hover:underline">Edit</a>
-                            <button
-                                class="text-red-600 font-medium danger text-sm hover:underline delete-rooms-btn"
+                            <button class="text-sky-600 font-medium text-sm hover:underline edit-room-btn"
+                                data-room-type-id="{{ $firstRoom->room_type_id }}">Edit</button>
+                            <button class="text-sky-600 font-medium text-sm hover:underline save-room-btn hidden"
+                                data-room-type-id="{{ $firstRoom->room_type_id }}">Save</button>
+                            <button class="text-red-600 font-medium danger text-sm hover:underline delete-rooms-btn"
                                 data-property-id="{{ $firstRoom->property_id }}"
-                                data-room-type-id="{{ $firstRoom->room_type_id }}">
-                                Delete
-                            </button>
-
+                                data-room-type-id="{{ $firstRoom->room_type_id }}">Delete</button>
                         </div>
                     </div>
                     @endforeach
                 </div>
-
 
                 <!-- Add Another Room -->
                 <div class="text-right">
