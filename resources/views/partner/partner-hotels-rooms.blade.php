@@ -23,11 +23,12 @@
             showTip2: true,
             showDiscount: false,
             price: 120.00, // default value
+            discountedPrice: '', // 20% discount
             selectedAmenities: [],
             selectedRoomAmenities: [],
 
-            get discountedPrice() {
-                return (this.price * 0.8).toFixed(2);
+            get discounted() {
+                return (this.discountedPrice=(this.price * 0.8).toFixed(2));
             },
             saveStep1() {
                 const url = window.location.href;
@@ -44,7 +45,17 @@
                 // 🛏️ Collect bed types and counts
                 const bedElements = document.querySelectorAll('[x-data^="{ guests:');
                 const bedCounts = [];
-
+                if(roomCount <= 0 || !roomType || maxGuests <= 0 || !roomSize) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Please fill in all required fields.',
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    return;
+                }
                 bedElements.forEach(el => {
                     const label = el.querySelector('p.text-sm')?.innerText?.trim();
                     const count = parseInt(el.querySelector('span[x-text="guests"]')?.innerText) || 0;
@@ -242,7 +253,7 @@
                     const payload = {
                         rooms: this.rooms.map(roomId => ({
                             id: roomId,
-                            price_per_night: this.price
+                            price_per_night: this.discountedPrice?this.discountedPrice: this.price
 
                         }))
                     };
@@ -1165,7 +1176,7 @@
                         <!-- Checkbox -->
                         <label class="inline-flex items-center">
                             <input type="checkbox" class="form-checkbox text-blue-600 rounded-md"
-                                @change="showDiscount = !showDiscount" />
+                                @change="showDiscount = !showDiscount,discounted" />
                             <span class="ml-2 font-medium text-gray-700 font-semibold">
                                 Get guests’ attention with a 20% discount
                             </span>
@@ -1182,7 +1193,7 @@
                             <div>
                                 <hr class="my-4">
                                 <p class="text-sm text-gray-800">
-                                    <del class="text-gray-500">US$ <span x-text="price.toFixed(2)"></span></del>
+                                    <del class="text-gray-500">US$ <span x-text="price"></span></del>
                                     <span class="text-green-600 font-semibold">US$ <span x-text="discountedPrice"></span> per night</span>
                                 </p>
 

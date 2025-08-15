@@ -63,22 +63,10 @@
                 }
             }
 
-            // Optional: clean up URL
-            // if (window.history.replaceState) {
-            //     const url = new URL(window.location);
-            //     url.searchParams.delete('uploaded');
-            //     url.searchParams.delete('details');
-            //     url.searchParams.delete('paymentDetails');
-            //     window.history.replaceState({}, document.title, url.pathname);
-            // }        
+                
 
         }
-        //         const paymentEditLinkBtn = document.querySelector('#payment-edit-link-btn');
-        // const finalicon = document.querySelector('#final-icon');
-
-        // console.log('paymentEditLinkBtn:', paymentEditLinkBtn);
-        // console.log('finalicon:', finalicon);
-
+      
         if (paymentDetails === 'true') {
             if (paymentEditLinkBtn) {
                 paymentEditLinkBtn.innerText = "Edit";
@@ -181,8 +169,7 @@
                 editables.forEach(cell => {
                     const field = cell.getAttribute('data-field');
                     const value = field === 'price_per_night' ?
-                        cell.textContent.split(' ')[1] 
-                        :
+                        cell.textContent.split(' ')[1] :
                         cell.textContent;
 
                     if (field === 'max_guests' || field === 'bed_count' || field === 'room_count') {
@@ -204,7 +191,10 @@
             });
         });
 
-        // Handle Save button click
+        document.querySelectorAll('td[data-field="room_count"]').forEach(td => {
+            td.setAttribute('data-old-value', td.textContent.trim());
+        });
+
         document.querySelectorAll('.save-room-btn').forEach(button => {
             button.addEventListener('click', function() {
                 const roomTypeId = this.getAttribute('data-room-type-id');
@@ -214,16 +204,47 @@
                 const saveButton = this;
                 const editButton = document.querySelector(`.edit-room-btn[data-room-type-id="${roomTypeId}"]`);
 
-                // Collect updated data
                 const formData = new FormData();
                 formData.append('_token', '{{ csrf_token() }}');
                 formData.append('property_id', propertyId);
+
+                let reductionPromise = Promise.resolve(true);
 
                 editables.forEach(cell => {
                     const field = cell.getAttribute('data-field');
                     let value;
 
-                    if (field === 'bathroom_type') {
+                    if (field === 'room_count') {
+                        let input = cell.querySelector('input');
+                        let newValue = parseInt(input.value) || 0;
+                        let oldValue = parseInt(cell.getAttribute('data-old-value')) || 0;
+
+                        if (newValue < oldValue) {
+                            reductionPromise = Swal.fire({
+                                title: 'Reduce room count?',
+                                text: 'Reducing the room count will delete existing rooms. This cannot be undone.',
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonText: 'Yes, reduce',
+                                cancelButtonText: 'Cancel'
+                            }).then((result) => {
+                                if (!result.isConfirmed) {
+                                    input.value = oldValue;
+                                    saveButton.classList.add('hidden');
+                                    editButton.classList.remove('hidden');
+                                    window.location.reload();
+                                    return false;
+                                }
+                                return true;
+                            });
+
+                        } else if (newValue === 0) {
+                            Swal.fire('Error', 'Room count cannot be zero.', 'error');
+                            input.value = oldValue;
+                        }
+
+                        value = input.value;
+                    } else if (field === 'bathroom_type') {
                         value = cell.querySelector('select').value;
                     } else {
                         value = cell.querySelector('input').value;
@@ -240,26 +261,34 @@
                     }
                 });
 
-                axios.post(`/rooms/${roomTypeId}`, formData)
-                    .then(response => {
-                        Swal.fire(
-                            'Success',
-                            'Room details updated successfully.',
-                            'success'   
-                        );
-                        saveButton.classList.add('hidden');
-                        editButton.classList.remove('hidden');
-                    })
-                    .catch(error => {
-                        console.error('Error updating room:', error);
-                        Swal.fire(
-                            'Error',
-                            'Failed to update room details. Please try again.',
-                            'error'
-                        );
-                    });
+                reductionPromise.then((proceed) => {
+                    if (!proceed) return;
+
+                    axios.post(`/rooms/${roomTypeId}`, formData)
+                        .then(() => {
+                            Swal.fire(
+                                'Success',
+                                'Room details updated successfully.',
+                                'success'
+                            );
+                            document.querySelectorAll('td[data-field="room_count"]').forEach(td => {
+                                td.setAttribute('data-old-value', td.textContent.trim());
+                            });
+                            saveButton.classList.add('hidden');
+                            editButton.classList.remove('hidden');
+                        })
+                        .catch(error => {
+                            console.error('Error updating room:', error);
+                            Swal.fire(
+                                'Error',
+                                'Failed to update room details. Please try again.',
+                                'error'
+                            );
+                        });
+                });
             });
         });
+
     });
 </script>
 <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
