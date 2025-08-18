@@ -59,7 +59,7 @@
 
     <!-- Steps 1 & 2 -->
     <template x-if="step > 0">
-        <div class="max-w-3xl mx-auto">
+        <div class="max-w-3xl ">
 
             <!-- Step 1 -->
             <template x-if="step === 1">
@@ -274,7 +274,7 @@
             get categoryHeadingDescription() {
               switch (this.category) {
                 case 'campsite':
-                    return 'One campsite where guests can book a room';
+                    return 'One campsite where guests can book an entire place';
                 case 'boat':
                     return 'One boat where guests can book the entire place';
                 case 'luxury_tent':
@@ -310,27 +310,40 @@
 },
 
 
-            finalContinue() {
-              let route = '';
-    
-              if (this.category === 'boat' && this.selected === 'one') {
-                route = '/partner/boat/one';
-            } else if (this.category === 'boat' && this.selected === 'multiple') {
-                route = '/partner/boat/multiple';
-            } else if (this.category === 'campsite' && this.selected === 'one') {
-                route = '/partner/alternative/Single/Campsite';
-            } else if (this.category === 'campsite' && this.selected === 'multiple') {
-                route = '/partner/campsite/multiple';
-            } else if (this.category === 'luxury_tent' && this.selected === 'one') {
-                route = '/partner/luxury-tent/one';
-            } else if (this.category === 'luxury_tent' && this.selected === 'multiple') {
-                route = '/partner/luxury-tent/multiple';
-            }
+          finalContinue() {
+    let route = '';
 
-            if (route) {
-                window.location.href = route;
-     }
+    if (this.category === 'boat') {
+        if (this.selected === 'one') {
+            route = '/partner/alternative/form';
+        } else if (this.sameAddress === 'yes') {
+            route = '/partner/alternative/multiple/boats/sameaddress';
+        } else {
+            route = '/partner/alternative/single/boat';
+        }
+    } else if (this.category === 'campsite') {
+        if (this.selected === 'one') {
+            route = '/partner/alternative/Single/Campsite';
+        } else if (this.sameAddress === 'yes') {
+            route = '/partner/alternative/Single/Campsite';
+        } else {
+            route = '/partner/alternative/Single/Campsite';
+        }
+    } else if (this.category === 'luxury_tent') {
+        if (this.selected === 'one') {
+            route = '/partner/tent/single';
+        } else if (this.sameAddress === 'yes') {
+            route = '/partner/tent/multiple/sameaddress';
+        } else {
+            route = '/partner/tent/single';
+        }
+    }
+
+    if (route) {
+        window.location.href = route;
+    }
 },
+
 
  
             selectCategory(value) {

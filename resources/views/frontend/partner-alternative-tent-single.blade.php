@@ -341,213 +341,293 @@
  
 
   <template x-if="propertyWizardStep === 1">
-<div class="max-w-xl mx-auto space-y-8 lg:ml-32 px-4 py-6">
-
-        <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mt-8">Property details</h2>
+ <form class="p-4 space-y-6 mt-8 ml-">
 
 
-       
-        <!-- Where can people sleep -->
-        <div class="bg-white p-4 rounded-lg shadow space-y-4">
-            <h2 class="text-sm font-semibold text-gray-700 mb-1">Where can people sleep?</h2>
 
-            <div class="flex flex-col gap-4">
-                <!-- Bedroom -->
-                <a href="#">
-                    <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer">
-                        <p class="text-sm">Bedroom 1</p>
-                        <p class="text-sm text-gray-600">No beds added</p>
+              <!-- Section Title -->
+<h2 class="text-2xl md:text-3xl font-bold ml-32 mb-4">Property details</h2>
+
+
+
+
+                <!-- Horizontal Layout Container -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+
+                    <!-- Bed Types Container (2/3 width) -->
+                    <div x-data="{ showMoreBeds: false }"
+                        class="lg:col-span-2 bg-white rounded-lg border border-gray-300 p-4 space-y-4 max-w-xl ml-32">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Which beds are available in this
+                            room?</label>
+
+                        @php
+                            $mainBeds = [
+                                ['label' => 'Single bed', 'desc' => '90 - 130 cm wide'],
+                                ['label' => 'Double bed', 'desc' => '131 - 150 cm wide'],
+                                ['label' => 'Large bed (King size)', 'desc' => '151 - 180 cm wide'],
+                                ['label' => 'Extra-large double bed (Super-king size)', 'desc' => '181 - 210 cm wide'],
+                            ];
+
+                            $extraBeds = [
+                                ['label' => 'Bunk bed', 'desc' => 'Variable size'],
+                                ['label' => 'Sofa bed', 'desc' => 'Variable size'],
+                                ['label' => 'Futon Mat', 'desc' => 'Variable size'],
+                            ];
+                        @endphp
+
+
+
+                        @foreach ($mainBeds as $bed)
+                            @php
+                                $labelLower = strtolower($bed['label']);
+                                $icon = 'famicons_bed.svg'; // default
+
+                                if (str_contains($labelLower, 'sofa')) {
+                                    $icon = 'famicons_sofa.svg';
+                                } elseif (str_contains($labelLower, 'bunk')) {
+                                    $icon = 'famicons_bunk-bed.svg';
+                                }
+                            @endphp
+
+                            <div x-data="{ guests: 0 }"
+                                class="flex items-center justify-between border rounded-md px-3 py-2 mb-2">
+                                <div class="flex items-start gap-2">
+                                    <img src="{{ asset('assets/' . $icon) }}" alt="Icon" class="w-5 h-5" />
+
+                                    <div>
+                                        <p class="text-sm font-medium">{{ $bed['label'] }}</p>
+                                        <p class="text-xs text-gray-500">{{ $bed['desc'] }}</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center gap-2">
+                                    <button type="button" @click="if (guests > 0) guests--"
+                                        class="text-xl text-gray-600 hover:text-gray-800 focus:outline-none">−</button>
+                                    <span class="mx-4 text-sm font-semibold" x-text="guests"></span>
+                                    <button type="button" @click="guests++"
+                                        class="text-xl text-gray-600 hover:text-gray-800 focus:outline-none">+</button>
+                                </div>
+                            </div>
+                        @endforeach
+
+
+
+
+
+
+                        <!-- Toggle Link -->
+                        <button type="button" @click="showMoreBeds = !showMoreBeds"
+                            class="text-sm text-blue-600 hover:underline focus:outline-none">
+                            <span x-show="!showMoreBeds">More bed options ▼</span>
+                            <span x-show="showMoreBeds">Fewer bed options ▲</span>
+                        </button>
+
+                        <!-- Extra Beds -->
+                        <div x-show="showMoreBeds" x-transition:enter="transition ease-out duration-300"
+                            x-transition:enter-start="opacity-0 max-h-0"
+                            x-transition:enter-end="opacity-100 max-h-screen"
+                            x-transition:leave="transition ease-in duration-200"
+                            x-transition:leave-start="opacity-100 max-h-screen"
+                            x-transition:leave-end="opacity-0 max-h-0 overflow-hidden" class="space-y-4 pt-2">
+                            @foreach ($extraBeds as $bed)
+                                @php
+                                    $labelLower = strtolower($bed['label']);
+                                    $icon = 'famicons_bed.svg'; // default
+
+                                    if (str_contains($labelLower, 'sofa')) {
+                                        $icon = 'mdi_sofa.svg';
+                                    } elseif (str_contains($labelLower, 'bunk')) {
+                                        $icon = 'mdi_bunk-bed.svg';
+                                    }
+                                @endphp
+
+                                <div x-data="{ guests: 0 }"
+                                    class="flex items-center justify-between border rounded-md px-3 py-2 mb-2">
+                                    <div class="flex items-start gap-2">
+                                        <img src="{{ asset('assets/' . $icon) }}" alt="Icon" class="w-5 h-5" />
+
+                                        <div>
+                                            <p class="text-sm font-medium">{{ $bed['label'] }}</p>
+                                            <p class="text-xs text-gray-500">{{ $bed['desc'] }}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-center gap-2">
+                                        <button type="button" @click="if (guests > 0) guests--"
+                                            class="text-xl text-gray-600 hover:text-gray-800 focus:outline-none">−</button>
+                                        <span class="mx-4 text-sm font-semibold" x-text="guests"></span>
+                                        <button type="button" @click="guests++"
+                                            class="text-xl text-gray-600 hover:text-gray-800 focus:outline-none">+</button>
+                                    </div>
+                                </div>
+                            @endforeach
+
+                        </div>
                     </div>
-                </a>
 
-                <!-- Living Room -->
-                <a href="#">
-                    <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer">
-                        <p class="text-sm">Living Room</p>
-                        <p class="text-sm text-gray-600">No beds added</p>
+
+
+
+
+
+                    <div x-data="{ guests: 2 }"
+                        class="lg:col-span-2 bg-white rounded-lg border border-gray-300 p-4 space-y-4 max-w-xl ml-32">
+                        <label class="block font-semibold text-sm text-gray-700 mb-2">How many guests can stay in this
+                            room?</label>
+
+                        <div class="flex items-center w-20 border rounded-md px-2 py-1">
+                            <button type="button" @click="if (guests > 1) guests--"
+                                class="text-xl text-gray-600 hover:text-gray-800 focus:outline-none">−</button>
+
+                            <span class="mx-4 text-lg font-semibold" x-text="guests"></span>
+
+                            <button type="button" @click="guests++"
+                                class="text-xl text-gray-600 hover:text-gray-800 focus:outline-none">+</button>
+                        </div>
+                           
+                        <label class="block font-semibold text-sm text-gray-700 mb-1">Is the bathroom private?</label>
+                        <div class="flex gap-6 mt-1">
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="bathroom" class="form-radio text-blue-500" checked>
+                                <span class="ml-2">Yes</span>
+                            </label>
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="bathroom" class="form-radio text-blue-500">
+                                <span class="ml-2">No, it's shared</span>
+                            </label>
+                        </div>
+                  
                     </div>
-                </a>
+                    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
-                <!-- Other Spaces -->
-                <a href="#">
-                    <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer">
-                        <p class="text-sm">Other spaces</p>
-                        <p class="text-sm text-gray-600">No beds added</p>
-                    </div>
-                </a>
-            </div>
 
-            <!-- Add Bedroom Button -->
-            <a href="#" class="text-blue-600 hover:underline text-sm flex items-center space-x-1 mt-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
-                    viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 4v16m8-8H4" />
-                </svg>
-                <span>Add Bedroom</span>
-            </a>
-        </div>
 
-        <!-- Alpine.js -->
-        <script src="//unpkg.com/alpinejs" defer></script>
-
-        <!-- Guests and Bathrooms -->
-        <div x-data="{ guests: 2, bathrooms: 1 }"
-            class="bg-white p-4 rounded-lg shadow space-y-4 w-full max-w-xl">
-            <!-- Guests -->
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">How many guests can stay ?</label>
-                <div class="flex items-center space-x-4 mt-1">
-                    <button @click="if (guests > 1) guests--"
-                        class="border px-3 py-1 rounded text-base">−</button>
-                    <span class="min-w-[2rem] text-center text-gray-700 text-base"
-                        x-text="guests"></span>
-                    <button @click="guests++"
-                        class="border px-3 py-1 rounded text-base">+</button>
-                </div>
-            </div>
-
-            <!-- Bathrooms -->
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">How many bathrooms are there ?</label>
-                <div class="flex items-center space-x-4 mt-1">
-                    <button @click="if (bathrooms > 0) bathrooms--"
-                        class="border px-3 py-1 rounded text-base">−</button>
-                    <span class="min-w-[2rem] text-center text-gray-700 text-base"
-                        x-text="bathrooms"></span>
-                    <button @click="bathrooms++"
-                        class="border px-3 py-1 rounded text-base">+</button>
-                </div>
-            </div>
-        </div>
-
-      <!-- Children Policy -->
-<div x-data="{ 
-    childrenAllowed: 'yes', 
-    offerCots: 'yes', 
-    costType: 'Fixed', 
-    cotsAvailable: 1 
-}" 
-class="bg-white p-4 rounded-lg shadow space-y-4">
-
-    <!-- Do you allow children? -->
+       <!-- Smoking Allowed -->
+                    <div x-data="{ offerCots: 'yes', allowChildren: 'yes', costType: 'Fixed', cotsAvailable: 1 }" class="lg:col-span-2 bg-white rounded-lg border border-gray-300 p-4 space-y-4 max-w-xl ml-32">
+     
     <div>
+        
         <p class="text-sm font-semibold text-gray-700 mb-1">Do you allow children?</p>
+        
         <label class="mr-4 text-sm">
-            <input type="radio" name="children" value="yes" x-model="childrenAllowed"> Yes
+            <input type="radio" name="allow_children" value="yes" x-model="allowChildren"> Yes
         </label>
         <label class="text-sm">
-            <input type="radio" name="children" value="no" x-model="childrenAllowed"> No
+            <input type="radio" name="allow_children" value="no" x-model="allowChildren"> No
         </label>
     </div>
+    <!-- Do you offer cots? -->
+    <div>
+        
+        <p class="text-sm font-semibold text-gray-700 mb-1">Do you offer cots?</p>
+        <p class="text-xs text-gray-500 mb-1">
+            Cots sleep most infants 0–3 years old and can be made available to guests on request.
+        </p>
+        <label class="mr-4 text-sm">
+            <input type="radio" name="offer_cots" value="yes" x-model="offerCots"> Yes
+        </label>
+        <label class="text-sm">
+            <input type="radio" name="offer_cots" value="no" x-model="offerCots"> No
+        </label>
+    </div>
+     
 
-    <!-- Cots Section - only if childrenAllowed === 'yes' -->
-    <template x-if="childrenAllowed === 'yes'">
+    <!-- Cots details - visible only if Yes -->
+    <template x-if="offerCots === 'yes'">
         <div class="space-y-4">
-
-            <!-- Do you offer cots? -->
+            <!-- How many cots are available -->
             <div>
-                <p class="text-sm font-semibold text-gray-700 mb-1">Do you offer cots?</p>
-                <p class="text-xs text-gray-500 mb-1">
-                    Cots sleep most infants 0–3 years old and can be made available to guests on request.
-                </p>
-                <label class="mr-4 text-sm">
-                    <input type="radio" name="offer_cots" value="yes" x-model="offerCots"> Yes
-                </label>
-                <label class="text-sm">
-                    <input type="radio" name="offer_cots" value="no" x-model="offerCots"> No
-                </label>
+                <p class="text-sm font-semibold text-gray-700 mb-1">How many cots are available?</p>
+                <div class="flex items-center space-x-4 mt-1">
+                    <button @click="if (cotsAvailable > 1) cotsAvailable--"
+                        class="border px-3 py-1 rounded text-base">−</button>
+                    <span class="min-w-[2rem] text-center text-gray-700 text-base" x-text="cotsAvailable"></span>
+                    <button @click="cotsAvailable++"
+                        class="border px-3 py-1 rounded text-base">+</button>
+                </div>
             </div>
 
-            <!-- Cots details - visible only if offerCots === 'yes' -->
-            <template x-if="offerCots === 'yes'">
-                <div class="space-y-4">
+            <!-- Cost per night -->
+            <div>
+                <p class="text-sm font-semibold text-gray-700 mb-1">How much does one cot cost per night?</p>
+             
+                <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-2 mt-2 space-y-2 sm:space-y-0">
+                   <select x-model="costType" class="w-24 border border-gray-300 rounded-md px-2 py-2 text-sm">
+    <option>Fixed</option>
+    <option>Free</option>
+</select>
 
-                    <!-- How many cots are available -->
-                    <div>
-                        <p class="text-sm font-semibold text-gray-700 mb-1">How many cots are available?</p>
-                        <div class="flex items-center space-x-4 mt-1">
-                            <button @click="if (cotsAvailable > 1) cotsAvailable--"
-                                class="border px-3 py-1 rounded text-base">−</button>
-                            <span class="min-w-[2rem] text-center text-gray-700 text-base" x-text="cotsAvailable"></span>
-                            <button @click="cotsAvailable++"
-                                class="border px-3 py-1 rounded text-base">+</button>
+                    <template x-if="costType === 'Fixed'">
+                        <div class="flex items-center  px-1 py-1 w-full sm:w-auto">
+                            <span class="text-gray-500 mr-1">US$</span>
+                            <input type="number" step="0.01" class="w-full border rounded-md border-gray-300 text-sm" placeholder="0.00">
                         </div>
-                    </div>
-
-                    <!-- Cost per night -->
-                    <div>
-                        <p class="text-sm font-semibold text-gray-700 mb-1">How much does one cot cost per night?</p>
-                        <p class="text-xs text-gray-500">
-                            This policy is set at the property level – any changes made will be applied to all apartments.
-                        </p>
-                        <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-2 mt-2 space-y-2 sm:space-y-0">
-                            <select x-model="costType" class="w-24 border border-gray-300 rounded-md px-2 py-2 text-sm">
-                                <option>Fixed</option>
-                                <option>Free</option>
-                            </select>
-
-                            <!-- Show input only if costType is Fixed -->
-                            <template x-if="costType === 'Fixed'">
-                                <div class="flex items-center px-1 py-1 w-full sm:w-auto">
-                                    <span class="text-gray-500 mr-1">US$</span>
-                                    <input type="number" step="0.01"
-                                        class="w-full border rounded-md border-gray-300 text-sm"
-                                        placeholder="0.00">
-                                </div>
-                            </template>
-                        </div>
-                    </div>
-
+                    </template>
                 </div>
-            </template>
+            </div>
         </div>
     </template>
 </div>
+                    </div>
 
-        <!-- Room Size -->
-        <div class="lg:col-span-2 bg-white rounded-lg border border-gray-300 p-4 space-y-4">
-            <div class="flex flex-col lg:flex-row gap-4 items-end">
-                <!-- Apartment Size Input -->
-                <div class="w-full lg:w-2/4">
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">How big is this boat?</label>
-                    <p class="text-xs text-gray-500">Boat size - optional</p>
-                    <input type="number" min="1" step="1" inputmode="numeric" pattern="\d*"
-                        class="w-full border border-gray-300 rounded-md shadow-sm text-sm mt-2 px-2 py-2">
-                </div>
 
-                <!-- Size Unit Dropdown -->
-                <div class="w-full lg:w-1/4">
-                    <label class="block text-sm text-transparent mb-1">Unit</label>
-                    <select
-                        class="w-full bg-gray-300 text-black border border-gray-300 rounded-md shadow-sm text-sm mt-2 px-2 py-2">
-                        <option>square meters</option>
-                        <option>square feet</option>
-                    </select>
+                    <!-- Room Size -->
+                    <div class="lg:col-span-2 bg-white rounded-lg border border-gray-300 p-4 space-y-4 max-w-xl ml-32">
+                        
+                        <div class="flex flex-col lg:flex-row gap-4 items-end"> <!-- ensure vertical alignment -->
 
-                    
-                </div>
-                
-            </div>
-          
-        </div>
+                            <!-- Apartment Size Dropdown -->
+                            <div class="w-full lg:w-2/4">
+                                <label class="block font-semibold text-sm text-gray-700 mb-1">How big is this luxury tent?</label>
+                                <p class="text-xs text-gray-500 ">Luxury tent size - optional</p>
 
-        <!-- Navigation Buttons -->
-        <div class="mt-8 flex justify-between">
-            <!-- Back Button -->
-            <button type="button" @click="propertyWizardStep--"
-                :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-                class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
-                ←
-            </button>
+                                <input type="number" min="1" step="1" inputmode="numeric"
+                                    pattern="\d*" x-model="propertyCount" name="property_count"
+                                    class="w-full border border-gray-300 rounded-md shadow-sm text-sm mt-2 px-2 py-2">
 
-            <!-- Continue Button -->
-            <button type="button"   @click="propertyWizardStep++"
-                class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
-                Continue
-            </button>
-        </div>
-    </div>
+
+
+                            </div>
+
+                            <!-- Size Unit Dropdown -->
+                            <div class="w-full lg:w-1/4">
+                                <label class="block text-sm text-transparent mb-1">Unit</label>
+                                <!-- invisible label for spacing -->
+                                <select
+                                    class="w-full bg-gray-300 text-black border border-gray-300 rounded-md shadow-sm text-sm mt-2  px-2 py-2">
+                                    <option>square meters</option>
+                                    <option>square feet</option>
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
+             
+
+
+
+                    <!-- Navigation Buttons -->
+                    <div class="lg:col-span-2  max-w-xl ml-32">
+                        <div class="flex justify-between mt-6">
+
+                            <!-- Back Button (Left-aligned) -->
+                           
+                                <button type="button" @click="step--"
+                                    :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
+                                    class="border border-[#3CC0E9] text-blue-600 font-semibold py-2 px-4 rounded">
+                                    ←
+                                </button>
+
+                            <!-- Continue Button (Right-aligned) -->
+                            <button type="submit"  @click="propertyWizardStep++"
+                                class="px-6 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300">
+                                Continue
+                            </button>
+
+                        </div>
+                    </div>
+
+            </form>
 
 </template>
 
@@ -570,11 +650,12 @@ class="bg-white p-4 rounded-lg shadow space-y-4">
 <div class="bg-white rounded-lg shadow-sm p-6 space-y-6">
   @php
     $amenities = [
-      'Highlights' => ['Private bathroom', 'BBQ facilities', 'Washing machine', 'Bath', 'Balcony'],
-      'General' => ['Non-smoking rooms', 'Towels', 'Linen', 'Air conditioning','Family rooms','Tea/Coffee maker','Electric kettle','Free WiFi','Electric vehicle charging station'],
+             'General' => ['Non-smoking rooms', 'Towels', 'Linen','Family rooms','Air conditioning ','Heating','Free WiFi','Electric vehicle charging station'],
+      
+ 
      
       'Entertainment' => ['Bar', 'Flat-screen TV', 'Swimming Pool', 'Hot tub', 'Sauna'],
-      'Outside and view' => ['Terrace', 'Beach', 'View', 'Garden']
+      'Outside and view' => ['Terrace', 'Beach', 'View', 'Garden','Outdoor furniture']
     ];
   @endphp
 
@@ -1678,171 +1759,207 @@ class="bg-white shadow rounded-lg p-6 space-y-4 border">
 
 <template x-if="pricingWizardStep === 2">
     
-    <div class="px-4 py-8 mt-6 w-full max-w-2xl mx-auto lg:ml-24 space-y-6">
+   <div class="px-4 py-8 mt-6 w-full max-w-2xl mx-auto lg:ml-24 space-y-6">
 
-    <!-- Main Title -->
-    <h2 class="text-3xl font-bold text-gray-800">Rate plans</h2>
+                <!-- Main Title -->
+                <h2 class="text-3xl font-bold text-gray-800">Rate plans</h2>
 
-    <!-- Intro Paragraph -->
-    <div class="bg-white border rounded-lg p-4 shadow-sm">
-      <p class="text-sm text-gray-600">
-        To attract a wider range of guests, we suggest setting up multiple rate plans.
-        The recommended prices and policies for each plan are based on data from properties like yours,
-        but they can be edited now or after you complete registration.
-      </p>
-    </div>
+                <!-- Intro Paragraph -->
+                <div class="bg-white border rounded-lg p-4 shadow-sm">
+                    <p class="text-sm text-gray-600">
+                        To attract a wider range of guests, we suggest setting up multiple rate plans.
+                        The recommended prices and policies for each plan are based on data from properties like yours,
+                        but they can be edited now or after you complete registration.
+                    </p>
+                </div>
 
-    <h2 class="text-xl font-semibold text-gray-800">Standard rate plan</h2>
+                <h2 class="text-xl font-semibold text-gray-800">Standard rate plan</h2>
 
-    <!-- Rate Plan Card -->
-    <div class="bg-white border rounded-lg p-6 shadow-sm space-y-6 w-full max-w-2xl mx-auto">
+                <!-- Rate Plan Card -->
+                <div class="bg-white border rounded-lg p-6 shadow-sm space-y-6 w-full max-w-2xl mx-auto">
 
-      <!-- Cancellation Policy Section -->
-      <div class="space-y-4">
-        <div class="flex justify-between items-start">
-          <div>
-            <div class="flex items-center gap-2">
-              <h3 class="text-base font-semibold text-gray-700">Cancellation policy</h3>
-              <img src="{{ asset('assets/material-symbols-light_info-outline.svg') }}" alt="Tip Icon" class="w-5 h-5">
+                    <!-- Cancellation Policy Section -->
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <h3 class="text-base font-semibold text-gray-700">Cancellation policy</h3>
+                                    <img src="{{ asset('assets/material-symbols-light_info-outline.svg') }}"
+                                        alt="Tip Icon" class="w-5 h-5">
+                                </div>
+                                <p class="text-xs text-gray-500 mb-4">
+                                    This policy is set at the property level – any changes made will be applied to all mobile homes.
+                                </p>
+                                      <p class="text-xs text-green-600 mb-4">
+                                  You’re 91% more likely to get bookings with the pre-selected cancellation policy settings than with a 30-day cancellation policy
+                                </p>
+                                  
+                            </div>
+                            
+   <a href="{{ route('partner.alternative.single.campsite.cancel-policies') }}">
+                            
+                            <button @click="$refs.section1.scrollIntoView({ behavior: 'smooth' })"
+                                class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">
+                                Edit
+                            </button></a>
+                        </div>
+                        <hr class="my-4">
+                        <ul class="text-gray-900 text-sm space-y-2">
+                            <li class="flex items-start gap-2">
+                                <img src="{{ asset('assets/teenyicons_tick-circle-outline.svg') }}" alt="Tick"
+                                    class="w-4 h-4 mt-1">
+                                <span>Guests can cancel their bookings for free up to 1 day before their arrival</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <img src="{{ asset('assets/teenyicons_tick-circle-outline.svg') }}" alt="Tick"
+                                    class="w-4 h-4 mt-1">
+                                <span>Guests who cancel within 24 hours will have their cancellation fee waived</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- Price Per Group Size Section -->
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center gap-2">
+                                <h3 class="text-base font-semibold text-gray-700">Price per group size</h3>
+                                <img src="{{ asset('assets/material-symbols-light_info-outline.svg') }}"
+                                    alt="Tip Icon" class="w-5 h-5">
+                           
+                            </div>
+
+   <a href="{{ route('partner.boat.price.per.group') }}">
+    <button class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">
+        Edit
+    </button>
+</a>
+
+
+                                
+                      
+                            </div>
+                         <p class="text-xs text-amber-800 mb-4">
+  Set lower prices for smaller groups of guests to increase your chances of getting bookings
+</p>
+
+                        <hr class="my-4">
+                        <table class="table-auto border-separate border-spacing-x-2 w-full text-left text-gray-700">
+                            <tbody>
+                                <tr>
+                                    <td class="py-2 text-sm font-semibold">Occupancy</td>
+                                    <td class="py-2 text-sm font-semibold">Guests pay</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2">
+                                        <div class="flex items-center gap-1">
+                                            <img src="{{ asset('assets/guidance_user-1 (1).svg') }}" alt="User Icon"
+                                                class="w-5 h-5">
+                                            <span>x 2</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-2 text-sm">US$ 20.00</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2">
+                                        <div class="flex items-center gap-1">
+                                            <img src="{{ asset('assets/guidance_user-1 (1).svg') }}" alt="User Icon"
+                                                class="w-5 h-5">
+                                            <span>x 1</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-2 text-sm">US$ 20.00</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+
+                    </div>
+
+
+                </div>
+
+                <h2 class="text-xl font-semibold text-gray-800">Non-refundable rate plan</h2>
+
+                <!-- Second Rate Plan -->
+                <div class="bg-white border rounded-lg p-4 shadow-sm">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-base font-semibold text-gray-700">Price and cancellation policy</h3>
+                            <img src="{{ asset('assets/material-symbols-light_info-outline.svg') }}" alt="Tip Icon"
+                                class="w-5 h-5">
+                        </div>
+                        <a href="{{ route('partner.hotels.non.refundable.rate') }}">
+                        <button
+                            class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">Edit</button></a>
+                    </div>
+                    <hr class="my-4">
+                    <ul class="text-gray-900 text-sm space-y-2">
+                        <li class="flex items-start gap-2">
+                            <img src="{{ asset('assets/teenyicons_tick-circle-outline.svg') }}" alt="Tick"
+                                class="w-4 h-4 mt-1">
+                            <span>Guests will pay 10% less than the standard rate for a non-refundable rate</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <img src="{{ asset('assets/teenyicons_tick-circle-outline.svg') }}" alt="Tick"
+                                class="w-4 h-4 mt-1">
+                            <span>Guests cannot cancel their bookings for free at any time</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <h2 class="text-xl font-semibold text-gray-800">Weekly rate plan</h2>
+
+                <!-- Third Rate Plan -->
+                <div class="bg-white border rounded-lg p-4 shadow-sm">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-base font-semibold text-gray-700">Price and cancellation policy</h3>
+                            <img src="{{ asset('assets/material-symbols-light_info-outline.svg') }}" alt="Tip Icon"
+                                class="w-5 h-5">
+                        </div>
+                          <a href="{{ route('partner.campsite.weekly.rate') }}">
+                        <button
+                            class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">Edit</button></a>
+                    </div>
+                         <p class="text-xs text-green-600 mb-4 mt-4">
+You’re 16% more likely to get bookings with the 15% pre-selected weekly rate than with none
+</p>
+                    <hr class="my-4">
+                    <ul class="text-gray-900 text-sm space-y-2">
+                        <li class="flex items-start gap-2">
+                            <img src="{{ asset('assets/teenyicons_tick-circle-outline.svg') }}" alt="Tick"
+                                class="w-4 h-4 mt-1">
+                            <span>Guests will pay 15% less than the standard rate when they book for at least 7 nights</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <img src="{{ asset('assets/teenyicons_tick-circle-outline.svg') }}" alt="Tick"
+                                class="w-4 h-4 mt-1">
+                            <span>Guests can cancel their bookings for free up to 1 day before their arrival (based on the standard rate cancellation policy)</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Navigation Buttons -->
+                <div class="flex justify-between items-center mt-4">
+                    <!-- Back Button -->
+                    <button type="button"  @click="pricingWizardStep--"
+                        :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
+                        class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
+                        ←
+                    </button>
+
+                    <!-- Continue Button -->
+                  
+                        <button  @click="pricingWizardStep++"
+                            class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-sky-500 transition w-full sm:w-auto">
+                            Continue
+                        </button>
+                </div>
+
+
             </div>
-            <p class="text-xs text-gray-500">
-              This policy is set at the property level – any changes made will be applied to all rooms.
-            </p>
-          </div>
-          <a href="{{ route('partner.apartment.pricing.policies') }}">
-         <button @click="$refs.section1.scrollIntoView({ behavior: 'smooth' })"
-        class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">
-  Edit
-</button></a>
-        </div>
-        <hr class="my-4">
-        <ul class="text-gray-900 text-sm space-y-2">
-          <li class="flex items-start gap-2">
-            <img src="{{ asset('assets/teenyicons_tick-circle-outline.svg') }}" alt="Tick" class="w-4 h-4 mt-1">
-            <span>Guests can cancel their bookings for free up to 1 day before their arrival</span>
-          </li>
-          <li class="flex items-start gap-2">
-            <img src="{{ asset('assets/teenyicons_tick-circle-outline.svg') }}" alt="Tick" class="w-4 h-4 mt-1">
-            <span>Guests who cancel within 24 hours will have their cancellation fee waived</span>
-          </li>
-        </ul>
-      </div>
-
-      <hr class="my-4">
-
-      <!-- Price Per Group Size Section -->
-      <div class="space-y-4">
-        <div class="flex justify-between items-center">
-          <div class="flex items-center gap-2">
-            <h3 class="text-base font-semibold text-gray-700">Price per group size</h3>
-            <img src="{{ asset('assets/material-symbols-light_info-outline.svg') }}" alt="Tip Icon" class="w-5 h-5">
-          </div>
-           <a href="{{ route('partner.apartment.price.group') }}">
-          <button class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">Edit</button></a>
-        </div>
-
-        <hr class="my-4">
-<table class="table-auto border-separate border-spacing-x-2 w-full text-left text-gray-700">
-  <tbody>
-    <tr>
-      <td class="py-2 text-sm font-semibold">Occupancy</td>
-      <td class="py-2 text-sm font-semibold">Guests pay</td>
-    </tr>
-    <tr>
-      <td class="py-2">
-        <div class="flex items-center gap-1">
-          <img src="{{ asset('assets/guidance_user-1 (1).svg') }}" alt="User Icon" class="w-5 h-5">
-          <span>x 2</span>
-        </div>
-      </td>
-      <td class="py-2 text-sm">US$ 30.00</td>
-    </tr>
-    <tr>
-      <td class="py-2">
-        <div class="flex items-center gap-1">
-          <img src="{{ asset('assets/guidance_user-1 (1).svg') }}" alt="User Icon" class="w-5 h-5">
-          <span>x 1</span>
-        </div>
-      </td>
-      <td class="py-2 text-sm">US$ 27.00</td>
-    </tr>
-  </tbody>
-</table>
-
-
-      </div>
-
-   
-    </div>
-
-    <h2 class="text-xl font-semibold text-gray-800">Non-refundable rate plan</h2>
-
-    <!-- Second Rate Plan -->
-    <div class="bg-white border rounded-lg p-4 shadow-sm">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <h3 class="text-base font-semibold text-gray-700">Price and cancellation policy</h3>
-          <img src="{{ asset('assets/material-symbols-light_info-outline.svg') }}" alt="Tip Icon" class="w-5 h-5">
-        </div>
-         <a href="{{ route('partner.apartment.refundable.rate') }}">
-        <button class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">Edit</button></a>
-      </div>
-      <hr class="my-4">
-      <ul class="text-gray-900 text-sm space-y-2">
-        <li class="flex items-start gap-2">
-          <img src="{{ asset('assets/teenyicons_tick-circle-outline.svg') }}" alt="Tick" class="w-4 h-4 mt-1">
-          <span>Guests will pay 10% less than the standard rate for a non-refundable rate</span>
-        </li>
-        <li class="flex items-start gap-2">
-          <img src="{{ asset('assets/teenyicons_tick-circle-outline.svg') }}" alt="Tick" class="w-4 h-4 mt-1">
-          <span>Guests can't cancel their bookings for free anytime</span>
-        </li>
-      </ul>
-    </div>
-
-    <h2 class="text-xl font-semibold text-gray-800">Weekly rate plan</h2>
-
-    <!-- Third Rate Plan -->
-    <div class="bg-white border rounded-lg p-4 shadow-sm">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <h3 class="text-base font-semibold text-gray-700">Price and cancellation policy</h3>
-          <img src="{{ asset('assets/material-symbols-light_info-outline.svg') }}" alt="Tip Icon" class="w-5 h-5">
-        </div>
-         <a href="{{ route('partner.apartment.weekly.rate') }}">
-        <button class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">Edit</button></a>
-      </div>
-      <hr class="my-4">
-      <ul class="text-gray-900 text-sm space-y-2">
-        <li class="flex items-start gap-2">
-          <img src="{{ asset('assets/teenyicons_tick-circle-outline.svg') }}" alt="Tick" class="w-4 h-4 mt-1">
-          <span>Guests will pay 15% less than the standard rate when they book for at least 7 nights</span>
-        </li>
-        <li class="flex items-start gap-2">
-          <img src="{{ asset('assets/teenyicons_tick-circle-outline.svg') }}" alt="Tick" class="w-4 h-4 mt-1">
-          <span>Guests can cancel their bookings for free before 18:00 on the day of arrival. The guests will be charged cost of the first night if they cancel after this (based on the standard rate cancellation policy).</span>
-        </li>
-      </ul>
-    </div>
-
-    <!-- Navigation Buttons -->
-<div class="flex justify-between items-center mt-4">
-  <!-- Back Button -->
-  <button type="button"
-          @click="pricingWizardStep--"
-          :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-          class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
-    ←
-  </button>
-
-  <!-- Continue Button -->
-  
-  <button       @click="pricingWizardStep++" class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-sky-500 transition w-full sm:w-auto">
-    Continue
-  </button>
-
-
-  </div>
   </template>
 
  

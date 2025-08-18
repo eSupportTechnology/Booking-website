@@ -23,39 +23,11 @@
 
         <div class="bg-white p-4 rounded-lg shadow ">
             
- <!-- Unit Type -->
-    <div class="w-full">
-      <label for="unit_type" class="block text-sm font-semibold text-gray-700 mb-1">
-        What type of unit is this?
-      </label>
-      <div class="relative">
-        <select
-          id="unit_type"
-          name="unit_type"
-          class="appearance-none w-full border border-gray-300 text-sm rounded-md shadow-sm bg-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200"
-        >
-          <option value="">Select a type</option>
-          <option value="Twin">Twin</option>
-          <option value="Single">Single</option>
-          <option value="Double">Double</option>
-          <option value="Twin/Double">Twin/Double</option>
-          <option value="Triple">Triple</option>
-          <option value="Quadruple">Quadruple</option>
-         <option value="Bungalow">Bungalow</option>
-          <option value="Chalet">Chalet</option>
-          <option value="Family">Family</option>
-          <option value="Mobile Home">Mobile Home</option>
-          <option value="Tent">Tent</option>
-        </select>
-
-        <!-- Optional: Custom dropdown arrow -->
-        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-          <svg class="h-4 w-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M10 14a1 1 0 01-.707-.293l-4-4a1 1 0 111.414-1.414L10 11.586l3.293-3.293a1 1 0 111.414 1.414l-4 4A1 1 0 0110 14z" clip-rule="evenodd" />
-          </svg>
-        </div>
-      </div>
-    </div>
+<div class="flex items-center gap-2">
+    <img src="{{ asset('assets/material-symbols-light_info-outline (2).svg') }}" 
+         alt="Tip Icon" class="w-6 h-6" />
+    <p  class="text-sm">Please note that boats are classified as ‘mobile homes’ on our site</p>
+</div>
 
 
 
@@ -78,7 +50,7 @@
 
             <div class="flex flex-col gap-4">
                 <!-- Bedroom -->
-                <a href="{{ route('partner.campsite.bedrooms') }}">
+                <a href="#">
                     <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer">
                         <p class="text-sm">Bedroom 1</p>
                         <p class="text-sm text-gray-600">No beds added</p>
@@ -86,7 +58,7 @@
                 </a>
 
                 <!-- Living Room -->
-                <a href="{{ route('partner.campsite.livingroom') }}">
+                <a href="#">
                     <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer">
                         <p class="text-sm">Living Room</p>
                         <p class="text-sm text-gray-600">No beds added</p>
@@ -94,15 +66,16 @@
                 </a>
 
                 <!-- Other Spaces -->
-                <a href="{{ route('partner.campsite.otherspaces') }}">
+                <a href="#">
                     <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer">
                         <p class="text-sm">Other spaces</p>
                         <p class="text-sm text-gray-600">No beds added</p>
                     </div>
                 </a>
             </div>
+
             <!-- Add Bedroom Button -->
-            <a  href="{{ route('partner.campsite.bedrooms') }}" class="text-blue-600 hover:underline text-sm flex items-center space-x-1 mt-2">
+            <a href="#" class="text-blue-600 hover:underline text-sm flex items-center space-x-1 mt-2">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
                     viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -273,7 +246,8 @@
                             <!-- Bathroom Amenities -->
                             <div>
                             
-                                <label class="block font-semibold text-gray-700 mb-3">Which bathroom items are available in this mobile home?</label>
+                                <label class="block font-semibold text-gray-700 mb-3">Which bathroom items are
+                                    available in this room?</label>
 
                                 @php
                                     $amenities = [
@@ -344,152 +318,136 @@
 
 
         <template x-if="step === 3">
-           <div class="max-w-3xl ml-32 mt-16">
-        <!-- Bathroom Details Wrapper -->
-        <div class="max-w-6xl mx-auto p-4 space-y-6">
+            <div class="max-w-3xl ml-32 mt-16">
+                <!-- Bathroom Details Wrapper -->
+                <div class="max-w-6xl mx-auto p-4 space-y-6">
 
-            <!-- Title -->
-            <h2 class="text-2xl font-bold">What can guests use in this room?</h2>
+                    <!-- Title -->
+                    <h2 class="text-2xl font-bold">What can guests use in this room?</h2>
 
-            <!-- Two-Column Layout: Main Content + Tip -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6" x-data="{ viewSelected: false }">
+                    <!-- Two-Column Layout: Main Content + Tip -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-                <!-- Main Content Container -->
-                <div class="lg:col-span-2 bg-white p-6 rounded-lg border border-gray-300 space-y-6">
+                        <!-- Main Content Container -->
+                        <div class="lg:col-span-2 bg-white p-6 rounded-lg border border-gray-300 space-y-6">
 
-                    <!-- Bathroom Amenities -->
-                    <div>
-                        <label class="block font-semibold text-sm text-gray-700 mb-3">General Amenities</label>
 
-                        @php
-                            $amenities = [
-                                'Towels',
-                                'Linen',
-                                'Seating Area',
-                                'Heating',
-                                'Air conditioning',
-                                'Wardrobe or closet',
-                                'Clothes rack',
-                                'Flat-screen TV',
-                            ];
-                        @endphp
 
-                        <div class="space-y-2">
-                            @foreach ($amenities as $item)
-                                <label class="flex items-center gap-3 cursor-pointer">
-                                    <input type="checkbox" class="form-checkbox text-blue-500">
-                                    <span class="text-sm">{{ $item }}</span>
-                                </label>
-                            @endforeach
-                        </div>
-                    </div>
+                            <!-- Bathroom Amenities -->
+                            <div>
 
-                    <div>
-                        <hr class="my-4">
-                        <label class="block font-semibold text-sm text-gray-700 mb-3">Outdoors and Views</label>
+                                <label class="block font-semibold text-sm text-gray-700 mb-3">General Amenities</label>
 
-                        @php
-                            $outdoorAmenities = ['Outdoor dining area', 'Outdoor furniture', 'View'];
-                        @endphp
+                                @php
+                                    $amenities = [
+                                        'Towels',
+                                        'Linen',
+                                        'Seating Area',
+                                        
+                                        'Heating',
+                                        'Air conditioning',
+                                        
+                                        'Wardrobe or closet',
+                                        'Clothes rack',
+                                        'Flat-screen TV',
+                                        
+                                    ];
+                                @endphp
 
-                        <div class="space-y-2">
-                            @foreach ($outdoorAmenities as $item)
-                                <label class="flex items-center gap-3 cursor-pointer">
-                                    <input type="checkbox"
-                                           class="form-checkbox text-blue-500"
-                                           @if ($item === 'View')
-                                               @click="viewSelected = $event.target.checked"
-                                           @endif
-                                    >
-                                    <span class="text-sm">{{ $item }}</span>
-                                </label>
-                            @endforeach
+                                <div class="space-y-2">
+                                    @foreach ($amenities as $item)
+                                        <label class="flex items-center gap-3 cursor-pointer">
+                                            <input type="checkbox" class="form-checkbox text-blue-500">
+                                            <span class="text-sm">{{ $item }}</span>
+                                        </label>
+                                    @endforeach
+                                </div>
+                            </div>
 
-                            <!-- Dropdown for View (Only shown if 'View' is checked) -->
-                            <div x-show="viewSelected" x-transition>
-                                <label class="block font-semibold text-sm text-gray-700">Select View Type</label>
-                                <select class="form-select mt-1 block w-full border border-gray-300 rounded-lg p-2 text-sm">
-                                    <option value="">Select view type</option>
-                                   <option value="Sea view">Sea view</option>
-<option value="Mountain view">Mountain view</option>
-<option value="City view">City view</option>
-<option value="Garden view">Garden view</option>
-<option value="Pool view">Pool view</option>
-<option value="Lake view">Lake view</option>
-<option value="Landmark view">Landmark view</option>
-<option value="River view">River view</option>
-<option value="Inner courtyard view">Inner courtyard view</option>
-<option value="Quiet street view">Quiet street view</option>
+                            <div>
+                                <hr class="my-4">
+                                <label class="block font-semibold text-sm text-gray-700 mb-3">Outdoors and
+                                    Views</label>
 
-                                </select>
+                                @php
+                                    $amenities = ['Outdoor dining area', 'Outdoor furniture', 'View'];
+                                @endphp
+
+                                <div class="space-y-2">
+                                    @foreach ($amenities as $item)
+                                        <label class="flex items-center gap-3 cursor-pointer">
+                                            <input type="checkbox" class="form-checkbox text-blue-500">
+                                            <span class="text-sm">{{ $item }}</span>
+                                        </label>
+                                    @endforeach
+                                </div>
+                            </div>
+                            <div>
+                                <hr class="my-4">
+                                <label class="block font-semibold text-sm text-gray-700 mb-3">Food and Drink</label>
+
+                                @php
+                                    $amenities = [
+                                        'Barbecue',
+                                        
+                                        'Dining area',
+                                        'Dining table',
+                                        'Electric kettle',
+                                        'Tea/Coffee maker',
+                                        'Refrigerator',
+                                        'Kitchenware',
+                                    ];
+                                @endphp
+
+                                <div class="space-y-2">
+                                    @foreach ($amenities as $item)
+                                        <label class="flex items-center gap-3 cursor-pointer">
+                                            <input type="checkbox" class="form-checkbox text-blue-500">
+                                            <span class="text-sm">{{ $item }}</span>
+                                        </label>
+                                    @endforeach
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div>
-                        <hr class="my-4">
-                        <label class="block font-semibold text-sm text-gray-700 mb-3">Food and Drink</label>
-
-                        @php
-                            $foodAmenities = [
-                                'Barbecue',
-                                'Dining table',
-                                'Dining area',
-                                'Electric kettle',
-                                'Tea/Coffee maker',
-                                'Refrigerator',
-                                'Kitchenware',
-                            ];
-                        @endphp
-
-                        <div class="space-y-2">
-                            @foreach ($foodAmenities as $item)
-                                <label class="flex items-center gap-3 cursor-pointer">
-                                    <input type="checkbox" class="form-checkbox text-blue-500">
-                                    <span class="text-sm">{{ $item }}</span>
-                                </label>
-                            @endforeach
+                        <!-- Tip Box Outside of Main Box -->
+                        <div x-data="{ showTip: true }" x-show="showTip"
+                            x-transition:leave="transition ease duration-300"
+                            x-transition:leave-start="opacity-100 max-h-screen"
+                            x-transition:leave-end="opacity-0 max-h-0 overflow-hidden"
+                            class="bg-white border border-gray-300 rounded-lg p-4 text-sm text-gray-700 h-fit">
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-center gap-2">
+                                    <img src="{{ asset('assets/system-uicons_lightbulb-on.svg') }}" alt="Tip Icon"
+                                        class="w-5 h-5" />
+                                    <strong class="font-semibold">Still deciding?</strong>
+                                </div>
+                                <button type="button" @click="showTip = false"
+                                    class="text-gray-400 hover:text-black text-sm font-bold text-xl leading-none">
+                                    &times;
+                                </button>
+                            </div>
+                            <p class="mt-2">Don’t worry, you can update the bathroom items available at your place
+                                later.</p>
                         </div>
                     </div>
-                </div>
 
-                <!-- Tip Box -->
-                <div x-data="{ showTip: true }" x-show="showTip"
-                    x-transition:leave="transition ease duration-300"
-                    x-transition:leave-start="opacity-100 max-h-screen"
-                    x-transition:leave-end="opacity-0 max-h-0 overflow-hidden"
-                    class="bg-white border border-gray-300 rounded-lg p-4 text-sm text-gray-700 h-fit">
-                    <div class="flex justify-between items-start">
-                        <div class="flex items-center gap-2">
-                            <img src="{{ asset('assets/system-uicons_lightbulb-on.svg') }}" alt="Tip Icon"
-                                class="w-5 h-5" />
-                            <strong class="font-semibold">Still deciding?</strong>
-                        </div>
-                        <button type="button" @click="showTip = false"
-                            class="text-gray-400 hover:text-black text-sm font-bold text-xl leading-none">
-                            &times;
+                    <!-- Navigation Buttons -->
+                    <div class="flex  mt-6">
+                        <!-- Back Button -->
+                        <button type="button" @click="step < 9 ? step-- : step"
+                            class="border border-[#3CC0E9] text-blue-600 font-semibold py-2 px-4 rounded hover:bg-blue-50">
+                            ←
+                        </button>
+
+                        <!-- Continue Button -->
+                        <button type="submit" @click="step < 9 ? step++ : step"
+                            class="px-6 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300 ml-[315px]">
+                            Continue
                         </button>
                     </div>
-                    <p class="mt-2">Don’t worry, you can update the bathroom items available at your place later.</p>
                 </div>
             </div>
-
-            <!-- Navigation Buttons -->
-            <div class="flex mt-6">
-                <!-- Back Button -->
-                <button type="button" @click="step < 9 ? step-- : step"
-                    class="border border-[#3CC0E9] text-blue-600 font-semibold py-2 px-4 rounded hover:bg-blue-50">
-                    ←
-                </button>
-
-                <!-- Continue Button -->
-                <button type="submit" @click="step < 9 ? step++ : step"
-                    class="px-6 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300 ml-[315px]">
-                    Continue
-                </button>
-            </div>
-        </div>
-    </div>
         </template>
         <template x-if="step === 4">
             <div class="max-w-3xl ml-40 px-4 py-8 mt-10">
@@ -505,8 +463,8 @@
                                     <p class="text-sm mb-4">
                                         This is the name that guests will see on your property page. Choose a name that most accurately describes this mobile home.
                                     </p>
-                                    <label class="block text-sm font-semibold text-gray-700 mb-1 mt-6">Mobile home name
-                                        </label>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-1 mt-6">Room
+                                        Name</label>
                                     <select
                                         class="w-full border border-gray-300 text-sm rounded-md shadow-sm focus:ring focus:ring-blue-200 px-3 py-2">
                                         <option>Caravan</option>
@@ -847,7 +805,7 @@
                            
                             </div>
 
-   <a href="{{ route('partner.boat.price.per.group') }}">
+   <a href="{{ route('partner.hotels.price.per.group') }}">
     <button class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">
         Edit
     </button>
@@ -936,7 +894,7 @@
                             <img src="{{ asset('assets/material-symbols-light_info-outline.svg') }}" alt="Tip Icon"
                                 class="w-5 h-5">
                         </div>
-                          <a href="{{ route('partner.campsite.weekly.rate') }}">
+                          <a href="{{ route('partner.hotels.weekly.rate') }}">
                         <button
                             class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">Edit</button></a>
                     </div>
@@ -968,7 +926,7 @@ You’re 16% more likely to get bookings with the 15% pre-selected weekly rate t
                     </button>
 
                     <!-- Continue Button -->
-                    <a href="{{ route('partner.alternative.single.campsite.edit') }}">
+                    <a href="{{ route('partner.boat.edit') }}">
                         <button
                             class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-sky-500 transition w-full sm:w-auto">
                             Continue

@@ -216,8 +216,8 @@
 
     <!-- Step 3 -->
    <template x-if="step === 3">
-    <div class="w-full px-4 py-8 md:px-16 lg:px-3 mx-auto ">
-        <div class="max-w-5xl lg:ml-32">
+    <div class="w-full px-4 py-8 md:px-16 lg:px-3 mx-auto  ">
+        <div class="max-w-5xl lg:ml-32 ">
             <h1 class="text-2xl md:text-3xl font-semibold text-gray-800 mb-8 mt-4">
                 What's the name of your place?
             </h1>
@@ -302,7 +302,7 @@
     <div>
         <div class="max-w-5xl  mx-auto lg:ml-32 mt-12 ">
             <h1 class="text-2xl md:text-3xl font-semibold text-gray-800 mb-8">
-                What can guests use at your campsite?
+                What can guests use at your boat?
             </h1>
 
             <div class="flex flex-col lg:flex-row gap-8">
@@ -784,8 +784,7 @@
 </template>
 
      <template x-if="step === 7">
-    <div>
-        <div class="max-w-4xl mx-auto space-y-8 lg:ml-24" x-data="{ pets: 'no' }">
+     <div class="max-w-4xl mx-auto space-y-8 lg:ml-24" x-data="{ pets: 'no' }">
   <div class="container w-full max-w-4xl ml-4 md:ml-24 px-4 py-8">
     <!-- Header -->
     <h2 class="text-2xl md:text-3xl font-bold mb-8 text-left">House rules</h2>
@@ -803,7 +802,8 @@
               <div class="absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-4"></div>
             </div>
           </label>
-          <label class="flex items-center justify-between cursor-pointer">
+
+            <label class="flex items-center justify-between cursor-pointer">
             <span>Children allowed</span>
             <div class="relative">
               <input type="checkbox" class="sr-only peer" />
@@ -896,7 +896,7 @@
 <div class="mt-12 flex justify-between">
   <!-- Back Button on the left -->
   <button
-   type="button" @click="step--"
+   type="button"  @click="step--"
         :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
   
       class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
@@ -905,7 +905,7 @@
 
   <!-- Continue Button on the right -->
   <button
-   type="button"  @click="step++"
+   type="button"   @click="step++"
      class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 "
   >
     Continue
@@ -937,8 +937,6 @@
 
     </div>
   </div>
-        
-    </div>
 </template>
 
                                                       
@@ -968,14 +966,14 @@
                             class="w-6 h-6 md:w-7 md:h-7" />
                         <div>
                             <p class="text-sm text-gray-500">Step 2</p>
-                            <h2 class="text-base font-semibold">Units</h2>
-                            <p class="text-xs text-gray-600">
-Tell us about your first unit. Once you’ve set one up you can add more.</p>
+                            <h2 class="text-base font-semibold">Rooms</h2>
+                            <p class="text-xs text-gray-600">Tell us about your first room. Once you’ve set one up you
+                                can add more.</p>
                         </div>
                     </div>
-                    <a href="{{ route('partner.alternative.single.campsite.room') }}"
+                    <a href="{{ route('partner.alternative.multiple.boat.room') }}"
                         class=" bg-sky-400 border border-sky-400 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-sky-500">
-                        Add unit
+                        Add room
                     </a>
                 </div>
 
@@ -991,7 +989,7 @@ Tell us about your first unit. Once you’ve set one up you can add more.</p>
                                 expect.</p>
                         </div>
                     </div>
-                    <a href="{{ route('partner.hotels.photos') }}"
+                    <a href="{{ route('partner.boat.photos') }}"
                         class="border border-sky-400 text-sky-400 text-sm font-semibold px-4 py-2 rounded hover:bg-sky-50">
                         Add Photos
                     </a>
@@ -1010,7 +1008,7 @@ Tell us about your first unit. Once you’ve set one up you can add more.</p>
                                 bookings.</p>
                         </div>
                     </div>
-                    <a href="{{ route('partner.hotels.payments') }}"
+                    <a href="{{ route('partner.boat.payment') }}"
                         class=" bg-sky-400 border border-sky-400 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-sky-500">
                         Add final details
                     </a>

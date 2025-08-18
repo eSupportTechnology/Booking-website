@@ -23,7 +23,7 @@
                             more</p>
                     </div>
                 </div>
-                <a href="{{ route('partner.hotels.create.2') }}"
+                <a href="{{ route('partner.alternative.single.campsite') }}"
                     class="text-sky-600 font-medium text-sm hover:underline">Edit</a>
             </div>
 
@@ -35,9 +35,9 @@
                         <img src="assets/Group 3926.svg" alt="Icon" class="w-6 h-6 md:w-7 md:h-7" />
                         <div>
                             <p class="text-sm text-gray-500">Step 2</p>
-                            <h2 class="text-base font-semibold">Rooms</h2>
-                            <p class="text-xs text-gray-600">Tell us about your first room. Once you’ve set one up you
-                                can add more.</p>
+
+                            <h2 class="text-base font-semibold">Units</h2>
+                            <p class="text-xs text-gray-600">Add another unit to add new layouts, bed options and rates.</p>
                         </div>
                     </div>
 
@@ -91,7 +91,7 @@
                 <!-- Add Another Room -->
                 <div class="text-right">
 
-                    <a href="{{ route('partner.hotels.rooms') }}">
+                    <a href="{{ route('partner.alternative.single.campsite.room') }}">
                         <button
                             class="mt-4  text-sky-600 text-sm font-semibold px-4 py-2 rounded border border-sky-300 hover:bg-sky-100">
                             + Add another room
@@ -133,13 +133,13 @@
                     </div>
                 </div>
 
-                <a href="{{ route('partner.hotels.payments') }}"
+                <a href="{{ route('partner.campsite.payments') }}"
                     class="text-sky-600 font-medium text-sm hover:underline">Edit</a>
             </div>
 
 
             <div class="flex justify-center">
-                <a href="{{ route('partner.hotels.complete.registration') }}"
+                <a href="{{ route('partner.tent.complete.registration') }}"
                   
                         class="mt-4 w-full  bg-[#3CC0E9] font-semibold text-white text-center rounded hover:bg-sky-500 text-sm font-semibold px-6 py-2 rounded shadow">
                         Complete Registration

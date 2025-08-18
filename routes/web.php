@@ -264,6 +264,11 @@ Route::get('/partner/alternative/Single/Campsite/room', function () {
     return view('frontend.partner-alternative-campsite-room');
 })->name('partner.alternative.single.campsite.room');
 
+Route::get('/partner/alternative/Campsite/edit', function () {
+    return view('frontend.partner-alternative-campsite-edit');
+})->name('partner.alternative.single.campsite.edit');
+
+
 Route::get('/partner/alternative/Single/Campsite/cancel-policies', function () {
     return view('frontend.partner-alternative-campsite-cancel-policies');
 })->name('partner.alternative.single.campsite.cancel-policies');
@@ -279,6 +284,100 @@ Route::get('/partner/alternative/form', function () {
 Route::get('/partner/alternative/single/boat', function () {
     return view('frontend.partner-alternative-single-boat');
 })->name('partner.alternative.single.boat');
+
+Route::get('/partner/alternative/multiple/boats/sameaddress', function () {
+    return view('frontend.partner-alternative-boat-multiple-sameaddress');
+})->name('partner.alternative.multiple.boats.sameaddress');
+
+Route::get('/partner/alternative/multiple/boat/room', function () {
+    return view('frontend.partner-alternative-boat-room');
+})->name('partner.alternative.multiple.boat.room');
+
+Route::get('/partner/boat/price-per-group', function () {
+    return view('frontend.partner-boat-pricepergroup');
+})->name('partner.boat.price.per.group');
+
+
+
+Route::get('/partner/boat/weekly-rate', function () {
+    return view('frontend.partner-boat-weekly-rate');
+})->name('partner.boat.weekly.rate');
+
+Route::get('/partner/campsite/weekly-rate', function () {
+    return view('frontend.partner-alternative-campsite-weeklyrate');
+})->name('partner.campsite.weekly.rate');
+
+Route::get('/partner/tent/single', function () {
+    return view('frontend.partner-alternative-tent-single');
+})->name('partner.tent.single');
+
+Route::get('/partner/tent/images', function () {
+    return view('frontend.partner-alternative-tent-photos');
+})->name('partner.tent.images');
+
+Route::get('/partner/campsite/payments', function () {
+    return view('frontend.partner-campsite-payment');
+})->name('partner.campsite.payments');
+
+Route::get('/partner/tent/payments', function () {
+    return view('frontend.partner-alternative-tent-payments');
+})->name('partner.tent.payments');
+
+Route::get('/partner/alternative/multiple/tent/room', function () {
+    return view('frontend.partner-alternative-tent-room');
+})->name('partner.alternative.multiple.tent.room');
+
+Route::get('/partner/privateroom/boat/room', function () {
+    return view('frontend.partner-privaterooom-boat-room');
+})->name('partner.privateroom.boat.room');
+
+Route::get('/partner/tent/multiple/sameaddress', function () {
+    return view('frontend.partner-tent-multiple-sameaddress');
+})->name('partner.tent.multiple.sameaddress');
+
+Route::get('/partner/boat/payment', function () {
+    return view('frontend.partner-alternative-boat-payments');
+})->name('partner.boat.payment');
+
+Route::get('/partner/campsite/bedrooms', function () {
+    return view('frontend.partner-campsite-bedroom');
+})->name('partner.campsite.bedrooms');
+
+Route::get('/partner/campsite/otherspaces', function () {
+    return view('frontend.partner-campsite-otherspaces');
+})->name('partner.campsite.otherspaces');
+
+Route::get('/partner/campsite/livingroom', function () {
+    return view('frontend.partner-campsite-livingroom');
+})->name('partner.campsite.livingroom');
+
+Route::get('/partner/boat/edit', function () {
+    return view('frontend.partner-alternative-boat-edit');
+})->name('partner.boat.edit');
+
+Route::get('/partner-boat-photos', function () {
+    return view('frontend.partner-alternative-boat-images');
+})->name('partner.boat.photos');
+
+Route::get('/partner-tent-edit', function () {
+    return view('frontend.partner-tent-edit');
+})->name('partner.tent.edit');
+
+Route::get('/partner-boat-compltete-registration', function () {
+    return view('frontend.partner-boat-complete-registration');
+})->name('partner.boat.complete.registration');
+
+Route::get('/partner-privateroom-campsite-room', function () {
+    return view('frontend.partner-privateroom-campsite-room');
+})->name('partner.privateroom.campsite.room');
+
+Route::get('/partner-privateroom-tent-room', function () {
+    return view('frontend.partner-privateroom-tent-room');
+})->name('partner.privateroom.tent.room');
+
+Route::get('/partner-tent-compltete-registration', function () {
+    return view('frontend.partner-alternative-tent-complete-registration');
+})->name('partner.tent.complete.registration');
 
 Route::get('/partner-apartment-multiple', function () {
     return view('frontend.partner-multiple-apartment');
