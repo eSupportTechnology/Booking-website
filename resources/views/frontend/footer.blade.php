@@ -65,14 +65,25 @@
 
             <!-- Footer Separator -->
             <hr class="my-6 border-gray-200">
+ @php
+                            $host = config('domains.app_name');
 
+                        @endphp
             <!-- Copyright and Branding -->
             <div class="flex flex-col items-center justify-center space-y-2">
+                    @if ($host == 'BookinTour')
                 <p class="text-sm text-center">
-                    {{ config('domains.app_name') }} is part of {{ config('domains.app_name') }} Inc., the world leader in online travel and related services.<br>
-                    Copyright © 1996–2025 {{ config('domains.app_name') }}™. All rights reserved.
+                    BookinTour.com is a part of JSG Ceylon (Pvt) Ltd, a growing leader and trusted partner in online travel and related services.
+<br>
+                   Copyright © 2024 – 2025. All rights reserved. BookinTour.com 
                 </p>
-                <a href="#" class="text-blue-500 font-bold hover:underline">{{ config('domains.domain') }}</a>
+                    @elseif ($host == 'Inselor')
+                    <p class="text-sm text-center">
+                        Inselor.com  is part of Inselor Inc., the world leader in online travel and related services
+                    <br>
+                       Copyright © 2024 – 2025. All rights reserved. Inselor.com
+                    </p>
+                @endif
             </div>
         </div>
     </footer>
