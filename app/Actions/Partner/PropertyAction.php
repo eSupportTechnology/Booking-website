@@ -116,7 +116,17 @@ class PropertyAction
             'address_type_id' => $dto->address_type_id,
         ]);
 
-        $property = \App\Models\Property::create($dto->toArray());
+        $property = \App\Models\Property::updateOrCreate(
+            ['id' => $dto->property_id],
+            [
+                'user_id' => $dto->user_id ?? Auth::id(),
+                'category_id' => $dto->category_id,
+                'subcategory_id' => $dto->subcategory_id,
+                'subtype_id' => null, // Set to null for step 1
+                'property_count' => $dto->property_count,
+                'address_type_id' => $dto->address_type_id,
+            ]
+        );
 
         // Store property ID in session for form navigation
         session(['current_property_id' => $property->id]);
