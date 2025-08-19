@@ -4,11 +4,11 @@
 
 @section('content')
 
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+<meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-   
-    <div  x-data="{ 
+<script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
+<div x-data="{ 
         step: 1,
         propertyId: {{ $propertyModel ? $propertyModel->id : 'null' }},
         formData: {
@@ -112,12 +112,37 @@
         return;
     }
 
-    for (let owner of this.formData.owners) {
-        if (!owner.firstName || !owner.lastName || !owner.dob) {
-            showToast('Please fill in all owner details (First Name, Last Name, Date of Birth)', 'error');
-            return;
-        }
+   for (let owner of this.formData.owners) {
+    if (!owner.firstName || !owner.lastName || !owner.dob) {
+        showToast('Please fill in all owner details (First Name, Last Name, Date of Birth)', 'error');
+        return;
     }
+
+    const dobPattern = /^\d{4}-\d{2}-\d{2}$/;
+    if (!dobPattern.test(owner.dob)) {
+        showToast(`Invalid DOB format for ${owner.firstName} ${owner.lastName}. Use YYYY-MM-DD.`, 'error');
+        return;
+    }
+
+    const dob = new Date(owner.dob);
+    const today = new Date();
+    const age = today.getFullYear() - dob.getFullYear();
+    const monthDiff = today.getMonth() - dob.getMonth();
+    const dayDiff = today.getDate() - dob.getDate();
+
+    const adjustedAge = (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) ? age - 1 : age;
+
+    if (isNaN(dob.getTime())) {
+        showToast(`Invalid date provided for ${owner.firstName} ${owner.lastName}.`, 'error');
+        return;
+    }
+
+    if (adjustedAge < 18) {
+        showToast(`Age must be at least 18 years old.`, 'error');
+        return;
+    }
+}
+
 
     // Step 1: Call existing save-verification endpoint
     fetch('/partner/property/save-verification/' + this.propertyId, {
@@ -212,18 +237,18 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-    // Toast notification system using SweetAlert2 (same as hotels-create-1)
-    function showToast(message, type = 'info') {
-        Swal.fire({
-            toast: true,
-            position: 'top-end',
-            icon: type,
-            title: message,
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true
-        });
-    }
+        // Toast notification system using SweetAlert2 (same as hotels-create-1)
+        function showToast(message, type = 'info') {
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: type,
+                title: message,
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true
+            });
+        }
     </script>
 
     <!-- Debug info -->
@@ -257,197 +282,195 @@
 
 
     <!-- Step 1 -->
-<template x-if="step === 1">
-    <div class="px-4 py-8 mt-6 w-full max-w-2xl mx-auto lg:ml-24 space-y-6">
+    <template x-if="step === 1">
+        <div class="px-4 py-8 mt-6 w-full max-w-2xl mx-auto lg:ml-24 space-y-6">
 
-        <!-- Title -->
-        <h2 class="text-3xl font-bold text-gray-800">Payments</h2>
+            <!-- Title -->
+            <h2 class="text-3xl font-bold text-gray-800">Payments</h2>
 
-        <!-- Guest Payment Options -->
-        <div class="bg-white p-6 rounded-lg shadow-sm border space-y-3">
-            <h3 class="font-semibold text-lg text-gray-900">How can your guests pay for their stay?</h3>
+            <!-- Guest Payment Options -->
+            <div class="bg-white p-6 rounded-lg shadow-sm border space-y-3">
+                <h3 class="font-semibold text-lg text-gray-900">How can your guests pay for their stay?</h3>
 
-            <div class="flex flex-col space-y-2 pt-2">
-                <!-- Online Payment Option -->
-                <label class="flex items-start space-x-2">
-                    <input
-                        type="radio"
-                        name="payment_method"
-                        class="form-radio text-sky-600 w-4 h-4 mt-1"
-                        value="online"
-                        x-model="formData.payment_method"
-                    />
-                    <span class="text-sm text-gray-700">
-                        Online, when they make a reservation, {{ config('domains.domain') }} will facilitate your
-                        guests’ payments with the payments by {{ config('domains.app_name') }} service.
-                    </span>
-                </label>
+                <div class="flex flex-col space-y-2 pt-2">
+                    <!-- Online Payment Option -->
+                    <label class="flex items-start space-x-2">
+                        <input
+                            type="radio"
+                            name="payment_method"
+                            class="form-radio text-sky-600 w-4 h-4 mt-1"
+                            value="online"
+                            x-model="formData.payment_method" />
+                        <span class="text-sm text-gray-700">
+                            Online, when they make a reservation, {{ config('domains.domain') }} will facilitate your
+                            guests’ payments with the payments by {{ config('domains.app_name') }} service.
+                        </span>
+                    </label>
 
-                <!-- Show Only When "Online" is Selected -->
-                <div x-show="formData.payment_method === 'online'" class="bg-blue-50 p-4 rounded-lg border border-blue-300 space-y-2 text-sm text-gray-800 ml-4">
-                    <ul class="list-disc list-inside space-y-1">
-                        <li>Fewer cancellations</li>
-                        <li>Fraud and card protection</li>
-                        <li>More payment options for your guests</li>
-                    </ul>
+                    <!-- Show Only When "Online" is Selected -->
+                    <div x-show="formData.payment_method === 'online'" class="bg-blue-50 p-4 rounded-lg border border-blue-300 space-y-2 text-sm text-gray-800 ml-4">
+                        <ul class="list-disc list-inside space-y-1">
+                            <li>Fewer cancellations</li>
+                            <li>Fraud and card protection</li>
+                            <li>More payment options for your guests</li>
+                        </ul>
+                    </div>
+
+                    <!-- Credit at Property Option -->
+                    <label class="flex items-start space-x-2">
+                        <input
+                            type="radio"
+                            name="payment_method"
+                            class="form-radio text-sky-600 w-4 h-4 mt-1"
+                            value="credit"
+                            x-model="formData.payment_method"
+                            checked />
+                        <span class="text-sm text-gray-700">By credit, at my property</span>
+                    </label>
                 </div>
+            </div>
 
-                <!-- Credit at Property Option -->
-                <label class="flex items-start space-x-2">
-                    <input
-                        type="radio"
-                        name="payment_method"
-                        class="form-radio text-sky-600 w-4 h-4 mt-1"
-                        value="credit"
-                        x-model="formData.payment_method"
-                        checked
-                    />
-                    <span class="text-sm text-gray-700">By credit, at my property</span>
-                </label>
+            <!-- Info on how Bookintour.com handles payment -->
+            <div class="bg-white p-6 rounded-lg shadow-sm border space-y-4">
+                <h3 class="font-semibold text-lg text-gray-900">How payment by {{ config('domains.domain') }} works</h3>
+                <ul class="list-decimal list-inside text-sm text-gray-700 space-y-2">
+                    <li>
+                        <span class="font-sm font-semibold">Your guest pays</span> through
+                        {{ config('domains.domain') }} with more options like PayPal, WeChat Pay and AliPay.
+                    </li>
+                    <li>
+                        <span class="font-sm font-semibold">We facilitate your guest’s payment</span> You don’t have to
+                        deal with fraud, chargebacks or invalid cards.
+                    </li>
+                    <li>
+                        <span class="font-sm font-semibold">{{ config('domains.domain') }} sends payouts to you.</span>
+                        You’ll receive a bank transfer by the 15th of each month that covers all bookings with a
+                        check-out in the previous month.
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Continue Button -->
+            <div class="flex justify-between items-center pt-4">
+                <button @click="window.location.href =`/partner-homes-edit/${propertyId}?propertyType=single&uploaded=true&rooms=true`"
+                    class="flex items-center border border-[#3CC0E9] rounded text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12">
+                    ←
+                </button>
+                <button @click="submitStep1()"
+                    class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition ">
+                    Continue
+                </button>
             </div>
         </div>
-
-        <!-- Info on how Bookintour.com handles payment -->
-        <div class="bg-white p-6 rounded-lg shadow-sm border space-y-4">
-            <h3 class="font-semibold text-lg text-gray-900">How payment by {{ config('domains.domain') }} works</h3>
-            <ul class="list-decimal list-inside text-sm text-gray-700 space-y-2">
-                <li>
-                    <span class="font-sm font-semibold">Your guest pays</span> through
-                    {{ config('domains.domain') }} with more options like PayPal, WeChat Pay and AliPay.
-                </li>
-                <li>
-                    <span class="font-sm font-semibold">We facilitate your guest’s payment</span> You don’t have to
-                    deal with fraud, chargebacks or invalid cards.
-                </li>
-                <li>
-                    <span class="font-sm font-semibold">{{ config('domains.domain') }} sends payouts to you.</span>
-                    You’ll receive a bank transfer by the 15th of each month that covers all bookings with a
-                    check-out in the previous month.
-                </li>
-            </ul>
-        </div>
-
-        <!-- Continue Button -->
-        <div class="flex justify-between items-center pt-4">
-            <button @click="window.location.href =`/partner-homes-edit/${propertyId}?propertyType=single&uploaded=true&rooms=true`"
-                class="flex items-center border border-[#3CC0E9] rounded text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12">
-                ←
-            </button>
-            <button @click="submitStep1()"
-                class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition ">
-                Continue
-            </button>
-        </div>
-    </div>
-</template>
+    </template>
 
 
     <!-- Step X - Invoicing -->
     <template x-if="step === 2">
-         <div class="px-4 py-8 mt-6 w-full max-w-2xl mx-auto lg:ml-24 space-y-6">
+        <div class="px-4 py-8 mt-6 w-full max-w-2xl mx-auto lg:ml-24 space-y-6">
 
-        <!-- Heading -->
-        <h2 class="text-3xl font-bold text-gray-800">Invoicing</h2>
+            <!-- Heading -->
+            <h2 class="text-3xl font-bold text-gray-800">Invoicing</h2>
 
-        <!-- Invoicing Options -->
-        <div class="bg-white p-6 rounded-lg shadow-sm border space-y-4 text-sm text-gray-700">
-            
-<!-- Invoice Name Section -->
-<div>
-    <h3 class="font-semibold text-gray-900 mb-2">What name should be on the Invoice?</h3>
-    <div class="space-y-4">
-        <label class="flex items-center space-x-2">
-            <input type="radio" name="invoice_name" value="user" x-model="formData.invoice_name" class="form-radio text-sky-600">
-            <span>{{ auth()->user()->name }}</span>
-        </label>
-        <label class="flex items-center space-x-2">
-            <input type="radio" name="invoice_name" value="property" x-model="formData.invoice_name" class="form-radio text-sky-600">
-            <span>My Property</span>
-        </label>
-        <label class="flex items-center space-x-2">
-            <input type="radio" name="invoice_name" value="other" x-model="formData.invoice_name" class="form-radio text-sky-600">
-            <span>Legal company name (please specify)</span>
-        </label>
+            <!-- Invoicing Options -->
+            <div class="bg-white p-6 rounded-lg shadow-sm border space-y-4 text-sm text-gray-700">
 
-        <!-- Show input field for legal company name if 'other' is selected -->
-        <div x-show="formData.invoice_name === 'other'" class="mt-4 space-y-2">
-            <label class="block font-semibold text-gray-800">Legal company name</label>
-            <input type="text" x-model="formData.legal_company_name"  class="w-full border px-4 py-2 rounded" />
-            <!-- Hidden field to include in form submission -->
-            <input type="hidden" name="legal_company_name" :value="formData.legal_company_name">
-        </div>
-    </div>
-</div>
-
-
-            <template x-if="formData.invoice_name === 'user' || formData.invoice_name === 'other'">
-                <!-- Same Address Section -->
+                <!-- Invoice Name Section -->
                 <div>
-                    <hr class="my-4">
-                    <h3 class="font-semibold text-gray-900 mb-2">Does this recipient have the same address as your property?</h3>
-                    <div class="space-y-2">
+                    <h3 class="font-semibold text-gray-900 mb-2">What name should be on the Invoice?</h3>
+                    <div class="space-y-4">
                         <label class="flex items-center space-x-2">
-                            <input type="radio" name="same_address" value="yes" x-model="formData.same_address" class="form-radio text-sky-600">
-                            <span>Yes</span>
+                            <input type="radio" name="invoice_name" value="user" x-model="formData.invoice_name" class="form-radio text-sky-600">
+                            <span>{{ auth()->user()->name }}</span>
                         </label>
                         <label class="flex items-center space-x-2">
-                            <input type="radio" name="same_address" value="no" x-model="formData.same_address" class="form-radio text-sky-600">
-                            <span>No</span>
+                            <input type="radio" name="invoice_name" value="property" x-model="formData.invoice_name" class="form-radio text-sky-600">
+                            <span>My Property</span>
                         </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="radio" name="invoice_name" value="other" x-model="formData.invoice_name" class="form-radio text-sky-600">
+                            <span>Legal company name (please specify)</span>
+                        </label>
+
+                        <!-- Show input field for legal company name if 'other' is selected -->
+                        <div x-show="formData.invoice_name === 'other'" class="mt-4 space-y-2">
+                            <label class="block font-semibold text-gray-800">Legal company name</label>
+                            <input type="text" x-model="formData.legal_company_name" class="w-full border px-4 py-2 rounded" />
+                            <!-- Hidden field to include in form submission -->
+                            <input type="hidden" name="legal_company_name" :value="formData.legal_company_name">
+                        </div>
                     </div>
-
-                    <!-- Address Fields if "No" is selected -->
-                    <div class="mt-4 space-y-4" x-show="formData.same_address === 'no'">
-                        <p class="font-medium text-gray-800 mb-1">Please provide invoice recipient’s address</p>
-    <!-- Country/region (disabled, from backend later) -->
-    <div>
-        <label class="block font-medium text-gray-800 mb-1">Country/region</label>
-        <input type="text" value="Sri Lanka" disabled
-            class="w-full border px-4 py-2 rounded bg-gray-100 text-gray-500 cursor-not-allowed" />
-    </div>
-
-    <!-- Street Address -->
-    <div>
-        <label class="block font-medium text-gray-800 mb-1">Street Address</label>
-        <input type="text" placeholder="Street Address" class="w-full border px-4 py-2 rounded" />
-    </div>
-
-    <!-- City -->
-    <div>
-        <label class="block font-medium text-gray-800 mb-1">City</label>
-        <input type="text" placeholder="City" class="w-full border px-4 py-2 rounded" />
-    </div>
-
-    <!-- Address line 1 -->
-    <div>
-        <label class="block font-medium text-gray-800 mb-1">Address line 1</label>
-        <input type="text" placeholder="Address line 1" class="w-full border px-4 py-2 rounded" />
-    </div>
-
-    <!-- Postcode -->
-    <div>
-        <label class="block font-medium text-gray-800 mb-1">Postcode</label>
-        <input type="text" placeholder="Postcode" class="w-full border px-4 py-2 rounded" />
-    </div>
-</div>
-
                 </div>
-            </template>
-        </div>
 
-        <!-- Navigation Buttons -->
-        <div class="flex justify-between pt-4">
-            <button @click="step--"
-                class="flex items-center border border-[#3CC0E9] rounded text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12">
-                ←
-            </button>
-            <button @click="submitStep2()"
-                class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition ">
-                Continue
-            </button>
-        </div>
 
-    </div>
+                <template x-if="formData.invoice_name === 'user' || formData.invoice_name === 'other'">
+                    <!-- Same Address Section -->
+                    <div>
+                        <hr class="my-4">
+                        <h3 class="font-semibold text-gray-900 mb-2">Does this recipient have the same address as your property?</h3>
+                        <div class="space-y-2">
+                            <label class="flex items-center space-x-2">
+                                <input type="radio" name="same_address" value="yes" x-model="formData.same_address" class="form-radio text-sky-600">
+                                <span>Yes</span>
+                            </label>
+                            <label class="flex items-center space-x-2">
+                                <input type="radio" name="same_address" value="no" x-model="formData.same_address" class="form-radio text-sky-600">
+                                <span>No</span>
+                            </label>
+                        </div>
+
+                        <!-- Address Fields if "No" is selected -->
+                        <div class="mt-4 space-y-4" x-show="formData.same_address === 'no'">
+                            <p class="font-medium text-gray-800 mb-1">Please provide invoice recipient’s address</p>
+                            <!-- Country/region (disabled, from backend later) -->
+                            <div>
+                                <label class="block font-medium text-gray-800 mb-1">Country/region</label>
+                                <input type="text" value="Sri Lanka" disabled
+                                    class="w-full border px-4 py-2 rounded bg-gray-100 text-gray-500 cursor-not-allowed" />
+                            </div>
+
+                            <!-- Street Address -->
+                            <div>
+                                <label class="block font-medium text-gray-800 mb-1">Street Address</label>
+                                <input type="text" placeholder="Street Address" class="w-full border px-4 py-2 rounded" />
+                            </div>
+
+                            <!-- City -->
+                            <div>
+                                <label class="block font-medium text-gray-800 mb-1">City</label>
+                                <input type="text" placeholder="City" class="w-full border px-4 py-2 rounded" />
+                            </div>
+
+                            <!-- Address line 1 -->
+                            <div>
+                                <label class="block font-medium text-gray-800 mb-1">Address line 1</label>
+                                <input type="text" placeholder="Address line 1" class="w-full border px-4 py-2 rounded" />
+                            </div>
+
+                            <!-- Postcode -->
+                            <div>
+                                <label class="block font-medium text-gray-800 mb-1">Postcode</label>
+                                <input type="text" placeholder="Postcode" class="w-full border px-4 py-2 rounded" />
+                            </div>
+                        </div>
+
+                    </div>
+                </template>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="flex justify-between pt-4">
+                <button @click="step--"
+                    class="flex items-center border border-[#3CC0E9] rounded text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12">
+                    ←
+                </button>
+                <button @click="submitStep2()"
+                    class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition ">
+                    Continue
+                </button>
+            </div>
+
+        </div>
     </template>
 
 
