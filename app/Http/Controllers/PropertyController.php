@@ -1507,6 +1507,10 @@ class PropertyController extends Controller
     {
         $property = Property::findOrFail($propertyId);
         $accommodation_type = Accommodation::where('property_id', $propertyId)->first()->ownership_type;
+
+        if (!$accommodation_type) {
+            return redirect()->back()->with('error', 'Accommodation type not found for this property.');
+        }
         return view('partner.partner-homes-complete-registration', compact('propertyId', 'accommodation_type'));
     }
 

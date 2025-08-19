@@ -105,6 +105,15 @@
             return;
         }
 
+        if(paymentDetails!== 'true' || rooms !== 'true' || uploaded !== 'true' || details !== 'true') {
+            console.warn('One or more required steps are not completed. Complete all steps before proceeding.');
+            completeRegistrationBtn.disabled = true;
+            completeRegistrationBtn.classList.add('cursor-not-allowed', 'opacity-50');
+            completeRegistrationBtn.innerText = 'Complete all steps to proceed';
+        } else {
+            completeRegistrationBtn.disabled = false;
+            completeRegistrationBtn.classList.remove('cursor-not-allowed', 'opacity-50');
+        }
 
 
         completeRegistrationBtn.addEventListener('click', () => {
