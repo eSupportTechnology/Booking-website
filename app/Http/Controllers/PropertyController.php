@@ -52,6 +52,7 @@ use App\Models\Language;
 use App\Models\RoomType;
 use App\DTOs\SaveFacilitiesDTO;
 use App\Models\Amenity;
+use App\Models\CancellationPolicy;
 use Faker\Provider\ar_EG\Address;
 
 class PropertyController extends Controller
@@ -1651,7 +1652,7 @@ class PropertyController extends Controller
 
     public function showPaymentPage($property = null)
     {
-        \Log::info('showPaymentPage called', [
+        Log::info('showPaymentPage called', [
             'property_parameter' => $property,
             'request_url' => request()->url(),
             'request_path' => request()->path()
@@ -2000,5 +2001,18 @@ class PropertyController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
+    }
+
+    public function saveCancelPolicy(Request $request, $propertyId)
+    {
+        $data = $request->validate([
+            'free_cancellation_days' => 'required|integer|in:1,5,14,30',
+            'protection_enabled' => 'required|boolean',
+        ]);
+        \App\Models\CancellationPolicy::updateOrCreate(
+            ['property_id' => $propertyId],
+            $data
+        );
+        return redirect()->back()->with('success', 'Cancellation policy saved!');
     }
 }

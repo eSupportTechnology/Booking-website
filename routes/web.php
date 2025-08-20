@@ -933,3 +933,4 @@ Route::post('/partner/property/{property}/step1-data', [PropertyController::clas
 Route::get('/partner/get-latest-property', [PropertyDataController::class, 'getLatestProperty'])->name('partner.get.latest.property');
 Route::post('/partner/property/upload-photos', [PropertyController::class, 'uploadPhotos'])->name('partner.property.upload-photos');
 Route::get('/partner/multiple-apartment-3', [PropertyController::class, 'showMultipleApartmentForm3'])->name('partner.multiple.apartment.3');
+Route::post('/partner/apartment/pricing/cancel-policies/{property}', [PropertyController::class, 'saveCancelPolicy'])->name('partner.apartment.pricing.cancel-policies.save');
