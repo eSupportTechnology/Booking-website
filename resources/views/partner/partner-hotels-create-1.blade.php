@@ -4,14 +4,14 @@
 
 
 @section('content')
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-   
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
 
 <div x-data="stepForm()">
 
-   
+
     <!-- Progress Bar -->
     <div class="w-full bg-gray-200 h-2">
         <div class="bg-[#3CC0E9] h-2 transition-all duration-500" :style="'width:' + (step * 100 / 8) + '%'"></div>
@@ -28,7 +28,7 @@
                 <div class="bg-white p-6 rounded-lg shadow">
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         <!-- Limit subcategories shown unless showMore is true -->
-                         
+
                         <template x-for="(subcategory, index) in showMore ? subcategories : subcategories.slice(0, 6)"
                             :key="subcategory.id">
                             <div @click="selectedBox = subcategory.id,subtypeName = subcategory.name"
@@ -37,7 +37,7 @@
                                 <div>
                                     <h3 class="font-semibold text-gray-900 mb-2" x-text="subcategory.name"></h3>
                                     <p class="text-sm text-gray-700"
-                                    x-text="subcategoryDescriptions[subcategory.id] || 'Choose this type'"></p>
+                                        x-text="subcategoryDescriptions[subcategory.id] || 'Choose this type'"></p>
                                 </div>
                                 <div class="absolute top-2 right-2" x-show="selectedBox === subcategory.id">
                                     <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -304,7 +304,7 @@
                                 </p>
                                 <div class="flex justify-between mt-6">
                                     <!-- Back Button (Left) -->
-                                    <button type="button" @click="step > 1 ? step-- : step"
+                                    <button type="button" @click="step > 2 ? step -= 2 : step = 1"
                                         :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
                                         class="border border-[#3CC0E9]  text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
                                         ←
@@ -417,7 +417,7 @@
                                     class="w-full border rounded px-4 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-200" />
                                 <p class="text-xs text-gray-500 mt-1">This name will be seen by guests when they search for a place to stay.</p>
                             </div>
-                            
+
                             <hr class="my-6" />
 
                             <!-- Star Rating -->
@@ -508,16 +508,17 @@
                                         <div class="mt-2">
                                             <h3 class="text-gray-700 font-semibold mb-2">Select property type(s)</h3>
                                             <div class="grid grid-cols-1 sm:grid-cols-1 gap-2 text-sm text-gray-700">
-                                                <div
-                                                    class="grid grid-cols-1 sm:grid-cols-1 gap-2 text-sm text-gray-700">
+                                                <div x-data="{ selectedAmenities: JSON.parse(localStorage.getItem('selectedAmenities')) || [] }"
+                                                    x-init="$watch('selectedAmenities', val => localStorage.setItem('selectedAmenities', JSON.stringify(val)))">
+                                                    
                                                     @foreach ($amenities as $amenity)
                                                         <label class="flex items-center space-x-2">
-                                                            <input type="checkbox" name="amenities[]"
-                                                                value="{{ $amenity['id'] }}" class="text-blue-500" />
+                                                            <input type="checkbox" name="amenities[]" value="{{ $amenity['id'] }}" x-model="selectedAmenities" />
                                                             <span>{{ $amenity['name'] }}</span>
                                                         </label>
                                                     @endforeach
                                                 </div>
+
                                             </div>
                                         </div>
                                     </div>
@@ -584,7 +585,7 @@
             <template x-if="step === 9">
                 <form @submit.prevent="submitStep9">
                     <div>
-                        <div  x-data="{
+                        <div x-data="{
                                         servesBreakfast: false,
                                         breakfastIncluded: '',
                                         selectedBreakfasts: [],
@@ -592,6 +593,53 @@
                                         breakfastOptions: ['Continental', 'Full English', 'Buffet', 'Vegetarian', 'Vegan', 'Gluten-free'],
                                         parking: 'no',
                                         parkingCost: '',
+                                        reservationNeeded: '',
+                                        parkingLocation: '',
+                                        parkingType: '',
+                                        
+                                        init() {
+                                            // Load data from localStorage (will be empty on page load due to script above)
+                                            const saved = localStorage.getItem('servicesFormData');
+                                            if (saved) {
+                                                const data = JSON.parse(saved);
+                                                this.servesBreakfast = data.servesBreakfast || false;
+                                                this.breakfastIncluded = data.breakfastIncluded || '';
+                                                this.selectedBreakfasts = data.selectedBreakfasts || [];
+                                                this.breakfastPrice = data.breakfastPrice || '';
+                                                this.parking = data.parking || 'no';
+                                                this.parkingCost = data.parkingCost || '';
+                                                this.reservationNeeded = data.reservationNeeded || '';
+                                                this.parkingLocation = data.parkingLocation || '';
+                                                this.parkingType = data.parkingType || '';
+                                            }
+                                            
+                                            // Watch for changes and save to localStorage
+                                            this.$watch('servesBreakfast', () => this.saveToStorage());
+                                            this.$watch('breakfastIncluded', () => this.saveToStorage());
+                                            this.$watch('selectedBreakfasts', () => this.saveToStorage());
+                                            this.$watch('breakfastPrice', () => this.saveToStorage());
+                                            this.$watch('parking', () => this.saveToStorage());
+                                            this.$watch('parkingCost', () => this.saveToStorage());
+                                            this.$watch('reservationNeeded', () => this.saveToStorage());
+                                            this.$watch('parkingLocation', () => this.saveToStorage());
+                                            this.$watch('parkingType', () => this.saveToStorage());
+                                        },
+                                        
+                                        saveToStorage() {
+                                            const data = {
+                                                servesBreakfast: this.servesBreakfast,
+                                                breakfastIncluded: this.breakfastIncluded,
+                                                selectedBreakfasts: this.selectedBreakfasts,
+                                                breakfastPrice: this.breakfastPrice,
+                                                parking: this.parking,
+                                                parkingCost: this.parkingCost,
+                                                reservationNeeded: this.reservationNeeded,
+                                                parkingLocation: this.parkingLocation,
+                                                parkingType: this.parkingType
+                                            };
+                                            localStorage.setItem('servicesFormData', JSON.stringify(data));
+                                        },
+                                        
                                         toggleBreakfastOption(option) {
                                             const index = this.selectedBreakfasts.indexOf(option);
                                             if (index > -1) {
@@ -599,6 +647,12 @@
                                             } else {
                                                 this.selectedBreakfasts.push(option);
                                             }
+                                        },
+                                        
+                                        clearBreakfastData() {
+                                            this.breakfastIncluded = '';
+                                            this.selectedBreakfasts = [];
+                                            this.breakfastPrice = '';
                                         }
                                     }">
                             <div class="container mx-auto px-4 py-4 max-w-6xl mb-8">
@@ -618,11 +672,11 @@
                                         <p class="text-gray-700 mb-2 font-bold text-base">Do you serve guests breakfast?</p>
                                         <div class="space-y-2">
                                             <label class="flex items-center cursor-pointer">
-                                                <input type="radio" name="breakfast" x-model="servesBreakfast" value="yes" class="mr-2" />
+                                                <input type="radio" name="serve_breakfast" x-model="servesBreakfast" value="yes" class="mr-2" />
                                                 <span>Yes</span>
                                             </label>
                                             <label class="flex items-center cursor-pointer">
-                                                <input type="radio" name="breakfast" x-model="servesBreakfast" value="no" class="mr-2"
+                                                <input type="radio" name="serve_breakfast" x-model="servesBreakfast" value="no" class="mr-2"
                                                     @click="breakfastIncluded=''; selectedBreakfasts=[]; breakfastPrice=''" />
                                                 <span>No</span>
                                             </label>
@@ -675,15 +729,15 @@
                                         <p class="text-gray-700 mb-2 font-bold">Is parking available to guests?</p>
                                         <div class="space-y-2 mb-4">
                                             <label class="flex items-center cursor-pointer">
-                                                <input type="radio" name="parking" value="free" x-model="parking" class="mr-2" />
+                                                <input type="radio" name="parking_available" value="free" x-model="parking" class="mr-2" />
                                                 <span>Yes, free</span>
                                             </label>
                                             <label class="flex items-center cursor-pointer">
-                                                <input type="radio" name="parking" value="paid" x-model="parking" class="mr-2" />
+                                                <input type="radio" name="parking_available" value="paid" x-model="parking" class="mr-2" />
                                                 <span>Yes, paid</span>
                                             </label>
                                             <label class="flex items-center cursor-pointer">
-                                                <input type="radio" name="parking" value="no" x-model="parking" class="mr-2" />
+                                                <input type="radio" name="parking_available" value="no" x-model="parking" class="mr-2" />
                                                 <span>No</span>
                                             </label>
                                         </div>
@@ -693,11 +747,11 @@
                                                 <p class="text-gray-700 font-semibold mb-1">Do they need to reserve a parking spot?</p>
                                                 <div class="space-y-2">
                                                     <label class="flex items-center">
-                                                        <input type="radio" name="reservation_needed" value="yes" class="mr-2" />
+                                                        <input type="radio" name="reservation_needed" x-model="reservationNeeded" value="yes" class="mr-2" />
                                                         <span>Reservation needed</span>
                                                     </label>
                                                     <label class="flex items-center">
-                                                        <input type="radio" name="reservation_needed" value="no" class="mr-2" />
+                                                        <input type="radio" name="reservation_needed" x-model="reservationNeeded" value="no" class="mr-2" />
                                                         <span>No reservation needed</span>
                                                     </label>
                                                 </div>
@@ -707,11 +761,11 @@
                                                 <p class="text-gray-700 font-semibold mb-1">Where is the parking located?</p>
                                                 <div class="space-y-2">
                                                     <label class="flex items-center">
-                                                        <input type="radio" name="location" value="on_site" class="mr-2" />
+                                                        <input type="radio" name="parking_location" x-model="parkingLocation" value="on_site" class="mr-2" />
                                                         <span>On site</span>
                                                     </label>
                                                     <label class="flex items-center">
-                                                        <input type="radio" name="location" value="off_site" class="mr-2" />
+                                                        <input type="radio" name="parking_location" x-model="parkingLocation" value="off_site" class="mr-2" />
                                                         <span>Off site</span>
                                                     </label>
                                                 </div>
@@ -721,11 +775,11 @@
                                                 <p class="text-gray-700 font-semibold mb-1">What type of parking is it?</p>
                                                 <div class="space-y-2">
                                                     <label class="flex items-center">
-                                                        <input type="radio" name="type" value="private" class="mr-2" />
+                                                        <input type="radio" name="parking_type" x-model="parkingType" value="private" class="mr-2" />
                                                         <span>Private</span>
                                                     </label>
                                                     <label class="flex items-center">
-                                                        <input type="radio" name="type" value="public" class="mr-2" />
+                                                        <input type="radio" name="parking_type" x-model="parkingType" value="public" class="mr-2" />
                                                         <span>Public</span>
                                                     </label>
                                                 </div>
@@ -770,7 +824,8 @@
                             <div class="bg-white shadow-md rounded-lg p-6 mb-8">
                                 <h3 class="text-lg  mb-4 font-bold">Select languages
                                 </h3>
-                                <div class="space-y-2">
+                                <div class="space-y-2" x-data="{ selectedLanguages: JSON.parse(localStorage.getItem('selectedLanguages')) || [] }"
+                                                    x-init="$watch('selectedLanguages', val => localStorage.setItem('selectedLanguages', JSON.stringify(val)))">
                                     @php
                                     $initialLanguages = $languages->take(6);
                                     $additionalLanguages = $languages->slice(6);
@@ -779,7 +834,7 @@
                                     <label class="flex items-center cursor-pointer">
                                         <input type="checkbox"
                                             class="mr-2"
-                                            :value="'{{ $lang['id'] }}'" />
+                                            :value="'{{ $lang['id'] }}'" x-model="selectedLanguages" />
                                         <span>{{ $lang['name'] }}</span>
                                     </label>
                                     @endforeach
@@ -852,96 +907,96 @@
 
                         </div>
 
-                            <script>
-                                function selectLanguage(element) {
-                                    const input = document.getElementById("languageInput");
-                                    const selectedContainer = document.getElementById("selectedAdditionalLanguages");
-                                    const langName = element.textContent.trim();
-                                    const langId = element.dataset.id;
+                        <script>
+                            function selectLanguage(element) {
+                                const input = document.getElementById("languageInput");
+                                const selectedContainer = document.getElementById("selectedAdditionalLanguages");
+                                const langName = element.textContent.trim();
+                                const langId = element.dataset.id;
 
-                                    // Prevent duplicate
-                                    if (document.getElementById(`lang-${langId}`)) {
-                                        input.value = '';
-                                        hideDropdown();
-                                        return;
-                                    }
+                                // Prevent duplicate
+                                if (document.getElementById(`lang-${langId}`)) {
+                                    input.value = '';
+                                    hideDropdown();
+                                    return;
+                                }
 
-                                    // Create checkbox dynamically
-                                    const label = document.createElement('label');
-                                    label.className = 'flex items-center cursor-pointer';
-                                    label.id = `lang-${langId}`;
-                                    label.innerHTML = `
+                                // Create checkbox dynamically
+                                const label = document.createElement('label');
+                                label.className = 'flex items-center cursor-pointer';
+                                label.id = `lang-${langId}`;
+                                label.innerHTML = `
                                             <input type="checkbox" class="mr-2" name="languages[]" value="${langId}" checked />
                                             <span>${langName}</span>
                                         `;
 
-                                    selectedContainer.appendChild(label);
+                                selectedContainer.appendChild(label);
 
-                                    // Clear input and close dropdown
-                                    input.value = '';
+                                // Clear input and close dropdown
+                                input.value = '';
+                                hideDropdown();
+                            }
+
+                            function toggleAdditionalLanguages() {
+                                const section = document.getElementById("additionalLanguagesSection");
+                                section.classList.toggle("hidden");
+                                if (!section.classList.contains("hidden")) {
+                                    document.getElementById("languageInput").focus();
+                                    showDropdown();
+                                } else {
                                     hideDropdown();
                                 }
+                            }
 
-                                function toggleAdditionalLanguages() {
-                                    const section = document.getElementById("additionalLanguagesSection");
-                                    section.classList.toggle("hidden");
-                                    if (!section.classList.contains("hidden")) {
-                                        document.getElementById("languageInput").focus();
-                                        showDropdown();
+                            function toggleDropdown() {
+                                const dropdown = document.getElementById("languageDropdown");
+                                dropdown.classList.toggle("hidden");
+                            }
+
+                            function showDropdown() {
+                                document.getElementById("languageDropdown").classList.remove("hidden");
+                            }
+
+                            function hideDropdown() {
+                                document.getElementById("languageDropdown").classList.add("hidden");
+                            }
+
+                            function filterDropdown() {
+                                const input = document.getElementById("languageInput");
+                                const filter = input.value.toLowerCase();
+                                const ul = document.getElementById("languageDropdown");
+                                const items = ul.getElementsByTagName("li");
+                                ul.classList.remove("hidden");
+                                let visibleCount = 0;
+                                for (let i = 0; i < items.length; i++) {
+                                    const txtValue = items[i].textContent || items[i].innerText;
+                                    if (txtValue.toLowerCase().indexOf(filter) > -1) {
+                                        items[i].style.display = "";
+                                        visibleCount++;
                                     } else {
-                                        hideDropdown();
+                                        items[i].style.display = "none";
                                     }
                                 }
-
-                                function toggleDropdown() {
-                                    const dropdown = document.getElementById("languageDropdown");
-                                    dropdown.classList.toggle("hidden");
+                                // Hide dropdown if no matches
+                                if (visibleCount === 0) {
+                                    ul.classList.add("hidden");
                                 }
+                            }
 
-                                function showDropdown() {
-                                    document.getElementById("languageDropdown").classList.remove("hidden");
+
+
+                            // Close dropdown when clicking outside
+                            document.addEventListener("click", function(event) {
+                                const dropdown = document.getElementById("languageDropdown");
+                                const input = document.getElementById("languageInput");
+                                const container = document.getElementById("additionalLanguagesSection");
+                                if (
+                                    !container.contains(event.target)
+                                ) {
+                                    hideDropdown();
                                 }
-
-                                function hideDropdown() {
-                                    document.getElementById("languageDropdown").classList.add("hidden");
-                                }
-
-                                function filterDropdown() {
-                                    const input = document.getElementById("languageInput");
-                                    const filter = input.value.toLowerCase();
-                                    const ul = document.getElementById("languageDropdown");
-                                    const items = ul.getElementsByTagName("li");
-                                    ul.classList.remove("hidden");
-                                    let visibleCount = 0;
-                                    for (let i = 0; i < items.length; i++) {
-                                        const txtValue = items[i].textContent || items[i].innerText;
-                                        if (txtValue.toLowerCase().indexOf(filter) > -1) {
-                                            items[i].style.display = "";
-                                            visibleCount++;
-                                        } else {
-                                            items[i].style.display = "none";
-                                        }
-                                    }
-                                    // Hide dropdown if no matches
-                                    if (visibleCount === 0) {
-                                        ul.classList.add("hidden");
-                                    }
-                                }
-
-
-
-                                // Close dropdown when clicking outside
-                                document.addEventListener("click", function(event) {
-                                    const dropdown = document.getElementById("languageDropdown");
-                                    const input = document.getElementById("languageInput");
-                                    const container = document.getElementById("additionalLanguagesSection");
-                                    if (
-                                        !container.contains(event.target)
-                                    ) {
-                                        hideDropdown();
-                                    }
-                                });
-                            </script>
+                            });
+                        </script>
                     </div>
                 </form>
             </template>
@@ -955,7 +1010,7 @@
                         <div class="flex flex-col md:flex-row gap-6">
                             <!-- Left Section -->
                             <div class="bg-white shadow-md rounded-lg p-6 w-full md:w-2/3">
-                                
+
                                 <!-- Check-in -->
                                 <div class="mt-6">
                                     <h3 class="text-base font-semibold mb-4">What are your check-in and check-out times?</h3>
@@ -1021,7 +1076,7 @@
                                             <span>No</span>
                                         </label>
                                     </div>
-                                    
+
                                     <!-- Conditional Field -->
                                     <div x-show="property.pets_allowed === 'yes' || property.pets_allowed === 'upon_request'" x-transition class="mt-4 space-y-2">
                                         <label class="block text-base font-semibold mb-1">Are there additional charges for pets?</label>
@@ -1084,51 +1139,51 @@
                                         </label>
                                     </div>
                                 </div>
-                    
-                                </div>
 
-                                <!-- Right Section: Tip Box -->
-                                <div x-data="{ show: true }" x-show="show"
-                                    class="bg-white shadow-md rounded-lg p-6 w-full h-[300px] md:w-1/3 relative">
-                                    <div class="flex justify-between items-start">
-                                        <div class="flex items-center space-x-2">
-                                            <img src="{{ asset('assets/system-uicons_lightbulb-on.svg') }}"
-                                                alt="Help" class="w-6 h-6 md:w-7 md:h-7 cursor-pointer" />
-                                            <h3 class="text-gray-800 font-semibold text-base">What if my house rules
-                                                change?</h3>
-                                        </div>
-                                        <button @click="show = false" class="text-gray-400 hover:text-gray-600">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"
-                                                viewBox="0 0 20 20" fill="currentColor">
-                                                <path fill-rule="evenodd"
-                                                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                                    clip-rule="evenodd" />
-                                            </svg>
-                                        </button>
+                            </div>
+
+                            <!-- Right Section: Tip Box -->
+                            <div x-data="{ show: true }" x-show="show"
+                                class="bg-white shadow-md rounded-lg p-6 w-full h-[300px] md:w-1/3 relative">
+                                <div class="flex justify-between items-start">
+                                    <div class="flex items-center space-x-2">
+                                        <img src="{{ asset('assets/system-uicons_lightbulb-on.svg') }}"
+                                            alt="Help" class="w-6 h-6 md:w-7 md:h-7 cursor-pointer" />
+                                        <h3 class="text-gray-800 font-semibold text-base">What if my house rules
+                                            change?</h3>
                                     </div>
-                                    <p class="text-sm text-gray-700 mt-3">
-                                        You can easily customise these house rules later and additional house rules can
-                                        be set on
-                                        the Policies page of the extranet after you complete registration.
-                                    </p>
+                                    <button @click="show = false" class="text-gray-400 hover:text-gray-600">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"
+                                            viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd"
+                                                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                                clip-rule="evenodd" />
+                                        </svg>
+                                    </button>
                                 </div>
+                                <p class="text-sm text-gray-700 mt-3">
+                                    You can easily customise these house rules later and additional house rules can
+                                    be set on
+                                    the Policies page of the extranet after you complete registration.
+                                </p>
                             </div>
+                        </div>
 
-                            <!-- Navigation Buttons -->
-                            <div class="mt-8 flex justify-between">
-                                <button type="button" @click="step > 1 ? step-- : step"
-                                    :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-100'"
-                                    class="border border-[#3CC0E9] text-blue-600  hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
-                                    ←
-                                </button>
-                                
-                                <button type="button" @click="submitStep11()" class="bg-blue-500 text-white py-2 px-4 rounded">
-                                    Continue
-                                </button>
-                            </div>
+                        <!-- Navigation Buttons -->
+                        <div class="mt-8 flex justify-between">
+                            <button type="button" @click="step > 1 ? step-- : step"
+                                :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-100'"
+                                class="border border-[#3CC0E9] text-blue-600  hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                                ←
+                            </button>
+
+                            <button type="button" @click="submitStep11()" class="bg-blue-500 text-white py-2 px-4 rounded">
+                                Continue
+                            </button>
                         </div>
                     </div>
                 </div>
+
             </template>
 
             <template x-if="step === 12">
@@ -1207,8 +1262,8 @@
                                 </div>
                                 <a :href="propertyId ? '{{ route('partner.hotels.payment.with.property', ':property') }}'.replace(':property', propertyId) : '#'"
                                     :class="propertyId ? 'bg-sky-400 border border-sky-400 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-sky-500' : 'bg-gray-300 border border-gray-300 text-gray-500 text-sm font-semibold px-4 py-2 rounded cursor-not-allowed'"
-                                    :onclick="!propertyId ? 'event.preventDefault(); alert(\"Please complete the previous steps first.\")' : ''"
-                                    @click="console.log('Property ID in link:', propertyId)">
+                                    :onclick="!propertyId ? 'event.preventDefault(); alert(\" Please complete the previous steps first.\")' : ''"
+                                    @click=" console.log('Property ID in link:', propertyId)">
                                     Add final details
                                 </a>
                             </div>
@@ -1234,6 +1289,13 @@
 
     <!-- Alpine Component Script -->
     <script>
+        const pathParts = window.location.pathname.split('/');
+        const URLpropertyId = pathParts[4] || null;
+        console.log('Property ID from URL:', URLpropertyId);
+    localStorage.removeItem('selectedAmenities');
+        localStorage.removeItem('servicesFormData');
+        localStorage.removeItem('selectedLanguages');
+
         function stepForm() {
             return {
                 pets_fees: '',
@@ -1298,18 +1360,19 @@
 
                     try {
                         const response = await fetch('{{ route('partner.property.step1.store_new') }}', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                'Accept': 'application/json',
-                            },
-                            body: JSON.stringify({
-                                apartment_type: this.selectedBox,
-                                subcategory_id: this.selectedBox,
-                                category_id: '{{ $categoryId }}'
-                            })
-                        });
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                    'Accept': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                    apartment_type: this.selectedBox,
+                                    subcategory_id: this.selectedBox,
+                                    category_id: '{{ $categoryId }}',
+                                    property_id: URLpropertyId ? URLpropertyId : null,
+                                })
+                            });
 
                         const data = await response.json();
                         this.propertyId = data.property_id;
@@ -1321,7 +1384,8 @@
                             position: 'top-end',
                             icon: 'success',
                             title: 'Property created successfully!',
-                            showConfirmButton: false
+                            showConfirmButton: false,
+                            timer: 3000
                         });
                     } catch (error) {
                         Swal.fire({
@@ -1329,7 +1393,8 @@
                             position: 'top-end',
                             icon: 'error',
                             title: 'Failed to create property',
-                            showConfirmButton: false
+                            showConfirmButton: false,
+                            timer: 3000
                         })
                     }
                 },
@@ -1351,7 +1416,8 @@
                             position: 'top-end',
                             icon: 'error',
                             title: 'Missing required fields',
-                            showConfirmButton: false
+                            showConfirmButton: false,
+                            timer: 3000
                         });
                         return;
                     }
@@ -1372,31 +1438,34 @@
 
                         const data = await response.json();
                         this.step = 3;
-                        if(response.ok) {
+                        if (response.ok) {
                             Swal.fire({
                                 toast: true,
                                 position: 'top-end',
                                 icon: 'success',
                                 title: 'Address type saved successfully!',
-                                showConfirmButton: false
+                                showConfirmButton: false,
+                                timer: 3000
                             });
-                        }else {
+                        } else {
                             Swal.fire({
                                 toast: true,
                                 position: 'top-end',
                                 icon: 'error',
                                 title: 'Failed to save address type',
-                                showConfirmButton: false
+                                showConfirmButton: false,
+                                timer: 3000
                             });
                         }
-                      
+
                     } catch (error) {
                         Swal.fire({
                             toast: true,
                             position: 'top-end',
                             icon: 'error',
                             title: 'Failed to save address type',
-                            showConfirmButton: false
+                            showConfirmButton: false,
+                            timer: 3000
                         });
                     }
                 },
@@ -1408,7 +1477,8 @@
                             position: 'top-end',
                             icon: 'error',
                             title: 'Missing required fields',
-                            showConfirmButton: false
+                            showConfirmButton: false,
+                            timer: 3000
                         });
                         return;
                     }
@@ -1434,7 +1504,8 @@
                             position: 'top-end',
                             icon: 'error',
                             title: 'Failed to save address type',
-                            showConfirmButton: false
+                            showConfirmButton: false,
+                            timer: 3000
                         });
                     }
                 },
@@ -1460,7 +1531,8 @@
                                 position: 'top-end',
                                 icon: 'success',
                                 title: 'Property name saved successfully!',
-                                showConfirmButton: false
+                                showConfirmButton: false,
+                                timer: 3000
                             })
                             this.step = 5; // Move to next step if needed
                         } else {
@@ -1469,7 +1541,8 @@
                                 position: 'top-end',
                                 icon: 'error',
                                 title: 'Failed to save step 4',
-                                showConfirmButton: false
+                                showConfirmButton: false,
+                                timer: 3000
                             });
                         }
                     } catch (error) {
@@ -1496,15 +1569,17 @@
                                 position: 'top-end',
                                 icon: 'success',
                                 title: 'Property address saved successfully!',
-                                showConfirmButton: false
+                                showConfirmButton: false,
+                                timer: 3000
                             })
-                        }else {
+                        } else {
                             Swal.fire({
                                 toast: true,
                                 position: 'top-end',
                                 icon: 'error',
                                 title: 'Failed to save address',
-                                showConfirmButton: false
+                                showConfirmButton: false,
+                                timer: 3000
                             });
                         }
 
@@ -1537,15 +1612,17 @@
                                 position: 'top-end',
                                 icon: 'success',
                                 title: 'Property channel saved successfully!',
-                                showConfirmButton: false
+                                showConfirmButton: false,
+                                timer: 3000
                             })
-                        }else {
+                        } else {
                             Swal.fire({
                                 toast: true,
                                 position: 'top-end',
                                 icon: 'error',
                                 title: 'Failed to save channel',
-                                showConfirmButton: false
+                                showConfirmButton: false,
+                                timer: 3000
                             });
                         }
 
@@ -1570,7 +1647,8 @@
                                 position: 'top-end',
                                 icon: 'error',
                                 title: 'Please fill in all required fields',
-                                showConfirmButton: false
+                                showConfirmButton: false,
+                                timer: 3000
                             });
                             return;
                         }
@@ -1591,16 +1669,17 @@
 
                         if (response.ok) {
                             const data = await response.json();
-                            
+
                             if (data.success) {
                                 Swal.fire({
                                     toast: true,
                                     position: 'top-end',
                                     icon: 'success',
                                     title: 'Property details saved successfully!',
-                                    showConfirmButton: false
+                                    showConfirmButton: false,
+                                    timer: 3000
                                 });
-                                
+
                                 this.step = 8; // Go to next step
                             } else {
                                 throw new Error(data.message || 'Failed to save property details');
@@ -1615,7 +1694,8 @@
                             position: 'top-end',
                             icon: 'error',
                             title: error.message || 'Failed to save property details',
-                            showConfirmButton: false
+                            showConfirmButton: false,
+                            timer: 3000
                         });
                     }
                 },
@@ -1649,7 +1729,8 @@
                                 position: 'top-end',
                                 icon: 'success',
                                 title: 'Amenities saved successfully!',
-                                showConfirmButton: false
+                                showConfirmButton: false,
+                                timer: 3000
                             });
                             this.step = 9; // go to next step
                         } else {
@@ -1658,7 +1739,8 @@
                                 position: 'top-end',
                                 icon: 'error',
                                 title: 'Failed to save amenities',
-                                showConfirmButton: false
+                                showConfirmButton: false,
+                                timer: 3000
                             });
                         }
                     } catch (e) {
@@ -1668,8 +1750,8 @@
 
                 async submitStep9() {
                     try {
-                        const response = await fetch(`/partner/property/${this.propertyId}/additional-details`, {
-                            method: 'PATCH',
+                        const response = await fetch(`/partner/property/${this.propertyId}/services`, {
+                            method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
@@ -1684,15 +1766,17 @@
                                 position: 'top-end',
                                 icon: 'success',
                                 title: 'Service details saved successfully!',
-                                showConfirmButton: false
+                                showConfirmButton: false,
+                                timer: 3000
                             });
-                        }else {
+                        } else {
                             Swal.fire({
                                 toast: true,
                                 position: 'top-end',
                                 icon: 'error',
                                 title: 'Failed to save service details',
-                                showConfirmButton: false
+                                showConfirmButton: false,
+                                timer: 3000
                             });
                         }
 
@@ -1711,7 +1795,7 @@
                 async submitStep10() {
                     try {
                         const selectedLanguages = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
-                                                    .map(input => input.value);
+                            .map(input => input.value);
 
                         console.log('Selected languages:', selectedLanguages);
 
@@ -1736,7 +1820,8 @@
                                 position: 'top-end',
                                 icon: 'success',
                                 title: 'Languages saved successfully!',
-                                showConfirmButton: false
+                                showConfirmButton: false,
+                                timer: 3000
                             });
                             this.step++; // go to next step
                         } else {
@@ -1745,7 +1830,8 @@
                                 position: 'top-end',
                                 icon: 'error',
                                 title: result.message || 'Failed to save languages',
-                                showConfirmButton: false
+                                showConfirmButton: false,
+                                timer: 3000
                             });
                         }
                     } catch (e) {
@@ -1774,7 +1860,7 @@
                     try {
                         // Debug logging
                         this.logPropertyState();
-                        
+
                         // Validate required fields
                         if (!this.property.pets_allowed || !['yes', 'no', 'upon_request'].includes(this.property.pets_allowed)) {
                             console.log('Pet policy validation failed. Value:', this.property.pets_allowed);
@@ -1783,7 +1869,8 @@
                                 position: 'top-end',
                                 icon: 'error',
                                 title: 'Please select a valid pet policy (Yes, No, or Upon request).',
-                                showConfirmButton: false
+                                showConfirmButton: false,
+                                timer: 3000
                             });
                             return;
                         }
@@ -1794,7 +1881,8 @@
                                 position: 'top-end',
                                 icon: 'error',
                                 title: 'Please select whether children are allowed.',
-                                showConfirmButton: false
+                                showConfirmButton: false,
+                                timer: 3000
                             });
                             return;
                         }
@@ -1805,7 +1893,8 @@
                                 position: 'top-end',
                                 icon: 'error',
                                 title: 'Please select whether smoking is allowed.',
-                                showConfirmButton: false
+                                showConfirmButton: false,
+                                timer: 3000
                             });
                             return;
                         }
@@ -1816,7 +1905,8 @@
                                 position: 'top-end',
                                 icon: 'error',
                                 title: 'Please select whether parties are allowed.',
-                                showConfirmButton: false
+                                showConfirmButton: false,
+                                timer: 3000
                             });
                             return;
                         }
@@ -1827,13 +1917,14 @@
                                 position: 'top-end',
                                 icon: 'error',
                                 title: 'Please select a cancellation policy.',
-                                showConfirmButton: false
+                                showConfirmButton: false,
+                                timer: 3000
                             });
                             return;
                         }
 
                         // Validate pet fees if pets are allowed
-                        if ((this.property.pets_allowed === 'yes' || this.property.pets_allowed === 'upon_request') && 
+                        if ((this.property.pets_allowed === 'yes' || this.property.pets_allowed === 'upon_request') &&
                             (!this.property.pets_fees || !['free', 'charges_apply'].includes(this.property.pets_fees))) {
                             console.log('Pet fees validation failed. Value:', this.property.pets_fees);
                             Swal.fire({
@@ -1841,7 +1932,8 @@
                                 position: 'top-end',
                                 icon: 'error',
                                 title: 'Please select whether there are additional charges for pets.',
-                                showConfirmButton: false
+                                showConfirmButton: false,
+                                timer: 3000
                             });
                             return;
                         }
@@ -1881,9 +1973,10 @@
                                 position: 'top-end',
                                 icon: 'success',
                                 title: 'House rules saved successfully!',
-                                showConfirmButton: false
+                                showConfirmButton: false,
+                                timer: 3000
                             });
-                              setTimeout(() => {
+                            setTimeout(() => {
                                 window.location.href = `/partner-homes-edit/${this.propertyId}?propertyType=single`;
                             })
                         } else {
@@ -1892,7 +1985,8 @@
                                 position: 'top-end',
                                 icon: 'error',
                                 title: data.message || 'Failed to save house rules',
-                                showConfirmButton: false
+                                showConfirmButton: false,
+                                timer: 3000
                             });
                         }
                     } catch (error) {
@@ -1902,7 +1996,8 @@
                             position: 'top-end',
                             icon: 'error',
                             title: 'An error occurred while saving house rules',
-                            showConfirmButton: false
+                            showConfirmButton: false,
+                            timer: 3000
                         });
                     }
                 },
@@ -1964,5 +2059,5 @@
         }
     </script>
 
-    </div>
-    @endsection
+</div>
+@endsection
