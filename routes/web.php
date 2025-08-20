@@ -729,6 +729,15 @@ Route::middleware(\App\Http\Middleware\EnsurePartner::class)->group(function () 
 
 Route::post('/property/{property}/update-title', [PropertyController::class, 'updateTitle'])->name('partner.property.update-title');
 
+Route::patch('/partner/property/{property}/additional-details', [PropertyController::class, 'updateAdditionalDetails'])
+    ->name('partner.property.update.additional-details.partner');
+
+Route::post('/partner/property/{property}/pricing', [PropertyController::class, 'savePricing'])
+    ->name('partner.property.save.pricing');
+
+Route::post('/partner/property/{property}/rate-plans', [PropertyController::class, 'saveRatePlans'])
+    ->name('partner.property.save.rate-plans');
+
 
 
 
