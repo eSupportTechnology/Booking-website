@@ -109,5 +109,10 @@ class Property extends Model
         return $this->hasOne(PropertyAvailabilitySetting::class);
     }
 
+    public function cancellationPolicy()
+    {
+        return $this->hasOne(CancellationPolicy::class);
+    }
+
 
 }
