@@ -426,6 +426,10 @@ Route::get('/partner-hotels-non-refundable-rate', function () {
     return view('frontend.partner-hotels-non-refundable');
 })->name('partner.hotels.non.refundable.rate');
 
+Route::get('/carrentals/Addcar', function () {
+    return view('frontend.carrentals-addcar');
+})->name('partner.carrentals.addcar');
+
 
 // Route::get('/partner-hotels-complete-registration', function () {
 //     return view('frontend.partner-hotels-complete-registration');
