@@ -34,22 +34,11 @@ class Property extends Model
         'property_wizard_step',
         'pricing_wizard_step',
     ];
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
-
-    public function partner()
-    {
-        return $this->belongsTo(User::class, 'user_id');
-    }
-
     public function photos()
     {
         return $this->hasMany(PropertyPhoto::class);
     }
-
+    
     public function files()
     {
         return $this->hasMany(File::class);
@@ -120,18 +109,10 @@ class Property extends Model
         return $this->hasOne(PropertyAvailabilitySetting::class);
     }
 
-    public function reviews()
+    public function cancellationPolicy()
     {
-        return $this->hasMany(Review::class);
+        return $this->hasOne(CancellationPolicy::class);
     }
 
-    public function hostReviews()
-    {
-        return $this->hasMany(HostReview::class);
-    }
 
-    public function category()
-    {
-        return $this->belongsTo(PropertyCategory::class, 'category_id');
-    }
 }
