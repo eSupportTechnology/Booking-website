@@ -45,6 +45,9 @@ Route::get('/login', [LoginController::class, 'show'])->name('login');
 Route::post('change-language', [LanguageController::class, 'change'])->name('lang.change');
 
 Route::prefix('customer')->group(function () {
+    // Search route
+    Route::get('/search', [\App\Http\Controllers\Customer\SearchController::class, 'search'])->name('customer.search');
+
     Route::get('/login', [CustomerAuthController::class, 'showLoginForm'])->name('customer.login');
     Route::post('/customer/request-otp', [CustomerAuthController::class, 'requestOtp'])->name('customer.request.otp');
     Route::post('/customer/verify-otp', [CustomerAuthController::class, 'verifyOtp'])->name('customer.verify.otp');
@@ -225,9 +228,6 @@ Route::get('/partner-homes-create-1', function () {
 Route::get('/partner-hotels-rooms', function () {
     return view('frontend.partner-hotels-rooms');
 })->name('partner.hotels.rooms');
-
-
-
 
 Route::get('/partner-hotels-create-2', function () {
     return view('frontend.partner-hotels-create-2');
@@ -475,11 +475,6 @@ Route::post('/taxis/store-step2', [AirportTaxiController::class, 'storeStep2'])-
 Route::get('/partner-hotels-multiple', function () {
     return view('frontend.partner-hotels-multiple');
 })->name('partner.hotels.multiple');
-
-// Route::get('/email-verify', function () {
-//     return view('frontend.verify-email');
-// })->name('email.verify');
-
 
 Route::get('/airport-taxis', function () {
     return view('frontend.airport-taxi');
