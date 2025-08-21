@@ -849,6 +849,9 @@ Route::get('/single-hotels', function () {
     return view('frontend.single-hotels');
 })->name('single-hotels');
 
+Route::get('/car-listing', function () {
+    return view('frontend.car-listing');
+})->name('car-listing');
 
 
 
