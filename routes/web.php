@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Controllers\AccommodationController;
+use App\Http\Controllers\CarReservations\CarRentalController;
 
 Route::post('/accommodation/save-verification/{propertyId}', [AccommodationController::class, 'saveVerification']);
 
@@ -426,9 +427,7 @@ Route::get('/partner-hotels-non-refundable-rate', function () {
     return view('frontend.partner-hotels-non-refundable');
 })->name('partner.hotels.non.refundable.rate');
 
-Route::get('/carrentals/Addcar', function () {
-    return view('frontend.carrentals-addcar');
-})->name('partner.carrentals.addcar');
+
 
 Route::get('/carrentals/registration', function () {
     return view('frontend.carrental-registration');
@@ -463,6 +462,9 @@ Route::get('/single-car', function () {
 Route::get('/airport-taxi/registration', function () {
     return view('frontend.airport-taxi-register');
 })->name('partner.airport.taxi.register');
+
+Route::get('/carrentals/Addcar', [CarRentalController::class, 'index'])->name('partner.carrentals.addcar');
+Route::post('/cars/register-step', [CarRentalController::class, 'registerStep']);
 
 
 // Route::get('/partner-hotels-complete-registration', function () {
@@ -920,3 +922,4 @@ Route::post('/partner/property/{property}/step1-data', [PropertyController::clas
 Route::get('/partner/get-latest-property', [PropertyDataController::class, 'getLatestProperty'])->name('partner.get.latest.property');
 Route::post('/partner/property/upload-photos', [PropertyController::class, 'uploadPhotos'])->name('partner.property.upload-photos');
 Route::get('/partner/multiple-apartment-3', [PropertyController::class, 'showMultipleApartmentForm3'])->name('partner.multiple.apartment.3');
+Route::post('/partner/apartment/pricing/cancel-policies/{property}', [PropertyController::class, 'saveCancelPolicy'])->name('partner.apartment.pricing.cancel-policies.save');
