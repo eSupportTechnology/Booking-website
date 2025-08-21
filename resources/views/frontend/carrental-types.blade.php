@@ -26,7 +26,7 @@
       List your cars and start earning from daily and long-term rentals.
     </p>
   </div>
-  <a href="{{ url('/partner/category/car-rental') }}" class="w-[70%] mt-4 mb-2">
+  <a href="{{ url('/carrentals/Addcar') }}" class="w-[70%] mt-4 mb-2">
     <button class="bg-[#3CC0E9] hover:bg-[#29ACD5] text-white px-4 py-2 rounded text-sm font-semibold w-full">
       List your Cars
     </button>
