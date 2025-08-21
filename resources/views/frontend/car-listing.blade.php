@@ -119,37 +119,34 @@
             Show on map
         </button>
     </div>
-  </div><br>
-
-
+  </div>
 
 <!-- Header with available cars -->
 <div class="max-w-2xl mx-auto px-0 py-0">
     <!-- Car categories aligned to right, floating higher -->
-    <div class="flex flex-wrap gap-12 -mt-20 justify-start md:justify-end md:-translate-x-8">
+    <div class="flex gap-12 -mt-20 justify-end">
         <div class="flex flex-col items-center text-center text-sm">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTt1U9d4v4Z5svuEZbRqeRyMxuR-Weq1xDELw&s" alt="Medium car" class="w-8 h-8 mb-1">
+            <img src="https://cdn-icons-png.flaticon.com/512/743/743131.png" alt="Medium car" class="w-8 h-8 mb-1">
             <span>Medium car</span>
         </div>
         <div class="flex flex-col items-center text-center text-sm">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTt1U9d4v4Z5svuEZbRqeRyMxuR-Weq1xDELw&s" alt="Small car" class="w-8 h-8 mb-1">
+            <img src="https://cdn-icons-png.flaticon.com/512/743/743140.png" alt="Small car" class="w-8 h-8 mb-1">
             <span>Small car</span>
         </div>
         <div class="flex flex-col items-center text-center text-sm">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTt1U9d4v4Z5svuEZbRqeRyMxuR-Weq1xDELw&s" alt="Large car" class="w-8 h-8 mb-1">
+            <img src="https://cdn-icons-png.flaticon.com/512/743/743155.png" alt="Large car" class="w-8 h-8 mb-1">
             <span>Large car</span>
         </div>
         <div class="flex flex-col items-center text-center text-sm">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTt1U9d4v4Z5svuEZbRqeRyMxuR-Weq1xDELw&s" alt="SUVs" class="w-8 h-8 mb-1">
+            <img src="https://cdn-icons-png.flaticon.com/512/743/743121.png" alt="SUVs" class="w-8 h-8 mb-1">
             <span>SUVs</span>
         </div>
         <div class="flex flex-col items-center text-center text-sm">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTeN_xfDJS_u1IgLRonK_g8Y6cOy5p6_u1qOA&s" alt="People carrier" class="w-8 h-8 mb-1">
+            <img src="https://cdn-icons-png.flaticon.com/512/743/743138.png" alt="People carrier" class="w-8 h-8 mb-1">
             <span>People carrier</span>
         </div>
     </div>
 </div>
-
 
 
 
