@@ -430,6 +430,31 @@ Route::get('/carrentals/Addcar', function () {
     return view('frontend.carrentals-addcar');
 })->name('partner.carrentals.addcar');
 
+Route::get('/carrentals/registration', function () {
+    return view('frontend.carrental-registration');
+})->name('partner.carrentals.registration');
+
+Route::get('/carrentals/account/create', function () {
+    return view('frontend.carrental-account-create');
+})->name('partner.carrentals.account.create');
+
+
+Route::get('/carrentals/create/password', function () {
+    return view('frontend.carrental-create-password');
+})->name('partner.carrentals.create.password');
+
+Route::get('/carrentals/enter/password', function () {
+    return view('frontend.carrental-enter-password');
+})->name('partner.carrentals.enter.password');
+
+Route::get('/carrentals/signin', function () {
+    return view('frontend.carrental-signin');
+})->name('partner.carrentals.signin');
+
+Route::get('/carrentals/types', function () {
+    return view('frontend.carrental-types');
+})->name('partner.carrentals.types');
+
 
 // Route::get('/partner-hotels-complete-registration', function () {
 //     return view('frontend.partner-hotels-complete-registration');
