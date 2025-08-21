@@ -265,6 +265,22 @@ Route::get('/partner/alternative/Single/Campsite/room', function () {
     return view('frontend.partner-alternative-campsite-room');
 })->name('partner.alternative.single.campsite.room');
 
+Route::get('/partner/alternative/Single/Campsite/cancel-policies', function () {
+    return view('frontend.partner-alternative-campsite-cancel-policies');
+})->name('partner.alternative.single.campsite.cancel-policies');
+
+Route::get('/partner/alternative/Single/Campsite/cancel-policies', function () {
+    return view('frontend.partner-alternative-campsite-cancel-policies');
+})->name('partner.alternative.single.campsite.cancel-policies');
+
+Route::get('/partner/alternative/form', function () {
+    return view('frontend.partner-alternative-form-1');
+})->name('partner.alternative.form');
+
+Route::get('/partner/alternative/single/boat', function () {
+    return view('frontend.partner-alternative-single-boat');
+})->name('partner.alternative.single.boat');
+
 Route::get('/partner-apartment-multiple', function () {
     return view('frontend.partner-multiple-apartment');
 })->name('partner.apartment.multiple');
@@ -358,11 +374,11 @@ Route::get('/airport-taxis', function () {
 // Partner Registration Routes (Public - No Auth Required)
 Route::prefix('partner')->group(function () {
     // Partner Login Routes
-    Route::get('/login', [LoginController::class, 'show'])->name('partner.login');
+    Route::get('/login', [LoginController::class, 'show'])->middleware('App\Http\Middleware\PreventBackHistory')->name('partner.login');
     Route::post('/login', [LoginController::class, 'login'])->name('partner.login.submit');
-    Route::get('/sign-in', [LoginController::class, 'showEmailForm'])->name('partner.login.email');
+    Route::get('/sign-in', [LoginController::class, 'showEmailForm'])->middleware('App\Http\Middleware\PreventBackHistory')->name('partner.login.email');
     Route::post('/sign-in', [LoginController::class, 'storeEmail']);
-    Route::get('/password', [LoginController::class, 'showPasswordForm'])->name('partner.login.password');
+    Route::get('/password', [LoginController::class, 'showPasswordForm'])->middleware('App\Http\Middleware\PreventBackHistory')->name('partner.login.password');
     Route::post('/password', [LoginController::class, 'loginWithPassword']);
 
     // Show email registration form
@@ -420,7 +436,32 @@ Route::prefix('partner')->group(function () {
 });
 
 // Partner Routes (Protected - Auth Required)
-Route::prefix('partner')->middleware('auth')->group(function () {
+Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddleware::class])->group(function () {
+    // Partner Dashboard
+    Route::get('/dashboard', [\App\Http\Controllers\Partner\DashboardController::class, 'index'])->name('partner.dashboard');
+
+    // Properties
+    Route::get('/properties', [\App\Http\Controllers\Partner\PropertyController::class, 'index'])->name('partner.properties');
+    Route::get('/bookings', [\App\Http\Controllers\Partner\PropertyController::class, 'bookings'])->name('partner.bookings');
+
+    // Property Listings
+    Route::get('/properties/apartments', [\App\Http\Controllers\Partner\PropertyListingController::class, 'apartments'])->name('partner.properties.apartments');
+    Route::get('/properties/homes', [\App\Http\Controllers\Partner\PropertyListingController::class, 'homes'])->name('partner.properties.homes');
+    Route::get('/properties/hotels', [\App\Http\Controllers\Partner\PropertyListingController::class, 'hotels'])->name('partner.properties.hotels');
+    Route::get('/properties/alternative-places', [\App\Http\Controllers\Partner\PropertyListingController::class, 'alternativePlaces'])->name('partner.properties.alternative-places');
+    Route::get('/properties/views/{id}', [\App\Http\Controllers\Partner\PropertyListingController::class, 'view'])->name('partner.properties.views');
+
+    // Earnings
+    Route::get('/earnings', [\App\Http\Controllers\Partner\EarningsController::class, 'index'])->name('partner.earnings');
+
+    // Messages
+    Route::get('/messages', [\App\Http\Controllers\Partner\MessageController::class, 'index'])->name('partner.messages');
+
+    // Reviews
+    Route::get('/reviews', [\App\Http\Controllers\Partner\ReviewController::class, 'index'])->name('partner.reviews');
+
+    // Settings
+    Route::get('/settings', [\App\Http\Controllers\Partner\SettingsController::class, 'index'])->name('partner.settings');
     Route::get('/property_category', [PropertyController::class, 'categories'])->name('partner.property.category');
     Route::get('/property_subcategory/{id}/{property_id?}', [PropertyController::class, 'subcategories'])->name('partner.property.subcategory');
     Route::get('/hotels/rooms/{id}', [PropertyController::class, 'rooms'])->name('partner.hotels.room');

@@ -14,8 +14,16 @@ use App\DTOs\Partner\PartnerLoginPasswordDTO;
 class LoginController extends Controller
 
 {
+    public function __construct()
+    {
+        $this->middleware('guest')->except('logout');
+    }
+
     public function showEmailForm()
     {
+        if (Auth::check()) {
+            return redirect()->route('partner.dashboard');
+        }
         return view('partner.partner-sign-in');
     }
 
@@ -34,6 +42,10 @@ class LoginController extends Controller
 
     public function showPasswordForm()
     {
+        if (Auth::check()) {
+            return redirect()->route('partner.dashboard');
+        }
+        
         if (!session('partner_login_email')) {
             return redirect()->route('partner.login.email')->withErrors([
                 'email' => 'Please enter your email first.',
@@ -69,7 +81,7 @@ class LoginController extends Controller
             if ($loginAction->execute($email, $dto->password)) {
                 session()->forget('partner_login_email');
                 $user = Auth::user();
-                return redirect()->route('partner.list-your-property')->with('success', 'Welcome back, ' . ($user ? $user->name : 'Partner') . '!');
+                return redirect()->route('partner.dashboard')->with('success', 'Welcome back, ' . ($user ? $user->name : 'Partner') . '!');
             }
 
             return back()->with('error', 'Invalid password. Please try again.')->withInput();
@@ -80,7 +92,10 @@ class LoginController extends Controller
 
     public function show()
     {
-        return view('partner.partner-sign-in'); // or your custom login view
+        if (Auth::check()) {
+            return redirect()->route('partner.dashboard');
+        }
+        return view('partner.partner-sign-in');
     }
 
     public function logout(Request $request)
@@ -90,6 +105,6 @@ class LoginController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/list-your-property')->with('success', 'Logged out successfully.');
+        return redirect()->route('partner.login')->with('success', 'Logged out successfully.');
     }
 }
