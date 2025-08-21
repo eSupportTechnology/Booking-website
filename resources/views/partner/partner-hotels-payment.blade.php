@@ -93,10 +93,7 @@
                 showToast('An error occurred while saving invoicing data', 'error');
             });
         },
-
-        submitStep3() {
-    console.log('step 3 called');
-
+submitStep3() {
     if (!this.propertyId) {
         showToast('Property ID is required. Please go back and complete the previous steps first.', 'error');
         return;
@@ -112,82 +109,80 @@
         return;
     }
 
-   for (let owner of this.formData.owners) {
-    if (!owner.firstName || !owner.lastName || !owner.dob) {
-        showToast('Please fill in all owner details (First Name, Last Name, Date of Birth)', 'error');
-        return;
+    for (let owner of this.formData.owners) {
+        if (!owner.firstName || !owner.lastName || !owner.dob) {
+            showToast('Please fill in all owner details (First Name, Last Name, Date of Birth)', 'error');
+            return;
+        }
+        const dobPattern = /^\d{4}-\d{2}-\d{2}$/;
+        if (!dobPattern.test(owner.dob)) {
+            showToast(`Invalid DOB format for ${owner.firstName} ${owner.lastName}. Use YYYY-MM-DD.`, 'error');
+            return;
+        }
+        const dob = new Date(owner.dob);
+        const today = new Date();
+        const age = today.getFullYear() - dob.getFullYear();
+        const monthDiff = today.getMonth() - dob.getMonth();
+        const dayDiff = today.getDate() - dob.getDate();
+        const adjustedAge = (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) ? age - 1 : age;
+        if (isNaN(dob.getTime())) {
+            showToast(`Invalid date provided for ${owner.firstName} ${owner.lastName}.`, 'error');
+            return;
+        }
+        if (adjustedAge < 18) {
+            showToast(`Age must be at least 18 years old.`, 'error');
+            return;
+        }
     }
 
-    const dobPattern = /^\d{4}-\d{2}-\d{2}$/;
-    if (!dobPattern.test(owner.dob)) {
-        showToast(`Invalid DOB format for ${owner.firstName} ${owner.lastName}. Use YYYY-MM-DD.`, 'error');
-        return;
+    // Prepare request data to match DTO
+    let requestData = {
+        property_id: this.propertyId,
+        ownership_type: this.formData.ownership_type
+    };
+
+    if (this.formData.ownership_type === 'individual') {
+        requestData.individuals = this.formData.owners.map(owner => ({
+            first_name: owner.firstName,
+            last_name: owner.lastName,
+            date_of_birth: owner.dob,
+            alt_names: owner.altNames || []
+        }));
+    } else if (this.formData.ownership_type === 'business') {
+        requestData.ownership_type = 'business_entity'; // match DTO
+        requestData.business_entity = {
+            business_name: this.formData.legal_company_name || '',
+            trading_name: '', // Add trading name field if you collect it
+            address: this.formData.business_address || '',
+            zip_code: this.formData.business_zip_code || '',
+            city: this.formData.business_city || '',
+            country: this.formData.business_country || ''
+        };
+        requestData.individuals = this.formData.owners.map(owner => ({
+            first_name: owner.firstName,
+            last_name: owner.lastName,
+            date_of_birth: owner.dob,
+            alt_names: owner.altNames || []
+        }));
     }
 
-    const dob = new Date(owner.dob);
-    const today = new Date();
-    const age = today.getFullYear() - dob.getFullYear();
-    const monthDiff = today.getMonth() - dob.getMonth();
-    const dayDiff = today.getDate() - dob.getDate();
-
-    const adjustedAge = (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) ? age - 1 : age;
-
-    if (isNaN(dob.getTime())) {
-        showToast(`Invalid date provided for ${owner.firstName} ${owner.lastName}.`, 'error');
-        return;
-    }
-
-    if (adjustedAge < 18) {
-        showToast(`Age must be at least 18 years old.`, 'error');
-        return;
-    }
-}
-
-
-    // Step 1: Call existing save-verification endpoint
-    fetch('/partner/property/save-verification/' + this.propertyId, {
+    fetch('/accommodation/save-verification/' + this.propertyId, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
         },
-        body: JSON.stringify({
-            ownership_type: this.formData.ownership_type,
-            owners: this.formData.owners,
-            legal_company_name: this.formData.legal_company_name
-        })
+        body: JSON.stringify(requestData)
     })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            // Step 2: Also save into accommodations / individuals / business_entities
-            return fetch('/accommodation/save-verification/' + this.propertyId, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
-                },
-                body: JSON.stringify({
-                    ownership_type: this.formData.ownership_type,
-                    owners: this.formData.owners,
-                    legal_company_name: this.formData.legal_company_name
-                })
-            });
-        } else {
-            throw new Error(data.message);
-        }
-    })
-    .then(response => {
-        if (response) return response.json();
-    })
-    .then(data2 => {
-        if (data2 && data2.success) {
             showToast('Verification information saved successfully!', 'success');
             setTimeout(() => {
                 this.step++;
             }, 1000);
-        } else if (data2) {
-            throw new Error(data2.message);
+        } else {
+            showToast('Error: ' + data.message, 'error');
         }
     })
     .catch(error => {
