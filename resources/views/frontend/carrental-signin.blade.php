@@ -12,7 +12,7 @@
             <div class="bg-white border border-gray-200 shadow-md rounded-md p-6 mt-8">
 
                 <h2 class="text-xl font-semibold mb-2" style="font-family: 'Noto Sans', sans-serif;">Sign in to manage
-                    your property</h2>
+                    your car</h2>
 
 
                 <form method="POST" action="#">
