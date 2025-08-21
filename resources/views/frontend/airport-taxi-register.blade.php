@@ -1,4 +1,4 @@
-@extends('partner.partner-layout')
+@extends('frontend.carrental-layout')
 
 @section('title', 'Add Car | ' . config('domains.app_name'))
 
