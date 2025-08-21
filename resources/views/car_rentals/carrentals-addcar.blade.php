@@ -162,7 +162,7 @@
 
     <!-- Step 3: Car Type Image Selection -->
     <template x-if="step === 3">
-        <div class="px-6 py-8 mt-6 w-full max-w-4xl mx-auto lg:ml-24 space-y-6 bg-white rounded-lg shadow border" x-data="{ selectedImage: '' }">
+        <div class="px-6 py-8 mt-6 w-full max-w-4xl mx-auto lg:ml-24 space-y-6 bg-white rounded-lg shadow border" >
             <h1 class="text-2xl font-bold mb-2">Select a demo image to represent the car for the listing</h1>
 
 
@@ -290,7 +290,7 @@
 
             <div class="flex justify-between items-center mt-6">
                 <button @click="step--" class="flex items-center border border-[#3CC0E9] rounded text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12">←</button>
-                <button @click="step++" class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition">Continue</button>
+                <button @click="submitStep()" class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition">Continue</button>
             </div>
         </div>
     </template>
@@ -373,6 +373,7 @@
                 mileage_type: '', 
                 fuel_type: '', 
             },
+            selectedImage : '',
             models: @json($car_models), // all models with brand_id
             get filteredModels() {
                 if (!this.car.brand) {
@@ -392,13 +393,14 @@
                         body: JSON.stringify({
                             step: this.step,
                             car: this.car,
-                            car_id: this.car_id? this.car_id : '1'
+                            car_id: this.car_id? this.car_id : '1',
+                            selectedImage:this.selectedImage ?this.selectedImage :null
                         })
                     });
                     let data = await response.json();
                     if (data.success) {
                         Swal.fire({
-                            title: "Success",
+                            title: data.message || "Step submitted successfully.",
                             icon: "success",
                             toast: true,
                             position: "top-end",

@@ -9,6 +9,7 @@ use App\Models\CarBrand;
 use App\Models\CarModel;
 use App\Models\CarType;
 use App\Models\Company;
+use App\Models\File;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
@@ -83,6 +84,22 @@ class CarRentalController extends Controller
                 return response()->json([
                     'success' => true,
                     'message' => 'Step 2 saved successfully'
+                ]);
+            } else if ($step == 3) {
+                $validated = $request->validate([
+                    'selectedImage' => 'required|string',
+                ]);
+
+                File::create([
+                    'file_type'     => 'image',
+                    'path'          => 'images/' . $validated['selectedImage'] . '.jpg', // stored path
+                    'property_type' => 'car',
+                    'car_id'        => $request->input('car_id'),
+                ]);
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Demo image saved successfully'
                 ]);
             }
 
