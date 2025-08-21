@@ -788,3 +788,9 @@ Route::get('/partner/get-latest-property', [PropertyDataController::class, 'getL
 Route::post('/partner/property/upload-photos', [PropertyController::class, 'uploadPhotos'])->name('partner.property.upload-photos');
 Route::get('/partner/multiple-apartment-3', [PropertyController::class, 'showMultipleApartmentForm3'])->name('partner.multiple.apartment.3');
 Route::post('/partner/apartment/pricing/cancel-policies/{property}', [PropertyController::class, 'saveCancelPolicy'])->name('partner.apartment.pricing.cancel-policies.save');
+Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+
+Route::post('/logout', function () {
+    Auth::logout();
+    return redirect('/')->with('success', 'You have been logged out.');
+})->name('logout');
