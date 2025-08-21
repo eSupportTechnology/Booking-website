@@ -11,7 +11,7 @@
 
             <div class="bg-white border border-gray-200 shadow-md rounded-md p-6 mt-8">
 
-                <h2 class="text-xl font-semibold mb-2" style="font-family: 'Noto Sans', sans-serif;">Create your 
+                <h2 class="text-xl font-semibold mb-2" style="font-family: 'Noto Sans', sans-serif;">Create your
                     account</h2>
                 <p class="text-gray-600 text-sm mb-6" style="font-family: 'Noto Sans', sans-serif;">Create an account to
                     list and manage your car.</p>
