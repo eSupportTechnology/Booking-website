@@ -455,6 +455,15 @@ Route::get('/carrentals/types', function () {
     return view('frontend.carrental-types');
 })->name('partner.carrentals.types');
 
+Route::get('/single-car', function () {
+    return view('frontend.single-car');
+})->name('partner.carrentals.single.car');
+
+
+Route::get('/airport-taxi/registration', function () {
+    return view('frontend.airport-taxi-register');
+})->name('partner.airport.taxi.register');
+
 
 // Route::get('/partner-hotels-complete-registration', function () {
 //     return view('frontend.partner-hotels-complete-registration');

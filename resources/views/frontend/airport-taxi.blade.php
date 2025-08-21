@@ -396,6 +396,45 @@ properties worldwide
     });
 </script>
 
+<section class="py-12 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Title -->
+            <h2 class="text-2xl font-semibold text-gray-800 mb-2">Register Your Airport Taxi Service</h2>
+
+
+            <!-- Offer Card -->
+            <div class="bg-white-50 p-2 rounded flex items-center justify-between border border-solid border-gray-300">
+                <!-- Text Content -->
+                <div class="ml-4">
+                    
+                    <p class="font-medium font-semibold" style="font-family: 'Noto Sans', sans-serif;"> Join our platform to showcase your airport taxis and connect with thousands of travelers searching for reliable rides.</p>
+                   <!-- Get Started Now Button -->
+                   <a href="/carrentals/account/create">
+                       <button class="text-white px-4 py-1 rounded mt-2 w-auto font-semibold" 
+                               style="font-family: 'Noto Sans', sans-serif; background-color:#3CC0E9;">
+                           Get Started Now  
+                       </button>
+                   </a>
+
+<!-- Already Registered Sign In Link -->
+<p class="mt-2 text-sm" style="font-family: 'Noto Sans', sans-serif;">
+  Already registered? 
+  <a href="/carrentals/signin" class="text-blue-600 hover:underline">
+    Sign In
+  </a>
+</p>
+
+                </div>
+
+
+
+
+                <!-- Image -->
+                <img src="{{ asset('images/taxi-airport.jpg') }}" alt="Offer Image" class="w-38 h-32 rounded ml-4">
+            </div>
+        </div>
+    </section>
+
 <section class="bg-white py-12">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 class="text-2xl font-bold text-center mb-12">Airport transfers made easy</h2>

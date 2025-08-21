@@ -238,7 +238,7 @@
 
 
                 <!-- Image -->
-                <img src="{{ asset('images/rental.jpg') }}" alt="Offer Image" class="w-36 h-32 rounded ml-4">
+                <img src="{{ asset('images/rental.jpg') }}" alt="Offer Image" class="w-38 h-32 rounded ml-4">
             </div>
         </div>
     </section>
