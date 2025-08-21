@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('frontend.partner-layout')
 
 @section('title', 'Partner Multiple Apartment')
 
@@ -6,17 +6,11 @@
     $amenities = $amenities ?? [];
 @endphp
 
-<script>
-    // Set languages data globally
-    window.languagesData = {{ Js::from($languages ?? []) }};
-</script>
-
 @section('content')
 <div x-data="{ 
     step: 1, 
     selectedBox: null,
     
-
     // Amenities
     selectedAmenities: [],
     // Facilities
@@ -40,7 +34,7 @@
     checkOutFrom: '08:00',
     checkOutUntil: '11:00',
     
-        // Host Profile
+    // Host Profile
     hostProfile: {
         about_property: '',
         about_host: '',
@@ -52,7 +46,7 @@
         host_name: ''
     },
     
-        // Pricing
+    // Pricing
     pricing: {
         booking_type: 'instant',
         price_per_night: '',
@@ -61,7 +55,7 @@
         discount_percent: ''
     },
     
-        // Address data
+    // Address data
     addressData: {
         address: 'Sri Lanka',
         apartment: 'aaa',
@@ -78,32 +72,8 @@
     toast: {
         show: false,
         message: '',
-        type: 'success', // success, error, warning, info
+        type: 'success',
         timeout: null
-    },
-    
-    // Toast methods
-    showToast(message, type = 'success', duration = 3000) {
-        this.toast.message = message;
-        this.toast.type = type;
-        this.toast.show = true;
-        
-        // Clear existing timeout
-        if (this.toast.timeout) {
-            clearTimeout(this.toast.timeout);
-        }
-        
-        // Auto hide after duration
-        this.toast.timeout = setTimeout(() => {
-            this.toast.show = false;
-        }, duration);
-    },
-    
-    hideToast() {
-        this.toast.show = false;
-        if (this.toast.timeout) {
-            clearTimeout(this.toast.timeout);
-        }
     },
     
     // Verification data
@@ -124,8 +94,71 @@
         owners: []
     },
     
-    // Methods
-    async savePropertyName() {
+    // Toast methods - keeping these simple ones in x-data
+    showToast(message, type = 'success', duration = 3000) {
+        this.toast.message = message;
+        this.toast.type = type;
+        this.toast.show = true;
+        
+        if (this.toast.timeout) {
+            clearTimeout(this.toast.timeout);
+        }
+        
+        this.toast.timeout = setTimeout(() => {
+            this.toast.show = false;
+        }, duration);
+    },
+    
+    hideToast() {
+        this.toast.show = false;
+        if (this.toast.timeout) {
+            clearTimeout(this.toast.timeout);
+        }
+    },
+    
+    async savePropertyName() { return await PropertyManager.savePropertyName(this); },
+    async saveBookingOption() { return await PropertyManager.saveBookingOption(this); },
+    async saveAddress() { return await PropertyManager.saveAddress(this); },
+    async saveLanguages() { return await LanguageManager.saveLanguages(this); },
+    async saveHostProfile() { return await PropertyManager.saveHostProfile(this); },
+    async savePricing() { return await PropertyManager.savePricing(this); },
+    async saveChannelManager() { return await PropertyManager.saveChannelManager(this); },
+    async saveAmenities() { return await PropertyManager.saveAmenities(this); },
+    async saveFacilities() { return await PropertyManager.saveFacilities(this); },
+    async savePartnerVerification() { return await VerificationManager.savePartnerVerification(this); },
+    
+    async loadFacilities() { return await DataLoader.loadFacilities(this); },
+    async loadServices() { return await DataLoader.loadServices(this); },
+    async loadLanguages() { return await LanguageManager.loadLanguages(this); },
+    async loadVerificationData() { return await DataLoader.loadVerificationData(this); },
+    
+    filterLanguages() { LanguageManager.filterLanguages(this); },
+    selectLanguage(languageId, languageName) { LanguageManager.selectLanguage(this, languageId, languageName); },
+    removeLanguage(languageId) { LanguageManager.removeLanguage(this, languageId); },
+    getLanguageName(languageId) { return LanguageManager.getLanguageName(this, languageId); },
+    getLanguageIdByName(languageName) { return LanguageManager.getLanguageIdByName(this, languageName); },
+    isLanguageSelected(languageId) { return LanguageManager.isLanguageSelected(this, languageId); },
+    toggleAdditionalLanguages() { LanguageManager.toggleAdditionalLanguages(this); },
+    
+    init() { StorageManager.initWatchers(this); },
+    clearWizardData() { StorageManager.clearWizardData(); },
+    completeWizard() { StorageManager.completeWizard(); },
+    debugLocalStorage() { StorageManager.debugLocalStorage(); }
+}" xmlns:x-bind="http://www.w3.org/1999/xlink">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Create Multiple Apartments</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<!-- Added script section with organized JavaScript modules -->
+<script>
+// Property Management Module
+const PropertyManager = {
+    async savePropertyName(alpineData) {
         try {
             const propertyId = @json($property->id ?? 'new');
             const propertyName = document.getElementById('property_name').value;
@@ -137,15 +170,13 @@
                     'Accept': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
                 },
-                body: JSON.stringify({
-                    title: propertyName
-                })
+                body: JSON.stringify({ title: propertyName })
             });
             
             if (response.ok) {
                 console.log('Property name saved successfully');
-                this.showToast('Property name saved successfully!', 'success');
-                this.step = Math.min(this.step + 1, 13);
+                alpineData.showToast('Property name saved successfully!', 'success');
+                alpineData.step = Math.min(alpineData.step + 1, 13);
             } else {
                 console.error('Failed to save property name');
                 const errorData = await response.json();
@@ -156,7 +187,7 @@
         }
     },
 
-    async saveBookingOption() {
+    async saveBookingOption(alpineData) {
         try {
             const propertyId = @json($property->id ?? 'new');
             const response = await fetch(`/partner/property/${propertyId}/pricing`, {
@@ -168,7 +199,7 @@
                 },
                 body: JSON.stringify({
                     property_id: propertyId,
-                    booking_type: this.bookingOption,
+                    booking_type: alpineData.bookingOption,
                     price_per_night: null,
                     currency: 'usd',
                     discount_enabled: false,
@@ -178,8 +209,8 @@
             
             if (response.ok) {
                 console.log('Booking option saved successfully');
-                this.showToast('Booking option saved successfully!', 'success');
-                this.step = Math.min(this.step + 1, 13);
+                alpineData.showToast('Booking option saved successfully!', 'success');
+                alpineData.step = Math.min(alpineData.step + 1, 13);
             } else {
                 console.error('Failed to save booking option');
                 const errorData = await response.json();
@@ -190,11 +221,7 @@
         }
     },
 
-    savePartnerVerification() {
-        savePartnerVerificationFromStep11(this);
-    },
-
-    async saveAddress() {
+    async saveAddress(alpineData) {
         try {
             const propertyId = @json($property->id ?? 'new');
             const response = await fetch(`/partner/property/${propertyId}`, {
@@ -205,66 +232,31 @@
                     'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
                 },
                 body: JSON.stringify({
-                    address: this.addressData.address,
-                    city: this.addressData.city,
-                    country: this.addressData.country,
-                    apartment: this.addressData.apartment,
-                    zipcode: this.addressData.postcode
+                    address: alpineData.addressData.address,
+                    city: alpineData.addressData.city,
+                    country: alpineData.addressData.country,
+                    apartment: alpineData.addressData.apartment,
+                    zipcode: alpineData.addressData.postcode
                 })
             });
             
             if (response.ok) {
                 const data = await response.json();
                 console.log('Address saved successfully:', data);
-                this.showToast('Address saved successfully!', 'success');
-                this.step = Math.min(this.step + 1, 13);
+                alpineData.showToast('Address saved successfully!', 'success');
+                alpineData.step = Math.min(alpineData.step + 1, 13);
             } else {
                 console.error('Failed to save address');
                 const errorData = await response.json();
-                this.showToast('Error: ' + (errorData.message || 'Failed to save address'), 'error');
+                alpineData.showToast('Error: ' + (errorData.message || 'Failed to save address'), 'error');
             }
         } catch (error) {
             console.error('Error saving address:', error);
-            this.showToast('An error occurred while saving the address.', 'error');
+            alpineData.showToast('An error occurred while saving the address.', 'error');
         }
     },
-    
-    async saveLanguages() {
-        // Check if any languages are selected
-        if (!this.selectedLanguages || this.selectedLanguages.length === 0) {
-            this.showToast('Please select at least one language before continuing.', 'warning');
-            return;
-        }
-        
-        try {
-            const propertyId = @json($property->id ?? 'new');
-            const response = await fetch(`/partner/property/${propertyId}/languages`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
-                },
-                body: JSON.stringify({
-                    languages: this.selectedLanguages
-                })
-            });
-            
-            if (response.ok) {
-                console.log('Languages saved successfully');
-                this.showToast('Languages saved successfully!', 'success');
-                this.step = Math.min(this.step + 1, 13);
-            } else {
-                console.error('Failed to save languages');
-            }
-        } catch (error) {
-            console.error('Error saving languages:', error);
-        }
-    },
-    
 
-    
-    async saveHostProfile() {
+    async saveHostProfile(alpineData) {
         try {
             const propertyId = @json($property->id ?? 'new');
             const response = await fetch(`/partner/property/${propertyId}/host-profile`, {
@@ -275,14 +267,14 @@
                     'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
                 },
                 body: JSON.stringify({
-                    ...this.hostProfile,
+                    ...alpineData.hostProfile,
                     property_id: propertyId
                 })
             });
             
             if (response.ok) {
                 console.log('Host profile saved successfully');
-                this.step = Math.min(this.step + 1, 13);
+                alpineData.step = Math.min(alpineData.step + 1, 13);
             } else {
                 console.error('Failed to save host profile');
                 const errorData = await response.json();
@@ -292,8 +284,8 @@
             console.error('Error saving host profile:', error);
         }
     },
-    
-    async savePricing() {
+
+    async savePricing(alpineData) {
         try {
             const propertyId = @json($property->id ?? 'new');
             const response = await fetch(`/partner/property/${propertyId}/pricing`, {
@@ -303,12 +295,12 @@
                     'Accept': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
                 },
-                body: JSON.stringify(this.pricing)
+                body: JSON.stringify(alpineData.pricing)
             });
             
             if (response.ok) {
                 console.log('Pricing saved successfully');
-                this.step = Math.min(this.step + 1, 13);
+                alpineData.step = Math.min(alpineData.step + 1, 13);
             } else {
                 console.error('Failed to save pricing');
             }
@@ -316,8 +308,8 @@
             console.error('Error saving pricing:', error);
         }
     },
-    
-    async saveChannelManager() {
+
+    async saveChannelManager(alpineData) {
         try {
             const propertyId = @json($property->id ?? 'new');
             const response = await fetch(`/partner/property/${propertyId}`, {
@@ -328,25 +320,25 @@
                     'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
                 },
                 body: JSON.stringify({
-                    channel_manager: this.channelManager
+                    channel_manager: alpineData.channelManager
                 })
             });
             
             if (response.ok) {
                 console.log('Channel manager saved successfully');
-                this.step = Math.min(this.step + 1, 13);
+                alpineData.step = Math.min(alpineData.step + 1, 13);
             } else {
                 console.error('Failed to save channel manager');
                 const errorData = await response.json();
-                this.showToast('Error: ' + (errorData.message || 'Failed to save channel manager'), 'error');
+                alpineData.showToast('Error: ' + (errorData.message || 'Failed to save channel manager'), 'error');
             }
         } catch (error) {
             console.error('Error saving channel manager:', error);
-            this.showToast('An error occurred while saving the channel manager.', 'error');
+            alpineData.showToast('An error occurred while saving the channel manager.', 'error');
         }
     },
-    
-    async saveAmenities() {
+
+    async saveAmenities(alpineData) {
         try {
             const propertyId = @json($property->id ?? 'new');
             const response = await fetch(`/partner/property/${propertyId}/amenities`, {
@@ -357,25 +349,25 @@
                     'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
                 },
                 body: JSON.stringify({
-                    amenities: this.selectedAmenities
+                    amenities: alpineData.selectedAmenities
                 })
             });
             
             if (response.ok) {
                 console.log('Amenities saved successfully');
-                this.step = Math.min(this.step + 1, 13);
+                alpineData.step = Math.min(alpineData.step + 1, 13);
             } else {
                 console.error('Failed to save amenities');
                 const errorData = await response.json();
-                this.showToast('Error: ' + (errorData.message || 'Failed to save amenities'), 'error');
+                alpineData.showToast('Error: ' + (errorData.message || 'Failed to save amenities'), 'error');
             }
         } catch (error) {
             console.error('Error saving amenities:', error);
-            this.showToast('An error occurred while saving the amenities.', 'error');
+            alpineData.showToast('An error occurred while saving the amenities.', 'error');
         }
     },
-    
-    async saveFacilities() {
+
+    async saveFacilities(alpineData) {
         try {
             const propertyId = @json($property->id ?? 'new');
             const response = await fetch(`/partner/property/${propertyId}/facilities`, {
@@ -386,76 +378,28 @@
                     'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
                 },
                 body: JSON.stringify({
-                    facilities: this.selectedFacilities
+                    facilities: alpineData.selectedFacilities
                 })
             });
             
             if (response.ok) {
                 console.log('Facilities saved successfully');
-                this.step = Math.min(this.step + 1, 13);
+                alpineData.step = Math.min(alpineData.step + 1, 13);
             } else {
                 console.error('Failed to save facilities');
                 const errorData = await response.json();
-                this.showToast('Error: ' + (errorData.message || 'Failed to save facilities'), 'error');
+                alpineData.showToast('Error: ' + (errorData.message || 'Failed to save facilities'), 'error');
             }
         } catch (error) {
             console.error('Error saving facilities:', error);
-            this.showToast('An error occurred while saving the facilities.', 'error');
+            alpineData.showToast('An error occurred while saving the facilities.', 'error');
         }
-    },
-    
-    async loadFacilities() {
-        try {
-            const propertyId = @json($property->id ?? 'new');
-            const response = await fetch(`/partner/property/${propertyId}/facilities`, {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
-                }
-            });
-            
-            if (response.ok) {
-                const data = await response.json();
-                if (data.success && data.facilities) {
-                    this.selectedFacilities = data.facilities;
-                    console.log('Facilities loaded successfully:', data.facilities);
-                }
-            } else {
-                console.error('Failed to load facilities');
-            }
-        } catch (error) {
-            console.error('Error loading facilities:', error);
-        }
-    },
+    }
+};
 
-    async loadServices() {
-        try {
-            const propertyId = @json($property->id ?? 'new');
-            const response = await fetch(`/partner/property/${propertyId}/services`, {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
-                }
-            });
-            
-            if (response.ok) {
-                const data = await response.json();
-                if (data.success && data.services) {
-                    // Update the services data in the form
-                    // This will need to be implemented based on the services structure
-                    console.log('Services loaded successfully:', data.services);
-                }
-            } else {
-                console.error('Failed to load services');
-            }
-        } catch (error) {
-            console.error('Error loading services:', error);
-        }
-    },
-
-    async loadLanguages() {
+// Language Management Module
+const LanguageManager = {
+    async loadLanguages(alpineData) {
         console.log('Loading languages...');
         try {
             const response = await fetch('/partner/languages', {
@@ -471,286 +415,234 @@
             if (response.ok) {
                 const data = await response.json();
                 console.log('Languages API response data:', data);
-                this.availableLanguages = data || [];
-                this.filteredLanguages = this.availableLanguages;
-                console.log('Languages loaded from database: ' + this.availableLanguages.length);
-                console.log('Available languages after loading:', this.availableLanguages);
-                
-                // Clear selected languages to prevent ID mismatches
-                this.selectedLanguages = [];
+                alpineData.availableLanguages = data || [];
+                alpineData.filteredLanguages = alpineData.availableLanguages;
+                console.log('Languages loaded from database: ' + alpineData.availableLanguages.length);
+                alpineData.selectedLanguages = [];
                 console.log('Cleared selected languages to prevent ID mismatches');
             } else {
                 console.log('Failed to load languages from database, using fallback');
-                console.log('Response not ok, status:', response.status);
-                // Use hardcoded languages as fallback
-                this.availableLanguages = [
-                    { id: 1, name: 'English' },
-                    { id: 2, name: 'Spanish' },
-                    { id: 3, name: 'French' },
-                    { id: 4, name: 'German' },
-                    { id: 5, name: 'Italian' },
-                    { id: 6, name: 'Portuguese' },
-                    { id: 7, name: 'Dutch' },
-                    { id: 8, name: 'Russian' },
-                    { id: 9, name: 'Chinese' },
-                    { id: 10, name: 'Japanese' },
-                    { id: 11, name: 'Korean' },
-                    { id: 12, name: 'Thai' },
-                    { id: 13, name: 'Vietnamese' },
-                    { id: 14, name: 'Turkish' },
-                    { id: 15, name: 'Greek' },
-                    { id: 16, name: 'Hebrew' },
-                    { id: 17, name: 'Polish' },
-                    { id: 18, name: 'Swedish' },
-                    { id: 19, name: 'Norwegian' },
-                    { id: 20, name: 'Finnish' },
-                    { id: 21, name: 'Hungarian' },
-                    { id: 22, name: 'Romanian' },
-                    { id: 23, name: 'Ukrainian' },
-                    { id: 24, name: 'Indonesian' },
-                    { id: 25, name: 'Malay' },
-                    { id: 26, name: 'Tagalog' },
-                    { id: 27, name: 'Swahili' },
-                    { id: 28, name: 'Urdu' },
-                    { id: 29, name: 'Bengali' },
-                    { id: 30, name: 'Tamil' },
-                    { id: 31, name: 'Telugu' },
-                    { id: 32, name: 'Marathi' },
-                    { id: 33, name: 'Gujarati' },
-                    { id: 34, name: 'Punjabi' },
-                    { id: 35, name: 'Kannada' },
-                    { id: 36, name: 'Malayalam' },
-                    { id: 37, name: 'Sinhala' },
-                    { id: 38, name: 'Hindi' },
-                    { id: 39, name: 'Arabic' },
-                    { id: 40, name: 'Bulgarian' },
-                    { id: 41, name: 'Catalan' },
-                    { id: 42, name: 'Croatian' },
-                    { id: 43, name: 'Czech' },
-                    { id: 44, name: 'Danish' }
-                ];
-                this.filteredLanguages = this.availableLanguages;
-                console.log('Using fallback languages: ' + this.availableLanguages.length);
-                
-                // Clear selected languages to prevent ID mismatches
-                this.selectedLanguages = [];
-                console.log('Cleared selected languages to prevent ID mismatches');
+                alpineData.availableLanguages = this.getFallbackLanguages();
+                alpineData.filteredLanguages = alpineData.availableLanguages;
+                alpineData.selectedLanguages = [];
             }
         } catch (error) {
             console.log('Error loading languages: ' + error);
             console.error('Error loading languages:', error);
-            // Use hardcoded languages as fallback
-            this.availableLanguages = [
-                { id: 1, name: 'English' },
-                { id: 2, name: 'Spanish' },
-                { id: 3, name: 'French' },
-                { id: 4, name: 'German' },
-                { id: 5, name: 'Italian' },
-                { id: 6, name: 'Portuguese' },
-                { id: 7, name: 'Dutch' },
-                { id: 8, name: 'Russian' },
-                { id: 9, name: 'Chinese' },
-                { id: 10, name: 'Japanese' },
-                { id: 11, name: 'Korean' },
-                { id: 12, name: 'Thai' },
-                { id: 13, name: 'Vietnamese' },
-                { id: 14, name: 'Turkish' },
-                { id: 15, name: 'Greek' },
-                { id: 16, name: 'Hebrew' },
-                { id: 17, name: 'Polish' },
-                { id: 18, name: 'Swedish' },
-                { id: 19, name: 'Norwegian' },
-                { id: 20, name: 'Finnish' },
-                { id: 21, name: 'Hungarian' },
-                { id: 22, name: 'Romanian' },
-                { id: 23, name: 'Ukrainian' },
-                { id: 24, name: 'Indonesian' },
-                { id: 25, name: 'Malay' },
-                { id: 26, name: 'Tagalog' },
-                { id: 27, name: 'Swahili' },
-                { id: 28, name: 'Urdu' },
-                { id: 29, name: 'Bengali' },
-                { id: 30, name: 'Tamil' },
-                { id: 31, name: 'Telugu' },
-                { id: 32, name: 'Marathi' },
-                { id: 33, name: 'Gujarati' },
-                { id: 34, name: 'Punjabi' },
-                { id: 35, name: 'Kannada' },
-                { id: 36, name: 'Malayalam' },
-                { id: 37, name: 'Sinhala' },
-                { id: 38, name: 'Hindi' },
-                { id: 39, name: 'Arabic' },
-                { id: 40, name: 'Bulgarian' },
-                { id: 41, name: 'Catalan' },
-                { id: 42, name: 'Croatian' },
-                { id: 43, name: 'Czech' },
-                { id: 44, name: 'Danish' }
-            ];
-            this.filteredLanguages = this.availableLanguages;
-            console.log('Using fallback languages: ' + this.availableLanguages.length);
-            
-            // Clear selected languages to prevent ID mismatches
-            this.selectedLanguages = [];
-            console.log('Cleared selected languages to prevent ID mismatches');
+            alpineData.availableLanguages = this.getFallbackLanguages();
+            alpineData.filteredLanguages = alpineData.availableLanguages;
+            alpineData.selectedLanguages = [];
         }
     },
 
-    filterLanguages() {
-        if (!this.searchTerm.trim()) {
-            this.filteredLanguages = this.availableLanguages;
+    async saveLanguages(alpineData) {
+        if (!alpineData.selectedLanguages || alpineData.selectedLanguages.length === 0) {
+            alpineData.showToast('Please select at least one language before continuing.', 'warning');
+            return;
+        }
+        
+        try {
+            const propertyId = @json($property->id ?? 'new');
+            const response = await fetch(`/partner/property/${propertyId}/languages`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    languages: alpineData.selectedLanguages
+                })
+            });
+            
+            if (response.ok) {
+                console.log('Languages saved successfully');
+                alpineData.showToast('Languages saved successfully!', 'success');
+                alpineData.step = Math.min(alpineData.step + 1, 13);
+            } else {
+                console.error('Failed to save languages');
+            }
+        } catch (error) {
+            console.error('Error saving languages:', error);
+        }
+    },
+
+    filterLanguages(alpineData) {
+        if (!alpineData.searchTerm.trim()) {
+            alpineData.filteredLanguages = alpineData.availableLanguages;
         } else {
-            this.filteredLanguages = this.availableLanguages.filter(language =>
-                language.name.toLowerCase().includes(this.searchTerm.toLowerCase())
+            alpineData.filteredLanguages = alpineData.availableLanguages.filter(language =>
+                language.name.toLowerCase().includes(alpineData.searchTerm.toLowerCase())
             );
         }
-        console.log('Filtered languages: ' + this.filteredLanguages.length + ' results');
+        console.log('Filtered languages: ' + alpineData.filteredLanguages.length + ' results');
     },
 
-    selectLanguage(languageId, languageName) {
+    selectLanguage(alpineData, languageId, languageName) {
         console.log('Selecting language: ' + languageId + ', ' + languageName);
         
-        // Ensure languageId is a number
         const numericId = parseInt(languageId);
         if (isNaN(numericId)) {
             console.error('Invalid language ID:', languageId);
             return;
         }
         
-        if (!this.selectedLanguages.includes(numericId)) {
-            this.selectedLanguages.push(numericId);
+        if (!alpineData.selectedLanguages.includes(numericId)) {
+            alpineData.selectedLanguages.push(numericId);
             console.log('Language added with ID: ' + numericId);
         }
-        this.showDropdown = false;
+        alpineData.showDropdown = false;
     },
 
-    removeLanguage(languageId) {
+    removeLanguage(alpineData, languageId) {
         console.log('Removing language: ' + languageId);
         
-        // Ensure languageId is a number
         const numericId = parseInt(languageId);
         if (isNaN(numericId)) {
             console.error('Invalid language ID for removal:', languageId);
             return;
         }
         
-        const index = this.selectedLanguages.indexOf(numericId);
+        const index = alpineData.selectedLanguages.indexOf(numericId);
         if (index > -1) {
-            this.selectedLanguages.splice(index, 1);
+            alpineData.selectedLanguages.splice(index, 1);
             console.log('Language removed with ID: ' + numericId);
         }
     },
 
-    getLanguageName(languageId) {
+    getLanguageName(alpineData, languageId) {
         console.log('Getting language name for ID:', languageId);
-        console.log('Available languages:', this.availableLanguages);
         
-        // Ensure languageId is a number
         const numericId = parseInt(languageId);
         if (isNaN(numericId)) {
             console.error('Invalid language ID for name lookup:', languageId);
             return 'Unknown';
         }
         
-        // First try to find in availableLanguages
-        if (this.availableLanguages && this.availableLanguages.length > 0) {
-            const language = this.availableLanguages.find(l => l.id === numericId);
-            console.log('Found language in availableLanguages:', language);
+        if (alpineData.availableLanguages && alpineData.availableLanguages.length > 0) {
+            const language = alpineData.availableLanguages.find(l => l.id === numericId);
             if (language) {
                 return language.name;
             }
         }
         
-        // Fallback to window.languagesData if available
         if (window.languagesData && window.languagesData.length > 0) {
             const language = window.languagesData.find(l => l.id === numericId);
-            console.log('Found language in window.languagesData:', language);
             if (language) {
                 return language.name;
             }
         }
         
-        // Hardcoded fallback for common languages
-        const commonLanguages = {
-            1: 'English',
-            2: 'Spanish', 
-            3: 'French',
-            4: 'German',
-            5: 'Italian',
-            6: 'Portuguese',
-            7: 'Dutch',
-            8: 'Russian',
-            9: 'Chinese',
-            10: 'Japanese',
-            11: 'Korean',
-            12: 'Thai',
-            13: 'Vietnamese',
-            14: 'Turkish',
-            15: 'Greek',
-            16: 'Hebrew',
-            17: 'Polish',
-            18: 'Swedish',
-            19: 'Norwegian',
-            20: 'Finnish',
-            21: 'Hungarian',
-            22: 'Romanian',
-            23: 'Ukrainian',
-            24: 'Indonesian',
-            25: 'Malay',
-            26: 'Tagalog',
-            27: 'Swahili',
-            28: 'Urdu',
-            29: 'Bengali',
-            30: 'Tamil',
-            31: 'Telugu',
-            32: 'Marathi',
-            33: 'Gujarati',
-            34: 'Punjabi',
-            35: 'Kannada',
-            36: 'Malayalam',
-            37: 'Sinhala',
-            38: 'Hindi',
-            39: 'Arabic',
-            40: 'Bulgarian',
-            41: 'Catalan',
-            42: 'Croatian',
-            43: 'Czech',
-            44: 'Danish'
-        };
-        
-        if (commonLanguages[numericId]) {
-            console.log('Found language in hardcoded fallback:', commonLanguages[numericId]);
-            return commonLanguages[numericId];
-        }
-        
-        console.warn('Language not found for ID:', numericId);
-        return 'Unknown';
+        const commonLanguages = this.getCommonLanguagesMap();
+        return commonLanguages[numericId] || 'Unknown';
     },
 
-    getLanguageIdByName(languageName) {
+    getLanguageIdByName(alpineData, languageName) {
         console.log('Getting language ID for name:', languageName);
-        console.log('Available languages:', this.availableLanguages);
-        
-        const language = this.availableLanguages.find(l => l.name === languageName);
-        console.log('Found language for name:', language);
-        
+        const language = alpineData.availableLanguages.find(l => l.name === languageName);
         return language ? language.id : null;
     },
 
-    isLanguageSelected(languageId) {
-        // Ensure languageId is a number
+    isLanguageSelected(alpineData, languageId) {
         const numericId = parseInt(languageId);
         if (isNaN(numericId)) {
             return false;
         }
-        return this.selectedLanguages.includes(numericId);
+        return alpineData.selectedLanguages.includes(numericId);
     },
 
-    toggleAdditionalLanguages() {
-        this.showAdditionalLanguages = !this.showAdditionalLanguages;
-        console.log('Toggled additional languages: ' + this.showAdditionalLanguages);
+    toggleAdditionalLanguages(alpineData) {
+        alpineData.showAdditionalLanguages = !alpineData.showAdditionalLanguages;
+        console.log('Toggled additional languages: ' + alpineData.showAdditionalLanguages);
     },
 
-    async loadVerificationData() {
+    getFallbackLanguages() {
+        return [
+            { id: 1, name: 'English' }, { id: 2, name: 'Spanish' }, { id: 3, name: 'French' },
+            { id: 4, name: 'German' }, { id: 5, name: 'Italian' }, { id: 6, name: 'Portuguese' },
+            { id: 7, name: 'Dutch' }, { id: 8, name: 'Russian' }, { id: 9, name: 'Chinese' },
+            { id: 10, name: 'Japanese' }, { id: 11, name: 'Korean' }, { id: 12, name: 'Thai' },
+            { id: 13, name: 'Vietnamese' }, { id: 14, name: 'Turkish' }, { id: 15, name: 'Greek' },
+            { id: 16, name: 'Hebrew' }, { id: 17, name: 'Polish' }, { id: 18, name: 'Swedish' },
+            { id: 19, name: 'Norwegian' }, { id: 20, name: 'Finnish' }, { id: 21, name: 'Hungarian' },
+            { id: 22, name: 'Romanian' }, { id: 23, name: 'Ukrainian' }, { id: 24, name: 'Indonesian' },
+            { id: 25, name: 'Malay' }, { id: 26, name: 'Tagalog' }, { id: 27, name: 'Swahili' },
+            { id: 28, name: 'Urdu' }, { id: 29, name: 'Bengali' }, { id: 30, name: 'Tamil' },
+            { id: 31, name: 'Telugu' }, { id: 32, name: 'Marathi' }, { id: 33, name: 'Gujarati' },
+            { id: 34, name: 'Punjabi' }, { id: 35, name: 'Kannada' }, { id: 36, name: 'Malayalam' },
+            { id: 37, name: 'Sinhala' }, { id: 38, name: 'Hindi' }, { id: 39, name: 'Arabic' },
+            { id: 40, name: 'Bulgarian' }, { id: 41, name: 'Catalan' }, { id: 42, name: 'Croatian' },
+            { id: 43, name: 'Czech' }, { id: 44, name: 'Danish' }
+        ];
+    },
+
+    getCommonLanguagesMap() {
+        return {
+            1: 'English', 2: 'Spanish', 3: 'French', 4: 'German', 5: 'Italian',
+            6: 'Portuguese', 7: 'Dutch', 8: 'Russian', 9: 'Chinese', 10: 'Japanese',
+            11: 'Korean', 12: 'Thai', 13: 'Vietnamese', 14: 'Turkish', 15: 'Greek',
+            16: 'Hebrew', 17: 'Polish', 18: 'Swedish', 19: 'Norwegian', 20: 'Finnish',
+            21: 'Hungarian', 22: 'Romanian', 23: 'Ukrainian', 24: 'Indonesian', 25: 'Malay',
+            26: 'Tagalog', 27: 'Swahili', 28: 'Urdu', 29: 'Bengali', 30: 'Tamil',
+            31: 'Telugu', 32: 'Marathi', 33: 'Gujarati', 34: 'Punjabi', 35: 'Kannada',
+            36: 'Malayalam', 37: 'Sinhala', 38: 'Hindi', 39: 'Arabic', 40: 'Bulgarian',
+            41: 'Catalan', 42: 'Croatian', 43: 'Czech', 44: 'Danish'
+        };
+    }
+};
+
+// Data Loading Module
+const DataLoader = {
+    async loadFacilities(alpineData) {
+        try {
+            const propertyId = @json($property->id ?? 'new');
+            const response = await fetch(`/partner/property/${propertyId}/facilities`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                }
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success && data.facilities) {
+                    alpineData.selectedFacilities = data.facilities;
+                    console.log('Facilities loaded successfully:', data.facilities);
+                }
+            } else {
+                console.error('Failed to load facilities');
+            }
+        } catch (error) {
+            console.error('Error loading facilities:', error);
+        }
+    },
+
+    async loadServices(alpineData) {
+        try {
+            const propertyId = @json($property->id ?? 'new');
+            const response = await fetch(`/partner/property/${propertyId}/services`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                }
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success && data.services) {
+                    console.log('Services loaded successfully:', data.services);
+                }
+            } else {
+                console.error('Failed to load services');
+            }
+        } catch (error) {
+            console.error('Error loading services:', error);
+        }
+    },
+
+    async loadVerificationData(alpineData) {
         try {
             const propertyId = @json($property->id ?? 'new');
             const response = await fetch(`/partner/property/${propertyId}/verification`, {
@@ -764,11 +656,10 @@
             if (response.ok) {
                 const data = await response.json();
                 if (data.success && data.verification) {
-                    // Update verification form data
-                    this.verificationType = data.verification.type || '';
+                    alpineData.verificationType = data.verification.type || '';
                     
                     if (data.verification.individual) {
-                        this.individualData = {
+                        alpineData.individualData = {
                             firstName: data.verification.individual.firstName || '',
                             lastName: data.verification.individual.lastName || '',
                             dob: data.verification.individual.dob || '',
@@ -777,7 +668,7 @@
                     }
                     
                     if (data.verification.business) {
-                        this.businessData = {
+                        alpineData.businessData = {
                             businessName: data.verification.business.businessName || '',
                             tradingName: data.verification.business.tradingName || '',
                             address: data.verification.business.address || '',
@@ -796,131 +687,126 @@
         } catch (error) {
             console.error('Error loading verification data:', error);
         }
-    },
+    }
+};
 
-    // Watch for step changes to load data when navigating to specific steps
-    init() {
-        this.$watch('step', (newStep) => {
+// Verification Management Module
+const VerificationManager = {
+    async savePartnerVerification(alpineData) {
+        return await savePartnerVerificationFromStep11(alpineData);
+    }
+};
+
+// Storage Management Module
+const StorageManager = {
+    initWatchers(alpineData) {
+        // Watch for step changes to load data when navigating to specific steps
+        alpineData.$watch('step', (newStep) => {
             if (newStep === 4) {
-                this.loadFacilities();
+                DataLoader.loadFacilities(alpineData);
             } else if (newStep === 5) {
-                this.loadServices();
+                DataLoader.loadServices(alpineData);
             } else if (newStep === 6) {
-                this.loadLanguages();
+                LanguageManager.loadLanguages(alpineData);
             } else if (newStep === 11) {
-                this.loadVerificationData();
+                DataLoader.loadVerificationData(alpineData);
             }
         });
-    },
-    
-    // localStorage watchers
-    init() {
-        // Watch for step changes and save to localStorage
-        this.$watch('step', (newStep) => {
+
+        // localStorage watchers
+        alpineData.$watch('step', (newStep) => {
             localStorage.setItem('wizard_step_main_{{ $property->id ?? 'new' }}', newStep);
             console.log('Step saved to localStorage:', newStep);
         });
         
-        // Watch for amenities changes and save to localStorage
-        this.$watch('selectedAmenities', (newAmenities) => {
+        alpineData.$watch('selectedAmenities', (newAmenities) => {
             localStorage.setItem('selected_amenities_main_{{ $property->id ?? 'new' }}', JSON.stringify(newAmenities));
             console.log('Amenities saved to localStorage:', newAmenities);
         });
         
-        // Watch for facilities changes and save to localStorage
-        this.$watch('selectedFacilities', (newFacilities) => {
+        alpineData.$watch('selectedFacilities', (newFacilities) => {
             localStorage.setItem('selected_facilities_main_{{ $property->id ?? 'new' }}', JSON.stringify(newFacilities));
             console.log('Facilities saved to localStorage:', newFacilities);
         });
         
-        // Watch for languages changes and save to localStorage
-        this.$watch('selectedLanguages', (newLanguages) => {
+        alpineData.$watch('selectedLanguages', (newLanguages) => {
             localStorage.setItem('selected_languages_main_{{ $property->id ?? 'new' }}', JSON.stringify(newLanguages));
             console.log('Languages saved to localStorage:', newLanguages);
         });
         
-        // Watch for address data changes and save to localStorage
-        this.$watch('addressData', (newAddressData) => {
+        alpineData.$watch('addressData', (newAddressData) => {
             localStorage.setItem('address_data_main_{{ $property->id ?? 'new' }}', JSON.stringify(newAddressData));
             console.log('Address data saved to localStorage:', newAddressData);
         });
         
-        // Watch for host profile changes and save to localStorage
-        this.$watch('hostProfile', (newHostProfile) => {
+        alpineData.$watch('hostProfile', (newHostProfile) => {
             localStorage.setItem('host_profile_main_{{ $property->id ?? 'new' }}', JSON.stringify(newHostProfile));
             console.log('Host profile saved to localStorage:', newHostProfile);
         });
         
-        // Watch for pricing changes and save to localStorage
-        this.$watch('pricing', (newPricing) => {
+        alpineData.$watch('pricing', (newPricing) => {
             localStorage.setItem('pricing_main_{{ $property->id ?? 'new' }}', JSON.stringify(newPricing));
             console.log('Pricing saved to localStorage:', newPricing);
         });
         
-        // Watch for verification data changes and save to localStorage
-        this.$watch('verificationType', (newType) => {
+        alpineData.$watch('verificationType', (newType) => {
             localStorage.setItem('verification_type_main_{{ $property->id ?? 'new' }}', newType);
             console.log('Verification type saved to localStorage:', newType);
         });
         
-        this.$watch('individualData', (newData) => {
+        alpineData.$watch('individualData', (newData) => {
             localStorage.setItem('individual_data_main_{{ $property->id ?? 'new' }}', JSON.stringify(newData));
             console.log('Individual data saved to localStorage:', newData);
         });
         
-        this.$watch('businessData', (newData) => {
+        alpineData.$watch('businessData', (newData) => {
             localStorage.setItem('business_data_main_{{ $property->id ?? 'new' }}', JSON.stringify(newData));
             console.log('Business data saved to localStorage:', newData);
         });
         
-        // Watch for house rules changes and save to localStorage
-        this.$watch('smokingAllowed', (newValue) => {
+        alpineData.$watch('smokingAllowed', (newValue) => {
             localStorage.setItem('smoking_allowed_main_{{ $property->id ?? 'new' }}', JSON.stringify(newValue));
         });
         
-        this.$watch('partiesAllowed', (newValue) => {
+        alpineData.$watch('partiesAllowed', (newValue) => {
             localStorage.setItem('parties_allowed_main_{{ $property->id ?? 'new' }}', JSON.stringify(newValue));
         });
         
-        this.$watch('petsAllowed', (newValue) => {
+        alpineData.$watch('petsAllowed', (newValue) => {
             localStorage.setItem('pets_allowed_main_{{ $property->id ?? 'new' }}', newValue);
         });
         
-        this.$watch('petsFees', (newValue) => {
+        alpineData.$watch('petsFees', (newValue) => {
             localStorage.setItem('pets_fees_main_{{ $property->id ?? 'new' }}', newValue);
         });
         
-        this.$watch('checkInFrom', (newValue) => {
+        alpineData.$watch('checkInFrom', (newValue) => {
             localStorage.setItem('check_in_from_main_{{ $property->id ?? 'new' }}', newValue);
         });
         
-        this.$watch('checkInUntil', (newValue) => {
+        alpineData.$watch('checkInUntil', (newValue) => {
             localStorage.setItem('check_in_until_main_{{ $property->id ?? 'new' }}', newValue);
         });
         
-        this.$watch('checkOutFrom', (newValue) => {
+        alpineData.$watch('checkOutFrom', (newValue) => {
             localStorage.setItem('check_out_from_main_{{ $property->id ?? 'new' }}', newValue);
         });
         
-        this.$watch('checkOutUntil', (newValue) => {
+        alpineData.$watch('checkOutUntil', (newValue) => {
             localStorage.setItem('check_out_until_main_{{ $property->id ?? 'new' }}', newValue);
         });
         
-        // Watch for channel manager changes and save to localStorage
-        this.$watch('channelManager', (newValue) => {
+        alpineData.$watch('channelManager', (newValue) => {
             localStorage.setItem('channel_manager_main_{{ $property->id ?? 'new' }}', newValue);
         });
         
         console.log('Wizard state loaded from localStorage');
         
-        // Add event listener to clear localStorage when user leaves the page
         window.addEventListener('beforeunload', () => {
-            // Don't clear localStorage on page unload, let user return to their progress
             console.log('Page unload detected - preserving wizard state');
         });
     },
     
-    // Method to clear localStorage when wizard is completed
     clearWizardData() {
         const propertyId = '{{ $property->id ?? 'new' }}';
         localStorage.removeItem(`wizard_step_main_${propertyId}`);
@@ -945,14 +831,11 @@
         console.log('Wizard data cleared from localStorage');
     },
     
-    // Method to complete the wizard and clear localStorage
     completeWizard() {
         this.clearWizardData();
-        // Redirect to success page or dashboard
         window.location.href = '{{ route("partner.multiple.apartment.3") }}';
     },
     
-    // Debug method to check localStorage contents
     debugLocalStorage() {
         const propertyId = '{{ $property->id ?? 'new' }}';
         console.log('=== localStorage Debug ===');
@@ -965,103 +848,13 @@
         console.log('Pricing:', localStorage.getItem(`pricing_main_${propertyId}`));
         console.log('=======================');
     }
-}" xmlns:x-bind="http://www.w3.org/1999/xlink">
+};
+</script>
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Create Multiple Apartments</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet" />
-    <style>
-        body {
-            font-family: 'Noto Sans', sans-serif;
-        }
-    </style>
-</head>
+
 
 <body class="bg-gray-100 text-gray-800">
 
-    <!-- Header -->
-    <header class="text-white px-4 py-2" style="background-color:#1F8FB2;">
-        <section class="py-4">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div
-                    class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
-                    <!-- Logo -->
-                    <div class="w-full md:w-auto md:ml-6">
-                        <!-- Logo -->
-                        @php
-                            $host = config('domains.app_name');
-
-                        @endphp
-
-                        <a href="{{ url('/') }}" class="text-2xl font-bold flex items-center">
-                            @if ($host == 'BookinTour')
-                                <h1>Bookintour.com</h1>
-                            @elseif ($host == 'Inselor')
-                                <img src="{{ asset('images/inselor-logo.png') }}" alt="Inselor"
-                                    class="h-12 w-auto align-middle" />
-                            @endif
-                        </a>
-                    </div>
-                    <!-- Right Section -->
-                    <div class="flex items-center space-x-4 text-sm font-medium md:ml-auto font-sans">
-                        <!-- Help Icon -->
-                        <a href="/help" title="Help">
-                            <img src="{{ asset('assets/question.svg') }}" alt="Help"
-                                class="w-6 h-6 md:w-7 md:h-7 cursor-pointer" />
-                        </a>
-                        <!-- Language Button -->
-                        <button id="language-button" type="button"
-                            class="flex items-center justify-center w-8 h-8 bg-white rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-hidden"
-                            title="Change Language">
-                            <img src="{{ asset('images/uk.png') }}" alt="UK Flag"
-                                class="w-full h-full object-cover rounded-full" />
-                        </button>
-                        <!-- Language Modal -->
-                        <div id="language-modal"
-                            class="fixed inset-0 hidden z-50 overflow-y-auto flex items-start justify-center px-4 py-8 bg-black bg-opacity-50">
-                            <div class="relative w-full max-w-md p-6 bg-white rounded-lg shadow">
-                                <!-- Modal Header -->
-                                <div class="flex items-start justify-between">
-                                    <h3 class="text-xl font-semibold text-gray-900">Select your language</h3>
-                                    <button type="button"
-                                        class="close-btn text-gray-400 hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center">
-                                        <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd"
-                                                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                                clip-rule="evenodd" />
-                                        </svg>
-                                        <span class="sr-only">Close modal</span>
-                                    </button>
-                                </div>
-                                <!-- Modal Body -->
-                                <div class="mt-4">
-                                    <p class="mb-4 text-base text-gray-500">Suggested for you</p>
-                                    <div class="grid grid-cols-2 gap-4">
-                                        <button class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100">
-                                            <img src="https://flagcdn.com/w40/gb.png" alt="English (UK)"
-                                                class="h-5 w-5" />
-                                            <span>English (UK)</span>
-                                        </button>
-                                        <button class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100">
-                                            <img src="https://flagcdn.com/w40/de.png" alt="Deutsch" class="h-5 w-5" />
-                                            <span>Deutsch</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </header>
 <!-- Blade + Alpine.js + Tailwind CSS -->
 <div x-data="{ 
     step: 1,
@@ -1435,12 +1228,12 @@
                                                                             <button @click="show = false"
                                                                                 class="text-gray-500 hover:text-gray-700">
                                                                                 <svg xmlns="http://www.w3.org/2000/svg"
-                                                                                    class="h-5 w-5"
-                                                                                    viewBox="0 0 20 20"
-                                                                                    fill="currentColor">
-                                                                                    <path fill-rule="evenodd"
-                                                                                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                                                                        clip-rule="evenodd" />
+                                                                                        class="h-5 w-5"
+                                                                                        viewBox="0 0 20 20"
+                                                                                        fill="currentColor">
+                                                                                        <path fill-rule="evenodd"
+                                                                                            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                                                                            clip-rule="evenodd" />
                                                                                 </svg>
                                                                             </button>
                                                                         </div>
