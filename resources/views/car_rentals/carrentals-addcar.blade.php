@@ -115,7 +115,7 @@
                         Transmission <span class="text-red-500">*</span>
                     </label>
                     <select x-model="car.transmission" class="w-full p-2 border rounded-md text-sm">
-                        <option disabled selected>Select Transmission</option>
+                        <option selected>Select Transmission</option>
                         <option>manual</option>
                         <option>automatic</option>
                     </select>
@@ -128,7 +128,7 @@
                         Mileage Type <span class="text-red-500">*</span>
                     </label>
                     <select x-model="car.mileage_type" class="w-full p-2 border rounded-md text-sm">
-                        <option disabled selected>Select Mileage Type</option>
+                        <option selected>Select Mileage Type</option>
                         <option>unlimited</option>
                         <option>limited</option>
                     </select>
@@ -143,7 +143,7 @@
                         Fuel Type <span class="text-red-500">*</span>
                     </label>
                     <select x-model="car.fuel_type" class="w-full p-2 border rounded-md text-sm">
-                        <option disabled selected>Select Fuel Type</option>
+                        <option selected>Select Fuel Type</option>
                         <option>petrol</option>
                         <option>diesel</option>
                         <option>electric</option>
@@ -162,7 +162,7 @@
 
     <!-- Step 3: Car Type Image Selection -->
     <template x-if="step === 3">
-        <div class="px-6 py-8 mt-6 w-full max-w-4xl mx-auto lg:ml-24 space-y-6 bg-white rounded-lg shadow border" >
+        <div class="px-6 py-8 mt-6 w-full max-w-4xl mx-auto lg:ml-24 space-y-6 bg-white rounded-lg shadow border">
             <h1 class="text-2xl font-bold mb-2">Select a demo image to represent the car for the listing</h1>
 
 
@@ -300,15 +300,14 @@
 
     <!-- Step 4: Pricing & Submit -->
     <template x-if="step === 4">
-        <div class="px-6 py-8 mt-6 w-full max-w-xl mx-auto lg:ml-24 space-y-6 bg-white rounded-lg shadow border"
-            x-data="{ pricingType: '', pricePerDay: '', pricePerKm: '', deposit: 0 }">
+        <div class="px-6 py-8 mt-6 w-full max-w-xl mx-auto lg:ml-24 space-y-6 bg-white rounded-lg shadow border">
             <h1 class="text-2xl font-bold mb-2">Set Rental Pricing and Complete Submission</h1>
 
 
             <!-- Step 1: Select Pricing Type -->
             <div>
                 <label class="block font-semibold text-sm mb-1">Select Pricing Type <span class="text-red-500">*</span></label>
-                <select x-model="pricingType" class="w-full p-2 border rounded-md text-sm ">
+                <select x-model="car.pricingType" class="w-full p-2 border rounded-md text-sm ">
                     <option disabled selected>Select an option</option>
                     <option value="perDay">Price Per Day</option>
                     <option value="perKm">Price Per Kilometer</option>
@@ -319,16 +318,16 @@
             <!-- Step 2: Show input based on selection -->
             <div class="space-y-4 mt-4">
                 <!-- Price Per Day -->
-                <div x-show="pricingType === 'perDay'" class="transition-all">
+                <div x-show="car.pricingType === 'perDay'" class="transition-all">
                     <label class="block font-semibold text-sm mb-1">Price Per Day <span class="text-red-500">*</span></label>
-                    <input type="number" x-model="pricePerDay" placeholder="e.g., 16,948.72" class="w-full p-2 border rounded-lg" step="0.01">
+                    <input type="number" x-model="car.pricePerDay" placeholder="e.g., 16,948.72" class="w-full p-2 border rounded-lg" step="0.01">
                     <p class="text-gray-500 text-sm mt-1">Enter the daily rental price of the car.</p>
                 </div>
 
                 <!-- Price Per Kilometer -->
-                <div x-show="pricingType === 'perKm'" class="transition-all">
+                <div x-show="car.pricingType === 'perKm'" class="transition-all">
                     <label class="block font-semibold text-sm mb-1">Price Per Kilometer <span class="text-red-500">*</span></label>
-                    <input type="number" x-model="pricePerKm" placeholder="e.g., 50.00" class="w-full p-2 border rounded-lg" step="0.01">
+                    <input type="number" x-model="car.pricePerKm" placeholder="e.g., 50.00" class="w-full p-2 border rounded-lg" step="0.01">
                     <p class="text-gray-500 text-sm mt-1">Enter the additional cost per kilometer.</p>
                 </div>
 
@@ -338,7 +337,7 @@
 
             <div class="flex justify-between items-center mt-6">
                 <button @click="step--" class="flex items-center border border-[#3CC0E9] rounded text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12">←</button>
-                <button type="submit" class="bg-[#3CC0E9]  text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition">Submit</button>
+                <button @click="submitStep()" class="bg-[#3CC0E9]  text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition">Submit</button>
             </div>
         </div>
     </template>
@@ -369,11 +368,15 @@
                 seats: '',
                 price_per_day: '',
                 deposit: 0,
-                transmission: '', 
-                mileage_type: '', 
-                fuel_type: '', 
+                transmission: '',
+                mileage_type: '',
+                fuel_type: '',
+                pricingType: '',
+                pricePerDay: '',
+                pricePerKm: '',
+                deposit: 0
             },
-            selectedImage : '',
+            selectedImage: '',
             models: @json($car_models), // all models with brand_id
             get filteredModels() {
                 if (!this.car.brand) {
@@ -393,8 +396,12 @@
                         body: JSON.stringify({
                             step: this.step,
                             car: this.car,
-                            car_id: this.car_id? this.car_id : '1',
-                            selectedImage:this.selectedImage ?this.selectedImage :null
+                            car_id: this.car_id ? this.car_id : '1',
+                            selectedImage: this.selectedImage ? this.selectedImage : null,
+                            pricingType: this.car.pricingType,
+                            pricePerDay: this.car.pricePerDay,
+                            pricePerKm: this.car.pricePerKm,
+                            deposit: this.car.deposit
                         })
                     });
                     let data = await response.json();
@@ -408,6 +415,10 @@
                             timer: 3000
                         });
                         this.car_id = data.car;
+                        console.log("Step " + this.step );
+                        if (this.step === 4) {
+                            window.location.href = "/carrentals/Addcar";
+                        }
                         this.step++;
                     } else {
                         Swal.fire({
