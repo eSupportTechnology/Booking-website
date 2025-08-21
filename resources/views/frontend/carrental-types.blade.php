@@ -42,7 +42,7 @@
       Offer safe and reliable airport transfer services to travelers.
     </p>
   </div>
-  <a href="{{ url('/partner/category/airport-taxi') }}"
+  <a href="{{ url('/airport-taxi/registration') }}"
      class="mt-4 mb-2 bg-[#3CC0E9] hover:bg-[#29ACD5] text-white px-4 py-2 rounded text-sm font-semibold mx-auto w-[70%] text-center block">
       List your Taxi
   </a>
