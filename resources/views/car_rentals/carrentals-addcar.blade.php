@@ -42,7 +42,7 @@
                         Company <span class="text-red-500">*</span>
                     </label>
                     <select class="w-full p-2 border rounded-md text-sm" x-model="car.company_id">
-                        <option value="">-- Select Model --</option>
+                        <option value="">-- Select Company --</option>
                         @foreach($companies as $company)
                         <option value="{{ $company->id }}">{{ $company->name }}</option>
                         @endforeach
@@ -160,6 +160,7 @@
         </div>
     </template>
 
+    
     <!-- Step 3: Car Type Image Selection -->
     <template x-if="step === 3">
         <div class="px-6 py-8 mt-6 w-full max-w-4xl mx-auto lg:ml-24 space-y-6 bg-white rounded-lg shadow border">
