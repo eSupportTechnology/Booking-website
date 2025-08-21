@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Controllers\AccommodationController;
+use App\Http\Controllers\CarReservations\CarRentalController;
 
 Route::post('/accommodation/save-verification/{propertyId}', [AccommodationController::class, 'saveVerification']);
 
@@ -310,6 +311,9 @@ Route::get('/partner-hotels-weekly-rate', function () {
 Route::get('/partner-hotels-non-refundable-rate', function () {
     return view('frontend.partner-hotels-non-refundable');
 })->name('partner.hotels.non.refundable.rate');
+
+Route::get('/carrentals/Addcar', [CarRentalController::class, 'index'])->name('partner.carrentals.addcar');
+Route::post('/cars/register-step', [CarRentalController::class, 'registerStep']);
 
 
 // Route::get('/partner-hotels-complete-registration', function () {
