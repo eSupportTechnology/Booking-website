@@ -114,7 +114,7 @@
         class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none" />
     </div>
 
-    
+
     <!-- NIC Number -->
     <div>
       <label for="individual-nic" class="block text-sm font-medium text-gray-800 mb-1">NIC Number <span class="text-red-500">*</span></label>
