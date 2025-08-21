@@ -3830,55 +3830,45 @@ function wizardApp() {
             }
         },
 
-        async saveLegalInfo() {
+               async saveLegalInfo() {
             this.log('Saving legal information');
-            console.log('=== SAVE LEGAL INFO CALLED ===');
-            console.log('Property ID:', this.propertyId);
-            console.log('Ownership Type:', this.ownershipType);
-            console.log('Individual Data:', this.individual);
-            console.log('Business Data:', this.business);
             this.isLoading = true;
             try {
-                console.log('Saving legal info with data:', {
-                    property_id: this.propertyId,
-                    ownershipType: this.ownershipType,
-                    individual: this.individual,
-                    business: this.business
-                });
-                
                 // Prepare data based on ownership type
                 let requestData = {
                     property_id: this.propertyId,
-                    type: this.ownershipType
+                    ownership_type: this.ownershipType // should be 'individual' or 'business_entity'
                 };
-
+        
                 if (this.ownershipType === 'individual') {
-                    requestData.full_name = (this.individual?.firstName || '') + ' ' + (this.individual?.lastName || '');
-                    requestData.national_id = this.individual?.dob || '';
-                    // Add owners array for individual
-                    requestData.owners = [{
+                    requestData.individuals = [{
                         first_name: this.individual?.firstName || '',
                         last_name: this.individual?.lastName || '',
-                        dob: this.individual?.dob || ''
+                        date_of_birth: this.individual?.dob || '',
+                        alt_names: this.individual?.altNames || []
                     }];
                 } else if (this.ownershipType === 'business') {
-                    requestData.company_name = this.business?.businessName || '';
-                    requestData.trading_name = this.business?.tradingName || '';
-                    requestData.address = this.business?.address || '';
-                    requestData.zip_code = this.business?.zipCode || '';
-                    requestData.city = this.business?.city || '';
-                    requestData.country = this.business?.country || '';
-                    // Add owners array for business
-                    requestData.owners = this.business?.owners?.map(owner => ({
+                    requestData.ownership_type = 'business_entity'; // match DTO
+                    requestData.business_entity = {
+                        business_name: this.business?.businessName || '',
+                        trading_name: this.business?.tradingName || '',
+                        address: this.business?.address || '',
+                        zip_code: this.business?.zipCode || '',
+                        city: this.business?.city || '',
+                        country: this.business?.country || ''
+                    };
+                    // If you want to save business owners as individuals too:
+                    requestData.individuals = (this.business?.owners || []).map(owner => ({
                         first_name: owner.firstName || '',
                         last_name: owner.lastName || '',
-                        dob: owner.dob || ''
-                    })) || [];
+                        date_of_birth: owner.dob || '',
+                        alt_names: owner.altNames || []
+                    }));
                 }
-
+        
                 console.log('Final request data being sent:', requestData);
-
-                const response = await fetch(`/partner/partner-verification`, {
+        
+                const response = await fetch(`/accommodation/save-verification/${this.propertyId}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -3886,31 +3876,22 @@ function wizardApp() {
                     },
                     body: JSON.stringify(requestData)
                 });
-                
+        
                 console.log('Response status:', response.status);
                 console.log('Response ok:', response.ok);
-                
+        
                 if (response.ok) {
                     const result = await response.json();
-                    console.log('Legal info saved successfully:', result);
-                    
-                    // Show success toast and redirect to list-your-property page
                     showToast('🎉 Congratulations! Your property has been successfully listed and is now live on our platform!', 'success');
-                    
-                    // Wait for toast to be visible, then redirect
                     setTimeout(() => {
                         const redirectUrl = '{{ route("partner.list-your-property") }}?registration=success';
-                        console.log('Redirecting to:', redirectUrl);
                         window.location.href = redirectUrl;
                     }, 2000);
-                    console.log('Legal info saved successfully, redirecting to list-your-property');
                 } else {
                     const errorData = await response.json();
-                    console.error('Failed to save legal info:', errorData);
                     showToast('Failed to save legal info: ' + (errorData.message || 'Unknown error'), 'error');
                 }
             } catch (error) {
-                console.error('Error saving legal info:', error);
                 showToast('Error saving legal info: ' + error.message, 'error');
             } finally {
                 this.isLoading = false;
