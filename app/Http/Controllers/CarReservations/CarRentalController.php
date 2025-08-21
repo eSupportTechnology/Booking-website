@@ -9,7 +9,6 @@ use App\Models\CarBrand;
 use App\Models\CarModel;
 use App\Models\CarType;
 use App\Models\Company;
-use App\Models\File;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
@@ -83,52 +82,7 @@ class CarRentalController extends Controller
                 ]);
                 return response()->json([
                     'success' => true,
-                    'message' => 'Step 2 saved successfully',
-                    'car' => $car['id']
-                ]);
-            } else if ($step == 3) {
-                $validated = $request->validate([
-                    'selectedImage' => 'required|string',
-                ]);
-
-                File::create([
-                    'file_type'     => 'image',
-                    'path'          => 'images/' . $validated['selectedImage'] . '.jpg', // stored path
-                    'property_type' => 'car',
-                    'car_id'        => $request->input('car_id'),
-                ]);
-
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Demo image saved successfully',
-                    'car' => $request->input('car_id')
-                ]);
-            } else if ($step == 4) {
-                $validated = $request->validate([
-                    'car_id'      => 'required|exists:cars,id',
-                    'pricingType' => 'required|in:perDay,perKm',
-                    'pricePerDay' => 'nullable|numeric|min:0',
-                    'pricePerKm'  => 'nullable|numeric|min:0',
-                    'deposit'     => 'nullable|numeric|min:0',
-                ]);
-
-                $car = Car::findOrFail($validated['car_id']);
-
-                if ($validated['pricingType'] === 'perDay') {
-                    $car->price_per_day = $validated['pricePerDay'];
-                    // $car->price_per_km = null; // clear per km if previously set
-                } else {
-                    $car->price_per_km = $validated['pricePerKm'];
-                    $car->price_per_day = null; // clear per day if previously set
-                }
-
-                $car->deposit = $validated['deposit'] ?? 0;
-                $car->save();
-
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Car pricing saved successfully!',
-                    'car' => $car['id']
+                    'message' => 'Step 2 saved successfully'
                 ]);
             }
 
