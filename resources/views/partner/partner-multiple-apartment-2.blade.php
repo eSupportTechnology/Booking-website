@@ -1,6 +1,6 @@
 @extends('frontend.partner-layout')
 
-@section('title', 'Apartment Multiple Homes')
+@section('title', 'Partner Multiple Apartment')
 
 @section('content')
 
@@ -8,7 +8,7 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
 <!-- Define Alpine.js data function -->
-<script>
+<script type="module">
 function apartmentForm2Data() {
     return {
         step: 1,
