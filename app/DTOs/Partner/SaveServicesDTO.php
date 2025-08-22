@@ -26,7 +26,7 @@ class SaveServicesDTO extends ValidatedDTO
             'breakfast_price' => ['nullable', 'string'],
             'parking_available' => ['nullable', 'string', 'in:free,paid,no'],
             'parking_cost' => ['nullable', 'string'],
-            'parking_reservation' => ['nullable', 'string', 'in:yes,no'],
+            'parking_reservation' => ['nullable', 'string', 'in:yes,no,not_needed'],
             'parking_location' => ['nullable', 'string', 'in:on_site,off_site'],
             'parking_type' => ['nullable', 'string', 'in:private,public'],
         ];
@@ -47,7 +47,7 @@ class SaveServicesDTO extends ValidatedDTO
         ];
     }
 
-    protected function casts(): array
+        protected function casts(): array
     {
         return [
             // 'serve_breakfast' => 'boolean',

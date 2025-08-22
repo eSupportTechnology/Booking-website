@@ -1,29 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Create Partner Account | {{ config('domains.app_name') }}</title>
+@extends('partner.partner-layout')
+
+@section('title', 'Create Partner Account | ' . config('domains.app_name'))
+
+@section('content')
+
+
 
   <!-- CSRF Token -->
   <meta name="csrf-token" content="{{ csrf_token() }}">
 
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+  
 
   <!-- SweetAlert2 -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-  @vite(['resources/js/app.js'])
-</head>
-<body class="bg-white">
-
-<!-- Header and Modal: Unchanged -->
-<!-- ... (same as your original code up to form section) -->
 
 <section class="max-h-screen flex items-start justify-center pt-10 px-4 sm:px-6">
   <div class="w-full max-w-md space-y-6">
@@ -114,5 +104,4 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
-</body>
-</html>
+@endsection

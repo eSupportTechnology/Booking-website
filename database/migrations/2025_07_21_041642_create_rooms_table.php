@@ -10,12 +10,11 @@ return new class extends Migration {
         Schema::table('rooms', function (Blueprint $table) {
             // Add room_type_id
             $table->foreignId('room_type_id')
-                  ->after('property_id')
-                  ->constrained('room_types')
-                  ->onDelete('cascade');
+                ->after('property_id')
+                ->constrained('room_types')
+                ->onDelete('cascade');
 
             // Remove bed_count column
-            $table->dropColumn('bed_count');
         });
     }
 
@@ -25,8 +24,8 @@ return new class extends Migration {
             // Reverse changes
             $table->dropForeign(['room_type_id']);
             $table->dropColumn('room_type_id');
+            $table->dropColumn('bed_count');
 
-            $table->integer('bed_count')->after('max_guests');
         });
     }
 };
