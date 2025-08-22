@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Controllers\AccommodationController;
+use App\Http\Controllers\AirportTaxiController;
 use App\Http\Controllers\CarReservations\CarRentalController;
 
 Route::post('/accommodation/save-verification/{propertyId}', [AccommodationController::class, 'saveVerification']);
@@ -459,12 +460,10 @@ Route::get('/single-car', function () {
 })->name('partner.carrentals.single.car');
 
 
-Route::get('/airport-taxi/registration', function () {
-    return view('frontend.airport-taxi-register');
-})->name('partner.airport.taxi.register');
-
 Route::get('/carrentals/Addcar', [CarRentalController::class, 'index'])->name('partner.carrentals.addcar');
 Route::post('/cars/register-step', [CarRentalController::class, 'registerStep']);
+
+Route::get('/airport-taxi/registration', [AirportTaxiController::class, 'index'])->name('partner.airport.taxi.registration');
 
 
 // Route::get('/partner-hotels-complete-registration', function () {

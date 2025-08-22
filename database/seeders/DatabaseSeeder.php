@@ -30,11 +30,13 @@ class DatabaseSeeder extends Seeder
             LanguagesTableSeeder::class,
             SeedersBedTypeSeeder::class,
             SeedersRoomTypeSeeder::class,
-            LanguageSeeder::class, 
+            LanguageSeeder::class,
             CarTypesSeeder::class,
             CarBrandsSeeder::class,
             CarModelsSeeder::class,
             CompaniesSeeder::class,
+            TaxiTypeSeeder::class,
+
         ]);
 
         // Create a test user

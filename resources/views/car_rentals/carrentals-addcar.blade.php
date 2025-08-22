@@ -86,7 +86,7 @@
             </div>
 
             <div class="flex justify-between items-center mt-6">
-                <button @click="step--" class="flex items-center border border-[#3CC0E9] rounded text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12">←</button>
+                <a href="{{ url()->previous() }}" class="flex items-center border border-[#3CC0E9] rounded text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12">←</a>
                 <button @click.prevent="submitStep()"
                     class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition">
                     Continue
@@ -412,7 +412,7 @@
                                     };
                                     this.selectedImage = '';
                                 } else {
-                                    window.location.href = "/carrentals/Addcar";
+                                    window.location.href = "/carrentals/types";
                                 }
                             });
                         } else {
