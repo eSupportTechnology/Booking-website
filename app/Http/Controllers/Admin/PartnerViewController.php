@@ -7,14 +7,15 @@ use Illuminate\Http\Request;
 
 class PartnerViewController extends Controller
 {
-    public function show(Request $request)
+    public function show($partner_id)
     {
-        $request->validate([
+        // Validate the ID exists
+        validator(['partner_id' => $partner_id], [
             'partner_id' => 'required|integer|exists:users,id'
-        ]);
-        
-        $partnerId = $request->partner_id;
-        
+        ])->validate();
+
+        $partnerId = $partner_id;
+
         return view('admin.admin-partner-view', compact('partnerId'));
     }
 }
