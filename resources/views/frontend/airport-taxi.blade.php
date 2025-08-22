@@ -7,6 +7,7 @@
         <h1 class="text-3xl font-bold mb-2">Book your airport taxi</h1>
         <p class="text-gray-600 mb-6">Easy airport transfers to and from your accommodation</p>
 
+        
         <!-- Trip type toggle -->
         <div class="flex items-center gap-6 mb-4">
             <label class="inline-flex items-center">
