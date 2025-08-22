@@ -25,7 +25,7 @@
     <!-- Search Box: Overlapping both sections -->
     <div class="relative z-10 -mt-8 px-4">
 
-        <form method="GET"
+        <form action="{{ route('customer.search') }}" method="GET"
             class="bg-white rounded-xl px-2 py-1 shadow-lg flex flex-col md:flex-row items-center gap-1 md:gap-0 border-4 border-yellow-400 max-w-6xl mx-auto overflow-visible text-sm">
 
             <!-- Destination Selector (Styled Like Guests) -->
@@ -100,13 +100,13 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs text-gray-500 font-semibold mb-1">{{ __('messages.Check-in Date') }}</label>
-                                <input type="date" x-model="checkIn"
+                                <input type="date" name="checkIn" x-model="checkIn"
                                     class="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none"
                                     placeholder="Check-in" />
                             </div>
                             <div>
                                 <label class="block text-xs text-gray-500 font-semibold mb-1">{{ __('messages.Check-out Date') }}</label>
-                                <input type="date" x-model="checkOut"
+                                <input type="date" name="checkOut" x-model="checkOut"
                                     class="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none"
                                     placeholder="Check-out" />
                             </div>
@@ -115,6 +115,7 @@
 
                     <!-- Flexible Dates Section -->
                     <div x-show="activeTab === 'flexible'" x-transition>
+                        <input type="hidden" name="flexibleOption" :value="flexibleOption">
                         <label class="block text-xs text-gray-500 font-semibold mb-1">{{ __('messages.Select Flexible Dates') }}</label>
                         <select x-model="flexibleOption"
                             class="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none">
@@ -148,6 +149,12 @@
                 <!-- Guest Dropdown -->
                 <div x-show="open" @click.away="open = false"
                     class="absolute z-20 bg-white shadow-xl rounded-xl p-4 mt-2 w-72 right-0 text-gray-800 space-y-4 text-sm">
+                    <!-- Hidden inputs for form submission -->
+                    <input type="hidden" name="adults" :value="adults">
+                    <input type="hidden" name="children" :value="children">
+                    <input type="hidden" name="rooms" :value="rooms">
+                    <input type="hidden" name="pets" :value="pets">
+
                     <!-- Adults -->
                     <div class="flex items-center justify-between">
                         <span style="font-family: 'Noto Sans', sans-serif;">{{ __('messages.adults') }}</span>
