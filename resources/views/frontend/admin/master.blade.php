@@ -131,8 +131,7 @@
             <a href="{{ route('admin.homes') }}" class="block py-1 hover:text-blue-700 font-semibold">Homes</a>
             <a href="{{ route('admin.hotels') }}" class="block py-1 hover:text-blue-700 font-semibold">Hotels</a>
             <a href="{{ route('admin.alternative.places') }}" class="block py-1 hover:text-blue-700 font-semibold">Alternative Places</a>
-        </div>
-
+          </div>
         </div>
 
         <!-- SETTINGS -->
