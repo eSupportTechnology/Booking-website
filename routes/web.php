@@ -464,6 +464,7 @@ Route::get('/carrentals/Addcar', [CarRentalController::class, 'index'])->name('p
 Route::post('/cars/register-step', [CarRentalController::class, 'registerStep']);
 
 Route::get('/airport-taxi/registration', [AirportTaxiController::class, 'index'])->name('partner.airport.taxi.registration');
+Route::post('/taxis/store-step1', [AirportTaxiController::class, 'storeStep1'])->name('taxis.storeStep1');
 
 
 // Route::get('/partner-hotels-complete-registration', function () {
