@@ -53,7 +53,7 @@
                             <p class="text-sm text-gray-500 mt-2">JPG, GIF or PNG. Max size 2MB.</p>
                         </div>
                     </div>
-                    
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-2">Full Name</label>
@@ -77,12 +77,12 @@
                             </select>
                         </div>
                     </div>
-                    
+
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Bio</label>
                         <textarea rows="4" placeholder="Tell guests about yourself..." class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all duration-200">{{ $profile['bio'] }}</textarea>
                     </div>
-                    
+
                     <button class="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg">
                         <i class="fas fa-save mr-2"></i>Update Profile
                     </button>
@@ -140,7 +140,7 @@
                             </label>
                         </div>
                     </div>
-                    
+
                     <div class="bg-blue-50 p-6 rounded-xl">
                         <h4 class="font-semibold text-gray-900 mb-4">SMS Notifications</h4>
                         <div class="space-y-4">
@@ -166,7 +166,7 @@
                             </label>
                         </div>
                     </div>
-                    
+
                     <button class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg">
                         <i class="fas fa-save mr-2"></i>Save Preferences
                     </button>
@@ -199,7 +199,7 @@
                             </button>
                         </div>
                     </div>
-                    
+
                     <div class="bg-green-50 p-6 rounded-xl">
                         <h4 class="font-semibold text-gray-900 mb-4">Two-Factor Authentication</h4>
                         <div class="flex items-center justify-between">
@@ -212,7 +212,7 @@
                             </button>
                         </div>
                     </div>
-                    
+
                     <div class="bg-yellow-50 p-6 rounded-xl">
                         <h4 class="font-semibold text-gray-900 mb-4">Login Sessions</h4>
                         <div class="space-y-3">
@@ -273,7 +273,7 @@
                             <i class="fas fa-save mr-2"></i>Save Bank Details
                         </button>
                     </div>
-                    
+
                     <div class="bg-green-50 p-6 rounded-xl">
                         <h4 class="font-semibold text-gray-900 mb-4">Payout Schedule</h4>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -296,7 +296,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="bg-yellow-50 p-6 rounded-xl">
                         <h4 class="font-semibold text-gray-900 mb-4">Tax Information</h4>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -347,7 +347,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="bg-red-50 p-6 rounded-xl">
                         <h4 class="font-semibold text-gray-900 mb-4">Danger Zone</h4>
                         <div class="space-y-4">

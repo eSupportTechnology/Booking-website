@@ -42,7 +42,7 @@
                 <a href="#" class="text-xl font-bold">Admin</a>
                 </div>
 
-                
+
             </div>
         </div>
     </nav>

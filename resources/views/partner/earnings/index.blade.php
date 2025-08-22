@@ -213,11 +213,11 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     const ctx = document.getElementById('earningsChart').getContext('2d');
-    
+
     const gradient = ctx.createLinearGradient(0, 0, 0, 400);
     gradient.addColorStop(0, 'rgba(234, 179, 8, 0.8)');
     gradient.addColorStop(1, 'rgba(234, 179, 8, 0.1)');
-    
+
     new Chart(ctx, {
         type: 'line',
         data: {
@@ -262,12 +262,12 @@
             },
             scales: {
                 x: {
-                    ticks: { 
-                        color: '#6b7280', 
-                        font: { weight: '600', size: 12 } 
+                    ticks: {
+                        color: '#6b7280',
+                        font: { weight: '600', size: 12 }
                     },
-                    grid: { 
-                        display: false 
+                    grid: {
+                        display: false
                     },
                     border: {
                         display: false

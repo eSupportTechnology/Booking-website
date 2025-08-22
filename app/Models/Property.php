@@ -34,11 +34,22 @@ class Property extends Model
         'property_wizard_step',
         'pricing_wizard_step',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function partner()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
     public function photos()
     {
         return $this->hasMany(PropertyPhoto::class);
     }
-    
+
     public function files()
     {
         return $this->hasMany(File::class);

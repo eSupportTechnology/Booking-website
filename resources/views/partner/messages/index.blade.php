@@ -88,7 +88,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Messages -->
             <div class="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50">
                 <div class="flex items-start space-x-3">
@@ -100,14 +100,14 @@
                         <span class="text-xs text-gray-500 mt-2 block">2h ago</span>
                     </div>
                 </div>
-                
+
                 <div class="flex justify-end">
                     <div class="bg-gradient-to-r from-purple-500 to-purple-600 text-white p-4 rounded-2xl rounded-tr-lg shadow-sm max-w-xs">
                         <p class="text-sm">Check-in is from 3:00 PM onwards. I'll be available to meet you at the property.</p>
                         <span class="text-xs text-purple-200 mt-2 block">1h ago</span>
                     </div>
                 </div>
-                
+
                 <div class="flex items-start space-x-3">
                     <div class="h-8 w-8 bg-purple-500 rounded-full flex items-center justify-center">
                         <span class="text-white font-semibold text-xs">SJ</span>
@@ -117,7 +117,7 @@
                         <span class="text-xs text-gray-500 mt-2 block">30m ago</span>
                     </div>
                 </div>
-                
+
                 <div class="flex justify-end">
                     <div class="bg-gradient-to-r from-purple-500 to-purple-600 text-white p-4 rounded-2xl rounded-tr-lg shadow-sm max-w-xs">
                         <p class="text-sm">Yes, please call me at +1 234 567 8900. Looking forward to hosting you!</p>
