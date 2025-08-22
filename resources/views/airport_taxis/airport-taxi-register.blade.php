@@ -109,7 +109,7 @@
                     <label class="block font-semibold text-sm mb-1">
                         Number Plate <span class="text-red-500">*</span>
                     </label>
-                    <input type="text" placeholder="e.g., WP-AB 1234" class="w-full p-2 border rounded-md text-sm">
+                    <input type="text" placeholder="e.g., WP-AB 1234" class="w-full p-2 border rounded-md text-sm" x-model="number_plate">
                     <p class="text-gray-500 text-sm mt-1">Enter the taxi’s registration number plate.</p>
                 </div>
 
@@ -117,7 +117,7 @@
                     <label class="block font-semibold text-sm mb-1">
                         Taxi Color <span class="text-red-500">*</span>
                     </label>
-                    <input type="text" placeholder="e.g., White, Black, Silver" class="w-full p-2 border rounded-md text-sm">
+                    <input type="text" placeholder="e.g., White, Black, Silver" class="w-full p-2 border rounded-md text-sm" x-model="color">
                     <p class="text-gray-500 text-sm mt-1">Enter the color of the taxi.</p>
                 </div>
 
@@ -126,7 +126,7 @@
                     <label class="block font-semibold text-sm mb-1">
                         Number of Passengers <span class="text-red-500">*</span>
                     </label>
-                    <input type="number" placeholder="e.g., 4" class="w-full p-2 border rounded-md text-sm" min="1" max="50">
+                    <input type="number" placeholder="e.g., 4" class="w-full p-2 border rounded-md text-sm" min="1" max="50" x-model="passenger_capacity">
                     <p class="text-gray-500 text-sm mt-1">Enter the maximum number of passengers the taxi can carry.</p>
                 </div>
 
@@ -135,7 +135,7 @@
                     <label class="block font-semibold text-sm mb-1">
                         Luggage Capacity <span class="text-gray-500">(Optional)</span>
                     </label>
-                    <input type="number" placeholder="Number of suitcases" class="w-full p-2 border rounded-md text-sm" min="0" max="20">
+                    <input type="number" placeholder="Number of suitcases" class="w-full p-2 border rounded-md text-sm" min="0" max="20" x-model="luggage_capacity">
                     <p class="text-gray-500 text-sm mt-1">Enter the number of suitcases or luggage the taxi can hold.</p>
                 </div>
             </div>
@@ -143,7 +143,7 @@
             <!-- Navigation Buttons -->
             <div class="flex justify-between items-center mt-6">
                 <button @click="step--" class="flex items-center border border-[#3CC0E9] rounded text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12">←</button>
-                <button @click="step++" class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition">Continue</button>
+                <button @click="saveStep2" class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition">Continue</button>
             </div>
         </div>
     </template>
@@ -283,6 +283,11 @@
             selectedCategory: '',
             step: 1,
             showModal: false,
+            taxi_id: null,
+            number_plate: '',
+            color: '',
+            passenger_capacity: '',
+            luggage_capacity: '',
             // Triggered when user clicks Continue
             async saveStep1() {
                 if (!this.selectedCategory) {
@@ -306,6 +311,7 @@
 
                     if (data.success) {
                         console.log("Taxi saved with ID:", data.taxi_id);
+                        this.taxi_id = data.taxi_id;
                         this.step++;
                     } else {
                         alert(data.message || "Failed to save taxi type");
@@ -313,6 +319,36 @@
                 } catch (error) {
                     console.error("Error:", error);
                     alert("Something went wrong while saving.");
+                }
+            },
+
+            async saveStep2() {
+                if (!this.number_plate || !this.color || !this.passenger_capacity) {
+                    alert("Please fill all required fields!");
+                    return;
+                }
+
+                const response = await fetch("{{ route('taxis.storeStep2') }}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                    },
+                    body: JSON.stringify({
+                        taxi_id: this.taxi_id,
+                        number_plate: this.number_plate,
+                        color: this.color,
+                        passenger_capacity: this.passenger_capacity,
+                        luggage_capacity: this.luggage_capacity
+                    })
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    console.log("Step 2 saved for Taxi ID:", data.taxi_id);
+                    this.step++;
+                } else {
+                    alert("Error: " + (data.message || "Failed to save step 2"));
                 }
             }
         }))
