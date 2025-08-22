@@ -16,17 +16,17 @@
                 <p class="text-gray-600 text-sm mb-6" style="font-family: 'Noto Sans', sans-serif;">Create an account to
                     list and manage your car.</p>
 
-                <form method="POST" action="#">
+                <form >
                     @csrf
                     <label for="email" class="block text-sm font-medium text-gray-700 mb-1"
                         style="font-family: 'Noto Sans', sans-serif;">Email address</label>
                     <input type="email" id="email" name="email" required
                         class="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4" />
-
+ <a href="/carrentals/registration">
                     <button type="submit" class="w-full text-white py-2 rounded hover:bg-blue-700 mb-4"
                         style=" background-color:#3CC0E9;font-family: 'Noto Sans', sans-serif;">
                         Continue
-                    </button>
+                    </button></a>
                 </form>
 
                 <div class="border-t border-gray-200 my-6"></div>
