@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Controllers\AccommodationController;
+use App\Http\Controllers\AirportTaxiController;
 use App\Http\Controllers\CarReservations\CarRentalController;
 
 Route::post('/accommodation/save-verification/{propertyId}', [AccommodationController::class, 'saveVerification']);
@@ -265,6 +266,121 @@ Route::get('/partner/alternative/Single/Campsite/room', function () {
     return view('frontend.partner-alternative-campsite-room');
 })->name('partner.alternative.single.campsite.room');
 
+Route::get('/partner/alternative/Campsite/edit', function () {
+    return view('frontend.partner-alternative-campsite-edit');
+})->name('partner.alternative.single.campsite.edit');
+
+
+Route::get('/partner/alternative/Single/Campsite/cancel-policies', function () {
+    return view('frontend.partner-alternative-campsite-cancel-policies');
+})->name('partner.alternative.single.campsite.cancel-policies');
+
+Route::get('/partner/alternative/Single/Campsite/cancel-policies', function () {
+    return view('frontend.partner-alternative-campsite-cancel-policies');
+})->name('partner.alternative.single.campsite.cancel-policies');
+
+Route::get('/partner/alternative/form', function () {
+    return view('frontend.partner-alternative-form-1');
+})->name('partner.alternative.form');
+
+Route::get('/partner/alternative/single/boat', function () {
+    return view('frontend.partner-alternative-single-boat');
+})->name('partner.alternative.single.boat');
+
+Route::get('/partner/alternative/multiple/boats/sameaddress', function () {
+    return view('frontend.partner-alternative-boat-multiple-sameaddress');
+})->name('partner.alternative.multiple.boats.sameaddress');
+
+Route::get('/partner/alternative/multiple/boat/room', function () {
+    return view('frontend.partner-alternative-boat-room');
+})->name('partner.alternative.multiple.boat.room');
+
+Route::get('/partner/boat/price-per-group', function () {
+    return view('frontend.partner-boat-pricepergroup');
+})->name('partner.boat.price.per.group');
+
+
+
+Route::get('/partner/boat/weekly-rate', function () {
+    return view('frontend.partner-boat-weekly-rate');
+})->name('partner.boat.weekly.rate');
+
+Route::get('/partner/campsite/weekly-rate', function () {
+    return view('frontend.partner-alternative-campsite-weeklyrate');
+})->name('partner.campsite.weekly.rate');
+
+Route::get('/partner/tent/single', function () {
+    return view('frontend.partner-alternative-tent-single');
+})->name('partner.tent.single');
+
+Route::get('/partner/tent/images', function () {
+    return view('frontend.partner-alternative-tent-photos');
+})->name('partner.tent.images');
+
+Route::get('/partner/campsite/payments', function () {
+    return view('frontend.partner-campsite-payment');
+})->name('partner.campsite.payments');
+
+Route::get('/partner/tent/payments', function () {
+    return view('frontend.partner-alternative-tent-payments');
+})->name('partner.tent.payments');
+
+Route::get('/partner/alternative/multiple/tent/room', function () {
+    return view('frontend.partner-alternative-tent-room');
+})->name('partner.alternative.multiple.tent.room');
+
+Route::get('/partner/privateroom/boat/room', function () {
+    return view('frontend.partner-privaterooom-boat-room');
+})->name('partner.privateroom.boat.room');
+
+Route::get('/partner/tent/multiple/sameaddress', function () {
+    return view('frontend.partner-tent-multiple-sameaddress');
+})->name('partner.tent.multiple.sameaddress');
+
+Route::get('/partner/boat/payment', function () {
+    return view('frontend.partner-alternative-boat-payments');
+})->name('partner.boat.payment');
+
+Route::get('/partner/campsite/bedrooms', function () {
+    return view('frontend.partner-campsite-bedroom');
+})->name('partner.campsite.bedrooms');
+
+Route::get('/partner/campsite/otherspaces', function () {
+    return view('frontend.partner-campsite-otherspaces');
+})->name('partner.campsite.otherspaces');
+
+Route::get('/partner/campsite/livingroom', function () {
+    return view('frontend.partner-campsite-livingroom');
+})->name('partner.campsite.livingroom');
+
+Route::get('/partner/boat/edit', function () {
+    return view('frontend.partner-alternative-boat-edit');
+})->name('partner.boat.edit');
+
+Route::get('/partner-boat-photos', function () {
+    return view('frontend.partner-alternative-boat-images');
+})->name('partner.boat.photos');
+
+Route::get('/partner-tent-edit', function () {
+    return view('frontend.partner-tent-edit');
+})->name('partner.tent.edit');
+
+Route::get('/partner-boat-compltete-registration', function () {
+    return view('frontend.partner-boat-complete-registration');
+})->name('partner.boat.complete.registration');
+
+Route::get('/partner-privateroom-campsite-room', function () {
+    return view('frontend.partner-privateroom-campsite-room');
+})->name('partner.privateroom.campsite.room');
+
+Route::get('/partner-privateroom-tent-room', function () {
+    return view('frontend.partner-privateroom-tent-room');
+})->name('partner.privateroom.tent.room');
+
+Route::get('/partner-tent-compltete-registration', function () {
+    return view('frontend.partner-alternative-tent-complete-registration');
+})->name('partner.tent.complete.registration');
+
 Route::get('/partner-apartment-multiple', function () {
     return view('frontend.partner-multiple-apartment');
 })->name('partner.apartment.multiple');
@@ -312,8 +428,42 @@ Route::get('/partner-hotels-non-refundable-rate', function () {
     return view('frontend.partner-hotels-non-refundable');
 })->name('partner.hotels.non.refundable.rate');
 
+
+
+Route::get('/carrentals/registration', function () {
+    return view('frontend.carrental-registration');
+})->name('partner.carrentals.registration');
+
+Route::get('/carrentals/account/create', function () {
+    return view('frontend.carrental-account-create');
+})->name('partner.carrentals.account.create');
+
+
+Route::get('/carrentals/create/password', function () {
+    return view('frontend.carrental-create-password');
+})->name('partner.carrentals.create.password');
+
+Route::get('/carrentals/enter/password', function () {
+    return view('frontend.carrental-enter-password');
+})->name('partner.carrentals.enter.password');
+
+Route::get('/carrentals/signin', function () {
+    return view('frontend.carrental-signin');
+})->name('partner.carrentals.signin');
+
+Route::get('/carrentals/types', function () {
+    return view('frontend.carrental-types');
+})->name('partner.carrentals.types');
+
+Route::get('/single-car', function () {
+    return view('frontend.single-car');
+})->name('partner.carrentals.single.car');
+
+
 Route::get('/carrentals/Addcar', [CarRentalController::class, 'index'])->name('partner.carrentals.addcar');
 Route::post('/cars/register-step', [CarRentalController::class, 'registerStep']);
+
+Route::get('/airport-taxi/registration', [AirportTaxiController::class, 'index'])->name('partner.airport.taxi.registration');
 
 
 // Route::get('/partner-hotels-complete-registration', function () {
@@ -358,11 +508,11 @@ Route::get('/airport-taxis', function () {
 // Partner Registration Routes (Public - No Auth Required)
 Route::prefix('partner')->group(function () {
     // Partner Login Routes
-    Route::get('/login', [LoginController::class, 'show'])->name('partner.login');
+    Route::get('/login', [LoginController::class, 'show'])->middleware('App\Http\Middleware\PreventBackHistory')->name('partner.login');
     Route::post('/login', [LoginController::class, 'login'])->name('partner.login.submit');
-    Route::get('/sign-in', [LoginController::class, 'showEmailForm'])->name('partner.login.email');
+    Route::get('/sign-in', [LoginController::class, 'showEmailForm'])->middleware('App\Http\Middleware\PreventBackHistory')->name('partner.login.email');
     Route::post('/sign-in', [LoginController::class, 'storeEmail']);
-    Route::get('/password', [LoginController::class, 'showPasswordForm'])->name('partner.login.password');
+    Route::get('/password', [LoginController::class, 'showPasswordForm'])->middleware('App\Http\Middleware\PreventBackHistory')->name('partner.login.password');
     Route::post('/password', [LoginController::class, 'loginWithPassword']);
 
     // Show email registration form
@@ -420,7 +570,32 @@ Route::prefix('partner')->group(function () {
 });
 
 // Partner Routes (Protected - Auth Required)
-Route::prefix('partner')->middleware('auth')->group(function () {
+Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddleware::class])->group(function () {
+    // Partner Dashboard
+    Route::get('/dashboard', [\App\Http\Controllers\Partner\DashboardController::class, 'index'])->name('partner.dashboard');
+
+    // Properties
+    Route::get('/properties', [\App\Http\Controllers\Partner\PropertyController::class, 'index'])->name('partner.properties');
+    Route::get('/bookings', [\App\Http\Controllers\Partner\PropertyController::class, 'bookings'])->name('partner.bookings');
+
+    // Property Listings
+    Route::get('/properties/apartments', [\App\Http\Controllers\Partner\PropertyListingController::class, 'apartments'])->name('partner.properties.apartments');
+    Route::get('/properties/homes', [\App\Http\Controllers\Partner\PropertyListingController::class, 'homes'])->name('partner.properties.homes');
+    Route::get('/properties/hotels', [\App\Http\Controllers\Partner\PropertyListingController::class, 'hotels'])->name('partner.properties.hotels');
+    Route::get('/properties/alternative-places', [\App\Http\Controllers\Partner\PropertyListingController::class, 'alternativePlaces'])->name('partner.properties.alternative-places');
+    Route::get('/properties/views/{id}', [\App\Http\Controllers\Partner\PropertyListingController::class, 'view'])->name('partner.properties.views');
+
+    // Earnings
+    Route::get('/earnings', [\App\Http\Controllers\Partner\EarningsController::class, 'index'])->name('partner.earnings');
+
+    // Messages
+    Route::get('/messages', [\App\Http\Controllers\Partner\MessageController::class, 'index'])->name('partner.messages');
+
+    // Reviews
+    Route::get('/reviews', [\App\Http\Controllers\Partner\ReviewController::class, 'index'])->name('partner.reviews');
+
+    // Settings
+    Route::get('/settings', [\App\Http\Controllers\Partner\SettingsController::class, 'index'])->name('partner.settings');
     Route::get('/property_category', [PropertyController::class, 'categories'])->name('partner.property.category');
     Route::get('/property_subcategory/{id}/{property_id?}', [PropertyController::class, 'subcategories'])->name('partner.property.subcategory');
     Route::get('/hotels/rooms/{id}', [PropertyController::class, 'rooms'])->name('partner.hotels.room');
@@ -747,3 +922,9 @@ Route::get('/partner/get-latest-property', [PropertyDataController::class, 'getL
 Route::post('/partner/property/upload-photos', [PropertyController::class, 'uploadPhotos'])->name('partner.property.upload-photos');
 Route::get('/partner/multiple-apartment-3', [PropertyController::class, 'showMultipleApartmentForm3'])->name('partner.multiple.apartment.3');
 Route::post('/partner/apartment/pricing/cancel-policies/{property}', [PropertyController::class, 'saveCancelPolicy'])->name('partner.apartment.pricing.cancel-policies.save');
+Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+
+Route::post('/logout', function () {
+    Auth::logout();
+    return redirect('/')->with('success', 'You have been logged out.');
+})->name('logout');
