@@ -5,6 +5,7 @@ use App\Http\Controllers\Customer\Auth\CustomerAuthController;
 use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TravelerDetailsController;
+use App\Http\Controllers\Admin\PropertyManagementController;
 use App\Models\Traveler;
 use App\Http\Controllers\Partner\PartnerRegistrationController;
 use Illuminate\Support\Facades\Route;
@@ -34,11 +35,6 @@ Route::get('/login/password', [LoginController::class, 'showPasswordForm'])->nam
 Route::post('/login/password', [LoginController::class, 'loginWithPassword']);
 
 Route::get('/login', [LoginController::class, 'show'])->name('login');
-// Route::post('/login', [AuthenticatedSessionController::class, 'store']);
-
-// Route::get('/login', function () {
-//     return view('frontend.login');
-// });
 
 Route::post('change-language', [LanguageController::class, 'change'])->name('lang.change');
 
@@ -226,9 +222,6 @@ Route::get('/partner-homes-create-1', function () {
 Route::get('/partner-hotels-rooms', function () {
     return view('frontend.partner-hotels-rooms');
 })->name('partner.hotels.rooms');
-
-
-
 
 Route::get('/partner-hotels-create-2', function () {
     return view('frontend.partner-hotels-create-2');
@@ -430,18 +423,9 @@ Route::get('/partner-hotels-non-refundable-rate', function () {
 })->name('partner.hotels.non.refundable.rate');
 
 
-// Route::get('/partner-hotels-complete-registration', function () {
-//     return view('frontend.partner-hotels-complete-registration');
-// })->name('partner.hotels.complete.registration');
-
 Route::get('/partner-hotels-multiple', function () {
     return view('frontend.partner-hotels-multiple');
 })->name('partner.hotels.multiple');
-
-// Route::get('/email-verify', function () {
-//     return view('frontend.verify-email');
-// })->name('email.verify');
-
 
 Route::get('/airport-taxis', function () {
     return view('frontend.airport-taxi');
@@ -706,15 +690,6 @@ Route::middleware(\App\Http\Middleware\EnsurePartner::class)->group(function () 
 
 Route::post('/property/{property}/update-title', [PropertyController::class, 'updateTitle'])->name('partner.property.update-title');
 
-Route::patch('/partner/property/{property}/additional-details', [PropertyController::class, 'updateAdditionalDetails'])
-    ->name('partner.property.update.additional-details.partner');
-
-Route::post('/partner/property/{property}/pricing', [PropertyController::class, 'savePricing'])
-    ->name('partner.property.save.pricing');
-
-Route::post('/partner/property/{property}/rate-plans', [PropertyController::class, 'saveRatePlans'])
-    ->name('partner.property.save.rate-plans');
-
 
 
 
@@ -725,54 +700,56 @@ require __DIR__ . '/auth.php';
 Route::prefix('admin')->name('admin.')->group(function () {
     // Guest routes
     Route::middleware('guest')->group(function () {
-        Route::get('/admin-login', [\App\Http\Controllers\Admin\AuthController::class, 'showLogin'])->name('login');
-        Route::post('/admin-login', [\App\Http\Controllers\Admin\AuthController::class, 'login']);
-        Route::get('/admin-registration', [\App\Http\Controllers\Admin\AuthController::class, 'showRegister'])->name('register');
-        Route::post('/admin-registration', [\App\Http\Controllers\Admin\AuthController::class, 'register']);
-        Route::get('/admin-forgot-password', [\App\Http\Controllers\Admin\AuthController::class, 'showForgotPassword'])->name('forgot-password');
-        Route::post('/admin-forgot-password', [\App\Http\Controllers\Admin\AdminPasswordResetLinkController::class, 'store'])->name('password.email');
-        Route::get('/admin-reset-password/{token}', function ($token) {
+        Route::get('/login', [\App\Http\Controllers\Admin\AuthController::class, 'showLogin'])->name('login');
+        Route::post('/login', [\App\Http\Controllers\Admin\AuthController::class, 'login']);
+        Route::get('/register', [\App\Http\Controllers\Admin\AuthController::class, 'showRegister'])->name('register');
+        Route::post('/register', [\App\Http\Controllers\Admin\AuthController::class, 'register']);
+        Route::get('/forgot-password', [\App\Http\Controllers\Admin\AuthController::class, 'showForgotPassword'])->name('forgot-password');
+        Route::post('/forgot-password', [\App\Http\Controllers\Admin\AdminPasswordResetLinkController::class, 'store'])->name('password.email');
+        Route::get('/reset-password/{token}', function ($token) {
             return view('admin.admin-reset-password', [
                 'token' => $token,
                 'email' => request('email')
             ]);
         })->name('password.reset');
-        Route::post('/admin-reset-password', [\App\Http\Controllers\Admin\AdminNewPasswordController::class, 'store'])->name('password.store');
+        Route::post('/reset-password', [\App\Http\Controllers\Admin\AdminNewPasswordController::class, 'store'])->name('password.store');
     });
 
     // Protected admin routes
-    Route::middleware(['auth:admin', \App\Http\Middleware\AdminMiddleware::class, \App\Http\Middleware\PreventBackHistory::class])->group(function () {
+    Route::middleware(['auth:admin', \App\Http\Middleware\AdminMiddleware::class])->group(function () {
         Route::get('/center', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
         Route::post('/exit', [\App\Http\Controllers\Admin\AuthController::class, 'logout'])->name('logout');
 
-        // Customer and Partner detail routes
+        // Property management routes
+        Route::get('/properties/pending', [\App\Http\Controllers\Admin\PropertyManagementController::class, 'pending'])->name('properties.pending');
+        Route::get('/properties/review/{id}', [\App\Http\Controllers\Admin\PropertyManagementController::class, 'review'])->name('properties.review');
+        Route::post('/properties/{id}/approve', [\App\Http\Controllers\Admin\PropertyManagementController::class, 'approve'])->name('properties.approve');
+        Route::post('/properties/{id}/reject', [\App\Http\Controllers\Admin\PropertyManagementController::class, 'reject'])->name('properties.reject');
+        Route::post('/properties/{id}/status', [\App\Http\Controllers\Admin\PropertyManagementController::class, 'updateStatus'])->name('properties.status.update');
+        Route::get('/properties/search', [\App\Http\Controllers\Admin\AdminViewController::class, 'search'])->name('properties.search');
+
+        // Property listings
+        Route::get('/units', [\App\Http\Controllers\Admin\AdminViewController::class, 'apartments'])->name('apartments');
+        Route::get('/residences', [\App\Http\Controllers\Admin\AdminViewController::class, 'homes'])->name('homes');
+        Route::get('/venues', [\App\Http\Controllers\Admin\AdminViewController::class, 'hotels'])->name('hotels');
+        Route::get('/unique-stays', [\App\Http\Controllers\Admin\AdminViewController::class, 'alternativePlaces'])->name('alternative.places');
+
+        // Customer and Partner management
         Route::get('/customer/{customer_id}', [\App\Http\Controllers\Admin\CustomerViewController::class, 'show'])->name('customer.view');
         Route::get('/partner/{partner_id}', [\App\Http\Controllers\Admin\PartnerViewController::class, 'show'])->name('partner.view');
 
         // Property management
-        Route::get('/units', function () {
-            return view('admin.admin-apartments');
-        })->name('apartments');
-        Route::get('/residences', function () {
-            return view('admin.admin-homes');
-        })->name('homes');
-        Route::get('/venues', function () {
-            return view('admin.admin-hotels');
-        })->name('hotels');
-        Route::get('/unique-stays', function () {
-            return view('admin.admin-alternative-places');
-        })->name('alternative.places');
+        Route::get('/units', [\App\Http\Controllers\Admin\AdminViewController::class, 'apartments'])->name('apartments');
+        Route::get('/residences', [\App\Http\Controllers\Admin\AdminViewController::class, 'homes'])->name('homes');
+        Route::get('/venues', [\App\Http\Controllers\Admin\AdminViewController::class, 'hotels'])->name('hotels');
+        Route::get('/unique-stays', [\App\Http\Controllers\Admin\AdminViewController::class, 'alternativePlaces'])->name('alternative.places');
 
         // Customer management
-        Route::get('/accounts', function () {
-            return view('admin.admin-customers');
-        })->name('customers');
+        Route::get('/accounts', [\App\Http\Controllers\Admin\AdminViewController::class, 'customers'])->name('customers');
         Route::post('/account-details', [\App\Http\Controllers\Admin\CustomerViewController::class, 'show'])->name('admin.customer.view');
 
         // Partner management
-        Route::get('/partners', function () {
-            return view('admin.admin-partners');
-        })->name('partners');
+        Route::get('/partners', [\App\Http\Controllers\Admin\AdminViewController::class, 'partners'])->name('partners');
         Route::post('/partner-details', [\App\Http\Controllers\Admin\PartnerViewController::class, 'show'])->name('admin.partner.view');
 
         // Settings

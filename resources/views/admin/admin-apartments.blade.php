@@ -78,38 +78,53 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100 text-xs sm:text-sm">
+                        @forelse($apartments as $apartment)
                         <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-2 sm:px-4 py-3 sm:py-4 font-medium text-gray-900">#101</td>
-                            <td class="px-2 sm:px-4 py-3 sm:py-4 text-gray-700">John Smith</td>
+                            <td class="px-2 sm:px-4 py-3 sm:py-4 font-medium text-gray-900">#{{ $apartment->id }}</td>
+                            <td class="px-2 sm:px-4 py-3 sm:py-4 text-gray-700">{{ $apartment->partner->name ?? 'N/A' }}</td>
                             <td class="px-2 sm:px-4 py-3 sm:py-4 text-gray-700">
-                                <div class="font-medium text-[#3CC0E9]">Central Loft</div>
+                                <div class="font-medium text-[#3CC0E9]">{{ $apartment->name }}</div>
                             </td>
-                            <td class="px-2 sm:px-4 py-3 sm:py-4 text-gray-700">New York, USA</td>
-                            {{-- <td class="px-2 sm:px-4 py-3 sm:py-4 text-gray-700">2</td> --}}
+                            <td class="px-2 sm:px-4 py-3 sm:py-4 text-gray-700">{{ $apartment->address }}</td>
                             <td class="px-2 sm:px-4 py-3 sm:py-4">
-                                <img src="/images/A.jpg" alt="Central Loft" class="w-10 h-10 rounded-md object-cover">
+                                @if($apartment->photos->isNotEmpty())
+                                    <img src="{{ $apartment->photos->first()->url }}" alt="{{ $apartment->name }}" class="w-10 h-10 rounded-md object-cover">
+                                @else
+                                    <div class="w-10 h-10 rounded-md bg-gray-200 flex items-center justify-center text-gray-400">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                    </div>
+                                @endif
                             </td>
-                            <td class="px-2 sm:px-4 py-3 sm:py-4 text-gray-700">Jul 24, 2025</td>
+                            <td class="px-2 sm:px-4 py-3 sm:py-4 text-gray-700">{{ $apartment->created_at->format('M d, Y') }}</td>
                             <td class="px-2 sm:px-4 py-3 sm:py-4">
                                 <div class="relative">
-                                    <select onchange="handleStatusChange(this, '101')" {{-- Replace '101' with dynamic ID --}}
-                                            class="appearance-none bg-green-100 text-green-800 font-medium text-[10px] sm:text-xs rounded-full pl-6 pr-4 py-0.5 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#3CC0E9] transition">
-                                        <option value="Available" selected class="bg-green-100 text-green-800">Available</option>
-                                        <option value="Pending" class="bg-yellow-100 text-yellow-800">Pending</option>
-                                        <option value="Unavailable" class="bg-red-100 text-red-800">Unavailable</option>
+                                    <select onchange="handleStatusChange(this, '{{ $apartment->id }}')"
+                                            class="appearance-none font-medium text-[10px] sm:text-xs rounded-full pl-6 pr-4 py-0.5 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#3CC0E9] transition
+                                            {{ $apartment->status === 'Available' ? 'bg-green-100 text-green-800' : '' }}
+                                            {{ $apartment->status === 'Pending' ? 'bg-yellow-100 text-yellow-800' : '' }}
+                                            {{ $apartment->status === 'Unavailable' ? 'bg-red-100 text-red-800' : '' }}">
+                                        <option value="Available" {{ $apartment->status === 'Available' ? 'selected' : '' }} class="bg-green-100 text-green-800">Available</option>
+                                        <option value="Pending" {{ $apartment->status === 'Pending' ? 'selected' : '' }} class="bg-yellow-100 text-yellow-800">Pending</option>
+                                        <option value="Unavailable" {{ $apartment->status === 'Unavailable' ? 'selected' : '' }} class="bg-red-100 text-red-800">Unavailable</option>
                                     </select>
-                                    <span class="absolute top-1/2 left-2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-green-800 pointer-events-none status-dot"></span>
+                                    <span class="absolute top-1/2 left-2 -translate-y-1/2 w-1.5 h-1.5 rounded-full status-dot
+                                        {{ $apartment->status === 'Available' ? 'bg-green-800' : '' }}
+                                        {{ $apartment->status === 'Pending' ? 'bg-yellow-800' : '' }}
+                                        {{ $apartment->status === 'Unavailable' ? 'bg-red-800' : '' }}">
+                                    </span>
                                 </div>
                             </td>
                             <td class="px-2 sm:px-4 py-3 sm:py-4">
                                 <div class="flex items-center space-x-3">
-                                    <button class="text-[#3CC0E9] hover:text-[#3CC0E9]/80 text-[10px] sm:text-xs font-medium inline-flex items-center">
+                                    <a href="{{ route('admin.properties.review', $apartment->id) }}" class="text-[#3CC0E9] hover:text-[#3CC0E9]/80 text-[10px] sm:text-xs font-medium inline-flex items-center">
                                         <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                         </svg>
                                         Edit
-                                    </button>
-                                    <button class="text-red-600 hover:text-red-800 text-[10px] sm:text-xs font-medium inline-flex items-center">
+                                    </a>
+                                    <button onclick="deleteProperty({{ $apartment->id }})" class="text-red-600 hover:text-red-800 text-[10px] sm:text-xs font-medium inline-flex items-center">
                                         <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                         </svg>
@@ -118,85 +133,13 @@
                                 </div>
                             </td>
                         </tr>
-                        {{-- Add more rows for testing search --}}
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-2 sm:px-4 py-3 sm:py-4 font-medium text-gray-900">#102</td>
-                            <td class="px-2 sm:px-4 py-3 sm:py-4 text-gray-700">Jane Doe</td>
-                            <td class="px-2 sm:px-4 py-3 sm:py-4 text-gray-700">
-                                <div class="font-medium text-[#3CC0E9]">Riverside Suites</div>
-                            </td>
-                            <td class="px-2 sm:px-4 py-3 sm:py-4 text-gray-700">Paris, France</td>
-                            <td class="px-2 sm:px-4 py-3 sm:py-4">
-                                <img src="https://placehold.co/40x40/FF0000/FFFFFF?text=B" alt="Riverside Suites" class="w-10 h-10 rounded-md object-cover">
-                            </td>
-                            <td class="px-2 sm:px-4 py-3 sm:py-4 text-gray-700">Jul 20, 2025</td>
-                            <td class="px-2 sm:px-4 py-3 sm:py-4">
-                                <div class="relative">
-                                    <select onchange="handleStatusChange(this, '101')" {{-- Replace '101' with dynamic ID --}}
-                                            class="appearance-none bg-green-100 text-green-800 font-medium text-[10px] sm:text-xs rounded-full pl-6 pr-4 py-0.5 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#3CC0E9] transition">
-                                        <option value="Available" selected class="bg-green-100 text-green-800">Available</option>
-                                        <option value="Pending" class="bg-yellow-100 text-yellow-800">Pending</option>
-                                        <option value="Unavailable" class="bg-red-100 text-red-800">Unavailable</option>
-                                    </select>
-                                    <span class="absolute top-1/2 left-2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-green-800 pointer-events-none status-dot"></span>
-                                </div>
-                            </td>
-                            <td class="px-2 sm:px-4 py-3 sm:py-4">
-                                <div class="flex items-center space-x-3">
-                                    <button class="text-[#3CC0E9] hover:text-[#3CC0E9]/80 text-[10px] sm:text-xs font-medium inline-flex items-center">
-                                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                        </svg>
-                                        Edit
-                                    </button>
-                                    <button class="text-red-600 hover:text-red-800 text-[10px] sm:text-xs font-medium inline-flex items-center">
-                                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                        </svg>
-                                        Delete
-                                    </button>
-                                </div>
+                        @empty
+                        <tr>
+                            <td colspan="8" class="px-4 py-8 text-center text-gray-500">
+                                No apartments found
                             </td>
                         </tr>
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-2 sm:px-4 py-3 sm:py-4 font-medium text-gray-900">#103</td>
-                            <td class="px-2 sm:px-4 py-3 sm:py-4 text-gray-700">Alice Brown</td>
-                            <td class="px-2 sm:px-4 py-3 sm:py-4 text-gray-700">
-                                <div class="font-medium text-[#3CC0E9]">Garden View Apt</div>
-                            </td>
-                            <td class="px-2 sm:px-4 py-3 sm:py-4 text-gray-700">Berlin, Germany</td>
-                            <td class="px-2 sm:px-4 py-3 sm:py-4">
-                                <img src="https://placehold.co/40x40/0000FF/FFFFFF?text=C" alt="Garden View Apt" class="w-10 h-10 rounded-md object-cover">
-                            </td>
-                            <td class="px-2 sm:px-4 py-3 sm:py-4 text-gray-700">Jul 18, 2025</td>
-                            <td class="px-2 sm:px-4 py-3 sm:py-4">
-                                <div class="relative">
-                                    <select onchange="handleStatusChange(this, '101')" {{-- Replace '101' with dynamic ID --}}
-                                            class="appearance-none bg-green-100 text-green-800 font-medium text-[10px] sm:text-xs rounded-full pl-6 pr-4 py-0.5 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#3CC0E9] transition">
-                                        <option value="Available" selected class="bg-green-100 text-green-800">Available</option>
-                                        <option value="Pending" class="bg-yellow-100 text-yellow-800">Pending</option>
-                                        <option value="Unavailable" class="bg-red-100 text-red-800">Unavailable</option>
-                                    </select>
-                                    <span class="absolute top-1/2 left-2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-green-800 pointer-events-none status-dot"></span>
-                                </div>
-                            </td>
-                            <td class="px-2 sm:px-4 py-3 sm:py-4">
-                                <div class="flex items-center space-x-3">
-                                    <button class="text-[#3CC0E9] hover:text-[#3CC0E9]/80 text-[10px] sm:text-xs font-medium inline-flex items-center">
-                                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                        </svg>
-                                        Edit
-                                    </button>
-                                    <button class="text-red-600 hover:text-red-800 text-[10px] sm:text-xs font-medium inline-flex items-center">
-                                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                        </svg>
-                                        Delete
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
@@ -204,49 +147,40 @@
             <!-- Pagination -->
             <div class="px-4 py-3 flex items-center justify-between border-t border-gray-200">
                 <div class="flex-1 flex justify-between sm:hidden">
-                    <button class="relative inline-flex items-center px-4 py-2 text-xs font-medium rounded-md text-gray-700 bg-white border border-gray-300 hover:bg-gray-50">
-                        Previous
-                    </button>
-                    <button class="relative inline-flex items-center px-4 py-2 text-xs font-medium rounded-md text-white bg-[#3CC0E9] hover:bg-[#3CC0E9]/80">
-                        Next
-                    </button>
+                    @if ($apartments->onFirstPage())
+                        <span class="relative inline-flex items-center px-4 py-2 text-xs font-medium text-gray-500 bg-white border border-gray-300 cursor-default rounded-md">
+                            Previous
+                        </span>
+                    @else
+                        <a href="{{ $apartments->previousPageUrl() }}" class="relative inline-flex items-center px-4 py-2 text-xs font-medium rounded-md text-gray-700 bg-white border border-gray-300 hover:bg-gray-50">
+                            Previous
+                        </a>
+                    @endif
+
+                    @if ($apartments->hasMorePages())
+                        <a href="{{ $apartments->nextPageUrl() }}" class="relative inline-flex items-center px-4 py-2 text-xs font-medium rounded-md text-white bg-[#3CC0E9] hover:bg-[#3CC0E9]/80">
+                            Next
+                        </a>
+                    @else
+                        <span class="relative inline-flex items-center px-4 py-2 text-xs font-medium text-gray-500 bg-white border border-gray-300 cursor-default rounded-md">
+                            Next
+                        </span>
+                    @endif
                 </div>
                 <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                     <div>
                         <p class="text-xs text-gray-700">
                             Showing
-                            <span class="font-medium">1</span>
+                            <span class="font-medium">{{ $apartments->firstItem() }}</span>
                             to
-                            <span class="font-medium">10</span>
+                            <span class="font-medium">{{ $apartments->lastItem() }}</span>
                             of
-                            <span class="font-medium">20</span>
+                            <span class="font-medium">{{ $apartments->total() }}</span>
                             results
                         </p>
                     </div>
                     <div>
-                        <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-                            <button class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-xs font-medium text-gray-500 hover:bg-gray-50">
-                                <span class="sr-only">Previous</span>
-                                <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
-                                </svg>
-                            </button>
-                            <button class="relative inline-flex items-center px-3 py-2 border border-gray-300 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50">
-                                1
-                            </button>
-                            <button class="relative inline-flex items-center px-3 py-2 border border-gray-300 bg-[#3CC0E9] text-xs font-medium text-white hover:bg-[#3CC0E9]/80">
-                                2
-                            </button>
-                            <button class="relative inline-flex items-center px-3 py-2 border border-gray-300 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50">
-                                3
-                            </button>
-                            <button class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-xs font-medium text-gray-500 hover:bg-gray-50">
-                                <span class="sr-only">Next</span>
-                                <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                                </svg>
-                            </button>
-                        </nav>
+                        {{ $apartments->links('vendor.pagination.tailwind') }}
                     </div>
                 </div>
             </div>
@@ -266,59 +200,193 @@
         selectEl.className = 'appearance-none font-medium text-[10px] sm:text-xs rounded-full pl-6 pr-4 py-0.5 transition focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#3CC0E9]';
         dot.className = 'absolute top-1/2 left-2 -translate-y-1/2 w-1.5 h-1.5 rounded-full status-dot';
 
-        // Apply styling
-        switch (value) {
-            case 'Available':
-                selectEl.classList.add('bg-green-100', 'text-green-800');
-                dot.classList.add('bg-green-800');
-                break;
-            case 'Pending':
-                selectEl.classList.add('bg-yellow-100', 'text-yellow-800');
-                dot.classList.add('bg-yellow-800');
-                break;
-            case 'Unavailable':
-                selectEl.classList.add('bg-red-100', 'text-red-800');
-                dot.classList.add('bg-red-800');
-                break;
-        }
+        // Update status via AJAX
+        fetch(`/admin/properties/${id}/status`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({ status: value })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Apply styling after successful update
+                switch (value) {
+                    case 'Available':
+                        selectEl.classList.add('bg-green-100', 'text-green-800');
+                        dot.classList.add('bg-green-800');
+                        break;
+                    case 'Pending':
+                        selectEl.classList.add('bg-yellow-100', 'text-yellow-800');
+                        dot.classList.add('bg-yellow-800');
+                        break;
+                    case 'Unavailable':
+                        selectEl.classList.add('bg-red-100', 'text-red-800');
+                        dot.classList.add('bg-red-800');
+                        break;
+                }
+            } else {
+                // Reset to previous value if update failed
+                alert('Failed to update status. Please try again.');
+                location.reload();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to update status. Please try again.');
+            location.reload();
+        });
+    }
 
-        // Optional: Save via AJAX
-        console.log(`Changed status of ID ${id} to ${value}`);
+    function deleteProperty(id) {
+        if (confirm('Are you sure you want to delete this property?')) {
+            fetch(`/admin/properties/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Failed to delete property. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to delete property. Please try again.');
+            });
+        }
     }
 
     document.addEventListener('DOMContentLoaded', function() {
+        let typingTimer;
+        const doneTypingInterval = 500;
         const searchInput = document.getElementById('apartmentSearchInput');
         const statusFilter = document.getElementById('statusFilter');
-        const table = document.getElementById('apartmentsTable');
-        const rows = table.querySelectorAll('tbody tr');
+        const tbody = document.querySelector('#apartmentsTable tbody');
 
-        function filterTable() {
-            const searchTerm = searchInput.value.toLowerCase();
-            const statusTerm = statusFilter.value.toLowerCase();
+        function performSearch() {
+            const searchTerm = searchInput.value.trim();
+            const status = statusFilter.value;
 
-            rows.forEach(row => {
-                const id = row.children[0]?.textContent.toLowerCase() || '';
-                const partnerName = row.children[1]?.textContent.toLowerCase() || '';
-                const apartmentNameEl = row.children[2]?.querySelector('.font-medium');
-                const apartmentName = apartmentNameEl ? apartmentNameEl.textContent.toLowerCase() : '';
-                const location = row.children[3]?.textContent.toLowerCase() || '';
-                const statusSelect = row.children[6]?.querySelector('select');
-                const status = statusSelect ? statusSelect.value.toLowerCase() : '';
+            // Add loading state
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="8" class="px-4 py-8 text-center text-gray-500">
+                        <svg class="animate-spin h-5 w-5 mx-auto mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Searching...
+                    </td>
+                </tr>
+            `;
 
-                const matchesSearch = id.includes(searchTerm) ||
-                    partnerName.includes(searchTerm) ||
-                    apartmentName.includes(searchTerm) ||
-                    location.includes(searchTerm) ||
-                    status.includes(searchTerm);
+            fetch(`/admin/properties/search?search=${searchTerm}&status=${status}&type=apartment`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const apartments = data.data;
 
-                const matchesStatus = !statusTerm || status === statusTerm;
+                        if (apartments.length === 0) {
+                            tbody.innerHTML = `
+                                <tr>
+                                    <td colspan="8" class="px-4 py-8 text-center text-gray-500">
+                                        No apartments found matching your criteria
+                                    </td>
+                                </tr>
+                            `;
+                            return;
+                        }
 
-                row.style.display = matchesSearch && matchesStatus ? '' : 'none';
-            });
+                        tbody.innerHTML = apartments.map(apt => `
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-2 sm:px-4 py-3 sm:py-4 font-medium text-gray-900">#${apt.id}</td>
+                                <td class="px-2 sm:px-4 py-3 sm:py-4 text-gray-700">${apt.partner.name || 'N/A'}</td>
+                                <td class="px-2 sm:px-4 py-3 sm:py-4 text-gray-700">
+                                    <div class="font-medium text-[#3CC0E9]">${apt.name}</div>
+                                </td>
+                                <td class="px-2 sm:px-4 py-3 sm:py-4 text-gray-700">${apt.address}</td>
+                                <td class="px-2 sm:px-4 py-3 sm:py-4">
+                                    ${apt.photos.length > 0 ?
+                                        `<img src="${apt.photos[0].url}" alt="${apt.name}" class="w-10 h-10 rounded-md object-cover">` :
+                                        `<div class="w-10 h-10 rounded-md bg-gray-200 flex items-center justify-center text-gray-400">
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                            </svg>
+                                        </div>`
+                                    }
+                                </td>
+                                <td class="px-2 sm:px-4 py-3 sm:py-4 text-gray-700">${new Date(apt.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</td>
+                                <td class="px-2 sm:px-4 py-3 sm:py-4">
+                                    <div class="relative">
+                                        <select onchange="handleStatusChange(this, '${apt.id}')"
+                                                class="appearance-none font-medium text-[10px] sm:text-xs rounded-full pl-6 pr-4 py-0.5 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#3CC0E9] transition
+                                                ${apt.status === 'Available' ? 'bg-green-100 text-green-800' : ''}
+                                                ${apt.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' : ''}
+                                                ${apt.status === 'Unavailable' ? 'bg-red-100 text-red-800' : ''}">
+                                            <option value="Available" ${apt.status === 'Available' ? 'selected' : ''} class="bg-green-100 text-green-800">Available</option>
+                                            <option value="Pending" ${apt.status === 'Pending' ? 'selected' : ''} class="bg-yellow-100 text-yellow-800">Pending</option>
+                                            <option value="Unavailable" ${apt.status === 'Unavailable' ? 'selected' : ''} class="bg-red-100 text-red-800">Unavailable</option>
+                                        </select>
+                                        <span class="absolute top-1/2 left-2 -translate-y-1/2 w-1.5 h-1.5 rounded-full status-dot
+                                            ${apt.status === 'Available' ? 'bg-green-800' : ''}
+                                            ${apt.status === 'Pending' ? 'bg-yellow-800' : ''}
+                                            ${apt.status === 'Unavailable' ? 'bg-red-800' : ''}">
+                                        </span>
+                                    </div>
+                                </td>
+                                <td class="px-2 sm:px-4 py-3 sm:py-4">
+                                    <div class="flex items-center space-x-3">
+                                        <a href="/admin/properties/review/${apt.id}" class="text-[#3CC0E9] hover:text-[#3CC0E9]/80 text-[10px] sm:text-xs font-medium inline-flex items-center">
+                                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                            </svg>
+                                            Edit
+                                        </a>
+                                        <button onclick="deleteProperty(${apt.id})" class="text-red-600 hover:text-red-800 text-[10px] sm:text-xs font-medium inline-flex items-center">
+                                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                            </svg>
+                                            Delete
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `).join('');
+                    } else {
+                        tbody.innerHTML = `
+                            <tr>
+                                <td colspan="8" class="px-4 py-8 text-center text-gray-500">
+                                    Error loading apartments
+                                </td>
+                            </tr>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="8" class="px-4 py-8 text-center text-gray-500">
+                                Error loading apartments
+                            </td>
+                        </tr>
+                    `;
+                });
         }
 
-        searchInput.addEventListener('input', filterTable);
-        statusFilter.addEventListener('change', filterTable);
+        searchInput.addEventListener('input', function() {
+            clearTimeout(typingTimer);
+            typingTimer = setTimeout(performSearch, doneTypingInterval);
+        });
+
+        statusFilter.addEventListener('change', performSearch);
     });
 </script>
 

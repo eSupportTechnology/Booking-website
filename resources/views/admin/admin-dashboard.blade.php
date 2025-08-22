@@ -2,183 +2,334 @@
 
 @section('content')
 <div class="space-y-6">
-
-    {{-- <!-- Breadcrumb -->
-    <nav class="flex mb-4" aria-label="Breadcrumb">
-        <ol class="inline-flex items-center space-x-1 md:space-x-3">
-            <li class="inline-flex items-center">
-                <a href="{{ route('admin.dashboard') }}" class="text-gray-700 hover:text-blue-600">
-                    <i class="fas fa-home mr-1"></i> Dashboard
-                </a>
-            </li>
-        </ol>
-    </nav> --}}
-
     <!-- Header -->
     <div class="flex justify-between items-center">
-        <h1 class="text-3xl font-semibold text-gray-800">Welcome back, <b>{{ Auth::guard('admin')->user()->username }} </b>👋</h1>
-        <a href="{{ route('admin.customers') }}" class="text-white px-4 py-2 rounded shadow hover:opacity-90 transition" style="background-color: #1F8FB2;">
-            Manage Customers
-        </a>
+        <div>
+            <h1 class="text-3xl font-semibold text-gray-800">Welcome back, <b>{{ Auth::guard('admin')->user()->username }}</b> 👋</h1>
+            <p class="text-gray-500 mt-1">Here's what's happening with your properties today.</p>
+        </div>
+        <div class="text-right">
+            <div class="text-sm text-gray-500">Today's Date</div>
+            <div class="text-lg font-semibold">{{ now()->format('F d, Y') }}</div>
+        </div>
     </div>
 
     <!-- Statistics Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div class="bg-white p-6 rounded-lg shadow border-l-4" style="border-color: #1F8FB2;">
-            <h2 class="text-sm text-gray-500">Total Bookings</h2>
-            <p class="text-2xl font-bold text-gray-800">1,250</p>
+        <!-- Total Properties -->
+        <div class="bg-white p-6 rounded-lg shadow-lg border-l-4 border-[#1F8FB2]">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-sm text-gray-500">Total Properties</p>
+                    <h3 class="text-2xl font-bold text-gray-800">{{ $totalProperties }}</h3>
+                </div>
+                <span class="text-[#1F8FB2] bg-blue-50 rounded-full p-3">
+                    <i class="fas fa-building text-xl"></i>
+                </span>
+            </div>
+            <div class="mt-2">
+                <span class="text-green-500 text-sm">
+                    <i class="fas fa-arrow-up"></i> +{{ $newPropertiesThisMonth }} this month
+                </span>
+            </div>
         </div>
-        <div class="bg-white p-6 rounded-lg shadow border-l-4 border-green-500">
-            <h2 class="text-sm text-gray-500">New Users</h2>
-            <p class="text-2xl font-bold text-gray-800">320</p>
+
+        <!-- Total Users -->
+        <div class="bg-white p-6 rounded-lg shadow-lg border-l-4 border-purple-500">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-sm text-gray-500">Total Users</p>
+                    <h3 class="text-2xl font-bold text-gray-800">{{ $totalPartners + $totalCustomers }}</h3>
+                </div>
+                <span class="text-purple-500 bg-purple-50 rounded-full p-3">
+                    <i class="fas fa-users text-xl"></i>
+                </span>
+            </div>
+            <div class="mt-2">
+                <span class="text-purple-500 text-sm">
+                    <i class="fas fa-arrow-up"></i> +{{ $newPartnersThisMonth + $newCustomersThisMonth }} this month
+                </span>
+            </div>
         </div>
-        <div class="bg-white p-6 rounded-lg shadow border-l-4 border-yellow-500">
-            <h2 class="text-sm text-gray-500">Revenue</h2>
-            <p class="text-2xl font-bold text-gray-800">$18,450</p>
+
+        <!-- Pending Approvals -->
+        <div class="bg-white p-6 rounded-lg shadow-lg border-l-4 border-yellow-500">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-sm text-gray-500">Pending Approvals</p>
+                    <h3 class="text-2xl font-bold text-gray-800">{{ $pendingApprovals }}</h3>
+                </div>
+                <span class="text-yellow-500 bg-yellow-50 rounded-full p-3">
+                    <i class="fas fa-clock text-xl"></i>
+                </span>
+            </div>
+            <div class="mt-2">
+                <a href="{{ route('admin.properties.pending') }}" class="text-yellow-500 text-sm hover:underline">
+                    View all →
+                </a>
+            </div>
         </div>
-        <div class="bg-white p-6 rounded-lg shadow border-l-4 border-red-500">
-            <h2 class="text-sm text-gray-500">Cancellations</h2>
-            <p class="text-2xl font-bold text-gray-800">12</p>
+
+        <!-- Total Bookings -->
+        <div class="bg-white p-6 rounded-lg shadow-lg border-l-4 border-green-500">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-sm text-gray-500">Total Bookings</p>
+                    <h3 class="text-2xl font-bold text-gray-800">{{ $totalBookings }}</h3>
+                </div>
+                <span class="text-green-500 bg-green-50 rounded-full p-3">
+                    <i class="fas fa-calendar-check text-xl"></i>
+                </span>
+            </div>
+            <div class="mt-2">
+                <span class="text-green-500 text-sm">
+                    <i class="fas fa-arrow-up"></i> {{ $bookingGrowth }}% growth
+                </span>
+            </div>
         </div>
     </div>
 
-    <!-- Recent Bookings Table -->
+    <!-- Charts Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Bookings Chart -->
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h2 class="text-xl font-semibold text-[#1F8FB2] mb-4">Booking Trends</h2>
+            <canvas id="bookingChart" height="300"></canvas>
+        </div>
+
+        <!-- Property Distribution Chart -->
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h2 class="text-xl font-semibold text-[#1F8FB2] mb-4">Property Distribution</h2>
+            <canvas id="propertyTypeChart" height="300"></canvas>
+        </div>
+    </div>
+
+    <!-- Recent Bookings -->
     <div class="bg-white p-6 rounded-lg shadow">
-        <h2 class="text-lg font-semibold text-gray-700 mb-4">Recent Bookings</h2>
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-semibold text-[#1F8FB2]">Recent Bookings</h2>
+            <a href="#" class="text-[#1F8FB2] hover:underline">View all</a>
+        </div>
+
         <div class="overflow-x-auto">
-            <table class="min-w-full table-auto text-sm text-gray-700">
-                <thead>
-                    <tr class="bg-gray-100 text-left">
-                        <th class="px-4 py-2">Booking ID</th>
-                        <th class="px-4 py-2">Customer</th>
-                        <th class="px-4 py-2">Property</th>
-                        <th class="px-4 py-2">Date</th>
-                        <th class="px-4 py-2">Status</th>
-                        <th class="px-4 py-2 text-right">Action</th>
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Booking ID</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Property</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Check-in</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr class="border-b hover:bg-gray-50">
-                        <td class="px-4 py-2">BK10234</td>
-                        <td class="px-4 py-2">John Doe</td>
-                        <td class="px-4 py-2">Ocean View Hotel</td>
-                        <td class="px-4 py-2">2025-07-20</td>
-                        <td class="px-4 py-2">
-                            <span class="bg-green-100 text-green-700 text-xs font-medium px-2 py-1 rounded">Confirmed</span>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    @forelse($recentBookings as $booking)
+                    <tr>
+                        <td class="px-6 py-4 text-sm font-medium text-gray-900">
+                            #{{ $booking->id }}
                         </td>
-                        <td class="px-4 py-2 text-right">
-                            <a href="{{ route('admin.customers') }}" class="hover:underline" style="color: #1F8FB2;">View</a>
+                        <td class="px-6 py-4">
+                            <div class="text-sm text-gray-900">{{ $booking->property->name }}</div>
+                            <div class="text-sm text-gray-500">{{ $booking->property->location }}</div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="text-sm text-gray-900">{{ $booking->user->name }}</div>
+                            <div class="text-sm text-gray-500">{{ $booking->user->email }}</div>
+                        </td>
+                        <td class="px-6 py-4 text-sm text-gray-500">
+                            {{ $booking->check_in->format('M d, Y') }}
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                {{ $booking->status === 'confirmed' ? 'bg-green-100 text-green-800' :
+                                   ($booking->status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                                   'bg-red-100 text-red-800') }}">
+                                {{ ucfirst($booking->status) }}
+                            </span>
                         </td>
                     </tr>
+                    @empty
+                    <tr>
+                        <td colspan="5" class="px-6 py-4 text-center text-gray-500">
+                            No recent bookings
+                        </td>
+                    </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
     </div>
 
-    <!--  Chart Section -->
+    <!-- Properties Pending Approval -->
     <div class="bg-white p-6 rounded-lg shadow">
-        <h2 class="text-lg font-semibold text-gray-700 mb-4">Monthly Bookings Overview</h2>
-        <canvas id="bookingChart" height="40"></canvas>
-    </div>
-
-    <!-- Quick Actions -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="bg-white p-6 rounded-lg shadow">
-            <h3 class="text-lg font-semibold mb-2">Quick Actions</h3>
-            <div class="flex flex-col space-y-2">
-                <a href="{{ route('admin.apartments') }}" class="text-center text-white px-4 py-2 rounded hover:opacity-90 transition" style="background-color: #1F8FB2;">Manage Properties</a>
-                <a href="{{ route('admin.customers') }}" class="text-center text-white px-4 py-2 rounded hover:opacity-90 transition" style="background-color: #3CC0E9;">Manage Users</a>
-                @if(Auth::guard('admin')->user()->hasRole('superAdmin'))
-                <a href="{{ route('admin.approvals.index') }}" class="text-center bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 transition">Pending Admins</a>
-                @endif
-            </div>
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-semibold text-[#1F8FB2]">Properties Pending Approval</h2>
+            <a href="{{ route('admin.properties.pending') }}" class="text-[#1F8FB2] hover:underline">View all</a>
         </div>
 
-        <div class="bg-white p-6 rounded-lg shadow">
-            <h3 class="text-lg font-semibold mb-2">Notifications</h3>
-            <ul class="list-disc list-inside text-gray-700 space-y-1">
-                <li>3 new bookings today.</li>
-                <li>Partner contract expiring soon.</li>
-                <li>System update scheduled for next week.</li>
-            </ul>
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Property</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Partner</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Submitted</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    @forelse($pendingProperties as $property)
+                    <tr>
+                        <td class="px-6 py-4">
+                            <div class="flex items-center">
+                                <img class="h-10 w-10 rounded-full object-cover"
+                                     src="{{ optional($property->photos->first())->url ?? asset('images/default-property.jpg') }}"
+                                     alt="{{ $property->title }}">
+                                <div class="ml-4">
+                                    <div class="text-sm font-medium text-gray-900">{{ $property->title }}</div>
+                                    <div class="text-sm text-gray-500">{{ $property->city }}, {{ $property->country }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="text-sm text-gray-900">{{ $property->user->name }}</div>
+                            <div class="text-sm text-gray-500">{{ $property->user->email }}</div>
+                        </td>
+                        <td class="px-6 py-4 text-sm text-gray-500">{{ ucfirst($property->type) }}</td>
+                        <td class="px-6 py-4 text-sm text-gray-500">{{ $property->created_at->diffForHumans() }}</td>
+                        <td class="px-6 py-4">
+                            <div class="flex space-x-2">
+                                <button onclick="approveProperty({{ $property->id }})"
+                                        class="text-green-600 hover:text-green-900">Approve</button>
+                                <button onclick="rejectProperty({{ $property->id }})"
+                                        class="text-red-600 hover:text-red-900">Reject</button>
+                            </div>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="5" class="px-6 py-4 text-center text-gray-500">
+                            No properties pending approval
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
     </div>
+
+
 </div>
 
-<!--  Chart Script -->
+<!-- Charts Script -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    const ctx = document.getElementById('bookingChart').getContext('2d');
-
-    const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-    gradient.addColorStop(0, 'rgba(31, 143, 178, 0.5)');
-    gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
-
-    new Chart(ctx, {
+    // Booking Trends Chart
+    const bookingCtx = document.getElementById('bookingChart').getContext('2d');
+    const bookingChart = new Chart(bookingCtx, {
         type: 'line',
         data: {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
-            datasets: [
-                {
-                    label: 'Bookings',
-                    data: [120, 150, 180, 140, 200, 170, 250],
-                    fill: true,
-                    backgroundColor: gradient,
-                    borderColor: '#1F8FB2',
-                    tension: 0.4,
-                    borderWidth: 3,
-                    pointBackgroundColor: '#1F8FB2',
-                    pointRadius: 4
-                },
-                {
-                    label: 'Cancellations',
-                    data: [20, 30, 15, 25, 18, 22, 10],
-                    fill: false,
-                    borderColor: '#ef4444',
-                    borderWidth: 2,
-                    tension: 0.4,
-                    pointBackgroundColor: '#ef4444',
-                    pointRadius: 4
-                }
-            ]
+            labels: {!! json_encode($bookingStats['labels']) !!},
+            datasets: [{
+                label: 'Bookings',
+                data: {!! json_encode($bookingStats['data']) !!},
+                backgroundColor: 'rgba(31, 143, 178, 0.1)',
+                borderColor: '#1F8FB2',
+                borderWidth: 2,
+                tension: 0.4,
+                fill: true
+            }]
         },
         options: {
             responsive: true,
             plugins: {
                 legend: {
-                    labels: {
-                        color: '#374151',
-                        font: { size: 14, weight: 'bold' }
-                    }
-                },
-                tooltip: {
-                    backgroundColor: '#111827',
-                    titleColor: '#fff',
-                    bodyColor: '#d1d5db',
-                    borderColor: '#1F8FB2',
-                    borderWidth: 1
+                    display: false
                 }
             },
             scales: {
-                x: {
-                    ticks: { color: '#6b7280', font: { weight: '600' } },
-                    grid: { display: false }
-                },
                 y: {
                     beginAtZero: true,
                     ticks: {
-                        color: '#6b7280',
-                        stepSize: 50,
-                        font: { weight: '600' }
-                    },
-                    grid: {
-                        color: '#e5e7eb',
-                        lineWidth: 1,
-                        borderDash: [5, 5]
+                        stepSize: 1
                     }
                 }
             }
         }
     });
+
+    // Property Distribution Chart
+    const propertyCtx = document.getElementById('propertyTypeChart').getContext('2d');
+    const propertyChart = new Chart(propertyCtx, {
+        type: 'doughnut',
+        data: {
+            labels: {!! json_encode(array_keys($propertyTypeStats)) !!},
+            datasets: [{
+                data: {!! json_encode(array_values($propertyTypeStats)) !!},
+                backgroundColor: [
+                    '#1F8FB2',
+                    '#3CC0E9',
+                    '#64D2F4',
+                    '#9BE3F9'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            },
+            cutout: '70%'
+        }
+    });
+</script>
+
+<script>
+    function approveProperty(id) {
+        if (confirm('Are you sure you want to approve this property?')) {
+            fetch(`/admin/properties/${id}/approve`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                }
+            }).then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            }).then(data => {
+                alert('Property approved successfully');
+                window.location.reload();
+            }).catch(error => {
+                console.error('Error:', error);
+                alert('Failed to approve property');
+            });
+        }
+    }
+
+    function rejectProperty(id) {
+        const reason = prompt('Please provide a reason for rejection:');
+        if (reason) {
+            fetch(`/admin/properties/${id}/reject`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({ reason })
+            }).then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            }).then(data => {
+                alert('Property rejected successfully');
+                window.location.reload();
+            }).catch(error => {
+                console.error('Error:', error);
+                alert('Failed to reject property');
+            });
+        }
+    }
 </script>
 @endsection
