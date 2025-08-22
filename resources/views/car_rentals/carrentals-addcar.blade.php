@@ -15,7 +15,8 @@
 
     <!-- Step 1: Car Info -->
     <template x-if="step === 1">
-        <div class="px-6 py-8 mt-6 w-full bg-white max-w-xl mx-auto lg:ml-24 space-y-6 rounded-lg shadow border">
+
+        <div class="px-6 py-6 mt-6 w-full bg-white max-w-xl mx-auto lg:ml-24 space-y-6 rounded-lg shadow border">
             <h1 class="text-2xl font-bold">Enter Basic Information About the Car</h1>
 
             <div class="space-y-4">
