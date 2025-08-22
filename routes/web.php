@@ -43,6 +43,9 @@ Route::get('/login', [LoginController::class, 'show'])->name('login');
 Route::post('change-language', [LanguageController::class, 'change'])->name('lang.change');
 
 Route::prefix('customer')->group(function () {
+    // Search route
+    Route::get('/search', [\App\Http\Controllers\Customer\SearchController::class, 'search'])->name('customer.search');
+
     Route::get('/login', [CustomerAuthController::class, 'showLoginForm'])->name('customer.login');
     Route::post('/customer/request-otp', [CustomerAuthController::class, 'requestOtp'])->name('customer.request.otp');
     Route::post('/customer/verify-otp', [CustomerAuthController::class, 'verifyOtp'])->name('customer.verify.otp');
@@ -742,6 +745,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/center', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
         Route::post('/exit', [\App\Http\Controllers\Admin\AuthController::class, 'logout'])->name('logout');
 
+        // Customer and Partner detail routes
+        Route::get('/customer/{customer_id}', [\App\Http\Controllers\Admin\CustomerViewController::class, 'show'])->name('customer.view');
+        Route::get('/partner/{partner_id}', [\App\Http\Controllers\Admin\PartnerViewController::class, 'show'])->name('partner.view');
+
         // Property management
         Route::get('/units', function () {
             return view('admin.admin-apartments');
@@ -760,13 +767,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/accounts', function () {
             return view('admin.admin-customers');
         })->name('customers');
-        Route::post('/account-details', [\App\Http\Controllers\Admin\CustomerViewController::class, 'show'])->name('customer.view');
+        Route::post('/account-details', [\App\Http\Controllers\Admin\CustomerViewController::class, 'show'])->name('admin.customer.view');
 
         // Partner management
         Route::get('/partners', function () {
             return view('admin.admin-partners');
         })->name('partners');
-        Route::post('/partner-details', [\App\Http\Controllers\Admin\PartnerViewController::class, 'show'])->name('partner.view');
+        Route::post('/partner-details', [\App\Http\Controllers\Admin\PartnerViewController::class, 'show'])->name('admin.partner.view');
 
         // Settings
         Route::get('/settings', function () {
