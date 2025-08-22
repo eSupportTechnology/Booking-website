@@ -585,6 +585,8 @@ Route::get('/car-listing', function () {
 
 
 
+
+
 Route::get('/partner/apartment/bedrooms/{property}', function ($propertyId) {
     $property = \App\Models\Property::findOrFail($propertyId);
     $bedTypes = \App\Models\BedType::all();
