@@ -44,4 +44,28 @@ class AirportTaxiController extends Controller
             'taxi_id' => $taxi->id
         ]);
     }
+
+    public function storeStep2(Request $request)
+    {
+        $validated = $request->validate([
+            'taxi_id' => 'required|exists:taxis,id',
+            'number_plate' => 'required|string|unique:taxis,number_plate,' . $request->taxi_id,
+            'color' => 'required|string',
+            'passenger_capacity' => 'required|integer|min:1|max:50',
+            'luggage_capacity' => 'nullable|integer|min:0|max:20',
+        ]);
+
+        $taxi = Taxi::findOrFail($validated['taxi_id']);
+        $taxi->update([
+            'number_plate' => $validated['number_plate'],
+            'color' => $validated['color'],
+            'passenger_capacity' => $validated['passenger_capacity'],
+            'luggage_capacity' => $validated['luggage_capacity'] ?? null,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'taxi_id' => $taxi->id,
+        ]);
+    }
 }
