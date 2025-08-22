@@ -6,7 +6,7 @@
 
 <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
-<div x-data="{ step: 1 ,showModal: false }" @open-modal.window="showModal = true">
+<div x-data="taxiWizard()" @open-modal.window="showModal = true">
     <!-- Progress Bar -->
     <div class="w-full bg-gray-200 h-2">
         <div class="bg-[#3CC0E9] border-r border-white h-2 transition-all duration-500"
@@ -15,7 +15,7 @@
 
     <!-- Step 1: Car Type Image Selection -->
     <template x-if="step === 1">
-        <div class="px-6 py-8 mt-6 w-full max-w-4xl mx-auto lg:ml-24 space-y-6 bg-white rounded-lg shadow border" x-data="{ selectedImage: '', selectedCategory: '' }">
+        <div class="px-6 py-8 mt-6 w-full max-w-4xl mx-auto lg:ml-24 space-y-6 bg-white rounded-lg shadow border">
             <!-- Car Images Grid -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <!-- Example car image -->
@@ -93,7 +93,7 @@
             <!-- Navigation Buttons -->
             <div class="flex justify-between items-center mt-6">
                 <button @click="step--" class="flex items-center border border-[#3CC0E9] rounded text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12">←</button>
-                <button @click="step++" class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition">Continue</button>
+                <button @click="saveStep1" class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition">Continue</button>
             </div>
         </div>
     </template>
@@ -275,5 +275,48 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener("alpine:init", () => {
+        Alpine.data("taxiWizard", () => ({
+            step: 1,
+            selectedCategory: '',
+            step: 1,
+            showModal: false,
+            // Triggered when user clicks Continue
+            async saveStep1() {
+                if (!this.selectedCategory) {
+                    alert("Please select a taxi type before continuing!");
+                    return;
+                }
+
+                try {
+                    const response = await fetch("{{ route('taxis.storeStep1') }}", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                        },
+                        body: JSON.stringify({
+                            taxi_type: this.selectedCategory
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        console.log("Taxi saved with ID:", data.taxi_id);
+                        this.step++;
+                    } else {
+                        alert(data.message || "Failed to save taxi type");
+                    }
+                } catch (error) {
+                    console.error("Error:", error);
+                    alert("Something went wrong while saving.");
+                }
+            }
+        }))
+    })
+</script>
 
 @endsection
