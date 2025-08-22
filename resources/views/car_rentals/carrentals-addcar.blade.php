@@ -1,4 +1,4 @@
-@extends('frontend.carrental-layout')
+@extends('partner.partner-layout')
 
 @section('title', 'Add Car | ' . config('domains.app_name'))
 
@@ -18,10 +18,7 @@
         <div class="px-6 py-8 mt-6 w-full bg-white max-w-xl mx-auto lg:ml-24 space-y-6 rounded-lg shadow border">
             <h1 class="text-2xl font-bold">Enter Basic Information About the Car</h1>
 
-
             <div class="space-y-4">
-                <!-- Car Name -->
-
                 <!-- Car Type -->
                 <div>
                     <label class="block text-sm  font-semibold mb-1">
@@ -34,7 +31,6 @@
                     </label>
                     @endforeach
                 </div>
-
 
                 <!-- Company -->
                 <div>
@@ -49,7 +45,6 @@
                     </select>
                     <p class="text-gray-500 text-sm mt-1">Select the rental company providing the car.</p>
                 </div>
-
 
                 <!-- Brand -->
                 <div>
@@ -79,7 +74,6 @@
                     <p class="text-gray-500 text-sm mt-1">Select the specific model of the car (e.g., Corolla, Civic).</p>
                 </div>
 
-
                 <!-- Seats -->
                 <div>
                     <label class="block font-semibold text-sm mb-1">
@@ -88,7 +82,6 @@
                     <input type="number" x-model="car.seats" placeholder="e.g., 4" class="w-full p-2 border rounded-md" min="2" max="20">
                     <p class="text-gray-500 text-sm mt-1">Enter the number of passengers the car can seat.</p>
                 </div>
-
             </div>
 
             <div class="flex justify-between items-center mt-6">
@@ -101,12 +94,10 @@
         </div>
     </template>
 
-
     <!-- Step 2: Specifications -->
     <template x-if="step === 2">
         <div class="px-6 py-8 mt-6 w-full bg-white max-w-xl mx-auto lg:ml-24 space-y-6 rounded-lg shadow border">
             <h1 class="text-2xl font-bold mb-2">Provide Detailed Specifications and Features of the Car</h1>
-
 
             <div class="space-y-4">
                 <!-- Transmission -->
@@ -135,8 +126,6 @@
                     <p class="text-gray-500 text-sm mt-1">Choose whether the mileage is unlimited or limited.</p>
                 </div>
 
-
-
                 <!-- Fuel Type -->
                 <div>
                     <label class="block font-semibold text-sm mb-1">
@@ -159,7 +148,6 @@
             </div>
         </div>
     </template>
-
     
     <!-- Step 3: Car Type Image Selection -->
     <template x-if="step === 3">
@@ -297,15 +285,11 @@
     </template>
 
 
-
-
-    <!-- Step 4: Pricing & Submit -->
+   <!-- Step 4: Pricing & Submit -->
     <template x-if="step === 4">
         <div class="px-6 py-8 mt-6 w-full max-w-xl mx-auto lg:ml-24 space-y-6 bg-white rounded-lg shadow border">
             <h1 class="text-2xl font-bold mb-2">Set Rental Pricing and Complete Submission</h1>
 
-
-            <!-- Step 1: Select Pricing Type -->
             <div>
                 <label class="block font-semibold text-sm mb-1">Select Pricing Type <span class="text-red-500">*</span></label>
                 <select x-model="car.pricingType" class="w-full p-2 border rounded-md text-sm ">
@@ -316,24 +300,18 @@
                 <p class="text-gray-500 text-sm mt-1">Choose whether you want to set a daily rate or a per kilometer rate.</p>
             </div>
 
-            <!-- Step 2: Show input based on selection -->
             <div class="space-y-4 mt-4">
-                <!-- Price Per Day -->
                 <div x-show="car.pricingType === 'perDay'" class="transition-all">
                     <label class="block font-semibold text-sm mb-1">Price Per Day <span class="text-red-500">*</span></label>
                     <input type="number" x-model="car.pricePerDay" placeholder="e.g., 16,948.72" class="w-full p-2 border rounded-lg" step="0.01">
                     <p class="text-gray-500 text-sm mt-1">Enter the daily rental price of the car.</p>
                 </div>
 
-                <!-- Price Per Kilometer -->
                 <div x-show="car.pricingType === 'perKm'" class="transition-all">
                     <label class="block font-semibold text-sm mb-1">Price Per Kilometer <span class="text-red-500">*</span></label>
                     <input type="number" x-model="car.pricePerKm" placeholder="e.g., 50.00" class="w-full p-2 border rounded-lg" step="0.01">
                     <p class="text-gray-500 text-sm mt-1">Enter the additional cost per kilometer.</p>
                 </div>
-
-                <!-- Deposit (always visible) -->
-
             </div>
 
             <div class="flex justify-between items-center mt-6">
@@ -342,7 +320,6 @@
             </div>
         </div>
     </template>
-
 </div>
 
 <script>
@@ -355,7 +332,6 @@
         };
         reader.readAsDataURL(event.target.files[0]);
     }
-
 
     function carForm() {
         return {
@@ -378,14 +354,13 @@
                 deposit: 0
             },
             selectedImage: '',
-            models: @json($car_models), // all models with brand_id
+            models: @json($car_models),
             get filteredModels() {
                 if (!this.car.brand) {
                     return [];
                 }
                 return this.models.filter(m => m.brand_id == this.car.brand);
             },
-            // Submit step to backend
             async submitStep() {
                 try {
                     let response = await fetch("/cars/register-step", {
@@ -407,20 +382,50 @@
                     });
                     let data = await response.json();
                     if (data.success) {
-                        Swal.fire({
-                            title: data.message || "Step submitted successfully.",
-                            icon: "success",
-                            toast: true,
-                            position: "top-end",
-                            showConfirmButton: false,
-                            timer: 3000
-                        });
-                        this.car_id = data.car;
-                        console.log("Step " + this.step );
                         if (this.step === 4) {
-                            window.location.href = "/carrentals/Addcar";
+                            Swal.fire({
+                                title: "Car added successfully!",
+                                text: "Do you want to add more cars?",
+                                icon: "success",
+                                showCancelButton: true,
+                                confirmButtonText: "Yes, add more",
+                                cancelButtonText: "No, finish"
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    this.step = 1;
+                                    this.car = {
+                                        car_type_id: '',
+                                        company_id: '',
+                                        brand: '',
+                                        model_id: '',
+                                        seats: '',
+                                        price_per_day: '',
+                                        deposit: 0,
+                                        transmission: '',
+                                        mileage_type: '',
+                                        fuel_type: '',
+                                        pricingType: '',
+                                        pricePerDay: '',
+                                        pricePerKm: '',
+                                        deposit: 0
+                                    };
+                                    this.selectedImage = '';
+                                } else {
+                                    window.location.href = "/carrentals/Addcar";
+                                }
+                            });
+                        } else {
+                            Swal.fire({
+                                title: data.message || "Step submitted successfully.",
+                                icon: "success",
+                                toast: true,
+                                position: "top-end",
+                                showConfirmButton: false,
+                                timer: 3000
+                            });
+                            this.car_id = data.car;
+                            this.step++;
                         }
-                        this.step++;
                     } else {
                         Swal.fire({
                             title: data.message || "An error occurred.",

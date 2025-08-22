@@ -1,4 +1,4 @@
-@extends('frontend.carrental-layout')
+@extends('frontend.master')
 
 @section('content')
 <!-- resources/views/components/airport-taxi-booking.blade.php -->
