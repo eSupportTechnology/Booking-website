@@ -53,7 +53,7 @@
                         <span class="inline-block px-3 py-1 text-xs font-semibold bg-green-100 text-green-800 rounded-full">Active</span>
                     </td>
                     <td class="px-6 py-4">
-                        <a href="{{ route('admin.customer.view') }}" class="px-3 py-1 text-sm text-white bg-[#1F8FB2] hover:bg-[#157799] rounded">View</a>
+                        <a href="{{ route('admin.customer.view', ['customer_id' => 1]) }}" class="px-3 py-1 text-sm text-white bg-[#1F8FB2] hover:bg-[#157799] rounded">View</a>
                         <button class="px-3 py-1 text-sm text-white bg-red-500 hover:bg-red-600 rounded">Delete</button>
                     </td>
                 </tr>
@@ -64,7 +64,7 @@
                         <span class="inline-block px-3 py-1 text-xs font-semibold bg-yellow-100 text-yellow-800 rounded-full">Pending</span>
                     </td>
                     <td class="px-6 py-4">
-                        <a href="{{ route('admin.customer.view') }}" class="px-3 py-1 text-sm text-white bg-[#1F8FB2] hover:bg-[#157799] rounded">View</a>
+                        <a href="{{ route('admin.customer.view', ['customer_id' => 2]) }}" class="px-3 py-1 text-sm text-white bg-[#1F8FB2] hover:bg-[#157799] rounded">View</a>
                         <button class="px-3 py-1 text-sm text-white bg-red-500 hover:bg-red-600 rounded">Delete</button>
                     </td>
                 </tr>
@@ -75,7 +75,7 @@
                         <span class="inline-block px-3 py-1 text-xs font-semibold bg-red-100 text-red-800 rounded-full">Inactive</span>
                     </td>
                     <td class="px-6 py-4">
-                        <a href="{{ route('admin.customer.view') }}" class="px-3 py-1 text-sm text-white bg-[#1F8FB2] hover:bg-[#157799] rounded">View</a>
+                        <a href="{{ route('admin.customer.view', ['customer_id' => 3]) }}" class="px-3 py-1 text-sm text-white bg-[#1F8FB2] hover:bg-[#157799] rounded">View</a>
                         <button class="px-3 py-1 text-sm text-white bg-red-500 hover:bg-red-600 rounded">Delete</button>
                     </td>
                 </tr>
