@@ -131,8 +131,7 @@
             <a href="{{ route('admin.homes') }}" class="block py-1 hover:text-blue-700 font-semibold">Homes</a>
             <a href="{{ route('admin.hotels') }}" class="block py-1 hover:text-blue-700 font-semibold">Hotels</a>
             <a href="{{ route('admin.alternative.places') }}" class="block py-1 hover:text-blue-700 font-semibold">Alternative Places</a>
-        </div>
-
+          </div>
         </div>
 
         <!-- SETTINGS -->
@@ -146,7 +145,7 @@
         <div>
           <a href="#"
             class="flex items-center justify-center px-4 py-3 rounded-lg bg-red-600 hover:bg-red-700 text-white font-bold text-base shadow-md transition duration-200">
-            <i class="fas fa-sign-out-alt mr-2 text-lg"></i> LOGOUT
+            <i class="fas fa-sign-out-alt mr-2 text-lg"></i> LOGOUTt
           </a>
         </div>
 
