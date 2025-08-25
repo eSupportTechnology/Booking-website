@@ -875,6 +875,15 @@ Route::get('/car-listing', function () {
 
 
 
+// Admin Dashboard Route
+Route::get('/admin/dashboard', function () {
+    return view('frontend.admin.dashboard');
+})->name('admin.dashboard');
+Route::view('/admin/rental/taxi', 'frontend.admin.taxi')->name('admin.taxi');
+Route::view('/admin/rental/airport', 'frontend.admin.airport')->name('admin.airport');
+
+
+
 
 
 Route::get('/partner/apartment/bedrooms/{property}', function ($propertyId) {
