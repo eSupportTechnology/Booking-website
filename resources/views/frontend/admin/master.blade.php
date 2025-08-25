@@ -145,7 +145,7 @@
         <div>
           <a href="#"
             class="flex items-center justify-center px-4 py-3 rounded-lg bg-red-600 hover:bg-red-700 text-white font-bold text-base shadow-md transition duration-200">
-            <i class="fas fa-sign-out-alt mr-2 text-lg"></i> LOGOUTtt
+            <i class="fas fa-sign-out-alt mr-2 text-lg"></i> LOGOUT
           </a>
         </div>
 
