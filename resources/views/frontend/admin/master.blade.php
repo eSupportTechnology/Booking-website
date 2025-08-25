@@ -134,6 +134,26 @@
           </div>
         </div>
 
+          <!-- RENTAL SECTION -->
+      <div x-data="{ openRental: false }">
+        <button
+          @click="openRental = !openRental"
+          class="w-full flex justify-between items-center px-4 py-2 rounded hover:bg-blue-200 transition focus:outline-none font-bold text-blue-900"
+        >
+          <div class="flex items-center">
+            <i class="fas fa-car mr-3 text-bg-[#1F8FB2] text-lg"></i>
+            Rental
+          </div>
+          <i :class="openRental ? 'fa-chevron-up' : 'fa-chevron-down'" class="fas text-xs"></i>
+        </button>
+
+        <!-- Toggle Links -->
+        <div x-show="openRental" x-transition class="ml-8 mt-2 space-y-1 border-l border-blue-300 pl-4">
+          <a href="{{ route('admin.taxi') }}" class="block py-1 hover:text-blue-700 font-semibold">Taxi</a>
+          <a href="{{ route('admin.airport') }}" class="block py-1 hover:text-blue-700 font-semibold">Airport</a>
+        </div>
+      </div>
+
         <!-- SETTINGS -->
         <div>
           <a href="{{ route('admin.settings') }}" class="flex items-center px-4 py-2 rounded hover:bg-blue-200 transition text-blue-800 font-bold text-base">
