@@ -9,7 +9,7 @@
 <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
 
-<div x-data="stepForm()">
+<div x-data="stepForm()" x-init="init()">
 
 
     <!-- Progress Bar -->
@@ -20,7 +20,7 @@
     <div class="max-w-6xl p-4 ml-14">
         <form class="p-6 rounded-lg space-y-6" @submit.prevent>
             <!-- STEP 1 -->
-            <div x-show="step === 1" x-cloak class="container mx-auto px-4 py-8 max-w-6xl" x-data="{ showMore: false, selectedBox: null }">
+            <div x-show="step === 1" x-cloak class="container mx-auto px-4 py-8 max-w-6xl">
                 <h2 class="text-2xl font-bold mb-6 mt-8">
                     Which property category is most similar to your place?
                 </h2>
@@ -508,9 +508,7 @@
                                         <div class="mt-2">
                                             <h3 class="text-gray-700 font-semibold mb-2">Select property type(s)</h3>
                                             <div class="grid grid-cols-1 sm:grid-cols-1 gap-2 text-sm text-gray-700">
-                                                <div x-data="{ selectedAmenities: JSON.parse(localStorage.getItem('selectedAmenities')) || [] }"
-                                                    x-init="$watch('selectedAmenities', val => localStorage.setItem('selectedAmenities', JSON.stringify(val)))">
-                                                    
+                                                <div>
                                                     @foreach ($amenities as $amenity)
                                                         <label class="flex items-center space-x-2">
                                                             <input type="checkbox" name="amenities[]" value="{{ $amenity['id'] }}" x-model="selectedAmenities" />
@@ -596,7 +594,7 @@
                                         reservationNeeded: '',
                                         parkingLocation: '',
                                         parkingType: '',
-                                        
+
                                         init() {
                                             // Load data from localStorage (will be empty on page load due to script above)
                                             const saved = localStorage.getItem('servicesFormData');
@@ -612,7 +610,7 @@
                                                 this.parkingLocation = data.parkingLocation || '';
                                                 this.parkingType = data.parkingType || '';
                                             }
-                                            
+
                                             // Watch for changes and save to localStorage
                                             this.$watch('servesBreakfast', () => this.saveToStorage());
                                             this.$watch('breakfastIncluded', () => this.saveToStorage());
@@ -624,7 +622,7 @@
                                             this.$watch('parkingLocation', () => this.saveToStorage());
                                             this.$watch('parkingType', () => this.saveToStorage());
                                         },
-                                        
+
                                         saveToStorage() {
                                             const data = {
                                                 servesBreakfast: this.servesBreakfast,
@@ -639,7 +637,7 @@
                                             };
                                             localStorage.setItem('servicesFormData', JSON.stringify(data));
                                         },
-                                        
+
                                         toggleBreakfastOption(option) {
                                             const index = this.selectedBreakfasts.indexOf(option);
                                             if (index > -1) {
@@ -648,7 +646,7 @@
                                                 this.selectedBreakfasts.push(option);
                                             }
                                         },
-                                        
+
                                         clearBreakfastData() {
                                             this.breakfastIncluded = '';
                                             this.selectedBreakfasts = [];
@@ -824,8 +822,7 @@
                             <div class="bg-white shadow-md rounded-lg p-6 mb-8">
                                 <h3 class="text-lg  mb-4 font-bold">Select languages
                                 </h3>
-                                <div class="space-y-2" x-data="{ selectedLanguages: JSON.parse(localStorage.getItem('selectedLanguages')) || [] }"
-                                                    x-init="$watch('selectedLanguages', val => localStorage.setItem('selectedLanguages', JSON.stringify(val)))">
+                                <div class="space-y-2">
                                     @php
                                     $initialLanguages = $languages->take(6);
                                     $additionalLanguages = $languages->slice(6);
@@ -1292,9 +1289,7 @@
         const pathParts = window.location.pathname.split('/');
         const URLpropertyId = pathParts[4] || null;
         console.log('Property ID from URL:', URLpropertyId);
-    localStorage.removeItem('selectedAmenities');
-        localStorage.removeItem('servicesFormData');
-        localStorage.removeItem('selectedLanguages');
+    // Keep local storage to allow client-side persistence between navigations
 
         function stepForm() {
             return {
@@ -1303,6 +1298,8 @@
                 selectedBox: '',
                 unitType: '',
                 propertyId: null,
+                selectedAmenities: [],
+                selectedLanguages: [],
                 subtypes: [],
                 subcategories: @json($subcategories),
                 subtypeName: '',
@@ -1355,11 +1352,18 @@
                     description: '',
                 },
 
+                async init() {
+                    if (URLpropertyId) {
+                        this.propertyId = URLpropertyId;
+                        await this.prefillFromServer();
+                    }
+                },
+
                 async submitStep1() {
                     if (this.selectedBox === '') return;
 
                     try {
-                        const response = await fetch('{{ route('partner.property.step1.store_new') }}', {
+                        const response = await fetch("{{ route('partner.property.step1.store_new') }}", {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json',
@@ -1396,6 +1400,63 @@
                             showConfirmButton: false,
                             timer: 3000
                         })
+                    }
+                },
+
+                async prefillFromServer() {
+                    try {
+                        const [propRes, amenitiesRes, languagesRes] = await Promise.all([
+                            fetch(`/partner/property/${this.propertyId}`, { headers: { 'Accept': 'application/json' } }),
+                            fetch(`/partner/property/${this.propertyId}/amenities`, { headers: { 'Accept': 'application/json' } }),
+                            fetch(`/partner/property/${this.propertyId}/languages`, { headers: { 'Accept': 'application/json' } }),
+                        ]);
+
+                        if (propRes.ok) {
+                            const propData = await propRes.json();
+                            // Map incoming fields to our state if they exist
+                            this.property.address = propData.address ?? this.property.address;
+                            this.property.apartment = propData.apartment ?? this.property.apartment;
+                            this.property.country = propData.country ?? this.property.country;
+                            this.property.city = propData.city ?? this.property.city;
+                            this.property.zipcode = propData.zipcode ?? this.property.zipcode;
+                            this.property.channel_manager = propData.channel_manager ?? this.property.channel_manager;
+                            this.property.title = propData.title ?? this.property.title;
+                            this.property.stars = propData.stars ?? this.property.stars;
+                            this.property.group = propData.group ?? this.property.group;
+                            this.property.smoking_allowed = propData.smoking_allowed ?? this.property.smoking_allowed;
+                            this.property.children_allowed = propData.children_allowed ?? this.property.children_allowed;
+                            this.property.parties_allowed = propData.parties_allowed ?? this.property.parties_allowed;
+                            this.property.pets_allowed = propData.pets_allowed ?? this.property.pets_allowed;
+                            this.property.pets_fees = propData.pets_fees ?? this.property.pets_fees;
+                            this.property.check_in_from = propData.check_in_from ?? this.property.check_in_from;
+                            this.property.check_in_until = propData.check_in_until ?? this.property.check_in_until;
+                            this.property.check_out_from = propData.check_out_from ?? this.property.check_out_from;
+                            this.property.check_out_until = propData.check_out_until ?? this.property.check_out_until;
+                            this.property.cancellation_policy = propData.cancellation_policy ?? this.property.cancellation_policy;
+
+                            // Wizard specific
+                            if (propData.subcategory_id) {
+                                this.selectedBox = Number(propData.subcategory_id);
+                                const match = this.subcategories.find(s => Number(s.id) === this.selectedBox);
+                                this.subtypeName = match ? match.name : '';
+                                // ensure subtypes are loaded for this subcategory
+                                this.fetchSubtypes(this.selectedBox);
+                            }
+                            if (propData.address_type_id) {
+                                this.unitType = propData.address_type_id === 1 ? 'one' : 'multiple';
+                            }
+                        }
+
+                        if (amenitiesRes.ok) {
+                            const a = await amenitiesRes.json();
+                            this.selectedAmenities = Array.isArray(a) ? a.map(Number) : [];
+                        }
+                        if (languagesRes.ok) {
+                            const l = await languagesRes.json();
+                            this.selectedLanguages = Array.isArray(l) ? l.map(String) : [];
+                        }
+                    } catch (e) {
+                        console.error('Failed to prefill data', e);
                     }
                 },
 
@@ -1703,10 +1764,8 @@
                 async submitStep8() {
                     try {
                         // Get all checked amenity IDs
-                        const selectedAmenities = Array.from(document.querySelectorAll(
-                                'input[name="amenities[]"]:checked'))
-                            .map(input => parseInt(input.value));
-                        console.log('Selected amenities:', selectedAmenities);
+                        const selectedAmenities = this.selectedAmenities.map(Number);
+                        console.log('Selected amenities (state):', selectedAmenities);
 
                         const response = await fetch(`/partner/property/save-amenities/${this.propertyId}`, {
                             method: 'POST',
@@ -1794,12 +1853,11 @@
 
                 async submitStep10() {
                     try {
-                        const selectedLanguages = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
-                            .map(input => input.value);
+                        const selectedLanguages = this.selectedLanguages;
 
-                        console.log('Selected languages:', selectedLanguages);
+                        console.log('Selected languages (state):', selectedLanguages);
 
-                        const response = await fetch(`/partner/save-languages/${this.propertyId}`, {
+                        const response = await fetch(`/partner/property/save-languages/${this.propertyId}`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
