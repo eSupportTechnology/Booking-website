@@ -987,3 +987,4 @@ Route::post('/logout', function () {
     Auth::logout();
     return redirect('/')->with('success', 'You have been logged out.');
 })->name('logout');
+
