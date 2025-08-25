@@ -4,7 +4,7 @@
 
 @section('content')
 
-<!-- Add CSRF token meta tag -->
+<!-- Add CSRF token meta tag hhh-->
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
 <!-- Define Alpine.js data function -->
