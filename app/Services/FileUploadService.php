@@ -12,7 +12,7 @@ class FileUploadService
         UploadedFile $file,
         string $fileType,
         string $propertyType,
-        int $propertyId,
+        int $propertyId=null,
         ?string $directory = null
     ): ?File {
         try {

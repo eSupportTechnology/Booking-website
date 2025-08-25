@@ -159,7 +159,7 @@
                     <label class="block font-semibold text-sm mb-1">
                         Driver Name <span class="text-red-500">*</span>
                     </label>
-                    <input type="text" placeholder="Enter Driver Name" class="w-full p-2 border rounded-md text-sm">
+                    <input type="text" placeholder="Enter Driver Name" class="w-full p-2 border rounded-md text-sm" x-model="driver_name">
                     <p class="text-gray-500 text-sm mt-1">Full name of the taxi driver.</p>
                 </div>
 
@@ -167,7 +167,7 @@
                     <label class="block font-semibold text-sm mb-1">
                         Contact Number <span class="text-red-500">*</span>
                     </label>
-                    <input type="text" placeholder="Enter Contact Number" class="w-full p-2 border rounded-md text-sm">
+                    <input type="text" placeholder="Enter Contact Number" class="w-full p-2 border rounded-md text-sm" x-model="driver_contact">
                     <p class="text-gray-500 text-sm mt-1">Mobile or phone number of the driver.</p>
                 </div>
 
@@ -175,7 +175,7 @@
                     <label class="block font-semibold text-sm mb-1">
                         Email <span class="text-gray-500">(Optional)</span>
                     </label>
-                    <input type="email" placeholder="Enter Email Address" class="w-full p-2 border rounded-md text-sm">
+                    <input type="email" placeholder="Enter Email Address" class="w-full p-2 border rounded-md text-sm" x-model="driver_email">
                     <p class="text-gray-500 text-sm mt-1">Driver’s email address if available.</p>
                 </div>
 
@@ -183,7 +183,7 @@
                     <label class="block font-semibold text-sm mb-1">
                         Driver License Number <span class="text-red-500">*</span>
                     </label>
-                    <input type="text" placeholder="Enter License Number" class="w-full p-2 border rounded-md text-sm">
+                    <input type="text" placeholder="Enter License Number" class="w-full p-2 border rounded-md text-sm" x-model="driver_license">
                     <p class="text-gray-500 text-sm mt-1">Official driver’s license number.</p>
                 </div>
 
@@ -191,7 +191,7 @@
                     <label class="block font-semibold text-sm mb-1">
                         Upload Driver Photo
                     </label>
-                    <input type="file" class="w-full p-2 border rounded-md text-sm" accept="image/*">
+                    <input type="file" class="w-full p-2 border rounded-md text-sm" accept="image/*" @change="driver_photo = $event.target.files[0]">
                     <p class="text-gray-500 text-sm mt-1">Upload a clear photo of the driver.</p>
                 </div>
             </div>
@@ -199,7 +199,7 @@
             <!-- Navigation Buttons -->
             <div class="flex justify-between items-center mt-6">
                 <button @click="step--" class="flex items-center border border-[#3CC0E9] rounded text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12">←</button>
-                <button @click="step++" class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition">Continue</button>
+                <button @click="saveStep3" class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition">Continue</button>
             </div>
         </div>
     </template>
@@ -207,7 +207,7 @@
     <!-- Step 4: Taxi Payment & Submit -->
     <template x-if="step === 4">
         <div class="px-6 py-8 mt-6 w-full max-w-xl mx-auto lg:ml-24 space-y-6 bg-white rounded-lg shadow border"
-            x-data="{ pricingType: '', baseFare: '', pricePerKm: '', pricePerMinute: '', airportFee: 0, luggageFee: 0, nightSurcharge: 0 }">
+            >
 
             <h1 class="text-2xl font-bold mb-2">Set Taxi Fare & Complete Submission</h1>
             <p class="text-gray-500 text-sm mb-4">Specify how the taxi payment will be calculated for customers.</p>
@@ -215,7 +215,7 @@
             <div>
                 <label class="block font-semibold text-sm mb-1">Select Fare Calculation Type <span class="text-red-500">*</span></label>
                 <select x-model="pricingType" class="w-full p-2 border rounded-md text-sm">
-                    <option disabled selected>Select an option</option>
+                    <option  selected>Select an option</option>
                     <option value="perKm">Per Kilometer</option>
                     <option value="perDay">Per Day</option>
                 </select>
@@ -252,7 +252,7 @@
             <!-- Navigation Buttons -->
             <div class="flex justify-between items-center mt-6">
                 <button @click="step--" class="flex items-center border border-[#3CC0E9] rounded text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12">←</button>
-                <button type="button" @click="$dispatch('open-modal')"
+                <button type="button" @click="saveStep4"
                     class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition">
                     Submit
                 </button>
@@ -288,6 +288,19 @@
             color: '',
             passenger_capacity: '',
             luggage_capacity: '',
+            driver_name: '',
+            driver_contact: '',
+            driver_email: '',
+            driver_license: '',
+            driver_photo: null,
+            pricePerDay: 0,
+            pricingType: '',
+            baseFare: '',
+            pricePerKm: '',
+            pricePerMinute: '',
+            airportFee: 0,
+            luggageFee: 0,
+            nightSurcharge: 0,
             // Triggered when user clicks Continue
             async saveStep1() {
                 if (!this.selectedCategory) {
@@ -349,6 +362,76 @@
                     this.step++;
                 } else {
                     alert("Error: " + (data.message || "Failed to save step 2"));
+                }
+            },
+
+            async saveStep3() {
+                if (!this.driver_name || !this.driver_contact || !this.driver_license) {
+                    alert("Please fill all required fields!");
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append("taxi_id", this.taxi_id);
+                formData.append("name", this.driver_name);
+                formData.append("contact_number", this.driver_contact);
+                formData.append("email", this.driver_email);
+                formData.append("license_number", this.driver_license);
+                if (this.driver_photo) {
+                    formData.append("photo", this.driver_photo);
+                }
+
+                const response = await fetch("{{ route('taxis.storeStep3') }}", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                    },
+                    body: formData
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    console.log("Driver saved with ID:", data.driver_id);
+                    this.step++;
+                } else {
+                    alert("Error: " + (data.message || "Failed to save driver"));
+                }
+            },
+
+            async saveStep4() {
+                if (!this.pricingType || !this.baseFare || (this.pricingType === 'perKm' && !this.pricePerKm) || (this.pricingType === 'perDay' && !this.pricePerDay)) {
+                    alert("Please fill all required fields!");
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append("taxi_id", this.taxi_id);
+                formData.append("pricing_type", this.pricingType);
+                formData.append("base_fare", this.baseFare);
+                if (this.pricingType === 'perKm') {
+                    formData.append("price_per_km", this.pricePerKm);
+                } else if (this.pricingType === 'perDay') {
+                    formData.append("price_per_day", this.pricePerDay);
+                }
+                formData.append("airport_fee", this.airportFee);
+                formData.append("luggage_fee", this.luggageFee);
+
+                const response = await fetch("{{ route('taxis.storeStep4') }}", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                    },
+                    body: formData
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    console.log("Fare saved with ID:", data.fare_id);
+                    this.showModal = true;
+                    
+                    // window.location.href = "{{ route('partner.carrentals.types') }}";
+                } else {
+                    alert("Error: " + (data.message || "Failed to save driver"));
                 }
             }
         }))
