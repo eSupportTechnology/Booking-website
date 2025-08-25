@@ -12,6 +12,7 @@
         <div class="bg-[#3CC0E9] border-r border-white h-2 transition-all duration-500"
             :style="'width:' + (step * 100 / 4) + '%'"></div>
     </div>
+    
 
     <!-- Step 1: Car Type Image Selection -->
     <template x-if="step === 1">
