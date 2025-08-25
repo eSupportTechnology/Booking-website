@@ -7,13 +7,14 @@ use Illuminate\Http\Request;
 
 class CustomerViewController extends Controller
 {
-    public function show(Request $request)
+    public function show($customer_id)
     {
-        $request->validate([
+        // Validate the ID exists
+        validator(['customer_id' => $customer_id], [
             'customer_id' => 'required|integer|exists:users,id'
-        ]);
+        ])->validate();
 
-        $customerId = $request->customer_id;
+        $customerId = $customer_id;
 
         return view('admin.admin-customer-view', compact('customerId'));
     }
