@@ -72,6 +72,15 @@
                 if (paymenEditLink) {
                     paymenEditLink.href = `/partner-homes-payments/${propertyId}?propertyType=${encodeURIComponent(propertyType)}`;
                 }
+                // Property details edit navigates via form submit to homes details
+                if (detailsLink && form) {
+                    const newDetailsLink = detailsLink.cloneNode(true);
+                    detailsLink.parentNode.replaceChild(newDetailsLink, detailsLink);
+                    newDetailsLink.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        form.submit();
+                    });
+                }
                 
                 newBtn.addEventListener('click', (e) => {
                     e.preventDefault();
@@ -83,6 +92,15 @@
                 console.log('Setting up hotels routes');
                 if (paymenEditLink) {
                     paymenEditLink.href = `/partner/partner-hotels-payment/${propertyId}?propertyType=${encodeURIComponent(propertyType)}`;
+                }
+                // Property details edit should go to hotels wizard with prefill by propertyId
+                if (detailsLink) {
+                    const newDetailsLink = detailsLink.cloneNode(true);
+                    detailsLink.parentNode.replaceChild(newDetailsLink, detailsLink);
+                    newDetailsLink.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        window.location.href = `/partner/partner-hotels-create-1/${propertyId}?propertyType=${encodeURIComponent(propertyType)}`;
+                    });
                 }
                 
                 newBtn.addEventListener('click', (e) => {
@@ -181,9 +199,11 @@
             formSubtypeId.value = subtypeId;
         }
 
-        // Set up details link click handler
-        if (detailsLink) {
-            detailsLink.addEventListener('click', (e) => {
+        // Set up details link click handler; will be overridden by setupCompleteRegistrationButton
+        if (detailsLink && form) {
+            const initialDetailsLink = detailsLink.cloneNode(true);
+            detailsLink.parentNode.replaceChild(initialDetailsLink, detailsLink);
+            initialDetailsLink.addEventListener('click', (e) => {
                 e.preventDefault();
                 form.submit();
             });
