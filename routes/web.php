@@ -800,19 +800,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
         })->name('alternative.places');
 
         // Customer management
-        Route::get('/accounts', function () {
-            return view('admin.admin-customers');
-        })->name('customers');
-        //Route::post('/account-details', [\App\Http\Controllers\Admin\CustomerViewController::class, 'show'])->name('customer.view');
+        Route::get('/accounts', function () {return view('admin.admin-customers');})->name('customers');
+
+        // Partner management
+        Route::get('/partners', function () {return view('admin.admin-partners');})->name('partners');
 
         // Customer and Partner detail routes
         Route::get('/customer/{customer_id}', [\App\Http\Controllers\Admin\CustomerViewController::class, 'show'])->name('customer.view');
         Route::get('/partner/{partner_id}', [\App\Http\Controllers\Admin\PartnerViewController::class, 'show'])->name('partner.view');
 
 
-        // Partner management
-        Route::get('/partners', function () {return view('admin.admin-partners');})->name('partners');
-        //Route::post('/partner-details', [\App\Http\Controllers\Admin\PartnerViewController::class, 'show'])->name('partner.view');
 
         // Settings
         Route::get('/settings', function () {
