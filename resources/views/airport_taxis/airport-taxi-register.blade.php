@@ -152,7 +152,7 @@
     <template x-if="step === 3">
         <div class="px-6 py-8 mt-6 w-full bg-white max-w-xl mx-auto lg:ml-24 space-y-6 rounded-lg shadow border">
             <h1 class="text-2xl font-bold mb-2">Provide Driver Details</h1>
-            <p class="text-gray-500 text-sm mb-4">Enter the driver’s information for this taxi listing.</p>
+            <p class="text-gray-500 text-sm mb-4">Enter the driver’s information for this taxi listinggggg.</p>
 
             <div class="space-y-4">
                 <div>
