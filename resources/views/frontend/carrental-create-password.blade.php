@@ -9,7 +9,7 @@
   <div class="max-w-md mx-auto bg-white border border-gray-200 rounded-md shadow-md p-6 mt-6">
     <!-- Title -->
     <div class="text-left mb-6">
-      <h2 class="text-2xl font-bold text-gray-900">Create password</h2>
+      <h2 class="text-2xl font-bold text-gray-900">Create password..</h2>
       <p class="text-sm text-gray-700 mt-1">Use a minimum of 10 characters, including uppercase letters, lowercase letters and numbers.</p>
     </div>
 
