@@ -888,6 +888,8 @@ Route::get('/admin/dashboard', function () {
 })->name('admin.dashboard');
 Route::view('/admin/rental/taxi', 'frontend.admin.taxi')->name('admin.taxi');
 Route::view('/admin/rental/airport', 'frontend.admin.airport')->name('admin.airport');
+Route::view('/admin/taxi-details', 'frontend.admin.taxi-details');
+
 
 
 
