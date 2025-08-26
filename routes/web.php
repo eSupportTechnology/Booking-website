@@ -880,6 +880,10 @@ Route::get('/car-listing', function () {
     return view('frontend.car-listing');
 })->name('car-listing');
 
+Route::get('/hotel-listing', function () {
+    return view('Customer.hotel-lisitng');
+})->name('hotel-listing');
+
 
 
 // Admin Dashboard Route
