@@ -793,18 +793,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/partner/{partner_id}', [\App\Http\Controllers\Admin\PartnerViewController::class, 'show'])->name('partner.view');
 
         // Property management
-        Route::get('/units', function () {
-            return view('admin.admin-apartments');
-        })->name('apartments');
-        Route::get('/residences', function () {
-            return view('admin.admin-homes');
-        })->name('homes');
-        Route::get('/venues', function () {
-            return view('admin.admin-hotels');
-        })->name('hotels');
-        Route::get('/unique-stays', function () {
-            return view('admin.admin-alternative-places');
-        })->name('alternative.places');
+        Route::get('/units', \App\Http\Controllers\Admin\ApartmentsController::class)->name('apartments');
+        Route::get('/residences', \App\Http\Controllers\Admin\HomesController::class)->name('homes');
+        Route::get('/venues', \App\Http\Controllers\Admin\HotelsController::class)->name('hotels');
+        Route::get('/unique-stays', \App\Http\Controllers\Admin\AlternativePlacesController::class)->name('alternative.places');
 
         // Customer management
         Route::get('/accounts', function () {
