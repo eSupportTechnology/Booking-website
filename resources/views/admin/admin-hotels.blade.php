@@ -135,16 +135,15 @@
             </div>
 
             <!-- Pagination -->
-            @if(isset($pagination))
-            <div class="px-4 py-3 border-t border-gray-200">
-                {{ $pagination }}
+            <div class="px-4 py-3  border-t border-gray-200">
+                {{ $pagination->links() }}
             </div>
-            @endif
         </div>
     </div>
 </section>
 
 
+<!-- serach JS -->
 <script>
     // Status change handler
     function handleStatusChange(selectEl, id) {
@@ -177,14 +176,9 @@
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-        // Initialize status selects
-        document.querySelectorAll('select[onchange^="handleStatusChange"]').forEach(select => {
-            handleStatusChange(select, select.getAttribute('onchange').split(',')[1]?.replace(/[^0-9]/g, ''));
-        });
-
-        const searchInput = document.getElementById('hotelSearchInput');
+        const searchInput = document.getElementById('alternativePlaceSearchInput');
         const statusFilter = document.getElementById('statusFilter');
-        const table = document.getElementById('hotelsTable');
+        const table = document.getElementById('alternativePlacesTable');
         const rows = table.querySelectorAll('tbody tr');
 
         function filterTable() {
@@ -192,19 +186,18 @@
             const statusTerm = statusFilter.value.toLowerCase();
 
             rows.forEach(row => {
-                const id = row.children[0]?.textContent.toLowerCase() || '';
-                const partnerName = row.children[1]?.textContent.toLowerCase() || '';
-                const hotelNameEl = row.children[2]?.querySelector('.font-medium');
-                const hotelName = hotelNameEl ? hotelNameEl.textContent.toLowerCase() : '';
-                const location = row.children[3]?.textContent.toLowerCase() || '';
-                const statusSelect = row.children[6]?.querySelector('select');
+                const id = row.children[0].textContent.toLowerCase();
+                const partnerName = row.children[1].textContent.toLowerCase();
+                const placeName = row.children[2].querySelector('.font-medium')?.textContent.toLowerCase() || '';
+                const location = row.children[3].textContent.toLowerCase();
+                const statusSelect = row.children[6].querySelector('select');
                 const status = statusSelect ? statusSelect.value.toLowerCase() : '';
 
-                const matchesSearch = searchTerm === '' ||
-                    id.includes(searchTerm) ||
+                const matchesSearch = id.includes(searchTerm) ||
                     partnerName.includes(searchTerm) ||
-                    hotelName.includes(searchTerm) ||
-                    location.includes(searchTerm);
+                    placeName.includes(searchTerm) ||
+                    location.includes(searchTerm) ||
+                    status.includes(searchTerm);
 
                 const matchesStatus = !statusTerm || status === statusTerm;
 

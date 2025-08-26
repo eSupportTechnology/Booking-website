@@ -2,20 +2,32 @@
 
 namespace App\View\Admin;
 
-class HotelsViewModel
+// app/View/Admin/HotelsViewModel.php
+use Illuminate\Contracts\Support\Htmlable;
+
+readonly class HotelsViewModel
 {
-    public function __construct(
-        private array $data
-    ) {}
+    public array $properties;
+    public Htmlable $pagination;
+    public int $total;
+    public int $perPage;
+
+    public function __construct(array $data)
+    {
+        $this->properties = $data['properties']->all();
+        $this->pagination = $data['pagination'];
+        $this->total = $data['total'];
+        $this->perPage = $data['perPage'] ?? 5;
+
+    }
 
     public function toArray(): array
     {
         return [
-            'properties' => $this->data['properties'],
-            'pagination' => $this->data['pagination'],
-            'total' => $this->data['total'],
-            'pageTitle' => 'Hotels Listings',
-            'breadcrumb' => 'Hotels'
+            'properties' => $this->properties,
+            'pagination' => $this->pagination,
+            'total' => $this->total,
+            'perPage' => $this->perPage,
         ];
     }
 }

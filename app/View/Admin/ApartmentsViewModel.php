@@ -3,20 +3,22 @@
 namespace App\View\Admin;
 
 // app/View/Admin/ApartmentsViewModel.php
+use Illuminate\Contracts\Support\Htmlable;
 
 readonly class ApartmentsViewModel
 {
     public array $properties;
-    public $pagination;
+    public Htmlable $pagination;
     public int $total;
     public int $perPage;
 
     public function __construct(array $data)
     {
-        $this->properties = $data['properties'];
+        $this->properties = $data['properties']->all();
         $this->pagination = $data['pagination'];
         $this->total = $data['total'];
-        $this->perPage = $data['perPage'] ?? 15;
+        $this->perPage = $data['perPage'] ?? 5;
+
     }
 
     public function toArray(): array

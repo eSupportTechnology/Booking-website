@@ -134,11 +134,9 @@
             </div>
 
             <!-- Pagination -->
-            @if(isset($pagination))
-            <div class="px-4 py-3 border-t border-gray-200">
-                {{ $pagination }}
+            <div class="px-4 py-3  border-t border-gray-200">
+                {{ $pagination->links() }}
             </div>
-            @endif
         </div>
     </div>
 </section>

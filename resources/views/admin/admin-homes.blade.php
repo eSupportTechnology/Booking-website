@@ -142,15 +142,14 @@
             </div>
 
             <!-- Pagination -->
-            @if(isset($pagination))
-            <div class="px-4 py-3 border-t border-gray-200">
-                {{ $pagination }}
+            <div class="px-4 py-3  border-t border-gray-200">
+                {{ $pagination->links() }}
             </div>
-            @endif
         </div>
     </div>
 </section>
 
+<!-- serach JS -->
 <script>
     // Status change handler
     function handleStatusChange(selectEl, id) {
@@ -183,14 +182,9 @@
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-        // Initialize status selects
-        document.querySelectorAll('select[onchange^="handleStatusChange"]').forEach(select => {
-            handleStatusChange(select, select.getAttribute('onchange').split(',')[1]?.replace(/[^0-9]/g, ''));
-        });
-
-        const searchInput = document.getElementById('homeSearchInput');
+        const searchInput = document.getElementById('alternativePlaceSearchInput');
         const statusFilter = document.getElementById('statusFilter');
-        const table = document.getElementById('homesTable');
+        const table = document.getElementById('alternativePlacesTable');
         const rows = table.querySelectorAll('tbody tr');
 
         function filterTable() {
@@ -198,19 +192,18 @@
             const statusTerm = statusFilter.value.toLowerCase();
 
             rows.forEach(row => {
-                const id = row.children[0]?.textContent.toLowerCase() || '';
-                const partnerName = row.children[1]?.textContent.toLowerCase() || '';
-                const homeNameEl = row.children[2]?.querySelector('.font-medium');
-                const homeName = homeNameEl ? homeNameEl.textContent.toLowerCase() : '';
-                const location = row.children[3]?.textContent.toLowerCase() || '';
-                const statusSelect = row.children[6]?.querySelector('select');
+                const id = row.children[0].textContent.toLowerCase();
+                const partnerName = row.children[1].textContent.toLowerCase();
+                const placeName = row.children[2].querySelector('.font-medium')?.textContent.toLowerCase() || '';
+                const location = row.children[3].textContent.toLowerCase();
+                const statusSelect = row.children[6].querySelector('select');
                 const status = statusSelect ? statusSelect.value.toLowerCase() : '';
 
-                const matchesSearch = searchTerm === '' ||
-                    id.includes(searchTerm) ||
+                const matchesSearch = id.includes(searchTerm) ||
                     partnerName.includes(searchTerm) ||
-                    homeName.includes(searchTerm) ||
-                    location.includes(searchTerm);
+                    placeName.includes(searchTerm) ||
+                    location.includes(searchTerm) ||
+                    status.includes(searchTerm);
 
                 const matchesStatus = !statusTerm || status === statusTerm;
 
@@ -220,57 +213,6 @@
 
         searchInput.addEventListener('input', filterTable);
         statusFilter.addEventListener('change', filterTable);
-
-        // Pagination and Rows per page logic (optional, but good to include if present)
-        const rowsPerPageSelect = document.getElementById('rowsPerPageSelect');
-        const totalRowsSpan = document.getElementById('totalRows');
-        const currentRowsDisplayedSpan = document.getElementById('currentRowsDisplayed');
-        const allRows = Array.from(table.querySelectorAll('tbody tr')); // Get all rows for pagination
-
-        let currentPage = 1;
-        let rowsPerPage = parseInt(rowsPerPageSelect.value);
-
-        function displayRows(page, perPage) {
-            const start = (page - 1) * perPage;
-            const end = start + perPage;
-
-            allRows.forEach((row, index) => {
-                if (index >= start && index < end) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-
-            // Update "Showing X to Y of Z results" text
-            const visibleRowsCount = Math.min(end, allRows.length);
-            currentRowsDisplayedSpan.textContent = `${start + 1} to ${visibleRowsCount}`;
-            totalRowsSpan.textContent = allRows.length;
-        }
-
-        // Initial display
-        displayRows(currentPage, rowsPerPage);
-
-        rowsPerPageSelect.addEventListener('change', function() {
-            rowsPerPage = parseInt(this.value);
-            currentPage = 1; // Reset to first page when rows per page changes
-            displayRows(currentPage, rowsPerPage);
-        });
-
-        // Add event listeners for pagination buttons if you implement them
-        // Example for previous/next buttons (you'd need to add IDs to them)
-        // document.getElementById('prevButton').addEventListener('click', function() {
-        //     if (currentPage > 1) {
-        //         currentPage--;
-        //         displayRows(currentPage, rowsPerPage);
-        //     }
-        // });
-        // document.getElementById('nextButton').addEventListener('click', function() {
-        //     if (currentPage * rowsPerPage < allRows.length) {
-        //         currentPage++;
-        //         displayRows(currentPage, rowsPerPage);
-        //     }
-        // });
     });
 </script>
 @endsection

@@ -7,19 +7,23 @@ use App\Models\Property;
 
 class HomesService
 {
-    public function getHomesData(): array
+
+
+    public function getHomesData(int $perPage = 15): array
     {
         $properties = Property::with(['user', 'photos', 'reviews', 'category'])
             ->whereHas('category', function ($query) {
                 $query->where('name', 'Homes');
             })
             ->orderBy('created_at', 'desc')
-            ->paginate(15);
+            ->paginate($perPage)
+            ->appends(['per_page' => $perPage]); // Preserve per_page in pagination links
 
         return [
             'properties' => $properties->map(fn($property) => PropertyListingDTO::fromProperty($property)),
-            'pagination' => $properties->links(),
-            'total' => $properties->total()
+            'pagination' => $properties,
+            'total' => $properties->total(),
+            'perPage' => $perPage,
         ];
     }
 

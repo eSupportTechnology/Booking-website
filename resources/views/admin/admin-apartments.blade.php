@@ -53,9 +53,9 @@
         <!-- Rows per page selector -->
         <div class="flex justify-end mb-4">
             <select id="rowsPerPage" class="text-xs sm:text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#3CC0E9] px-2 py-1.5">
-                <option value="10" {{ request('per_page') == 5 ? 'selected' : '' }}>05 rows</option>
-                <option value="20" {{ request('per_page') == 10 ? 'selected' : '' }}>10 rows</option>
-                <option value="30" {{ request('per_page') == 20 ? 'selected' : '' }}>20 rows</option>
+                <option value="5" {{ request('per_page') == 5 ? 'selected' : '' }}>05 rows</option>
+                <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10 rows</option>
+                <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>20 rows</option>
                 <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50 rows</option>
             </select>
         </div>
@@ -136,11 +136,9 @@
             </div>
 
             <!-- Pagination -->
-            @if(isset($pagination))
-            <div class="px-4 py-3 border-t border-gray-200">
-                {{ $pagination }}
+            <div class="px-4 py-3  border-t border-gray-200">
+                {{ $pagination->links() }}
             </div>
-            @endif
         </div>
     </div>
 </section>

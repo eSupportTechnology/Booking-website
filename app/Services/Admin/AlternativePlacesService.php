@@ -7,13 +7,13 @@ use App\Models\Property;
 
 class AlternativePlacesService
 {
-    // app/Services/Admin/ApartmentsService.php
+    // app/Services/Admin/AlternativePlacesService.php
 
-    public function getApartmentsData(int $perPage = 15): array
+    public function getAlternativePlacesData(int $perPage = 15): array
     {
         $properties = Property::with(['user', 'photos', 'reviews', 'category'])
             ->whereHas('category', function ($query) {
-                $query->where('name', 'Apartment');
+                $query->where('name', 'Alternative places');
             })
             ->orderBy('created_at', 'desc')
             ->paginate($perPage)
@@ -21,7 +21,7 @@ class AlternativePlacesService
 
         return [
             'properties' => $properties->map(fn($property) => PropertyListingDTO::fromProperty($property)),
-            'pagination' => $properties->links(),
+            'pagination' => $properties,
             'total' => $properties->total(),
             'perPage' => $perPage,
         ];
