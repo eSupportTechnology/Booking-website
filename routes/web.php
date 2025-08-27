@@ -843,6 +843,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::post('/pending/{admin}/approve', [\App\Http\Controllers\Admin\AdminApprovalController::class, 'approve'])->name('approvals.approve');
             Route::post('/pending/{admin}/reject', [\App\Http\Controllers\Admin\AdminApprovalController::class, 'reject'])->name('approvals.reject');
         });
+
+        // Status management routes
+        Route::prefix('status')->name('status.')->group(function () {
+            // Property status routes
+            Route::patch('/property/{property}', \App\Http\Controllers\Admin\UpdatePropertyStatusController::class)->name('property.update');
+
+            // User status routes
+            Route::patch('/customer/{user}', \App\Http\Controllers\Admin\UpdateCustomerStatusController::class)->name('customer.update');
+            Route::patch('/partner/{partner}', \App\Http\Controllers\Admin\UpdatePartnerStatusController::class)->name('partner.update');
+        });
     });
 });
 
