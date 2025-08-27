@@ -52,7 +52,18 @@
             </div>
         </div>
 
-       
+         <!-- Contact Details -->
+        <div class="bg-white rounded-lg shadow p-4 sm:p-6 relative">
+            <a href="#"
+               class="absolute top-3 sm:top-4 right-3 sm:right-4 bg-[#3CC0E9] hover:bg-[#33aad1] text-white px-3 py-1 sm:px-4 sm:py-2 rounded shadow text-xs sm:text-sm">Edit</a>
+            <h2 class="text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4">Contact Details</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 text-sm sm:text-base">
+                <p class="text-gray-700"><span class="font-semibold">Contact Number:</span> +94 11 225 2861</p>
+                <p class="text-gray-700"><span class="font-semibold">Email:</span> info@airport.lk</p>
+                <p class="text-gray-700"><span class="font-semibold">Website:</span> www.airport.lk</p>
+                <p class="text-gray-700"><span class="font-semibold">Manager:</span> Mr. Sunil Perera</p>
+            </div>
+        </div>
 
         <!-- Back Button -->
         <div class="mt-4 sm:mt-6">
