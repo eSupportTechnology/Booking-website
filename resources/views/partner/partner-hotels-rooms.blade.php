@@ -30,6 +30,85 @@
             get discounted() {
                 return (this.discountedPrice=(this.price * 0.8).toFixed(2));
             },
+            init() {
+                // Load saved state if exists on init and when returning to step 1
+                this.loadRoomDetailsState();
+                this.$watch('step', (n) => {
+                    if (n === 1) {
+                        // Defer to ensure DOM for step 1 exists
+                        setTimeout(() => this.loadRoomDetailsState(), 0);
+                    }
+                });
+            },
+            saveRoomDetailsState() {
+                try {
+                    const state = this.collectRoomDetailsState();
+                    sessionStorage.setItem('hotelRoomsStep1State', JSON.stringify(state));
+                } catch (e) { console.warn('Failed to save step1 state', e); }
+            },
+            loadRoomDetailsState() {
+                try {
+                    const raw = sessionStorage.getItem('hotelRoomsStep1State');
+                    if (!raw) return;
+                    const state = JSON.parse(raw);
+                    // Room type
+                    const roomTypeSel = document.querySelector('.room-type-id');
+                    if (roomTypeSel && state.roomType) roomTypeSel.value = state.roomType;
+                    // Room count
+                    const roomCountInput = document.querySelector('[name="property_count"]');
+                    if (roomCountInput && state.roomCount != null) roomCountInput.value = state.roomCount;
+                    // Guests
+                    const guestsSpan = document.querySelector('.room-guests');
+                    if (guestsSpan && state.maxGuests != null) guestsSpan.innerText = state.maxGuests;
+                    // Room size and unit
+                    const sizeInput = document.querySelector('.room-size');
+                    if (sizeInput && state.roomSize != null) sizeInput.value = state.roomSize;
+                    const unitSelect = document.querySelector('.w-full.bg-gray-300.text-black.border.border-gray-300.rounded-md.shadow-sm.text-sm.mt-2.px-2.py-2, select');
+                    if (unitSelect && state.sizeUnit) unitSelect.value = state.sizeUnit;
+                    // Smoking radio
+                    const yesLabel = Array.from(document.querySelectorAll('label.inline-flex input[name="smoking"]')).find((el, i) => i === 0);
+                    const noLabel = Array.from(document.querySelectorAll('label.inline-flex input[name="smoking"]')).find((el, i) => i === 1);
+                    if (state.smokingAllowed === true && yesLabel) yesLabel.checked = true;
+                    if (state.smokingAllowed === false && noLabel) noLabel.checked = true;
+                    // Bed counts: match by label text
+                    if (Array.isArray(state.beds)) {
+                        state.beds.forEach(b => {
+                            const items = Array.from(document.querySelectorAll('div[x-data^="{ guests:"]'));
+                            const item = items.find(it => (it.querySelector('p.text-sm')?.innerText || '').trim().toLowerCase() === (b.label || '').trim().toLowerCase());
+                            if (item) {
+                                const span = item.querySelector('span[x-text="guests"]');
+                                if (span) span.innerText = b.count;
+                            }
+                        });
+                    }
+                } catch (e) { console.warn('Failed to load step1 state', e); }
+            },
+            collectRoomDetailsState() {
+                const roomTypeSel = document.querySelector('.room-type-id');
+                const roomCountInput = document.querySelector('[name="property_count"]');
+                const guestsSpan = document.querySelector('.room-guests');
+                const sizeInput = document.querySelector('.room-size');
+                const unitSelect = document.querySelector('.w-full.bg-gray-300.text-black.border.border-gray-300.rounded-md.shadow-sm.text-sm.mt-2.px-2.py-2, select');
+                const smokingYes = document.querySelector('input[name="smoking"]:checked');
+                // Bed counts
+                const bedElements = document.querySelectorAll('[x-data^="{ guests:"]');
+                const bedCounts = [];
+                bedElements.forEach(el => {
+                    const label = el.querySelector('p.text-sm')?.innerText?.trim();
+                    const span = el.querySelector('span[x-text="guests"]');
+                    const count = span ? parseInt(span.innerText || '0') : 0;
+                    if (count > 0 && label) bedCounts.push({ label, count });
+                });
+                return {
+                    roomType: roomTypeSel ? roomTypeSel.value : null,
+                    roomCount: roomCountInput ? parseInt(roomCountInput.value || '0') : null,
+                    maxGuests: guestsSpan ? parseInt(guestsSpan.innerText || '0') : null,
+                    roomSize: sizeInput ? sizeInput.value : null,
+                    sizeUnit: unitSelect ? unitSelect.value : null,
+                    smokingAllowed: smokingYes ? (smokingYes.nextElementSibling?.innerText?.trim().toLowerCase() === 'yes') : null,
+                    beds: bedCounts,
+                };
+            },
             saveStep1() {
                 const url = window.location.href;
                 const pathname = new URL(url).pathname;
@@ -77,6 +156,8 @@
                     beds: bedCounts
                 };
                 console.log(payload);
+                // Save local state snapshot so it's restored if we come back
+                this.saveRoomDetailsState();
 
                 fetch('/rooms', {
                         method: 'POST',
@@ -904,6 +985,7 @@
                                 <label class="block text-sm font-semibold text-gray-700 mb-1 mt-6">Room Name</label>
                                 <select
                                     class="w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200 px-3 py-2 relative z-50" x-model="selectedRoomName">
+                                    <option value="" disabled selected>Select a room name</option>
                                     <option>Double Room</option>
                                     <option>Double Room with Balcony</option>
                                     <option>Double Room with Private Bathroom</option>
@@ -1011,7 +1093,7 @@
                         class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
                         ←
                     </button>
-                    <button type="button" @click="saveStep4()"
+                    <button type="button" @click="if(!selectedRoomName){ Swal.fire({icon: 'warning', title: 'Please select a room name', toast: true, position: 'top-end', timer: 1500, showConfirmButton: false}); } else { saveStep4(); }"
                         class="ml-auto px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300 ml-[335px]">
                         Continue
                     </button>
