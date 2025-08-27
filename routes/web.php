@@ -904,6 +904,13 @@ Route::get('/hotel-listing', function () {
     return view('Customer.hotel-lisitng');
 })->name('hotel-listing');
 
+Route::get('/apartment-listing', function () {
+    return view('Customer.apartment-listing');
+})->name('apartment-listing');
+
+Route::get('/home-listing', function () {
+    return view('Customer.apartment-listing');
+})->name('apartment-listing');
 
 
 // Admin Dashboard Route - Updated to use dynamic controller (public access for testing)
