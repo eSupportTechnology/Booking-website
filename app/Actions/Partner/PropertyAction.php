@@ -264,16 +264,49 @@ class PropertyAction
 
     public function uploadPhotos(UploadPropertyPhotosDTO $dto, FileUploadService $fileUploadService): void
     {
-        $property_type = Property::find($dto->property_id)?->subtype_id ?? 'Property';
+        Log::info('Starting photo upload process', [
+            'property_id' => $dto->property_id,
+            'photo_count' => count($dto->photos)
+        ]);
 
-        foreach ($dto->photos as $photo) {
-            $fileUploadService->uploadAndSave(
-                file: $photo,
-                fileType: 'image',
-                propertyType: PropertySubtype::find($property_type)?->name ?? 'Property',
-                propertyId: $dto->property_id,
-                directory: 'property_photos'
-            );
+        try {
+            $property_type = Property::find($dto->property_id)?->subtype_id ?? 'Property';
+            
+            Log::info('Property type found', ['property_type' => $property_type]);
+
+            foreach ($dto->photos as $index => $photo) {
+                Log::info('Processing photo', [
+                    'index' => $index,
+                    'filename' => $photo->getClientOriginalName(),
+                    'size' => $photo->getSize(),
+                    'mime_type' => $photo->getMimeType()
+                ]);
+
+                $result = $fileUploadService->uploadAndSave(
+                    file: $photo,
+                    fileType: 'image',
+                    propertyType: PropertySubtype::find($property_type)?->name ?? 'Property',
+                    propertyId: $dto->property_id,
+                    directory: 'property_photos'
+                );
+
+                if ($result) {
+                    Log::info('Photo uploaded successfully', [
+                        'index' => $index,
+                        'file_id' => $result->id
+                    ]);
+                } else {
+                    Log::error('Failed to upload photo', ['index' => $index]);
+                }
+            }
+
+            Log::info('Photo upload process completed successfully');
+        } catch (\Exception $e) {
+            Log::error('Error in uploadPhotos method', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw $e;
         }
     }
 

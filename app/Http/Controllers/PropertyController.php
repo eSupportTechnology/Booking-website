@@ -371,9 +371,49 @@ class PropertyController extends Controller
         FileUploadService $fileUploadService,
         PropertyAction $propertyAction
     ) {
-        $propertyAction->uploadPhotos($dto, $fileUploadService);
+        try {
+            // Validate the request data
+            if (!$dto->property_id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Property ID is required'
+                ], 400);
+            }
 
-        return response()->json(['success' => true]);
+            if (empty($dto->photos) || count($dto->photos) < 3) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'At least 3 photos are required'
+                ], 400);
+            }
+
+            // Call the action to upload photos
+            $propertyAction->uploadPhotos($dto, $fileUploadService);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Photos uploaded successfully'
+            ]);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
+
+        } catch (\Exception $e) {
+            Log::error('Error uploading photos', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'property_id' => $dto->property_id ?? 'unknown'
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while uploading photos. Please try again.'
+            ], 500);
+        }
     }
 
 
@@ -1661,9 +1701,9 @@ class PropertyController extends Controller
         $propertyModel = null;
         if ($property) {
             $propertyModel = Property::findOrFail($property);
-            \Log::info('Property found', ['property_id' => $propertyModel->id]);
+            Log::info('Property found', ['property_id' => $propertyModel->id]);
         } else {
-            \Log::info('No property parameter provided');
+            Log::info('No property parameter provided');
         }
 
         return view('partner.partner-hotels-payment', compact('propertyModel'));
