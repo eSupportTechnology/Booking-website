@@ -91,9 +91,11 @@
                             </td>
                             <td class="px-2 sm:px-4 py-3 sm:py-4">
                                 <div class="flex items-center space-x-3">
-                                    <button class="text-[#1F8FB2] hover:text-[#157799] text-[10px] sm:text-xs font-medium inline-flex items-center">
-                                        <i class="fas fa-edit mr-1"></i> Edit
-                                    </button>
+                                    <a href="{{ url('/admin/airport-details') }}"
+                                        class="text-[#1F8FB2] hover:text-[#157799] text-[10px] sm:text-xs font-medium inline-flex items-center">
+                                            <i class="fas fa-eye mr-1"></i> View
+                                    </a>
+
                                     <button class="text-red-600 hover:text-red-800 text-[10px] sm:text-xs font-medium inline-flex items-center">
                                         <i class="fas fa-trash mr-1"></i> Delete
                                     </button>
