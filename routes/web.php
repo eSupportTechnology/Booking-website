@@ -911,6 +911,10 @@ Route::get('/admin/dashboard', [\App\Http\Controllers\Admin\DashboardController:
 Route::view('/admin/rental/taxi', 'frontend.admin.taxi')->name('admin.taxi');
 Route::view('/admin/rental/airport', 'frontend.admin.airport')->name('admin.airport');
 Route::view('/admin/taxi-details', 'frontend.admin.taxi-details');
+// Airport Details Page
+Route::view('/admin/airport-details', 'frontend.admin.airport-details')->name('admin.airport.details');
+
+
 
 
 
