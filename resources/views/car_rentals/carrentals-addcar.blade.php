@@ -84,6 +84,19 @@
                     <p class="text-gray-500 text-sm mt-1">Enter the number of passengers the car can seat.</p>
                 </div>
             </div>
+            <div class="mb-4">
+    <label class="block text-sm font-semibold mb-1">This car rental with driver? <span class="text-red-500">*</span></label>
+    <div class="flex items-center space-x-4">
+        <label class="flex items-center space-x-2">
+            <input type="radio" name="with_driver" value="yes" x-model="car.with_driver" class="text-blue-600">
+            <span>Yes</span>
+        </label>
+        <label class="flex items-center space-x-2">
+            <input type="radio" name="with_driver" value="no" x-model="car.with_driver" class="text-blue-600">
+            <span>No</span>
+        </label>
+    </div>
+</div>
 
             <div class="flex justify-between items-center mt-6">
                 <a href="{{ url()->previous() }}" class="flex items-center border border-[#3CC0E9] rounded text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12">←</a>
