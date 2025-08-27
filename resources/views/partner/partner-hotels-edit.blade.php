@@ -105,21 +105,96 @@
             return;
         }
 
-        if(paymentDetails!== 'true' || rooms !== 'true' || uploaded !== 'true' || details !== 'true') {
-            console.warn('One or more required steps are not completed. Complete all steps before proceeding.');
+        // Check if all required steps are completed
+        const allStepsCompleted = paymentDetails === 'true' && rooms === 'true' && uploaded === 'true';
+        
+        console.log('=== HOTELS EDIT COMPLETION CHECK ===');
+        console.log('paymentDetails:', paymentDetails);
+        console.log('rooms:', rooms);
+        console.log('uploaded:', uploaded);
+        console.log('All steps completed:', allStepsCompleted);
+        console.log('=== END CHECK ===');
+        
+        if (!allStepsCompleted) {
+            console.log('One or more required steps are not completed. Complete all steps before proceeding.');
             completeRegistrationBtn.disabled = true;
             completeRegistrationBtn.classList.add('cursor-not-allowed', 'opacity-50');
             completeRegistrationBtn.innerText = 'Complete all steps to proceed';
+            completeRegistrationBtn.className = "mt-4 w-full bg-gray-400 font-semibold text-white rounded text-sm font-semibold px-6 py-2 rounded shadow cursor-not-allowed opacity-50";
         } else {
+            console.log('All steps completed! Enabling complete registration button.');
             completeRegistrationBtn.disabled = false;
             completeRegistrationBtn.classList.remove('cursor-not-allowed', 'opacity-50');
+            completeRegistrationBtn.innerText = 'Complete Registration';
+            completeRegistrationBtn.className = "mt-4 w-full bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 text-sm font-semibold px-6 py-2 rounded shadow";
         }
 
 
         completeRegistrationBtn.addEventListener('click', () => {
-            console.log('Navigating to complete registration page for property ID:', propertyId);
-            window.location.href = `/partner-homes-complete-registration/${propertyId}?propertyType=${encodeURIComponent(propertyType)}`;
-        })
+            if (!allStepsCompleted) {
+                console.log('Cannot proceed - not all steps are completed');
+                return;
+            }
+            
+            console.log('Registration completed successfully! Redirecting to list-your-property page.');
+            
+            // Show success toast message
+            Swal.fire({
+                icon: 'success',
+                title: 'Registration Completed!',
+                text: 'Your property has been successfully registered. You can now list more properties or manage your existing ones.',
+                showConfirmButton: false,
+                timer: 3000,
+                toast: true,
+                position: 'top-end'
+            }).then(() => {
+                // Redirect to list-your-property page
+                window.location.href = '{{ url("/list-your-property") }}';
+            });
+        });
+        
+        // Add progress indicator and success message
+        // Calculate completion percentage
+        let completedSteps = 0;
+        if (uploaded === 'true') completedSteps++;
+        if (paymentDetails === 'true') completedSteps++;
+        if (rooms === 'true') completedSteps++;
+        const completionPercentage = (completedSteps / 3) * 100;
+        
+        // Add progress bar above the complete registration button
+        const progressSection = document.createElement('div');
+        progressSection.className = 'mb-4';
+        progressSection.innerHTML = `
+            <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="bg-[#3CC0E9] h-2 rounded-full transition-all duration-300" style="width: ${completionPercentage}%"></div>
+            </div>
+        `;
+        
+        if (allStepsCompleted) {
+            // Add a success message above the complete registration button
+            const successMessage = document.createElement('div');
+            successMessage.className = 'text-center p-4 bg-green-50 border border-green-200 rounded-lg mb-4';
+            successMessage.innerHTML = `
+                <div class="flex items-center justify-center gap-2 text-green-700">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                    </svg>
+                    <span class="font-medium">All steps completed! You can now complete your registration.</span>
+                </div>
+            `;
+            
+            const completeRegistrationSection = document.querySelector('.flex.justify-center');
+            if (completeRegistrationSection) {
+                completeRegistrationSection.parentNode.insertBefore(progressSection, completeRegistrationSection);
+                completeRegistrationSection.parentNode.insertBefore(successMessage, completeRegistrationSection);
+            }
+        } else {
+            // Add progress bar without success message
+            const completeRegistrationSection = document.querySelector('.flex.justify-center');
+            if (completeRegistrationSection) {
+                completeRegistrationSection.parentNode.insertBefore(progressSection, completeRegistrationSection);
+            }
+        }
 
     });
 
@@ -322,8 +397,8 @@
                             more</p>
                     </div>
                 </div>
-                <a href="{{ url('/partner/property_subcategory/' . $property->category_id . '/' . $property->id) }}"
-                    class="text-sky-600 font-medium text-sm hover:underline">Edit</a>
+                <!-- <a href="{{ url('/partner/property_subcategory/' . $property->category_id . '/' . $property->id) }}"
+                    class="text-sky-600 font-medium text-sm hover:underline">Edit</a> -->
 
             </div>
 
@@ -385,8 +460,8 @@
 
                         <!-- Actions -->
                         <div class="flex items-center gap-4">
-                            <button class="text-sky-600 font-medium text-sm hover:underline edit-room-btn"
-                                data-room-type-id="{{ $firstRoom->room_type_id }}">Edit</button>
+                            <!-- <button class="text-sky-600 font-medium text-sm hover:underline edit-room-btn"
+                                data-room-type-id="{{ $firstRoom->room_type_id }}">Edit</button> -->
                             <button class="text-sky-600 font-medium text-sm hover:underline save-room-btn hidden"
                                 data-room-type-id="{{ $firstRoom->room_type_id }}">Save</button>
                             <button class="text-red-600 font-medium danger text-sm hover:underline delete-rooms-btn"
