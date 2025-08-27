@@ -16,29 +16,33 @@
 
     <!-- Header -->
     <div class="flex justify-between items-center">
-        <h1 class="text-3xl font-semibold text-gray-800">Welcome back, <b>{{ Auth::guard('admin')->user()->username }} </b>👋</h1>
+        <h1 class="text-3xl font-semibold text-gray-800">Welcome back, <b>{{ Auth::guard('admin')->user()->username ?? 'Admin' }} </b>👋</h1>
         <a href="{{ route('admin.customers') }}" class="text-white px-4 py-2 rounded shadow hover:opacity-90 transition" style="background-color: #1F8FB2;">
             Manage Customers
         </a>
     </div>
 
     <!-- Statistics Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
         <div class="bg-white p-6 rounded-lg shadow border-l-4" style="border-color: #1F8FB2;">
-            <h2 class="text-sm text-gray-500">Total Bookings</h2>
-            <p class="text-2xl font-bold text-gray-800">1,250</p>
+            <h2 class="text-sm text-gray-500">Total Customers</h2>
+            <p class="text-2xl font-bold text-gray-800">{{ number_format($totalCustomers) }}</p>
         </div>
         <div class="bg-white p-6 rounded-lg shadow border-l-4 border-green-500">
-            <h2 class="text-sm text-gray-500">New Users</h2>
-            <p class="text-2xl font-bold text-gray-800">320</p>
+            <h2 class="text-sm text-gray-500">Total Partners</h2>
+            <p class="text-2xl font-bold text-gray-800">{{ number_format($totalPartners) }}</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow border-l-4 border-blue-500">
+            <h2 class="text-sm text-gray-500">Total Bookings (30d)</h2>
+            <p class="text-2xl font-bold text-gray-800">{{ number_format($totalBookings) }}</p>
         </div>
         <div class="bg-white p-6 rounded-lg shadow border-l-4 border-yellow-500">
-            <h2 class="text-sm text-gray-500">Revenue</h2>
-            <p class="text-2xl font-bold text-gray-800">$18,450</p>
+            <h2 class="text-sm text-gray-500">Revenue (30d)</h2>
+            <p class="text-2xl font-bold text-gray-800">${{ $revenue }}</p>
         </div>
         <div class="bg-white p-6 rounded-lg shadow border-l-4 border-red-500">
-            <h2 class="text-sm text-gray-500">Cancellations</h2>
-            <p class="text-2xl font-bold text-gray-800">12</p>
+            <h2 class="text-sm text-gray-500">Pending Verifications</h2>
+            <p class="text-2xl font-bold text-gray-800">{{ number_format($pendingVerifications) }}</p>
         </div>
     </div>
 
@@ -53,23 +57,42 @@
                         <th class="px-4 py-2">Customer</th>
                         <th class="px-4 py-2">Property</th>
                         <th class="px-4 py-2">Date</th>
+                        <th class="px-4 py-2">Amount</th>
                         <th class="px-4 py-2">Status</th>
                         <th class="px-4 py-2 text-right">Action</th>
                     </tr>
                 </thead>
                 <tbody>
+                    @forelse($recentBookings as $booking)
                     <tr class="border-b hover:bg-gray-50">
-                        <td class="px-4 py-2">BK10234</td>
-                        <td class="px-4 py-2">John Doe</td>
-                        <td class="px-4 py-2">Ocean View Hotel</td>
-                        <td class="px-4 py-2">2025-07-20</td>
+                        <td class="px-4 py-2 font-medium">{{ $booking['id'] }}</td>
+                        <td class="px-4 py-2">{{ $booking['customer_name'] }}</td>
+                        <td class="px-4 py-2">{{ $booking['property_name'] }}</td>
+                        <td class="px-4 py-2">{{ $booking['date'] }}</td>
+                        <td class="px-4 py-2 font-semibold text-green-600">${{ $booking['amount'] }}</td>
                         <td class="px-4 py-2">
-                            <span class="bg-green-100 text-green-700 text-xs font-medium px-2 py-1 rounded">Confirmed</span>
+                            @php
+                                $statusColors = [
+                                    'pending' => 'bg-yellow-100 text-yellow-700',
+                                    'confirmed' => 'bg-green-100 text-green-700',
+                                    'cancelled' => 'bg-red-100 text-red-700',
+                                    'completed' => 'bg-blue-100 text-blue-700'
+                                ];
+                                $statusColor = $statusColors[strtolower($booking['status'])] ?? 'bg-gray-100 text-gray-700';
+                            @endphp
+                            <span class="{{ $statusColor }} text-xs font-medium px-2 py-1 rounded">{{ $booking['status'] }}</span>
                         </td>
                         <td class="px-4 py-2 text-right">
                             <a href="{{ route('admin.customers') }}" class="hover:underline" style="color: #1F8FB2;">View</a>
                         </td>
                     </tr>
+                    @empty
+                    <tr>
+                        <td colspan="7" class="px-4 py-8 text-center text-gray-500">
+                            No recent bookings found.
+                        </td>
+                    </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
@@ -95,12 +118,29 @@
         </div>
 
         <div class="bg-white p-6 rounded-lg shadow">
-            <h3 class="text-lg font-semibold mb-2">Notifications</h3>
-            <ul class="list-disc list-inside text-gray-700 space-y-1">
-                <li>3 new bookings today.</li>
-                <li>Partner contract expiring soon.</li>
-                <li>System update scheduled for next week.</li>
-            </ul>
+            <h3 class="text-lg font-semibold mb-2">System Overview</h3>
+            <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Recent Bookings:</span>
+                    <span class="font-semibold">{{ count($recentBookings) }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Pending Verifications:</span>
+                    <span class="font-semibold text-red-600">{{ $pendingVerifications }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Total Revenue (30d):</span>
+                    <span class="font-semibold text-green-600">${{ $revenue }}</span>
+                </div>
+                @if($pendingVerifications > 0)
+                <div class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded">
+                    <p class="text-sm text-yellow-800">
+                        <i class="fas fa-exclamation-triangle mr-1"></i>
+                        {{ $pendingVerifications }} partner(s) awaiting verification
+                    </p>
+                </div>
+                @endif
+            </div>
         </div>
     </div>
 </div>
@@ -117,11 +157,11 @@
     new Chart(ctx, {
         type: 'line',
         data: {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+            labels: @json($monthlyStats['labels']),
             datasets: [
                 {
                     label: 'Bookings',
-                    data: [120, 150, 180, 140, 200, 170, 250],
+                    data: @json($monthlyStats['bookings']),
                     fill: true,
                     backgroundColor: gradient,
                     borderColor: '#1F8FB2',
@@ -132,7 +172,7 @@
                 },
                 {
                     label: 'Cancellations',
-                    data: [20, 30, 15, 25, 18, 22, 10],
+                    data: @json($monthlyStats['cancellations']),
                     fill: false,
                     borderColor: '#ef4444',
                     borderWidth: 2,
