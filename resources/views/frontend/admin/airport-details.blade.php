@@ -79,6 +79,40 @@
             </ul>
         </div>
 
+          <!-- Airport Statistics -->
+        <div class="bg-white rounded-lg shadow p-4 sm:p-6 relative">
+            <a href="#"
+               class="absolute top-3 sm:top-4 right-3 sm:right-4 bg-[#3CC0E9] hover:bg-[#33aad1] text-white px-3 py-1 sm:px-4 sm:py-2 rounded shadow text-xs sm:text-sm">Edit</a>
+            <h2 class="text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4">Airport Statistics</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-5 shadow">
+                    <h3 class="text-base sm:text-lg font-semibold text-blue-700">Total Passengers</h3>
+                    <p class="text-lg sm:text-2xl font-bold text-gray-800 mt-1 sm:mt-2">12.5M</p>
+                </div>
+                <div class="bg-green-50 border border-green-200 rounded-lg p-3 sm:p-5 shadow">
+                    <h3 class="text-base sm:text-lg font-semibold text-green-700">Monthly Flights</h3>
+                    <p class="text-lg sm:text-2xl font-bold text-gray-800 mt-1 sm:mt-2">1,200</p>
+                </div>
+                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 sm:p-5 shadow">
+                    <h3 class="text-base sm:text-lg font-semibold text-yellow-700">Total Airlines</h3>
+                    <p class="text-lg sm:text-2xl font-bold text-gray-800 mt-1 sm:mt-2">45</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Customer Insights -->
+        <div class="bg-white rounded-lg shadow p-4 sm:p-6 relative">
+            <a href="#"
+               class="absolute top-3 sm:top-4 right-3 sm:right-4 bg-[#3CC0E9] hover:bg-[#33aad1] text-white px-3 py-1 sm:px-4 sm:py-2 rounded shadow text-xs sm:text-sm">Edit</a>
+            <h2 class="text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4">Customer Insights</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 text-sm sm:text-base">
+                <p class="text-gray-700"><span class="font-semibold">Unique Customers:</span> 150K</p>
+                <p class="text-gray-700"><span class="font-semibold">Repeat Customers:</span> 60%</p>
+                <p class="text-gray-700"><span class="font-semibold">Customer Rating:</span> ⭐ 4.8 / 5</p>
+                <p class="text-gray-700"><span class="font-semibold">Customer Reviews:</span> 12,000</p>
+            </div>
+        </div>
+
 
         <!-- Back Button -->
         <div class="mt-4 sm:mt-6">
