@@ -65,6 +65,21 @@
             </div>
         </div>
 
+         <!-- Facilities & Services -->
+        <div class="bg-white rounded-lg shadow p-4 sm:p-6 relative">
+            <a href="#"
+               class="absolute top-3 sm:top-4 right-3 sm:right-4 bg-[#3CC0E9] hover:bg-[#33aad1] text-white px-3 py-1 sm:px-4 sm:py-2 rounded shadow text-xs sm:text-sm">Edit</a>
+            <h2 class="text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4">Facilities & Services</h2>
+            <ul class="list-disc list-inside text-gray-700 space-y-2">
+                <li>24/7 Taxi Service</li>
+                <li>Restaurants & Cafés</li>
+                <li>Duty-Free Shopping</li>
+                <li>Free Wi-Fi</li>
+                <li>VIP Lounge</li>
+            </ul>
+        </div>
+
+
         <!-- Back Button -->
         <div class="mt-4 sm:mt-6">
             <a href="{{ url('/admin/rental/airport') }}"
