@@ -90,9 +90,18 @@
         console.log('Property data from backend:', {!! json_encode($propertyData) !!});
     </script>
     @else
+    @if(isset($property) && $property)
+    <script id="property-data" type="application/json">
+        {"id": {{ (int) $property->id }} }
+    </script>
+    <script>
+        console.log('Property id from backend object:', {{ (int) $property->id }});
+    </script>
+    @else
     <script>
         console.log('No property data found in backend');
     </script>
+    @endif
     @endif
     
     <!-- Header -->
@@ -3031,10 +3040,44 @@ function wizardApp() {
         },
 
         // Form submission methods
+        async ensurePropertyId() {
+            try {
+                if (this.propertyId && this.propertyId !== 'new') {
+                    return true;
+                }
+                const res = await fetch('/partner/get-latest-property', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                });
+                if (!res.ok) {
+                    showToast('Could not resolve property. Please complete Step 1 first.', 'error');
+                    return false;
+                }
+                const data = await res.json();
+                const latestId = data?.property?.id || data?.id || null;
+                if (!latestId) {
+                    showToast('No property found. Please complete Step 1 first.', 'error');
+                    return false;
+                }
+                this.propertyId = latestId;
+                this.saveWizardState();
+                return true;
+            } catch (e) {
+                showToast('Error resolving property. Please complete Step 1 first.', 'error');
+                return false;
+            }
+        },
+
         async saveName() {
             this.log('Saving name');
             if (!this.title.trim()) {
                 showToast('Please enter a property name', 'warning');
+                return;
+            }
+            if (!(await this.ensurePropertyId())) {
                 return;
             }
             
@@ -3075,6 +3118,9 @@ function wizardApp() {
                 showToast('Please enter both address and city', 'warning');
                 return;
             }
+            if (!(await this.ensurePropertyId())) {
+                return;
+            }
             
             try {
                 const response = await fetch(`/partner/property/${this.propertyId}`, {
@@ -3107,6 +3153,10 @@ function wizardApp() {
 
         async saveChannelManager() {
             this.log('Saving channel manager preference');
+            
+            if (!(await this.ensurePropertyId())) {
+                return;
+            }
             
             try {
                 const response = await fetch(`/partner/property/${this.propertyId}`, {
@@ -3156,6 +3206,10 @@ function wizardApp() {
                 return;
             }
             
+            if (!(await this.ensurePropertyId())) {
+                return;
+            }
+            
             try {
                 console.log('Saving property details with data:', {
                     guests: this.guests,
@@ -3201,6 +3255,10 @@ function wizardApp() {
 
         async saveHostProfile() {
             this.log('Saving host profile');
+            
+            if (!(await this.ensurePropertyId())) {
+                return;
+            }
             
             try {
                 const response = await fetch(`/partner/property/${this.propertyId}/host-profile`, {
@@ -3724,6 +3782,11 @@ function wizardApp() {
             this.log('Saving house rules');
             this.isLoading = true;
             
+            if (!(await this.ensurePropertyId())) {
+                this.isLoading = false;
+                return;
+            }
+            
             try {
                 console.log('Saving house rules with data:', {
                     smoking_allowed: this.smokingAllowed,
@@ -3775,6 +3838,11 @@ function wizardApp() {
             this.log('Saving pricing');
             console.log('Current pricingWizardStep before saving:', this.pricingWizardStep);
             this.isLoading = true;
+            
+            if (!(await this.ensurePropertyId())) {
+                this.isUploading = false;
+                return;
+            }
             
             try {
                 console.log('Saving pricing with data:', {
@@ -3834,6 +3902,10 @@ function wizardApp() {
             this.log('Saving legal information');
             this.isLoading = true;
             try {
+                if (!(await this.ensurePropertyId())) {
+                    this.isLoading = false;
+                    return;
+                }
                 // Prepare data based on ownership type
                 let requestData = {
                     property_id: this.propertyId,
@@ -3841,6 +3913,12 @@ function wizardApp() {
                 };
         
                 if (this.ownershipType === 'individual') {
+                    // Basic client-side validation to avoid server 500
+                    if (!this.individual?.firstName || !this.individual?.lastName || !this.individual?.dob) {
+                        showToast('Please fill first name, last name and date of birth.', 'warning');
+                        this.isLoading = false;
+                        return;
+                    }
                     requestData.individuals = [{
                         first_name: this.individual?.firstName || '',
                         last_name: this.individual?.lastName || '',
@@ -3849,6 +3927,12 @@ function wizardApp() {
                     }];
                 } else if (this.ownershipType === 'business') {
                     requestData.ownership_type = 'business_entity'; // match DTO
+                    // Basic client-side validation
+                    if (!this.business?.businessName || !this.business?.address || !this.business?.zipCode || !this.business?.city || !this.business?.country) {
+                        showToast('Please fill all required business fields (name, address, zip, city, country).', 'warning');
+                        this.isLoading = false;
+                        return;
+                    }
                     requestData.business_entity = {
                         business_name: this.business?.businessName || '',
                         trading_name: this.business?.tradingName || '',
@@ -3888,8 +3972,14 @@ function wizardApp() {
                         window.location.href = redirectUrl;
                     }, 2000);
                 } else {
-                    const errorData = await response.json();
-                    showToast('Failed to save legal info: ' + (errorData.message || 'Unknown error'), 'error');
+                    let errorText = '';
+                    try {
+                        const errorData = await response.json();
+                        errorText = errorData.message || JSON.stringify(errorData.errors || errorData);
+                    } catch (e) {
+                        errorText = await response.text();
+                    }
+                    showToast('Failed to save legal info: ' + (errorText || 'Unknown error'), 'error');
                 }
             } catch (error) {
                 showToast('Error saving legal info: ' + error.message, 'error');
