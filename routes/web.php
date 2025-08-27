@@ -644,7 +644,7 @@ Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddle
     Route::post('/property/step3/{property}', [PropertyController::class, 'storeStep2'])->name('partner.property.store.step3');
     Route::post('/property/upload-photos', [PropertyController::class, 'uploadPhotos'])->name('partner.property.upload.photos');
     Route::post('/partner/property/upload-photos', [PropertyController::class, 'uploadPhotos'])->name('partner.property.upload.photos');
-    
+
     // Temporary debug route for file upload limits
     Route::get('/debug/upload-limits', function() {
         return response()->json([
@@ -823,16 +823,18 @@ Route::prefix('admin')->name('admin.')->group(function () {
         })->name('alternative.places');
 
         // Customer management
-        Route::get('/accounts', function () {
-            return view('admin.admin-customers');
-        })->name('customers');
+        Route::get('/accounts', [\App\Http\Controllers\Admin\CustomersController::class, '__invoke'])->name('customers');
         Route::post('/account-details', [\App\Http\Controllers\Admin\CustomerViewController::class, 'show'])->name('admin.customer.view');
 
         // Partner management
-        Route::get('/partners', function () {
-            return view('admin.admin-partners');
-        })->name('partners');
+        Route::get('/partners', [\App\Http\Controllers\Admin\PartnersController::class, '__invoke'])->name('partners');
         Route::post('/partner-details', [\App\Http\Controllers\Admin\PartnerViewController::class, 'show'])->name('admin.partner.view');
+
+        // Customer and Partner detail routes
+        Route::get('/customer/{customer_id}', [\App\Http\Controllers\Admin\CustomerViewController::class, 'show'])->name('customer.view');
+        Route::get('/partner/{partner_id}', [\App\Http\Controllers\Admin\PartnerViewController::class, 'show'])->name('partner.view');
+
+
 
         // Settings
         Route::get('/settings', function () {
