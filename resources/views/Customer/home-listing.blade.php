@@ -8,8 +8,8 @@
     <!-- Search Box: Overlapping both sections -->
     <div class="relative z-10 -mt-8 px-4">
         <div class="p-6 max-w-7xl mx-auto">
-            <h1 class="text-4xl font-bold mb-2 mt-4">Find the perfect hotel on {{ config('domains.domain') }}</h1>
-            <p class="text-gray-600 mb-6 text-xl">From cheap hotels to luxury rooms and everything in between</p>
+            <h1 class="text-4xl font-bold mb-2 mt-4">Find the perfect Holiday Homes on {{ config('domains.domain') }}</h1>
+            <p class="text-gray-600 mb-6 text-xl">Find the Holiday Homes that appeal to you the most</p>
 
             <!-- Alpine.js CDN (Required for Dropdowns) -->
             <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
@@ -66,10 +66,10 @@
     <div class="p-6 max-w-7xl mx-auto">
         <!-- Heading -->
         <h2 class="text-2xl font-semibold text-gray-800 mb-2">
-            Latest hotels for you
+            Latest Holiday Homes for you
         </h2>
         <p class="mb-8 text-gray-600" style="font-family: 'Noto Sans', sans-serif;">
-            Find a great deal on a hotel for tonight or an upcoming trip
+           Find a great deal on your perfect Holiday Homes stay
         </p>
 
         <!-- Hotels Grid -->
@@ -77,28 +77,17 @@
 
           <!-- Hotel Card 1 -->
           <div class="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden flex flex-col w-full max-w-sm">
-              <img src="{{ asset('images/AAA.png') }}" alt="Hotel" class="w-full h-48 object-cover">
+              <img src="{{ asset('images/AA.png') }}" alt="Hotel" class="w-full h-48 object-cover">
               <div class="p-4 flex flex-col justify-between flex-1">
                   <div class="flex justify-between items-center mb-2">
-                      <h3 class="text-lg font-semibold">Orbit88 Hotel by AMR</h3>
-                      <span class="inline-block bg-yellow-400 text-white text-xs font-medium px-2 py-1 rounded">
-                          5-Star
-                      </span>
+                      <h3 class="text-lg font-semibold">Orbit88 Holiday Home </h3>
+                     <span class="ml-2 text-sm text-gray-600">4.0 (320 reviews)</span>
                   </div>
                   <p class="text-sm text-gray-500 mb-2">Kandy • 2.4 km from center</p>
-                  <div class="flex items-center mb-4">
-                      <div class="flex space-x-1">
-                          <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                          <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                          <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                          <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                          <div class="w-3 h-3 bg-gray-300 rounded-full"></div>
-                      </div>
-                      <span class="ml-2 text-sm text-gray-600">4.0 (320 reviews)</span>
-                  </div>
+                 
                   <div class="flex justify-between items-center">
                       <button class="bg-[#3CC0E9] hover:bg-blue-600 text-white text-sm px-4 py-2 rounded-lg transition">
-                          See Availability
+                          Reserve this home
                       </button>
                   </div>
               </div>
@@ -106,28 +95,17 @@
 
           <!-- Hotel Card 2 -->
           <div class="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden flex flex-col w-full max-w-sm">
-              <img src="{{ asset('images/AAA.png') }}" alt="Hotel" class="w-full h-48 object-cover">
+              <img src="{{ asset('images/AA.png') }}" alt="Hotel" class="w-full h-48 object-cover">
               <div class="p-4 flex flex-col justify-between flex-1">
                   <div class="flex justify-between items-center mb-2">
-                      <h3 class="text-lg font-semibold">Orbit88 Hotel by AMR</h3>
-                      <span class="inline-block bg-yellow-400 text-white text-xs font-medium px-2 py-1 rounded">
-                          5-Star
-                      </span>
-                  </div>
-                  <p class="text-sm text-gray-500 mb-2">Kandy • 2.4 km from center</p>
-                  <div class="flex items-center mb-4">
-                      <div class="flex space-x-1">
-                          <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                          <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                          <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                          <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                          <div class="w-3 h-3 bg-gray-300 rounded-full"></div>
-                      </div>
+                      <h3 class="text-lg font-semibold">Orbit88 Holiday Home</h3>
                       <span class="ml-2 text-sm text-gray-600">4.0 (320 reviews)</span>
                   </div>
+                  <p class="text-sm text-gray-500 mb-2">Kandy • 2.4 km from center</p>
+                 
                   <div class="flex justify-between items-center">
                       <button class="bg-[#3CC0E9] hover:bg-blue-600 text-white text-sm px-4 py-2 rounded-lg transition">
-                          See Availability
+                               Reserve this home
                       </button>
                   </div>
               </div>
@@ -135,28 +113,17 @@
 
           <!-- Hotel Card 3 -->
           <div class="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden flex flex-col w-full max-w-sm">
-              <img src="{{ asset('images/AAA.png') }}" alt="Hotel" class="w-full h-48 object-cover">
+              <img src="{{ asset('images/AA.png') }}" alt="Hotel" class="w-full h-48 object-cover">
               <div class="p-4 flex flex-col justify-between flex-1">
                   <div class="flex justify-between items-center mb-2">
-                      <h3 class="text-lg font-semibold">Orbit88 Hotel by AMR</h3>
-                      <span class="inline-block bg-yellow-400 text-white text-xs font-medium px-2 py-1 rounded">
-                          5-Star
-                      </span>
+                      <h3 class="text-lg font-semibold">Orbit88 Holiday Home </h3>
+                   <span class="ml-2 text-sm text-gray-600">4.0 (320 reviews)</span>
                   </div>
                   <p class="text-sm text-gray-500 mb-2">Kandy • 2.4 km from center</p>
-                  <div class="flex items-center mb-4">
-                      <div class="flex space-x-1">
-                          <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                          <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                          <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                          <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                          <div class="w-3 h-3 bg-gray-300 rounded-full"></div>
-                      </div>
-                      <span class="ml-2 text-sm text-gray-600">4.0 (320 reviews)</span>
-                  </div>
+                 
                   <div class="flex justify-between items-center">
                       <button class="bg-[#3CC0E9] hover:bg-blue-600 text-white text-sm px-4 py-2 rounded-lg transition">
-                          See Availability
+                                     Reserve this home
                       </button>
                   </div>
               </div>
@@ -164,61 +131,41 @@
 
           <!-- Hotel Card 4 -->
           <div class="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden flex flex-col w-full max-w-sm">
-              <img src="{{ asset('images/AAA.png') }}" alt="Hotel" class="w-full h-48 object-cover">
+              <img src="{{ asset('images/AA.png') }}" alt="Hotel" class="w-full h-48 object-cover">
               <div class="p-4 flex flex-col justify-between flex-1">
                   <div class="flex justify-between items-center mb-2">
-                      <h3 class="text-lg font-semibold">Orbit88 Hotel by AMR</h3>
-                      <span class="inline-block bg-yellow-400 text-white text-xs font-medium px-2 py-1 rounded">
-                          5-Star
-                      </span>
+                      <h3 class="text-lg font-semibold">Orbit88 Holiday Home </h3>
+                   <span class="ml-2 text-sm text-gray-600">4.0 (320 reviews)</span>
                   </div>
                   <p class="text-sm text-gray-500 mb-2">Kandy • 2.4 km from center</p>
-                  <div class="flex items-center mb-4">
-                      <div class="flex space-x-1">
-                          <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                          <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                          <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                          <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                          <div class="w-3 h-3 bg-gray-300 rounded-full"></div>
-                      </div>
-                      <span class="ml-2 text-sm text-gray-600">4.0 (320 reviews)</span>
-                  </div>
+                 
                   <div class="flex justify-between items-center">
                       <button class="bg-[#3CC0E9] hover:bg-blue-600 text-white text-sm px-4 py-2 rounded-lg transition">
-                          See Availability
+                                     Reserve this home
                       </button>
                   </div>
               </div>
           </div>
 
+
           <!-- Hotel Card 5 -->
-          <div class="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden flex flex-col w-full max-w-sm">
-              <img src="{{ asset('images/AAA.png') }}" alt="Hotel" class="w-full h-48 object-cover">
+         <div class="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden flex flex-col w-full max-w-sm">
+              <img src="{{ asset('images/AA.png') }}" alt="Hotel" class="w-full h-48 object-cover">
               <div class="p-4 flex flex-col justify-between flex-1">
                   <div class="flex justify-between items-center mb-2">
-                      <h3 class="text-lg font-semibold">Orbit88 Hotel by AMR</h3>
-                      <span class="inline-block bg-yellow-400 text-white text-xs font-medium px-2 py-1 rounded">
-                          5-Star
-                      </span>
+                      <h3 class="text-lg font-semibold">Orbit88 Holiday Home </h3>
+                   <span class="ml-2 text-sm text-gray-600">4.0 (320 reviews)</span>
                   </div>
                   <p class="text-sm text-gray-500 mb-2">Kandy • 2.4 km from center</p>
-                  <div class="flex items-center mb-4">
-                      <div class="flex space-x-1">
-                          <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                          <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                          <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                          <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                          <div class="w-3 h-3 bg-gray-300 rounded-full"></div>
-                      </div>
-                      <span class="ml-2 text-sm text-gray-600">4.0 (320 reviews)</span>
-                  </div>
+                 
                   <div class="flex justify-between items-center">
                       <button class="bg-[#3CC0E9] hover:bg-blue-600 text-white text-sm px-4 py-2 rounded-lg transition">
-                          See Availability
+                                     Reserve this home
                       </button>
                   </div>
               </div>
           </div>
+
 
         </div> <!-- End of Hotels Grid -->
 
@@ -296,4 +243,6 @@
         </div>
     </div>
 </section>
+
+
 @endsection

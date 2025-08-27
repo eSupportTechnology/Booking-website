@@ -253,56 +253,64 @@
 
     <!-- Browse by Property Type Section -->
     <section class="py-12 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-2xl font-semibold text-gray-800 mb-6">{{ __('messages.Browse by property type') }}</h2>
-            <div class="flex space-x-4 overflow-x-auto pb-2">
-                <!-- Resorts -->
-                <div class="min-w-[250px]">
-                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                        <img src="{{ asset('images/resorts.jpg') }}" alt="Resorts" class="w-full h-48 object-cover">
-                    </div>
-                    <div class="mt-2">
-                        <h6 class="text-base font-semibold text-gray-800" style="font-family: 'Noto Sans', sans-serif;">
-                            {{ __('messages.Resorts')}}</h3>
-                    </div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-2xl font-semibold text-gray-800 mb-6">Browse by property type</h2>
+        <div class="flex space-x-4 overflow-x-auto pb-2">
+            
+          <!-- Hotels -->
+            <a href="{{ route('hotel-listing') }}" class="min-w-[250px]">
+                <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
+                    <img src="{{ asset('images/hotels.jpg') }}" alt="Hotels" class="w-full h-48 object-cover">
                 </div>
+                <div class="mt-2">
+                    <h6 class="text-base font-semibold text-gray-800" style="font-family: 'Noto Sans', sans-serif;">
+                        Hotels
+                    </h6>
+                </div>
+            </a>
 
-                <!-- Apartments -->
-                <div class="min-w-[250px]">
-                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                        <img src="{{ asset('images/apartments.jpg') }}" alt="Apartments"
-                            class="w-full h-48 object-cover">
-                    </div>
-                    <div class="mt-2">
-                        <h6 class="text-base font-semibold text-gray-800" style="font-family: 'Noto Sans', sans-serif;">
-                            {{ __('messages.Apartments')}}</h3>
-                    </div>
+            
+            <!-- Apartments -->
+            <a href="{{ route('apartment-listing') }}" class="min-w-[250px]">
+                <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
+                    <img src="{{ asset('images/apartments.jpg') }}" alt="Apartments" class="w-full h-48 object-cover">
                 </div>
+                <div class="mt-2">
+                    <h6 class="text-base font-semibold text-gray-800" style="font-family: 'Noto Sans', sans-serif;">
+                        Apartments
+                    </h6>
+                </div>
+            </a>
 
-                <!-- Hotels -->
-                <div class="min-w-[250px]">
-                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                        <img src="{{ asset('images/hotels.jpg') }}" alt="Apartments" class="w-full h-48 object-cover">
-                    </div>
-                    <div class="mt-2">
-                        <h6 class="text-base font-semibold text-gray-800" style="font-family: 'Noto Sans', sans-serif;">
-                            {{ __('messages.Hotels')}}</h3>
-                    </div>
+            <!-- Resorts -->
+            <a href="{{ route('home-listing') }}" class="min-w-[250px]">
+                <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
+                    <img src="{{ asset('images/villas.jpg') }}" alt="Resorts" class="w-full h-48 object-cover">
                 </div>
+                <div class="mt-2">
+                    <h6 class="text-base font-semibold text-gray-800" style="font-family: 'Noto Sans', sans-serif;">
+                        Holiday Homes
+                    </h6>
+                </div>
+            </a>
 
-                <!-- Villas -->
-                <div class="min-w-[250px]">
-                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                        <img src="{{ asset('images/villas.jpg') }}" alt="Villas" class="w-full h-48 object-cover">
-                    </div>
-                    <div class="mt-2">
-                        <h6 class="text-base font-semibold text-gray-800" style="font-family: 'Noto Sans', sans-serif;">
-                            {{ __('messages.Villas')}}</h3>
-                    </div>
+
+          
+            <!-- Villas -->
+            <a href="{{ route('hotel-listing') }}" class="min-w-[250px]">
+                <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
+                    <img src="{{ asset('images/resorts.jpg') }}" alt="Villas" class="w-full h-48 object-cover">
                 </div>
-            </div>
+                <div class="mt-2">
+                    <h6 class="text-base font-semibold text-gray-800" style="font-family: 'Noto Sans', sans-serif;">
+                        Villas
+                    </h6>
+                </div>
+            </a>
+
         </div>
-    </section>
+    </div>
+</section>
     <!--End Section-->
 
     <!-- Trending Destinations Section -->
