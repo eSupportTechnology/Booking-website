@@ -3,19 +3,25 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Services\Admin\CustomersService;
+use App\Models\User;
 
 class CustomerViewController extends Controller
 {
-    public function show($customer_id)
+    public function __construct(
+        private CustomersService $customersService
+    ) {}
+
+    public function show(User $customer)
     {
-        // Validate the ID exists
-        validator(['customer_id' => $customer_id], [
-            'customer_id' => 'required|integer|exists:users,id'
-        ])->validate();
+        // Ensure this user is a customer (not a partner)
+        if ($customer->partner()->exists()) {
+            abort(404, 'Customer not found');
+        }
 
-        $customerId = $customer_id;
+        // Load additional relationships
+        $customer->load(['bookings', 'reviews', 'travelerDetails']);
 
-        return view('admin.admin-customer-view', compact('customerId'));
+        return view('admin.admin-customer-view', compact('customer'));
     }
 }

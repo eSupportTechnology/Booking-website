@@ -133,4 +133,12 @@ class Property extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    /**
+     * Get the partner that owns the property (through user relationship).
+     */
+    public function partner()
+    {
+        return $this->hasOneThrough(Partner::class, User::class, 'id', 'user_id', 'user_id', 'id');
+    }
 }

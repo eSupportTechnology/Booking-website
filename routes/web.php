@@ -785,11 +785,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // Protected admin routes
     Route::middleware(['auth:admin', \App\Http\Middleware\AdminMiddleware::class, \App\Http\Middleware\PreventBackHistory::class])->group(function () {
-        Route::get('/center', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/center', [\App\Http\Controllers\Admin\DashboardController::class, '__invoke'])->name('dashboard');
         Route::post('/exit', [\App\Http\Controllers\Admin\AuthController::class, 'logout'])->name('logout');
 
         // Customer and Partner detail routes
-        Route::get('/customer/{customer_id}', [\App\Http\Controllers\Admin\CustomerViewController::class, 'show'])->name('customer.view');
+        Route::get('/customer/{customer}', [\App\Http\Controllers\Admin\CustomerViewController::class, 'show'])->name('customer.view');
         Route::get('/partner/{partner_id}', [\App\Http\Controllers\Admin\PartnerViewController::class, 'show'])->name('partner.view');
 
         // Property management
@@ -876,12 +876,14 @@ Route::get('/hotel-listing', function () {
     return view('Customer.hotel-lisitng');
 })->name('hotel-listing');
 
+Route::get('/hotel-listing', function () {
+    return view('Customer.hotel-lisitng');
+})->name('hotel-listing');
 
 
-// Admin Dashboard Route
-Route::get('/admin/dashboard', function () {
-    return view('frontend.admin.dashboard');
-})->name('admin.dashboard');
+
+// Admin Dashboard Route - Updated to use dynamic controller (public access for testing)
+Route::get('/admin/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, '__invoke']);
 Route::view('/admin/rental/taxi', 'frontend.admin.taxi')->name('admin.taxi');
 Route::view('/admin/rental/airport', 'frontend.admin.airport')->name('admin.airport');
 Route::view('/admin/taxi-details', 'frontend.admin.taxi-details');
