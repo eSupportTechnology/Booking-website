@@ -34,9 +34,9 @@
                     id="homeSearchInput">
                 <select id="statusFilter" class="px-3 py-1.5 text-xs sm:text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#3CC0E9] bg-white">
                     <option value="">All Status</option>
-                    <option value="Available">Available</option>
-                    <option value="Pending">Pending</option>
-                    <option value="Unavailable">Unavailable</option>
+                    <option value="active">Active</option>
+                    <option value="pending">Pending</option>
+                    <option value="inactive">Inactive</option>
                 </select>
             </div>
 
@@ -57,11 +57,11 @@
             </div>
             <div class="flex items-center gap-2">
                 <label class="text-xs text-gray-600">Rows per page:</label>
-                <select id="rowsPerPageSelect" class="text-xs sm:text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#3CC0E9] px-2 py-1.5">
-                    <option value="10">10</option>
-                    <option value="20">20</option>
-                    <option value="30">30</option>
-                    <option value="50">50</option>
+                <select id="rowsPerPage" class="text-xs sm:text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#3CC0E9] px-2 py-1.5">
+                    <option value="5" {{ request('per_page') == 5 ? 'selected' : '' }}>5 rows</option>
+                    <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10 rows</option>
+                    <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>20 rows</option>
+                    <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50 rows</option>
                 </select>
             </div>
         </div>
@@ -105,10 +105,11 @@
                             <td class="px-2 sm:px-4 py-3 sm:py-4">
                                 <div class="relative">
                                     <select onchange="handleStatusChange(this, '{{ $property->id }}')"
-                                            class="appearance-none {{ $property->status === 'active' ? 'bg-green-100 text-green-800' : ($property->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }} font-medium text-[10px] sm:text-xs rounded-full pl-6 pr-4 py-0.5 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#3CC0E9] transition">
+                                            class="appearance-none {{ $property->status === 'active' ? 'bg-green-100 text-green-800' : ($property->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }} font-medium text-[10px] sm:text-xs rounded-full pl-6 pr-4 py-0.5 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#3CC0E9] transition"
+                                            data-original-value="{{ $property->status === 'suspended' ? 'inactive' : $property->status }}">
                                         <option value="active" {{ $property->status === 'active' ? 'selected' : '' }}>Active</option>
                                         <option value="pending" {{ $property->status === 'pending' ? 'selected' : '' }}>Pending</option>
-                                        <option value="inactive" {{ $property->status === 'inactive' ? 'selected' : '' }}>Inactive</option>
+                                        <option value="inactive" {{ $property->status === 'suspended' ? 'selected' : '' }}>Inactive</option>
                                     </select>
                                     <span class="absolute top-1/2 left-2 -translate-y-1/2 w-1.5 h-1.5 rounded-full {{ $property->status === 'active' ? 'bg-green-800' : ($property->status === 'pending' ? 'bg-yellow-800' : 'bg-red-800') }} pointer-events-none status-dot"></span>
                                 </div>
@@ -157,35 +158,103 @@
         const wrapper = selectEl.parentElement;
         const dot = wrapper.querySelector('.status-dot');
 
+        // Show loading state
+        selectEl.disabled = true;
+        selectEl.style.opacity = '0.6';
+
+        // Make AJAX request to update status
+        fetch(`/admin/status/property/${id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({
+                status: value
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update UI styling
+                updateStatusStyling(selectEl, dot, value);
+
+                // Show success message
+                showNotification('success', data.message);
+            } else {
+                // Revert selection on error
+                selectEl.value = selectEl.getAttribute('data-original-value') || 'pending';
+                showNotification('error', data.message || 'Failed to update status');
+            }
+        })
+        .catch(error => {
+            console.error('Error updating status:', error);
+            // Revert selection on error
+            selectEl.value = selectEl.getAttribute('data-original-value') || 'pending';
+            showNotification('error', 'Failed to update status. Please try again.');
+        })
+        .finally(() => {
+            // Remove loading state
+            selectEl.disabled = false;
+            selectEl.style.opacity = '1';
+        });
+    }
+
+    function updateStatusStyling(selectEl, dot, value) {
         // Reset classes
         selectEl.className = 'appearance-none font-medium text-[10px] sm:text-xs rounded-full pl-6 pr-4 py-0.5 transition focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#3CC0E9]';
         dot.className = 'absolute top-1/2 left-2 -translate-y-1/2 w-1.5 h-1.5 rounded-full status-dot';
 
-        // Apply styling
+        // Apply styling based on status
         switch (value) {
-            case 'Available':
+            case 'active':
                 selectEl.classList.add('bg-green-100', 'text-green-800');
                 dot.classList.add('bg-green-800');
                 break;
-            case 'Pending':
+            case 'pending':
                 selectEl.classList.add('bg-yellow-100', 'text-yellow-800');
                 dot.classList.add('bg-yellow-800');
                 break;
-            case 'Unavailable':
+            case 'inactive':
                 selectEl.classList.add('bg-red-100', 'text-red-800');
                 dot.classList.add('bg-red-800');
                 break;
         }
 
-        // Optional: Save via AJAX
-        console.log(`Changed status of ID ${id} to ${value}`);
+        // Store current value as original for potential revert
+        selectEl.setAttribute('data-original-value', value);
+    }
+
+    function showNotification(type, message) {
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.className = `fixed top-4 right-4 z-50 px-4 py-3 rounded-md shadow-lg transition-all duration-300 ${
+            type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+        }`;
+        notification.textContent = message;
+
+        // Add to page
+        document.body.appendChild(notification);
+
+        // Remove after 3 seconds
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 300);
+        }, 3000);
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-        const searchInput = document.getElementById('alternativePlaceSearchInput');
+        const searchInput = document.getElementById('homeSearchInput');
         const statusFilter = document.getElementById('statusFilter');
-        const table = document.getElementById('alternativePlacesTable');
+        const table = document.getElementById('homesTable');
         const rows = table.querySelectorAll('tbody tr');
+
+        // Initialize original values on page load
+        document.querySelectorAll('select[onchange*="handleStatusChange"]').forEach(select => {
+            select.setAttribute('data-original-value', select.value);
+        });
 
         function filterTable() {
             const searchTerm = searchInput.value.toLowerCase();
@@ -213,6 +282,15 @@
 
         searchInput.addEventListener('input', filterTable);
         statusFilter.addEventListener('change', filterTable);
+
+        // Handle "Rows per page" change
+        const rowsPerPageSelect = document.getElementById('rowsPerPage');
+        rowsPerPageSelect?.addEventListener('change', function () {
+            const url = new URL(window.location.href);
+            url.searchParams.set('per_page', this.value);
+            url.searchParams.delete('page');
+            window.location.href = url.toString();
+        });
     });
 </script>
 @endsection
