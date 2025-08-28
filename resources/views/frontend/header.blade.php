@@ -10,23 +10,27 @@
                         <!-- Logo -->
                         @php
                             $host = config('domains.app_name');
-                           
+
                         @endphp
 
                         <a href="{{ url('/') }}" class="text-2xl font-bold flex items-center">
-                            @if($host == 'BookinTour')
+                            @if ($host == 'BookinTour')
                                 <h1>Bookintour.com</h1>
                             @elseif ($host == 'Inselor')
-                                <img src="{{ asset('images/inselor-logo.png') }}" alt="Inselor" class="h-12 w-auto align-middle" />
+                                <img src="{{ asset('images/inselor-logo.png') }}" alt="Inselor"
+                                    class="h-12 w-auto align-middle" />
                             @endif
                         </a>
+
+
+
 
                         <!-- Push nav a bit down to separate from logo -->
                         @php
                             $currentRoute = request()->route()->getName(); // Get current route name
                         @endphp
 
-                        <nav class="flex flex-wrap gap-4 text-sm md:text-base mt-4 ">
+                        <nav class="flex flex-wrap gap-4 text-sm md:text-base mt-6 ">
                             <!-- Stays Link -->
                             <a href="{{ route('stays') }}"
                                 class="flex items-center space-x-1 px-3 py-1 rounded-full border
@@ -112,7 +116,7 @@
                         </div>
                     </div>
 
-                    <!-- Language Button -->
+                      <!-- Language Button -->
                     @php
                         $locale = app()->getLocale();
                         $language = config('languages.' . $locale);
@@ -166,7 +170,6 @@
                             </div>
                         </div>
                     </div>
-
                     <a href="">
                         <img src="{{ asset('assets/question.svg') }}" alt="Taxi" class="w-5 h-5 cursor-pointer" />
                     </a>
@@ -174,108 +177,141 @@
                     <a href="/list-your-property" class="hover:underline"
                         style="font-family: 'Noto Sans', sans-serif;">List your property</a>
 
-                    @auth('customer')
-                        <!-- Profile dropdown -->
-                        <div class="relative group">
-                            <button class=" text-[#3CC0E9] font-base px-4 py-2 rounded  flex items-center space-x-2">
-                                <!-- Profile Icon with Border -->
-                                @php
-                                    $profileImage = Auth::guard('customer')->user()?->customerPersonalDetail
-                                        ?->profile_image;
 
-                                    $divClasses =
-                                        'bg-white border border-[#3CC0E9] rounded-full flex items-center justify-center ';
-                                    $divClasses .= $profileImage ? 'w-10 h-10' : 'p-2 w-10 h-10';
+                    <!-- Profile dropdown -->
+                    <div class="relative group">
+                        <button class=" text-[#3CC0E9] font-base px-4 py-2 rounded  flex items-center space-x-2">
+                            <!-- Profile Icon with Border -->
+                            <div class="bg-white p-2 border border-[#3CC0E9] rounded-full">
+                                <img src="{{ asset('assets/user.svg') }}" class="w-5 h-5" alt="Profile" />
+                            </div>
 
-                                    $imgClasses = $profileImage
-                                        ? 'w-10 h-10 rounded-full object-cover'
-                                        : 'w-7 h-7 rounded-full object-cover';
-                                @endphp
+                            <!-- My Account Link -->
+                            <a href="/my-account" class="text-white hover:underline"
+                                style="font-family: 'Noto Sans', sans-serif;">
+                                Your Account
+                            </a>
+                        </button>
 
-                                <div class="{{ $divClasses }}">
-                                    <img src="{{ $profileImage ? asset('storage/' . $profileImage) : asset('assets/user.svg') }}"
-                                        class="{{ $imgClasses }}" alt="Profile" />
-                                </div>
+                        <!-- Dropdown -->
+                        <div
+                            class="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-md shadow-lg opacity-0 group-hover:opacity-100 group-hover:visible transition-all duration-200 invisible z-50">
+                            <a href="/profile"
+                                class="block px-4 text-base py-2 text-gray-700 hover:bg-gray-100 flex items-center gap-2">
+                                <img src="{{ asset('assets/mynaui_user.svg') }}" alt="My Account Icon"
+                                    class="w-5 h-5" />
+                                <span style="font-family: 'Noto Sans', sans-serif;">My Account</span>
+                            </a>
+                            <a href="/profile"
+                                class="block px-4 py-2 text-gray-700  text-base hover:bg-gray-100 flex items-center gap-2">
+                                <img src="{{ asset('assets/streamline_baggage.svg') }}" alt="My Account Icon"
+                                    class="w-4 h-4" />
+                                <span style="font-family: 'Noto Sans', sans-serif;">Bookings & Trips</span>
+                            </a>
+                            <a href="/profile"
+                                class="block px-4 py-2 text-gray-700  text-base hover:bg-gray-100 flex items-center gap-2">
+                                <img src="{{ asset('assets/mynaui_letter-g-circle.svg') }}" alt="My Account Icon"
+                                    class="w-5 h-5" />
+                                <span style="font-family: 'Noto Sans', sans-serif;">Genius loyalty programme</span>
+                            </a>
+                            <a href="/profile"
+                                class="block px-4 py-2 text-gray-700  text-base  hover:bg-gray-100 flex items-center gap-2">
+                                <img src="{{ asset('assets/lets-icons_wallet-light.svg') }}" alt="My Account Icon"
+                                    class="w-5 h-5" />
+                                <span style="font-family: 'Noto Sans', sans-serif;">Rewards & Wallet</span>
+                            </a>
+                            <a href="/profile"
+                                class="block px-4 py-2 text-gray-700  text-base  hover:bg-gray-100 flex items-center gap-2">
+                                <img src="{{ asset('assets/fluent_person-feedback-20-regular.svg') }}"
+                                    alt="My Account Icon" class="w-5 h-5" />
+                                <span style="font-family: 'Noto Sans', sans-serif;">Reviews</span>
+                            </a>
+                            <a href="/profile"
+                                class="block px-4 py-2 text-gray-700  text-base hover:bg-gray-100 flex items-center gap-2">
+                                <img src="{{ asset('assets/mdi-light_heart.svg') }}" alt="My Account Icon"
+                                    class="w-5 h-5" />
+                                <span style="font-family: 'Noto Sans', sans-serif;">Saved</span>
+                            </a>
 
-
-
-
-                                <!-- My Account Link -->
-                                <a href="#" class="text-white hover:underline"
-                                    style="font-family: 'Noto Sans', sans-serif;">
-                                    Your Account
-                                </a>
+                            <button type="submit"
+                                class="w-full text-left px-4 py-2 text-gray-700 text-base hover:bg-gray-100 flex items-center gap-2">
+                                <img src="{{ asset('assets/simple-line-icons_logout.svg') }}" alt="Logout Icon"
+                                    class="w-4 h-4" />
+                                <span style="font-family: 'Noto Sans', sans-serif;">Logout</span>
                             </button>
 
-                            <!-- Dropdown -->
-                            <div
-                                class="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-md shadow-lg opacity-0 group-hover:opacity-100 group-hover:visible transition-all duration-200 invisible z-50">
-                                <a href="{{ route('customer.details.create') }}"
-                                    class="block px-4 text-base py-2 text-gray-700 hover:bg-gray-100 flex items-center gap-2">
-                                    <img src="{{ asset('assets/mynaui_user.svg') }}" alt="My Account Icon"
-                                        class="w-5 h-5" />
-                                    <span style="font-family: 'Noto Sans', sans-serif;">My Account</span>
-                                </a>
-                                <a href="/profile"
-                                    class="block px-4 py-2 text-gray-700  text-base hover:bg-gray-100 flex items-center gap-2">
-                                    <img src="{{ asset('assets/streamline_baggage.svg') }}" alt="My Account Icon"
-                                        class="w-4 h-4" />
-                                    <span style="font-family: 'Noto Sans', sans-serif;">Bookings & Trips</span>
-                                </a>
-                                <a href="/profile"
-                                    class="block px-4 py-2 text-gray-700  text-base hover:bg-gray-100 flex items-center gap-2">
-                                    <img src="{{ asset('assets/mynaui_letter-g-circle.svg') }}" alt="My Account Icon"
-                                        class="w-5 h-5" />
-                                    <span style="font-family: 'Noto Sans', sans-serif;">Genius loyalty programme</span>
-                                </a>
-                                <a href="/profile"
-                                    class="block px-4 py-2 text-gray-700  text-base  hover:bg-gray-100 flex items-center gap-2">
-                                    <img src="{{ asset('assets/lets-icons_wallet-light.svg') }}" alt="My Account Icon"
-                                        class="w-5 h-5" />
-                                    <span style="font-family: 'Noto Sans', sans-serif;">Rewards & Wallet</span>
-                                </a>
-                                <a href="/profile"
-                                    class="block px-4 py-2 text-gray-700  text-base  hover:bg-gray-100 flex items-center gap-2">
-                                    <img src="{{ asset('assets/fluent_person-feedback-20-regular.svg') }}"
-                                        alt="My Account Icon" class="w-5 h-5" />
-                                    <span style="font-family: 'Noto Sans', sans-serif;">Reviews</span>
-                                </a>
-                                <a href="/profile"
-                                    class="block px-4 py-2 text-gray-700  text-base hover:bg-gray-100 flex items-center gap-2">
-                                    <img src="{{ asset('assets/mdi-light_heart.svg') }}" alt="My Account Icon"
-                                        class="w-5 h-5" />
-                                    <span style="font-family: 'Noto Sans', sans-serif;">Saved</span>
-                                </a>
-
-                                <form method="POST" action="{{ route('customer.logout') }}">
-                                    @csrf
-                                    <button type="submit"
-                                        class="w-full text-left px-4 py-2 text-gray-700 text-base hover:bg-gray-100 flex items-center gap-2">
-                                        <img src="{{ asset('assets/simple-line-icons_logout.svg') }}" alt="Logout Icon"
-                                            class="w-4 h-4" />
-                                        <span style="font-family: 'Noto Sans', sans-serif;">Logout</span>
-                                    </button>
-                                </form>
-                            </div>
                         </div>
-                    @else
-                        <!-- Guest buttons -->
-                        <a href="{{ route('customer.login') }}"
-                            class="bg-white font-base px-4 py-2 rounded hover:bg-blue-100"
-                            style="font-family: 'Noto Sans', sans-serif; color:#3CC0E9;">Register</a>
-                        <a href="{{ route('customer.login') }}"
-                            class="bg-white font-base px-4 py-2 rounded hover:bg-blue-100"
-                            style="font-family: 'Noto Sans', sans-serif; color:#3CC0E9;">Sign in</a>
-                        @endif
-
                     </div>
+                    <!-- Guest buttons -->
+                    <a href="" class="bg-white font-base px-4 py-2 rounded hover:bg-blue-100"
+                        style="font-family: 'Noto Sans', sans-serif; color:#3CC0E9;">Register</a>
+                    <a href="" class="bg-white font-base px-4 py-2 rounded hover:bg-blue-100"
+                        style="font-family: 'Noto Sans', sans-serif; color:#3CC0E9;">Sign in</a>
+
 
                 </div>
-            </div>
-        </section>
-    </header>
 
-    @push('scripts')
-        <script src="{{ asset('assets/Customer/js/header.js') }}"></script>
-    @endpush
-    @stack('scripts')
+            </div>
+        </div>
+    </section>
+</header>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        // Currency modal logic
+        const currentCurrency = document.getElementById("current-currency");
+        const currencyModal = document.getElementById("currency-modal");
+        const currencyCloseBtn = document.getElementById("currency-close-btn");
+
+        if (currentCurrency && currencyModal && currencyCloseBtn) {
+            // Open currency modal on clicking the currency span
+            currentCurrency.addEventListener("click", () => {
+                currencyModal.classList.remove("hidden");
+            });
+
+            // Close currency modal on close button click
+            currencyCloseBtn.addEventListener("click", () => {
+                currencyModal.classList.add("hidden");
+            });
+
+            // Close currency modal on clicking outside the modal content
+            window.addEventListener("click", (e) => {
+                if (e.target === currencyModal) {
+                    currencyModal.classList.add("hidden");
+                }
+            });
+
+            // Change currency when a currency button is clicked
+            currencyModal.querySelectorAll("button[data-currency]").forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    const selectedCurrency = btn.getAttribute("data-currency");
+                    currentCurrency.textContent = selectedCurrency;
+                    currencyModal.classList.add("hidden");
+                });
+            });
+        }
+
+        // Language modal logic
+        const languageButton = document.getElementById("language-button");
+        const languageModal = document.getElementById("language-modal");
+        const closeBtn = languageModal ? languageModal.querySelector(".close-btn") : null;
+
+        if (languageButton && languageModal && closeBtn) {
+            // Open the language modal
+            languageButton.addEventListener("click", () => {
+                languageModal.classList.remove("hidden");
+            });
+
+            // Close language modal on close button click
+            closeBtn.addEventListener("click", () => {
+                languageModal.classList.add("hidden");
+            });
+
+            // Close language modal on clicking outside the modal content
+            window.addEventListener("click", (event) => {
+                if (event.target === languageModal) {
+                    languageModal.classList.add("hidden");
+                }
+            });
+        }
+    });
+</script>
