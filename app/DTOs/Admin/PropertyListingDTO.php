@@ -26,7 +26,7 @@ class PropertyListingDTO
             location: trim(($property->city ?? '') . ', ' . ($property->country ?? ''), ', ') ?: 'Unknown Location',
             status: $property->status ?? 'pending',
             createdAt: $property->created_at->format('M d Y'),
-            primaryImage: $property->photos()->first()?->file_path,
+            primaryImage: $property->files()->first()?->path,
             reviewsCount: $property->reviews()->count(),
             averageRating: $property->reviews()->avg('rating') ?? 0.0,
             categoryName: $property->category?->name
