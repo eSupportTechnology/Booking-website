@@ -26,7 +26,7 @@
                             $currentRoute = request()->route()->getName(); // Get current route name
                         @endphp
 
-                        <nav class="flex flex-wrap gap-4 text-sm md:text-base ">
+                        <nav class="flex flex-wrap gap-4 text-sm md:text-base mt-4 ">
                             <!-- Stays Link -->
                             <a href="{{ route('stays') }}"
                                 class="flex items-center space-x-1 px-3 py-1 rounded-full border
