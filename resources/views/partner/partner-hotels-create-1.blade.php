@@ -221,7 +221,7 @@
             <template x-if="step === 5">
                 <form @submit.prevent="submitStep5">
 
-                    <div class="relative w-[1200px] h-auto overflow-hidden rounded-lg shadow mx-auto my-10 ">
+                    <div class="relative w-[1300px] h-auto overflow-hidden rounded-lg shadow mx-auto my-10 ">
                         <!-- Google Maps iframe full background -->
                         <iframe class="absolute inset-0 w-full h-full" loading="lazy"
                             src="https://www.google.com/maps?q=La+Grande+Villa+Nuwara+Eliya&output=embed"
@@ -312,7 +312,7 @@
 
 
                                     <!-- Continue Button (Right) -->
-                                    <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded">
+                                    <button type="submit" class="bg-[#3CC0E9] hover:bg-[#29ACD5] font-semibold text-white py-2 px-4 rounded">
                                         Continue
                                     </button>
                                 </div>
@@ -393,7 +393,7 @@
 
 
                                     <!-- Continue Button (Right) -->
-                                    <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded">
+                                    <button type="submit" class="bg-[#3CC0E9] hover:bg-[#29ACD5] font-semibold text-white py-2 px-4 rounded">
                                         Continue
                                     </button>
                                 </div>
@@ -406,7 +406,7 @@
             <template x-if="step === 7">
                 <form @submit.prevent="submitStep7">
                     <div>
-                        <div class="max-w-2xl ml-40 px-4 py-8  bg-white  rounded shadow mt-10">
+                        <div class="max-w-2xl mx-auto lg:ml-24 px-4 py-8  bg-white  rounded shadow mt-10">
                             <h1 class="text-2xl font-bold mb-6">Tell us about your hotel</h1>
 
                             <!-- Hotel Name -->
@@ -482,7 +482,7 @@
                             <div class="flex justify-between items-center mt-8">
                                 <button type="submit" @click="step < 9 ? step-- : step"
                                     class="border border-[#3CC0E9]  text-blue-600  hover:bg-blue-50 font-semibold py-2 px-4 rounded">←</button>
-                                <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded">
+                                <button type="submit" class="bg-[#3CC0E9] hover:bg-[#29ACD5] font-semibold text-white py-2 px-4 rounded">
                                     Continue
                                 </button>
                             </div>
@@ -493,7 +493,7 @@
 
             <template x-if="step === 8" x-cloak>
                 <form @submit.prevent="submitStep8">
-                    <div class="max-w-4xl ml-40 px-4 py-8 mt-10">
+                    <div class="max-w-4xl mx-auto lg:ml-24 px-4 py-8 mt-6">
                         <section class="mb-8">
                             <h1 class="text-xl text-gray-700 font-bold mb-4">What can guests use at your place?</h1>
 
@@ -507,19 +507,30 @@
 
                                         <div class="mt-2">
                                             <h3 class="text-gray-700 font-semibold mb-2">Select property type(s)</h3>
-                                            <div class="grid grid-cols-1 sm:grid-cols-1 gap-2 text-sm text-gray-700">
-                                                <div>
+                                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-gray-700">
+                                              
                                                     @foreach ($amenities as $amenity)
                                                         <label class="flex items-center space-x-2">
                                                             <input type="checkbox" name="amenities[]" value="{{ $amenity['id'] }}" x-model="selectedAmenities" />
                                                             <span>{{ $amenity['name'] }}</span>
                                                         </label>
                                                     @endforeach
-                                                </div>
+                                           
 
                                             </div>
                                         </div>
+                                         <div class="flex justify-between items-center mt-8">
+                                <button type="button" @click="step > 1 ? step-- : step"
+                                    :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
+                                    class="border border-[#3CC0E9] text-blue-600  hover:bg-blue-50 font-semibold py-2 px-4 rounded">
+                                    ←
+                                </button>
+                                <button type="submit" class="bg-[#3CC0E9] hover:bg-[#29ACD5] font-semibold text-white py-2 px-4 rounded">
+                                    Continue
+                                </button>
+                            </div>
                                     </div>
+                                    
                                 </div>
 
                                 <!-- Tips and Information (1/3 Width) -->
@@ -564,16 +575,7 @@
 
                             <!-- Buttons Row (Outside grid, full width) -->
                             <!-- Buttons Row aligned with Checkbox Section -->
-                            <div class="flex justify-between items-center mt-8">
-                                <button type="button" @click="step > 1 ? step-- : step"
-                                    :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-                                    class="border border-[#3CC0E9] text-blue-600  hover:bg-blue-50 font-semibold py-2 px-4 rounded">
-                                    ←
-                                </button>
-                                <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded">
-                                    Continue
-                                </button>
-                            </div>
+                           
 
                         </section>
                     </div>
@@ -582,7 +584,7 @@
 
             <template x-if="step === 9">
                 <form @submit.prevent="submitStep9">
-                    <div>
+                    <div >
                         <div x-data="{
                                         servesBreakfast: false,
                                         breakfastIncluded: '',
@@ -653,7 +655,9 @@
                                             this.breakfastPrice = '';
                                         }
                                     }">
-                            <div class="container mx-auto px-4 py-4 max-w-6xl mb-8">
+                         <div class="container mx-auto px-4 py-4 max-w-6xl mb-8">
+
+
 
                                 <!-- Header -->
                                 <h2 class="text-2xl font-bold mb-4 text-left ml-6 max-w-xl">
@@ -661,7 +665,7 @@
                                 </h2>
 
                                 <!-- Sections stacked vertically, aligned with header -->
-                                <div class="max-w-xl ml-6 flex flex-col space-y-8">
+                               <div class="max-w-xl ml-6 flex flex-col space-y-8">
                                     <!-- Breakfast Section -->
                                     <div class="bg-white shadow-md rounded-lg p-6">
                                         <h3 class="text-lg mb-4 font-bold">Breakfast</h3>
@@ -799,7 +803,7 @@
                                         class="border border-[#3CC0E9] text-blue-600  hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
                                         ←
                                     </button>
-                                    <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded">
+                                    <button type="submit" class="bg-[#3CC0E9] hover:bg-[#29ACD5] font-semibold text-white py-2 px-4 rounded">
                                         Continue
                                     </button>
                                 </div>
@@ -810,9 +814,10 @@
             </template>
 
             <template x-if="step === 10" x-cloak>
+                  <div class="max-w-2xl mx-auto lg:ml-16 px-4 py-8">
                 <form @submit.prevent="submitStep10">
                     <div>
-                        <div class="container ml-32 px-4 py-8 max-w-2xl">
+                    
                             <!-- Header -->
                             <h2 class="text-2xl font-bold mb-8 text-left">
                                 What languages do you or your staff speak?
@@ -897,12 +902,12 @@
                                 </button>
 
                                 <!-- Continue Button on the right -->
-                                <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded">
+                                <button type="submit" class="bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded">
                                     Continue
                                 </button>
                             </div>
 
-                        </div>
+                        
 
                         <script>
                             function selectLanguage(element) {
@@ -996,13 +1001,13 @@
                         </script>
                     </div>
                 </form>
+                        </div>
             </template>
 
             <template x-if="step === 11">
-                <div>
-                    <div class="container ml-32 px-4 py-8 max-w-4xl">
+                 <div class="px-4 py-4 max-w-4xl mx-auto lg:ml-16">
                         <!-- Header -->
-                        <h2 class="text-2xl font-bold mb-8 text-left">House rules</h2>
+                        <h2 class="text-2xl font-bold mb-4 text-left">House rules</h2>
 
                         <div class="flex flex-col md:flex-row gap-6">
                             <!-- Left Section -->
@@ -1044,7 +1049,7 @@
                                 <!-- Allow Children Section -->
                                 <div class="mb-6">
                                     <label class="block font-semibold text-base text-gray-800 mb-2">Do you allow children?</label>
-                                    <div class="space-y-2 text-sm text-gray-700">
+                                    <div class="flex space-x-6 text-sm text-gray-700">
                                         <label class="flex items-center gap-2">
                                             <input type="radio" name="allowChildren" value="yes" x-model="property.children_allowed" />
                                             Yes
@@ -1059,7 +1064,7 @@
                                 <!-- Pet Policy -->
                                 <div class="mt-6">
                                     <h3 class="text-base font-semibold mb-2">Do you allow pets?</h3>
-                                    <div class="space-y-2">
+                                    <div class="flex space-x-6">
                                         <label class="flex items-center cursor-pointer">
                                             <input type="radio" name="pets" value="yes" x-model="property.pets_allowed" class="mr-2">
                                             <span>Yes</span>
@@ -1075,7 +1080,7 @@
                                     </div>
 
                                     <!-- Conditional Field -->
-                                    <div x-show="property.pets_allowed === 'yes' || property.pets_allowed === 'upon_request'" x-transition class="mt-4 space-y-2">
+                                    <div x-show="property.pets_allowed === 'yes' || property.pets_allowed === 'upon_request'" x-transition class="mt-4 ">
                                         <label class="block text-base font-semibold mb-1">Are there additional charges for pets?</label>
                                         <label class="flex items-center cursor-pointer">
                                             <input type="radio" name="pet_charges" value="free" x-model="property.pets_fees" class="mr-2">
@@ -1091,7 +1096,7 @@
                                 <!-- Smoking Policy -->
                                 <div class="mt-6">
                                     <h3 class="text-base font-semibold mb-2">Do you allow smoking?</h3>
-                                    <div class="space-y-2">
+                                    <div class="flex space-x-6">
                                         <label class="flex items-center cursor-pointer">
                                             <input type="radio" name="smoking" value="yes" x-model="property.smoking_allowed" class="mr-2">
                                             <span>Yes</span>
@@ -1106,7 +1111,7 @@
                                 <!-- Parties Policy -->
                                 <div class="mt-6">
                                     <h3 class="text-base font-semibold mb-2">Do you allow parties?</h3>
-                                    <div class="space-y-2">
+                                    <div class="flex space-x-6">
                                         <label class="flex items-center cursor-pointer">
                                             <input type="radio" name="parties" value="yes" x-model="property.parties_allowed" class="mr-2">
                                             <span>Yes</span>
@@ -1121,7 +1126,7 @@
                                 <!-- Cancellation Policy -->
                                 <div class="mt-6">
                                     <h3 class="text-base font-semibold mb-2">What's your cancellation policy?</h3>
-                                    <div class="space-y-2">
+                                    <div class="flex space-x-6">
                                         <label class="flex items-center cursor-pointer">
                                             <input type="radio" name="cancellation" value="flexible" x-model="property.cancellation_policy" class="mr-2">
                                             <span>Flexible</span>
@@ -1136,12 +1141,23 @@
                                         </label>
                                     </div>
                                 </div>
+<!-- Navigation Buttons -->
+                        <div class="mt-8 flex justify-between">
+                            <button type="button" @click="step > 1 ? step-- : step"
+                                :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-100'"
+                                class="border border-[#3CC0E9] text-blue-600  hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                                ←
+                            </button>
 
+                            <button type="button" @click="submitStep11()" class="bg-[#3CC0E9] hover:bg-[#29ACD5] font-semibold text-white py-2 px-4 rounded">
+                                Continue
+                            </button>
+                        </div>
                             </div>
 
                             <!-- Right Section: Tip Box -->
                             <div x-data="{ show: true }" x-show="show"
-                                class="bg-white shadow-md rounded-lg p-6 w-full h-[300px] md:w-1/3 relative">
+                                class="bg-white shadow-md rounded-lg p-6 w-full h-[200px] md:w-1/3 relative">
                                 <div class="flex justify-between items-start">
                                     <div class="flex items-center space-x-2">
                                         <img src="{{ asset('assets/system-uicons_lightbulb-on.svg') }}"
@@ -1166,20 +1182,9 @@
                             </div>
                         </div>
 
-                        <!-- Navigation Buttons -->
-                        <div class="mt-8 flex justify-between">
-                            <button type="button" @click="step > 1 ? step-- : step"
-                                :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-100'"
-                                class="border border-[#3CC0E9] text-blue-600  hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
-                                ←
-                            </button>
-
-                            <button type="button" @click="submitStep11()" class="bg-blue-500 text-white py-2 px-4 rounded">
-                                Continue
-                            </button>
-                        </div>
+                        
                     </div>
-                </div>
+                
 
             </template>
 
