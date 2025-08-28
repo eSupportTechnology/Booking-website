@@ -243,9 +243,9 @@
                         </div>
                     </div>
                     <!-- Guest buttons -->
-                    <a href="" class="bg-white font-base px-4 py-2 rounded hover:bg-blue-100"
+                    <a href="{{ route('customer.login') }}" class="bg-white font-base px-4 py-2 rounded hover:bg-blue-100"
                         style="font-family: 'Noto Sans', sans-serif; color:#3CC0E9;">Register</a>
-                    <a href="" class="bg-white font-base px-4 py-2 rounded hover:bg-blue-100"
+                    <a href="{{ route('customer.login') }}" class="bg-white font-base px-4 py-2 rounded hover:bg-blue-100"
                         style="font-family: 'Noto Sans', sans-serif; color:#3CC0E9;">Sign in</a>
 
 
