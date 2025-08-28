@@ -918,6 +918,10 @@ Route::get('/home-listing', function () {
     return view('Customer.home-listing');
 })->name('home-listing');
 
+Route::get('/car-rental-listing', function () {
+    return view('Customer.car-rental-listing');
+})->name('car-rental-listing');
+
 
 // Admin Dashboard Route - Updated to use dynamic controller (public access for testing)
 Route::get('/admin/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, '__invoke']);
