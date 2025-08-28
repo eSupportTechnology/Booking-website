@@ -50,11 +50,11 @@
 
         <!-- Rows per page selector -->
         <div class="flex justify-end mb-4">
-            <select class="text-xs sm:text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#3CC0E9] px-2 py-1.5">
-                <option value="10">10 rows</option>
-                <option value="20">20 rows</option>
-                <option value="30">30 rows</option>
-                <option value="50">50 rows</option>
+            <select id="rowsPerPage" class="text-xs sm:text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#3CC0E9] px-2 py-1.5">
+                <option value="5" {{ request('per_page') == 5 ? 'selected' : '' }}>5 rows</option>
+                <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10 rows</option>
+                <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>20 rows</option>
+                <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50 rows</option>
             </select>
         </div>
 
@@ -206,6 +206,15 @@
 
         searchInput.addEventListener('input', filterTable);
         statusFilter.addEventListener('change', filterTable);
+
+        // Handle "Rows per page" change
+        const rowsPerPageSelect = document.getElementById('rowsPerPage');
+        rowsPerPageSelect?.addEventListener('change', function () {
+            const url = new URL(window.location.href);
+            url.searchParams.set('per_page', this.value);
+            url.searchParams.delete('page');
+            window.location.href = url.toString();
+        });
     });
 </script>
 
