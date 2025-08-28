@@ -158,12 +158,12 @@
         const value = selectEl.value;
         const dot = selectEl.parentElement.querySelector('.status-dot');
 
-        // Reset classes
+        
         selectEl.className =
             'appearance-none font-medium text-[10px] sm:text-xs rounded-full pl-6 pr-4 py-1 transition focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#1F8FB2]';
         dot.className = 'absolute top-1/2 left-2 -translate-y-1/2 w-2 h-2 rounded-full status-dot';
 
-        // Change color based on status
+        
         switch (value) {
             case 'Scheduled':
                 selectEl.classList.add('bg-green-100', 'text-green-800');
@@ -180,7 +180,7 @@
         }
     }
 
-    // Search & Filter
+    
     document.addEventListener('DOMContentLoaded', function () {
         const searchInput = document.getElementById('transferSearchInput');
         const statusFilter = document.getElementById('statusFilter');
