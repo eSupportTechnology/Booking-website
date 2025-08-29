@@ -823,14 +823,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/partners', [\App\Http\Controllers\Admin\PartnersController::class, '__invoke'])->name('partners');
         Route::post('/partner-details', [\App\Http\Controllers\Admin\PartnerViewController::class, 'show'])->name('admin.partner.view');
 
-        // Customer and Partner detail routes
-        Route::get('/customer/{customer_id}', [\App\Http\Controllers\Admin\CustomerViewController::class, 'show'])->name('customer.view');
-        Route::get('/partner/{partner_id}', [\App\Http\Controllers\Admin\PartnerViewController::class, 'show'])->name('partner.view');
-
         // Admin Dashboard rental Route
-        Route::view('/admin/rental/taxi', 'admin-admin.taxi')->name('admin.taxi');
-        Route::view('/admin/rental/taxi/taxi-details', 'admin-admin.taxi-details')->name('admin.taxi.details');
-        Route::view('/admin/rental/airport', 'admin-admin.airport')->name('admin.airport');
+        Route::view('/rental/taxi', 'admin.admin-taxi')->name('rental.taxi');
+        Route::view('/rental/taxi/taxi-details', 'admin.admin-taxi-details')->name('rental.taxi.details');
+        Route::view('/rental/airport', 'admin.admin-airport')->name('rental.airport');
+        Route::view('/rental/airport/airport-details', 'admin.admin-airport-details')->name('rental.airport.details');
+
 
         //admin dashboard admin account management
         Route::get('/accounts', [AdminAccountController::class, 'index'])->name('accounts.index');

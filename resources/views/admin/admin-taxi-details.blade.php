@@ -16,7 +16,7 @@
                 <li>
                     <div class="flex items-center">
                         <i class="fas fa-chevron-right text-gray-400 mx-1 sm:mx-2"></i>
-                        <a href="{{ url('/admin/rental/taxi-management') }}" class="text-gray-700 hover:text-blue-600">Taxi</a>
+                        <a href="{{ url('/admin/taxi-management') }}" class="text-gray-700 hover:text-blue-600">Taxi</a>
                     </div>
                 </li>
                 <li>
@@ -147,7 +147,7 @@
 
         <!-- Back Button -->
         <div class="mt-4 sm:mt-6">
-            <a href="{{ url('/admin/rental/admin-taxi') }}"
+            <a href="{{ url('/admin/rental/taxi') }}"
                class="bg-[#1F8FB2] hover:bg-[#157799] text-white px-3 py-2 sm:px-4 sm:py-2 rounded shadow text-sm sm:text-base">
                 ← Back to Taxi List
             </a>
