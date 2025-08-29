@@ -146,7 +146,7 @@
                     <button @click="openRental = !openRental"
                         class="w-full flex justify-between items-center px-4 py-2 rounded hover:bg-blue-200 transition focus:outline-none font-bold text-blue-900">
                         <div class="flex items-center">
-                            <i class="fas fa-building mr-3 text-bg-[#1F8FB2] text-lg"></i> <span>Rental</span>
+                            <i class="fas fa-car mr-3 text-bg-[#1F8FB2] text-lg"></i> <span>Rental</span>
                         </div>
                         <i :class="openRental ? 'fa-chevron-up' : 'fa-chevron-down'" class="fas text-xs"></i>
                     </button>
