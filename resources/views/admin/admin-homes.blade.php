@@ -52,11 +52,10 @@
         <div class="flex flex-col sm:flex-row justify-between items-center gap-3 mb-4">
             <div>
                 <p class="text-xs text-gray-700">
-                    Showing <span class="font-medium">1</span> to <span class="font-medium" id="currentRowsDisplayed">10</span> of <span class="font-medium" id="totalRows">20</span> results
+
                 </p>
             </div>
             <div class="flex items-center gap-2">
-                <label class="text-xs text-gray-600">Rows per page:</label>
                 <select id="rowsPerPage" class="text-xs sm:text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#3CC0E9] px-2 py-1.5">
                     <option value="5" {{ request('per_page') == 5 ? 'selected' : '' }}>5 rows</option>
                     <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10 rows</option>

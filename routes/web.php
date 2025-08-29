@@ -25,6 +25,7 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Controllers\AccommodationController;
 use App\Http\Controllers\AirportTaxiController;
 use App\Http\Controllers\CarReservations\CarRentalController;
+use App\Http\Controllers\Admin\AdminAccountController;
 
 Route::post('/accommodation/save-verification/{propertyId}', [AccommodationController::class, 'saveVerification']);
 
@@ -815,7 +816,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/unique-stays', \App\Http\Controllers\Admin\AlternativePlacesController::class)->name('alternative.places');
 
         // Customer management
-        Route::get('/accounts', [\App\Http\Controllers\Admin\CustomersController::class, '__invoke'])->name('customers');
+        Route::get('/customers', [\App\Http\Controllers\Admin\CustomersController::class, '__invoke'])->name('customers');
         Route::post('/account-details', [\App\Http\Controllers\Admin\CustomerViewController::class, 'show'])->name('admin.customer.view');
 
         // Partner management
@@ -831,6 +832,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::view('/admin/rental/taxi/taxi-details', 'admin-admin.taxi-details')->name('admin.taxi.details');
         Route::view('/admin/rental/airport', 'admin-admin.airport')->name('admin.airport');
 
+        //admin dashboard admin account management
+        Route::get('/accounts', [AdminAccountController::class, 'index'])->name('accounts.index');
+        Route::post('/accounts/{id}/toggle', [AdminAccountController::class, 'toggleStatus'])->name('accounts.toggle');
 
         // Settings
         Route::get('/settings', function () {
