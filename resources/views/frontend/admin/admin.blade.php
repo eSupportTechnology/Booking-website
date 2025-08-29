@@ -3,56 +3,55 @@
 @section('title', 'Admin Dashboard')
 
 @section('content')
-<section class="min-h-screen p-6 bg-gray-50">
-    <div class="space-y-8">
-
-        <!-- Breadcrumb -->
-        <nav class="flex mb-4" aria-label="Breadcrumb">
-            <ol class="inline-flex items-center space-x-1 md:space-x-3">
-                <li class="inline-flex items-center">
-                    <a href="{{ route('admin.dashboard') }}" class="text-gray-700 hover:text-blue-600">Dashboard</a>
-                </li>
-                <li>
-                    <span class="text-gray-400">/</span>
-                </li>
-                <li class="text-gray-500 font-medium">Admin</li>
-            </ol>
-        </nav>
+<section class="min-h-screen p-4 sm:p-6 bg-gray-50">
+    <div class="space-y-6 sm:space-y-8">
 
         <!-- Page Heading -->
-        <h1 class="text-3xl font-bold text-gray-800">Admin Dashboard</h1>
+        <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-2 sm:mb-4">Admin Accounts</h1>
 
-        <!-- Card Section -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+        <!-- Admin Accounts Table -->
+        <div class="bg-white rounded-lg shadow p-3 sm:p-6 overflow-x-auto">
+            @php
+                $adminAccounts = [
+                    (object)['id'=>1, 'username'=>'John Doe', 'email'=>'john@example.com', 'active'=>true],
+                    (object)['id'=>2, 'username'=>'Emma Smith', 'email'=>'emma@example.com', 'active'=>false],
+                    (object)['id'=>3, 'username'=>'Michael Brown', 'email'=>'michael@example.com', 'active'=>true],
+                    (object)['id'=>4, 'username'=>'Sophia Johnson', 'email'=>'sophia@example.com', 'active'=>false],
+                ];
+            @endphp
 
-            <!-- Users -->
-            <div class="bg-white rounded-lg shadow p-6 hover:shadow-lg transition">
-                <h2 class="text-xl font-semibold text-gray-800 mb-2">Manage Users</h2>
-                <p class="text-gray-600 mb-4">Add, edit, or delete users from the system.</p>
-                <a href="#" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded shadow">
-                    Go to Users
-                </a>
-            </div>
-
-            <!-- Roles -->
-            <div class="bg-white rounded-lg shadow p-6 hover:shadow-lg transition">
-                <h2 class="text-xl font-semibold text-gray-800 mb-2">Manage Roles</h2>
-                <p class="text-gray-600 mb-4">Define and manage roles and permissions.</p>
-                <a href="#" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded shadow">
-                    Go to Roles
-                </a>
-            </div>
-
-            <!-- Settings -->
-            <div class="bg-white rounded-lg shadow p-6 hover:shadow-lg transition">
-                <h2 class="text-xl font-semibold text-gray-800 mb-2">System Settings</h2>
-                <p class="text-gray-600 mb-4">Update application settings and preferences.</p>
-                <a href="#" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded shadow">
-                    Go to Settings
-                </a>
-            </div>
-
+            <table class="min-w-full border border-gray-200 rounded-lg">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="px-3 py-2 sm:px-6 sm:py-3 text-left text-gray-700 font-semibold border-b text-sm sm:text-base">ID</th>
+                        <th class="px-3 py-2 sm:px-6 sm:py-3 text-left text-gray-700 font-semibold border-b text-sm sm:text-base">UserName</th>
+                        <th class="px-3 py-2 sm:px-6 sm:py-3 text-left text-gray-700 font-semibold border-b text-sm sm:text-base">Email</th>
+                        <th class="px-3 py-2 sm:px-6 sm:py-3 text-left text-gray-700 font-semibold border-b text-sm sm:text-base">Status</th>
+                        <th class="px-3 py-2 sm:px-6 sm:py-3 text-center text-gray-700 font-semibold border-b text-sm sm:text-base">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($adminAccounts as $account)
+                        <tr class="hover:bg-gray-50 border-b">
+                            <td class="px-3 py-2 sm:px-6 sm:py-3 text-sm sm:text-base">{{ $account->id }}</td>
+                            <td class="px-3 py-2 sm:px-6 sm:py-3 text-sm sm:text-base">{{ $account->username }}</td>
+                            <td class="px-3 py-2 sm:px-6 sm:py-3 text-sm sm:text-base">{{ $account->email }}</td>
+                            <td class="px-3 py-2 sm:px-6 sm:py-3 text-sm sm:text-base">
+                                <span class="px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs sm:text-sm font-semibold {{ $account->active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                    {{ $account->active ? 'Active' : 'Inactive' }}
+                                </span>
+                            </td>
+                            <td class="px-3 py-2 sm:px-6 sm:py-3 text-center whitespace-nowrap">
+                                <button class="px-3 py-1 sm:px-4 sm:py-2 rounded-lg shadow text-white text-xs sm:text-sm {{ $account->active ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600' }}">
+                                    {{ $account->active ? 'Deactivate' : 'Activate' }}
+                                </button>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
+
     </div>
 </section>
 @endsection
