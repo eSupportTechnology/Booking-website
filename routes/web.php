@@ -941,6 +941,9 @@ Route::view('/admin/rental/airport', 'frontend.admin.airport')->name('admin.airp
 Route::view('/admin/taxi-details', 'frontend.admin.taxi-details');
 // Airport Details Page
 Route::view('/admin/airport-details', 'frontend.admin.airport-details')->name('admin.airport.details');
+Route::get('/admin', function () {
+    return view('frontend.admin.admin');
+})->name('admin.dashboard');
 
 
 

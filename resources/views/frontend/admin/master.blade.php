@@ -161,6 +161,15 @@
           </a>
         </div>
 
+        <!-- ADMIN -->
+        <div>
+          <a href="{{ route('admin.dashboard') }}" 
+            class="flex items-center px-4 py-2 rounded hover:bg-blue-200 transition text-blue-800 font-bold text-base">
+            <i class="fas fa-user-shield mr-3 text-bg-[#1F8FB2] text-lg"></i> Admin
+          </a>
+        </div>
+
+
         <!-- LOGOUT -->
         <div>
           <a href="#"

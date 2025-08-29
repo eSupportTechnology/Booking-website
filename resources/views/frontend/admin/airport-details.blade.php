@@ -100,18 +100,59 @@
             </div>
         </div>
 
-        <!-- Customer Insights -->
-        <div class="bg-white rounded-lg shadow p-4 sm:p-6 relative">
-            <a href="#"
-               class="absolute top-3 sm:top-4 right-3 sm:right-4 bg-[#3CC0E9] hover:bg-[#33aad1] text-white px-3 py-1 sm:px-4 sm:py-2 rounded shadow text-xs sm:text-sm">Edit</a>
-            <h2 class="text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4">Customer Insights</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 text-sm sm:text-base">
-                <p class="text-gray-700"><span class="font-semibold">Unique Customers:</span> 150K</p>
-                <p class="text-gray-700"><span class="font-semibold">Repeat Customers:</span> 60%</p>
-                <p class="text-gray-700"><span class="font-semibold">Customer Rating:</span> ⭐ 4.8 / 5</p>
-                <p class="text-gray-700"><span class="font-semibold">Customer Reviews:</span> 12,000</p>
-            </div>
+    <!-- Customer Insights -->
+    <div class="bg-white rounded-lg shadow p-4 sm:p-6 relative">
+        <a href="#"
+        class="absolute top-3 sm:top-4 right-3 sm:right-4 bg-[#3CC0E9] hover:bg-[#33aad1] text-white px-3 py-1 sm:px-4 sm:py-2 rounded shadow text-xs sm:text-sm">
+            Edit
+        </a>
+        
+        <h2 class="text-lg sm:text-xl font-bold text-gray-800 mb-4">Customer Insights</h2>
+
+        <!-- Responsive Table -->
+        <div class="overflow-x-auto">
+            <table class="min-w-full border border-gray-200 rounded-lg overflow-hidden">
+                <thead>
+                    <tr class="bg-[#3CC0E9] text-white text-sm sm:text-base">
+                        <th class="px-4 py-2 text-left">Customer ID</th>
+                        <th class="px-4 py-2 text-left">Customer Name</th>
+                        <th class="px-4 py-2 text-center">Repeat Customer</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 text-gray-700 text-sm sm:text-base">
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="px-4 py-2">C001</td>
+                        <td class="px-4 py-2">John Doe</td>
+                        <td class="px-4 py-2 text-center">
+                            <span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs sm:text-sm">Yes</span>
+                        </td>
+                    </tr>
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="px-4 py-2">C002</td>
+                        <td class="px-4 py-2">Emma Smith</td>
+                        <td class="px-4 py-2 text-center">
+                            <span class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs sm:text-sm">No</span>
+                        </td>
+                    </tr>
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="px-4 py-2">C003</td>
+                        <td class="px-4 py-2">Michael Brown</td>
+                        <td class="px-4 py-2 text-center">
+                            <span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs sm:text-sm">Yes</span>
+                        </td>
+                    </tr>
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="px-4 py-2">C004</td>
+                        <td class="px-4 py-2">Sophia Johnson</td>
+                        <td class="px-4 py-2 text-center">
+                            <span class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs sm:text-sm">No</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
+    </div>
+
 
 
         <!-- Back Button -->
