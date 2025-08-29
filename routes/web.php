@@ -88,7 +88,7 @@ Route::prefix('customer')->group(function () {
     Route::post('/customer-details', [CustomerPersonalDetailsController::class, 'update'])->name('customer.details.store');
 
 
-    // Email verification routes
+    // Email verification route
     Route::post('/email/send-otp', [EmailVerifyController::class, 'sendOtp'])->name('email.send-otp');
     Route::post('/email/verify-otp', [EmailVerifyController::class, 'verifyOtp'])->name('email.verify-otp');
     Route::post('/email/resend-otp', [EmailVerifyController::class, 'resendOtp'])->name('email.resend-otp');
