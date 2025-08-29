@@ -923,6 +923,13 @@ Route::get('/car-rental-listing', function () {
 })->name('car-rental-listing');
 
 
+
+Route::get('/property/vedio', function () {
+    return view('frontend.property-vedio');
+})->name('property.vedio');
+
+
+
 // Admin Dashboard Route - Updated to use dynamic controller (public access for testing)
 Route::get('/admin/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, '__invoke']);
 Route::view('/admin/rental/taxi', 'frontend.admin.taxi')->name('admin.taxi');
