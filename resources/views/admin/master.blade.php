@@ -71,7 +71,7 @@
         <!-- Sidebar -->
         <aside id="sidebar"
             class="w-64 bg-blue-50 text-blue-900 fixed md:static inset-y-0 left-0 transform -translate-x-full md:translate-x-0 transition-transform duration-200 ease-in-out z-40 p-4 shadow-lg"
-            x-data="{ openUsers: false, openProperty: false }">
+            x-data="{ openUsers: false, openProperty: false, openRental: false, openAdminManagement: false }">
 
             @php
                 $appName = config('domains.app_name');
@@ -141,20 +141,47 @@
 
                 </div>
 
-                <!-- Toggle Links -->
-                <div x-show="openRental" x-transition class="ml-8 mt-2 space-y-1 border-l border-blue-300 pl-4">
-                    <a href="{{ route('admin.admin.taxi') }}" class="block py-1 hover:text-blue-700 font-semibold">Taxi</a>
-                    <a href="{{ route('admin.admin.airport') }}" class="block py-1 hover:text-blue-700 font-semibold">Airport</a>
+                <!-- Rental SECTION -->
+                <div>
+                    <button @click="openRental = !openRental"
+                        class="w-full flex justify-between items-center px-4 py-2 rounded hover:bg-blue-200 transition focus:outline-none font-bold text-blue-900">
+                        <div class="flex items-center">
+                            <i class="fas fa-building mr-3 text-bg-[#1F8FB2] text-lg"></i> <span>Rental</span>
+                        </div>
+                        <i :class="openRental ? 'fa-chevron-up' : 'fa-chevron-down'" class="fas text-xs"></i>
+                    </button>
+                    <!-- Toggle Links -->
+                    <div x-show="openRental" x-collapse class="ml-8 mt-2 space-y-1 border-l border-blue-300 pl-4">
+                        <a href="{{ route('admin.taxi') }}" class="block py-1 hover:text-blue-700 font-semibold">Taxi</a>
+                        <a href="{{ route('admin.airport') }}" class="block py-1 hover:text-blue-700 font-semibold">Airport</a>
+                    </div>
                 </div>
+
 
                 @if (Auth::guard('admin')->user()->hasRole('superAdmin'))
                     <!-- ADMIN MANAGEMENT -->
                     <div>
+                        <button @click="openAdminManagement = !openAdminManagement"
+                            class="w-full flex justify-between items-center px-4 py-2 rounded hover:bg-blue-200 transition focus:outline-none font-bold text-blue-900">
+                            <div class="flex items-center">
+                                <i class="fas fa-building mr-3 text-bg-[#1F8FB2] text-lg"></i> <span>Admin Management</span>
+                            </div>
+                            <i :class="openAdminManagement ? 'fa-chevron-up' : 'fa-chevron-down'" class="fas text-xs"></i>
+                        </button>
+                        <!-- Toggle Links -->
+                        <div x-show="openAdminManagement" x-collapse class="ml-8 mt-2 space-y-1 border-l border-blue-300 pl-4">
+                            <div>
+                                <a href="{{ route('admin.approvals.index') }}" class="block py-1 hover:text-blue-700 font-semibold">Pending Admins</a>
+                                <a href="{{ route('admin.accounts.index') }}" class="block py-1 hover:text-blue-700 font-semibold">Admins Accounts</a>
+                            </div>
+                        </div>
+                    </div>
+                    {{-- <div>
                         <a href="{{ route('admin.approvals.index') }}"
                             class="flex items-center px-4 py-2 rounded hover:bg-blue-200 transition text-blue-800 font-bold text-base">
                             <i class="fas fa-user-shield mr-3 text-bg-[#1F8FB2] text-lg"></i> Pending Admins
                         </a>
-                    </div>
+                    </div> --}}
                 @endif
 
                 <!-- SETTINGS -->
