@@ -39,13 +39,6 @@
                     <option value="inactive">Inactive</option>
                 </select>
             </div>
-
-            <!-- Add New Home Button -->
-            <div class="w-full sm:w-auto">
-                <button class="w-full sm:w-auto bg-[#3CC0E9] hover:bg-[#3CC0E9]/80 text-white font-medium text-xs sm:text-sm py-1.5 px-3 rounded-md shadow transition">
-                    + Add New Home
-                </button>
-            </div>
         </div>
 
         <!-- Results info and Rows per page selector -->
