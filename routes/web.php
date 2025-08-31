@@ -804,25 +804,25 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Customer and Partner detail routes
         Route::get('/customer/{customer}', [\App\Http\Controllers\Admin\CustomerViewController::class, 'show'])->name('customer.view');
-        Route::get('/partner/{partner_id}', [\App\Http\Controllers\Admin\PartnerViewController::class, 'show'])->name('partner.view');
+        Route::get('/partners/{partner_id}', [\App\Http\Controllers\Admin\PartnerViewController::class, 'show'])->name('partner.view');
 
         // Customer and Partner detail routes
         Route::get('/customer/{customer_id}', [\App\Http\Controllers\Admin\CustomerViewController::class, 'show'])->name('customer.view');
-        Route::get('/partner/{partner_id}', [\App\Http\Controllers\Admin\PartnerViewController::class, 'show'])->name('partner.view');
+        Route::get('/partners/{partner_id}', [\App\Http\Controllers\Admin\PartnerViewController::class, 'show'])->name('partner.view');
 
         // Property management
-        Route::get('/units', \App\Http\Controllers\Admin\ApartmentsController::class)->name('apartments');
-        Route::get('/residences', \App\Http\Controllers\Admin\HomesController::class)->name('homes');
-        Route::get('/venues', \App\Http\Controllers\Admin\HotelsController::class)->name('hotels');
-        Route::get('/unique-stays', \App\Http\Controllers\Admin\AlternativePlacesController::class)->name('alternative.places');
+        Route::get('/Property/Apartment', \App\Http\Controllers\Admin\ApartmentsController::class)->name('apartments');
+        Route::get('/Property/Home', \App\Http\Controllers\Admin\HomesController::class)->name('homes');
+        Route::get('/Property/Hotel', \App\Http\Controllers\Admin\HotelsController::class)->name('hotels');
+        Route::get('/Property/Alternative-Places', \App\Http\Controllers\Admin\AlternativePlacesController::class)->name('alternative.places');
 
         // Customer management
         Route::get('/customers', [\App\Http\Controllers\Admin\CustomersController::class, '__invoke'])->name('customers');
-        Route::post('/account-details', [\App\Http\Controllers\Admin\CustomerViewController::class, 'show'])->name('admin.customer.view');
+        Route::post('/customers/customer-details', [\App\Http\Controllers\Admin\CustomerViewController::class, 'show'])->name('admin.customer.view');
 
         // Partner management
         Route::get('/partners', [\App\Http\Controllers\Admin\PartnersController::class, '__invoke'])->name('partners');
-        Route::post('/partner-details', [\App\Http\Controllers\Admin\PartnerViewController::class, 'show'])->name('admin.partner.view');
+        Route::post('/partners/partner-details', [\App\Http\Controllers\Admin\PartnerViewController::class, 'show'])->name('admin.partner.view');
 
         // Admin Dashboard rental Route
         Route::view('/rental/taxi', 'admin.admin-taxi')->name('rental.taxi');
