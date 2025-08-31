@@ -39,13 +39,6 @@
                     <option value="Unavailable">Unavailable</option>
                 </select>
             </div>
-
-            <!-- Add Button -->
-            <div class="w-full sm:w-auto">
-                <button class="w-full sm:w-auto bg-[#3CC0E9] hover:bg-[#3CC0E9]/80 text-white font-medium text-xs sm:text-sm py-1.5 px-3 rounded-md shadow transition">
-                    + Add New Alternative Place
-                </button>
-            </div>
         </div>
 
         <!-- Rows per page selector -->

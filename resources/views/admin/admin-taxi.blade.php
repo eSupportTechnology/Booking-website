@@ -46,14 +46,6 @@
                     <option value="On Trip">On Trip</option>
                 </select>
             </div>
-
-            <!-- Add New Taxi Button -->
-            <div class="w-full sm:w-auto">
-                <button
-                    class="w-full sm:w-auto bg-[#1F8FB2] hover:bg-[#157799] text-white font-medium text-xs sm:text-sm py-2 px-4 rounded-md shadow transition">
-                    + Add New Taxi
-                </button>
-            </div>
         </div>
 
         <!-- Rows per page selector -->

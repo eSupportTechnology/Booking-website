@@ -41,13 +41,6 @@
                     <option value="inactive">Inactive</option>
                 </select>
             </div>
-
-            <!-- Add New Apartment Button -->
-            <div class="w-full sm:w-auto">
-                <a href="{{ route('admin.dashboard') }}" class="w-full sm:w-auto bg-[#3CC0E9] hover:bg-[#3CC0E9]/80 text-white font-medium text-xs sm:text-sm py-1.5 px-3 rounded-md shadow transition inline-block text-center">
-                    + Add New Apartment
-                </a>
-            </div>
         </div>
 
         <!-- Rows per page selector -->
