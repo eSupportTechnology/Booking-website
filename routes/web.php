@@ -1100,3 +1100,5 @@ Route::middleware('auth:car_renter')->group(function () {
         return view('car_renters.dashboard');
     })->name('car_renter.dashboard');
 });
+
+
