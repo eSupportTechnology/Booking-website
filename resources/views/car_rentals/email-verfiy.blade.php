@@ -1,1 +1,0 @@
-<h1>Hello car renters</h1>

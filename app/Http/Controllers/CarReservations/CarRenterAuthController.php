@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use App\DTOs\CarRenters\RegisterCarRentersDTO;
 use App\DTOs\CarRenters\CarRentersEmailDTO;
 use App\Actions\CarRenters\RegisterCarRentersAction; 
-
 use App\Models\CarRenter;
 
 class CarRenterAuthController extends Controller
@@ -53,13 +52,20 @@ class CarRenterAuthController extends Controller
         ]);
 
         $registrationData = $request->session()->get('car_renter_registration', []);
-        $companyData = $request->only(['company_name','business_reg','company_email','phone','address']);
+
+        $companyData = [
+            'company_name'     => $request->company_name,
+            'business_reg_no'  => $request->business_reg,
+            'email'            => $request->company_email,
+            'phone'            => $request->phone,
+            'address'          => $request->address,
+        ];
 
         if ($request->hasFile('logo')) {
-            $companyData['logo'] = $request->file('logo')->store('logos', 'public');
+            $companyData['company_logo'] = $request->file('logo')->store('logos', 'public');
         }
 
-        $registrationData = array_merge($registrationData, ['type' => 'company'], $companyData);
+        $registrationData = array_merge($registrationData, ['account_type' => 'company'], $companyData);
         $request->session()->put('car_renter_registration', $registrationData);
 
         return redirect()->route('carrentals.register.password');
@@ -76,9 +82,16 @@ class CarRenterAuthController extends Controller
         ]);
 
         $registrationData = $request->session()->get('car_renter_registration', []);
-        $individualData = $request->only(['full_name','individual_email','individual_phone','individual_nic','individual_address']);
-        $registrationData = array_merge($registrationData, ['type' => 'individual'], $individualData);
 
+        $individualData = [
+            'full_name'   => $request->full_name,
+            'nic_number'  => $request->individual_nic,
+            'email'       => $request->individual_email,
+            'phone'       => $request->individual_phone,
+            'address'     => $request->individual_address,
+        ];
+
+        $registrationData = array_merge($registrationData, ['account_type' => 'individual'], $individualData);
         $request->session()->put('car_renter_registration', $registrationData);
 
         return redirect()->route('carrentals.register.password');
@@ -94,8 +107,8 @@ class CarRenterAuthController extends Controller
         }
 
         $data = session('car_renter_registration');
-        if (($data['type'] === 'company' && empty($data['company_name'])) ||
-            ($data['type'] === 'individual' && empty($data['full_name']))) {
+        if (($data['account_type'] === 'company' && empty($data['company_name'])) ||
+            ($data['account_type'] === 'individual' && empty($data['full_name']))) {
             return redirect()
                 ->route('car_renter.register.details')
                 ->with('error', 'Please complete your registration details first.');
@@ -120,14 +133,12 @@ class CarRenterAuthController extends Controller
 
         $registrationData['password'] = $request->password;
 
-        // Store email separately before clearing session
         $email = $registrationData['email'];
   
         $dto = RegisterCarRentersDTO::fromArray($registrationData);
         $user = $action->execute($dto);
         $user->sendEmailVerificationNotification();
 
-        // Clear session and save email
         $request->session()->forget('car_renter_registration');
         $request->session()->put('car_renter_email', $email);
 
@@ -144,7 +155,6 @@ class CarRenterAuthController extends Controller
     // Resend verification email
     public function resendVerificationEmail()
     {
-        // Placeholder
         return response()->json([
             'status' => 'success',
             'message' => 'Verification email resent (placeholder).'
@@ -154,7 +164,6 @@ class CarRenterAuthController extends Controller
     // Verify user email by token
     public function verify($token)
     {
-        // Add your verification logic here
         return redirect()->route('login')->with('success', 'Email verified successfully.');
     }
 }

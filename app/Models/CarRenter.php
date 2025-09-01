@@ -1,12 +1,9 @@
 <?php
 
-
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-//use Illuminate\Foundation\Auth\User as Authenticatable;
-
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class CarRenter extends Authenticatable
@@ -15,9 +12,6 @@ class CarRenter extends Authenticatable
 
     protected $table = 'car_renters';
 
-    /**
-     * Mass assignable attributes
-     */
     protected $fillable = [
         'email',
         'password',
@@ -32,24 +26,16 @@ class CarRenter extends Authenticatable
         'address',
     ];
 
-    /**
-     * Attributes hidden from arrays/json
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Attribute casting
-     */
-   protected $casts = [
-    'email' => 'string', 
- ];
+    protected $casts = [
+        'email' => 'string',
+    ];
 
-    /**
-     * Mutator for password hashing automatically
-     */
+    // Hash password automatically
     public function setPasswordAttribute($value)
     {
         if ($value) {
@@ -57,20 +43,13 @@ class CarRenter extends Authenticatable
         }
     }
 
-    /**
-     * Helper to check if renter is a company
-     */
     public function isCompany(): bool
     {
         return $this->account_type === 'company';
     }
 
-    /**
-     * Helper to check if renter is an individual
-     */
     public function isIndividual(): bool
     {
         return $this->account_type === 'individual';
     }
 }
-
