@@ -26,6 +26,7 @@ use App\Http\Controllers\AccommodationController;
 use App\Http\Controllers\AirportTaxiController;
 use App\Http\Controllers\CarReservations\CarRentalController;
 use App\Http\Controllers\CarReservations\CarRenterAuthController;
+use App\Http\Controllers\CarReservations\CarRenterLoginController;
 
 Route::post('/accommodation/save-verification/{propertyId}', [AccommodationController::class, 'saveVerification']);
 
@@ -1074,3 +1075,17 @@ Route::post('/carrentals/register/resend', [CarRenterAuthController::class, 'res
 
 Route::get('/carrentals/register/verify/{token}', [CarRenterAuthController::class, 'verify'])
     ->name('carrentals.register.verify.token');
+
+    // Login flow
+Route::get('/carrentals/login/email', [CarRenterLoginController::class, 'showEmailForm'])->name('carrentals.login.email');
+Route::post('/carrentals/login/email', [CarRenterLoginController::class, 'storeEmail'])->name('carrentals.login.email.store');
+Route::get('/carrentals/login/password', [CarRenterLoginController::class, 'showPasswordForm'])->name('carrentals.login.password');
+Route::post('/carrentals/login/password', [CarRenterLoginController::class, 'loginWithPassword'])->name('carrentals.login.password.submit');
+Route::post('/carrentals/logout', [CarRenterLoginController::class, 'logout'])->name('car_renter.logout');
+
+// Dashboard
+Route::middleware('auth:car_renter')->group(function () {
+    Route::get('/car-renter/dashboard', function () {
+        return view('car_renters.dashboard');
+    })->name('car_renter.dashboard');
+});
