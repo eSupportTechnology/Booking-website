@@ -1135,20 +1135,10 @@ Route::get('/car-renters/control-panel', function () {
 })->name('home-listing');
 
 Route::middleware('auth:car_renter')->group(function () {
-    Route::get('/renter/control-panel', [CarRenterControlPanel::class, 'index'])->name('renter.control.panel');
+    Route::get('/car-renter/dashboard', function () {
+        return view('car_renters.dashboard');
+    })->name('car_renter.dashboard');
 });
 
 
 
-Route::middleware('auth:car_renter')->group(function () {
-    Route::get('/car-rentals/control-panel', [CarRenterControlPanel::class, 'myCars'])
-        ->name('car_rentals-listing');
-        
-     Route::get('/my-cars/{id}', [CarRenterControlPanel::class, 'show'])
-        ->name('carrentals.show');
-});
-
-Route::middleware('auth:car_renter')->group(function () {
-    Route::get('/taxis', [AirportTaxiControlPanel::class, 'myTaxi'])
-        ->name('taxis-listing');
-});
