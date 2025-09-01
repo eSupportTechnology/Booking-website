@@ -30,6 +30,11 @@ readonly class CustomersViewModel
                 'registrationDate' => $dto->registrationDate,
                 'bookingsCount' => $dto->bookingsCount,
                 'reviewsCount' => $dto->reviewsCount,
+                'address' => $dto->address,
+                'nationality' => $dto->nationality,
+                'dateOfBirth' => $dto->dateOfBirth,
+                'gender' => $dto->gender,
+                'displayName' => $dto->displayName,
             ])
             ->all();
 

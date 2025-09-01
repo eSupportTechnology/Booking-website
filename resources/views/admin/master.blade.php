@@ -27,7 +27,7 @@
                     <button id="menuToggle" class="text-white focus:outline-none block md:hidden">
                         <i class="fas fa-bars text-xl"></i>
                     </button>
-                    <a href="#" class="text-xl font-bold">Admin Panel</a>
+                    <a href="{{ route('admin.dashboard') }}" class="text-xl font-bold">Admin Panel</a>
                 </div>
 
                 <!-- Center: Search -->

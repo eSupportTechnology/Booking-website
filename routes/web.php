@@ -25,6 +25,8 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Controllers\AccommodationController;
 use App\Http\Controllers\AirportTaxiController;
 use App\Http\Controllers\CarReservations\CarRentalController;
+use App\Http\Controllers\Admin\AdminAccountController;
+use App\Http\Controllers\Admin\CustomersController;
 use App\Http\Controllers\CarReservations\CarRenterAuthController;
 use App\Http\Controllers\CarReservations\CarRenterLoginController;
 
@@ -776,6 +778,15 @@ Route::post('/partner/property/{property}/rate-plans', [PropertyController::clas
 
 
 require __DIR__ . '/auth.php';
+
+
+// Admin Customer Routes
+Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
+    Route::get('/customers/{id}', [CustomersController::class, 'view'])->name('admin.customers.view');
+    Route::post('/customers/{id}/verify-email', [CustomersController::class, 'verifyEmail'])->name('admin.customers.verify-email');
+    Route::post('/customers/{id}/activate', [CustomersController::class, 'activateAccount'])->name('admin.customers.activate');
+    Route::post('/customers/{id}/deactivate', [CustomersController::class, 'deactivateAccount'])->name('admin.customers.deactivate');
+});
 
 
 // Admin Portal Routes

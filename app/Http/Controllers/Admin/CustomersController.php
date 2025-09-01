@@ -13,6 +13,61 @@ class CustomersController extends Controller
         private CustomersService $customersService
     ) {}
 
+    public function view($id)
+    {
+        $customer = $this->customersService->getCustomerById($id);
+
+        if (!$customer) {
+            abort(404);
+        }
+
+        return view('admin.admin-customer-view', [
+            'customer' => $customer
+        ]);
+    }
+
+    public function verifyEmail($id)
+    {
+        $customer = $this->customersService->getCustomerById($id);
+
+        if (!$customer) {
+            return response()->json(['success' => false], 404);
+        }
+
+        $customer->email_verified_at = now();
+        $customer->save();
+
+        return response()->json(['success' => true]);
+    }
+
+    public function activateAccount($id)
+    {
+        $customer = $this->customersService->getCustomerById($id);
+
+        if (!$customer) {
+            return response()->json(['success' => false], 404);
+        }
+
+        $customer->is_active = true;
+        $customer->save();
+
+        return response()->json(['success' => true]);
+    }
+
+    public function deactivateAccount($id)
+    {
+        $customer = $this->customersService->getCustomerById($id);
+
+        if (!$customer) {
+            return response()->json(['success' => false], 404);
+        }
+
+        $customer->is_active = false;
+        $customer->save();
+
+        return response()->json(['success' => true]);
+    }
+
     public function __invoke(Request $request)
     {
         $perPage = $request->input('per_page', 10);
