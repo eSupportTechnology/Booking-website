@@ -1057,7 +1057,11 @@ Route::post('/logout', function () {
 
 
 
+Route::get('/carrentals/register/email', [CarRenterAuthController::class, 'createEmail'])
+    ->name('car_renter.register.email');
 
+Route::post('/carrentals/register/email', [CarRenterAuthController::class, 'storeEmail'])
+    ->name('car_renter.register.email.store');
 
 Route::get('/carrentals/register/details', [CarRenterAuthController::class, 'carRenterDetails'])
     ->name('car_renter.register.details');
@@ -1083,9 +1087,16 @@ Route::post('/carrentals/register/resend', [CarRenterAuthController::class, 'res
 Route::get('/carrentals/register/verify/{token}', [CarRenterAuthController::class, 'verify'])
     ->name('carrentals.register.verify.token');
 
-  // Dashboard - only for logged in car renters
-Route::middleware('car_renter')->group(function () {
+    // Login flow
+Route::get('/carrentals/login/email', [CarRenterLoginController::class, 'showEmailForm'])->name('carrentals.login.email');
+Route::post('/carrentals/login/email', [CarRenterLoginController::class, 'storeEmail'])->name('carrentals.login.email.store');
+Route::get('/carrentals/login/password', [CarRenterLoginController::class, 'showPasswordForm'])->name('carrentals.login.password');
+Route::post('/carrentals/login/password', [CarRenterLoginController::class, 'loginWithPassword'])->name('carrentals.login.password.submit');
+Route::post('/carrentals/logout', [CarRenterLoginController::class, 'logout'])->name('car_renter.logout');
+
+// Dashboard
+Route::middleware('auth:car_renter')->group(function () {
     Route::get('/car-renter/dashboard', function () {
-        return view('car_rentals.dashboard');
+        return view('car_renters.dashboard');
     })->name('car_renter.dashboard');
 });
