@@ -60,37 +60,35 @@
         <table class="min-w-full bg-white border border-gray-200 rounded shadow">
             <thead class="bg-[#E6F7FC] text-[#1F8FB2]">
                 <tr>
-                    <th class="px-6 py-3 text-left text-sm font-semibold">ID</th>
-                    <th class="px-6 py-3 text-left text-sm font-semibold">Name</th>
-                    <th class="px-6 py-3 text-left text-sm font-semibold">Email</th>
-                    <th class="px-6 py-3 text-left text-sm font-semibold">Phone</th>
-                    <th class="px-6 py-3 text-left text-sm font-semibold">Bookings</th>
-                    <th class="px-6 py-3 text-left text-sm font-semibold">Registration Date</th>
-                    <th class="px-6 py-3 text-left text-sm font-semibold">Status</th>
-                    <th class="px-6 py-3 text-left text-sm font-semibold">Action</th>
+                    <th class="px-6 py-3 text-left">Name</th>
+                    <th class="px-6 py-3 text-left">Email</th>
+                    <th class="px-6 py-3 text-left">Phone</th>
+                    <th class="px-6 py-3 text-left">Status</th>
+                    <th class="px-6 py-3 text-left">Registration Date</th>
+                    <th class="px-6 py-3 text-left">Actions</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-200 text-sm">
                 @forelse($customers as $customer)
-                <tr>
-                    <td class="px-6 py-4">{{ $customer['id'] }}</td>
-                    <td class="px-6 py-4">{{ $customer['name'] }}</td>
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 font-medium">{{ $customer['displayName'] ?? $customer['name'] }}</td>
                     <td class="px-6 py-4">{{ $customer['email'] }}</td>
-                    <td class="px-6 py-4">{{ $customer['phone'] ?? 'N/A' }}</td>
-                    <td class="px-6 py-4">{{ $customer['bookingsCount'] }}</td>
+                    <td class="px-6 py-4">{{ $customer['phone'] ?? 'Not provided' }}</td>
+                    <td class="px-6 py-4">
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold
+                            @if($customer['status'] === 'active') bg-green-100 text-green-800
+                            @elseif($customer['status'] === 'pending') bg-yellow-100 text-yellow-800
+                            @else bg-red-100 text-red-800
+                            @endif">
+                            {{ ucfirst($customer['status']) }}
+                        </span>
+                    </td>
                     <td class="px-6 py-4">{{ $customer['registrationDate'] }}</td>
                     <td class="px-6 py-4">
-                        <select onchange="handleCustomerStatusChange(this, '{{ $customer['id'] }}')"
-                                class="appearance-none {{ $customer['status'] === 'active' ? 'bg-green-100 text-green-800' : ($customer['status'] === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }} font-semibold text-xs rounded-full px-3 py-1 focus:outline-none focus:ring-2 focus:ring-[#1F8FB2] transition"
-                                data-original-value="{{ $customer['status'] }}">
-                            <option value="active" {{ $customer['status'] === 'active' ? 'selected' : '' }}>Active</option>
-                            <option value="pending" {{ $customer['status'] === 'pending' ? 'selected' : '' }}>Pending</option>
-                            <option value="inactive" {{ $customer['status'] === 'inactive' ? 'selected' : '' }}>Inactive</option>
-                        </select>
-                    </td>
-                    <td class="px-6 py-4">
-                        <a href="{{ route('admin.customer.view', ['customer_id' => $customer['id']]) }}" class="px-3 py-1 text-sm text-white bg-[#1F8FB2] hover:bg-[#157799] rounded">View</a>
-                        <button class="px-3 py-1 text-sm text-white bg-red-500 hover:bg-red-600 rounded ml-2">Delete</button>
+                        <a href="{{ route('admin.customers.view', ['id' => $customer['id']]) }}"
+                           class="text-[#1F8FB2] hover:text-[#157799] flex items-center">
+                            <i class="fas fa-eye mr-1"></i> View Details
+                        </a>
                     </td>
                 </tr>
                 @empty

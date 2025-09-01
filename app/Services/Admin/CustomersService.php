@@ -12,7 +12,7 @@ class CustomersService
     {
         $query = User::query()
             ->whereDoesntHave('partner') // Only users who are not partners
-            ->with(['bookings', 'reviews'])
+            ->with(['bookings', 'reviews', 'customerPersonalDetail'])
             ->withCount(['bookings', 'reviews']);
 
         // Apply search filter
@@ -49,7 +49,7 @@ class CustomersService
 
     public function getCustomerById(int $id): ?User
     {
-        return User::with(['bookings', 'reviews', 'travelerDetails'])
+        return User::with(['bookings', 'reviews', 'customerPersonalDetail'])
                    ->whereDoesntHave('partner')
                    ->find($id);
     }
