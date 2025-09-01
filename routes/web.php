@@ -25,7 +25,7 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Controllers\AccommodationController;
 use App\Http\Controllers\AirportTaxiController;
 use App\Http\Controllers\CarReservations\CarRentalController;
-use App\Http\Controllers\Admin\AdminAccountController;
+use App\Http\Controllers\CarReservations\CarRenterAuthController;
 
 Route::post('/accommodation/save-verification/{propertyId}', [AccommodationController::class, 'saveVerification']);
 
@@ -1038,3 +1038,39 @@ Route::post('/logout', function () {
     return redirect('/')->with('success', 'You have been logged out.');
 })->name('logout');
 
+
+
+
+
+
+
+
+Route::get('/carrentals/register/email', [CarRenterAuthController::class, 'createEmail'])
+    ->name('car_renter.register.email');
+
+Route::post('/carrentals/register/email', [CarRenterAuthController::class, 'storeEmail'])
+    ->name('car_renter.register.email.store');
+
+Route::get('/carrentals/register/details', [CarRenterAuthController::class, 'carRenterDetails'])
+    ->name('car_renter.register.details');
+
+Route::post('/car-renter/register/company', [CarRenterAuthController::class, 'storeCompanyDetails'])
+     ->name('car_renter.register.company.store');
+
+Route::post('/car-renter/register/individual', [CarRenterAuthController::class, 'storeIndividualDetails'])
+     ->name('car_renter.register.individual.store');
+
+Route::get('/carrentals/register/password', [CarRenterAuthController::class, 'createPassword'])
+    ->name('carrentals.register.password');
+
+Route::post('/carrentals/register/password', [CarRenterAuthController::class, 'register'])
+    ->name('carrentals.register.password.store');
+
+Route::get('/carrentals/register/email/verify', [CarRenterAuthController::class, 'emailVerifyPage'])
+    ->name('carrentals.register.email.verify');
+
+Route::post('/carrentals/register/resend', [CarRenterAuthController::class, 'resendVerificationEmail'])
+    ->name('carrentals.register.resend');
+
+Route::get('/carrentals/register/verify/{token}', [CarRenterAuthController::class, 'verify'])
+    ->name('carrentals.register.verify.token');
