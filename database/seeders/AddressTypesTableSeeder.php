@@ -12,6 +12,7 @@ class AddressTypesTableSeeder extends Seeder
         $addressTypes = [
             ['name' => 'one'],
             ['name' => 'multiple_same_address'],
+            ['name' => 'multiple_different_addresses'],
         ];
 
         foreach ($addressTypes as $type) {

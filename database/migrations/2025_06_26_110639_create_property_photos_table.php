@@ -8,11 +8,11 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('property_photos', function (Blueprint $table) {
-$table->id();
-        $table->foreignId('property_id')->constrained('properties');
-        $table->string('photo_url');
-        $table->boolean('is_cover')->default(false);
-        $table->timestamps();
+            $table->id();
+            $table->foreignId('property_id');
+            $table->string('photo_url');
+            $table->boolean('is_cover')->default(false);
+            $table->timestamps();
         });
     }
 

@@ -1,12 +1,13 @@
-<!DOCTYPE html>
-<html lang="en" x-data="{ step: 1, selectedBox: null }" xmlns:x-bind="http://www.w3.org/1999/xlink">
+@extends('partner.partner-layout')
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>create homes</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+@section('title', ' Homes Create | ' . config('domains.app_name'))
+
+@section('content')
+
+
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet" />
@@ -19,96 +20,13 @@
 
 </head>
 
-<body class="bg-gray-100 text-gray-800">
+<body class="bg-gray-100 text-gray-800" x-data="{ step: 1, selectedBox: null,subtypes: [] }">
 
-    <!-- Header -->
-    <header class="text-white px-4 py-2" style="background-color:#1F8FB2;">
-        <section class="py-4">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div
-                    class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
-                    <!-- Logo -->
-                    <div class="w-full md:w-auto md:ml-6">
-                        <!-- Logo -->
-                        @php
-                            $host = config('domains.app_name');
+    
 
-                        @endphp
-
-                        <a href="{{ url('/') }}" class="text-2xl font-bold flex items-center">
-                            @if ($host == 'BookinTour')
-                                <h1>Bookintour.com</h1>
-                            @elseif ($host == 'Inselor')
-                                <img src="{{ asset('images/inselor-logo.png') }}" alt="Inselor"
-                                    class="h-12 w-auto align-middle" />
-                            @endif
-                        </a>
-                    </div>
-                    <!-- Right Section -->
-                    <div class="flex items-center space-x-4 text-sm font-medium md:ml-auto font-sans">
-                        <!-- Help Icon -->
-                        <a href="/help" title="Help">
-                            <img src="{{ asset('assets/question.svg') }}" alt="Help"
-                                class="w-6 h-6 md:w-7 md:h-7 cursor-pointer" />
-                        </a>
-                        <!-- Language Button -->
-                        <button id="language-button" type="button"
-                            class="flex items-center justify-center w-8 h-8 bg-white rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-hidden"
-                            title="Change Language">
-                            <img src="{{ asset('images/uk.png') }}" alt="UK Flag"
-                                class="w-full h-full object-cover rounded-full" />
-                        </button>
-                        <!-- Logout Link -->
-                        <form action="{{ route('partner.logout') }}" method="POST">
-                            @csrf
-                            <button type="submit" class="text-sm font-medium text-red-200 hover:underline"
-                                title="Logout">
-                                Logout
-                            </button>
-                        </form>
-
-                        <!-- Language Modal -->
-                        <div id="language-modal"
-                            class="fixed inset-0 hidden z-50 overflow-y-auto flex items-start justify-center px-4 py-8 bg-black bg-opacity-50">
-                            <div class="relative w-full max-w-md p-6 bg-white rounded-lg shadow">
-                                <!-- Modal Header -->
-                                <div class="flex items-start justify-between">
-                                    <h3 class="text-xl font-semibold text-gray-900">Select your language</h3>
-                                    <button type="button"
-                                        class="close-btn text-gray-400 hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center">
-                                        <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd"
-                                                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                                clip-rule="evenodd" />
-                                        </svg>
-                                        <span class="sr-only">Close modal</span>
-                                    </button>
-                                </div>
-                                <!-- Modal Body -->
-                                <div class="mt-4">
-                                    <p class="mb-4 text-base text-gray-500">Suggested for you</p>
-                                    <div class="grid grid-cols-2 gap-4">
-                                        <button class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100">
-                                            <img src="https://flagcdn.com/w40/gb.png" alt="English (UK)"
-                                                class="h-5 w-5" />
-                                            <span>English (UK)</span>
-                                        </button>
-                                        <button class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100">
-                                            <img src="https://flagcdn.com/w40/de.png" alt="Deutsch" class="h-5 w-5" />
-                                            <span>Deutsch</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </header>
-
+   <div x-data="{ step: 1, selectedBox: null }">
     <!-- Start Form -->
-    <div class="max-w-6xl p-4 ml-14 bg-gray-100" x-data="{ propertyId: null, selected: '',  propertyName: '',description: ''}">
+    <div class="max-w-6xl p-4 ml-14" x-data="{ propertyId: null, selected: '',  propertyName: '',description: '',availableLanguages: {{ Js::from($languages) }} }">
 
         <!-- Step 1: Main Form Step -->
         <form class="p-6 rounded-lg space-y-6" @submit.prevent>
@@ -123,7 +41,7 @@
 
             <!-- Main Step 1 Content -->
             <div x-show="step === 1" x-cloak x-data="{
-
+                
                 subcategories: {{ Js::from($subcategories) }},
                 async submitStep1() {
                     if (this.selected === '') return;
@@ -155,12 +73,29 @@
                         this.propertyId = data.property_id;
                         this.step = 2;
                         await this.fetchSubtypes(this.selected);
-                        alert(data.message || 'Property created successfully');
+                        Swal.fire({
+                        icon: 'success',
+                        title:  'Property initiated successfully',
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        });
 
                     } catch (error) {
                         console.error('Request failed:', error);
-                        alert('Request failed: ' + error.message);
-                    }
+                        Swal.fire({
+                        icon: 'error',
+                        title: 'Request failed',
+                        text: error.message,
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        });
+                                            }
                 },
                     async fetchSubtypes(subcategoryId) {
                         try {
@@ -173,29 +108,7 @@
                         }
                     }
 
-                        const data = await response.json();
-                        this.propertyId = data.property_id;
-                        this.step = 2;
-                        await this.fetchSubtypes(this.selected);
-                        alert(data.message || 'Property created successfully');
-
-                    } catch (error) {
-                        console.error('Request failed:', error);
-                        alert('Request failed: ' + error.message);
-                    }
-                },
-                async fetchSubtypes(subcategoryId) {
-                    try {
-                        const response = await fetch(`/partner/property_subtype/${subcategoryId}`);
-                        const data = await response.json();
-                        console.log('Fetched subtypes:', data);
-                        this.subtypes = data;
-                    } catch (err) {
-                        console.error('Failed to fetch subtypes:', err);
-                    }
-                }
-
-            }">
+                }">
                 <div class="bg-white max-w-2xl w-full p-6 rounded-lg shadow">
                     <div class="max-w-xl mx-auto p-4 space-y-6">
                         <h2 class="text-2xl font-bold text-center">@lang('messages.what_can_guests_book')</h2>
@@ -230,7 +143,7 @@
                             <div class="flex items-center justify-between pt-4">
                                 <button type="button"
                                     @click="window.location.href = '{{ route('partner.property.category') }}'"
-                                    class="border border-[#3CC0E9] text-blue-600 hover:bg-[#29ACD5] font-semibold py-2 px-4 rounded">
+                                    class="border border-[#3CC0E9] text-blue-600 hover:bg-sky-50 font-semibold py-2 px-4 rounded">
                                     ←
                                 </button>
                                 <button type="button" @click="submitStep1()"
@@ -253,7 +166,11 @@
                 x-data="{
                     async submitStep2() {
                         if (!this.selectedBox || !this.propertyId) return;
-
+                        if (this.selectedBox > 6) {
+                            window.location.href = `/partner-homes-form2/${propertyId}/${this.selectedBox}`
+                                        
+                                  
+                        }
                         const response = await fetch(`/partner/property/${this.selectedBox}/step2/${this.propertyId}`, {
                             method: 'POST',
                             headers: {
@@ -271,10 +188,27 @@
                             const data = await response.json();
                             this.step = 3;
                             console.log('Step 2 selectedBox:', this.selectedBox);
-                            alert(data.message || 'Step 2 saved successfully');
+                         
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Property subcategory saved successfully',
+                                toast: true,
+                                position: 'top-end',
+                                showConfirmButton: false,
+                                timer: 3000,
+                                timerProgressBar: true,
+                            });
                         } else {
                             const error = await response.json();
-                            alert(error.message || 'Error in Step 2');
+                            Swal.fire({
+                                icon: 'error',
+                                title: error.message || 'Error in Step 2',
+                                toast: true,
+                                position: 'top-end',
+                                showConfirmButton: false,
+                                timer: 3000,
+                                timerProgressBar: true,
+                            })
                         }
                     }
                 }">
@@ -318,7 +252,7 @@
                 <template x-if="step === 2">
                     <div class="flex items-center justify-between pt-4">
                         <button type="button" @click="step = 1"
-                            class="border border-[#3CC0E9] text-blue-600  font-semibold py-2 px-4 rounded">
+                            class="border border-[#3CC0E9] text-blue-600 hover:bg-sky-50 font-semibold py-2 px-4 rounded">
                             ←
                         </button>
 
@@ -372,7 +306,7 @@
                                         </label>
 
                                         <label
-                                            :class="selected ===2 ? 'border-blue-600 border-2' :
+                                            :class="selected === 'multiple' ? 'border-blue-600 border-2' :
                                                 'border border-gray-300'"
                                             class="block rounded p-4 cursor-pointer bg-white"
                                             @click="selectOption('multiple')">
@@ -388,7 +322,7 @@
                                         </label>
                                     </div>
 
-                                    <div x-show="selected === 2"
+                                    <div x-show="selected === 'multiple'" x-cloak
                                         class="mt-6 space-y-4 bg-gray-50 p-4 rounded">
                                         <h3 class="text-lg font-semibold">Are these properties in the same address?
                                         </h3>
@@ -427,7 +361,7 @@
                                     <div class="flex items-center justify-between pt-4">
                                         <button type="button"
                                             @click="$dispatch('step-change', 2)"
-                                            class="border border-[#3CC0E9] text-blue-600  font-semibold py-2 px-4 rounded">
+                                            class="border border-[#3CC0E9] text-blue-600 hover:bg-sky-50  font-semibold py-2 px-4 rounded">
                                             ←
                                         </button>
 
@@ -506,7 +440,7 @@
                                                     <!-- Info -->
                                                     <p class="text-sm text-gray-700">
                                                         If your property is listed on Airbnb or Vrbo, you can speed up
-                                                        registration by importing it directly to {{ config('domains.subdomain') }}.
+                                                        registration by importing it directly to Booking.com.
                                                     </p>
 
                                                     <!-- Checkboxes -->
@@ -581,7 +515,7 @@
                                                     <template x-if="step === 3">
                                                         <div class="flex items-center justify-between pt-4">
                                                             <button type="button" @click="prevStep"
-                                                                class="border border-[#3CC0E9] text-blue-600 hover:bg-[#29ACD5] font-semibold py-2 px-4 rounded  ">
+                                                                class="border border-[#3CC0E9] text-blue-600 hover:bg-sky-50 font-semibold py-2 px-4 rounded  ">
                                                                 ←
                                                             </button>
                                                             <button type="button" @click="nextStep"
@@ -644,100 +578,121 @@
                                         </template>
 
                                         <template x-if="step === 5 && selected === 'one'">
-                                            <div class="space-y-6">
-                                                <h3 class="text-lg font-bold">Upload Photos</h3>
+                                            <div class=" space-y-6">
+                                                <section>
+                                                    <div class="w-full max-w-6xl">
+                                                        <h2 class="text-xl md:text-2xl font-bold text-black mb-6 text-left mt-12">
+                                                            What does your place look like?
+                                                        </h2>
 
-                                                <!-- Stylish Upload Box -->
-                                                <div
-                                                    class="relative border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center text-center hover:border-blue-400 transition"
-                                                    @dragover.prevent
-                                                    @drop.prevent>
-                                                    <svg class="w-12 h-12 text-blue-400 mb-2" fill="none" stroke="currentColor" stroke-width="1.5"
-                                                        viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            d="M3 16.5V18a2.5 2.5 0 002.5 2.5h13a2.5 2.5 0 002.5-2.5v-1.5M16.5 12L12 7.5 7.5 12M12 7.5V18" />
-                                                    </svg>
+                                                        <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6 items-start">
+                                                            <!-- 📸 Upload Area -->
+                                                            <div class="border rounded-lg p-6 bg-white shadow-sm">
+                                                                <p class="font-semibold text-gray-800 mb-2">Upload at least one photo of your property.</p>
+                                                                <p class="text-sm text-gray-600 mb-4">
+                                                                    The more you upload, the more likely you are to get bookings. You can add more later.
+                                                                </p>
 
-                                                    <p class="text-gray-600 text-sm">Drag and drop your images here, or</p>
+                                                                <!-- Drag and Drop Upload -->
+                                                                <div class="border border-dashed border-gray-400 rounded-lg p-6 text-center bg-gray-50 mb-6"
+                                                                    @dragover.prevent
+                                                                    @drop.prevent>
+                                                                    <div class="mb-4">
+                                                                        <svg class="w-12 h-12 text-blue-400 mx-auto" fill="none" stroke="currentColor" stroke-width="1.5"
+                                                                            viewBox="0 0 24 24">
+                                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                                d="M3 16.5V18a2.5 2.5 0 002.5 2.5h13a2.5 2.5 0 002.5-2.5v-1.5M16.5 12L12 7.5 7.5 12M12 7.5V18" />
+                                                                        </svg>
+                                                                    </div>
 
-                                                    <label class="mt-2 cursor-pointer inline-block bg-blue-100 hover:bg-blue-200 text-blue-700 px-4 py-2 rounded font-medium">
-                                                        Browse files
-                                                        <input
-                                                            type="file"
-                                                            multiple
-                                                            x-ref="photoInput"
-                                                            @change="handlePreview"
-                                                            accept="image/*"
-                                                            class="hidden" />
-                                                    </label>
+                                                                    <p class="text-gray-700 font-medium mb-2">Drag and drop or</p>
 
-                                                    <p class="text-xs text-gray-500 mt-2">Accepted formats: JPG, PNG, WebP. Max size: 5MB each</p>
-                                                </div>
-                                                <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-4" x-show="previewFiles.length">
-                                                    <template x-for="(file, index) in previewFiles" :key="index">
-                                                        <img :src="file" class="rounded shadow object-cover w-full h-32 border border-gray-300" />
-                                                    </template>
-                                                </div>
+                                                                    <label
+                                                                        class="inline-flex items-center gap-2 px-4 py-2 bg-white text-gray-800 border border-gray-800 rounded cursor-pointer hover:bg-gray-50 hover:text-black transition"
+                                                                        for="photoInput">
+                                                                        <img src="{{ asset('assets/mdi_camera-outline.svg') }}" alt="Upload" class="w-4 h-4" />
+                                                                        <span>Upload photos</span>
+                                                                    </label>
 
+                                                                    <input id="photoInput" type="file" multiple accept="image/*"
+                                                                        class="hidden" x-ref="photoInput" @change="handlePreview" />
 
-                                                <!-- Navigation Buttons -->
-                                                <div class="flex justify-between pt-4">
-                                                    <button type="button"
-                                                        @click="prevStep"
-                                                        class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium px-5 py-2 rounded">
-                                                        ←
-                                                    </button>
+                                                                    <p class="text-xs text-gray-500 mt-2">
+                                                                        JPG, PNG, or WebP. Max size: 47MB each
+                                                                    </p>
+                                                                </div>
 
-                                                    <button
-                                                        type="button"
-                                                        @click="nextStep"
-                                                        class="bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold px-6 py-2 rounded shadow">
-                                                        Continue →
-                                                    </button>
-                                                </div>
+                                                                <!-- Previews -->
+                                                                <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-4" x-show="previewFiles.length">
+                                                                    <template x-for="(file, index) in previewFiles" :key="index">
+                                                                        <div class="relative group border rounded overflow-hidden">
+                                                                            <!-- Main Photo Label -->
+                                                                            <span x-show="index === 0"
+                                                                                class="absolute top-1 left-1 bg-green-600 text-white text-xs px-2 py-1 rounded z-10">
+                                                                                Main Photo
+                                                                            </span>
+
+                                                                            <!-- Remove Button -->
+                                                                            <button type="button"
+                                                                                @click="removePhoto(index)"
+                                                                                class="absolute top-1 right-1 bg-black bg-opacity-50 text-white rounded-full p-1 z-10 hover:bg-opacity-75">
+                                                                                &times;
+                                                                            </button>
+
+                                                                            <!-- Preview Image -->
+                                                                            <img :src="file" class="rounded shadow object-cover w-full h-32 border border-gray-300" />
+                                                                        </div>
+                                                                    </template>
+                                                                </div>
+
+                                                                <!-- Navigation Buttons -->
+                                                                <div class="mt-6 flex justify-between">
+                                                                    <button type="button"
+                                                                        @click="prevStep"
+                                                                        class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
+                                                                        ←
+                                                                    </button>
+
+                                                                    <button
+                                                                        type="button"
+                                                                        @click="nextStep"
+                                                                        x-ref="continueBtn"
+                                                                        class="px-6 py-2 text-white rounded bg-gray-400 cursor-not-allowed"
+                                                                        disabled>
+                                                                        Continue →
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- ℹ️ Tips Box -->
+                                                            <div>
+                                                                <div class="bg-white border rounded-none p-4 shadow-sm relative text-sm">
+                                                                    <h3 class="font-semibold text-gray-800 mb-2 text-base">
+                                                                        What if I don't have professional photos?
+                                                                    </h3>
+                                                                    <p class="text-gray-600 mb-2">
+                                                                        No problem! You can use a smartphone or a digital camera. Here are some tips for taking great photos.
+                                                                    </p>
+                                                                    <a href="#" class="text-[#3CC0E9] hover:underline block mb-2">
+                                                                        Here are some tips for taking great photos of your property
+                                                                    </a>
+                                                                    <p class="text-gray-600">
+                                                                        If you don’t know who took a photo, it's best not to use it. Only use photos others have taken if you have permission.
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </section>
                                             </div>
+
                                         </template>
+
+
+
 
 
                                         <template x-if="step === 6 && selected === 'one'">
-                                            <div class="space-y-6">
-                                                <h3 class="text-xl font-bold">Set Your Pricing</h3>
-
-                                                <div>
-                                                    <label for="price" class="block text-sm font-medium text-gray-700 mb-1">Price per night (LKR)</label>
-                                                    <div class="relative rounded-md shadow-sm">
-                                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                                            <span class="text-gray-500">Rs.</span>
-                                                        </div>
-                                                        <input
-                                                            id="price"
-                                                            type="number"
-                                                            min="0"
-                                                            placeholder="Enter amount"
-                                                            class="pl-12 pr-4 py-2 border border-gray-300 rounded-md w-full focus:ring-blue-500 focus:border-blue-500" />
-                                                    </div>
-                                                    <p class="text-sm text-gray-500 mt-1">Set a competitive price to attract more bookings.</p>
-                                                </div>
-
-                                                <div class="flex justify-between pt-4">
-                                                    <button type="button"
-                                                        @click="prevStep"
-                                                        class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium px-5 py-2 rounded">
-                                                        ←
-                                                    </button>
-
-                                                    <button
-                                                        type="button"
-                                                        @click="nextStep"
-                                                        class="bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold px-6 py-2 rounded shadow">
-                                                        Continue →
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </template>
-
-
-                                        <template x-if="step === 7 && selected === 'one'">
                                             <div>
                                                 <div
                                                     class="relative w-[1400px] h-auto overflow-hidden rounded-lg shadow mx-auto -mt-14 -ml-16">
@@ -864,7 +819,7 @@
                                             </div>
                                         </template>
                                         <!-- Step 5 -->
-                                        <template x-if="step === 8 && selected === 'one'">
+                                        <template x-if="step === 7 && selected === 'one'">
                                             <div>
                                                 <div class="max-w-5xl mx-auto px-4 py-8">
                                                     <h1 class="text-2xl font-bold mb-4 mt-4">Connect to a
@@ -952,7 +907,7 @@
 
 
                                         <!-- Step 5 -->
-                                        <template x-if="step === 9 &&  selected === 'one'">
+                                        <template x-if="step === 8 &&  selected === 'one'">
                                             <div>
                                                 <section class="mb-8">
                                                     <h1 class="text-xl text-gray-700 font-bold mb-4">What can
@@ -1053,74 +1008,162 @@
                                             </div>
                                         </template>
                                         <!-- Step 5 -->
-                                        <template x-if="step === 10 && selected === 'one'">
-                                            <div>
+                                        <template x-if="step === 9 && selected === 'one'">
+                                            <div x-data="{
+                                                    servesBreakfast: false,
+                                                    breakfastIncluded: '',
+                                                    selectedBreakfasts: [],
+                                                    breakfastPrice: '',
+                                                    breakfastOptions: ['Continental', 'Full English', 'Buffet', 'Vegetarian', 'Vegan', 'Gluten-free'],
+                                                    parking: 'no',
+                                                    parkingCost: '',
+                                                    toggleBreakfastOption(option) {
+                                                        const index = this.selectedBreakfasts.indexOf(option);
+                                                        if (index > -1) {
+                                                            this.selectedBreakfasts.splice(index, 1);
+                                                        } else {
+                                                            this.selectedBreakfasts.push(option);
+                                                        }
+                                                    }
+                                                }">
                                                 <div class="container mx-auto px-4 py-4 max-w-6xl mb-8">
 
-                                                    <!-- Header -->
-                                                    <h2
-                                                        class="text-2xl font-bold mb-4 text-left ml-6 max-w-xl">
+                                                    <h2 class="text-2xl font-bold mb-4 text-left ml-6 max-w-xl">
                                                         Services at your property
                                                     </h2>
 
-                                                    <!-- Sections stacked vertically, aligned with header -->
                                                     <div class="max-w-xl ml-6 flex flex-col space-y-8">
                                                         <!-- Breakfast Section -->
                                                         <div class="bg-white shadow-md rounded-lg p-6">
-                                                            <h3 class="text-lg  mb-4 font-bold">Breakfast</h3>
+                                                            <h3 class="text-lg mb-4 font-bold">Breakfast</h3>
                                                             <hr class="border-gray-300 mb-4" />
-                                                            <p class="text-gray-700 mb-2 font-bold text-base">
-                                                                Do you serve guests breakfast?
-                                                            </p>
+
+                                                            <p class="text-gray-700 mb-2 font-bold text-base">Do you serve guests breakfast?</p>
                                                             <div class="space-y-2">
-                                                                <label
-                                                                    class="flex items-center cursor-pointer">
-                                                                    <input type="radio" name="breakfast"
-                                                                        value="yes" class="mr-2" />
+                                                                <label class="flex items-center cursor-pointer">
+                                                                    <input type="radio" name="breakfast" x-model="servesBreakfast" value="yes" class="mr-2" />
                                                                     <span>Yes</span>
                                                                 </label>
-                                                                <label
-                                                                    class="flex items-center cursor-pointer">
-                                                                    <input type="radio" name="breakfast"
-                                                                        value="no" class="mr-2"
-                                                                        checked />
+                                                                <label class="flex items-center cursor-pointer">
+                                                                    <input type="radio" name="breakfast" x-model="servesBreakfast" value="no" class="mr-2"
+                                                                        @click="breakfastIncluded=''; selectedBreakfasts=[]; breakfastPrice=''" />
                                                                     <span>No</span>
                                                                 </label>
+                                                            </div>
+
+                                                            <div x-show="servesBreakfast" x-transition class="mt-6">
+                                                                <p class="text-gray-700 mb-2 font-bold text-base">Is breakfast included in the price guests pay?</p>
+                                                                <div class="space-y-2">
+                                                                    <label class="flex items-center cursor-pointer">
+                                                                        <input type="radio" name="breakfast_included" x-model="breakfastIncluded" value="included" class="mr-2" />
+                                                                        <span>Yes, it's included</span>
+                                                                    </label>
+                                                                    <label class="flex items-center cursor-pointer">
+                                                                        <input type="radio" name="breakfast_included" x-model="breakfastIncluded" value="extra" class="mr-2" />
+                                                                        <span>No, it costs extra</span>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+
+                                                            <div x-show="servesBreakfast && breakfastIncluded === 'extra'" x-transition class="mt-6">
+                                                                <p class="text-gray-700 mb-2 font-bold text-base">Breakfast price per person, per day</p>
+                                                                <input type="text" x-model="breakfastPrice"
+                                                                    class="border border-gray-300 px-3 py-2 rounded w-full mb-1" placeholder="US$" />
+                                                                <p class="text-sm text-gray-500">Including all fees and taxes</p>
+                                                            </div>
+
+                                                            <div x-show="servesBreakfast" x-transition class="mt-6">
+                                                                <p class="text-gray-700 mb-2 font-bold text-base">What type of breakfast do you offer?</p>
+                                                                <p class="text-sm text-gray-500 mb-2">Select all that apply</p>
+                                                                <div class="flex flex-wrap gap-2">
+                                                                    <template x-for="option in breakfastOptions" :key="option">
+                                                                        <button type="button" @click="toggleBreakfastOption(option)"
+                                                                            :class="selectedBreakfasts.includes(option) ? 'bg-blue-100 border-blue-500 text-blue-700' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
+                                                                            class="border px-3 py-1 rounded-full text-sm flex items-center space-x-1 transition">
+                                                                            <span x-text="option"></span>
+                                                                            <template x-if="selectedBreakfasts.includes(option)">
+                                                                                <span class="ml-1 font-bold text-lg leading-none">×</span>
+                                                                            </template>
+                                                                        </button>
+                                                                    </template>
+                                                                </div>
                                                             </div>
                                                         </div>
 
                                                         <!-- Parking Section -->
                                                         <div class="bg-white shadow-md rounded-lg p-6">
-                                                            <h3 class="text-lg  mb-4 font-bold">Parking</h3>
+                                                            <h3 class="text-lg mb-4 font-bold">Parking</h3>
                                                             <hr class="border-gray-300 mb-4" />
-                                                            <p class="text-gray-700 mb-2 font-bold">
-                                                                Is parking available to guests?
-                                                            </p>
-                                                            <div class="space-y-2">
-                                                                <label
-                                                                    class="flex items-center cursor-pointer">
-                                                                    <input type="radio" name="parking"
-                                                                        value="free" class="mr-2" />
+
+                                                            <p class="text-gray-700 mb-2 font-bold">Is parking available to guests?</p>
+                                                            <div class="space-y-2 mb-4">
+                                                                <label class="flex items-center cursor-pointer">
+                                                                    <input type="radio" name="parking" value="free" x-model="parking" class="mr-2" />
                                                                     <span>Yes, free</span>
                                                                 </label>
-                                                                <label
-                                                                    class="flex items-center cursor-pointer">
-                                                                    <input type="radio" name="parking"
-                                                                        value="paid" class="mr-2" />
+                                                                <label class="flex items-center cursor-pointer">
+                                                                    <input type="radio" name="parking" value="paid" x-model="parking" class="mr-2" />
                                                                     <span>Yes, paid</span>
                                                                 </label>
-                                                                <label
-                                                                    class="flex items-center cursor-pointer">
-                                                                    <input type="radio" name="parking"
-                                                                        value="no" class="mr-2"
-                                                                        checked />
+                                                                <label class="flex items-center cursor-pointer">
+                                                                    <input type="radio" name="parking" value="no" x-model="parking" class="mr-2" />
                                                                     <span>No</span>
                                                                 </label>
+                                                            </div>
+
+                                                            <div x-show="parking === 'free' || parking === 'paid'" x-transition class="space-y-4">
+                                                                <div>
+                                                                    <p class="text-gray-700 font-semibold mb-1">Do they need to reserve a parking spot?</p>
+                                                                    <div class="space-y-2">
+                                                                        <label class="flex items-center">
+                                                                            <input type="radio" name="reservation_needed" value="yes" class="mr-2" />
+                                                                            <span>Reservation needed</span>
+                                                                        </label>
+                                                                        <label class="flex items-center">
+                                                                            <input type="radio" name="reservation_needed" value="no" class="mr-2" />
+                                                                            <span>No reservation needed</span>
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div>
+                                                                    <p class="text-gray-700 font-semibold mb-1">Where is the parking located?</p>
+                                                                    <div class="space-y-2">
+                                                                        <label class="flex items-center">
+                                                                            <input type="radio" name="location" value="on_site" class="mr-2" />
+                                                                            <span>On site</span>
+                                                                        </label>
+                                                                        <label class="flex items-center">
+                                                                            <input type="radio" name="location" value="off_site" class="mr-2" />
+                                                                            <span>Off site</span>
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div>
+                                                                    <p class="text-gray-700 font-semibold mb-1">What type of parking is it?</p>
+                                                                    <div class="space-y-2">
+                                                                        <label class="flex items-center">
+                                                                            <input type="radio" name="type" value="private" class="mr-2" />
+                                                                            <span>Private</span>
+                                                                        </label>
+                                                                        <label class="flex items-center">
+                                                                            <input type="radio" name="type" value="public" class="mr-2" />
+                                                                            <span>Public</span>
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div x-show="parking === 'paid'" x-transition class="mt-4">
+                                                                <label class="block text-gray-700 font-semibold mb-1">How much does parking cost?</label>
+                                                                <input type="text" x-model="parkingCost" placeholder="e.g., $10 per day"
+                                                                    class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
                                                             </div>
                                                         </div>
                                                     </div>
 
-                                                    <!-- Navigation Buttons below sections -->
+                                                    <!-- Navigation Buttons -->
                                                     <div class="mt-8 flex justify-between max-w-xl ml-6">
                                                         <button type="button" @click="prevStep"
                                                             class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
@@ -1133,9 +1176,10 @@
                                                     </div>
                                                 </div>
                                             </div>
+
                                         </template>
                                         <!-- Step 5 -->
-                                        <template x-if="step === 11 && selected === 'one'">
+                                        <template x-if="step === 10 && selected === 'one'">
                                             <div>
                                                 <div class="container mx-auto px-4 py-8 max-w-6xl">
                                                     <!-- Header -->
@@ -1148,22 +1192,20 @@
                                                         <h3 class="text-lg  mb-4 font-bold">Select languages
                                                         </h3>
                                                         <div class="space-y-2">
+                                                            @php
+                                                            $initialLanguages = $languages->take(6);
+                                                            $additionalLanguages = $languages->slice(6);
+                                                            @endphp
+                                                            @foreach ($initialLanguages as $lang)
                                                             <label class="flex items-center cursor-pointer">
-                                                                <input type="checkbox" class="mr-2" />
-                                                                <span>English</span>
+                                                                <input type="checkbox"
+                                                                    class="mr-2"
+                                                                    :value="'{{ $lang['id'] }}'" />
+                                                                <span>{{ $lang['name'] }}</span>
                                                             </label>
-                                                            <label class="flex items-center cursor-pointer">
-                                                                <input type="checkbox" class="mr-2" />
-                                                                <span>French</span>
-                                                            </label>
-                                                            <label class="flex items-center cursor-pointer">
-                                                                <input type="checkbox" class="mr-2" />
-                                                                <span>German</span>
-                                                            </label>
-                                                            <label class="flex items-center cursor-pointer">
-                                                                <input type="checkbox" class="mr-2" />
-                                                                <span>Hindi</span>
-                                                            </label>
+                                                            @endforeach
+
+
                                                         </div>
 
                                                         <!-- Add Additional Languages -->
@@ -1192,33 +1234,19 @@
                                                                 <!-- Dropdown list -->
                                                                 <ul id="languageDropdown"
                                                                     class="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded max-h-40 overflow-auto shadow-lg hidden">
+                                                                    @foreach ($additionalLanguages as $lang)
                                                                     <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                                        onclick="selectLanguage(this)">Arabic
+                                                                        onclick="selectLanguage(this)"
+                                                                        data-id="{{ $lang['id'] }}">
+                                                                        {{ $lang['name'] }}
                                                                     </li>
-                                                                    <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                                        onclick="selectLanguage(this)">
-                                                                        Bulgarian</li>
-                                                                    <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                                        onclick="selectLanguage(this)">Catalan
-                                                                    </li>
-                                                                    <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                                        onclick="selectLanguage(this)">Chinese
-                                                                    </li>
-                                                                    <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                                        onclick="selectLanguage(this)">Croatian
-                                                                    </li>
-                                                                    <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                                        onclick="selectLanguage(this)">Czech
-                                                                    </li>
-                                                                    <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                                        onclick="selectLanguage(this)">Danish
-                                                                    </li>
-                                                                    <li class="p-2 hover:bg-blue-100 cursor-pointer"
-                                                                        onclick="selectLanguage(this)">Dutch
-                                                                    </li>
+                                                                    @endforeach
                                                                 </ul>
+
                                                             </div>
                                                         </div>
+                                                        <!-- Container to hold dynamically selected additional languages -->
+                                                        <div id="selectedAdditionalLanguages" class="mt-2 space-y-2"></div>
 
                                                         <!-- Toggle Button for Additional Languages -->
                                                         <a href="#"
@@ -1246,6 +1274,35 @@
                                                 </div>
 
                                                 <script>
+                                                    function selectLanguage(element) {
+                                                        const input = document.getElementById("languageInput");
+                                                        const selectedContainer = document.getElementById("selectedAdditionalLanguages");
+                                                        const langName = element.textContent.trim();
+                                                        const langId = element.dataset.id;
+
+                                                        // Prevent duplicate
+                                                        if (document.getElementById(`lang-${langId}`)) {
+                                                            input.value = '';
+                                                            hideDropdown();
+                                                            return;
+                                                        }
+
+                                                        // Create checkbox dynamically
+                                                        const label = document.createElement('label');
+                                                        label.className = 'flex items-center cursor-pointer';
+                                                        label.id = `lang-${langId}`;
+                                                        label.innerHTML = `
+                                                                <input type="checkbox" class="mr-2" name="languages[]" value="${langId}" checked />
+                                                                <span>${langName}</span>
+                                                            `;
+
+                                                        selectedContainer.appendChild(label);
+
+                                                        // Clear input and close dropdown
+                                                        input.value = '';
+                                                        hideDropdown();
+                                                    }
+
                                                     function toggleAdditionalLanguages() {
                                                         const section = document.getElementById("additionalLanguagesSection");
                                                         section.classList.toggle("hidden");
@@ -1292,11 +1349,7 @@
                                                         }
                                                     }
 
-                                                    function selectLanguage(element) {
-                                                        const input = document.getElementById("languageInput");
-                                                        input.value = element.textContent;
-                                                        hideDropdown();
-                                                    }
+
 
                                                     // Close dropdown when clicking outside
                                                     document.addEventListener("click", function(event) {
@@ -1313,7 +1366,7 @@
                                             </div>
                                         </template>
                                         <!-- Step 5 -->
-                                        <template x-if="step === 12 && selected === 'one'">
+                                        <template x-if="step === 11 && selected === 'one'">
                                             <div>
                                                 <div class="container mx-auto px-4 py-8 max-w-6xl">
                                                     <!-- Header -->
@@ -1414,7 +1467,7 @@
                                                                     <div class="w-full">
                                                                         <label
                                                                             class="block text-sm font-medium mb-1">Until</label>
-                                                                        <input type="time" id="check_out_until" value="18:00"
+                                                                        <input type="time" id="check_in_until" value="18:00"
                                                                             class="w-full border rounded p-2" />
                                                                     </div>
                                                                 </div>
@@ -1428,13 +1481,13 @@
                                                                     <div class="w-full">
                                                                         <label
                                                                             class="block text-sm font-medium mb-1">From</label>
-                                                                        <input type="time" value="08:00"
+                                                                        <input type="time" value="08:00" id="check_out_from"
                                                                             class="w-full border rounded p-2" />
                                                                     </div>
                                                                     <div class="w-full">
                                                                         <label
                                                                             class="block text-sm font-medium mb-1">Until</label>
-                                                                        <input type="time" value="11:00"
+                                                                        <input type="time" value="11:00" id="check_out_until"
                                                                             class="w-full border rounded p-2" />
                                                                     </div>
                                                                 </div>
@@ -1489,77 +1542,318 @@
                                         </template>
 
 
-                                        <template x-if="step === 13 && selected === 'one'">
-                                            <div>
-                                                <!-- Main Content -->
-                                                <main class="container mx-auto px-4 py-8 max-w-4xl">
-                                                    <h2 class="text-2xl md:text-3xl font-bold mb-6 text-left">
-                                                        Host profile
-                                                    </h2>
+                                        <template x-if="step === 12 && selected === 'one'">
+                                            <div
+                                                class="max-w-2xl mx-auto space-y-8 px-4 sm:px-6 lg:px-8 lg:ml-32 py-6"
+                                                x-data="{
+                                                            showProperty: false,
+                                                            showHost: false,
+                                                            showNeighborhood: false,
+                                                            showNone: false
+                                                        }">
+                                                <h2 class="text-2xl font-bold mb-8 text-left">Host Profile</h2>
 
-                                                    <div class="bg-white shadow-md rounded-lg p-6 md:p-8">
-                                                        <p class="text-gray-700 mb-4 text-sm md:text-base">
-                                                            Help your listing stand out by telling potential
-                                                            guests a bit more about yourself, your property and
-                                                            your neighbourhood. This information will be shown
-                                                            on your property page.
-                                                        </p>
+                                                <div class="bg-white shadow-md rounded-lg p-4 space-y-6">
+                                                    <p class="text-base text-gray-800">
+                                                        Help your listing stand out by telling potential guests a bit more about yourself, your property and your neighborhood. This information will appear on your property page.
+                                                    </p>
 
-                                                        <div class="space-y-3">
-                                                            <label
-                                                                class="flex items-start sm:items-center cursor-pointer">
-                                                                <input type="radio" name="profile-info"
-                                                                    value="property"
-                                                                    class="mr-3 mt-1 sm:mt-0">
-                                                                <span class="text-sm sm:text-base">The
-                                                                    property</span>
-                                                            </label>
-
-                                                            <label
-                                                                class="flex items-start sm:items-center cursor-pointer">
-                                                                <input type="radio" name="profile-info"
-                                                                    value="host" class="mr-3 mt-1 sm:mt-0">
-                                                                <span class="text-sm sm:text-base">The
-                                                                    host</span>
-                                                            </label>
-
-                                                            <label
-                                                                class="flex items-start sm:items-center cursor-pointer">
-                                                                <input type="radio" name="profile-info"
-                                                                    value="neighbourhood"
-                                                                    class="mr-3 mt-1 sm:mt-0">
-                                                                <span class="text-sm sm:text-base">The
-                                                                    neighbourhood</span>
-                                                            </label>
-
-                                                            <label
-                                                                class="flex items-start sm:items-center cursor-pointer">
-                                                                <input type="radio" name="profile-info"
-                                                                    value="later" class="mr-3 mt-1 sm:mt-0"
-                                                                    checked>
-                                                                <span class="text-sm sm:text-base">None of the
-                                                                    above/I'll add these later</span>
-                                                            </label>
+                                                    <!-- Property -->
+                                                    <div>
+                                                        <label class="inline-flex items-center space-x-2">
+                                                            <input type="checkbox" class="form-checkbox text-blue-600" x-model="showProperty">
+                                                            <span class="text-gray-800">The property</span>
+                                                        </label>
+                                                        <div x-show="showProperty" x-transition class="mt-2">
+                                                            <label class="block text-sm font-semibold text-gray-700">About the property</label>
+                                                            <textarea
+                                                                rows="4"
+                                                                x-ref="about_property"
+                                                                maxlength="1200"
+                                                                placeholder="What makes your place unique? What can guests expect?"
+                                                                class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"></textarea>
+                                                            <p class="text-right text-xs text-gray-500">0/1200</p>
                                                         </div>
                                                     </div>
 
-                                                    <!-- Navigation Buttons -->
-                                                    <div class="mt-8 flex justify-between">
-                                                        <!-- Back Button on the left -->
-                                                        <button type="button" @click="prevStep"
-                                                            class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
-                                                            ←
-                                                        </button>
-
-                                                        <!-- Continue Button on the right -->
-                                                        <button type="button" @click="nextStep"
-                                                            class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
-                                                            Continue
-                                                        </button>
+                                                    <!-- Host -->
+                                                    <div>
+                                                        <label class="inline-flex items-center space-x-2">
+                                                            <input type="checkbox" class="form-checkbox text-blue-600" x-model="showHost">
+                                                            <span class="text-gray-800">The host</span>
+                                                        </label>
+                                                        <div x-show="showHost" x-transition class="mt-2 space-y-2">
+                                                            <div>
+                                                                <label class="block text-sm font-semibold text-gray-700">Host name</label>
+                                                                <input
+                                                                    type="text"
+                                                                    x-ref="host_name"
+                                                                    maxlength="80"
+                                                                    placeholder="Your name"
+                                                                    class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
+                                                                <p class="text-right text-xs text-gray-500">0/80</p>
+                                                            </div>
+                                                            <div>
+                                                                <label class="block text-sm font-semibold text-gray-700">About the host</label>
+                                                                <textarea
+                                                                    rows="4"
+                                                                    maxlength="1200"
+                                                                    x-ref="about_host"
+                                                                    placeholder="What are your interests? What do you like about hosting?"
+                                                                    class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"></textarea>
+                                                                <p class="text-right text-xs text-gray-500">0/1200</p>
+                                                            </div>
+                                                        </div>
                                                     </div>
 
-                                                </main>
+                                                    <!-- Neighborhood -->
+                                                    <div>
+                                                        <label class="inline-flex items-center space-x-2">
+                                                            <input type="checkbox" class="form-checkbox text-blue-600" x-model="showNeighborhood">
+                                                            <span class="text-gray-800">The neighborhood</span>
+                                                        </label>
+                                                        <div x-show="showNeighborhood" x-transition class="mt-2">
+                                                            <label class="block text-sm font-semibold text-gray-700">About the neighborhood</label>
+                                                            <textarea
+                                                                x-ref="about_neighborhood"
+                                                                rows="4"
+                                                                maxlength="1200"
+                                                                placeholder="What's the area like? Are there any attractions nearby?"
+                                                                class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"></textarea>
+                                                            <p class="text-right text-xs text-gray-500">0/1200</p>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- None -->
+                                                    <div>
+                                                        <label class="inline-flex items-center space-x-2">
+                                                            <input type="checkbox" class="form-checkbox text-blue-600" x-model="showNone">
+                                                            <span class="text-gray-800">None of the above / I'll add these later</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Navigation Buttons -->
+                                                <div class="mt-12 flex justify-between">
+                                                    <button type="button"
+                                                        @click="prevStep"
+                                                        class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                                                        ←
+                                                    </button>
+                                                    <button type="button"
+                                                        @click="nextStep"
+                                                        class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
+                                                        Continue
+                                                    </button>
+                                                </div>
                                             </div>
+
+                                        </template>
+
+                                        <template x-if="step === 13 && selected === 'one'">
+
+                                            <!-- Room Editor Modal -->
+
+
+
+                                            <div class="max-w-xl mx-auto space-y-8 lg:ml-32 px-4 py-6">
+                                                <h2 class="text-2xl font-bold text-gray-900 mt-8">What can guests use at your place?</h2>
+
+                                                <!-- Room Selector -->
+                                                <div class="bg-white p-4 rounded-lg shadow space-y-4">
+                                                    <h2 class="text-lg font-semibold">Where can people sleep?</h2>
+                                                    <div class="flex flex-col gap-4">
+
+                                                        <!-- Predefined Rooms -->
+                                                        <template x-for="key in ['bedroom1', 'livingRoom', 'otherSpaces']" :key="key">
+                                                            <div>
+                                                                <template x-if="hasBedCounts(key)">
+                                                                    <div class="border border-green-300 bg-green-50 rounded px-3 py-2 w-96 flex justify-between items-center">
+                                                                        <div>
+                                                                            <p class="text-sm font-medium" x-text="rooms[key]?.name || key"></p>
+                                                                            <p class="text-sm text-gray-600" x-text="getBedSummary(key)"></p>
+                                                                            <p class="text-xs text-green-600">✓ Saved</p>
+                                                                        </div>
+                                                                        <span class="text-xs text-blue-600 hover:underline cursor-pointer" @click="navigateToBedroom(key)">Edit</span>
+                                                                        <span class="text-xs text-red-600 hover:underline cursor-pointer" @click="deleteRoom(key)">Delete</span>
+
+                                                                    </div>
+                                                                </template>
+                                                                <template x-if="!hasBedCounts(key)">
+                                                                    <a href="#" @click.prevent="navigateToBedroom(key)" class="block">
+                                                                        <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer flex justify-between items-center">
+                                                                            <div>
+                                                                                <p class="text-sm" x-text="rooms[key]?.name || key"></p>
+                                                                                <p class="text-sm text-gray-600" x-text="getBedSummary(key)"></p>
+                                                                            </div>
+                                                                            <span class="text-xs text-blue-600 hover:underline">Edit</span>
+                                                                            <span class="text-xs text-red-600 hover:underline cursor-pointer" @click="deleteRoom(key)">Delete</span>    
+                                                                        </div>
+                                                                    </a>
+                                                                </template>
+                                                            </div>
+                                                        </template>
+
+                                                        <!-- Dynamically Added Bedrooms -->
+                                                        <template x-for="(room, key) in rooms" :key="key">
+                                                            <template x-if="!['bedroom1', 'livingRoom', 'otherSpaces'].includes(key)">
+                                                                <div class="border border-green-300 bg-green-50 rounded px-3 py-2 w-96 flex justify-between items-center">
+                                                                    <div>
+                                                                        <p class="text-sm font-medium" x-text="room.name"></p>
+                                                                        <p class="text-sm text-gray-600" x-text="getSavedRoomBedSummary(room)"></p>
+                                                                        <p class="text-xs text-green-600">✓ Saved</p>
+                                                                    </div>
+                                                                    <span class="text-xs text-blue-600 hover:underline cursor-pointer" @click="editSavedRoom(key)">Edit</span>
+                                                                    <span class="text-xs text-red-600 hover:underline cursor-pointer" @click="deleteRoom(key)">Delete</span>
+
+                                                                </div>
+                                                            </template>
+                                                        </template>
+
+                                                    </div>
+
+                                                    <!-- Add Bedroom Button -->
+                                                    <button @click="navigateToBedroom()" class="text-blue-600 hover:underline text-sm flex items-center space-x-1 mt-2">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                                        </svg>
+                                                        <span>Add Bedroom</span>
+                                                    </button>
+                                                </div>
+
+                                                <!-- Guests and Bathrooms -->
+                                                <div class="bg-white p-4 rounded-lg shadow space-y-4 w-full max-w-xl">
+                                                    <div>
+                                                        <label class="block text-sm text-gray-800">How many guests can stay?</label>
+                                                        <div class="flex items-center space-x-4 mt-1">
+                                                            <button @click="if (guests > 1) guests--" class="border px-3 py-1 rounded text-base">−</button>
+                                                            <span class="min-w-[2rem] text-center text-gray-700 text-base" x-text="guests"></span>
+                                                            <button @click="guests++" class="border px-3 py-1 rounded text-base">+</button>
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <label class="block text-sm text-gray-800">How many bathrooms are there?</label>
+                                                        <div class="flex items-center space-x-4 mt-1">
+                                                            <button @click="if (bathrooms > 0) bathrooms--" class="border px-3 py-1 rounded text-base">−</button>
+                                                            <span class="min-w-[2rem] text-center text-gray-700 text-base" x-text="bathrooms"></span>
+                                                            <button @click="bathrooms++" class="border px-3 py-1 rounded text-base">+</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Children Policy -->
+                                                <div class="bg-white p-4 rounded-lg shadow space-y-4">
+                                                    <div>
+                                                        <p class="font-medium text-sm">Do you allow children?</p>
+                                                        <label class="mr-4 text-sm">
+                                                            <input type="radio" name="children" value="yes" x-model="allowChildren"> Yes
+                                                        </label>
+                                                        <label class="text-sm">
+                                                            <input type="radio" name="children" value="no" x-model="allowChildren"> No
+                                                        </label>
+                                                    </div>
+                                                    <div>
+                                                        <p class="font-medium text-sm">Do you allow infants?</p>
+                                                        <p class="text-xs text-gray-500">cribs sleep most infants 0–3 years old and are available to guests on request.</p>
+                                                        <label class="mr-4 text-sm">
+                                                            <input type="radio" name="infants" value="yes" x-model="offerCribs"> Yes
+                                                        </label>
+                                                        <label class="text-sm">
+                                                            <input type="radio" name="infants" value="no" x-model="offerCribs"> No
+                                                        </label>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Room Size -->
+                                                <div class="lg:col-span-2 bg-white rounded-lg border border-gray-300 p-4 space-y-4 ">
+                                                    <div class="flex flex-col lg:flex-row gap-4 items-end">
+                                                        <div class="w-full lg:w-2/4">
+                                                            <label class="block text-sm text-gray-700 mb-1">How big is this room?</label>
+                                                            <p class="text-xs text-gray-500">Apartment size - optional</p>
+                                                            <input
+                                                                type="number"
+                                                                min="1"
+                                                                step="1"
+                                                                x-model="apartmentSize"
+                                                                name="apartment_size"
+                                                                class="w-full border border-gray-300 rounded-md shadow-sm text-sm mt-2 px-2 py-2">
+                                                        </div>
+                                                        <div class="w-full lg:w-1/4">
+                                                            <label class="block text-sm text-transparent mb-1">Unit</label>
+                                                            <select x-model="apartmentUnit" class="w-full bg-gray-300 text-black border border-gray-300 rounded-md shadow-sm text-sm mt-2 px-2 py-2">
+                                                                <option value="square meters">square meters</option>
+                                                                <option value="square feet">square feet</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Navigation Buttons -->
+                                                <div class="mt-8 flex justify-between">
+                                                    <button
+                                                        type="button"
+                                                        @click="propertyWizardStep--"
+                                                        :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
+                                                        class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                                                        ←
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        @click="nextStep"
+                                                        class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
+                                                        Continue
+                                                    </button>
+                                                </div>
+
+                                                <div x-show="showRoomEditor"
+                                                    style="background-color: rgba(0, 0, 0, 0.5);"
+                                                    class="fixed inset-0 z-50 flex items-center justify-center"
+                                                    x-transition>
+                                                    <div @click.outside="cancelRoomEditor"
+                                                        class="bg-white w-full max-w-2xl mx-auto rounded-lg shadow-lg p-6 relative">
+
+                                                        <!-- Header -->
+                                                        <h2 class="text-xl font-semibold mb-4" x-text="editingRoom.name || 'Edit Room'"></h2>
+
+                                                        <!-- Room Name -->
+                                                        <div class="mb-4">
+                                                            <label class="block text-sm font-medium text-gray-700 mb-1">Room Name</label>
+                                                            <input type="text" x-model="editingRoom.name"
+                                                                class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500">
+                                                        </div>
+
+                                                        <!-- Bed Types -->
+                                                        <div class="mb-4">
+                                                            <h3 class="text-sm font-semibold text-gray-800 mb-2">Bed Configuration</h3>
+                                                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                                                                <template x-for="bed in allBedTypes.filter(b => b.applicableTo.includes(String(editingRoom.room_type_id)))" :key="bed.id">
+                                                                    <div class="flex items-center space-x-3">
+                                                                        <label class="w-1/2 text-gray-700 text-sm" x-text="bed.name"></label>
+                                                                        <input type="number" min="0"
+                                                                            class="w-1/2 border border-gray-300 rounded px-2 py-1 text-sm focus:ring-blue-500 focus:border-blue-500"
+                                                                            :value="editingRoom.beds[bed.id] || 0"
+                                                                            @input="editingRoom.beds[bed.id] = +$event.target.value">
+                                                                    </div>
+                                                                </template>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Modal Actions -->
+                                                        <div class="flex justify-end gap-3 mt-6">
+                                                            <button @click="cancelRoomEditor"
+                                                                class="text-gray-600 border border-gray-300 px-4 py-2 rounded hover:bg-gray-100 text-sm">Cancel</button>
+                                                            <button @click="saveRoomEditor"
+                                                                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm font-semibold">Save</button>
+                                                        </div>
+
+                                                        <!-- Close Icon -->
+                                                        <button @click="cancelRoomEditor" class="absolute top-3 right-4 text-gray-400 hover:text-gray-600 text-lg">
+                                                            ✕
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+
                                         </template>
 
 
@@ -1568,7 +1862,16 @@
                                                 <!-- Include Alpine.js -->
                                                 <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
-                                                <div x-data="{ type: '' }"
+                                                <div x-data="{
+                                                                    type: '',
+                                                                    individual: {
+                                                                        full_name: '',
+                                                                        national_id: ''
+                                                                    },
+                                                                    business: {
+                                                                        company_name: '',
+                                                                        registration_number:    ''
+                                                }}"
                                                     class="px-4 py-8 max-w-3xl mx-auto space-y-6">
 
                                                     <h1 class="text-2xl sm:text-3xl font-semibold">Partner
@@ -1606,7 +1909,7 @@
                                                             <div>
                                                                 <label class="block text-sm text-gray-700">Full
                                                                     Name</label>
-                                                                <input type="text"
+                                                                <input type="text" x-model="individual.full_name"
                                                                     class="w-full mt-1 border rounded px-3 py-2"
                                                                     placeholder="Enter your full name">
                                                             </div>
@@ -1614,7 +1917,7 @@
                                                                 <label
                                                                     class="block text-sm text-gray-700">National
                                                                     ID or Passport</label>
-                                                                <input type="text"
+                                                                <input type="text" x-model="individual.national_id"
                                                                     class="w-full mt-1 border rounded px-3 py-2"
                                                                     placeholder="Enter ID number">
                                                             </div>
@@ -1631,7 +1934,7 @@
                                                                 <label
                                                                     class="block text-sm text-gray-700">Company
                                                                     Name</label>
-                                                                <input type="text"
+                                                                <input type="text" x-model="business.company_name"
                                                                     class="w-full mt-1 border rounded px-3 py-2"
                                                                     placeholder="Enter company name">
                                                             </div>
@@ -1639,7 +1942,7 @@
                                                                 <label
                                                                     class="block text-sm text-gray-700">Business
                                                                     Registration Number</label>
-                                                                <input type="text"
+                                                                <input type="text" x-model="business.registration_number"
                                                                     class="w-full mt-1 border rounded px-3 py-2"
                                                                     placeholder="Enter registration number">
                                                             </div>
@@ -1675,70 +1978,92 @@
                                         </template>
 
                                         <!-- Steps for 'multiple' -->
-                                        <template x-if="selected === 'multiple'">
+                                        <template x-if="selected === 'multiple'"
+                                            x-data="{ 
+                                                        currentUnit: 1, unitFacilities: Array.from({ length: propertyCount }, () => []),unitServices: Array.from({ length: 3 }, () => ({ breakfast: '', parking: '',hostprofile: '' ,languages: [], houseRules: {
+                                                        smokingAllowed: false,
+                                                        childrenAllowed: true,
+                                                        partiesAllowed: false,
+                                                        petsPolicy: 'no',
+                                                        checkInFrom: '15:00',
+                                                        checkInUntil: '18:00',
+                                                        checkOutFrom: '08:00',
+                                                        checkOutUntil: '11:00'
+                                                        }})),
+                                                        address: '',
+                                                        addresses:[],
+                                                        selectedAmenities: [],
+                                                        type: '',
+                                                        individual: { name: '', id: '' },
+                                                        business: { company_name: '', reg_no: '' },
+                                                        newRoom: {
+                                                            room_type_id: '',
+                                                            name: '',
+                                                            price_per_night: 0,
+                                                            max_guests: 1,
+                                                            bathroom_count: 0,
+                                                            size_sq_m: 0,
+                                                            beds: {}
+                                                        },
+                                                        rooms: [],
+                                                        roomTypes: [],
+                                                        bedTypes: [],
+                                                        unitAddresses: Array(propertyCount).fill(''),
+                                                        toggleLanguage(lang) {
+                                                            const index = this.unitServices[this.currentUnit - 1].languages.indexOf(lang);
+                                                            if (index === -1) {
+                                                                this.unitServices[this.currentUnit - 1].languages.push(lang);
+                                                            } else {
+                                                                this.unitServices[this.currentUnit - 1].languages.splice(index, 1);
+                                                            }
+                                                            console.log(this.unitServices); // Log updated structure
+                                                        },
+                                                        handleUnitPhotoUpload(unitId, event) {
+                                                            const files = Array.from(event.target.files);
+                                                            if (!this.unitPhotos[unitId]) this.unitPhotos[unitId] = [];
+                                                            if (!this.previewUnitPhotos[unitId]) this.previewUnitPhotos[unitId] = [];
+
+                                                            files.forEach(file => {
+                                                                // Save actual file
+                                                                this.unitPhotos[unitId].push(file);
+
+                                                                // Preview
+                                                                const reader = new FileReader();
+                                                                reader.onload = () => {
+                                                                    this.previewUnitPhotos[unitId].push(reader.result);
+                                                                };
+                                                                reader.readAsDataURL(file);
+                                                            });
+                                                        },
+
+                                                    }">
                                             <div>
 
 
-                                                <!-- Step 1 -->
-                                                <template x-if="step === 1">
-                                                    <div>
-                                                        <div
-                                                            class="bg-white max-w-2xl w-full p-6 rounded-lg shadow text-center">
-                                                            <p class="text-base text-gray-600 mb-8">You're listing:</p>
-
-                                                            <!-- Icon -->
-                                                            <div class="flex justify-center mb-8">
-                                                                <img src="{{ asset('images/accomm_one_apt_main@2x.png') }}"
-                                                                    alt="Multiple Apartments" class="w-16 h-16" />
-                                                            </div>
-
-                                                            <!-- Heading -->
-                                                            <h2
-                                                                class="text-lg md:text-xl font-bold text-gray-800 mb-8">
-                                                                Multiple apartments in the same location where guests
-                                                                can book an entire apartment
-                                                            </h2>
-
-                                                            <!-- Description -->
-                                                            <p class="text-gray-700 mb-8">Does this sound like your
-                                                                property?</p>
-
-                                                            <!-- Buttons -->
-                                                            <div class="space-y-2">
-                                                                <button type="button" @click="nextStep"
-                                                                    class="w-full bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded">
-                                                                    Continue
-                                                                </button>
-                                                                <button type="button" @click="prevStep"
-                                                                    class="w-full border border-[#3CC0E9] text-[#3CC0E9] hover:bg-[#29ACD5] font-semibold py-2 px-4 rounded mb-6">
-                                                                    No, I need to make a change
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </template>
 
                                                 <!-- Step 2 -->
-                                                <template x-if="step === 2">
-                                                    <div
-                                                        class="bg-white max-w-2xl w-full p-6 rounded-lg shadow text-center">
+                                                <template x-if="step === 2 && selected === 'multiple'">
+                                                    <div class="bg-white max-w-2xl w-full p-6 rounded-lg shadow text-center">
                                                         <p class="text-base text-gray-600 mb-8">You're listing:</p>
 
                                                         <!-- Icon -->
                                                         <div class="flex justify-center mb-8">
-                                                            <img src="{{ asset('images/accomm_one_apt_main@2x.png') }}"
-                                                                alt="Multiple Apartments" class="w-16 h-16" />
+                                                            <template x-if="sameAddress === 'yes'">
+                                                                <img src="{{ asset('images/accomm_one_apt_main@2x.png') }}" alt="Same Location" class="w-16 h-16" />
+                                                            </template>
+                                                            <template x-if="sameAddress === 'no'">
+                                                                <img src="{{ asset('images/accomm_multiple_location@2x.png') }}" alt="Different Locations" class="w-16 h-16" />
+                                                            </template>
                                                         </div>
 
                                                         <!-- Heading -->
-                                                        <h2 class="text-lg md:text-xl font-bold text-gray-800 mb-8">
-                                                            Multiple holiday homes in the same location where guests can
-                                                            book an entire home
+                                                        <h2 class="text-lg md:text-xl font-bold text-gray-800 mb-8" x-text="sameAddress === 'yes' 
+                                                            ? 'Multiple holiday homes in the same location where guests can book an entire home' 
+                                                            : 'Multiple holiday homes in different locations that guests can book separately'">
                                                         </h2>
 
                                                         <!-- Description -->
-                                                        <p class="text-gray-700 mb-8">Does this sound like your
-                                                            property?</p>
+                                                        <p class="text-gray-700 mb-8">Does this sound like your property?</p>
 
                                                         <!-- Buttons -->
                                                         <div class="space-y-2">
@@ -1747,36 +2072,41 @@
                                                                 Continue
                                                             </button>
                                                             <button type="button" @click="prevStep"
-                                                                class="w-full border border-[#3CC0E9] text-[#3CC0E9]  font-semibold py-2 px-4 rounded mb-6">
+                                                                class="w-full border border-[#3CC0E9] text-[#3CC0E9] font-semibold py-2 px-4 rounded mb-6">
                                                                 No, I need to make a change
                                                             </button>
                                                         </div>
                                                     </div>
                                                 </template>
 
+
                                                 <!-- Step 3 -->
-                                                <template x-if="step === 3">
+                                                <template x-if="step === 3 && selected === 'multiple'">
                                                     <div>
                                                         <!-- Main Content -->
                                                         <div class="max-w-xl ml-4 mr-auto">
                                                             <!-- White Box -->
-                                                            <div class="bg-white shadow-md  p-6 text-left">
-                                                                <p class=" text-base text-gray-700">
-                                                                    Great, since your holiday homes are located at the
-                                                                    same address there should be some things that apply
-                                                                    to all of them. Let's start filling in those general
-                                                                    settings.
-                                                                </p>
+                                                            <div class="bg-white shadow-md p-6 text-left">
+                                                                <template x-if="sameAddress === 'yes'">
+                                                                    <p class="text-base text-gray-700">
+                                                                        Great, since your holiday homes are located at the same address, there should be some settings that apply to all of them. Let's start with those general settings.
+                                                                    </p>
+                                                                </template>
+                                                                <template x-if="sameAddress === 'no'">
+                                                                    <p class="text-base text-gray-700">
+                                                                        Since your holiday homes are at different addresses, we'll help you set up each one individually, starting with some shared preferences.
+                                                                    </p>
+                                                                </template>
                                                             </div>
 
                                                             <!-- Navigation Buttons -->
                                                             <div class="mt-6 flex justify-between">
                                                                 <button type="button" @click="prevStep"
-                                                                    class="border border-[#3CC0E9]  text-blue-600 hover:bg-[#29ACD5] font-semibold py-2 px-4 rounded">
+                                                                    class="border border-[#3CC0E9] text-blue-600 hover:bg-[#29ACD5] font-semibold py-2 px-4 rounded">
                                                                     ←
                                                                 </button>
                                                                 <button type="button" @click="nextStep"
-                                                                    class=" font-semibold py-3 px-8 rounded  bg-[#3CC0E9] hover:bg-[#29ACD5] text-white">
+                                                                    class="font-semibold py-3 px-8 rounded bg-[#3CC0E9] hover:bg-[#29ACD5] text-white">
                                                                     Continue
                                                                 </button>
                                                             </div>
@@ -1786,124 +2116,60 @@
 
                                                 <!-- Step 4 -->
                                                 <template x-if="step === 4">
-                                                    <div>
-                                                        <div
-                                                            class="relative w-[1400px] h-auto overflow-hidden rounded-lg shadow mx-auto -mt-14 -ml-16">
+                                                    <div class="relative w-[1400px] h-auto overflow-hidden rounded-lg shadow mx-auto -mt-14 -ml-16">
+                                                        <!-- Google Maps iframe background -->
+                                                        <iframe class="absolute inset-0 w-full h-full"
+                                                            loading="lazy"
+                                                            src="https://www.google.com/maps?q=La+Grande+Villa+Nuwara+Eliya&output=embed"
+                                                            allowfullscreen>
+                                                        </iframe>
 
-                                                            <!-- Google Maps iframe full background -->
-                                                            <iframe class="absolute inset-0 w-full h-full"
-                                                                loading="lazy"
-                                                                src="https://www.google.com/maps?q=La+Grande+Villa+Nuwara+Eliya&output=embed"
-                                                                allowfullscreen>
-                                                            </iframe>
+                                                        <div class="absolute inset-0"></div>
 
-                                                            <!-- Optional overlay for readability -->
-                                                            <div class="absolute inset-0"></div>
+                                                        <div class="relative z-10 flex items-center justify-start h-auto p-4 mt-[110px]">
+                                                            <div class="bg-white bg-opacity-95 rounded-lg shadow-lg w-full max-w-[700px] p-6 md:p-8 h-auto mb-4 overflow-y-auto max-h-[80vh]">
 
-                                                            <!-- Form content centered on map -->
-                                                            <div
-                                                                class="relative z-10 flex items-center justify-start h-auto p-4 mt-[110px]">
-                                                                <div
-                                                                    class="bg-white bg-opacity-95 rounded-lg shadow-lg w-full max-w-md p-6 md:p-8 h-auto mb-4">
-                                                                    <h2
-                                                                        class="text-2xl font-semibold mb-4 text-gray-800">
-                                                                        Where is your property?</h2>
-                                                                    <form>
+                                                                <h2 class="text-2xl font-semibold mb-4 text-gray-800">Where is your property?</h2>
+
+                                                                <template x-if="selected === 'one' || sameAddress === 'yes'">
+                                                                    <!-- Shared address form -->
+                                                                    <div>
                                                                         <div class="mb-4">
-                                                                            <label for="address"
-                                                                                class="block text-sm font-medium text-gray-700">Find
-                                                                                your address</label>
-                                                                            <input type="text" id="address"
-                                                                                name="address" value="Sri Lanka"
-                                                                                class="mt-1 p-2 w-full border border-gray-300 rounded">
+                                                                            <label class="block text-sm font-medium text-gray-700">Find your address</label>
+                                                                            <input type="text" x-model="address" class="mt-1 p-2 w-full border border-gray-300 rounded" placeholder="Address" />
                                                                         </div>
-                                                                        <div class="mb-4">
-                                                                            <label for="apartment"
-                                                                                class="block text-sm font-medium text-gray-700">Apartment
-                                                                                or floor number (optional)</label>
-                                                                            <input type="text" id="apartment"
-                                                                                name="apartment" value="aaa"
-                                                                                class="mt-1 p-2 w-full border border-gray-300 rounded">
-                                                                        </div>
-                                                                        <div class="mb-4">
-                                                                            <label for="country"
-                                                                                class="block text-sm font-medium text-gray-700">Country/region</label>
-                                                                            <select id="country" name="country"
-                                                                                class="mt-1 p-2 w-full border border-gray-300 rounded">
-                                                                                <option selected>Sri Lanka</option>
-                                                                            </select>
-                                                                        </div>
-                                                                        <div class="flex flex-col md:flex-row gap-4">
-                                                                            <div class="flex-1">
-                                                                                <label for="city"
-                                                                                    class="block text-sm font-medium text-gray-700">City</label>
-                                                                                <input type="text" id="city"
-                                                                                    name="city" value="a"
-                                                                                    class="mt-1 p-2 w-full border border-gray-300 rounded">
+                                                                    </div>
+                                                                </template>
+
+                                                                <template x-if="selected === 'multiple' && sameAddress === 'no'">
+                                                                    <!-- Multiple address forms -->
+                                                                    <template x-for="i in propertyCount" :key="i">
+                                                                        <div class="mb-8 border border-gray-200 rounded p-4">
+                                                                            <h3 class="text-lg font-semibold mb-2 text-gray-700">Property <span x-text="i"></span></h3>
+
+                                                                            <!-- Inline address form -->
+                                                                            <div class="mb-4">
+                                                                                <label class="block text-sm font-medium text-gray-700">Find your address</label>
+                                                                                <input type="text" :id="`property-address-${i - 1}`" x-model="unitAddresses[i - 1]" class="mt-1 p-2 w-full border border-gray-300 rounded" placeholder="Address" />
                                                                             </div>
-                                                                            <div class="flex-1">
-                                                                                <label for="postcode"
-                                                                                    class="block text-sm font-medium text-gray-700">Post
-                                                                                    code / Zip code</label>
-                                                                                <input type="text" id="postcode"
-                                                                                    name="postcode" value="80400"
-                                                                                    class="mt-1 p-2 w-full border border-gray-300 rounded">
-                                                                            </div>
+                                                                            <!-- Repeat other address fields as needed -->
                                                                         </div>
-                                                                        <div class="flex items-center mt-4">
-                                                                            <input id="update_address" type="checkbox"
-                                                                                name="update_address" checked
-                                                                                class="mr-2">
-                                                                            <label for="update_address"
-                                                                                class="text-sm text-gray-700">Update
-                                                                                the address when moving the pin on the
-                                                                                map.</label>
-                                                                        </div>
+                                                                    </template>
 
-                                                                        <!-- Dismissible message box -->
-                                                                        <div x-data="{ showMessage: true }"
-                                                                            x-show="showMessage"
-                                                                            class="mt-4 bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded relative"
-                                                                            role="alert">
-                                                                            <strong class="font-bold">Note:</strong>
-                                                                            <span class="block sm:inline">Make sure the
-                                                                                pin location is accurate before
-                                                                                continuing.</span>
-                                                                            <span @click="showMessage = false"
-                                                                                class="absolute top-0 bottom-0 right-0 px-4 py-3 cursor-pointer">
-                                                                                <svg class="fill-current h-6 w-6 text-yellow-800"
-                                                                                    role="button"
-                                                                                    xmlns="http://www.w3.org/2000/svg"
-                                                                                    viewBox="0 0 20 20">
-                                                                                    <title>Close</title>
-                                                                                    <path
-                                                                                        d="M14.348 5.652a1 1 0 00-1.414 0L10 8.586 7.066 5.652a1 1 0 10-1.414 1.414L8.586 10l-2.934 2.934a1 1 0 101.414 1.414L10 11.414l2.934 2.934a1 1 0 001.414-1.414L11.414 10l2.934-2.934a1 1 0 000-1.414z" />
-                                                                                </svg>
-                                                                            </span>
-                                                                        </div>
+                                                                </template>
 
-                                                                        <p class="text-sm text-gray-600 mt-2">
-                                                                            Is the red pin location incorrect? Uncheck
-                                                                            the option above and click or press on the
-                                                                            map to move the pin.
-                                                                        </p>
-
-                                                                        <!-- Buttons -->
-                                                                        <div
-                                                                            class="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6">
-                                                                            <button type="button" @click="prevStep"
-                                                                                class="w-full sm:w-auto border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
-                                                                                ←
-                                                                            </button>
-                                                                            <button type="button" @click="nextStep"
-                                                                                class="w-full sm:w-auto px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
-                                                                                Continue
-                                                                            </button>
-                                                                        </div>
-
-
-                                                                    </form>
+                                                                <!-- Navigation buttons -->
+                                                                <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6">
+                                                                    <button type="button" @click="prevStep"
+                                                                        class="w-full sm:w-auto border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
+                                                                        ←
+                                                                    </button>
+                                                                    <button type="button" @click="nextStep"
+                                                                        class="w-full sm:w-auto px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
+                                                                        Continue
+                                                                    </button>
                                                                 </div>
+
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1927,7 +2193,7 @@
                                                                     A channel manager is a third-party tool that lets
                                                                     you manage rates and availability across different
                                                                     sites you might list your place on, including
-                                                                    {{ config('domains.subdomain') }}. If you're already using a channel
+                                                                    Booking.com. If you're already using a channel
                                                                     manager, you can select 'Yes' to connect it to your
                                                                     listing.
                                                                 </p>
@@ -2001,8 +2267,9 @@
                                                 <template x-if="step === 6">
                                                     <div>
                                                         <section class="mb-8">
-                                                            <h1 class="text-xl text-gray-700 font-bold mb-4">What can
-                                                                guests use at your place?</h1>
+                                                            <h1 class="text-xl text-gray-700 font-bold mb-4">
+                                                                What can guests use at Unit <span x-text="currentUnit"></span>?
+                                                            </h1>
 
                                                             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
@@ -2020,78 +2287,17 @@
                                                                                 Select property type(s)</h3>
                                                                             <div
                                                                                 class="grid grid-cols-1 sm:grid-cols-1 gap-2 text-sm text-gray-700">
-                                                                                <label
-                                                                                    class="flex items-center space-x-2">
+                                                                                @foreach ($amenities as $amenity)
+                                                                                <label class="flex items-center space-x-2">
                                                                                     <input type="checkbox"
-                                                                                        name="property_types[]"
-                                                                                        value="Apartment"
+                                                                                        :value="{{ $amenity['id'] }}"
+                                                                                        x-model="selectedAmenities"
                                                                                         class="text-blue-500" />
-                                                                                    <span>Bar</span>
+                                                                                    <span>{{ $amenity['name'] }}</span>
                                                                                 </label>
-                                                                                <label
-                                                                                    class="flex items-center space-x-2">
-                                                                                    <input type="checkbox"
-                                                                                        name="property_types[]"
-                                                                                        value="Villa"
-                                                                                        class="text-blue-500" />
-                                                                                    <span>Sauna</span>
-                                                                                </label>
-                                                                                <label
-                                                                                    class="flex items-center space-x-2">
-                                                                                    <input type="checkbox"
-                                                                                        name="property_types[]"
-                                                                                        value="Holiday Home"
-                                                                                        class="text-blue-500" />
-                                                                                    <span>Garden</span>
-                                                                                </label>
-                                                                                <label
-                                                                                    class="flex items-center space-x-2">
-                                                                                    <input type="checkbox"
-                                                                                        name="property_types[]"
-                                                                                        value="Chalet"
-                                                                                        class="text-blue-500" />
-                                                                                    <span>Terrace</span>
-                                                                                </label>
-                                                                                <label
-                                                                                    class="flex items-center space-x-2">
-                                                                                    <input type="checkbox"
-                                                                                        name="property_types[]"
-                                                                                        value="Cottage"
-                                                                                        class="text-blue-500" />
-                                                                                    <span>Hot tub/Jacuzzi</span>
-                                                                                </label>
-                                                                                <label
-                                                                                    class="flex items-center space-x-2">
-                                                                                    <input type="checkbox"
-                                                                                        name="property_types[]"
-                                                                                        value="Cabin"
-                                                                                        class="text-blue-500" />
-                                                                                    <span>Heating</span>
-                                                                                </label>
-                                                                                <label
-                                                                                    class="flex items-center space-x-2">
-                                                                                    <input type="checkbox"
-                                                                                        name="property_types[]"
-                                                                                        value="Bungalow"
-                                                                                        class="text-blue-500" />
-                                                                                    <span>Free WiFi</span>
-                                                                                </label>
-                                                                                <label
-                                                                                    class="flex items-center space-x-2">
-                                                                                    <input type="checkbox"
-                                                                                        name="property_types[]"
-                                                                                        value="Farm Stay"
-                                                                                        class="text-blue-500" />
-                                                                                    <span>Air conditioning</span>
-                                                                                </label>
-                                                                                <label
-                                                                                    class="flex items-center space-x-2">
-                                                                                    <input type="checkbox"
-                                                                                        name="property_types[]"
-                                                                                        value="Houseboat"
-                                                                                        class="text-blue-500" />
-                                                                                    <span>Swimming pool</span>
-                                                                                </label>
+                                                                                @endforeach
+
+
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -2159,7 +2365,7 @@
                                                         </section>
                                                     </div>
                                                 </template>
-                                                <!-- Step 5 -->
+                                                <!-- Step 7 -->
                                                 <template x-if="step === 7">
                                                     <div>
                                                         <div class="container mx-auto px-4 py-4 max-w-6xl mb-8">
@@ -2167,7 +2373,7 @@
                                                             <!-- Header -->
                                                             <h2
                                                                 class="text-2xl font-bold mb-4 text-left ml-6 max-w-xl">
-                                                                Services at your property
+                                                                Services at your property <span x-text="currentUnit"></span>
                                                             </h2>
 
                                                             <!-- Sections stacked vertically, aligned with header -->
@@ -2182,15 +2388,18 @@
                                                                     <div class="space-y-2">
                                                                         <label
                                                                             class="flex items-center cursor-pointer">
-                                                                            <input type="radio" name="breakfast"
-                                                                                value="yes" class="mr-2" />
+                                                                            <input type="radio"
+                                                                                :name="`breakfast_unit_${currentUnit}`"
+                                                                                value="yes" class="mr-2"
+                                                                                x-model="unitServices[currentUnit - 1].breakfast" />
                                                                             <span>Yes</span>
                                                                         </label>
                                                                         <label
                                                                             class="flex items-center cursor-pointer">
-                                                                            <input type="radio" name="breakfast"
+                                                                            <input type="radio"
+                                                                                :name="`breakfast_unit_${currentUnit}`"
                                                                                 value="no" class="mr-2"
-                                                                                checked />
+                                                                                x-model="unitServices[currentUnit - 1].breakfast" />
                                                                             <span>No</span>
                                                                         </label>
                                                                     </div>
@@ -2241,13 +2450,13 @@
                                                         </div>
                                                     </div>
                                                 </template>
-                                                <!-- Step 5 -->
+                                                <!-- Step 8 -->
                                                 <template x-if="step === 8">
                                                     <div>
                                                         <div class="container mx-auto px-4 py-8 max-w-6xl">
                                                             <!-- Header -->
                                                             <h2 class="text-2xl font-bold mb-8 text-left">
-                                                                What languages do you or your staff speak?
+                                                                What languages do you or your staff in property <span x-text="currentUnit"></span> speak?
                                                             </h2>
 
                                                             <!-- Language Selection Section -->
@@ -2255,22 +2464,17 @@
                                                                 <h3 class="text-lg  mb-4 font-bold">Select languages
                                                                 </h3>
                                                                 <div class="space-y-2">
+                                                                    @foreach ($languages as $lang)
                                                                     <label class="flex items-center cursor-pointer">
-                                                                        <input type="checkbox" class="mr-2" />
-                                                                        <span>English</span>
+                                                                        <input type="checkbox"
+                                                                            class="mr-2"
+                                                                            :value="'{{ $lang['name'] }}'"
+                                                                            x-model="unitServices[currentUnit - 1].languages" />
+                                                                        <span>{{ $lang['name'] }}</span>
                                                                     </label>
-                                                                    <label class="flex items-center cursor-pointer">
-                                                                        <input type="checkbox" class="mr-2" />
-                                                                        <span>French</span>
-                                                                    </label>
-                                                                    <label class="flex items-center cursor-pointer">
-                                                                        <input type="checkbox" class="mr-2" />
-                                                                        <span>German</span>
-                                                                    </label>
-                                                                    <label class="flex items-center cursor-pointer">
-                                                                        <input type="checkbox" class="mr-2" />
-                                                                        <span>Hindi</span>
-                                                                    </label>
+                                                                    @endforeach
+
+
                                                                 </div>
 
                                                                 <!-- Add Additional Languages -->
@@ -2343,7 +2547,7 @@
                                                                     ←
                                                                 </button>
 
-                                                                <!-- Continue Button on the right -->
+                                                                <!-- Continue Button n tohe right -->
                                                                 <button type="button" @click="nextStep"
                                                                     class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
                                                                     Continue
@@ -2363,6 +2567,24 @@
                                                                     hideDropdown();
                                                                 }
                                                             }
+
+
+
+                                                            function selectLanguage(element) {
+                                                                const selected = element.textContent.trim();
+                                                                const unitIndex = Alpine.store('stepForm').currentUnit - 1;
+                                                                const langArray = Alpine.store('stepForm').unitServices[unitIndex].languages;
+
+                                                                if (!langArray.includes(selected)) {
+                                                                    langArray.push(selected);
+                                                                }
+                                                                console.log(`Selected language: ${selected}`);
+
+                                                                // clear input and hide dropdown
+                                                                document.getElementById("languageInput").value = "";
+                                                                hideDropdown();
+                                                            }
+
 
                                                             function toggleDropdown() {
                                                                 const dropdown = document.getElementById("languageDropdown");
@@ -2419,12 +2641,12 @@
                                                         </script>
                                                     </div>
                                                 </template>
-                                                <!-- Step 5 -->
+                                                <!-- Step 9 -->
                                                 <template x-if="step === 9">
                                                     <div>
                                                         <div class="container mx-auto px-4 py-8 max-w-6xl">
                                                             <!-- Header -->
-                                                            <h2 class="text-2xl font-bold mb-8 text-left">House rules
+                                                            <h2 class="text-2xl font-bold mb-8 text-left">House rules of property <span x-text="currentUnit"></span>
                                                             </h2>
 
                                                             <div class="flex flex-col md:flex-row gap-6">
@@ -2438,7 +2660,9 @@
                                                                             <span>Smoking allowed</span>
                                                                             <div class="relative">
                                                                                 <input type="checkbox"
-                                                                                    class="sr-only peer" />
+                                                                                    class="sr-only peer"
+                                                                                    x-model="unitServices[currentUnit - 1].houseRules.smokingAllowed" />
+
                                                                                 <div
                                                                                     class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition">
                                                                                 </div>
@@ -2453,7 +2677,9 @@
                                                                             <span>Children allowed</span>
                                                                             <div class="relative">
                                                                                 <input type="checkbox"
-                                                                                    class="sr-only peer" checked />
+                                                                                    class="sr-only peer"
+                                                                                    x-model="unitServices[currentUnit - 1].houseRules.childrenAllowed" />
+
                                                                                 <div
                                                                                     class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition">
                                                                                 </div>
@@ -2468,7 +2694,9 @@
                                                                             <span>Parties/events allowed</span>
                                                                             <div class="relative">
                                                                                 <input type="checkbox"
-                                                                                    class="sr-only peer" />
+                                                                                    class="sr-only peer"
+                                                                                    x-model="unitServices[currentUnit - 1].houseRules.partiesAllowed" />
+
                                                                                 <div
                                                                                     class="w-8 h-4 bg-gray-300 rounded-full peer-focus:outline-none peer-checked:bg-blue-500 transition">
                                                                                 </div>
@@ -2487,22 +2715,20 @@
                                                                         <div class="space-y-2">
                                                                             <label
                                                                                 class="flex items-center cursor-pointer">
-                                                                                <input type="radio" name="pets"
-                                                                                    value="yes" class="mr-2">
+                                                                                <input type="radio" name="pets" value="yes"
+                                                                                    x-model="unitServices[currentUnit - 1].houseRules.petsPolicy" />
                                                                                 <span>Yes</span>
                                                                             </label>
                                                                             <label
                                                                                 class="flex items-center cursor-pointer">
-                                                                                <input type="radio" name="pets"
-                                                                                    value="upon_request"
-                                                                                    class="mr-2">
+                                                                                <input type="radio" name="pets" value="upon_request"
+                                                                                    x-model="unitServices[currentUnit - 1].houseRules.petsPolicy" />
                                                                                 <span>Upon request</span>
                                                                             </label>
                                                                             <label
                                                                                 class="flex items-center cursor-pointer">
-                                                                                <input type="radio" name="pets"
-                                                                                    value="no" class="mr-2"
-                                                                                    checked>
+                                                                                <input type="radio" name="pets" value="no"
+                                                                                    x-model="unitServices[currentUnit - 1].houseRules.petsPolicy" />
                                                                                 <span>No</span>
                                                                             </label>
                                                                         </div>
@@ -2518,13 +2744,15 @@
                                                                             <div class="w-full">
                                                                                 <label
                                                                                     class="block text-sm font-medium mb-1">From</label>
-                                                                                <input type="time" value="15:00"
+                                                                                <input type="time"
+                                                                                    x-model="unitServices[currentUnit - 1].houseRules.checkInFrom"
                                                                                     class="w-full border rounded p-2" />
                                                                             </div>
                                                                             <div class="w-full">
                                                                                 <label
                                                                                     class="block text-sm font-medium mb-1">Until</label>
-                                                                                <input type="time" value="18:00"
+                                                                                <input type="time"
+                                                                                    x-model="unitServices[currentUnit - 1].houseRules.checkInUntil"
                                                                                     class="w-full border rounded p-2" />
                                                                             </div>
                                                                         </div>
@@ -2538,13 +2766,15 @@
                                                                             <div class="w-full">
                                                                                 <label
                                                                                     class="block text-sm font-medium mb-1">From</label>
-                                                                                <input type="time" value="08:00"
+                                                                                <input type="time"
+                                                                                    x-model="unitServices[currentUnit - 1].houseRules.checkOutFrom"
                                                                                     class="w-full border rounded p-2" />
                                                                             </div>
                                                                             <div class="w-full">
                                                                                 <label
                                                                                     class="block text-sm font-medium mb-1">Until</label>
-                                                                                <input type="time" value="11:00"
+                                                                                <input type="time"
+                                                                                    x-model="unitServices[currentUnit - 1].houseRules.checkOutUntil"
                                                                                     class="w-full border rounded p-2" />
                                                                             </div>
                                                                         </div>
@@ -2603,80 +2833,66 @@
                                                     <div>
                                                         <!-- Main Content -->
                                                         <main class="container mx-auto px-4 py-8 max-w-4xl">
-                                                            <h2 class="text-2xl md:text-3xl font-bold mb-6 text-left">
-                                                                Host profile
-                                                            </h2>
+                                                            <h2 class="text-2xl md:text-3xl font-bold mb-6 text-left">Host profile of property <span x-text="currentUnit"></span> </h2>
 
                                                             <div class="bg-white shadow-md rounded-lg p-6 md:p-8">
                                                                 <p class="text-gray-700 mb-4 text-sm md:text-base">
-                                                                    Help your listing stand out by telling potential
-                                                                    guests a bit more about yourself, your property and
-                                                                    your neighbourhood. This information will be shown
-                                                                    on your property page.
+                                                                    Help your listing stand out by telling potential guests a bit more about yourself, your property and your neighbourhood. This information will be shown on your property page.
                                                                 </p>
 
                                                                 <div class="space-y-3">
-                                                                    <label
-                                                                        class="flex items-start sm:items-center cursor-pointer">
-                                                                        <input type="radio" name="profile-info"
-                                                                            value="property"
-                                                                            class="mr-3 mt-1 sm:mt-0">
-                                                                        <span class="text-sm sm:text-base">The
-                                                                            property</span>
+                                                                    <label class="flex items-start sm:items-center cursor-pointer">
+                                                                        <input type="radio" name="profile-info" value="property"
+                                                                            class="mr-3 mt-1 sm:mt-0"
+                                                                            x-model="unitServices[currentUnit - 1].hostProfile">
+                                                                        <span class="text-sm sm:text-base">The property</span>
                                                                     </label>
 
-                                                                    <label
-                                                                        class="flex items-start sm:items-center cursor-pointer">
-                                                                        <input type="radio" name="profile-info"
-                                                                            value="host" class="mr-3 mt-1 sm:mt-0">
-                                                                        <span class="text-sm sm:text-base">The
-                                                                            host</span>
+                                                                    <label class="flex items-start sm:items-center cursor-pointer">
+                                                                        <input type="radio" name="profile-info" value="host"
+                                                                            class="mr-3 mt-1 sm:mt-0"
+                                                                            x-model="unitServices[currentUnit - 1].hostProfile">
+                                                                        <span class="text-sm sm:text-base">The host</span>
                                                                     </label>
 
-                                                                    <label
-                                                                        class="flex items-start sm:items-center cursor-pointer">
-                                                                        <input type="radio" name="profile-info"
-                                                                            value="neighbourhood"
-                                                                            class="mr-3 mt-1 sm:mt-0">
-                                                                        <span class="text-sm sm:text-base">The
-                                                                            neighbourhood</span>
+                                                                    <label class="flex items-start sm:items-center cursor-pointer">
+                                                                        <input type="radio" name="profile-info" value="neighbourhood"
+                                                                            class="mr-3 mt-1 sm:mt-0"
+                                                                            x-model="unitServices[currentUnit - 1].hostProfile">
+                                                                        <span class="text-sm sm:text-base">The neighbourhood</span>
                                                                     </label>
 
-                                                                    <label
-                                                                        class="flex items-start sm:items-center cursor-pointer">
-                                                                        <input type="radio" name="profile-info"
-                                                                            value="later" class="mr-3 mt-1 sm:mt-0"
-                                                                            checked>
-                                                                        <span class="text-sm sm:text-base">None of the
-                                                                            above/I'll add these later</span>
+                                                                    <label class="flex items-start sm:items-center cursor-pointer">
+                                                                        <input type="radio" name="profile-info" value="later"
+                                                                            class="mr-3 mt-1 sm:mt-0"
+                                                                            x-model="unitServices[currentUnit - 1].hostProfile">
+                                                                        <span class="text-sm sm:text-base">None of the above/I'll add these later</span>
                                                                     </label>
                                                                 </div>
                                                             </div>
 
                                                             <!-- Navigation Buttons -->
                                                             <div class="mt-8 flex justify-between">
-                                                                <!-- Back Button on the left -->
                                                                 <button type="button" @click="prevStep"
                                                                     class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
                                                                     ←
                                                                 </button>
 
-                                                                <!-- Continue Button on the right -->
                                                                 <button type="button" @click="nextStep"
                                                                     class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
                                                                     Continue
                                                                 </button>
                                                             </div>
-
                                                         </main>
                                                     </div>
                                                 </template>
+
                                                 <template x-if="step === 11">
                                                     <div>
                                                         <div class="max-w-5xl mx-auto px-4 py-10 space-y-32">
                                                             <section class="mb-8">
                                                                 <h1 class="text-2xl text-gray-700 font-bold mb-4">
-                                                                    What's the name of your place?</h1>
+                                                                    What's the name of your place <span x-text="currentUnit"></span>?</h1>
 
                                                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
@@ -2688,7 +2904,8 @@
                                                                                 class="block text-gray-700">Property
                                                                                 name</label>
                                                                             <input type="text" id="property_name"
-                                                                                name="property_name" value="ccc"
+                                                                                name="property_name"
+                                                                                x-model="formData.propertyName"
                                                                                 class="w-full h-16 border border-gray-300 rounded p-4 mt-3 text-lg focus:outline-none focus:border-blue-500"
                                                                                 placeholder="e.g., Sunset Villa"
                                                                                 required>
@@ -2781,7 +2998,7 @@
                                                                     <!-- Continue Button -->
                                                                     <!-- Continue Button (inside input field container, aligned right) -->
                                                                     <div class="flex justify-end mt-4">
-                                                                        <button type="button" @click="nextStep"
+                                                                        <button type="button" @click="nextStep()"
                                                                             class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
                                                                             Continue
                                                                         </button>
@@ -2794,7 +3011,63 @@
                                                     </div>
 
                                                 </template>
-                                                <template x-if="step === 12">
+                                                <template x-if="step === 12 ">
+                                                    <div class="space-y-6">
+                                                        <h3 class="text-lg font-bold">Upload Photos for Unit <span x-text="currentUnit"></span></h3>
+
+                                                        <!-- Upload Box -->
+                                                        <div
+                                                            class="relative border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center text-center hover:border-blue-400 transition"
+                                                            @dragover.prevent
+                                                            @drop.prevent>
+                                                            <svg class="w-12 h-12 text-blue-400 mb-2" fill="none" stroke="currentColor" stroke-width="1.5"
+                                                                viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                                    d="M3 16.5V18a2.5 2.5 0 002.5 2.5h13a2.5 2.5 0 002.5-2.5v-1.5M16.5 12L12 7.5 7.5 12M12 7.5V18" />
+                                                            </svg>
+
+                                                            <p class="text-gray-600 text-sm">Drag and drop your images here, or</p>
+
+                                                            <label class="mt-2 cursor-pointer inline-block bg-blue-100 hover:bg-blue-200 text-blue-700 px-4 py-2 rounded font-medium">
+                                                                Browse files
+                                                                <input
+                                                                    type="file"
+                                                                    multiple
+                                                                    x-ref="unitPhotoInput"
+                                                                    @change="handleUnitPhotoUpload(currentUnit, $event)"
+                                                                    accept="image/*"
+                                                                    class="hidden" />
+                                                            </label>
+
+                                                            <p class="text-xs text-gray-500 mt-2">Accepted formats: JPG, PNG, WebP. Max size: 5MB each</p>
+                                                        </div>
+
+                                                        <!-- Photo Previews -->
+                                                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-4" x-show="previewUnitPhotos[currentUnit]?.length">
+                                                            <template x-for="(file, index) in previewUnitPhotos[currentUnit]" :key="index">
+                                                                <img :src="file" class="rounded shadow object-cover w-full h-32 border border-gray-300" />
+                                                            </template>
+                                                        </div>
+
+                                                        <!-- Navigation Buttons -->
+                                                        <div class="flex justify-between pt-4">
+                                                            <button type="button"
+                                                                @click="prevStep"
+                                                                class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium px-5 py-2 rounded">
+                                                                ←
+                                                            </button>
+
+                                                            <button
+                                                                type="button"
+                                                                @click="nextStep"
+                                                                class="bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold px-6 py-2 rounded shadow">
+                                                                Continue →
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </template>
+
+                                                <template x-if="step === 15">
                                                     <div>
                                                         <!-- AlpineJS is required -->
                                                         <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
@@ -2803,7 +3076,7 @@
                                                             class="px-4 py-8 max-w-4xl mx-auto space-y-6">
 
                                                             <h1 class="text-2xl sm:text-3xl font-semibold">How you
-                                                                receive bookings</h1>
+                                                                receive bookings for Unit <span x-text="currentUnit"></span></h1>
 
                                                             <!-- Safety Info Box -->
                                                             <div class="bg-white border rounded-lg p-6 shadow-sm">
@@ -2922,7 +3195,124 @@
 
                                                     </div>
                                                 </template>
-                                                <template x-if="step === 13">
+
+                                                <template x-if="step === 13 "
+
+                                                    x-init="
+                                                        roomTypes = @js($roomTypes);
+                                                        bedTypes = @js($bedTypes)
+                                                    ">
+                                                    <div>
+                                                        <!-- Main Content -->
+                                                        <main class="container mx-auto px-4 py-8 max-w-4xl">
+                                                            <h2 class="text-2xl md:text-3xl font-bold mb-6 text-left">
+                                                                Room Details for Unit <span x-text="currentUnit"></span>
+                                                            </h2>
+
+                                                            <div class="bg-white shadow-md rounded-lg p-6 md:p-8 space-y-6">
+
+                                                                <p class="text-gray-700 text-sm md:text-base">
+                                                                    Add information about each room in your property. Include room type, number of guests it can host,
+                                                                    price, and bed configuration.
+                                                                </p>
+
+                                                                <!-- Room Type -->
+                                                                <div>
+                                                                    <label class="block text-sm font-medium text-gray-700 mb-1">Room Type</label>
+                                                                    <select x-model="newRoom.room_type_id" class="w-full border rounded px-3 py-2">
+                                                                        <template x-for="type in roomTypes" :key="type.id">
+                                                                            <option :value="type.id" x-text="type.name"></option>
+                                                                        </template>
+                                                                    </select>
+                                                                </div>
+
+                                                                <!-- Room Name -->
+                                                                <div>
+                                                                    <label class="block text-sm font-medium text-gray-700 mb-1">Room Name</label>
+                                                                    <input type="text" x-model="newRoom.name"
+                                                                        class="w-full border border-gray-300 rounded px-3 py-2" placeholder="E.g. Master Bedroom" />
+                                                                </div>
+
+                                                                <!-- Price -->
+                                                                <div>
+                                                                    <label class="block text-sm font-medium text-gray-700 mb-1">Price per Night (LKR)</label>
+                                                                    <input type="number" x-model="newRoom.price_per_night" min="0" step="0.01"
+                                                                        class="w-full border border-gray-300 rounded px-3 py-2" />
+                                                                </div>
+
+                                                                <!-- Max Guests -->
+                                                                <div>
+                                                                    <label class="block text-sm font-medium text-gray-700 mb-1">Max Guests</label>
+                                                                    <input type="number" x-model="newRoom.max_guests" min="1"
+                                                                        class="w-full border border-gray-300 rounded px-3 py-2" />
+                                                                </div>
+
+                                                                <!-- Bathroom Count -->
+                                                                <div>
+                                                                    <label class="block text-sm font-medium text-gray-700 mb-1">Bathroom Count</label>
+                                                                    <input type="number" x-model="newRoom.bathroom_count" min="0"
+                                                                        class="w-full border border-gray-300 rounded px-3 py-2" />
+                                                                </div>
+
+                                                                <!-- Size -->
+                                                                <div>
+                                                                    <label class="block text-sm font-medium text-gray-700 mb-1">Size (sq. meters)</label>
+                                                                    <input type="number" x-model="newRoom.size_sq_m" min="0"
+                                                                        class="w-full border border-gray-300 rounded px-3 py-2" />
+                                                                </div>
+
+                                                                <!-- Bed Types -->
+                                                                <div>
+                                                                    <label class="block text-sm font-medium text-gray-700 mb-1">Beds</label>
+                                                                    <template x-for="(bedType, index) in bedTypes" :key="bedType.id">
+                                                                        <div class="flex items-center mb-2">
+                                                                            <label class="w-1/2 text-gray-600 text-sm" x-text="bedType.name"></label>
+                                                                            <input type="number" min="0"
+                                                                                class="w-1/2 border border-gray-300 rounded px-3 py-1 ml-2"
+                                                                                @input="newRoom.beds[bedType.id] = +$event.target.value" />
+
+                                                                        </div>
+                                                                    </template>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Navigation Buttons -->
+                                                            <div class="mt-8 flex justify-between">
+                                                                <button type="button" @click="prevStep"
+                                                                    class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                                                                    ←
+                                                                </button>
+                                                                <button type="button" @click="addRoom"
+                                                                    class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                                                                    + Add Room
+                                                                </button>
+                                                                <button type="button" @click="nextStep"
+                                                                    class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
+                                                                    Save Room & Continue
+                                                                </button>
+                                                            </div>
+
+                                                            <div class="mt-6 border-t pt-4">
+                                                                <h3 class="font-semibold mb-2">Added Rooms:</h3>
+                                                                <template x-for="(room, index) in rooms" :key="index">
+                                                                    <div class="border p-2 rounded mb-2 bg-gray-50">
+                                                                        <p><strong>Name:</strong> <span x-text="room.name"></span></p>
+                                                                        <p><strong>Type:</strong> <span x-text="roomTypes.find(rt => rt.id == room.room_type_id)?.name"></span></p>
+                                                                        <p><strong>Price:</strong> Rs. <span x-text="room.price_per_night"></span></p>
+
+                                                                        <button
+                                                                            @click="if(confirm('Are you sure you want to remove this room?')) rooms.splice(index, 1)"
+                                                                            class="ml-4 bg-red-100 hover:bg-red-200 text-red-700 font-semibold px-3 py-1 rounded">
+                                                                            ✕ Remove
+                                                                        </button>
+                                                                    </div>
+                                                                </template>
+                                                            </div>
+
+                                                        </main>
+                                                    </div>
+                                                </template>
+                                                <template x-if="step === 14">
                                                     <div>
                                                         <!-- Include Alpine.js -->
                                                         <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
@@ -2931,7 +3321,7 @@
                                                             class="px-4 py-8 max-w-3xl mx-auto space-y-6">
 
                                                             <h1 class="text-2xl sm:text-3xl font-semibold">Partner
-                                                                verification</h1>
+                                                                verification for <span x-text="currentUnit"></span> </h1>
 
                                                             <!-- Instruction + Select Box -->
                                                             <div
@@ -2965,7 +3355,7 @@
                                                                     <div>
                                                                         <label class="block text-sm text-gray-700">Full
                                                                             Name</label>
-                                                                        <input type="text"
+                                                                        <input type="text" x-model="individual.name"
                                                                             class="w-full mt-1 border rounded px-3 py-2"
                                                                             placeholder="Enter your full name">
                                                                     </div>
@@ -2973,7 +3363,7 @@
                                                                         <label
                                                                             class="block text-sm text-gray-700">National
                                                                             ID or Passport</label>
-                                                                        <input type="text"
+                                                                        <input type="text" x-model="individual.id"
                                                                             class="w-full mt-1 border rounded px-3 py-2"
                                                                             placeholder="Enter ID number">
                                                                     </div>
@@ -2990,7 +3380,7 @@
                                                                         <label
                                                                             class="block text-sm text-gray-700">Company
                                                                             Name</label>
-                                                                        <input type="text"
+                                                                        <input type="text" x-model="business.company_name"
                                                                             class="w-full mt-1 border rounded px-3 py-2"
                                                                             placeholder="Enter company name">
                                                                     </div>
@@ -2998,7 +3388,7 @@
                                                                         <label
                                                                             class="block text-sm text-gray-700">Business
                                                                             Registration Number</label>
-                                                                        <input type="text"
+                                                                        <input type="text" x-model="business.reg_no"
                                                                             class="w-full mt-1 border rounded px-3 py-2"
                                                                             placeholder="Enter registration number">
                                                                     </div>
@@ -3024,13 +3414,25 @@
 
                                                     </div>
                                                 </template>
-                                                <template x-if="step === 14">
+                                                <template x-if="step === 16 ">
                                                     <div>
                                                         <h3 class="text-lg font-bold mb-2">Upload Additional Documents
                                                         </h3>
                                                         <input type="file" multiple
                                                             class="border p-2 rounded w-full" />
+
+                                                        <div class="flex justify-between mt-8">
+                                                            <button type="button" @click="prevStep"
+                                                                class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                                                                ←
+                                                            </button>
+                                                            <button type="button" @click="nextStep"
+                                                                class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
+                                                                Continue
+                                                            </button>
+                                                        </div>
                                                     </div>
+
                                                 </template>
                                             </div>
                                         </template>
@@ -3050,27 +3452,157 @@
                             function wizard(selectedBoxValue) {
                                 return {
                                     step: 1,
-                                    selectedBox: selectedBoxValue, // Ensure this matches to show this section
+                                    selectedBox: selectedBoxValue,
                                     selected: '',
-                                    sameAddress: '',
+                                    sameAddress: 'yes',
                                     propertyCount: 2,
-                                    totalSteps: 14, // Adjust total steps as needed
-
+                                    totalSteps: 16,
+                                    currentUnit: 1,
+                                    unitPhotos: {}, // Holds all photo arrays per unit
+                                    previewUnitPhotos: {}, // Holds base64 previews per unit
+                                    unitFacilities: [],
+                                    unitServices: [],
                                     previewFiles: [],
+                                    channelManager: '',
+                                    formData: {
+                                        propertyName: '',
+                                        description: '',
+                                        addressForm: {
+                                            address_line_1: '',
+                                            address_line_2: '',
+                                            city: '',
+                                            state: '',
+                                            country: '',
+                                            postal_code: ''
+                                        }
+                                    },
+                                    rooms: {
+                                        bedroom1: {key:'1',room_type_id: 1, name: 'Bedroom ', beds: {} },
+                                        livingRoom: {key:'2',room_type_id: 2,  name: 'Living Room', beds: {} },
+                                        otherSpaces: {key:'3',room_type_id: 3, name: 'Other Spaces', beds: {} },
+                                    },
+                                    allBedTypes: [
+                                        { id: '1', name: 'Single', applicableTo: ['1', '3'] },
+                                        { id: '2', name: 'Double', applicableTo: ['1', '3'] },
+                                        { id: '3', name: 'King', applicableTo: ['1', '3'] },
+                                        { id: '4', name: 'Super King', applicableTo: ['1', '3'] },
+                                        { id: '5', name: 'Bunk', applicableTo: ['1', '3'] },
+                                        { id: '6', name: 'Sofa Bed', applicableTo: ['1', '2', '3'] }
+                                    ],
+                                    guests: 1,
+                                    bathrooms: 1,
+                                    allowChildren: 'yes',
+                                    offerCribs: 'no',
+                                    apartmentSize: '',
+                                    price_per_night: '',
+                                    apartmentUnit: 'square meters',
+                                    showRoomEditor: false,
 
+                                    currentEditingRoomKey: null,
+                                    editingRoom: { name: '', beds: {} ,room_type_id: 1},
+
+                                    openRoomEditor(key = null) {
+                                        this.currentEditingRoomKey = key;
+
+                                        if (key && this.rooms[key]) {
+                                            this.editingRoom = JSON.parse(JSON.stringify(this.rooms[key]));
+                                        } else {
+                                            // For new room
+                                            const newKey = 'bedroom' + (Object.keys(this.rooms).filter(k => k.startsWith('bedroom')).length + 1);
+                                            this.currentEditingRoomKey = newKey;
+                                            this.editingRoom = { name: 'Bedroom', beds: {},room_type_id: 1 };
+                                        }
+
+                                        this.showRoomEditor = true;
+                                    },
+
+                                    saveRoomEditor() {
+                                        this.rooms[this.currentEditingRoomKey] = JSON.parse(JSON.stringify(this.editingRoom));
+                                        this.showRoomEditor = false;
+                                    },
+
+                                    cancelRoomEditor() {
+                                        this.showRoomEditor = false;
+                                    },
+
+                                    getBedSummary(key) {
+                                        const bedCounts = this.rooms[key]?.beds || {};
+                                        return Object.entries(bedCounts)
+                                            .filter(([_, count]) => count > 0)
+                                            .map(([id, count]) => `${count} ${this.allBedTypes.find(bt => bt.id === id)?.name}`)
+                                            .join(', ') || 'No beds selected';
+                                    },
+
+                                    hasBedCounts(key) {
+                                        const beds = this.rooms[key]?.beds || {};
+                                        return Object.values(beds).some(count => count > 0);
+                                    },
+
+                                    navigateToBedroom(key = null) {
+                                        this.openRoomEditor(key);
+                                    },
+
+                                    editSavedRoom(key) {
+                                        this.openRoomEditor(key);
+                                    },
+                                    getSavedRoomBedSummary(room) {
+                                        return Object.entries(room.beds)
+                                            .filter(([_, count]) => count > 0)
+                                            .map(([id, count]) => `${count} ${this.allBedTypes.find(bt => bt.id === id)?.name}`)
+                                            .join(', ');
+                                    },
+                                    deleteRoom(key) {
+                                        if (confirm('Are you sure you want to delete this room?')) {
+                                            delete this.rooms[key];
+                                        }
+                                    },
+                                    addRoom() {
+
+
+                                        // Clone the current newRoom and push to rooms
+                                        const roomCopy = JSON.parse(JSON.stringify(this.newRoom));
+                                        this.rooms.push(roomCopy);
+
+                                        // Reset newRoom
+                                        this.newRoom = {
+                                            room_type_id: '',
+                                            name: '',
+                                            price_per_night: 0,
+                                            max_guests: 1,
+                                            bathroom_count: 0,
+                                            size_sq_m: 0,
+                                            beds: {}
+                                        };
+                                    },
                                     handlePreview(event) {
-                                        this.previewFiles = []; // Clear existing previews
                                         const files = event.target.files;
 
                                         for (let i = 0; i < files.length; i++) {
                                             const reader = new FileReader();
                                             reader.onload = e => {
                                                 this.previewFiles.push(e.target.result);
+                                                this.updateContinueButton();
+
                                             };
+
                                             reader.readAsDataURL(files[i]);
                                         }
                                     },
 
+                                    removePhoto(index) {
+                                        this.previewFiles.splice(index, 1);
+                                        this.updateContinueButton();
+                                    },
+                                    updateContinueButton() {
+                                        const btn = this.$refs.continueBtn;
+                                        if (this.previewFiles.length < 3) {
+                                            btn.disabled = true;
+                                            btn.className = 'px-6 py-2 text-white rounded bg-gray-400 cursor-not-allowed';
+                                        } else {
+                                            btn.disabled = false;
+                                            btn.className = 'px-6 py-2 text-white rounded bg-[#3CC0E9] hover:bg-blue-700';
+                                        }
+                                    },
                                     selectOption(option) {
                                         this.selected = option;
                                         // Reset step if needed
@@ -3125,8 +3657,10 @@
                                         }
                                     },
 
+
+
                                     async nextStep() {
-                                        if (this.step === 1 && this.selected === 'one' || this.selected === 'multiple') {
+                                        if ((this.step === 1 && this.selected === 'one')) {
                                             try {
 
                                                 console.log('Addtress type:', this.step);
@@ -3146,9 +3680,24 @@
                                                 const result = await response.json();
                                                 if (result.success) {
                                                     console.log('Address type saved:', result);
+                                                    Swal.fire({
+                                                        icon: 'success',
+                                                        title: 'Address type saved successfully',
+                                                        toast: true,
+                                                        position: 'top-end',
+                                                        showConfirmButton: false,
+                                                        timer: 3000
+                                                    });
                                                     this.step++;
                                                 } else {
-                                                    alert('Failed to save address step: ' + result.message);
+                                                    Swal.fire({
+                                                        icon: 'error',
+                                                        title: 'Failed to save address step: ' + result.message,
+                                                        toast: true,
+                                                        position: 'top-end',
+                                                        showConfirmButton: false,
+                                                        timer: 3000
+                                                    });
                                                 }
                                             } catch (e) {
                                                 console.error('Error saving step 2:', e);
@@ -3157,7 +3706,11 @@
                                             console.log(`Submitting property name ${this.propertyName} and description ${this.description} for property ID:`, this.propertyId);
 
                                             if (!this.propertyName || this.propertyName.trim() === '') {
-                                                alert('Please enter a property name.');
+                                                Swal.fire({
+                                                    icon: 'error',
+                                                    title: 'Error',
+                                                    text: 'Please enter a property name.'
+                                                });
                                                 return;
                                             }
 
@@ -3165,8 +3718,7 @@
                                                     method: 'POST',
                                                     headers: {
                                                         'Content-Type': 'application/json',
-                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                                            .getAttribute('content')
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                                                     },
                                                     body: JSON.stringify({
                                                         title: this.propertyName,
@@ -3178,20 +3730,49 @@
                                                 .then(result => {
                                                     if (result.success) {
                                                         console.log('Property name saved:', result);
+                                                        Swal.fire({
+                                                            icon: 'success',
+                                                            title: 'Property name saved successfully',
+                                                            toast: true,
+                                                            position: 'top-end',
+                                                            showConfirmButton: false,
+                                                            timer: 3000
+                                                        });
                                                         this.step++; // move to next step
                                                     } else {
-                                                        alert(result.message || 'Failed to save property name.');
+                                                        Swal.fire({
+                                                            icon: 'error',
+                                                            title: 'Failed to save property name: ' + result.message,
+                                                            toast: true,
+                                                            position: 'top-end',
+                                                            showConfirmButton: false,
+                                                            timer: 3000
+                                                        });
                                                     }
                                                 })
                                                 .catch(error => {
                                                     console.error('Error saving property name:', error);
-                                                    alert('Something went wrong while saving the property name.');
+                                                    Swal.fire({
+                                                        icon: 'error',
+                                                        title: 'Something went wrong while saving the property name.',
+                                                        toast: true,
+                                                        position: 'top-end',
+                                                        showConfirmButton: false,
+                                                        timer: 3000
+                                                    })
                                                 });
                                         } else if (this.step === 5 && this.selected === 'one') {
                                             console.log('Submitting photos for property ID:', this.propertyId);
                                             const files = this.$refs.photoInput.files;
                                             if (!files.length) {
-                                                alert('Please upload at least one photo.');
+                                                Swal.fire({
+                                                    icon: 'error',
+                                                    title: 'Please select at least one photo.',
+                                                    toast: true,
+                                                    position: 'top-end',
+                                                    showConfirmButton: false,
+                                                    timer: 3000
+                                                });
                                                 return;
                                             }
 
@@ -3213,16 +3794,38 @@
                                                 .then(result => {
                                                     if (result.success) {
                                                         console.log('Photos uploaded');
+                                                        Swal.fire({
+                                                            icon: 'success',
+                                                            title: 'Photos uploaded successfully',
+                                                            toast: true,
+                                                            position: 'top-end',
+                                                            showConfirmButton: false,
+                                                            timer: 3000
+                                                        });
                                                         this.step++;
                                                     } else {
-                                                        alert(result.message || 'Upload failed');
+                                                        Swal.fire({
+                                                            icon: 'error',
+                                                            title: 'Failed to upload photos: ' + result.message,
+                                                            toast: true,
+                                                            position: 'top-end',
+                                                            showConfirmButton: false,
+                                                            timer: 3000
+                                                        });
                                                     }
                                                 })
                                                 .catch(error => {
                                                     console.error('Upload error:', error);
-                                                    alert('Something went wrong while uploading photos.');
+                                                    Swal.fire({
+                                                        icon: 'error',
+                                                        title: 'Something went wrong while uploading photos.',
+                                                        toast: true,
+                                                        position: 'top-end',
+                                                        showConfirmButton: false,
+                                                        timer: 3000
+                                                    });
                                                 });
-                                        } else if (this.step === 7 && this.selected === 'one') {
+                                        } else if (this.step === 6 && this.selected === 'one') {
                                             try {
                                                 console.log('Submitting form:', this.addressForm);
 
@@ -3238,14 +3841,30 @@
                                                 const result = await response.json();
                                                 if (result.success) {
                                                     console.log('Addtress saved:', result);
+                                                    Swal.fire({
+                                                        icon: 'success',
+                                                        title: 'Address saved successfully',
+                                                        toast: true,
+                                                        position: 'top-end',
+                                                        showConfirmButton: false,
+                                                        timer: 3000
+                                                    });
                                                     this.step++;
                                                 } else {
-                                                    alert('Failed to save address step: ' + result.message);
+                                                    Swal.fire({
+                                                        icon: 'error',
+                                                        title: 'Error',
+                                                        text: 'Failed to save address step: ' + result.message,
+                                                        toast: true,
+                                                        position: 'top-end',
+                                                        showConfirmButton: false,
+                                                        timer: 3000
+                                                    });
                                                 }
                                             } catch (e) {
                                                 console.error('Error saving step 2:', e);
                                             }
-                                        } else if (this.step === 9 && this.selected === 'one') {
+                                        } else if (this.step === 8 && this.selected === 'one') {
                                             try {
                                                 // Get all checked amenity IDs
                                                 const selectedAmenities = Array.from(document.querySelectorAll('input[name="amenities[]"]:checked'))
@@ -3255,6 +3874,7 @@
                                                 const response = await fetch(`/partner/property/save-amenities/${this.propertyId}`, {
                                                     method: 'POST',
                                                     headers: {
+                                                        'Content-Type': 'application/json',
                                                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                                                     },
                                                     body: JSON.stringify({
@@ -3267,32 +3887,161 @@
 
                                                 if (result.success) {
                                                     console.log('Amenities saved:', result);
-                                                    this.step++; // go to next step
+                                                    Swal.fire({
+                                                        icon: 'success',
+                                                        title: 'Amenities saved successfully',
+                                                        toast: true,
+                                                        position: 'top-end',
+                                                        showConfirmButton: false,
+                                                        timer: 3000
+                                                    });
+                                                    this.step++;
                                                 } else {
-                                                    alert('Failed to save amenities: ' + result.message);
+                                                    Swal.fire({
+                                                        icon: 'error',
+                                                        title: 'Error',
+                                                        text: 'Failed to save amenities: ' + result.message,
+                                                        toast: true,
+                                                        position: 'top-end',
+                                                        showConfirmButton: false,
+                                                        timer: 3000
+                                                    })
                                                 }
                                             } catch (e) {
                                                 console.error('Error saving amenities:', e);
                                             }
-                                        } else if (this.step === 12 && this.selected === 'one') {
+                                        } else if (this.step === 9 && this.selected === 'one') {
+                                            const propertyId = this.propertyId;
+                                            const payload = {
+                                                property_id: parseInt(propertyId),
+                                                serve_breakfast: this.servesBreakfast === 'yes',
+                                                breakfast_included: this.breakfastIncluded || null,
+                                                breakfast_type: this.selectedBreakfasts.length > 0 ? this.selectedBreakfasts : null,
+                                                breakfast_price: document.getElementById('breakfast_price')?.value || null,
+                                                parking_available: document.querySelector('input[name="parking"]:checked')?.value || null,
+                                                parking_cost: document.querySelector('input[name="parking"]:checked')?.value === 'paid' ?
+                                                    document.getElementById('parking_cost')?.value : '0',
+                                                parking_reservation: document.querySelector('input[name="reservation_needed"]:checked')?.value || null,
+                                                parking_location: document.querySelector('input[name="location"]:checked')?.value || null,
+                                                parking_type: document.querySelector('input[name="type"]:checked')?.value || null
+                                            };
+
+                                            try {
+                                                const response = await fetch(`/partner/property/save-services/${propertyId}`, {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                                                    },
+                                                    body: JSON.stringify(payload)
+                                                });
+
+                                                const result = await response.json();
+
+                                                if (result.success) {
+                                                    Swal.fire({
+                                                        toast: true,
+                                                        position: 'top-end',
+                                                        icon: 'success',
+                                                        title: 'Services saved successfully!',
+                                                        showConfirmButton: false,
+                                                        timer: 3000
+                                                    });
+                                                    this.step++;
+                                                } else {
+                                                    Swal.fire({
+                                                        toast: true,
+                                                        position: 'top-end',
+                                                        icon: 'error',
+                                                        title: result.message || 'Failed to save services',
+                                                        showConfirmButton: false,
+                                                        timer: 3000
+                                                    });
+                                                }
+                                            } catch (error) {
+                                                Swal.fire({
+                                                    toast: true,
+                                                    position: 'top-end',
+                                                    icon: 'error',
+                                                    title: 'Error saving services',
+                                                    text: error.message,
+                                                    toast: true,
+                                                    showConfirmButton: false,
+                                                    timer: 3000
+                                                });
+                                            }
+                                        } else if (this.step === 10 && this.selected === 'one') {
+                                            try {
+                                                // Get all selected languages (checked checkboxes)
+                                                const selectedLanguages = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
+                                                    .map(input => input.value);
+
+                                                console.log('Selected languages:', selectedLanguages);
+
+                                                const response = await fetch(`/partner/save-languages/${this.propertyId}`, {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                    },
+                                                    body: JSON.stringify({
+                                                        languages: selectedLanguages,
+                                                        property_id: this.propertyId
+                                                    })
+                                                });
+
+                                                const result = await response.json();
+
+                                                if (result.success) {
+                                                    console.log('Languages saved:', result);
+                                                    Swal.fire({
+                                                        toast: true,
+                                                        position: 'top-end',
+                                                        icon: 'success',
+                                                        title: 'Languages saved successfully!',
+                                                        showConfirmButton: false
+                                                    });
+                                                    this.step++; // go to next step
+                                                } else {
+                                                    Swal.fire({
+                                                        toast: true,
+                                                        position: 'top-end',
+                                                        icon: 'error',
+                                                        title: result.message || 'Failed to save languages',
+                                                        showConfirmButton: false
+                                                    });
+                                                }
+                                            } catch (e) {
+                                                console.error('Error saving languages:', e);
+                                            }
+                                        } else if (this.step === 11 && this.selected === 'one') {
                                             try {
                                                 const smokingAllowed = document.querySelector('#smoking_allowed').checked;
                                                 const petsValue = document.querySelector('input[name="pets_allowed"]:checked')?.value || 'no';
+                                                const partiesAllowed = document.querySelector('#parties_allowed').checked;
+                                                const childrenAllowed = document.querySelector('#children_allowed').checked;
 
-                                                const checkInTime = document.querySelector('#check_in_from').value;
-                                                const checkOutTime = document.querySelector('#check_out_until').value;
+                                                const checkInFromTime = document.querySelector('#check_in_from').value;
+                                                const checkInUntilTime = document.querySelector('#check_in_until').value;
+                                                const checkOutFromTime = document.querySelector('#check_out_from').value;
+                                                const checkOutUntilTime = document.querySelector('#check_out_until').value;
 
                                                 const response = await fetch(`/partner/property/save-policy/${this.propertyId}`, {
                                                     method: 'POST',
                                                     headers: {
+                                                        'Content-Type': 'application/json',
                                                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                                                     },
                                                     body: JSON.stringify({
                                                         smoking_allowed: smokingAllowed,
-                                                        pets_allowed: petsValue !== 'no', // convert to boolean
-                                                        check_in_time: checkInTime,
-                                                        check_out_time: checkOutTime,
-                                                        cancellation_policy: 'flexible', // hardcoded for now; you can make this dynamic
+                                                        parties_allowed: partiesAllowed,
+                                                        pets_allowed: petsValue,
+                                                        children_allowed: childrenAllowed,
+                                                        check_in_from: checkInFromTime,
+                                                        check_in_until: checkInUntilTime,
+                                                        check_out_from: checkOutFromTime,
+                                                        check_out_until: checkOutUntilTime,
+                                                        cancellation_policy: 'flexible',
                                                         property_id: this.propertyId
                                                     }),
                                                 });
@@ -3301,12 +4050,620 @@
 
                                                 if (result.success) {
                                                     console.log('Policy saved:', result);
+                                                    Swal.fire({
+                                                        toast: true,
+                                                        position: 'top-end',
+                                                        icon: 'success',
+                                                        title: 'Policy saved successfully!',
+                                                        showConfirmButton: false
+                                                    });
                                                     this.step++;
                                                 } else {
-                                                    alert('Failed to save policy: ' + result.message);
+                                                    Swal.fire({
+                                                        toast: true,
+                                                        position: 'top-end',
+                                                        icon: 'error',
+                                                        title: result.message || 'Failed to save policy',
+                                                        showConfirmButton: false
+                                                    });
                                                 }
                                             } catch (e) {
                                                 console.error('Error saving policy:', e);
+                                            }
+                                        } else if (this.step === 12 && this.selected === 'one') {
+
+
+                                            const payload = {
+                                                property_id: this.propertyId,
+                                                show_property: this.showProperty,
+                                                show_host: this.showHost,
+                                                show_neighborhood: this.showNeighborhood,
+                                                none_selected: this.showNone,
+                                                about_property: this.$refs.about_property?.value || '',
+                                                host_name: this.$refs.host_name?.value || '',
+                                                about_host: this.$refs.about_host?.value || '',
+                                                about_neighborhood: this.$refs.about_neighborhood?.value || '',
+                                            };
+
+                                            try {
+                                                const response = await fetch(`/partner/property/${propertyId}/host-profile`, {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                                                    },
+                                                    body: JSON.stringify(payload),
+                                                });
+
+                                                const result = await response.json();
+
+                                                if (result.success) {
+                                                    console.log('✅ Host profile saved:', result.message);
+                                                    Swal.fire({
+                                                        toast: true,
+                                                        position: 'top-end',
+                                                        icon: 'success',
+                                                        title: 'Host profile saved successfully!',
+                                                        showConfirmButton: false
+                                                    });
+                                                    this.step++;
+                                                } else {
+                                                    console.error('❌ Save failed:', result.message);
+                                                    Swal.fire({
+                                                        toast: true,
+                                                        position: 'top-end',
+                                                        icon: 'error',
+                                                        title: 'Failed to save host profile' + result.message,
+                                                        showConfirmButton: false
+                                                    })
+                                                }
+                                            } catch (error) {
+                                                console.error('❌ Error submitting host profile:', error);
+                                            }
+                                        } else if (this.step === 13 && this.selected === 'one') {
+                                            console.log('Saving room details for property ID:', this.propertyId);
+
+                                            const roomKeys = Object.keys(this.rooms);
+
+                                            if (roomKeys.length === 0) {
+                                                alert('Please add at least one room before continuing.');
+                                                return;
+                                            }
+
+                                            const roomArray = roomKeys.map(key => {
+                                                const room = this.rooms[key];
+                                                return {
+                                                    key: key,
+                                                    room_type_id: room.room_type_id ?? '', // Ensure this field exists
+                                                    name: room.name,
+                                                    beds: room.beds,
+                                                    max_guests: this.guests,
+                                                    bathroom_count: this.bathrooms,
+                                                    size_sq_m: this.apartmentSize,
+                                                    price_per_night: room.price_per_night ?? '0',
+                                                };
+                                            });
+
+                                            // Optional validation
+                                            const invalidRoom = roomArray.find(r => !r.room_type_id);
+                                            if (invalidRoom) {
+                                                alert(`Please select a Room Type for ${invalidRoom.key}`);
+                                                return;
+                                            }
+
+                                            console.log('Saving room details:', {
+                                                rooms: roomArray
+                                            });
+
+                                            fetch(`/partner/save-rooms/${this.propertyId}`, {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                    },
+                                                    body: JSON.stringify({
+                                                        property_id: this.propertyId,
+                                                        rooms: roomArray
+                                                    })
+                                                })
+                                                .then(response => response.json())
+                                                .then(result => {
+                                                    if (result.success) {
+                                                        console.log('Room saved:', result);
+                                                        Swal.fire({
+                                                            toast: true,
+                                                            position: 'top-end',
+                                                            icon: 'success',
+                                                            title: 'Room saved successfully!',
+                                                            showConfirmButton: false
+                                                        });
+                                                        this.step++;
+                                                    } else {
+                                                        Swal.fire({
+                                                            toast: true,
+                                                            position: 'top-end',
+                                                            icon: 'error',
+                                                            showConfirmButton: false,
+                                                            title: 'Failed to save room' + result.message,
+                                                        });
+                                                    }
+                                                })
+                                                .catch(error => {
+                                                    console.error('Error saving room:', error);
+                                                    alert('Something went wrong while saving the room.');
+                                                });
+                                        } else if (this.step === 14 && this.selected === 'one') {
+                                            console.log('Submitting partner verification details for property ID:', this.propertyId);
+                                            if (this.type === 'individual') {
+                                                if (!this.individual.national_id) {
+                                                    Swal.fire({
+                                                        icon: 'error',
+                                                        title: 'Error',
+                                                        text: 'National ID is required.',
+                                                        toast: true,
+                                                        position: 'top-end',
+                                                        showConfirmButton: false,
+                                                    });
+                                                    return;
+                                                }
+                                                if (this.individual.national_id.length !== 12) {
+                                                    Swal.fire({
+                                                        icon: 'error',
+                                                        title: 'National ID must be 12 digits.',
+                                                        toast: true,
+                                                        position: 'top-end',
+                                                        showConfirmButton: false,
+                                                    });
+                                                    return;
+                                                }
+                                            }
+
+                                            const payload = {
+                                                property_id: this.propertyId,
+                                                type: this.type,
+                                                full_name: this.type === 'individual' ? this.individual.full_name : null,
+                                                national_id: this.type === 'individual' ? this.individual.national_id : null,
+                                                company_name: this.type === 'business' ? this.business.company_name : null,
+                                                registration_number: this.type === 'business' ? this.business.registration_number : null,
+                                            };
+
+                                            fetch(`/partner/partner-verification`, {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                    },
+                                                    body: JSON.stringify(payload)
+                                                })
+                                                .then(response => response.json())
+                                                .then(data => {
+                                                    console.log(data);
+                                                    window.location.href = `/partner-homes-complete-registration/${this.propertyId}`;
+                                                    Swal.fire({
+                                                        toast: true,
+                                                        position: 'top-end',
+                                                        icon: 'success',
+                                                        title: 'Partner verification successfully!',
+                                                        showConfirmButton: false
+                                                    });
+
+                                                })
+                                                .catch(error => {
+                                                    console.error('Error:', error);
+                                                    Swal.fire({
+                                                        toast: true,
+                                                        position: 'top-end',
+                                                        icon: 'error',
+                                                        title: 'Failed to save property',
+                                                        showConfirmButton: false
+                                                    });
+                                                });
+                                        } else if (this.step === 4 && this.selected === 'multiple') {
+                                            if (this.sameAddress === 'yes') {
+                                                console.log('Saving same address for all properties with ID:', this.propertyId);
+                                                fetch('/property/save-address-same', {
+                                                        method: 'POST',
+                                                        headers: {
+                                                            'Content-Type': 'application/json',
+                                                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                        },
+                                                        body: JSON.stringify({
+                                                            property_id: this.propertyId,
+                                                            count: this.propertyCount,
+                                                            address: this.address
+                                                        })
+                                                    })
+                                                    .then(res => res.json())
+                                                    .then(data => {
+                                                        console.log('Saved:', data);
+                                                        this.step++;
+                                                    });
+                                            } else {
+                                                // Different address for each property
+                                                console.log('Saving multiple addresses for properties with ID:', this.propertyId);
+                                                const allAddresses = Array.from({
+                                                    length: this.propertyCount
+                                                }, (_, i) => {
+                                                    const input = document.querySelector(`#property-address-${i}`);
+                                                    return input ? input.value : '';
+                                                });
+
+                                                fetch('/property/save-address-multiple', {
+                                                        method: 'POST',
+                                                        headers: {
+                                                            'Content-Type': 'application/json',
+                                                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                        },
+                                                        body: JSON.stringify({
+                                                            first_property_id: this.propertyId,
+                                                            addresses: allAddresses
+                                                        })
+                                                    })
+                                                    .then(res => res.json())
+                                                    .then(data => {
+                                                        alert('Addresses saved successfully');
+                                                        console.log('Saved Multiple:', data);
+                                                        this.step++;
+                                                    });
+                                            }
+                                        } else if (this.step === 6 && this.selected === 'multiple') {
+                                            console.log('Saving amenities for property ID:', this.propertyId);
+                                            console.log('currentUnit:', this.currentUnit);
+                                            console.log('propertyCount:', this.propertyCount);
+                                            if (this.currentUnit < this.propertyCount) {
+                                                const currentPropertyId = this.propertyId + this.currentUnit - 1;
+
+                                                console.log('Saving amenities for unit:', this.currentUnit);
+
+                                                fetch(`/save-amenities/${currentPropertyId}`, {
+                                                        method: 'POST',
+                                                        headers: {
+                                                            'Content-Type': 'application/json',
+                                                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                        },
+                                                        body: JSON.stringify({
+                                                            property_id: currentPropertyId,
+                                                            amenities: this.selectedAmenities
+                                                        })
+                                                    })
+                                                    .then(response => response.json())
+                                                    .then(data => {
+                                                        if (data.success) {
+                                                            console.log("Amenities saved for property " + currentPropertyId);
+                                                            this.currentUnit++;
+                                                            this.step--;
+                                                        } else {
+                                                            console.error("Error:", data.message);
+                                                            alert("Failed to save amenities.");
+                                                        }
+                                                    })
+                                                    .catch(error => {
+                                                        console.error("Fetch error:", error);
+                                                    });
+
+                                                // Repeat for next unit
+                                            } else {
+                                                console.log('Saving amenities for last unit:', this.currentUnit);
+                                                const currentPropertyId = this.propertyId + 1;
+                                                fetch(`/save-amenities/${currentPropertyId}`, {
+                                                        method: 'POST',
+                                                        headers: {
+                                                            'Content-Type': 'application/json',
+                                                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                        },
+                                                        body: JSON.stringify({
+                                                            property_id: this.propertyId,
+                                                            amenities: this.selectedAmenities
+                                                        })
+                                                    })
+                                                    .then(response => response.json())
+                                                    .then(data => {
+                                                        if (data.success) {
+                                                            console.log("Amenities saved for property " + currentPropertyId);
+                                                            this.currentUnit = 1;
+                                                            this.step++;
+                                                        } else {
+                                                            console.error("Error:", data.message);
+                                                            alert("Failed to save amenities.");
+                                                        }
+                                                    })
+                                                    .catch(error => {
+                                                        console.error("Fetch error:", error);
+                                                    });
+                                            }
+                                        } else if (this.step === 8 && this.selected === 'multiple') {
+                                            const currentPropertyId = this.propertyId + this.currentUnit - 1;
+                                            const selectedLanguages = this.unitServices[this.currentUnit - 1].languages || [];
+
+                                            // Replace language names with corresponding language IDs
+                                            const languageIds = selectedLanguages.map(lang => {
+                                                const langEntry = this.availableLanguages.find(l => l.name === lang);
+                                                return langEntry ? langEntry.id : null;
+                                            }).filter(id => id !== null);
+
+                                            fetch(`/partner/save-languages/${currentPropertyId}`, {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                    },
+                                                    body: JSON.stringify({
+                                                        languages: languageIds
+                                                    })
+                                                })
+                                                .then(response => response.json())
+                                                .then(data => {
+                                                    if (data.success) {
+                                                        console.log(`Languages saved for property ${currentPropertyId}:`, data.selected_languages);
+
+                                                        if (this.currentUnit < this.propertyCount) {
+                                                            this.currentUnit++;
+                                                        } else {
+                                                            this.step++;
+                                                            this.currentUnit = 1;
+                                                        }
+                                                    } else {
+                                                        console.error('Error saving languages:', data.message);
+                                                        alert('Failed to save languages.');
+                                                    }
+                                                })
+                                                .catch(error => {
+                                                    console.error('Fetch error:', error);
+                                                });
+                                        } else if (this.step === 9 && this.selected === 'multiple') {
+                                            console.log('Saving policy for property ID:', this.propertyId);
+                                            console.log('currentUnit:', this.currentUnit);
+                                            console.log('propertyCount:', this.propertyCount);
+
+                                            const currentPropertyId = this.propertyId + this.currentUnit - 1;
+                                            const houseRules = this.unitServices[this.currentUnit - 1].houseRules;
+
+                                            fetch(`/partner/property/save-policy/${currentPropertyId}`, {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                    },
+                                                    body: JSON.stringify({
+                                                        property_id: currentPropertyId,
+                                                        smoking_allowed: houseRules.smokingAllowed,
+                                                        children_allowed: houseRules.childrenAllowed,
+                                                        parties_allowed: houseRules.partiesAllowed,
+                                                        pets_allowed: houseRules.petsPolicy,
+                                                        check_in_from: houseRules.checkInFrom,
+                                                        check_in_until: houseRules.checkInUntil,
+                                                        check_out_from: houseRules.checkOutFrom,
+                                                        check_out_until: houseRules.checkOutUntil,
+                                                    })
+
+
+                                                })
+                                                .then(response => response.json())
+                                                .then(data => {
+                                                    if (data.success) {
+                                                        console.log("Policy saved for property " + currentPropertyId);
+
+                                                        if (this.currentUnit < this.propertyCount) {
+                                                            this.currentUnit++;
+                                                        } else {
+                                                            this.currentUnit = 1;
+                                                            this.step++; // move to next step
+                                                        }
+                                                    } else {
+                                                        console.error("Error:", data.message);
+                                                        alert("Failed to save policy.");
+                                                    }
+                                                })
+                                                .catch(error => {
+                                                    console.error("Fetch error:", error);
+                                                });
+                                        } else if (this.step === 10 && this.selected === 'multiple') {
+                                            const currentPropertyId = this.propertyId + this.currentUnit - 1;
+                                            const hostProfile = this.unitServices[this.currentUnit - 1].hostProfile;
+
+                                            // Prepare default boolean values based on selected option
+                                            let show_property = false;
+                                            let show_host = false;
+                                            let show_neighborhood = false;
+                                            let none_selected = false;
+
+                                            switch (hostProfile) {
+                                                case 'property':
+                                                    show_property = true;
+                                                    break;
+                                                case 'host':
+                                                    show_host = true;
+                                                    break;
+                                                case 'neighbourhood':
+                                                    show_neighborhood = true;
+                                                    break;
+                                                case 'later':
+                                                default:
+                                                    none_selected = true;
+                                                    break;
+                                            }
+
+                                            fetch(`/partner/property/${currentPropertyId}/host-profile`, {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                    },
+                                                    body: JSON.stringify({
+                                                        property_id: currentPropertyId,
+                                                        show_property: show_property,
+                                                        show_host: show_host,
+                                                        show_neighborhood: show_neighborhood,
+                                                        none_selected: none_selected
+                                                    })
+                                                })
+                                                .then(response => response.json())
+                                                .then(data => {
+                                                    if (data.success) {
+                                                        console.log(`Host profile saved for property ${currentPropertyId}`);
+                                                        if (this.currentUnit < this.propertyCount) {
+                                                            this.currentUnit++;
+                                                        } else {
+                                                            this.currentUnit = 1;
+                                                            this.step++; // move to next step
+                                                        }
+                                                    } else {
+                                                        console.error("Error saving host profile:", data.message);
+                                                        alert("Failed to save host profile.");
+                                                    }
+                                                })
+                                                .catch(error => {
+                                                    console.error("Fetch error:", error);
+                                                });
+                                        } else if (this.step === 11 && this.selected === 'multiple') {
+                                            const currentPropertyId = this.propertyId + this.currentUnit - 1;
+                                            const title = this.formData.propertyName;
+
+                                            fetch(`/property/${currentPropertyId}/update-title`, {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                    },
+                                                    body: JSON.stringify({
+                                                        title: title
+                                                    })
+                                                })
+                                                .then(response => response.json())
+                                                .then(data => {
+                                                    if (data.success) {
+                                                        console.log(`Title updated for property ${currentPropertyId}: ${title}`);
+
+                                                        if (this.currentUnit < this.propertyCount) {
+                                                            this.currentUnit++;
+                                                            // Stay on step 11 for next property
+                                                        } else {
+                                                            this.currentUnit = 1;
+                                                            this.step++; // Proceed to step 12
+                                                        }
+                                                    } else {
+                                                        console.error('Error saving title:', data);
+                                                        alert('Failed to save title.');
+                                                    }
+                                                })
+                                                .catch(error => {
+                                                    console.error('Fetch error:', error);
+                                                });
+                                        } else if (this.step === 12 && this.selected === 'multiple') {
+                                            const currentPropertyId = this.propertyId + this.currentUnit - 1;
+                                            const files = this.$refs.unitPhotoInput.files;
+                                            if (files.length > 0) {
+                                                const formData = new FormData();
+                                                formData.append('property_id', currentPropertyId);
+                                                formData.append('unit_number', this.currentUnit);
+
+                                                for (let file of files) {
+                                                    formData.append('photos[]', file);
+                                                }
+
+                                                await fetch('/partner/property/upload-photos', {
+                                                    method: 'POST',
+                                                    body: formData,
+                                                    headers: {
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                                                    }
+                                                });
+                                            }
+
+                                            if (this.currentUnit < this.propertyCount) {
+                                                this.currentUnit++;
+                                            } else {
+                                                this.step++;
+                                                this.currentUnit = 1;
+                                            }
+                                        } else if (this.step === 13 && this.selected === 'multiple') {
+                                            const currentPropertyId = this.propertyId + this.currentUnit - 1;
+
+                                            if (this.rooms.length === 0) {
+                                                alert('Please add at least one room before continuing.');
+                                                return;
+                                            }
+
+                                            const formData = new FormData();
+                                            formData.append('property_id', parseInt(currentPropertyId));
+                                            formData.append('unit_number', this.currentUnit);
+
+                                            this.rooms.forEach((room, index) => {
+                                                formData.append(`rooms[${index}][room_type_id]`, parseInt(room.room_type_id));
+                                                formData.append(`rooms[${index}][name]`, room.name);
+                                                formData.append(`rooms[${index}][price_per_night]`, parseFloat(room.price_per_night));
+                                                formData.append(`rooms[${index}][max_guests]`, parseInt(room.max_guests));
+                                                formData.append(`rooms[${index}][bathroom_count]`, parseInt(room.bathroom_count)); // ✅ fix
+                                                formData.append(`rooms[${index}][size_sq_m]`, parseFloat(room.size_sq_m));
+
+                                                if (room.beds) {
+                                                    Object.keys(room.beds).forEach((bedTypeId) => {
+                                                        formData.append(`rooms[${index}][beds][${bedTypeId}]`, parseInt(room.beds[bedTypeId]));
+                                                    });
+                                                }
+                                            });
+
+
+                                            await fetch(`/partner/save-rooms/${currentPropertyId}`, {
+                                                method: 'POST',
+                                                body: formData,
+                                                headers: {
+                                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                                                }
+                                            });
+
+                                            // Move to next unit or step
+                                            if (this.currentUnit < this.propertyCount) {
+                                                this.currentUnit++;
+                                            } else {
+                                                this.step++;
+                                                this.currentUnit = 1;
+                                            }
+
+                                            // Reset room data for next unit
+                                            this.rooms = [];
+                                        } else if (this.step === 14 && this.selected === 'multiple') {
+                                            const currentPropertyId = this.propertyId + this.currentUnit - 1;
+
+                                            const formData = new FormData();
+                                            formData.append('property_id', currentPropertyId);
+                                            formData.append('type', this.type);
+
+                                            if (this.type === 'individual') {
+                                                formData.append('full_name', this.individual.name);
+                                                formData.append('national_id', this.individual.id);
+                                            } else if (this.type === 'business') {
+                                                formData.append('company_name', this.business.company_name);
+                                                formData.append('registration_number', this.business.reg_no);
+                                            }
+
+                                            await fetch('/partner/partner-verification', {
+                                                    method: 'POST',
+                                                    body: formData,
+                                                    headers: {
+                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                                                    }
+                                                })
+                                                .then(response => response.json())
+                                                .then(data => {
+                                                    if (data.success) {
+                                                        console.log('Partner verification details saved:', data)
+                                                        window.location.href = '/partner/list-your-property';
+
+                                                    } else {
+                                                        alert('Failed to save partner verification details: ' + data.message)
+                                                    }
+                                                })
+                                                .catch(error => {
+                                                    console.error('Error saving partner verification details:', error)
+                                                    alert('Something went wrong while saving partner verification details.')
+                                                });
+
+                                            if (this.currentUnit < this.propertyCount) {
+                                                this.currentUnit++;
+                                            } else {
+                                                this.step++;
+                                                this.currentUnit = 1;
                                             }
                                         } else {
                                             if (this.step === 1 && this.selected === '') return;
@@ -3331,38 +4688,6 @@
                     </section>
 
 
-
-                    <!-- Villa -->
-                    <section x-show="selectedBox === 2" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
-                        <h3 class="text-xl font-bold mb-4">Villa Details</h3>
-                        <p>Details related to villa...</p>
-                        <button type="button" @click="step = 2"
-                            class="mt-4 bg-gray-300 px-4 py-2 rounded">Back</button>
-                    </section>
-
-                    <!-- Chalet -->
-                    <section x-show="selectedBox === 1" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
-                        <h3 class="text-xl font-bold mb-4">Chalet Details</h3>
-                        <p>Details related to chalet...</p>
-                        <button type="button" @click="step = 2"
-                            class="mt-4 bg-gray-300 px-4 py-2 rounded">Back</button>
-                    </section>
-
-                    <!-- Holiday Park -->
-                    <section x-show="selectedBox === 6" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
-                        <h3 class="text-xl font-bold mb-4">Holiday Park Details</h3>
-                        <p>Details related to holiday park...</p>
-                        <button type="button" @click="step = 2"
-                            class="mt-4 bg-gray-300 px-4 py-2 rounded">Back</button>
-                    </section>
-
-                    <!-- Aparthotel -->
-                    <section x-show="selectedBox ===5" class="mt-20 p-8 bg-gray-100 rounded shadow-lg">
-                        <h3 class="text-xl font-bold mb-4">Aparthotel Details</h3>
-                        <p>Details related to aparthotel...</p>
-                        <button type="button" @click="step = 2"
-                            class="mt-4 bg-gray-300 px-4 py-2 rounded">Back</button>
-                    </section>
                 </div>
             </template>
         </form>
@@ -3449,6 +4774,6 @@
         }
     </script>
 
-</body>
+</div>
 
-</html>
+@endsection

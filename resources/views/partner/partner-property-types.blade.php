@@ -1,57 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>List Your Property</title>
 
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
+@extends('partner.partner-layout')
+
+@section('title', ' Property Types | ' . config('domains.app_name'))
+
+
+@section('content')
   <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet" />
-
-  <style>
-    body {
-      font-family: 'Noto Sans', sans-serif;
-    }
-  </style>
-</head>
-
-<body class="bg-gray-50 text-gray-800">
-
-  <!-- Header -->
-  <header class="text-white px-4 py-2" style="background-color:#1F8FB2;">
-    <section class="py-4">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
-          <!-- Logo -->
-          <div class="w-full md:w-auto md:ml-6">
-            <a href="/" class="text-2xl font-bold font-poppins">Bookintour.com</a>
-          </div>
-
-          <!-- Right Section -->
-          <div class="flex items-center space-x-4 text-sm font-medium md:ml-auto font-sans">
-            <a href="/help" title="Help">
-              <img src="{{ asset('assets/question.svg') }}" alt="Help" class="w-6 h-6 md:w-7 md:h-7 cursor-pointer" />
-            </a>
-            <button
-              id="language-button"
-              type="button"
-              class="flex items-center justify-center w-8 h-8 bg-white rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-hidden"
-              title="Change Language">
-              <img src="{{ asset('images/uk.png') }}" alt="UK Flag" class="w-full h-full object-cover rounded-full" />
-            </button>
-          </div>
-        </div>
-      </div>
-    </section>
-  </header>
-
-  <!-- Main Section -->
+<!-- Main Section -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10">
     <h2 class="text-xl sm:text-3xl font-bold text-left mb-2 mt-20">
       List your property on Bookintour.com and start welcoming guests in no time!
@@ -121,7 +78,4 @@
       @endforeach
     </div>
   </main>
-
-</body>
-
-</html>
+@endsection

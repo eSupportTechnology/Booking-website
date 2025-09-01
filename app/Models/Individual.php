@@ -16,6 +16,10 @@ class Individual extends Model
         'date_of_birth',
     ];
 
+    protected $casts = [
+        'date_of_birth' => 'date',
+    ];
+
     public function accommodation()
     {
         return $this->belongsTo(Accommodation::class);

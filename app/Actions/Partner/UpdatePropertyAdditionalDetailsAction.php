@@ -16,6 +16,8 @@ class UpdatePropertyAdditionalDetailsAction
             'offer_cribs' => $dto->offer_cribs,
             'apartment_size' => $dto->apartment_size,
             'apartment_unit' => $dto->apartment_unit,
+            'breakfast' => $dto->breakfast,
+            'parking' => $dto->parking,
         ]);
     }
 }

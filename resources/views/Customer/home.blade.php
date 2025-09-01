@@ -25,7 +25,7 @@
     <!-- Search Box: Overlapping both sections -->
     <div class="relative z-10 -mt-8 px-4">
 
-        <form method="GET"
+        <form action="{{ route('customer.search') }}" method="GET"
             class="bg-white rounded-xl px-2 py-1 shadow-lg flex flex-col md:flex-row items-center gap-1 md:gap-0 border-4 border-yellow-400 max-w-6xl mx-auto overflow-visible text-sm">
 
             <!-- Destination Selector (Styled Like Guests) -->
@@ -100,13 +100,13 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs text-gray-500 font-semibold mb-1">{{ __('messages.Check-in Date') }}</label>
-                                <input type="date" x-model="checkIn"
+                                <input type="date" name="checkIn" x-model="checkIn"
                                     class="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none"
                                     placeholder="Check-in" />
                             </div>
                             <div>
                                 <label class="block text-xs text-gray-500 font-semibold mb-1">{{ __('messages.Check-out Date') }}</label>
-                                <input type="date" x-model="checkOut"
+                                <input type="date" name="checkOut" x-model="checkOut"
                                     class="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none"
                                     placeholder="Check-out" />
                             </div>
@@ -115,6 +115,7 @@
 
                     <!-- Flexible Dates Section -->
                     <div x-show="activeTab === 'flexible'" x-transition>
+                        <input type="hidden" name="flexibleOption" :value="flexibleOption">
                         <label class="block text-xs text-gray-500 font-semibold mb-1">{{ __('messages.Select Flexible Dates') }}</label>
                         <select x-model="flexibleOption"
                             class="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none">
@@ -148,6 +149,12 @@
                 <!-- Guest Dropdown -->
                 <div x-show="open" @click.away="open = false"
                     class="absolute z-20 bg-white shadow-xl rounded-xl p-4 mt-2 w-72 right-0 text-gray-800 space-y-4 text-sm">
+                    <!-- Hidden inputs for form submission -->
+                    <input type="hidden" name="adults" :value="adults">
+                    <input type="hidden" name="children" :value="children">
+                    <input type="hidden" name="rooms" :value="rooms">
+                    <input type="hidden" name="pets" :value="pets">
+
                     <!-- Adults -->
                     <div class="flex items-center justify-between">
                         <span style="font-family: 'Noto Sans', sans-serif;">{{ __('messages.adults') }}</span>
@@ -246,56 +253,64 @@
 
     <!-- Browse by Property Type Section -->
     <section class="py-12 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-2xl font-semibold text-gray-800 mb-6">{{ __('messages.Browse by property type') }}</h2>
-            <div class="flex space-x-4 overflow-x-auto pb-2">
-                <!-- Resorts -->
-                <div class="min-w-[250px]">
-                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                        <img src="{{ asset('images/resorts.jpg') }}" alt="Resorts" class="w-full h-48 object-cover">
-                    </div>
-                    <div class="mt-2">
-                        <h6 class="text-base font-semibold text-gray-800" style="font-family: 'Noto Sans', sans-serif;">
-                            {{ __('messages.Resorts')}}</h3>
-                    </div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-2xl font-semibold text-gray-800 mb-6">Browse by property type</h2>
+        <div class="flex space-x-4 overflow-x-auto pb-2">
+            
+          <!-- Hotels -->
+            <a href="{{ route('hotel-listing') }}" class="min-w-[250px]">
+                <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
+                    <img src="{{ asset('images/hotels.jpg') }}" alt="Hotels" class="w-full h-48 object-cover">
                 </div>
+                <div class="mt-2">
+                    <h6 class="text-base font-semibold text-gray-800" style="font-family: 'Noto Sans', sans-serif;">
+                        Hotels
+                    </h6>
+                </div>
+            </a>
 
-                <!-- Apartments -->
-                <div class="min-w-[250px]">
-                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                        <img src="{{ asset('images/apartments.jpg') }}" alt="Apartments"
-                            class="w-full h-48 object-cover">
-                    </div>
-                    <div class="mt-2">
-                        <h6 class="text-base font-semibold text-gray-800" style="font-family: 'Noto Sans', sans-serif;">
-                            {{ __('messages.Apartments')}}</h3>
-                    </div>
+            
+            <!-- Apartments -->
+            <a href="{{ route('apartment-listing') }}" class="min-w-[250px]">
+                <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
+                    <img src="{{ asset('images/apartments.jpg') }}" alt="Apartments" class="w-full h-48 object-cover">
                 </div>
+                <div class="mt-2">
+                    <h6 class="text-base font-semibold text-gray-800" style="font-family: 'Noto Sans', sans-serif;">
+                        Apartments
+                    </h6>
+                </div>
+            </a>
 
-                <!-- Hotels -->
-                <div class="min-w-[250px]">
-                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                        <img src="{{ asset('images/hotels.jpg') }}" alt="Apartments" class="w-full h-48 object-cover">
-                    </div>
-                    <div class="mt-2">
-                        <h6 class="text-base font-semibold text-gray-800" style="font-family: 'Noto Sans', sans-serif;">
-                            {{ __('messages.Hotels')}}</h3>
-                    </div>
+            <!-- Resorts -->
+            <a href="{{ route('home-listing') }}" class="min-w-[250px]">
+                <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
+                    <img src="{{ asset('images/villas.jpg') }}" alt="Resorts" class="w-full h-48 object-cover">
                 </div>
+                <div class="mt-2">
+                    <h6 class="text-base font-semibold text-gray-800" style="font-family: 'Noto Sans', sans-serif;">
+                        Holiday Homes
+                    </h6>
+                </div>
+            </a>
 
-                <!-- Villas -->
-                <div class="min-w-[250px]">
-                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                        <img src="{{ asset('images/villas.jpg') }}" alt="Villas" class="w-full h-48 object-cover">
-                    </div>
-                    <div class="mt-2">
-                        <h6 class="text-base font-semibold text-gray-800" style="font-family: 'Noto Sans', sans-serif;">
-                            {{ __('messages.Villas')}}</h3>
-                    </div>
+
+          
+            <!-- Villas -->
+            <a href="{{ route('hotel-listing') }}" class="min-w-[250px]">
+                <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
+                    <img src="{{ asset('images/resorts.jpg') }}" alt="Villas" class="w-full h-48 object-cover">
                 </div>
-            </div>
+                <div class="mt-2">
+                    <h6 class="text-base font-semibold text-gray-800" style="font-family: 'Noto Sans', sans-serif;">
+                        Villas
+                    </h6>
+                </div>
+            </a>
+
         </div>
-    </section>
+    </div>
+</section>
     <!--End Section-->
 
     <!-- Trending Destinations Section -->

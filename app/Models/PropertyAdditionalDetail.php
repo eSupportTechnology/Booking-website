@@ -6,8 +6,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class PropertyAdditionalDetail extends Model
 {
+    protected $guarded = [];
     protected $fillable = [
-        'property_id', 'guests', 'bathrooms', 'allow_children', 'offer_cribs', 'apartment_size', 'apartment_unit'
+        'property_id',
+        'guests',
+        'bathrooms',
+        'allow_children',
+        'offer_cribs',
+        'apartment_size',
+        'apartment_unit',
+        'breakfast',
+        'parking',
     ];
 
     public function property()

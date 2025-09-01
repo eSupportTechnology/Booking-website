@@ -12,6 +12,8 @@ class PropertyAdditionalDetailsDTO extends ValidatedDTO
     public ?string $offer_cribs = null;
     public ?int $apartment_size = null;
     public ?string $apartment_unit = null;
+    public ?string $breakfast = null;
+    public ?string $parking = null;
 
     public function rules(): array
     {
@@ -22,6 +24,8 @@ class PropertyAdditionalDetailsDTO extends ValidatedDTO
             'offer_cribs' => ['nullable', 'string'],
             'apartment_size' => ['nullable', 'integer'],
             'apartment_unit' => ['nullable', 'string'],
+            'breakfast' => ['nullable', 'string', 'in:yes,no'],
+            'parking' => ['nullable', 'string', 'in:free,paid,no'],
         ];
     }
 
@@ -33,9 +37,6 @@ class PropertyAdditionalDetailsDTO extends ValidatedDTO
     protected function casts(): array
     {
         return [
-            // 'guests' => 'integer',
-            // 'bathrooms' => 'integer',
-            // 'apartment_size' => 'integer',
         ];
     }
 }

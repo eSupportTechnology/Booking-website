@@ -6,7 +6,7 @@
   <title>create apartment</title></title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-
+  
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet" />
@@ -26,19 +26,7 @@
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
           <!-- Logo -->
           <div class="w-full md:w-auto md:ml-6">
-              <!-- Logo -->
-                        @php
-                            $host = config('domains.app_name');
-
-                        @endphp
-
-                        <a href="{{ url('/') }}" class="text-2xl font-bold flex items-center">
-                            @if($host == 'BookinTour')
-                                <h1>Bookintour.com</h1>
-                            @elseif ($host == 'Inselor')
-                                <img src="{{ asset('images/inselor-logo.png') }}" alt="Inselor" class="h-12 w-auto align-middle" />
-                            @endif
-                        </a>
+            <a href="/" class="text-2xl font-bold font-poppins">Bookintour.com</a>
           </div>
 
           <!-- Right Section -->
@@ -109,87 +97,74 @@
 <div x-data="{ step: 1, wizardStep: 1 , propertyWizardStep: 1, pricingWizardStep:1 }">
 
  <!-- Sticky Top Navbar -->
-  <nav class="border-b shadow-sm sticky top-0 z-50 ">
-    <div class="max-w-full mx-auto px-4 py-3">
+<nav class="border-b shadow-sm sticky top-0 z-50 bg-white">
+  <div class="max-w-full mx-auto px-4 py-3 overflow-x-auto">
+    <!-- Scrollable/Responsive Nav Items -->
+    <div class="flex flex-nowrap min-w-max space-x-6 sm:space-x-12 md:space-x-8 lg:space-x-24 xl:space-x-24 text-sm font-medium whitespace-nowrap">
 
-      <!-- Scrollable/Responsive Nav Items -->
-      <div class="flex flex-wrap sm:flex-nowrap overflow-x-auto space-x-6 sm:space-x-10 md:space-x-14 lg:space-x-20 xl:space-x-24 text-sm font-medium whitespace-nowrap">
+      <!-- Loop through nav steps -->
+      <template x-for="(label, index) in ['Basic information', 'Property setup', 'Photos', 'Pricing and calendar', 'Legal information','Review and complete']" :key="index">
+        <div class="relative">
+          
+          <!-- Tab Label -->
+          <div 
+            @click="step = index + 1"
+            class="flex items-center space-x-1 cursor-pointer transition duration-200"
+            :class="step === index + 1 ? 'text-blue-600' : 'text-gray-700'"
+          >
+            <span x-text="label"></span>
 
-        <!-- Loop through nav steps -->
-        <template x-for="(label, index) in ['Basic information', 'Property setup', 'Photos', 'Pricing and calendar', 'Legal information','Review and complete']" :key="index">
-          <div class="relative">
-
-            <!-- Tab Label -->
-            <div
-              @click="step = index + 1"
-              class="flex items-center space-x-1 cursor-pointer transition duration-200"
-              :class="step === index + 1 ? 'text-blue-600' : 'text-gray-700'"
-            >
-              <span x-text="label"></span>
-
-              <!-- Optional checkmark -->
-              <template x-if="index === 0 && wizardStep === 3">
-                <span class="text-green-600">✔️</span>
-              </template>
- <!-- Optional checkmark -->
-              <template x-if="index === 1 && propertyWizardStep === 6">
-                <span class="text-green-600">✔️</span>
-              </template>
-
-
-            </div>
-
-
-
-            <!-- 🔵 Progress bar only under "Basic information" when active -->
-            <template x-if="index === 0 && step === 1">
-              <div class="flex space-x-1 mt-1 w-35 sm:w-48 md:w-46 lg:w-54 xl:w-62 ml-[-15px] sm:ml-[-25px] md:ml-[-35px]">
-                <template x-for="i in 3">
-                  <div
-                    :class="wizardStep >= i ? 'bg-blue-600' : 'bg-gray-300'"
-                    class="h-1 flex-1 rounded-full"
-                  ></div>
-                </template>
-              </div>
+            <!-- Optional checkmark -->
+            <template x-if="index === 0 && wizardStep === 3">
+              <span class="text-green-600">✔️</span>
             </template>
-
-            <!-- Progress bar under "Property setup" tab -->
-<!-- Progress bar under "Property setup" tab -->
-<template x-if="index === 1 && step === 2">
-  <div class="flex space-x-1 mt-1 w-15 sm:w-25 md:w-30 lg:w-64 xl:w-72 ml-[-60px] sm:ml-[-80px] md:ml-[-90px]">
-    <template x-for="i in 6">
-      <div
-        :class="propertyWizardStep >= i ? 'bg-blue-600' : 'bg-gray-300'"
-        class="h-1 flex-1 rounded-full">
-      </div>
-    </template>
-  </div>
-</template>
-
-
-<template x-if="index === 3 && step === 4">
-  <div class="flex space-x-1 mt-1 w-10 sm:w-16 md:w-24 lg:w-56 xl:w-72 ml-[-40px] sm:ml-[-60px] md:ml-[-70px]">
-    <template x-for="i in 4">
-      <div
-        :class="pricingWizardStep >= i ? 'bg-blue-600' : 'bg-gray-300'"
-        class="h-1 flex-1 rounded-full">
-      </div>
-    </template>
-  </div>
-</template>
-
-
-
-
-
-
-
+            <template x-if="index === 1 && propertyWizardStep === 6">
+              <span class="text-green-600">✔️</span>
+            </template>
           </div>
-        </template>
-      </div>
 
+          <!-- 🔵 Progress bar only under "Basic information" when active -->
+          <template x-if="index === 0 && step === 1">
+            <div class="flex space-x-1 mt-1 w-35 sm:w-48 md:w-46 lg:w-54 xl:w-62 ml-[-15px] sm:ml-[-25px] md:ml-[-35px]">
+              <template x-for="i in 3">
+                <div 
+                  :class="wizardStep >= i ? 'bg-blue-600' : 'bg-gray-300'" 
+                  class="h-1 flex-1 rounded-full"
+                ></div>
+              </template>
+            </div>
+          </template>
+
+          <!-- Progress bar under "Property setup" tab -->
+          <template x-if="index === 1 && step === 2">
+            <div class="flex space-x-1 mt-1 w-15 sm:w-25 md:w-30 lg:w-64 xl:w-72 ml-[-60px] sm:ml-[-80px] md:ml-[-90px]">
+              <template x-for="i in 6">
+                <div 
+                  :class="propertyWizardStep >= i ? 'bg-blue-600' : 'bg-gray-300'" 
+                  class="h-1 flex-1 rounded-full">
+                </div>
+              </template>
+            </div>
+          </template>
+
+          <!-- Progress bar under "Pricing and calendar" tab -->
+          <template x-if="index === 3 && step === 4">
+            <div class="flex space-x-1 mt-1 w-10 sm:w-16 md:w-24 lg:w-56 xl:w-72 ml-[-40px] sm:ml-[-60px] md:ml-[-70px]">
+              <template x-for="i in 4">
+                <div 
+                  :class="pricingWizardStep >= i ? 'bg-blue-600' : 'bg-gray-300'" 
+                  class="h-1 flex-1 rounded-full">
+                </div>
+              </template>
+            </div>
+          </template>
+
+        </div>
+      </template>
     </div>
-  </nav>
+  </div>
+</nav>
+
   <!-- 🧾 Page Content -->
   <div >
 
@@ -203,7 +178,7 @@
   <h1 class="text-xl text-gray-700 font-bold mb-4">What's the name of your place?</h1>
 
   <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-
+    
     <!-- Property Name Input (2/3 Width) -->
     <div class="md:col-span-2 flex">
       <div class="w-full bg-white p-6 rounded shadow-md flex flex-col text-base ">
@@ -281,7 +256,7 @@
     <button
       type="submit"  @click="wizardStep++"
       class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
-      Continue
+      Continue 
     </button>
   </div>
 
@@ -294,7 +269,7 @@
 <template x-if="wizardStep === 2"  >
   <div class="relative w-[1200px] h-auto overflow-hidden rounded-lg shadow mx-auto my-10 ">
     <!-- Google Maps iframe full background -->
-    <iframe
+    <iframe 
         class="absolute inset-0 w-full h-full"
         loading="lazy"
         src="https://www.google.com/maps?q=La+Grande+Villa+Nuwara+Eliya&output=embed"
@@ -358,7 +333,7 @@
               class="border border-[#3CC0E9]  text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
         ←
       </button>
-
+  
 
   <!-- Continue Button (Right) -->
   <button   type="submit"
@@ -386,9 +361,9 @@
         Do you want to connect this listing to your channel manager?
       </h2>
       <p class="text-gray-700 mb-6">
-        A channel manager is a third-party tool that lets you manage rates and availability across different sites you might list your place on, including {{ config('domains.subdomain') }}. If you're already using a channel manager, you can select 'Yes' to connect it to your listing.
+        A channel manager is a third-party tool that lets you manage rates and availability across different sites you might list your place on, including Booking.com. If you're already using a channel manager, you can select 'Yes' to connect it to your listing.
       </p>
-
+    
 
     <!-- Radio Buttons -->
     <div class="bg-white p-4 border border-gray-200 rounded mb-8 space-y-4">
@@ -406,13 +381,13 @@
         <div class="bg-red-100 border border-red-300 rounded p-2">
       <div class="flex items-start text-sm text-red-700 space-x-2">
   <!-- Inline icon -->
-  <img src="{{ asset('assets/material-symbols-light_info-outline (2).svg') }}"
-       alt="Help"
+  <img src="{{ asset('assets/material-symbols-light_info-outline (2).svg') }}" 
+       alt="Help" 
        class="w-5 h-5 md:w-6 md:h-6 mt-1" />
 
   <!-- Text block -->
   <p>
-    Select 'Yes' only if you are already using a channel manager.
+    Select 'Yes' only if you are already using a channel manager.  
     You'll be able to connect your channel manager after your registration is complete – please continue to the next step.
   </p>
 </div>
@@ -436,7 +411,7 @@
               class="border border-[#3CC0E9]  text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
         ←
       </button>
-
+ 
 
   <!-- Continue Button (Right) -->
   <button type="submit"
@@ -457,40 +432,58 @@
 
  <!-- Property Setup Section -->
 <section x-show="step === 2">
+ 
 
-
-
-    <template x-if="propertyWizardStep === 1">
-  <div x-data="{ showBedTypeSelector: false }">
-
-    <!-- Header -->
-    <h2 class="text-2xl font-bold mb-6">Property details</h2>
-    <p class="text-gray-600 mb-4">Where can people sleep?</p>
+  <template x-if="propertyWizardStep === 1">
+   {{-- property-setup.blade.php --}}
+<div class="max-w-xl mx-auto space-y-8 lg:ml-32 px-4 py-6">
 
 <h2 class="text-2xl font-bold text-gray-900 mt-8">What can guests use at your place?</h2>
+            
     <!-- Where can people sleep -->
     <div class="bg-white p-4 rounded-lg shadow space-y-4">
         <h2 class="text-lg font-semibold">Where can people sleep?</h2>
 
      <div class="flex flex-col gap-4">
-    <a href="{{ route('partner.apartment.bedrooms') }}">
+    <!-- Bedroom -->
+    <a href="{{ route('partner.apartment.bedrooms', ['property' => $property->id]) }}?source=single&step=1">
         <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer">
             <p class="text-sm">Bedroom 1</p>
-            <p class="text-sm text-gray-600">1 full bed</p>
+            <p class="text-sm text-gray-600">
+                @if(isset($roomDisplayData['bedroom']) && $roomDisplayData['bedroom']['has_beds'])
+                    {{ $roomDisplayData['bedroom']['bed_summary'] }}
+                @else
+                    No beds added
+                @endif
+            </p>
         </div>
     </a>
 
-    <a href="{{ route('partner.apartment.livingroom') }}">
+    <!-- Living Room -->
+    <a href="{{ route('partner.apartment.livingroom') }}?source=single&step=1">
         <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer">
             <p class="text-sm">Living Room</p>
-            <p class="text-sm text-gray-600">1 full bed</p>
+            <p class="text-sm text-gray-600">
+                @if(isset($roomDisplayData['living_room']) && $roomDisplayData['living_room']['has_beds'])
+                    {{ $roomDisplayData['living_room']['bed_summary'] }}
+                @else
+                    No beds added
+                @endif
+            </p>
         </div>
     </a>
 
-    <a href="{{ route('partner.apartment.otherspaces') }}">
+    <!-- Other Spaces -->
+    <a href="{{ route('partner.apartment.otherspaces') }}?source=single&step=1">
         <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer">
             <p class="text-sm">Other spaces</p>
-            <p class="text-sm text-gray-600">1 full bed</p>
+            <p class="text-sm text-gray-600">
+                @if(isset($roomDisplayData['other']) && $roomDisplayData['other']['has_beds'])
+                    {{ $roomDisplayData['other']['bed_summary'] }}
+                @else
+                    No beds added
+                @endif
+            </p>
         </div>
     </a>
 </div>
@@ -500,7 +493,7 @@
 
 
         <!-- Add Bedroom Button (navigate to 2nd page) -->
-        <a href="{{ route('partner.apartment.bedrooms') }}" class="text-blue-600 hover:underline text-sm flex items-center space-x-1 mt-2">
+        <a href="{{ route('partner.apartment.bedrooms', ['property' => $property->id]) }}?source=single&step=1" class="text-blue-600 hover:underline text-sm flex items-center space-x-1 mt-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
                  viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -510,64 +503,24 @@
         </a>
     </div>
 
-    <!-- Add Bedroom Button -->
-    <div class="flex items-center mt-6">
-      <button
-        @click="showBedTypeSelector = true"
-        class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded flex items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v6m0 0v6m0-6h6m-6 0H6" />
-        </svg>
-        Add bedroom
-      </button>
-    </div>
+    <!-- Include Alpine.js in your Blade layout if not already -->
+<script src="//unpkg.com/alpinejs" defer></script>
 
-    <!-- Bed Type Selector (Only this toggles visibility) -->
-    <div x-show="showBedTypeSelector" class="mt-6 bg-white border border-gray-300 p-6 rounded shadow-md">
-      <h3 class="text-xl font-semibold mb-4">Select bed types for new bedroom</h3>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <label class="flex items-center space-x-2">
-          <input type="checkbox" class="h-4 w-4 text-blue-600">
-          <span>Double bed</span>
-        </label>
-        <label class="flex items-center space-x-2">
-          <input type="checkbox" class="h-4 w-4 text-blue-600">
-          <span>Single bed</span>
-        </label>
-        <label class="flex items-center space-x-2">
-          <input type="checkbox" class="h-4 w-4 text-blue-600">
-          <span>Queen bed</span>
-        </label>
-        <label class="flex items-center space-x-2">
-          <input type="checkbox" class="h-4 w-4 text-blue-600">
-          <span>Sofa bed</span>
-        </label>
-      </div>
-
-      <!-- Save and Cancel -->
-      <div class="flex justify-end mt-6 space-x-4">
-        <button
-          @click="showBedTypeSelector = false"
-          class="text-gray-600 hover:underline text-sm">
-          Cancel
-        </button>
-        <button
-          @click="showBedTypeSelector = false"
-          class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm font-medium">
-          Save Bedroom
-        </button>
-      </div>
-    </div>
- <div class="flex justify-between mt-4">
-          <button @click="propertyWizardStep--"
-            class="text-blue-600 border border-blue-600 px-4 py-2 rounded hover:bg-blue-50">
-            Back
-          </button>
-          <button @click="propertyWizardStep++"
-            class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-            Next
-          </button>
+<!-- Guests and Bathrooms -->
+<div x-data="{ guests: 2, bathrooms: 1 }" class="bg-white p-4 rounded-lg shadow space-y-4 w-full max-w-xl">
+    <!-- Guests -->
+    <div>
+        <label class="block text-sm text-gray-800">How many guests can stay?</label>
+        <div class="flex items-center space-x-4 mt-1">
+            <button
+                @click="if (guests > 1) guests--"
+                class="border px-3 py-1 rounded text-base "
+            >−</button>
+            <span class="min-w-[2rem] text-center text-gray-700  text-base" x-text="guests"></span>
+            <button
+                @click="guests++"
+                class="border px-3 py-1 rounded text-base "
+            >+</button>
         </div>
     </div>
 
@@ -608,13 +561,13 @@
         <!-- Room Size -->
 <div class="lg:col-span-2 bg-white rounded-lg border border-gray-300 p-4 space-y-4 ">
   <div class="flex flex-col lg:flex-row gap-4 items-end"> <!-- ensure vertical alignment -->
-
+    
     <!-- Apartment Size Dropdown -->
     <div class="w-full lg:w-2/4">
   <label class="block  text-sm text-gray-700 mb-1">How big is this room?</label>
   <p class="text-xs text-gray-500 ">Apartment size - optional</p>
-
-<input
+ 
+<input 
     type="number"
     min="1"
     step="1"
@@ -625,7 +578,7 @@
     class="w-full border border-gray-300 rounded-md shadow-sm text-sm mt-2 px-2 py-2"
 >
 
-
+  
 
 </div>
 
@@ -637,7 +590,7 @@
         <option>square feet</option>
       </select>
     </div>
-
+    
   </div>
     </div>
 
@@ -646,7 +599,7 @@
   <button
    type="button" @click="propertyWizardStep--"
         :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-
+  
       class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
       ←
   </button>
@@ -672,8 +625,9 @@
 
 
     <template x-if="propertyWizardStep === 2">
+      
+ <div class="max-w-2xl mx-auto space-y-8 lg:ml-32">
 
-  <div class="max-w-2xl mx-auto space-y-8">
     <!-- Heading -->
      <h2 class="text-2xl font-bold text-gray-900 mt-8">What can guests use at your place?</h2>
 
@@ -727,8 +681,8 @@
     <button
       type="submit"
     @click="propertyWizardStep++"
-      class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
-      Continue
+      class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 mb-16">
+      Continue 
     </button>
   </div>
 
@@ -773,21 +727,21 @@
             <!-- Type of breakfast -->
           <div x-data="{ selected: [] }">
   <p class="font-semibold text-sm text-gray-800 mb-2">
-    What type of breakfast do you offer?
+    What type of breakfast do you offer? 
     <span class="text-sm text-gray-500">(Select all that apply)</span>
   </p>
 
   <div class="flex flex-wrap gap-2">
     @foreach(['A la carte', 'American', 'Asian', 'Breakfast to go', 'Buffet', 'Continental', 'Full English/Irish', 'Gluten-Free', 'Halal', 'Italian', 'Kosher', 'Vegan', 'Vegetarian'] as $option)
       <label
-        :class="selected.includes('{{ $option }}')
-                  ? 'bg-[#3CC0E9] text-white'
+        :class="selected.includes('{{ $option }}') 
+                  ? 'bg-[#3CC0E9] text-white' 
                   : 'border border-gray-300 text-gray-700 hover:bg-gray-200'"
         class="px-3 py-1 rounded-full text-sm font-medium cursor-pointer transition"
       >
-        <input type="checkbox" class="hidden"
+        <input type="checkbox" class="hidden" 
                :value="'{{ $option }}'"
-               x-model="selected">
+               x-model="selected"> 
         {{ $option }}
       </label>
     @endforeach
@@ -809,7 +763,7 @@
                     <label><input type="radio" name="parking_available" class="mr-2"> Yes, paid</label>
                     <label><input type="radio" name="parking_available" class="mr-2"> No</label>
 </div>
-
+               
             </div>
     <hr class="my-6 border-t border-gray-300">
             <!-- Parking cost -->
@@ -853,11 +807,11 @@
                 <p class="font-semibold text-sm text-gray-800 mb-2">Do guests need to reserve a parking spot?</p>
 
                 <div class="flex flex-col text-sm gap-2">
-
+    
                     <label><input type="radio" name="parking_reservation" class="mr-2"> Reservation needed</label>
                     <label><input type="radio" name="parking_reservation" class="mr-2">No reservation needed </label>
 </div>
-
+                
             </div>
 
             <!-- Parking location -->
@@ -865,11 +819,11 @@
                 <p class="font-semibold text-sm text-gray-800 mb-2">Where is the parking located?</p>
 
                 <div class="flex flex-col text-sm gap-2">
-
+    
                  <label><input type="radio" name="parking_location" class="mr-2"> On site</label>
                     <label><input type="radio" name="parking_location" class="mr-2"> Off site</label>
 </div>
-
+                
             </div>
 
                 <div>
@@ -880,10 +834,10 @@
                  <label><input type="radio" name="parking_type" class="mr-2">Private</label>
                     <label><input type="radio" name="parking_type" class="mr-2">Public</label>
 </div>
-
+                
             </div>
 
-
+            
         </div>
 <div class="flex justify-between mt-6">
     <!-- Back Button -->
@@ -903,7 +857,7 @@
       type="submit"
     @click="propertyWizardStep++"
       class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 mb-16">
-      Continue
+      Continue 
     </button>
   </div>
     </div>
@@ -943,7 +897,7 @@
       <!-- Add Additional Languages -->
       <div id="additionalLanguagesSection" class="mt-4 hidden relative">
         <h3 class="text-lg font-medium mb-2 ">Add additional languages</h3>
-
+        
         <!-- Searchable dropdown container -->
         <div class="relative w-full max-w-md">
           <input
@@ -1023,7 +977,7 @@
   <button
    type="button" @click="propertyWizardStep--"
         :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-
+  
       class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
       ←
   </button>
@@ -1210,7 +1164,7 @@
   <button
    type="button" @click="propertyWizardStep--"
         :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-
+  
       class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
       ←
   </button>
@@ -1242,32 +1196,12 @@
             You can easily customise these house rules later and additional house rules can be set on the Policies page of the extranet after you complete registration.
           </p>
 
+          
+        </div>
+      </div>
 
-        </div>
-      </div>
-    </template>
-    <template x-if="propertyWizardStep === 6">
-      <div class="space-y-4">
-        <h2 class="text-xl font-semibold text-gray-800">Step 5: Confirm Details</h2>
-        <p class="text-gray-600">Review and confirm the details you've entered.</p>
-        <!-- Just placeholder review text -->
-        <ul class="list-disc list-inside text-gray-700">
-          <li>Property: Villa</li>
-          <li>Rooms: 3</li>
-          <li>Facilities: Wi-Fi, Parking</li>
-        </ul>
-        <div class="flex justify-between mt-4">
-          <button @click="propertyWizardStep--"
-            class="text-blue-600 border border-blue-600 px-4 py-2 rounded hover:bg-blue-50">
-            Back
-          </button>
-          <button @click="step = 3; propertyWizardStep = 1"
-            class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-            Finish & Continue →
-          </button>
-        </div>
-      </div>
-    </template>
+
+    </div>
   </div>
 </template>
 
@@ -1328,7 +1262,7 @@
 
                 <div class="mt-2">
                     <label class="block text-sm font-semibold text-gray-700">About the neighborhood</label>
-                    <textarea rows="4" maxlength="1200" placeholder="What’s the area like? Are there any attractions nearby?"
+                    <textarea rows="4" maxlength="1200" placeholder="What's the area like? Are there any attractions nearby?"
                         class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"></textarea>
                     <p class="text-right text-xs text-gray-500">0/1200</p>
                 </div>
@@ -1338,7 +1272,7 @@
             <div>
                 <label class="inline-flex items-center space-x-2">
                     <input type="checkbox" class="form-checkbox text-blue-600">
-                    <span class="text-gray-800 font-medium">None of the above / I’ll add these later</span>
+                    <span class="text-gray-800 font-medium">None of the above / I'll add these later</span>
                 </label>
             </div>
         </div>
@@ -1347,7 +1281,7 @@
   <button
    type="button" @click="propertyWizardStep--"
         :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-
+  
       class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
       ←
   </button>
@@ -1398,7 +1332,7 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6 items-start">
       <!-- 📸 Photo Upload Area -->
-      <div
+      <div 
         class="border rounded-lg p-6 bg-white shadow-sm"
       >
         <p class="font-semibold text-gray-800 mb-2">Upload at least 5 photos of your property.</p>
@@ -1422,12 +1356,12 @@
   <img src="{{ asset('assets/mdi_camera-outline.svg') }}" alt="Upload" class="w-4 h-4" />
   <span>Upload photos</span>
 </label>
-<input
+<input 
   id="fileInput"
-  type="file"
-  multiple
-  accept="image/*"
-  class="hidden"
+  type="file" 
+  multiple 
+  accept="image/*" 
+  class="hidden" 
   @change="handleUpload"
 />
 
@@ -1462,7 +1396,7 @@
 <div x-data="{ showTips: true }">
   <div x-show="showTips" x-transition
        class="bg-white border rounded-none p-4 shadow-sm relative text-sm">
-
+    
     <button
       @click="showTips = false"
       class="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-lg"
@@ -1470,7 +1404,7 @@
     >
       &times;
     </button>
-
+    
     <h3 class="font-semibold text-gray-800 mb-2 text-base">What if I don't have professional photos?</h3>
     <p class="text-gray-600 mb-2">
       No problem! You can use a smartphone or a digital camera.
@@ -1479,7 +1413,7 @@
       Here are some tips for taking great photos of your property
     </a>
     <p class="text-gray-600">
-      If you don’t know who took a photo, it's best to avoid using it. Only use photos others have taken if you have permission.
+      If you don't know who took a photo, it's best to avoid using it. Only use photos others have taken if you have permission.
     </p>
   </div>
 </div>
@@ -1517,7 +1451,7 @@
     <!-- Info Card -->
     <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6 space-y-4">
       <h3 class="text-base font-semibold text-gray-900">
-        We’re here to ensure you can receive bookings safely:
+        We're here to ensure you can receive bookings safely:
       </h3>
      <ul class="text-gray-700 space-y-1 text-sm">
   @php
@@ -1579,7 +1513,7 @@
 
       <!-- Price input and Tip 1 in two separate columns -->
 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
-
+  
   <!-- Price input card (2/3 width) -->
   <div class="md:col-span-2 bg-white border rounded-lg p-6 shadow-sm space-y-4">
     <label class="block font-semibold text-base text-gray-700">How much do you want to charge per night?</label>
@@ -1623,10 +1557,10 @@
   <!-- Tip Box 1 (1/3 width, independent height) -->
   <div x-show="showTip1" class="relative bg-white border rounded-lg p-4 shadow-sm text-sm text-gray-700">
     <button @click="showTip1 = false" class="absolute top-2 right-2 text-gray-500 font-semibold">✕</button>
-
+    
     <div class="flex items-center mb-2">
       <img src="{{ asset('assets/system-uicons_lightbulb-on.svg') }}" alt="Tip Icon" class="w-6 h-6 mr-2">
-      <strong>What if I’m not sure about my price?</strong>
+      <strong>What if I'm not sure about my price?</strong>
     </div>
 
     <p>Don't worry, you can always change it later. You can even set weekend, midweek, and seasonal prices, giving you more control over what you earn.</p>
@@ -1636,20 +1570,20 @@
 
       <!-- Discount and Tip 2 -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-
+        
         <!-- Discount card -->
         <div class="md:col-span-2 bg-white border rounded-lg p-6 shadow-sm space-y-3">
           <label class="inline-flex items-center">
             <input type="checkbox" class="form-checkbox text-blue-600 rounded-md" />
-            <span class="ml-2 font-medium text-gray-700 font-semibold">Get guests’ attention with a 20% discount</span>
+            <span class="ml-2 font-medium text-gray-700 font-semibold">Get guests' attention with a 20% discount</span>
           </label>
           <p class="text-sm text-gray-600">
-            Give 20% off your first 3 bookings or for 90 days, whichever comes first.
+            Give 20% off your first 3 bookings or for 90 days, whichever comes first. 
             <a href="#" class="text-blue-600 underline">Learn more</a>
           </p>
           <hr class="my-4">
           <p class="text-sm text-gray-800">
-            <del class="text-gray-500">US$ 30.00</del>
+            <del class="text-gray-500">US$ 30.00</del> 
             <span class="text-green-600 font-semibold">US$ 24.00 per night</span>
           </p>
         </div>
@@ -1662,7 +1596,7 @@
             <strong>Rules for setting up a promotion</strong>
           </div>
           <p>
-            Make sure you're giving a genuine discount. It must represent a real discount in line with consumer protection rules.
+            Make sure you're giving a genuine discount. It must represent a real discount in line with consumer protection rules. 
             <a href="#" class="text-blue-600 underline">Learn More</a>
           </p>
         </div>
@@ -1689,7 +1623,7 @@
 
 
 <template x-if="pricingWizardStep === 3">
-
+    
     <div class="px-4 py-8 mt-6 w-full max-w-2xl mx-auto lg:ml-24 space-y-6">
 
     <!-- Main Title -->
@@ -1721,10 +1655,11 @@
               This policy is set at the property level – any changes made will be applied to all rooms.
             </p>
           </div>
+          <a href="{{ route('partner.apartment.pricing.policies') }}">
          <button @click="$refs.section1.scrollIntoView({ behavior: 'smooth' })"
         class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">
   Edit
-</button>
+</button></a>
         </div>
         <hr class="my-4">
         <ul class="text-gray-900 text-sm space-y-2">
@@ -1748,7 +1683,8 @@
             <h3 class="text-base font-semibold text-gray-700">Price per group size</h3>
             <img src="{{ asset('assets/material-symbols-light_info-outline.svg') }}" alt="Tip Icon" class="w-5 h-5">
           </div>
-          <button class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">Edit</button>
+           <a href="{{ route('partner.apartment.price.group') }}">
+          <button class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">Edit</button></a>
         </div>
 
         <hr class="my-4">
@@ -1782,7 +1718,7 @@
 
       </div>
 
-
+   
     </div>
 
     <h2 class="text-xl font-semibold text-gray-800">Non-refundable rate plan</h2>
@@ -1794,7 +1730,8 @@
           <h3 class="text-base font-semibold text-gray-700">Price and cancellation policy</h3>
           <img src="{{ asset('assets/material-symbols-light_info-outline.svg') }}" alt="Tip Icon" class="w-5 h-5">
         </div>
-        <button class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">Edit</button>
+         <a href="{{ route('partner.apartment.refundable.rate') }}">
+        <button class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">Edit</button></a>
       </div>
       <hr class="my-4">
       <ul class="text-gray-900 text-sm space-y-2">
@@ -1818,7 +1755,8 @@
           <h3 class="text-base font-semibold text-gray-700">Price and cancellation policy</h3>
           <img src="{{ asset('assets/material-symbols-light_info-outline.svg') }}" alt="Tip Icon" class="w-5 h-5">
         </div>
-        <button class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">Edit</button>
+         <a href="{{ route('partner.apartment.weekly.rate') }}">
+        <button class="text-[#3CC0E9] border border-[#3CC0E9] rounded px-3 py-1 text-sm hover:bg-blue-50 transition">Edit</button></a>
       </div>
       <hr class="my-4">
       <ul class="text-gray-900 text-sm space-y-2">
@@ -1844,7 +1782,7 @@
   </button>
 
   <!-- Continue Button -->
-
+  
   <button       @click="pricingWizardStep++" class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-sky-500 transition w-full sm:w-auto">
     Continue
   </button>
@@ -1853,7 +1791,7 @@
   </div>
   </template>
 
-
+ 
 
   <template x-if="pricingWizardStep === 4">
   <div x-data="{
@@ -2020,7 +1958,7 @@ function calendarComponent() {
                 <input type="radio" value="365" x-model="availabilityOption" class="form-radio text-blue-600">
                 <span class="text-sm">Continuously extend my availability to:</span>
             </label>
-
+            
         </div>
 
         <div x-show="availabilityOption === '365'" class="pl-6">
@@ -2053,18 +1991,18 @@ function calendarComponent() {
       <div class="space-y-4">
         <label class="flex items-center space-x-2">
           <input type="radio" value="yes" x-model="syncOption" class="form-radio text-blue-600">
-          <span class="text-sm">Yes, I’ll import unavailable dates from another website</span>
+          <span class="text-sm">Yes, I'll import unavailable dates from another website</span>
         </label>
 
         <div x-show="syncOption === 'yes'" class="space-y-2 border border-gray-300 rounded p-4">
           <p class="text-sm">Paste your iCal link here</p>
-          <input
-              type="text"
-              placeholder="Paste your iCal link here"
+          <input 
+              type="text" 
+              placeholder="Paste your iCal link here" 
               x-model="icalUrl"
               class="border border-gray-300 p-2 rounded w-full"
           >
-          <button
+          <button 
               class="bg-blue-700 text-white px-4 py-1 rounded mt-2"
               :disabled="!icalUrl.trim()"
               :class="{ 'opacity-50 cursor-not-allowed': !icalUrl.trim() }"
@@ -2076,13 +2014,13 @@ function calendarComponent() {
 
         <label class="flex items-center space-x-2">
           <input type="radio" value="no" x-model="syncOption" class="form-radio text-blue-600">
-          <span class="text-sm">No, I won’t sync my availability</span>
+          <span class="text-sm">No, I won't sync my availability</span>
         </label>
       </div>
     </div>
   </div>
 
-
+  
 </div>
 
 <!-- LONG STAY SECTION -->
@@ -2097,7 +2035,7 @@ function calendarComponent() {
 
       <p class="text-sm font-semibold">Will you accept reservations for stays over 30 nights?</p>
       <div class="flex flex-col sm:flex-row gap-4">
-
+         
         <label class="flex items-center space-x-2">
           <input type="radio" value="yes" x-model="allowLongStay" class="form-radio text-blue-600">
           <span>Yes</span>
@@ -2118,6 +2056,69 @@ function calendarComponent() {
         </select>
       </div>
     </div>
+  </div>
+
+  
+</div>
+
+
+     <!-- Navigation Buttons -->
+<div class="flex justify-between items-center mt-4">
+  <!-- Back Button -->
+  <button type="button"
+          @click="pricingWizardStep--"
+          :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
+          class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
+    ←
+  </button>
+
+  <!-- Continue Button -->
+  
+  <button       @click="pricingWizardStep++" class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-sky-500 transition w-full sm:w-auto">
+    Continue
+  </button>
+
+
+  </div>
+</div>
+
+
+  </template>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- ✅ Step 5: Legal Information -->
+<section x-show="step === 5">
+   <div class="px-4 py-8 mt-6 w-full max-w-2xl mx-auto lg:ml-24 space-y-6" x-data="{ ownershipType: '', owners: [{ firstName: '', lastName: '', dob: '' }] }">
+
+    <h2 class="text-3xl font-bold text-gray-800">Partner verification</h2>
+
+    <div class="bg-white p-6 rounded-lg shadow-sm border space-y-4 text-sm text-gray-700">
+      <p class="text-sm text-gray-800">
+        In order to comply with various legal and regulatory requirements, we need to collect and verify some information about you and your property.
+      </p>
+
+      <div>
+        <label class="block font-semibold text-gray-900 mb-2">
+          Is the accommodation owned by an individual or business entity?
+        </label>
+        <select x-model="ownershipType" class="w-full p-2 border rounded text-sm focus:ring focus:ring-sky-200">
+          <option value="">Select an option</option>
+          <option value="individual">I am an individual running a business</option>
+          <option value="business">I represent a business entity</option>
+        </select>
+      </div>
+    </div>
 
     <!-- Individual Form -->
     <div x-show="ownershipType === 'individual'" x-transition class="bg-white p-6 rounded-lg  space-y-4">
@@ -2127,10 +2128,10 @@ function calendarComponent() {
       </p>
       <!-- Owner Input Blocks -->
       <template x-for="(owner, index) in owners" :key="index">
-
+        
         <div class="border p-4 rounded-lg space-y-4 bg-white">
-
-
+          
+     
           <div>
             <label class="block  text-sm font-semibold text-gray-600">First Name</label>
             <input type="text" x-model="owner.firstName" placeholder="First Name"
@@ -2173,11 +2174,11 @@ function calendarComponent() {
           <span class="text-gray-500">- (Optional)</span>
         </label>
         <input type="text"
-
+               
                class="w-full p-2 border rounded text-sm" />
       </div>
 
-
+    
     </div>
 
     <!-- Business Form -->
@@ -2222,7 +2223,7 @@ function calendarComponent() {
   </select>
 </div>
 
-
+          
 
  <div>
         <label class="block font-semibold text-sm text-gray-600">
@@ -2230,10 +2231,10 @@ function calendarComponent() {
           <span class="text-gray-500">- (Optional)</span>
         </label>
         <input type="text"
-
+               
                class="w-full p-2 border rounded text-sm" />
       </div>
-
+          
 
 
 </div>
@@ -2243,7 +2244,7 @@ function calendarComponent() {
       <!-- Owner Input Blocks -->
       <template x-for="(owner, index) in owners" :key="index">
         <div class="border p-4 rounded-lg space-y-4 bg-white">
-
+          
           <div>
             <label class="block  text-sm font-semibold text-gray-600">First Name</label>
             <input type="text" x-model="owner.firstName" placeholder="First Name"
@@ -2286,7 +2287,7 @@ function calendarComponent() {
           <span class="text-gray-500">- (Optional)</span>
         </label>
         <input type="text"
-
+               
                class="w-full p-2 border rounded text-sm" />
       </div>
     </div>
@@ -2295,7 +2296,7 @@ function calendarComponent() {
     <div class="flex justify-between pt-4">
       <button @click="step--"
              class="flex items-center border border-[#3CC0E9] rounded text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12">
-
+        
             ←
       </button>
       <button @click="step++"
@@ -2304,55 +2305,10 @@ function calendarComponent() {
       </button>
     </div>
   </div>
-
-
-</div>
-
-
-     <!-- Navigation Buttons -->
-<div class="flex justify-between items-center mt-4">
-  <!-- Back Button -->
-  <button type="button"
-          @click="pricingWizardStep--"
-          :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-          class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
-    ←
-  </button>
-
-  <!-- Continue Button -->
-
-  <button       @click="pricingWizardStep++" class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-sky-500 transition w-full sm:w-auto">
-    Continue
-  </button>
-
-
-  </div>
-</div>
-
-
-  </template>
-</section>
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- ✅ Step 5: Legal Information -->
-<section x-show="step === 5">
-  <h2 class="text-2xl font-bold text-blue-700 mb-4">Legal information</h2>
-  <p class="text-gray-600">Provide required legal documents and compliance information.</p>
-  <!-- Add your legal details form here -->
 </section>
 
 <section x-data="{ businessType: 'individual' }" x-show="step === 6" class="w-full px-4 py-8 max-w-2xl mx-auto lg:ml-32">
-    <h2 class="text-2xl font-semibold mb-6">You’re almost there</h2>
+    <h2 class="text-2xl font-semibold mb-6">You're almost there</h2>
 
     <div class="bg-white p-6 rounded-lg shadow-md space-y-6">
         <div>
@@ -2433,7 +2389,7 @@ function calendarComponent() {
                 </div>
 
                  <p class="text-lg font-semibold text-gray-700 mb-2 mt-6">
-                    Legal representative’s personal information
+                    Legal representative's personal information
                 </p>
      <hr class="mt-2 border-t border-gray-300 mb-4">
                 <div class="space-y-4">
@@ -2576,7 +2532,7 @@ function calendarComponent() {
       </div>
       <div>
         <p class="font-semibold text-sm">Are bookings confirmed straight away?</p>
-        <p class="text-sm">Yes. They’re confirmed as soon as a guest makes a booking.</p>
+        <p class="text-sm">Yes. They're confirmed as soon as a guest makes a booking.</p>
       </div>
     </div>
   </li>
@@ -2601,7 +2557,7 @@ function calendarComponent() {
       <div>
         <p class="font-semibold text-sm">Can I decide when I get bookings?</p>
         <p class="text-sm">
-          Yes. The best way to do this is to keep your calendar up-to-date. Close any dates you don’t want a booking on. If you have bookings on other sites, close those dates as well.
+          Yes. The best way to do this is to keep your calendar up-to-date. Close any dates you don't want a booking on. If you have bookings on other sites, close those dates as well.
         </p>
       </div>
     </div>
@@ -2609,7 +2565,7 @@ function calendarComponent() {
 </ul>
 
 
-
+ 
   <div class="mt-6 space-y-4 text-sm text-gray-700">
     <label class="flex items-start gap-2">
       <input type="checkbox" class="mt-1 accent-blue-600">
@@ -2626,7 +2582,7 @@ function calendarComponent() {
     </label>
   </div>
 
-
+  
 </div>
 <!-- Button Row -->
 <div class="mt-6">
@@ -2637,9 +2593,11 @@ function calendarComponent() {
     </button>
 
     <!-- Open for bookings Button (take remaining space) -->
-    <button class="flex-1 px-6 py-3 bg-[#3CC0E9]  text-white font-semibold rounded-md hover:bg-[#29ACD5] transition">
-      Open for bookings
-    </button>
+   <a href="{{ route('open.booking') }}"
+   class="flex-1 px-6 py-3 bg-[#3CC0E9] text-white text-center font-semibold rounded-md hover:bg-[#29ACD5] transition">
+   Open for bookings
+</a>
+
   </div>
 
   <!-- I'm not ready link -->

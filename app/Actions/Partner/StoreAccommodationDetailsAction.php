@@ -14,25 +14,35 @@ class StoreAccommodationDetailsAction
     public function execute(AccommodationDetailsDTO $dto): Accommodation
     {
         return DB::transaction(function () use ($dto) {
-            $accommodation = Accommodation::create([
+            $accommodation = Accommodation::updateOrCreate([
                 'property_id' => $dto->property_id,
                 'ownership_type' => $dto->ownership_type,
             ]);
 
             if ($dto->ownership_type === 'business_entity' && $dto->business_entity) {
-                $business = $accommodation->businessEntities()->create($dto->business_entity);
+                $businessData = $dto->business_entity;
+                $accommodation->businessEntities()->updateOrCreate(
+                    [
+                        'business_name' => $businessData['business_name'] ?? null,
+                    ],
+                    $businessData
+                );
             }
 
             if ($dto->ownership_type === 'individual' && $dto->individuals) {
                 foreach ($dto->individuals as $individualData) {
-                    $individual = $accommodation->individuals()->create([
-                        'first_name' => $individualData['first_name'],
-                        'last_name' => $individualData['last_name'],
-                        'date_of_birth' => $individualData['date_of_birth'],
-                    ]);
-                    if (!empty($individualData['alt_names'])) {
-                        foreach ($individualData['alt_names'] as $altName) {
-                            $individual->altNames()->create(['alt_name' => $altName]);
+                    $attrs = [
+                        'first_name' => $individualData['first_name'] ?? null,
+                        'last_name' => $individualData['last_name'] ?? null,
+                        'date_of_birth' => $individualData['date_of_birth'] ?? null,
+                    ];
+                    $individual = $accommodation->individuals()->updateOrCreate($attrs, $attrs);
+                    if (!empty($individualData['alt_names']) && is_array($individualData['alt_names'])) {
+                        $cleanAltNames = array_values(array_filter($individualData['alt_names'], function ($name) {
+                            return is_string($name) && strlen(trim($name)) > 0;
+                        }));
+                        foreach ($cleanAltNames as $altName) {
+                            $individual->altNames()->create(['alt_name' => trim($altName)]);
                         }
                     }
                 }
