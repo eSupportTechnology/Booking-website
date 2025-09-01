@@ -1,7 +1,4 @@
 <?php
-
-
-// app/Http/Controllers/Admin/AdminAccountController.php
 namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Services\Admin\AdminAccountService;
@@ -17,17 +14,18 @@ class AdminAccountController extends Controller
     }
     public function index()
     {
-        // Get the ID of the currently authenticated user (super admin)
-        $superAdminId = Auth::id(); // Assuming the super admin is authenticated
-        // Fetch all admin accounts excluding the super admin
+        $superAdminId = Auth::guard('admin')->id();
         $adminAccounts = $this->adminAccountService->getAllAdminAccounts($superAdminId);
         $viewModel = new AdminAccountViewModel($adminAccounts);
-
         return view('admin.accounts.index', compact('viewModel'));
     }
-    public function toggleStatus($id)
+    public function updateStatus(Request $request, $id)
     {
-        $this->adminAccountService->toggleAdminStatus($id);
-        return redirect()->route('admin.accounts.index')->with('success', 'Admin status updated successfully.');
+        $request->validate([
+            'status' => 'required|in:approved,rejected,pending'
+        ]);
+        $admin = $this->adminAccountService->updateAdminStatus($id, $request->status);
+        return redirect()->route('admin.accounts.index')
+            ->with('success', "Admin status updated to {$request->status} successfully.");
     }
 }

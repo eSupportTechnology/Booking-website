@@ -833,7 +833,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         //admin dashboard admin account management
         Route::get('/accounts', [AdminAccountController::class, 'index'])->name('accounts.index');
-        Route::post('/accounts/{id}/toggle', [AdminAccountController::class, 'toggleStatus'])->name('accounts.toggle');
+        Route::post('/accounts/{id}/status', [AdminAccountController::class, 'updateStatus'])->name('accounts.updateStatus');
 
         // Settings
         Route::get('/settings', function () {
@@ -940,9 +940,9 @@ Route::view('/admin/rental/airport', 'frontend.admin.airport')->name('admin.airp
 Route::view('/admin/taxi-details', 'frontend.admin.taxi-details');
 // Airport Details Page
 Route::view('/admin/airport-details', 'frontend.admin.airport-details')->name('admin.airport.details');
-Route::get('/admin', function () {
-    return view('frontend.admin.admin');
-})->name('admin.dashboard');
+// Route::get('/admin', function () {
+//     return view('frontend.admin.admin');
+// })->name('admin.dashboard');
 
 
 
