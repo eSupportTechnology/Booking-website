@@ -1,19 +1,21 @@
 <?php
-
-// app/Services/Admin/AdminAccountService.php
 namespace App\Services\Admin;
 use App\Models\Admin;
 class AdminAccountService
 {
     public function getAllAdminAccounts($superAdminId)
     {
-        // Fetch all admin accounts excluding the super admin account
-        return Admin::where('id', '!=', $superAdminId)->get();
+        return Admin::where('id', '!=', $superAdminId)
+                   ->orderBy('created_at', 'desc')
+                   ->get();
     }
-    public function toggleAdminStatus($id)
+    public function updateAdminStatus($id, $status)
     {
         $admin = Admin::findOrFail($id);
-        $admin->status = !$admin->status; // Toggle active status
+        $admin->status = $status;
+        $admin->approved_by = auth('admin')->id();
+        $admin->approved_at = now();
         $admin->save();
+        return $admin;
     }
 }
