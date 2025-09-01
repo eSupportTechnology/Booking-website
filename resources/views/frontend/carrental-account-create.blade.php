@@ -16,18 +16,41 @@
                 <p class="text-gray-600 text-sm mb-6" style="font-family: 'Noto Sans', sans-serif;">Create an account to
                     list and manage your car.</p>
 
-                <form >
-                    @csrf
-                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1"
-                        style="font-family: 'Noto Sans', sans-serif;">Email address</label>
-                    <input type="email" id="email" name="email" required
-                        class="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4" />
- <a href="/carrentals/registration">
-                    <button type="submit" class="w-full text-white py-2 rounded hover:bg-blue-700 mb-4"
-                        style=" background-color:#3CC0E9;font-family: 'Noto Sans', sans-serif;">
-                        Continue
-                    </button></a>
-                </form>
+                     @if (session('success'))
+        <div class="mb-4 p-3 rounded bg-green-100 border border-green-400 text-green-700 text-sm" role="alert">
+          {{ session('success') }}
+        </div>
+      @endif
+
+      @if (session('error'))
+        <div class="mb-4 p-3 rounded bg-red-100 border border-red-400 text-red-700 text-sm" role="alert">
+          {{ session('error') }}
+        </div>
+      @endif
+
+      @if ($errors->any())
+        <div class="mb-4 p-3 rounded bg-red-100 border border-red-400 text-red-700 text-sm" role="alert">
+          <ul class="mb-0 pl-4 list-disc">
+            @foreach ($errors->all() as $error)
+              <li>{{ $error }}</li>
+            @endforeach
+          </ul>
+        </div>
+      @endif
+
+           <form method="POST" action="{{ route('partner.register.email') }}" id="emailForm">
+        @csrf
+        <label for="email" class="block text-sm font-medium text-gray-700 mb-1" style="font-family: 'Noto Sans', sans-serif;">Email address</label>
+        <input type="email" id="email" name="email" required
+               class="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4 @error('email') border-red-500 @enderror" />
+        @error('email')
+            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+        @enderror
+
+        <button type="submit" class="w-full text-white py-2 rounded hover:bg-blue-700 mb-4" style="background-color:#3CC0E9;font-family: 'Noto Sans', sans-serif;">
+          Continue
+        </button>
+      </form>
 
                 <div class="border-t border-gray-200 my-6"></div>
 
