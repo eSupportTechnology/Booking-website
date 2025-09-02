@@ -52,6 +52,11 @@ return [
         'driver' => 'session',
         'provider' => 'travelers',
         ],
+
+        'car_renter' => [
+        'driver' => 'session',
+        'provider' => 'car_renters',
+    ],
     ],
 
     /*
@@ -86,6 +91,11 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\Admin::class,
         ],
+
+         'car_renters' => [
+        'driver' => 'eloquent',
+        'model' => App\Models\CarRenter::class,
+    ],
 
         // 'users' => [
         //     'driver' => 'database',

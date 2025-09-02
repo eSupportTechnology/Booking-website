@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 </head>
 
 <body class="bg-blue-50 text-gray-800">
@@ -25,7 +27,7 @@
                     <button id="menuToggle" class="text-white focus:outline-none block md:hidden">
                         <i class="fas fa-bars text-xl"></i>
                     </button>
-                    <a href="#" class="text-xl font-bold">Admin Panel</a>
+                    <a href="{{ route('admin.dashboard') }}" class="text-xl font-bold">Admin Panel</a>
                 </div>
 
                 <!-- Center: Search -->

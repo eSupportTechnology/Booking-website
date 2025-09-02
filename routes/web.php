@@ -26,6 +26,9 @@ use App\Http\Controllers\AccommodationController;
 use App\Http\Controllers\AirportTaxiController;
 use App\Http\Controllers\CarReservations\CarRentalController;
 use App\Http\Controllers\Admin\AdminAccountController;
+use App\Http\Controllers\Admin\CustomersController;
+use App\Http\Controllers\CarReservations\CarRenterAuthController;
+use App\Http\Controllers\CarReservations\CarRenterLoginController;
 
 Route::post('/accommodation/save-verification/{propertyId}', [AccommodationController::class, 'saveVerification']);
 
@@ -777,6 +780,15 @@ Route::post('/partner/property/{property}/rate-plans', [PropertyController::clas
 require __DIR__ . '/auth.php';
 
 
+// Admin Customer Routes
+Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
+    Route::get('/customers/{id}', [CustomersController::class, 'view'])->name('admin.customers.view');
+    Route::post('/customers/{id}/verify-email', [CustomersController::class, 'verifyEmail'])->name('admin.customers.verify-email');
+    Route::post('/customers/{id}/activate', [CustomersController::class, 'activateAccount'])->name('admin.customers.activate');
+    Route::post('/customers/{id}/deactivate', [CustomersController::class, 'deactivateAccount'])->name('admin.customers.deactivate');
+});
+
+
 // Admin Portal Routes
 Route::prefix('admin')->name('admin.')->group(function () {
     // Guest routes
@@ -803,25 +815,25 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Customer and Partner detail routes
         Route::get('/customer/{customer}', [\App\Http\Controllers\Admin\CustomerViewController::class, 'show'])->name('customer.view');
-        Route::get('/partner/{partner_id}', [\App\Http\Controllers\Admin\PartnerViewController::class, 'show'])->name('partner.view');
+        Route::get('/partners/{partner_id}', [\App\Http\Controllers\Admin\PartnerViewController::class, 'show'])->name('partner.view');
 
         // Customer and Partner detail routes
         Route::get('/customer/{customer_id}', [\App\Http\Controllers\Admin\CustomerViewController::class, 'show'])->name('customer.view');
-        Route::get('/partner/{partner_id}', [\App\Http\Controllers\Admin\PartnerViewController::class, 'show'])->name('partner.view');
+        Route::get('/partners/{partner_id}', [\App\Http\Controllers\Admin\PartnerViewController::class, 'show'])->name('partner.view');
 
         // Property management
-        Route::get('/units', \App\Http\Controllers\Admin\ApartmentsController::class)->name('apartments');
-        Route::get('/residences', \App\Http\Controllers\Admin\HomesController::class)->name('homes');
-        Route::get('/venues', \App\Http\Controllers\Admin\HotelsController::class)->name('hotels');
-        Route::get('/unique-stays', \App\Http\Controllers\Admin\AlternativePlacesController::class)->name('alternative.places');
+        Route::get('/Property/Apartment', \App\Http\Controllers\Admin\ApartmentsController::class)->name('apartments');
+        Route::get('/Property/Home', \App\Http\Controllers\Admin\HomesController::class)->name('homes');
+        Route::get('/Property/Hotel', \App\Http\Controllers\Admin\HotelsController::class)->name('hotels');
+        Route::get('/Property/Alternative-Places', \App\Http\Controllers\Admin\AlternativePlacesController::class)->name('alternative.places');
 
         // Customer management
         Route::get('/customers', [\App\Http\Controllers\Admin\CustomersController::class, '__invoke'])->name('customers');
-        Route::post('/account-details', [\App\Http\Controllers\Admin\CustomerViewController::class, 'show'])->name('admin.customer.view');
+        Route::post('/customers/customer-details', [\App\Http\Controllers\Admin\CustomerViewController::class, 'show'])->name('admin.customer.view');
 
         // Partner management
         Route::get('/partners', [\App\Http\Controllers\Admin\PartnersController::class, '__invoke'])->name('partners');
-        Route::post('/partner-details', [\App\Http\Controllers\Admin\PartnerViewController::class, 'show'])->name('admin.partner.view');
+        Route::post('/partners/partner-details', [\App\Http\Controllers\Admin\PartnerViewController::class, 'show'])->name('admin.partner.view');
 
         // Admin Dashboard rental Route
         Route::view('/rental/taxi', 'admin.admin-taxi')->name('rental.taxi');
@@ -832,7 +844,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         //admin dashboard admin account management
         Route::get('/accounts', [AdminAccountController::class, 'index'])->name('accounts.index');
-        Route::post('/accounts/{id}/toggle', [AdminAccountController::class, 'toggleStatus'])->name('accounts.toggle');
+        Route::post('/accounts/{id}/status', [AdminAccountController::class, 'updateStatus'])->name('accounts.updateStatus');
 
         // Settings
         Route::get('/settings', function () {
@@ -939,9 +951,9 @@ Route::view('/admin/rental/airport', 'frontend.admin.airport')->name('admin.airp
 Route::view('/admin/taxi-details', 'frontend.admin.taxi-details');
 // Airport Details Page
 Route::view('/admin/airport-details', 'frontend.admin.airport-details')->name('admin.airport.details');
-Route::get('/admin', function () {
-    return view('frontend.admin.admin');
-})->name('admin.dashboard');
+// Route::get('/admin', function () {
+//     return view('frontend.admin.admin');
+// })->name('admin.dashboard');
 
 
 
@@ -1038,3 +1050,53 @@ Route::post('/logout', function () {
     return redirect('/')->with('success', 'You have been logged out.');
 })->name('logout');
 
+
+
+
+
+
+
+
+Route::get('/carrentals/register/email', [CarRenterAuthController::class, 'createEmail'])
+    ->name('car_renter.register.email');
+
+Route::post('/carrentals/register/email', [CarRenterAuthController::class, 'storeEmail'])
+    ->name('car_renter.register.email.store');
+
+Route::get('/carrentals/register/details', [CarRenterAuthController::class, 'carRenterDetails'])
+    ->name('car_renter.register.details');
+
+Route::post('/car-renter/register/company', [CarRenterAuthController::class, 'storeCompanyDetails'])
+     ->name('car_renter.register.company.store');
+
+Route::post('/car-renter/register/individual', [CarRenterAuthController::class, 'storeIndividualDetails'])
+     ->name('car_renter.register.individual.store');
+
+Route::get('/carrentals/register/password', [CarRenterAuthController::class, 'createPassword'])
+    ->name('carrentals.register.password');
+
+Route::post('/carrentals/register/password', [CarRenterAuthController::class, 'register'])
+    ->name('carrentals.register.password.store');
+
+Route::get('/carrentals/register/email/verify', [CarRenterAuthController::class, 'emailVerifyPage'])
+    ->name('carrentals.register.email.verify');
+
+Route::post('/carrentals/register/resend', [CarRenterAuthController::class, 'resendVerificationEmail'])
+    ->name('carrentals.register.resend');
+
+Route::get('/carrentals/register/verify/{token}', [CarRenterAuthController::class, 'verify'])
+    ->name('carrentals.register.verify.token');
+
+    // Login flow
+Route::get('/carrentals/login/email', [CarRenterLoginController::class, 'showEmailForm'])->name('carrentals.login.email');
+Route::post('/carrentals/login/email', [CarRenterLoginController::class, 'storeEmail'])->name('carrentals.login.email.store');
+Route::get('/carrentals/login/password', [CarRenterLoginController::class, 'showPasswordForm'])->name('carrentals.login.password');
+Route::post('/carrentals/login/password', [CarRenterLoginController::class, 'loginWithPassword'])->name('carrentals.login.password.submit');
+Route::post('/carrentals/logout', [CarRenterLoginController::class, 'logout'])->name('car_renter.logout');
+
+// Dashboard
+Route::middleware('auth:car_renter')->group(function () {
+    Route::get('/car-renter/dashboard', function () {
+        return view('car_renters.dashboard');
+    })->name('car_renter.dashboard');
+});
