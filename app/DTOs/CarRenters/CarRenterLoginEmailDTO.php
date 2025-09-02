@@ -3,7 +3,6 @@
 namespace App\DTOs\CarRenters;
 
 use WendellAdriel\ValidatedDTO\ValidatedDTO;
-use App\Models\CarRenter;
 
 class CarRenterLoginEmailDTO extends ValidatedDTO
 {
@@ -32,4 +31,4 @@ class CarRenterLoginEmailDTO extends ValidatedDTO
     {
         return [];
     }
-} 
+}

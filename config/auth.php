@@ -92,7 +92,7 @@ return [
             'model' => App\Models\Admin::class,
         ],
 
-         'car_renters' => [
+        'car_renters' => [
         'driver' => 'eloquent',
         'model' => App\Models\CarRenter::class,
     ],

@@ -5,10 +5,10 @@ namespace App\Http\Controllers\CarReservations;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 use App\DTOs\CarRenters\CarRenterLoginEmailDTO;
 use App\DTOs\CarRenters\CarRenterLoginPasswordDTO;
 use App\Actions\CarRenters\LoginAction;
-use App\Models\CarRenter;
 
 class CarRenterLoginController extends Controller
 {
@@ -17,7 +17,7 @@ class CarRenterLoginController extends Controller
         $this->middleware('guest:car_renter')->except('logout');
     }
 
-    // Show Email Form
+    // Step 1: Show Email Form
     public function showEmailForm()
     {
         if (Auth::guard('car_renter')->check()) {
@@ -26,79 +26,79 @@ class CarRenterLoginController extends Controller
         return view('car_rentals.carrental-signin');
     }
 
-    // Store Email in Session
+    // Step 1: Store Email in Session
     public function storeEmail(Request $request)
     {
+        // Try using DTO if available; fallback to manual validation
         try {
             $dto = CarRenterLoginEmailDTO::fromRequest($request);
-
-            session(['car_renter_login_email' => $dto->email]);
-
-            return redirect()->route('carrentals.login.password')
-                ->with('success', 'Email verified. Please enter your password.');
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return back()->withErrors($e->errors())->withInput();
+            $email = $dto->email;
+        } catch (\Throwable $e) {
+            $validated = $request->validate([
+                'email' => ['required', 'email', 'exists:car_renters,email'],
+            ]);
+            $email = $validated['email'];
         }
+
+        session(['car_renter_login_email' => $email]);
+
+        return redirect()->route('carrentals.login.password');
     }
 
-    // Show Password Form
+    // Step 2: Show Password Form
     public function showPasswordForm()
     {
-        if (Auth::guard('car_renter')->check()) {
-            return redirect()->route('car_renter.dashboard');
-        }
-
-        if (!session('car_renter_login_email')) {
-            return redirect()->route('carrentals.login.email')->withErrors([
-                'email' => 'Please enter your email first.',
-            ]);
-        }
-
         $email = session('car_renter_login_email');
-        $user = CarRenter::where('email', $email)->first();
 
-        if ($user) {
-            return view('car_rentals.carrental-enter-password', compact('email'));
+        if (!$email) {
+            return redirect()->route('carrentals.login.email')
+                ->withErrors(['email' => 'Please enter your email first.']);
         }
 
-        abort(403, 'Unauthorized');
+        return view('car_rentals.carrental-enter-password', compact('email'));
     }
 
-    // Process Login
+    // Step 2: Process Login with Password
     public function loginWithPassword(Request $request, LoginAction $loginAction)
     {
-        try {
-            $email = $request->input('email') ?? session('car_renter_login_email');
+        $email = session('car_renter_login_email');
 
-            if (!$email) {
-                return redirect()->route('carrentals.login.email')
-                    ->with('error', 'Session expired. Please re-enter your email.');
-            }
-
-            $dto = CarRenterLoginPasswordDTO::fromArray([
-                'password' => $request->password,
-                'email' => $email
-            ]);
-
-            if ($loginAction->execute($email, $dto->password)) {
-                session()->forget('car_renter_login_email');
-                $user = Auth::guard('car_renter')->user();
-
-                return redirect()->route('car_renter.dashboard')
-                    ->with('success', 'Welcome back, ' . ($user ? $user->name : 'Car Renter') . '!');
-            }
-
-            return back()->with('error', 'Invalid password. Please try again.')->withInput();
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return back()->withErrors($e->errors())->withInput();
+        if (!$email) {
+            return redirect()->route('carrentals.login.email')
+                ->withErrors(['email' => 'Session expired. Please re-enter your email.']);
         }
+
+        // DTO or fallback validation
+        try {
+            $dto = CarRenterLoginPasswordDTO::fromRequest($request);
+            $password = $dto->password;
+        } catch (\Throwable $e) {
+            $validated = $request->validate([
+                'password' => ['required', 'string'],
+            ]);
+            $password = $validated['password'];
+        }
+
+        // Attempt login using the dedicated action
+        if ($loginAction->execute($email, $password)) {
+            // Regenerate session for session fixation protection
+            $request->session()->forget('car_renter_login_email');
+            $request->session()->regenerate();
+
+            $user = Auth::guard('car_renter')->user();
+
+            return redirect()->route('car_renter.dashboard')
+                ->with('success', 'Welcome back, ' . ($user->full_name ?? 'Car Renter') . '!');
+        }
+
+        // failed
+        return back()->withErrors(['password' => 'Invalid password. Please try again.'])->withInput();
     }
 
     // Logout
     public function logout(Request $request)
     {
         Auth::guard('car_renter')->logout();
-
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 

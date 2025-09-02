@@ -24,6 +24,7 @@ class CarRenter extends Authenticatable
         'phone',
         'country_code',
         'address',
+        'remember_token',
     ];
 
     protected $hidden = [
@@ -31,16 +32,23 @@ class CarRenter extends Authenticatable
         'remember_token',
     ];
 
-    protected $casts = [
-        'email' => 'string',
-    ];
-
-    // Hash password automatically
-    public function setPasswordAttribute($value)
+    /**
+     * When setting password: only bcrypt if it does not already look like a bcrypt hash.
+     * This avoids double-hashing.
+     */
+    public function setPasswordAttribute($value): void
     {
-        if ($value) {
-            $this->attributes['password'] = bcrypt($value);
+        if ($value === null || $value === '') {
+            return;
         }
+
+        // bcrypt hashes look like: $2y$10$..................................................
+        if (preg_match('/^\$2[aby]\$.{56}$/', $value)) {
+            $this->attributes['password'] = $value;
+            return;
+        }
+
+        $this->attributes['password'] = bcrypt($value);
     }
 
     public function isCompany(): bool
