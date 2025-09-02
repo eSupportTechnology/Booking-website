@@ -56,6 +56,16 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasOne(Partner::class);
     }
 
+    public function partnerPersonalDetail()
+    {
+        return $this->hasOne(PartnerPersonalDetails::class);
+    }
+
+    public function businessEntity()
+    {
+        return $this->hasOne(BusinessEntity::class);
+    }
+
     public function customerPersonalDetail()
     {
         return $this->hasOne(CustomerPersonalDetails::class);
@@ -64,6 +74,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function travelerDetails()
     {
         return $this->hasOne(TravelersDetails::class);
+    }
+
+    public function properties()
+    {
+        return $this->hasMany(Property::class);
     }
 
     public function bookings()

@@ -30,8 +30,7 @@
 
         <!-- Taxi Basic Info -->
         <div class="bg-white rounded-lg shadow p-4 sm:p-6 relative">
-            <a href="#"
-               class="absolute top-3 sm:top-4 right-3 sm:right-4 bg-[#3CC0E9] hover:bg-[#33aad1] text-white px-3 py-1 sm:px-4 sm:py-2 rounded shadow text-xs sm:text-sm">Edit</a>
+
 
             <h1 class="text-xl sm:text-2xl font-bold text-gray-800 mb-4 sm:mb-6">Taxi Details</h1>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
@@ -45,7 +44,7 @@
                     </p>
                 </div>
                 <div class="flex items-center justify-center">
-                    <img src="{{ asset('images/taxi-sample.jpg') }}"
+                    <img src="{{ asset('public\images\4.jpg') }}"
                          alt="Taxi Image"
                          class="rounded-lg shadow-md w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg h-40 sm:h-48 md:h-56 object-cover">
                 </div>
@@ -54,8 +53,7 @@
 
         <!-- Driver Details -->
         <div class="bg-white rounded-lg shadow p-4 sm:p-6 relative">
-            <a href="#"
-               class="absolute top-3 sm:top-4 right-3 sm:right-4 bg-[#3CC0E9] hover:bg-[#33aad1] text-white px-3 py-1 sm:px-4 sm:py-2 rounded shadow text-xs sm:text-sm">Edit</a>
+
             <h2 class="text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4">Driver Details</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 text-sm sm:text-base">
                 <p class="text-gray-700"><span class="font-semibold">Driver Name:</span> John Doe</p>
@@ -69,8 +67,7 @@
 
         <!-- Taxi Performance & Revenue -->
         <div class="bg-white rounded-lg shadow p-4 sm:p-6 relative">
-            <a href="#"
-               class="absolute top-3 sm:top-4 right-3 sm:right-4 bg-[#3CC0E9] hover:bg-[#33aad1] text-white px-3 py-1 sm:px-4 sm:py-2 rounded shadow text-xs sm:text-sm">Edit</a>
+
             <h2 class="text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4">Performance & Revenue</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
                 <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-5 shadow">
@@ -104,8 +101,7 @@
 
         <!-- Taxi Usage Statistics -->
         <div class="bg-white rounded-lg shadow p-4 sm:p-6 relative">
-            <a href="#"
-               class="absolute top-3 sm:top-4 right-3 sm:right-4 bg-[#3CC0E9] hover:bg-[#33aad1] text-white px-3 py-1 sm:px-4 sm:py-2 rounded shadow text-xs sm:text-sm">Edit</a>
+
             <h2 class="text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4">Usage Statistics</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 text-sm sm:text-base">
                 <p class="text-gray-700"><span class="font-semibold">Total Bookings:</span> 180</p>
@@ -119,8 +115,7 @@
 
         <!-- Customer Insights -->
         <div class="bg-white rounded-lg shadow p-4 sm:p-6 relative">
-            <a href="#"
-               class="absolute top-3 sm:top-4 right-3 sm:right-4 bg-[#3CC0E9] hover:bg-[#33aad1] text-white px-3 py-1 sm:px-4 sm:py-2 rounded shadow text-xs sm:text-sm">Edit</a>
+
             <h2 class="text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4">Customer Insights</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 text-sm sm:text-base">
                 <p class="text-gray-700"><span class="font-semibold">Unique Customers:</span> 95</p>
@@ -132,8 +127,7 @@
 
         <!-- Maintenance & Vehicle Health -->
         <div class="bg-white rounded-lg shadow p-4 sm:p-6 relative">
-            <a href="#"
-               class="absolute top-3 sm:top-4 right-3 sm:right-4 bg-[#3CC0E9] hover:bg-[#33aad1] text-white px-3 py-1 sm:px-4 sm:py-2 rounded shadow text-xs sm:text-sm">Edit</a>
+
             <h2 class="text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4">Maintenance & Health</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 text-sm sm:text-base">
                 <p class="text-gray-700"><span class="font-semibold">Last Maintenance:</span> 20 Jul 2025</p>

@@ -141,4 +141,9 @@ class Property extends Model
     {
         return $this->hasOneThrough(Partner::class, User::class, 'id', 'user_id', 'user_id', 'id');
     }
+
+    public function accommodation()
+    {
+        return $this->hasOne(Accommodation::class);
+    }
 }
