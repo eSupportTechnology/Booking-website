@@ -8,7 +8,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('files', function (Blueprint $table) {
-            $table->dropForeign(['property_id']);
+//            $table->dropForeign(['property_id']);
 
             $table->unsignedBigInteger('property_id')->nullable()->change();
 
