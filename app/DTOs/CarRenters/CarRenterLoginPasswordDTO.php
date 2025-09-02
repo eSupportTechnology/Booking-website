@@ -7,13 +7,11 @@ use WendellAdriel\ValidatedDTO\ValidatedDTO;
 class CarRenterLoginPasswordDTO extends ValidatedDTO
 {
     public string $password;
-    public string $email;
 
     protected function rules(): array
     {
         return [
             'password' => ['required', 'string'],
-            'email' => ['required', 'email'],
         ];
     }
 
@@ -21,7 +19,6 @@ class CarRenterLoginPasswordDTO extends ValidatedDTO
     {
         return [
             'password.required' => 'Password is required.',
-            'email.required' => 'Email is required.',
         ];
     }
 
@@ -34,4 +31,4 @@ class CarRenterLoginPasswordDTO extends ValidatedDTO
     {
         return [];
     }
-} 
+}

@@ -11,33 +11,11 @@ use App\Models\CarRenter;
 
 class CarRenterAuthController extends Controller
 {
-    // Show email form
-    public function createEmail()
-    {
-        return view('car_rentals.carrental-account-create');
-    }
-
-    // Store email in session
-    public function storeEmail(Request $request)
-    {
-        $dto = CarRentersEmailDTO::fromRequest($request);
-        $registrationData = $request->session()->get('car_renter_registration', []);
-        $registrationData['email'] = $dto->email;
-        $request->session()->put('car_renter_registration', $registrationData);
-
-        return redirect()
-            ->route('car_renter.register.details')
-            ->with('success', 'Email saved successfully. Please continue with your details.');
-    }
-
+    
     // Show contact details form
     public function carRenterDetails()
     {
-        if (!session()->has('car_renter_registration.email')) {
-            return redirect()
-                ->route('car_renter.register.email')
-                ->with('error', 'Please enter your email first.');
-        }
+       
         return view('car_rentals.carrental-registration');
     }
 
