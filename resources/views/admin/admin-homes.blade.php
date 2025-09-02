@@ -2,37 +2,36 @@
 @section('title', 'Home Listings')
 @section('content')
 
-<section class="min-h-screen p-4 bg-white rounded-lg shadow-lg">
-    <div class="space-y-6 p-4">
+<section class="min-h-screen p-3 sm:p-4 bg-white rounded-lg shadow-lg">
+    <div class="space-y-4 sm:space-y-6 p-2 sm:p-4">
 
         <!-- Breadcrumb -->
-        <nav class="flex mb-4" aria-label="Breadcrumb">
-            <ol class="inline-flex items-center space-x-1 md:space-x-3">
+        <nav class="flex mb-2 sm:mb-4" aria-label="Breadcrumb">
+            <ol class="inline-flex items-center space-x-1 sm:space-x-2 md:space-x-3 text-xs sm:text-sm md:text-base">
                 <li class="inline-flex items-center">
-                    <a href="{{ route('admin.dashboard') }}" class="text-gray-700 hover:text-blue-600">
+                    <a href="{{ route('admin.dashboard') }}" class="text-gray-700 hover:text-blue-600 flex items-center">
                         <i class="fas fa-home mr-1"></i> Dashboard
                     </a>
                 </li>
                 <li>
                     <div class="flex items-center">
-                        <i class="fas fa-chevron-right text-gray-400 mx-2"></i>
+                        <i class="fas fa-chevron-right text-gray-400 mx-1 sm:mx-2"></i>
                         <span class="text-gray-500">Homes</span>
                     </div>
                 </li>
             </ol>
         </nav>
+
         <!-- Title -->
-        <h1 class="text-lg sm:text-2xl md:text-3xl font-bold text-gray-800 mb-3 sm:mb-6">Home Listings</h1>
+        <h1 class="text-lg sm:text-2xl md:text-3xl font-bold text-gray-800 mb-2 sm:mb-4">Home Listings</h1>
 
-        <!-- Search & Add Button Section -->
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-
-            <!-- Search and Filter Section -->
-            <div class="w-full sm:w-2/3 lg:w-2/3 flex gap-3">
+        <!-- Search & Filter Section -->
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-3">
+            <div class="w-full sm:w-2/3 lg:w-1/2 flex flex-col sm:flex-row gap-2 sm:gap-3">
                 <input type="text" placeholder="Search homes..."
-                    class="w-full px-3 py-1.5 text-xs sm:text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#3CC0E9]"
+                    class="w-full px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#3CC0E9]"
                     id="homeSearchInput">
-                <select id="statusFilter" class="px-3 py-1.5 text-xs sm:text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#3CC0E9] bg-white">
+                <select id="statusFilter" class="px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#3CC0E9] bg-white">
                     <option value="">All Status</option>
                     <option value="active">Active</option>
                     <option value="pending">Pending</option>
@@ -41,35 +40,28 @@
             </div>
         </div>
 
-        <!-- Results info and Rows per page selector -->
-        <div class="flex flex-col sm:flex-row justify-between items-center gap-3 mb-4">
-            <div>
-                <p class="text-xs text-gray-700">
-
-                </p>
-            </div>
-            <div class="flex items-center gap-2">
-                <select id="rowsPerPage" class="text-xs sm:text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#3CC0E9] px-2 py-1.5">
-                    <option value="5" {{ request('per_page') == 5 ? 'selected' : '' }}>5 rows</option>
-                    <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10 rows</option>
-                    <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>20 rows</option>
-                    <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50 rows</option>
-                </select>
-            </div>
+        <!-- Rows per page selector -->
+        <div class="flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+            <p class="text-xs sm:text-sm text-gray-700">Showing home listings</p>
+            <select id="rowsPerPage" class="text-xs sm:text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#3CC0E9] px-2 py-1.5">
+                <option value="5" {{ request('per_page') == 5 ? 'selected' : '' }}>5 rows</option>
+                <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10 rows</option>
+                <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>20 rows</option>
+                <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50 rows</option>
+            </select>
         </div>
 
-        <!-- Table -->
-        <div class="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-100">
+        <!-- Table for Desktop -->
+        <div class="bg-white rounded-lg shadow-lg border border-gray-100 hidden md:block">
             <div class="overflow-x-auto">
-                <table class="min-w-full text-sm text-left text-gray-700" id="homesTable"> {{-- ADDED ID HERE --}}
+                <table class="min-w-full text-sm text-left text-gray-700" id="homesTable">
                     <thead class="bg-gray-50 text-[10px] font-bold sm:text-xs uppercase text-gray-500">
                         <tr>
                             <th class="px-2 sm:px-4 py-3 sm:py-4">ID</th>
-                            <th class="px-2 sm:px-4 py-3 sm:py-4">Partner Name</th>
-                            <th class="px-2 sm:px-4 py-3 sm:py-4">Apartment Name</th>
+                            <th class="px-2 sm:px-4 py-3 sm:py-4">Partner</th>
+                            <th class="px-2 sm:px-4 py-3 sm:py-4">Apartment</th>
                             <th class="px-2 sm:px-4 py-3 sm:py-4">Location</th>
-                            {{-- <th class="px-2 sm:px-4 py-3 sm:py-4 font-medium">Bedrooms</th> --}}
-                            <th class="px-2 sm:px-4 py-3 sm:py-4">Main Image</th>
+                            <th class="px-2 sm:px-4 py-3 sm:py-4">Image</th>
                             <th class="px-2 sm:px-4 py-3 sm:py-4">Date Added</th>
                             <th class="px-2 sm:px-4 py-3 sm:py-4">Status</th>
                             <th class="px-2 sm:px-4 py-3 sm:py-4">Actions</th>
@@ -78,66 +70,79 @@
                     <tbody class="divide-y divide-gray-100 text-xs sm:text-sm">
                         @forelse($properties as $property)
                         <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-2 sm:px-4 py-3 sm:py-4 font-medium text-gray-900">#{{ $property->id }}</td>
-                            <td class="px-2 sm:px-4 py-3 sm:py-4 text-gray-700">{{ $property->partnerName }}</td>
-                            <td class="px-2 sm:px-4 py-3 sm:py-4 text-gray-700">
-                                <div class="font-medium text-[#3CC0E9]">{{ $property->title }}</div>
-                            </td>
-                            <td class="px-2 sm:px-4 py-3 sm:py-4 text-gray-700">{{ $property->location }}</td>
-                            <td class="px-2 sm:px-4 py-3 sm:py-4">
+                            <td class="px-2 sm:px-4 py-3">#{{ $property->id }}</td>
+                            <td class="px-2 sm:px-4 py-3">{{ $property->partnerName }}</td>
+                            <td class="px-2 sm:px-4 py-3 text-[#3CC0E9] font-medium">{{ $property->title }}</td>
+                            <td class="px-2 sm:px-4 py-3">{{ $property->location }}</td>
+                            <td class="px-2 sm:px-4 py-3">
                                 @if($property->primaryImage)
-                                    <img src="{{ asset('storage/' . $property->primaryImage) }}" alt="{{ $property->title }}" class="w-10 h-10 rounded-md object-cover">
+                                    <img src="{{ asset('storage/' . $property->primaryImage) }}" class="w-10 h-10 rounded-md object-cover">
                                 @else
-                                    <div class="w-10 h-10 rounded-md bg-gray-200 flex items-center justify-center">
-                                        <span class="text-gray-400 text-xs">No Image</span>
-                                    </div>
+                                    <div class="w-10 h-10 bg-gray-200 rounded-md flex items-center justify-center text-gray-400 text-xs">No Image</div>
                                 @endif
                             </td>
-                            <td class="px-2 sm:px-4 py-3 sm:py-4 text-gray-700">{{ $property->createdAt }}</td>
-                            <td class="px-2 sm:px-4 py-3 sm:py-4">
-                                <div class="relative">
-                                    <select onchange="handleStatusChange(this, '{{ $property->id }}')"
-                                            class="appearance-none {{ $property->status === 'active' ? 'bg-green-100 text-green-800' : ($property->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }} font-medium text-[10px] sm:text-xs rounded-full pl-6 pr-4 py-0.5 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#3CC0E9] transition"
-                                            data-original-value="{{ $property->status === 'suspended' ? 'inactive' : $property->status }}">
-                                        <option value="active" {{ $property->status === 'active' ? 'selected' : '' }}>Active</option>
-                                        <option value="pending" {{ $property->status === 'pending' ? 'selected' : '' }}>Pending</option>
-                                        <option value="inactive" {{ $property->status === 'suspended' ? 'selected' : '' }}>Inactive</option>
-                                    </select>
-                                    <span class="absolute top-1/2 left-2 -translate-y-1/2 w-1.5 h-1.5 rounded-full {{ $property->status === 'active' ? 'bg-green-800' : ($property->status === 'pending' ? 'bg-yellow-800' : 'bg-red-800') }} pointer-events-none status-dot"></span>
-                                </div>
+                            <td class="px-2 sm:px-4 py-3">{{ $property->createdAt }}</td>
+                            <td class="px-2 sm:px-4 py-3">
+                                <select onchange="handleStatusChange(this, '{{ $property->id }}')"
+                                    class="appearance-none {{ $property->status === 'active' ? 'bg-green-100 text-green-800' : ($property->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }} rounded-full px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-[#3CC0E9]">
+                                    <option value="active" {{ $property->status === 'active' ? 'selected' : '' }}>Active</option>
+                                    <option value="pending" {{ $property->status === 'pending' ? 'selected' : '' }}>Pending</option>
+                                    <option value="inactive" {{ $property->status === 'suspended' ? 'selected' : '' }}>Inactive</option>
+                                </select>
                             </td>
-                            <td class="px-2 sm:px-4 py-3 sm:py-4">
-                                <div class="flex items-center space-x-3">
-                                    <button class="text-[#3CC0E9] hover:text-[#3CC0E9]/80 text-[10px] sm:text-xs font-medium inline-flex items-center">
-                                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                        </svg>
-                                        Edit
-                                    </button>
-                                    <button class="text-red-600 hover:text-red-800 text-[10px] sm:text-xs font-medium inline-flex items-center">
-                                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                        </svg>
-                                        Delete
-                                    </button>
-                                </div>
+                            <td class="px-2 sm:px-4 py-3 flex space-x-2 sm:pt-6">
+                                <button class="text-[#3CC0E9] text-xs">Edit</button>
+                                <button class="text-red-600 text-xs">Delete</button>
                             </td>
+
+
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="8" class="px-2 sm:px-4 py-8 text-center text-gray-500">
-                                No alternative places found.
-                            </td>
+                            <td colspan="8" class="text-center text-gray-500 py-4">No homes found.</td>
                         </tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
-
-            <!-- Pagination -->
-            <div class="px-4 py-3  border-t border-gray-200">
+            <div class="px-4 py-3 border-t border-gray-200">
                 {{ $pagination->links() }}
             </div>
+        </div>
+
+        <!-- Mobile Card View -->
+        <div class="md:hidden space-y-3">
+            @forelse($properties as $property)
+            <div class="bg-gray-50 rounded-lg shadow p-3">
+                <div class="flex justify-between items-center">
+                    <span class="text-sm font-semibold text-gray-900">#{{ $property->id }} - {{ $property->title }}</span>
+                    <select onchange="handleStatusChange(this, '{{ $property->id }}')"
+                        class="appearance-none {{ $property->status === 'active' ? 'bg-green-100 text-green-800' : ($property->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }} rounded-full px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-[#3CC0E9]">
+                        <option value="active" {{ $property->status === 'active' ? 'selected' : '' }}>Active</option>
+                        <option value="pending" {{ $property->status === 'pending' ? 'selected' : '' }}>Pending</option>
+                        <option value="inactive" {{ $property->status === 'suspended' ? 'selected' : '' }}>Inactive</option>
+                    </select>
+                </div>
+                <div class="flex gap-3 mt-2">
+                    @if($property->primaryImage)
+                        <img src="{{ asset('storage/' . $property->primaryImage) }}" class="w-16 h-16 rounded-md object-cover">
+                    @else
+                        <div class="w-16 h-16 bg-gray-200 rounded-md flex items-center justify-center text-gray-400 text-xs">No Image</div>
+                    @endif
+                    <div class="flex flex-col text-xs">
+                        <span class="text-gray-700">Partner: {{ $property->partnerName }}</span>
+                        <span class="text-gray-700">Location: {{ $property->location }}</span>
+                        <span class="text-gray-700">Date: {{ $property->createdAt }}</span>
+                    </div>
+                </div>
+                <div class="flex space-x-3 mt-3">
+                    <button class="text-[#3CC0E9] text-xs">Edit</button>
+                    <button class="text-red-600 text-xs">Delete</button>
+                </div>
+            </div>
+            @empty
+            <div class="text-center text-gray-500 text-xs">No homes found.</div>
+            @endforelse
         </div>
     </div>
 </section>
@@ -249,28 +254,51 @@
         });
 
         function filterTable() {
-            const searchTerm = searchInput.value.toLowerCase();
-            const statusTerm = statusFilter.value.toLowerCase();
+    const searchTerm = searchInput.value.toLowerCase();
+    const statusTerm = statusFilter.value.toLowerCase();
 
-            rows.forEach(row => {
-                const id = row.children[0].textContent.toLowerCase();
-                const partnerName = row.children[1].textContent.toLowerCase();
-                const placeName = row.children[2].querySelector('.font-medium')?.textContent.toLowerCase() || '';
-                const location = row.children[3].textContent.toLowerCase();
-                const statusSelect = row.children[6].querySelector('select');
-                const status = statusSelect ? statusSelect.value.toLowerCase() : '';
+    // Desktop table rows
+    rows.forEach(row => {
+        const id = row.children[0].textContent.toLowerCase();
+        const partnerName = row.children[1].textContent.toLowerCase();
+        const placeName = row.children[2].querySelector('.font-medium')?.textContent.toLowerCase() || '';
+        const location = row.children[3].textContent.toLowerCase();
+        const statusSelect = row.children[6].querySelector('select');
+        const status = statusSelect ? statusSelect.value.toLowerCase() : '';
 
-                const matchesSearch = id.includes(searchTerm) ||
-                    partnerName.includes(searchTerm) ||
-                    placeName.includes(searchTerm) ||
-                    location.includes(searchTerm) ||
-                    status.includes(searchTerm);
+        const matchesSearch = id.includes(searchTerm) ||
+            partnerName.includes(searchTerm) ||
+            placeName.includes(searchTerm) ||
+            location.includes(searchTerm) ||
+            status.includes(searchTerm);
 
-                const matchesStatus = !statusTerm || status === statusTerm;
+        const matchesStatus = !statusTerm || status === statusTerm;
 
-                row.style.display = matchesSearch && matchesStatus ? '' : 'none';
-            });
-        }
+        row.style.display = matchesSearch && matchesStatus ? '' : 'none';
+    });
+
+    // Mobile card view
+    const mobileCards = document.querySelectorAll('.md\\:hidden .bg-gray-50');
+    mobileCards.forEach(card => {
+        const title = card.querySelector('span').textContent.toLowerCase();
+        const partner = card.querySelector('span.text-gray-700')?.textContent.toLowerCase() || '';
+        const location = card.querySelector('span.text-gray-700:nth-child(2)')?.textContent.toLowerCase() || '';
+        const date = card.querySelector('span.text-gray-700:nth-child(3)')?.textContent.toLowerCase() || '';
+        const statusSelect = card.querySelector('select');
+        const status = statusSelect ? statusSelect.value.toLowerCase() : '';
+
+        const matchesSearch = title.includes(searchTerm) ||
+            partner.includes(searchTerm) ||
+            location.includes(searchTerm) ||
+            date.includes(searchTerm) ||
+            status.includes(searchTerm);
+
+        const matchesStatus = !statusTerm || status === statusTerm;
+
+        card.style.display = matchesSearch && matchesStatus ? '' : 'none';
+    });
+}
+
 
         searchInput.addEventListener('input', filterTable);
         statusFilter.addEventListener('change', filterTable);
@@ -285,4 +313,6 @@
         });
     });
 </script>
+
+
 @endsection
