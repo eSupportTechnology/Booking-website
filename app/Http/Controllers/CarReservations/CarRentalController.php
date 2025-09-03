@@ -44,11 +44,12 @@ class CarRentalController extends Controller
                     'car.model_id'    => 'required|integer|exists:car_models,id',
                     'car.seats'       => 'required|integer|min:2|max:20',
                     'car.with_driver' => 'required|in:yes,no',
-                    'car.driver_name' => 'required_if:car.with_driver,yes|string|max:255',
-                    'car.driver_phone'=> 'required_if:car.with_driver,yes|string|max:20',
-                    'car.driver_age'  => 'required_if:car.with_driver,yes|integer|min:18|max:80',
-                    'car.driver_experience' => 'nullable|integer|min:0|max:60',
-                    'car.driver_nic' => 'nullable|string|unique:cars,driver_nic',
+
+ 'car.driver_name'       => 'nullable|required_if:car.with_driver,yes|string|max:255',
+    'car.driver_phone'      => 'nullable|required_if:car.with_driver,yes|string|max:20',
+    'car.driver_age'        => 'nullable|required_if:car.with_driver,yes|integer|min:18|max:80',
+    'car.driver_experience' => 'nullable|required_if:car.with_driver,yes|integer|min:0|max:60',
+    'car.driver_nic'        => 'nullable|required_if:car.with_driver,yes|string|unique:cars,driver_nic',
                 ]);
 
                 $car = Car::create([
@@ -82,18 +83,27 @@ class CarRentalController extends Controller
                     'car.fuel_type'    => ['required', Rule::in(['petrol', 'diesel', 'electric', 'hybrid'])],
                 ]);
 
-                $car = Car::findOrFail($request->input('car_id'));
-                $car->update([
-                    'transmission' => $validated['car']['transmission'],
-                    'mileage_type' => $validated['car']['mileage_type'],
-                    'fuel_type'    => $validated['car']['fuel_type'],
-                ]);
+                $car = Car::find($request->input('car_id'));
 
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Step 2 saved successfully',
-                    'car_id' => $car->id
-                ]);
+if (!$car) {
+    return response()->json([
+        'success' => false,
+        'message' => 'Car not found'
+    ], 404);
+}
+
+$car->update([
+    'transmission' => $validated['car']['transmission'],
+    'mileage_type' => $validated['car']['mileage_type'],
+    'fuel_type'    => $validated['car']['fuel_type'],
+]);
+
+return response()->json([
+    'success' => true,
+    'message' => 'Step 2 saved successfully',
+    'car_id' => $car->id
+]);
+
             }
 
             // Step 3: Image
@@ -118,33 +128,35 @@ class CarRentalController extends Controller
             }
 
             // Step 4: Pricing
-            if ($step == 4) {
-                $validated = $request->validate([
-                    'car_id' => 'required|exists:cars,id',
-                    'pricingType' => 'required|in:perDay,perKm',
-                    'pricePerDay' => 'nullable|numeric|min:0',
-                    'pricePerKm'  => 'nullable|numeric|min:0',
-                    'deposit'     => 'nullable|numeric|min:0',
-                ]);
+         // Step 4: Pricing
+if ($step == 4) {
+    $validated = $request->validate([
+        'car_id'      => 'required|exists:cars,id',
+        'pricingType' => 'required|in:perDay,perKm',
+        'pricePerDay' => 'required_if:pricingType,perDay|nullable|numeric|min:0',
+        'pricePerKm'  => 'required_if:pricingType,perKm|nullable|numeric|min:0',
+        'deposit'     => 'nullable|numeric|min:0',
+    ]);
 
-                $car = Car::findOrFail($validated['car_id']);
+    $car = Car::findOrFail($validated['car_id']);
 
-                if ($validated['pricingType'] === 'perDay') {
-                    $car->price_per_day = $validated['pricePerDay'];
-                    $car->price_per_km = null;
-                } else {
-                    $car->price_per_km = $validated['pricePerKm'];
-                    $car->price_per_day = null;
-                }
-                $car->deposit = $validated['deposit'] ?? 0;
-                $car->save();
+    if ($validated['pricingType'] === 'perDay') {
+        $car->price_per_day = $validated['pricePerDay'];
+        $car->price_per_km = null;
+    } else {
+        $car->price_per_km = $validated['pricePerKm'];
+        $car->price_per_day = null;
+    }
+    $car->deposit = $validated['deposit'] ?? 0;
+    $car->save();
 
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Car pricing saved successfully',
-                    'car_id' => $car->id
-                ]);
-            }
+    return response()->json([
+        'success' => true,
+        'message' => 'Car pricing saved successfully',
+        'car_id'  => $car->id
+    ]);
+}
+
 
             return response()->json([
                 'success' => false,
