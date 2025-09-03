@@ -248,6 +248,13 @@ function carForm() {
             return this.car.brand ? this.models.filter(m => m.brand_id == this.car.brand) : [];
         },
         async submitStep() {
+        if (this.step === 1 && this.car.with_driver === 'no') {
+        this.car.driver_name = null;
+        this.car.driver_phone = null;
+        this.car.driver_age = null;
+        this.car.driver_experience = null;
+        this.car.driver_nic = null;
+    }
             try {
                 const response = await fetch("/cars/register-step", {
                     method: "POST",
@@ -255,12 +262,17 @@ function carForm() {
                         "Content-Type": "application/json",
                         "X-CSRF-TOKEN": document.querySelector('meta[name=csrf-token]').content
                     },
-                    body: JSON.stringify({
-                        step: this.step,
-                        car: this.car,
-                        car_id: this.car_id,
-                        selectedImage: this.selectedImage
-                    })
+             body: JSON.stringify({
+    step: this.step,
+    car: this.car,
+    car_id: this.car_id,
+    selectedImage: this.selectedImage,
+    pricingType: this.car.pricingType,   // ✅ send separately
+    pricePerDay: this.car.pricePerDay,
+    pricePerKm: this.car.pricePerKm,
+    deposit: this.car.deposit ?? 0
+})
+
                 });
                 const data = await response.json();
 
@@ -287,7 +299,8 @@ function carForm() {
                             }
                         });
                     } else {
-                        this.car_id = data.car;
+                     this.car_id = data.car_id; // correct key from backend
+
                         this.step++;
                         Swal.fire({
                             title: data.message || "Step submitted",
