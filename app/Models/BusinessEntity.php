@@ -4,11 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class BusinessEntity extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     protected $fillable = [
         'accommodation_id',
@@ -20,8 +19,6 @@ class BusinessEntity extends Model
         'country',
     ];
 
-    protected $dates = ['deleted_at'];
-
     public function accommodation()
     {
         return $this->belongsTo(Accommodation::class);
@@ -31,4 +28,4 @@ class BusinessEntity extends Model
     {
         return $this->hasOneThrough(Property::class, Accommodation::class);
     }
-} 
+}

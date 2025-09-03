@@ -17,23 +17,21 @@ class PartnerViewController extends Controller
         ])->validate();
 
         $partner = User::with([
-            'partnerPersonalDetail',
             'partner',
             'properties' => function($query) {
                 $query->with([
-                    'accommodation' => function($query) {
-                        $query->with('businessEntities');
-                    },
-                    'reviews',
+                    'accommodation.businessEntities',
+                    'accommodation.individuals',
+                    'category',
+                    'propertySubcategory',
                     'photos'
                 ]);
-            },
-            'bookings' => function($query) {
-                $query->latest();
             }
         ])
         ->whereHas('partner')
         ->findOrFail($partner_id);
+
+        return view('admin.admin-partner-view', compact('partner'));
 
         return view('admin.admin-partner-view', compact('partner'));
     }
