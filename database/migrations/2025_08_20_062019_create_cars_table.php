@@ -13,10 +13,11 @@ return new class extends Migration
     {
         Schema::create('cars', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('car_renter_id');
             $table->foreignId('car_type_id')->constrained('car_types')->onDelete('cascade');
             $table->foreignId('company_id')->constrained('companies')->onDelete('cascade');
             $table->foreignId('model_id')->constrained('car_models')->onDelete('cascade');
-
+            $table->foreignId('car_renter_id')->constrained('car_renters')->onDelete('cascade');
             $table->unsignedTinyInteger('seats');
             $table->enum('transmission', ['manual', 'automatic']);
             $table->enum('mileage_type', ['unlimited', 'limited']);

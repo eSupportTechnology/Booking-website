@@ -1,6 +1,6 @@
-@extends('car_rentals.layout')
+@extends('partner.partner-layout')
 
-@section('title', 'Car Renter Types | ' . config('app.name'))
+@section('title', 'Add Car | ' . config('domains.app_name'))
 
 @section('content')
 
@@ -83,7 +83,7 @@
                     <input type="number" x-model="car.seats" placeholder="e.g., 4" class="w-full p-2 border rounded-md" min="2" max="20">
                     <p class="text-gray-500 text-sm mt-1">Enter the number of passengers the car can seat.</p>
                 </div>
-               <div>
+                div>
                     <label class="block text-sm font-semibold mb-1">With Driver? <span class="text-red-500">*</span></label>
                     <div class="flex items-center space-x-4">
                         <label class="flex items-center space-x-2">

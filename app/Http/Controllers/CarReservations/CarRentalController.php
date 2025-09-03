@@ -29,6 +29,9 @@ class CarRentalController extends Controller
     }
     public function registerStep(Request $request)
     {
+        $user = Auth::guard('car_renter')->user(); // logged-in car renter
+
+    
         Log::info('Car registration step data: ', $request->all());
         try {
             $step = $request->input('step');

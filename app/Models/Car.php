@@ -6,17 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Car extends Model
 {
-    protected $fillable = [
-        'car_type_id',
-        'company_id',
-        'model_id',
-        'seats',
-        'transmission',
-        'mileage_type',
-        'pay_timing',
-        'fuel_type',
-        'price_per_day',
-        'deposit'
+      protected $fillable = [
+        'car_renter_id','car_type_id','company_id','model_id','brand','seats','with_driver',
+        'driver_name','driver_phone','driver_age','driver_experience','driver_nic',
+        'transmission','mileage_type','fuel_type','image','price_per_day','price_per_km'
     ];
 
     public function carType()
@@ -38,4 +31,10 @@ class Car extends Model
     {
         return $this->hasMany(Car_Reservation::class);
     }
+     public function renter()
+    {
+        return $this->belongsTo(CarRenter::class, 'car_renter_id');
+    }
+
+
 }
