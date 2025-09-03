@@ -5,22 +5,22 @@
 <section class="min-h-screen p-3 sm:p-4 bg-white rounded-lg shadow-lg">
     <div class="space-y-4 sm:space-y-6 p-2 sm:p-4">
 
-       <!-- Breadcrumb -->
-<nav class="flex mb-2 sm:mb-4" aria-label="Breadcrumb">
-    <ol class="inline-flex items-center space-x-1 md:space-x-3 text-xs sm:text-sm md:text-base">
-        <li class="inline-flex items-center">
-            <a href="{{ route('admin.dashboard') }}" class="text-gray-700 hover:text-blue-600 flex items-center">
-                <i class="fas fa-home mr-1"></i> Dashboard
-            </a>
-        </li>
-        <li>
-            <div class="flex items-center">
-                <i class="fas fa-chevron-right text-gray-400 mx-1 sm:mx-2"></i>
-                <span class="text-gray-500">Apartments</span>
-            </div>
-        </li>
-    </ol>
-</nav>
+        <!-- Breadcrumb -->
+        <nav class="flex mb-2 sm:mb-4" aria-label="Breadcrumb">
+            <ol class="inline-flex items-center space-x-1 md:space-x-3 text-xs sm:text-sm md:text-base">
+                <li class="inline-flex items-center">
+                    <a href="{{ route('admin.dashboard') }}" class="text-gray-700 hover:text-blue-600 flex items-center">
+                        <i class="fas fa-home mr-1"></i> Dashboard
+                    </a>
+                </li>
+                <li>
+                    <div class="flex items-center">
+                        <i class="fas fa-chevron-right text-gray-400 mx-1 sm:mx-2"></i>
+                        <span class="text-gray-500">Apartments</span>
+                    </div>
+                </li>
+            </ol>
+        </nav>
 
         <!-- Title -->
         <h1 class="text-lg sm:text-2xl md:text-3xl font-bold text-gray-800 mb-2 sm:mb-4">Apartment Listings</h1>
@@ -50,8 +50,8 @@
             </select>
         </div>
 
-        <!-- Table Section -->
-        <div class="bg-white rounded-lg shadow-lg border border-gray-100">
+        <!-- Desktop / Tablet Table -->
+        <div class="hidden sm:block bg-white rounded-lg shadow-lg border border-gray-100">
             <div class="overflow-x-auto">
                 <table class="min-w-full text-xs sm:text-sm text-left text-gray-700" id="apartmentsTable">
                     <thead class="bg-gray-50 text-[10px] sm:text-xs uppercase text-gray-500">
@@ -98,15 +98,9 @@
                             </td>
                             <td class="px-2 sm:px-4 py-2 sm:py-3 flex items-center space-x-2">
                                 <button class="text-[#3CC0E9] hover:text-[#3CC0E9]/80 text-[10px] sm:text-xs font-medium flex items-center">
-                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                    </svg>
                                     Edit
                                 </button>
                                 <button class="text-red-600 hover:text-red-800 text-[10px] sm:text-xs font-medium flex items-center">
-                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                    </svg>
                                     Delete
                                 </button>
                             </td>
@@ -127,42 +121,170 @@
                 {{ $pagination->links() }}
             </div>
         </div>
+
+        <!-- Mobile Cards -->
+        <div class="sm:hidden grid grid-cols-1 gap-4">
+            @forelse($properties as $property)
+            <div class="bg-white border rounded-lg shadow p-4 space-y-2">
+                <div class="flex justify-between items-center">
+                    <h3 class="font-semibold text-base sm:text-lg truncate">{{ $property->title }}</h3>
+                    <span class="px-2 py-1 rounded-full text-xs font-semibold
+                        {{ $property->status === 'active' ? 'bg-green-100 text-green-800' : ($property->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
+                        {{ ucfirst($property->status) }}
+                    </span>
+                </div>
+                <p class="text-sm text-gray-600"><strong>ID:</strong> #{{ $property->id }}</p>
+                <p class="text-sm text-gray-600"><strong>Partner:</strong> {{ $property->partnerName }}</p>
+                <p class="text-sm text-gray-600"><strong>Location:</strong> {{ $property->location }}</p>
+                <div class="w-full h-32 sm:h-40 rounded-md overflow-hidden">
+                    @if($property->primaryImage)
+                        <img src="{{ asset('storage/' . $property->primaryImage) }}" alt="{{ $property->title }}" class="w-full h-full object-cover">
+                    @else
+                        <div class="w-full h-full flex items-center justify-center bg-gray-200 text-gray-400 text-xs">No Image</div>
+                    @endif
+                </div>
+                <p class="text-sm text-gray-600"><strong>Created:</strong> {{ $property->createdAt }}</p>
+                <div class="flex space-x-2 pt-2">
+                    <button class="flex-1 bg-[#3CC0E9] hover:bg-[#33aad1] text-white px-3 py-1.5 rounded text-xs sm:text-sm">Edit</button>
+                    <button class="flex-1 bg-red-600 hover:bg-red-800 text-white px-3 py-1.5 rounded text-xs sm:text-sm">Delete</button>
+                </div>
+            </div>
+            @empty
+            <p class="text-center text-gray-500 col-span-1">No apartments found.</p>
+            @endforelse
+        </div>
+
     </div>
 </section>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const rowsPerPageSelect = document.getElementById('rowsPerPage');
-        const searchInput = document.getElementById('apartmentSearchInput');
-        const statusFilter = document.getElementById('statusFilter');
-        const table = document.getElementById('apartmentsTable');
-        const rows = table.querySelectorAll('tbody tr');
+document.addEventListener('DOMContentLoaded', function () {
+    const rowsPerPageSelect = document.getElementById('rowsPerPage');
+    const searchInput = document.getElementById('apartmentSearchInput');
+    const statusFilter = document.getElementById('statusFilter');
+    const table = document.getElementById('apartmentsTable');
+    const rows = table.querySelectorAll('tbody tr');
 
-        rowsPerPageSelect.addEventListener('change', function () {
-            const url = new URL(window.location.href);
-            url.searchParams.set('per_page', this.value);
-            url.searchParams.delete('page');
-            window.location.href = url.toString();
+    // Initialize original values for status selects
+    document.querySelectorAll('select[onchange*="handleStatusChange"]').forEach(select => {
+        select.setAttribute('data-original-value', select.value);
+    });
+
+    // Handle Rows per page change
+    rowsPerPageSelect.addEventListener('change', function () {
+        const url = new URL(window.location.href);
+        url.searchParams.set('per_page', this.value);
+        url.searchParams.delete('page');
+        window.location.href = url.toString();
+    });
+
+    // Handle status change via AJAX
+    window.handleStatusChange = function(selectEl, id) {
+        const value = selectEl.value;
+        const wrapper = selectEl.parentElement;
+        const dot = wrapper.querySelector('span');
+
+        selectEl.disabled = true;
+        selectEl.style.opacity = '0.6';
+
+        fetch(`/admin/status/property/${id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({ status: value })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                updateStatusStyling(selectEl, dot, value);
+                showNotification('success', data.message);
+            } else {
+                selectEl.value = selectEl.getAttribute('data-original-value') || 'pending';
+                showNotification('error', data.message || 'Failed to update status');
+            }
+        })
+        .catch(() => {
+            selectEl.value = selectEl.getAttribute('data-original-value') || 'pending';
+            showNotification('error', 'Failed to update status. Please try again.');
+        })
+        .finally(() => {
+            selectEl.disabled = false;
+            selectEl.style.opacity = '1';
+        });
+    }
+
+    function updateStatusStyling(selectEl, dot, value) {
+        selectEl.className = 'appearance-none font-medium text-[10px] sm:text-xs rounded-full pl-5 pr-3 py-0.5 focus:outline-none focus:ring-2 focus:ring-[#3CC0E9] transition';
+        dot.className = 'absolute top-1/2 left-1.5 -translate-y-1/2 w-1.5 h-1.5 rounded-full';
+
+        switch (value) {
+            case 'active':
+                selectEl.classList.add('bg-green-100', 'text-green-800');
+                dot.classList.add('bg-green-800');
+                break;
+            case 'pending':
+                selectEl.classList.add('bg-yellow-100', 'text-yellow-800');
+                dot.classList.add('bg-yellow-800');
+                break;
+            case 'inactive':
+                selectEl.classList.add('bg-red-100', 'text-red-800');
+                dot.classList.add('bg-red-800');
+                break;
+        }
+
+        selectEl.setAttribute('data-original-value', value);
+    }
+
+    function showNotification(type, message) {
+        const notification = document.createElement('div');
+        notification.className = `fixed top-4 right-4 z-50 px-4 py-3 rounded-md shadow-lg transition-all duration-300 ${
+            type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+        }`;
+        notification.textContent = message;
+        document.body.appendChild(notification);
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            setTimeout(() => document.body.removeChild(notification), 300);
+        }, 3000);
+    }
+
+    // Filter function for table and mobile cards
+    function filterTable() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const statusTerm = statusFilter.value.toLowerCase();
+
+        // Desktop table rows
+        rows.forEach(row => {
+            const id = row.children[0]?.textContent.toLowerCase() || '';
+            const partnerName = row.children[1]?.textContent.toLowerCase() || '';
+            const apartmentName = row.children[2]?.textContent.toLowerCase() || '';
+            const location = row.children[3]?.textContent.toLowerCase() || '';
+            const statusSelect = row.children[6]?.querySelector('select');
+            const status = statusSelect ? statusSelect.value.toLowerCase() : '';
+
+            const matchesSearch = id.includes(searchTerm) || partnerName.includes(searchTerm) || apartmentName.includes(searchTerm) || location.includes(searchTerm);
+            const matchesStatus = !statusTerm || status === statusTerm;
+
+            row.style.display = matchesSearch && matchesStatus ? '' : 'none';
         });
 
-        function filterTable() {
-            const searchTerm = searchInput.value.toLowerCase();
-            const statusTerm = statusFilter.value.toLowerCase();
+        // Mobile card view
+        const mobileCards = document.querySelectorAll('.sm\\:hidden .bg-white');
+        mobileCards.forEach(card => {
+            const title = card.querySelector('h3')?.textContent.toLowerCase() || '';
+            const partner = card.querySelector('p strong:contains("Partner")')?.parentElement.textContent.toLowerCase() || '';
+            const location = card.querySelector('p strong:contains("Location")')?.parentElement.textContent.toLowerCase() || '';
+            const statusSelect = card.querySelector('select');
+            const status = statusSelect ? statusSelect.value.toLowerCase() : '';
 
-            rows.forEach(row => {
-                const id = row.children[0]?.textContent.toLowerCase() || '';
-                const partnerName = row.children[1]?.textContent.toLowerCase() || '';
-                const apartmentName = row.children[2]?.textContent.toLowerCase() || '';
-                const location = row.children[3]?.textContent.toLowerCase() || '';
-                const statusSelect = row.children[6]?.querySelector('select');
-                const status = statusSelect ? statusSelect.value.toLowerCase() : '';
+            const matchesSearch = title.includes(searchTerm) || partner.includes(searchTerm) || location.includes(searchTerm);
+            const matchesStatus = !statusTerm || status === statusTerm;
 
-                const matchesSearch = id.includes(searchTerm) || partnerName.includes(searchTerm) || apartmentName.includes(searchTerm) || location.includes(searchTerm);
-                const matchesStatus = !statusTerm || status === statusTerm;
-
-                row.style.display = matchesSearch && matchesStatus ? '' : 'none';
-            });
-        }
+            card.style.display = matchesSearch && matchesStatus ? '' : 'none';
+        });
+    }
 
         searchInput.addEventListener('input', filterTable);
         statusFilter.addEventListener('change', filterTable);
@@ -264,5 +386,6 @@
         }, 3000);
     }
 </script>
+
 
 @endsection
