@@ -32,5 +32,7 @@ class PartnerViewController extends Controller
         ->findOrFail($partner_id);
 
         return view('admin.admin-partner-view', compact('partner'));
+
+        return view('admin.admin-partner-view', compact('partner'));
     }
 }
