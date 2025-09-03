@@ -84,17 +84,16 @@
                                 @endif
                             </td>
                             <td class="px-2 sm:px-4 py-2 sm:py-3">{{ $property->createdAt }}</td>
-                            <td class="px-2 sm:px-4 py-2 sm:py-3">
+                            <td class="px-2 sm:px-4 py-3">
                                 <div class="relative">
                                     <select onchange="handleStatusChange(this, '{{ $property->id }}')"
-                                        class="appearance-none font-medium text-[10px] sm:text-xs rounded-full pl-5 pr-3 py-0.5 focus:outline-none focus:ring-2 focus:ring-[#3CC0E9] transition
-                                        {{ $property->status === 'active' ? 'bg-green-100 text-green-800' : ($property->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}"
-                                        data-original-value="{{ $property->status }}">
+                                            class="appearance-none {{ $property->status === 'active' ? 'bg-green-100 text-green-800' : ($property->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }} font-medium text-[10px] sm:text-xs rounded-full pl-6 pr-4 py-0.5 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#3CC0E9] transition"
+                                            data-original-value="{{ $property->status === 'suspended' ? 'inactive' : $property->status }}">
                                         <option value="active" {{ $property->status === 'active' ? 'selected' : '' }}>Active</option>
                                         <option value="pending" {{ $property->status === 'pending' ? 'selected' : '' }}>Pending</option>
                                         <option value="inactive" {{ $property->status === 'suspended' ? 'selected' : '' }}>Inactive</option>
                                     </select>
-                                    <span class="absolute top-1/2 left-1.5 -translate-y-1/2 w-1.5 h-1.5 rounded-full status-dot {{ $property->status === 'active' ? 'bg-green-800' : ($property->status === 'pending' ? 'bg-yellow-800' : 'bg-red-800') }}"></span>
+                                    <span class="absolute top-1/2 left-2 -translate-y-1/2 w-1.5 h-1.5 rounded-full status-dot {{ $property->status === 'active' ? 'bg-green-800' : ($property->status === 'pending' ? 'bg-yellow-800' : 'bg-red-800') }}"></span>
                                 </div>
                             </td>
                             <td class="px-2 sm:px-4 py-2 sm:py-3 flex items-center space-x-2">
@@ -194,7 +193,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
             },
-            body: JSON.stringify({ status: value })
+            body: JSON.stringify({
+                status: value
+            })
         })
         .then(response => response.json())
         .then(data => {
