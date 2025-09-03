@@ -26,15 +26,13 @@
                         <p class="text-gray-600">{{ $partner->email ?? 'No email set' }}</p>
                         <p class="text-gray-600">{{ $partner->partner->contact_number ?? 'No contact number' }}</p>
                     </div>
-                    <select id="partnerStatus"
-                            onchange="handleStatusChange(this.value)"
-                            class="px-4 py-2 rounded-full text-sm font-semibold
-                                {{ $partner->partner->status === 'active' ? 'bg-green-100 text-green-800' :
-                                   ($partner->partner->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
-                        <option value="active" {{ $partner->partner->status === 'active' ? 'selected' : '' }}>Active</option>
-                        <option value="pending" {{ $partner->partner->status === 'pending' ? 'selected' : '' }}>Pending</option>
-                        <option value="inactive" {{ $partner->partner->status === 'suspended' ? 'selected' : '' }}>Inactive</option>
-                    </select>
+                    <div>
+                        <span class="px-4 py-2 rounded-full text-sm font-semibold
+                            {{ $partner->partner->status === 'active' ? 'bg-green-100 text-green-800' :
+                            ($partner->partner->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
+                            {{ ucfirst($partner->partner->status) }}
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>
