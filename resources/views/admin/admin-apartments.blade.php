@@ -84,17 +84,16 @@
                                 @endif
                             </td>
                             <td class="px-2 sm:px-4 py-2 sm:py-3">{{ $property->createdAt }}</td>
-                            <td class="px-2 sm:px-4 py-2 sm:py-3">
+                            <td class="px-2 sm:px-4 py-3">
                                 <div class="relative">
                                     <select onchange="handleStatusChange(this, '{{ $property->id }}')"
-                                        class="appearance-none font-medium text-[10px] sm:text-xs rounded-full pl-5 pr-3 py-0.5 focus:outline-none focus:ring-2 focus:ring-[#3CC0E9] transition
-                                        {{ $property->status === 'active' ? 'bg-green-100 text-green-800' : ($property->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}"
-                                        data-original-value="{{ $property->status }}">
+                                            class="appearance-none {{ $property->status === 'active' ? 'bg-green-100 text-green-800' : ($property->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }} font-medium text-[10px] sm:text-xs rounded-full pl-6 pr-4 py-0.5 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#3CC0E9] transition"
+                                            data-original-value="{{ $property->status === 'suspended' ? 'inactive' : $property->status }}">
                                         <option value="active" {{ $property->status === 'active' ? 'selected' : '' }}>Active</option>
                                         <option value="pending" {{ $property->status === 'pending' ? 'selected' : '' }}>Pending</option>
                                         <option value="inactive" {{ $property->status === 'suspended' ? 'selected' : '' }}>Inactive</option>
                                     </select>
-                                    <span class="absolute top-1/2 left-1.5 -translate-y-1/2 w-1.5 h-1.5 rounded-full status-dot {{ $property->status === 'active' ? 'bg-green-800' : ($property->status === 'pending' ? 'bg-yellow-800' : 'bg-red-800') }}"></span>
+                                    <span class="absolute top-1/2 left-2 -translate-y-1/2 w-1.5 h-1.5 rounded-full status-dot {{ $property->status === 'active' ? 'bg-green-800' : ($property->status === 'pending' ? 'bg-yellow-800' : 'bg-red-800') }}"></span>
                                 </div>
                             </td>
                             <td class="px-2 sm:px-4 py-2 sm:py-3 flex items-center space-x-2">
@@ -187,7 +186,9 @@
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
             },
-            body: JSON.stringify({ status: value })
+            body: JSON.stringify({
+                status: value
+            })
         })
         .then(response => response.json())
         .then(data => {
@@ -195,24 +196,8 @@
                 // Update visual elements
                 updateStatusStyling(selectEl, dot, value);
 
-                // Create and show notification
-                const notification = document.createElement('div');
-                notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded shadow-lg z-50 opacity-0 transition-opacity duration-300';
-                notification.textContent = data.message;
-                document.body.appendChild(notification);
-
-                // Trigger fade in
-                setTimeout(() => {
-                    notification.classList.add('opacity-100');
-                }, 100);
-
-                // Trigger fade out and remove
-                setTimeout(() => {
-                    notification.classList.remove('opacity-100');
-                    setTimeout(() => {
-                        notification.remove();
-                    }, 300);
-                }, 3000);
+                // Show success notification
+                showNotification('success', data.message);
 
                 // Update dataset
                 selectEl.dataset.originalValue = value;
@@ -222,25 +207,7 @@
         })
         .catch(error => {
             console.error('Error:', error);
-
-            // Create and show error notification
-            const notification = document.createElement('div');
-            notification.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded shadow-lg z-50 opacity-0 transition-opacity duration-300';
-            notification.textContent = error.message || 'Failed to update status. Please try again.';
-            document.body.appendChild(notification);
-
-            // Trigger fade in
-            setTimeout(() => {
-                notification.classList.add('opacity-100');
-            }, 100);
-
-            // Trigger fade out and remove
-            setTimeout(() => {
-                notification.classList.remove('opacity-100');
-                setTimeout(() => {
-                    notification.remove();
-                }, 300);
-            }, 3000);
+            showNotification('error', error.message || 'Failed to update status. Please try again.');
 
             // Revert to original value
             selectEl.value = originalValue;
@@ -254,8 +221,8 @@
 
     function updateStatusStyling(selectEl, dot, value) {
         // Reset classes
-        selectEl.className = 'appearance-none font-medium text-[10px] sm:text-xs rounded-full pl-5 pr-3 py-0.5 focus:outline-none focus:ring-2 focus:ring-[#3CC0E9] transition';
-        dot.className = 'absolute top-1/2 left-1.5 -translate-y-1/2 w-1.5 h-1.5 rounded-full';
+        selectEl.className = 'appearance-none font-medium text-[10px] sm:text-xs rounded-full pl-6 pr-4 py-0.5 transition focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#3CC0E9]';
+        dot.className = 'absolute top-1/2 left-2 -translate-y-1/2 w-1.5 h-1.5 rounded-full status-dot';
 
         // Apply styling based on status
         switch (value) {
@@ -272,6 +239,29 @@
                 dot.classList.add('bg-red-800');
                 break;
         }
+
+        // Store current value as original for potential revert
+        selectEl.setAttribute('data-original-value', value);
+    }
+
+    function showNotification(type, message) {
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.className = `fixed top-4 right-4 z-50 px-4 py-3 rounded-md shadow-lg transition-all duration-300 ${
+            type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+        }`;
+        notification.textContent = message;
+
+        // Add to page
+        document.body.appendChild(notification);
+
+        // Remove after 3 seconds
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 300);
+        }, 3000);
     }
 </script>
 

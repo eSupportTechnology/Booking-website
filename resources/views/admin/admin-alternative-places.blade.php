@@ -90,7 +90,8 @@
                             <td class="px-2 sm:px-4 py-3 sm:py-4">
                                 <div class="relative">
                                     <select onchange="handleStatusChange(this, '{{ $property->id }}')"
-                                            class="appearance-none {{ $property->status === 'active' ? 'bg-green-100 text-green-800' : ($property->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }} font-medium text-[10px] sm:text-xs rounded-full pl-6 pr-4 py-0.5 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#3CC0E9] transition">
+                                            class="appearance-none {{ $property->status === 'active' ? 'bg-green-100 text-green-800' : ($property->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }} font-medium text-[10px] sm:text-xs rounded-full pl-6 pr-4 py-0.5 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#3CC0E9] transition"
+                                            data-original-value="{{ $property->status === 'suspended' ? 'inactive' : $property->status }}">
                                         <option value="active" {{ $property->status === 'active' ? 'selected' : '' }}>Active</option>
                                         <option value="pending" {{ $property->status === 'pending' ? 'selected' : '' }}>Pending</option>
                                         <option value="inactive" {{ $property->status === 'suspended' ? 'selected' : '' }}>Inactive</option>
@@ -135,11 +136,10 @@
 </section>
 
 
-<!-- serach JS -->
+<!-- JS -->
 <script>
     // Status change handler
     function handleStatusChange(selectEl, id) {
-        const originalValue = selectEl.dataset.originalValue;
         const value = selectEl.value;
         const wrapper = selectEl.parentElement;
         const dot = wrapper.querySelector('.status-dot');
@@ -149,68 +149,40 @@
         selectEl.style.opacity = '0.6';
 
         // Make AJAX request to update status
-                // Make AJAX request to update status
-                fetch(`/admin/status/property/${id}`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                    },
-                    body: JSON.stringify({
-                        status: value
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Update visual elements
-                        updateStatusStyling(selectEl, dot, value);
+        fetch(`/admin/status/property/${id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({
+                status: value
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update UI styling
+                updateStatusStyling(selectEl, dot, value);
 
-                        // Create and show notification
-                        const notification = document.createElement('div');
-                        notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded shadow-lg z-50 animate-fade-in-out';
-                        notification.textContent = data.message;
-                        document.body.appendChild(notification);
-
-                        // Remove notification after 3 seconds
-                        setTimeout(() => {
-                            notification.remove();
-                        }, 3000);
-
-                        // Update dataset
-                        selectEl.dataset.originalValue = value;
-                    } else {
-                        throw new Error(data.message || 'Failed to update status');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-
-                    // Create and show error notification
-                    const notification = document.createElement('div');
-                    notification.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded shadow-lg z-50 animate-fade-in-out';
-                    notification.textContent = error.message || 'Failed to update status. Please try again.';
-                    document.body.appendChild(notification);
-
-                    // Remove notification after 3 seconds
-                    setTimeout(() => {
-                        notification.remove();
-                    }, 3000);
-
-                    // Revert to original value
-                    selectEl.value = originalValue;
-                })
-                .finally(() => {
-                    // Re-enable select
-                    selectEl.disabled = false;
-                    selectEl.style.opacity = '1';
-                });
+                // Show success message
+                showNotification('success', data.message);
             } else {
-                // Revert to original value
-                selectEl.value = originalValue;
-                selectEl.disabled = false;
-                selectEl.style.opacity = '1';
+                // Revert selection on error
+                selectEl.value = selectEl.getAttribute('data-original-value') || 'pending';
+                showNotification('error', data.message || 'Failed to update status');
             }
+        })
+        .catch(error => {
+            console.error('Error updating status:', error);
+            // Revert selection on error
+            selectEl.value = selectEl.getAttribute('data-original-value') || 'pending';
+            showNotification('error', 'Failed to update status. Please try again.');
+        })
+        .finally(() => {
+            // Remove loading state
+            selectEl.disabled = false;
+            selectEl.style.opacity = '1';
         });
     }
 
@@ -234,7 +206,34 @@
                 dot.classList.add('bg-red-800');
                 break;
         }
+
+        // Store current value as original for potential revert
+        selectEl.setAttribute('data-original-value', value);
     }
+
+    function showNotification(type, message) {
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.className = `fixed top-4 right-4 z-50 px-4 py-3 rounded-md shadow-lg transition-all duration-300 opacity-0 ${
+            type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+        }`;
+        notification.textContent = message;
+
+        // Add to page
+        document.body.appendChild(notification);
+
+        // Trigger fade in
+        setTimeout(() => {
+            notification.style.opacity = '1';
+        }, 100);
+
+        // Remove after 3 seconds
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 300);
+        }, 3000);
     }
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -242,6 +241,11 @@
         const statusFilter = document.getElementById('statusFilter');
         const table = document.getElementById('alternativePlacesTable');
         const rows = table.querySelectorAll('tbody tr');
+
+        // Initialize original values on page load
+        document.querySelectorAll('select[onchange*="handleStatusChange"]').forEach(select => {
+            select.setAttribute('data-original-value', select.value);
+        });
 
         function filterTable() {
             const searchTerm = searchInput.value.toLowerCase();
