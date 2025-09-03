@@ -92,9 +92,9 @@
                                         data-original-value="{{ $property->status }}">
                                         <option value="active" {{ $property->status === 'active' ? 'selected' : '' }}>Active</option>
                                         <option value="pending" {{ $property->status === 'pending' ? 'selected' : '' }}>Pending</option>
-                                        <option value="inactive" {{ $property->status === 'inactive' ? 'selected' : '' }}>Inactive</option>
+                                        <option value="inactive" {{ $property->status === 'suspended' ? 'selected' : '' }}>Inactive</option>
                                     </select>
-                                    <span class="absolute top-1/2 left-1.5 -translate-y-1/2 w-1.5 h-1.5 rounded-full {{ $property->status === 'active' ? 'bg-green-800' : ($property->status === 'pending' ? 'bg-yellow-800' : 'bg-red-800') }}"></span>
+                                    <span class="absolute top-1/2 left-1.5 -translate-y-1/2 w-1.5 h-1.5 rounded-full status-dot {{ $property->status === 'active' ? 'bg-green-800' : ($property->status === 'pending' ? 'bg-yellow-800' : 'bg-red-800') }}"></span>
                                 </div>
                             </td>
                             <td class="px-2 sm:px-4 py-2 sm:py-3 flex items-center space-x-2">
@@ -168,6 +168,111 @@
         searchInput.addEventListener('input', filterTable);
         statusFilter.addEventListener('change', filterTable);
     });
+
+    // Status change handler
+    function handleStatusChange(selectEl, id) {
+        const originalValue = selectEl.dataset.originalValue;
+        const value = selectEl.value;
+        const wrapper = selectEl.parentElement;
+        const dot = wrapper.querySelector('.status-dot');
+
+        // Show loading state
+        selectEl.disabled = true;
+        selectEl.style.opacity = '0.6';
+
+        // Make AJAX request to update status
+        fetch(`/admin/status/property/${id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({ status: value })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update visual elements
+                updateStatusStyling(selectEl, dot, value);
+
+                // Create and show notification
+                const notification = document.createElement('div');
+                notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded shadow-lg z-50 opacity-0 transition-opacity duration-300';
+                notification.textContent = data.message;
+                document.body.appendChild(notification);
+
+                // Trigger fade in
+                setTimeout(() => {
+                    notification.classList.add('opacity-100');
+                }, 100);
+
+                // Trigger fade out and remove
+                setTimeout(() => {
+                    notification.classList.remove('opacity-100');
+                    setTimeout(() => {
+                        notification.remove();
+                    }, 300);
+                }, 3000);
+
+                // Update dataset
+                selectEl.dataset.originalValue = value;
+            } else {
+                throw new Error(data.message || 'Failed to update status');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+
+            // Create and show error notification
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded shadow-lg z-50 opacity-0 transition-opacity duration-300';
+            notification.textContent = error.message || 'Failed to update status. Please try again.';
+            document.body.appendChild(notification);
+
+            // Trigger fade in
+            setTimeout(() => {
+                notification.classList.add('opacity-100');
+            }, 100);
+
+            // Trigger fade out and remove
+            setTimeout(() => {
+                notification.classList.remove('opacity-100');
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 3000);
+
+            // Revert to original value
+            selectEl.value = originalValue;
+        })
+        .finally(() => {
+            // Re-enable select
+            selectEl.disabled = false;
+            selectEl.style.opacity = '1';
+        });
+    }
+
+    function updateStatusStyling(selectEl, dot, value) {
+        // Reset classes
+        selectEl.className = 'appearance-none font-medium text-[10px] sm:text-xs rounded-full pl-5 pr-3 py-0.5 focus:outline-none focus:ring-2 focus:ring-[#3CC0E9] transition';
+        dot.className = 'absolute top-1/2 left-1.5 -translate-y-1/2 w-1.5 h-1.5 rounded-full';
+
+        // Apply styling based on status
+        switch (value) {
+            case 'active':
+                selectEl.classList.add('bg-green-100', 'text-green-800');
+                dot.classList.add('bg-green-800');
+                break;
+            case 'pending':
+                selectEl.classList.add('bg-yellow-100', 'text-yellow-800');
+                dot.classList.add('bg-yellow-800');
+                break;
+            case 'inactive':
+                selectEl.classList.add('bg-red-100', 'text-red-800');
+                dot.classList.add('bg-red-800');
+                break;
+        }
+    }
 </script>
 
 @endsection

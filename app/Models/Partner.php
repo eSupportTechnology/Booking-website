@@ -16,10 +16,10 @@ class Partner extends Model
         'first_name',
         'last_name',
         'contact_number',
+        'status'
     ];
 
     protected $casts = [
-        'is_verified' => 'boolean',
         'verified_at' => 'datetime',
     ];
 

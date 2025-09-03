@@ -22,21 +22,45 @@ class UpdatePartnerStatusController extends Controller
             'status' => ['required', Rule::in(['active', 'inactive', 'pending'])]
         ]);
 
-        $dto = StatusUpdateDTO::fromRequest(
-            $request->all(),
-            $partner->id,
-            'partner'
-        );
+        try {
+            $user = $partner->user;
+            $oldStatus = $partner->status;
 
-        if (!$dto->isValidStatus()) {
+            // Update partner status
+            $partner->status = $request->status === 'inactive' ? 'suspended' : $request->status;
+
+            // Update user email verification status based on partner status
+            switch($request->status) {
+                case 'active':
+                    $user->email_verified_at = $user->email_verified_at ?? now();
+                    break;
+                case 'inactive':
+                    $user->email_verified_at = null;
+                    break;
+                case 'pending':
+                    $user->email_verified_at = now();
+                    break;
+            }
+
+            $user->save();
+            $partner->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => "Partner status updated to {$request->status}",
+                'data' => [
+                    'partner_id' => $partner->id,
+                    'user_id' => $user->id,
+                    'old_status' => $oldStatus,
+                    'new_status' => $request->status
+                ]
+            ]);
+
+        } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Invalid status provided.'
-            ], 400);
+                'message' => 'Failed to update partner status. ' . $e->getMessage()
+            ], 500);
         }
-
-        $result = $this->userStatusService->updatePartnerStatus($dto);
-
-        return response()->json($result, $result['success'] ? 200 : 500);
     }
 }
