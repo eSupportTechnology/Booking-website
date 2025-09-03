@@ -60,4 +60,9 @@ class CarRenter extends Authenticatable
     {
         return $this->account_type === 'individual';
     }
+    public function cars()
+{
+    return $this->hasMany(Car::class, 'car_renter_id');
+}
+
 }

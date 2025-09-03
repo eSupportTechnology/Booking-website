@@ -28,13 +28,6 @@
                     Sign in
                 </button>
             </form>
-
-            <div class="border-t border-gray-200 my-6"></div>
-            <p class="text-xs text-gray-600 text-center">
-                By signing in you agree with our
-                <a href="#" class="text-blue-600 hover:underline">Terms & conditions</a> and
-                <a href="#" class="text-blue-600 hover:underline">Privacy statement</a>
-            </p>
         </div>
     </div>
 </section>
