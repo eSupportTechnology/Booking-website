@@ -1090,18 +1090,35 @@ Route::post('/carrentals/register/resend', [CarRenterAuthController::class, 'res
 Route::get('/carrentals/register/verify/{token}', [CarRenterAuthController::class, 'verify'])
     ->name('carrentals.register.verify.token');
 
-    // Login flow
-Route::get('/carrentals/login/email', [CarRenterLoginController::class, 'showEmailForm'])->name('carrentals.login.email');
-Route::post('/carrentals/login/email', [CarRenterLoginController::class, 'storeEmail'])->name('carrentals.login.email.store');
-Route::get('/carrentals/login/password', [CarRenterLoginController::class, 'showPasswordForm'])->name('carrentals.login.password');
-Route::post('/carrentals/login/password', [CarRenterLoginController::class, 'loginWithPassword'])->name('carrentals.login.password.submit');
-Route::post('/carrentals/logout', [CarRenterLoginController::class, 'logout'])->name('car_renter.logout');
+Route::prefix('car-renter')->name('carrentals.')->group(function () {
 
-// Dashboard
-Route::middleware('auth:car_renter')->group(function () {
-    Route::get('/car-renter/dashboard', function () {
-        return view('car_renters.dashboard');
-    })->name('car_renter.dashboard');
+    // Login flow
+    Route::get('login/email', [CarRenterLoginController::class, 'showEmailForm'])->name('login.email');
+    Route::post('login/email', [CarRenterLoginController::class, 'storeEmail'])->name('login.email.store');
+
+    Route::get('login/password', [CarRenterLoginController::class, 'showPasswordForm'])->name('login.password');
+    Route::post('login/password', [CarRenterLoginController::class, 'login'])->name('login.password.submit');
+
+    // Dashboard (protected)
+    Route::get('dashboard', [CarRenterLoginController::class, 'dashboard'])
+        ->middleware('auth:car_renter')
+        ->name('dashboard');
+
+
+
+
+
+Route::middleware(['auth:car_renter'])->prefix('cars')->name('cars.')->group(function () {
+    // Show add car form
+    Route::get('/add', [CarRentalController::class, 'index'])->name('add');
+
+    // Save each step (Step 1, 2, 3, 4)
+    Route::post('/save-step/{step}', [CarRentalController::class, 'saveStep'])->name('saveStep');
+});
+
+
+    // Logout
+    Route::post('logout', [CarRenterLoginController::class, 'logout'])->name('logout');
 });
 
 
