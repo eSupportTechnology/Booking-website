@@ -58,10 +58,11 @@
                             <option value="inactive" {{ $partner['status'] === 'Inactive' ? 'selected' : '' }}>Inactive</option>
                         </select>
                     </td>
-                    <td class="px-4 py-3 flex flex-wrap gap-2">
+                    <td class="px-4 py-3">
                         <a href="{{ route('admin.partner.view', ['partner_id' => $partner['id']]) }}"
-                           class="px-3 py-1 text-sm text-white bg-[#1F8FB2] hover:bg-[#157799] rounded">View</a>
-                        <button class="px-3 py-1 text-sm text-white bg-red-500 hover:bg-red-600 rounded">Delete</button>
+                            class="text-[#1F8FB2] hover:text-[#157799] flex items-center">
+                            <i class="fas fa-eye mr-1"></i> View Details
+                        </a>
                     </td>
                 </tr>
                 @empty
@@ -91,10 +92,11 @@
                 <div class="text-sm"><span class="font-semibold">Name:</span> {{ $partner['name'] }}</div>
                 <div class="text-sm"><span class="font-semibold">Email:</span> {{ $partner['email'] }}</div>
                 <div class="text-sm"><span class="font-semibold">Properties:</span> {{ $partner['propertyCount'] }}</div>
-                <div class="flex gap-2 mt-2">
+                <div class="px-6 py-4">
                     <a href="{{ route('admin.partner.view', ['partner_id' => $partner['id']]) }}"
-                       class="px-3 py-1 text-sm text-white bg-[#1F8FB2] hover:bg-[#157799] rounded">View</a>
-                    <button class="px-3 py-1 text-sm text-white bg-red-500 hover:bg-red-600 rounded">Delete</button>
+                        class="text-[#1F8FB2] hover:text-[#157799] flex items-center">
+                        <i class="fas fa-eye mr-1"></i> View Details
+                    </a>
                 </div>
             </div>
             @empty

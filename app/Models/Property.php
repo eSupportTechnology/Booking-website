@@ -151,4 +151,9 @@ class Property extends Model
     {
         return $this->hasOne(Accommodation::class);
     }
+
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
 }
