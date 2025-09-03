@@ -83,12 +83,16 @@
                             </td>
                             <td class="px-2 sm:px-4 py-3">{{ $property->createdAt }}</td>
                             <td class="px-2 sm:px-4 py-3">
-                                <select onchange="handleStatusChange(this, '{{ $property->id }}')"
-                                    class="appearance-none {{ $property->status === 'active' ? 'bg-green-100 text-green-800' : ($property->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }} rounded-full px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-[#3CC0E9]">
-                                    <option value="active" {{ $property->status === 'active' ? 'selected' : '' }}>Active</option>
-                                    <option value="pending" {{ $property->status === 'pending' ? 'selected' : '' }}>Pending</option>
-                                    <option value="inactive" {{ $property->status === 'suspended' ? 'selected' : '' }}>Inactive</option>
-                                </select>
+                                <div class="relative">
+                                    <select onchange="handleStatusChange(this, '{{ $property->id }}')"
+                                            class="appearance-none {{ $property->status === 'active' ? 'bg-green-100 text-green-800' : ($property->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }} font-medium text-[10px] sm:text-xs rounded-full pl-6 pr-4 py-0.5 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#3CC0E9] transition"
+                                            data-original-value="{{ $property->status === 'suspended' ? 'inactive' : $property->status }}">
+                                        <option value="active" {{ $property->status === 'active' ? 'selected' : '' }}>Active</option>
+                                        <option value="pending" {{ $property->status === 'pending' ? 'selected' : '' }}>Pending</option>
+                                        <option value="inactive" {{ $property->status === 'suspended' ? 'selected' : '' }}>Inactive</option>
+                                    </select>
+                                    <span class="absolute top-1/2 left-2 -translate-y-1/2 w-1.5 h-1.5 rounded-full status-dot {{ $property->status === 'active' ? 'bg-green-800' : ($property->status === 'pending' ? 'bg-yellow-800' : 'bg-red-800') }}"></span>
+                                </div>
                             </td>
                             <td class="px-2 sm:px-4 py-3 flex space-x-2 sm:pt-6">
                                 <button class="text-[#3CC0E9] text-xs">Edit</button>
@@ -151,6 +155,7 @@
 <script>
     // Status change handler
     function handleStatusChange(selectEl, id) {
+        const originalValue = selectEl.dataset.originalValue;
         const value = selectEl.value;
         const wrapper = selectEl.parentElement;
         const dot = wrapper.querySelector('.status-dot');
@@ -164,7 +169,7 @@
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
             },
             body: JSON.stringify({
                 status: value
@@ -173,25 +178,27 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                // Update UI styling
+                // Update visual elements
                 updateStatusStyling(selectEl, dot, value);
 
-                // Show success message
+                // Show success notification
                 showNotification('success', data.message);
+
+                // Update dataset
+                selectEl.dataset.originalValue = value;
             } else {
-                // Revert selection on error
-                selectEl.value = selectEl.getAttribute('data-original-value') || 'pending';
-                showNotification('error', data.message || 'Failed to update status');
+                throw new Error(data.message || 'Failed to update status');
             }
         })
         .catch(error => {
-            console.error('Error updating status:', error);
-            // Revert selection on error
-            selectEl.value = selectEl.getAttribute('data-original-value') || 'pending';
-            showNotification('error', 'Failed to update status. Please try again.');
+            console.error('Error:', error);
+            showNotification('error', error.message || 'Failed to update status. Please try again.');
+
+            // Revert to original value
+            selectEl.value = originalValue;
         })
         .finally(() => {
-            // Remove loading state
+            // Re-enable select
             selectEl.disabled = false;
             selectEl.style.opacity = '1';
         });
