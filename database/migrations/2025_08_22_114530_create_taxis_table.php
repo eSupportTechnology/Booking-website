@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('taxis', function (Blueprint $table) {
             $table->id();
             $table->foreignId('taxi_type_id')->constrained('taxi_types')->cascadeOnDelete();
+            $table->foreignId('car_renter_id')->constrained('car_renters')->onDelete('cascade');
+            
             $table->string('number_plate')->unique()->nullable();
             $table->string('color')->nullable();
             $table->integer('passenger_capacity')->nullable();

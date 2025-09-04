@@ -1,6 +1,6 @@
-@extends('frontend.carrental-layout')
+@extends('car_rentals.layout')
 
-@section('title', 'Add Car | ' . config('domains.app_name'))
+@section('title', 'Add Car | ' . config('app.name'))
 
 @section('content')
 
@@ -121,7 +121,6 @@
                     <p class="text-gray-500 text-sm mt-1">Enter the color of the taxi.</p>
                 </div>
 
-                <!-- Seats -->
                 <div>
                     <label class="block font-semibold text-sm mb-1">
                         Number of Passengers <span class="text-red-500">*</span>
@@ -130,7 +129,6 @@
                     <p class="text-gray-500 text-sm mt-1">Enter the maximum number of passengers the taxi can carry.</p>
                 </div>
 
-                <!-- Luggage / Suitcase Capacity -->
                 <div>
                     <label class="block font-semibold text-sm mb-1">
                         Luggage Capacity <span class="text-gray-500">(Optional)</span>
@@ -152,7 +150,7 @@
     <template x-if="step === 3">
         <div class="px-6 py-8 mt-6 w-full bg-white max-w-xl mx-auto lg:ml-24 space-y-6 rounded-lg shadow border">
             <h1 class="text-2xl font-bold mb-2">Provide Driver Details</h1>
-            <p class="text-gray-500 text-sm mb-4">Enter the driver’s information for this taxi listinggggg.</p>
+            <p class="text-gray-500 text-sm mb-4">Enter the driver’s information for this taxi listing.</p>
 
             <div class="space-y-4">
                 <div>
@@ -206,16 +204,14 @@
 
     <!-- Step 4: Taxi Payment & Submit -->
     <template x-if="step === 4">
-        <div class="px-6 py-8 mt-6 w-full max-w-xl mx-auto lg:ml-24 space-y-6 bg-white rounded-lg shadow border"
-            >
-
+        <div class="px-6 py-8 mt-6 w-full max-w-xl mx-auto lg:ml-24 space-y-6 bg-white rounded-lg shadow border">
             <h1 class="text-2xl font-bold mb-2">Set Taxi Fare & Complete Submission</h1>
             <p class="text-gray-500 text-sm mb-4">Specify how the taxi payment will be calculated for customers.</p>
 
             <div>
                 <label class="block font-semibold text-sm mb-1">Select Fare Calculation Type <span class="text-red-500">*</span></label>
                 <select x-model="pricingType" class="w-full p-2 border rounded-md text-sm">
-                    <option  selected>Select an option</option>
+                    <option selected>Select an option</option>
                     <option value="perKm">Per Kilometer</option>
                     <option value="perDay">Per Day</option>
                 </select>
@@ -277,165 +273,150 @@
 </div>
 
 <script>
-    document.addEventListener("alpine:init", () => {
-        Alpine.data("taxiWizard", () => ({
-            step: 1,
-            selectedCategory: '',
-            step: 1,
-            showModal: false,
-            taxi_id: null,
-            number_plate: '',
-            color: '',
-            passenger_capacity: '',
-            luggage_capacity: '',
-            driver_name: '',
-            driver_contact: '',
-            driver_email: '',
-            driver_license: '',
-            driver_photo: null,
-            pricePerDay: 0,
-            pricingType: '',
-            baseFare: '',
-            pricePerKm: '',
-            pricePerMinute: '',
-            airportFee: 0,
-            luggageFee: 0,
-            nightSurcharge: 0,
-            // Triggered when user clicks Continue
-            async saveStep1() {
-                if (!this.selectedCategory) {
-                    alert("Please select a taxi type before continuing!");
-                    return;
-                }
+document.addEventListener("alpine:init", () => {
+    Alpine.data("taxiWizard", () => ({
+        step: 1,
+        selectedCategory: '',
+        showModal: false,
+        taxi_id: null,
+        number_plate: '',
+        color: '',
+        passenger_capacity: '',
+        luggage_capacity: '',
+        driver_name: '',
+        driver_contact: '',
+        driver_email: '',
+        driver_license: '',
+        driver_photo: null,
+        pricePerDay: 0,
+        pricingType: '',
+        baseFare: '',
+        pricePerKm: '',
+        airportFee: 0,
+        luggageFee: 0,
 
-                try {
-                    const response = await fetch("{{ route('taxis.storeStep1') }}", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                        },
-                        body: JSON.stringify({
-                            taxi_type: this.selectedCategory
-                        })
-                    });
+        async saveStep1() {
+            if (!this.selectedCategory) {
+                alert("Please select a taxi type before continuing!");
+                return;
+            }
 
-                    const data = await response.json();
-
-                    if (data.success) {
-                        console.log("Taxi saved with ID:", data.taxi_id);
-                        this.taxi_id = data.taxi_id;
-                        this.step++;
-                    } else {
-                        alert(data.message || "Failed to save taxi type");
-                    }
-                } catch (error) {
-                    console.error("Error:", error);
-                    alert("Something went wrong while saving.");
-                }
-            },
-
-            async saveStep2() {
-                if (!this.number_plate || !this.color || !this.passenger_capacity) {
-                    alert("Please fill all required fields!");
-                    return;
-                }
-
-                const response = await fetch("{{ route('taxis.storeStep2') }}", {
+            try {
+                const response = await fetch("{{ route('taxis.storeStep1') }}", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                         "X-CSRF-TOKEN": "{{ csrf_token() }}"
                     },
-                    body: JSON.stringify({
-                        taxi_id: this.taxi_id,
-                        number_plate: this.number_plate,
-                        color: this.color,
-                        passenger_capacity: this.passenger_capacity,
-                        luggage_capacity: this.luggage_capacity
-                    })
+                    body: JSON.stringify({ taxi_type: this.selectedCategory })
                 });
-                const data = await response.json();
 
+                const data = await response.json();
                 if (data.success) {
-                    console.log("Step 2 saved for Taxi ID:", data.taxi_id);
+                    this.taxi_id = data.taxi_id;
                     this.step++;
                 } else {
-                    alert("Error: " + (data.message || "Failed to save step 2"));
+                    alert("Error: " + (data.message || "Failed to save step 1"));
                 }
-            },
-
-            async saveStep3() {
-                if (!this.driver_name || !this.driver_contact || !this.driver_license) {
-                    alert("Please fill all required fields!");
-                    return;
-                }
-
-                const formData = new FormData();
-                formData.append("taxi_id", this.taxi_id);
-                formData.append("name", this.driver_name);
-                formData.append("contact_number", this.driver_contact);
-                formData.append("email", this.driver_email);
-                formData.append("license_number", this.driver_license);
-                if (this.driver_photo) {
-                    formData.append("photo", this.driver_photo);
-                }
-
-                const response = await fetch("{{ route('taxis.storeStep3') }}", {
-                    method: "POST",
-                    headers: {
-                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                    },
-                    body: formData
-                });
-                const data = await response.json();
-
-                if (data.success) {
-                    console.log("Driver saved with ID:", data.driver_id);
-                    this.step++;
-                } else {
-                    alert("Error: " + (data.message || "Failed to save driver"));
-                }
-            },
-
-            async saveStep4() {
-                if (!this.pricingType || !this.baseFare || (this.pricingType === 'perKm' && !this.pricePerKm) || (this.pricingType === 'perDay' && !this.pricePerDay)) {
-                    alert("Please fill all required fields!");
-                    return;
-                }
-
-                const formData = new FormData();
-                formData.append("taxi_id", this.taxi_id);
-                formData.append("pricing_type", this.pricingType);
-                formData.append("base_fare", this.baseFare);
-                if (this.pricingType === 'perKm') {
-                    formData.append("price_per_km", this.pricePerKm);
-                } else if (this.pricingType === 'perDay') {
-                    formData.append("price_per_day", this.pricePerDay);
-                }
-                formData.append("airport_fee", this.airportFee);
-                formData.append("luggage_fee", this.luggageFee);
-
-                const response = await fetch("{{ route('taxis.storeStep4') }}", {
-                    method: "POST",
-                    headers: {
-                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                    },
-                    body: formData
-                });
-                const data = await response.json();
-
-                if (data.success) {
-                    console.log("Fare saved with ID:", data.fare_id);
-                    this.showModal = true;
-                    
-                    // window.location.href = "{{ route('partner.carrentals.types') }}";
-                } else {
-                    alert("Error: " + (data.message || "Failed to save driver"));
-                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Something went wrong while saving.");
             }
-        }))
-    })
+        },
+
+        async saveStep2() {
+            if (!this.number_plate || !this.color || !this.passenger_capacity) {
+                alert("Please fill all required fields!");
+                return;
+            }
+
+            const response = await fetch("{{ route('taxis.storeStep2') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: JSON.stringify({
+                    taxi_id: this.taxi_id,
+                    number_plate: this.number_plate,
+                    color: this.color,
+                    passenger_capacity: this.passenger_capacity,
+                    luggage_capacity: this.luggage_capacity
+                })
+            });
+            const data = await response.json();
+
+            if (data.success) {
+                this.step++;
+            } else {
+                alert("Error: " + (data.message || "Failed to save step 2"));
+            }
+        },
+
+        async saveStep3() {
+            if (!this.driver_name || !this.driver_contact || !this.driver_license) {
+                alert("Please fill all required fields!");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("taxi_id", this.taxi_id);
+            formData.append("name", this.driver_name);
+            formData.append("contact_number", this.driver_contact);
+            formData.append("email", this.driver_email);
+            formData.append("license_number", this.driver_license);
+            if (this.driver_photo) {
+                formData.append("photo", this.driver_photo);
+            }
+
+            const response = await fetch("{{ route('taxis.storeStep3') }}", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: formData
+            });
+            const data = await response.json();
+
+            if (data.success) {
+                this.step++;
+            } else {
+                alert("Error: " + (data.message || "Failed to save driver"));
+            }
+        },
+
+        async saveStep4() {
+            if (!this.pricingType || !this.baseFare || (this.pricingType === 'perKm' && !this.pricePerKm) || (this.pricingType === 'perDay' && !this.pricePerDay)) {
+                alert("Please fill all required fields!");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("taxi_id", this.taxi_id);
+            formData.append("pricing_type", this.pricingType);
+            formData.append("base_fare", this.baseFare);
+            if (this.pricingType === 'perKm') formData.append("price_per_km", this.pricePerKm);
+            if (this.pricingType === 'perDay') formData.append("price_per_day", this.pricePerDay);
+            formData.append("airport_fee", this.airportFee);
+            formData.append("luggage_fee", this.luggageFee);
+
+            const response = await fetch("{{ route('taxis.storeStep4') }}", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: formData
+            });
+            const data = await response.json();
+
+            if (data.success) {
+                this.showModal = true;
+            } else {
+                alert("Error: " + (data.message || "Failed to save fare"));
+            }
+        }
+    }));
+});
 </script>
 
 @endsection
