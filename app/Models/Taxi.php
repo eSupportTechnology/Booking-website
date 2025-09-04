@@ -6,17 +6,28 @@ use Illuminate\Database\Eloquent\Model;
 
 class Taxi extends Model
 {
-    protected $fillable = ['taxi_type_id', 'number_plate', 'color', 'passenger_capacity', 'luggage_capacity'];
+    protected $fillable = [
+        'car_renter_id', 'taxi_type_id', 'number_plate',
+        'color', 'passenger_capacity', 'luggage_capacity'
+    ];
+
     public function type()
     {
         return $this->belongsTo(TaxiType::class, 'taxi_type_id');
     }
-    public function drivers()
+
+     public function drivers()
     {
-        return $this->belongsToMany(Driver::class, 'taxi_driver')->withTimestamps()->withPivot(['assigned_at', 'released_at']);
+        return $this->hasMany(Driver::class); // One-to-many now
     }
+
     public function fare()
     {
         return $this->hasOne(Fare::class);
+    }
+
+    public function renter()
+    {
+        return $this->belongsTo(CarRenter::class, 'car_renter_id');
     }
 }

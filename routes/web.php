@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Controllers\AccommodationController;
-use App\Http\Controllers\AirportTaxiController;
+use App\Http\Controllers\CarReservations\AirportTaxiController;
 use App\Http\Controllers\CarReservations\CarRentalController;
 use App\Http\Controllers\Admin\AdminAccountController;
 use App\Http\Controllers\Admin\CustomersController;
@@ -470,11 +470,7 @@ Route::get('/single-car', function () {
 Route::get('/carrentals/Addcar', [CarRentalController::class, 'index'])->name('partner.carrentals.addcar');
 Route::post('/cars/register-step', [CarRentalController::class, 'registerStep']);
 
-Route::get('/airport-taxi/registration', [AirportTaxiController::class, 'index'])->name('partner.airport.taxi.registration');
-Route::post('/taxis/store-step1', [AirportTaxiController::class, 'storeStep1'])->name('taxis.storeStep1');
-Route::post('/taxis/store-step2', [AirportTaxiController::class, 'storeStep2'])->name('taxis.storeStep2');
-Route::post('/taxis/store-step3', [AirportTaxiController::class, 'storeStep3'])->name('taxis.storeStep3');
-Route::post('/taxis/store-step4', [AirportTaxiController::class, 'storeStep4'])->name('taxis.storeStep4');
+
 
 
 // Route::get('/partner-hotels-complete-registration', function () {
@@ -1117,10 +1113,23 @@ Route::middleware(['auth:car_renter'])->prefix('cars')->name('cars.')->group(fun
 });
 
 
+
+
+
+
+
+
     // Logout
     Route::post('logout', [CarRenterLoginController::class, 'logout'])->name('logout');
 });
 
+Route::middleware(['auth:car_renter'])->prefix('taxi')->name('taxis.')->group(function () {
+    Route::get('/registration', [AirportTaxiController::class, 'index'])->name('registration');
+    Route::post('/store-step1', [AirportTaxiController::class, 'storeStep1'])->name('storeStep1');
+    Route::post('/store-step2', [AirportTaxiController::class, 'storeStep2'])->name('storeStep2');
+    Route::post('/store-step3', [AirportTaxiController::class, 'storeStep3'])->name('storeStep3');
+    Route::post('/store-step4', [AirportTaxiController::class, 'storeStep4'])->name('storeStep4');
+});
 
 
 
