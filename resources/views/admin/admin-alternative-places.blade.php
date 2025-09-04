@@ -222,6 +222,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 dot.classList.add('bg-green-800');
                 break;
             case 'pending':
+            case 'pending':
                 selectEl.classList.add('bg-yellow-100', 'text-yellow-800');
                 dot.classList.add('bg-yellow-800');
                 break;
