@@ -858,6 +858,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::post('/pending/{admin}/reject', [\App\Http\Controllers\Admin\AdminApprovalController::class, 'reject'])->name('approvals.reject');
         });
 
+        // Aging Report
+        Route::get('/aging-report', \App\Http\Controllers\Admin\AgingReportController::class)->name('aging-report');
+
         // Status management routes
         Route::prefix('status')->name('status.')->group(function () {
             // Property status routes

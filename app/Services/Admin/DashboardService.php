@@ -6,23 +6,28 @@ namespace App\Services\Admin;
 use App\Models\User;
 use App\Models\Partner;
 use App\Models\Property;
+use App\Models\PropertyCategory;
 use App\Models\Booking;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class DashboardService
 {
-    public function getDashboardData(): array
+    public function getDashboardData(Request $request = null): array
     {
         $thirtyDaysAgo = Carbon::now()->subDays(30);
+        $chartPeriod = $request?->get('chart_period', 6) ?? 6;
+        $chartType = $request?->get('chart_type');
 
         return [
             'totalCustomers' => $this->getTotalCustomers(),
             'totalPartners' => $this->getTotalPartners(),
             'totalBookings' => $this->getTotalBookings($thirtyDaysAgo),
             'revenue' => $this->getRevenue($thirtyDaysAgo),
-            'pendingVerifications' => 0, // Disabled until verification system is implemented
+            'pendingVerifications' => 0,
             'recentBookings' => $this->getRecentBookings(),
-            'monthlyStats' => $this->getMonthlyStats(),
+            'monthlyStats' => $this->getMonthlyStats($chartPeriod, $chartType),
+            'propertyTypes' => PropertyCategory::all()->toArray(),
         ];
     }
 
@@ -69,20 +74,32 @@ class DashboardService
             ])->toArray();
     }
 
-    private function getMonthlyStats(): array
+    private function getMonthlyStats(int $period = 6, ?string $propertyType = null): array
     {
-        $months = collect(range(6, 0))->map(fn ($i) => Carbon::now()->subMonths($i)->startOfMonth());
+        $months = collect(range($period, 0))->map(fn ($i) => Carbon::now()->subMonths($i)->startOfMonth());
 
         $labels = $months->map(fn ($date) => $date->format('M Y'));
-        $bookings = $months->map(fn ($date) => Booking::whereMonth('created_at', $date->month)->whereYear('created_at', $date->year)->count());
-        $cancellations = $months->map(fn ($date) => Booking::whereMonth('created_at', $date->month)->whereYear('created_at', $date->year)->where('status', 'cancelled')->count());
-        $revenue = $months->map(fn ($date) => (float) Booking::whereMonth('created_at', $date->month)->whereYear('created_at', $date->year)->sum('total_price'));
+        
+        $bookings = $months->map(function ($date) use ($propertyType) {
+            $query = Booking::whereMonth('created_at', $date->month)->whereYear('created_at', $date->year);
+            if ($propertyType) {
+                $query->whereHas('property', fn($q) => $q->where('category_id', $propertyType));
+            }
+            return $query->count();
+        });
+        
+        $cancellations = $months->map(function ($date) use ($propertyType) {
+            $query = Booking::whereMonth('created_at', $date->month)->whereYear('created_at', $date->year)->where('status', 'cancelled');
+            if ($propertyType) {
+                $query->whereHas('property', fn($q) => $q->where('category_id', $propertyType));
+            }
+            return $query->count();
+        });
 
         return [
             'labels' => $labels->values()->toArray(),
             'bookings' => $bookings->values()->toArray(),
             'cancellations' => $cancellations->values()->toArray(),
-            'revenue' => $revenue->values()->toArray(),
         ];
     }
 }
