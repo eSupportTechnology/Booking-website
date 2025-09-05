@@ -133,8 +133,22 @@
 
     <!-- Chart Section -->
     <div class="bg-white p-4 sm:p-6 rounded-lg shadow">
-        <h2 class="text-lg font-semibold text-gray-700 mb-4">Monthly Bookings Overview</h2>
-        <div class="relative w-full h-56 sm:h-64 md:h-72 lg:h-64 xl:h-60"> {{-- fluid chart height --}}
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-lg font-semibold text-gray-700">Monthly Bookings Overview</h2>
+            <form method="GET" class="flex gap-2">
+                <select name="chart_period" class="text-sm rounded border-gray-300" onchange="this.form.submit()">
+                    <option value="6" {{ request('chart_period', 6) == 6 ? 'selected' : '' }}>Last 6 Months</option>
+                    <option value="12" {{ request('chart_period') == 12 ? 'selected' : '' }}>Last 12 Months</option>
+                </select>
+                <select name="chart_type" class="text-sm rounded border-gray-300" onchange="this.form.submit()">
+                    <option value="" {{ !request('chart_type') ? 'selected' : '' }}>All Properties</option>
+                    @foreach($propertyTypes as $type)
+                        <option value="{{ $type['id'] }}" {{ request('chart_type') == $type['id'] ? 'selected' : '' }}>{{ $type['name'] }}</option>
+                    @endforeach
+                </select>
+            </form>
+        </div>
+        <div class="relative w-full h-56 sm:h-64 md:h-72 lg:h-64 xl:h-60">
             <canvas id="bookingChart" class="absolute inset-0 w-full h-full"></canvas>
         </div>
     </div>
@@ -146,11 +160,11 @@
             <h3 class="text-lg font-semibold mb-2">Quick Actions</h3>
             <div class="flex flex-col gap-2">
                 <a href="{{ route('admin.apartments') }}"
-                   class="w-full text-center text-white px-4 py-2 rounded hover:opacity-90 transition"
-                   style="background-color:#1F8FB2;">Manage Properties</a>
+                    class="w-full text-center text-white px-4 py-2 rounded hover:opacity-90 transition"
+                    style="background-color:#1F8FB2;">Manage Properties</a>
                 <a href="{{ route('admin.customers') }}"
-                   class="w-full text-center text-white px-4 py-2 rounded hover:opacity-90 transition"
-                   style="background-color:#3CC0E9;">Manage Users</a>
+                    class="w-full text-center text-white px-4 py-2 rounded hover:opacity-90 transition"
+                    style="background-color:#3CC0E9;">Manage Users</a>
                 @if(Auth::guard('admin')->user()->hasRole('superAdmin'))
                     <a href="{{ route('admin.approvals.index') }}"
                        class="w-full text-center bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 transition">
@@ -183,6 +197,11 @@
                         </p>
                     </div>
                 @endif
+                <div class="flex justify-between items-center">
+                    <a  href="{{ route('admin.aging-report') }}"
+                    class="w-full text-center text-white px-4 py-2 rounded hover:opacity-90 transition"
+                    style="background-color:#3CC0E9;">Aging Report</a>
+                </div>
             </div>
         </div>
     </div>

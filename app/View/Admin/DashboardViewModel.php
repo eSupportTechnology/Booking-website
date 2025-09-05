@@ -11,6 +11,7 @@ readonly class DashboardViewModel
     public int $pendingVerifications;
     public array $recentBookings;
     public array $monthlyStats;
+    public array $propertyTypes;
 
     public function __construct(array $data)
     {
@@ -21,6 +22,7 @@ readonly class DashboardViewModel
         $this->pendingVerifications = $data['pendingVerifications'];
         $this->recentBookings = $data['recentBookings'];
         $this->monthlyStats = $data['monthlyStats'];
+        $this->propertyTypes = $data['propertyTypes'];
     }
 
     public function toArray(): array
@@ -33,6 +35,7 @@ readonly class DashboardViewModel
             'pendingVerifications' => $this->pendingVerifications,
             'recentBookings' => $this->recentBookings,
             'monthlyStats' => $this->monthlyStats,
+            'propertyTypes' => $this->propertyTypes,
         ];
     }
 
