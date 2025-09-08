@@ -35,12 +35,12 @@
             <h1 class="text-xl sm:text-2xl font-bold text-gray-800 mb-4 sm:mb-6">Taxi Details</h1>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                 <div class="space-y-2 sm:space-y-3 text-sm sm:text-base">
-                    <p class="text-gray-700"><span class="font-semibold">Taxi ID:</span> #T101</p>
-                    <p class="text-gray-700"><span class="font-semibold">Vehicle Model:</span> Toyota Prius</p>
-                    <p class="text-gray-700"><span class="font-semibold">Vehicle Number:</span> ABC-1234</p>
-                    <p class="text-gray-700"><span class="font-semibold">Taxi Type:</span> Sedan</p>
+                    <p class="text-gray-700"><span class="font-semibold">Taxi ID:</span> #T{{ $taxi->id }}</p>
+                    <p class="text-gray-700"><span class="font-semibold">Vehicle Model:</span> {{ $taxi->type?->name ?? 'Unknown' }}</p>
+                    <p class="text-gray-700"><span class="font-semibold">Vehicle Number:</span> {{ $taxi->number_plate ?? 'N/A' }}</p>
+                    <p class="text-gray-700"><span class="font-semibold">Taxi Type:</span> {{ $taxi->type?->name ?? 'Unknown' }}</p>
                     <p class="text-gray-700"><span class="font-semibold">Status:</span>
-                        <span class="px-2 sm:px-3 py-1 rounded-full text-white bg-green-500 text-xs sm:text-sm">Active</span>
+                        <span class="px-2 sm:px-3 py-1 rounded-full text-white @if($taxi->status === 'Active') bg-green-500 @elseif($taxi->status === 'Inactive') bg-yellow-500 @else bg-red-500 @endif text-xs sm:text-sm">{{ $taxi->status }}</span>
                     </p>
                 </div>
                 <div class="flex items-center justify-center">
@@ -55,14 +55,18 @@
         <div class="bg-white rounded-lg shadow p-4 sm:p-6 relative">
 
             <h2 class="text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4">Driver Details</h2>
+            @if($driver)
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 text-sm sm:text-base">
-                <p class="text-gray-700"><span class="font-semibold">Driver Name:</span> John Doe</p>
-                <p class="text-gray-700"><span class="font-semibold">Contact Number:</span> +94 77 123 4567</p>
-                <p class="text-gray-700"><span class="font-semibold">Email:</span> johndoe@gmail.com</p>
-                <p class="text-gray-700"><span class="font-semibold">License Number:</span> D1234567</p>
+                <p class="text-gray-700"><span class="font-semibold">Driver Name:</span> {{ $driver->name }}</p>
+                <p class="text-gray-700"><span class="font-semibold">Contact Number:</span> {{ $driver->contact_number }}</p>
+                <p class="text-gray-700"><span class="font-semibold">Email:</span> {{ $driver->email ?? 'N/A' }}</p>
+                <p class="text-gray-700"><span class="font-semibold">License Number:</span> {{ $driver->license_number }}</p>
                 <p class="text-gray-700"><span class="font-semibold">Experience:</span> 5 years</p>
                 <p class="text-gray-700"><span class="font-semibold">Driver Rating:</span> ⭐ 4.8 / 5</p>
             </div>
+            @else
+            <p class="text-gray-500">No driver assigned to this taxi.</p>
+            @endif
         </div>
 
         <!-- Taxi Performance & Revenue -->
@@ -72,29 +76,29 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
                 <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-5 shadow">
                     <h3 class="text-base sm:text-lg font-semibold text-blue-700">Total Revenue</h3>
-                    <p class="text-lg sm:text-2xl font-bold text-gray-800 mt-1 sm:mt-2">LKR 120,000</p>
+                    <p class="text-lg sm:text-2xl font-bold text-gray-800 mt-1 sm:mt-2">LKR {{ number_format($performance['total_revenue']) }}</p>
                 </div>
                 <div class="bg-green-50 border border-green-200 rounded-lg p-3 sm:p-5 shadow">
                     <h3 class="text-base sm:text-lg font-semibold text-green-700">Monthly Revenue</h3>
-                    <p class="text-lg sm:text-2xl font-bold text-gray-800 mt-1 sm:mt-2">LKR 30,000</p>
+                    <p class="text-lg sm:text-2xl font-bold text-gray-800 mt-1 sm:mt-2">LKR {{ number_format($performance['monthly_revenue']) }}</p>
                 </div>
                 <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 sm:p-5 shadow">
                     <h3 class="text-base sm:text-lg font-semibold text-yellow-700">Total Trips</h3>
-                    <p class="text-lg sm:text-2xl font-bold text-gray-800 mt-1 sm:mt-2">145</p>
+                    <p class="text-lg sm:text-2xl font-bold text-gray-800 mt-1 sm:mt-2">{{ $performance['total_trips'] }}</p>
                 </div>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 mt-4 sm:mt-6">
                 <div class="bg-purple-50 border border-purple-200 rounded-lg p-3 sm:p-5 shadow">
                     <h3 class="text-base sm:text-lg font-semibold text-purple-700">Customers Served</h3>
-                    <p class="text-lg sm:text-2xl font-bold text-gray-800 mt-1 sm:mt-2">95</p>
+                    <p class="text-lg sm:text-2xl font-bold text-gray-800 mt-1 sm:mt-2">{{ $performance['customers_served'] }}</p>
                 </div>
                 <div class="bg-pink-50 border border-pink-200 rounded-lg p-3 sm:p-5 shadow">
                     <h3 class="text-base sm:text-lg font-semibold text-pink-700">Average Fare</h3>
-                    <p class="text-lg sm:text-2xl font-bold text-gray-800 mt-1 sm:mt-2">LKR 1,200</p>
+                    <p class="text-lg sm:text-2xl font-bold text-gray-800 mt-1 sm:mt-2">LKR {{ number_format($performance['average_fare']) }}</p>
                 </div>
                 <div class="bg-orange-50 border border-orange-200 rounded-lg p-3 sm:p-5 shadow">
                     <h3 class="text-base sm:text-lg font-semibold text-orange-700">Total Distance</h3>
-                    <p class="text-lg sm:text-2xl font-bold text-gray-800 mt-1 sm:mt-2">4,500 km</p>
+                    <p class="text-lg sm:text-2xl font-bold text-gray-800 mt-1 sm:mt-2">{{ number_format($performance['total_distance']) }} km</p>
                 </div>
             </div>
         </div>
@@ -104,12 +108,12 @@
 
             <h2 class="text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4">Usage Statistics</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 text-sm sm:text-base">
-                <p class="text-gray-700"><span class="font-semibold">Total Bookings:</span> 180</p>
-                <p class="text-gray-700"><span class="font-semibold">Completed Trips:</span> 170</p>
-                <p class="text-gray-700"><span class="font-semibold">Canceled Trips:</span> 5</p>
-                <p class="text-gray-700"><span class="font-semibold">Ongoing Trips:</span> 5</p>
-                <p class="text-gray-700"><span class="font-semibold">Peak Booking Time:</span> Evening</p>
-                <p class="text-gray-700"><span class="font-semibold">Top 3 Pickup Locations:</span> Colombo, Kandy, Negombo</p>
+                <p class="text-gray-700"><span class="font-semibold">Total Bookings:</span> {{ $statistics['total_bookings'] }}</p>
+                <p class="text-gray-700"><span class="font-semibold">Completed Trips:</span> {{ $statistics['completed_trips'] }}</p>
+                <p class="text-gray-700"><span class="font-semibold">Canceled Trips:</span> {{ $statistics['canceled_trips'] }}</p>
+                <p class="text-gray-700"><span class="font-semibold">Ongoing Trips:</span> {{ $statistics['ongoing_trips'] }}</p>
+                <p class="text-gray-700"><span class="font-semibold">Peak Booking Time:</span> {{ $statistics['peak_booking_time'] }}</p>
+                <p class="text-gray-700"><span class="font-semibold">Top 3 Pickup Locations:</span> {{ implode(', ', $statistics['top_pickup_locations']) }}</p>
             </div>
         </div>
 
@@ -141,7 +145,7 @@
 
         <!-- Back Button -->
         <div class="mt-4 sm:mt-6">
-            <a href="{{ url('/admin/rental/taxi') }}"
+            <a href="{{ route('admin.rental.taxi') }}"
                class="bg-[#1F8FB2] hover:bg-[#157799] text-white px-3 py-2 sm:px-4 sm:py-2 rounded shadow text-sm sm:text-base">
                 ← Back to Taxi List
             </a>

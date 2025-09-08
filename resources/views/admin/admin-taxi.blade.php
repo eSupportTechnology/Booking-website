@@ -32,19 +32,26 @@
 
             <!-- Search & Filter Section -->
             <div class="w-full sm:w-2/3 flex flex-col sm:flex-row gap-2 sm:gap-3">
-                <input
-                    type="text"
-                    placeholder="Search taxis or driver name"
-                    id="taxiSearchInput"
-                    class="w-full sm:flex-1 px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#1F8FB2]"
-                >
-                <select id="statusFilter"
-                    class="px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#1F8FB2] bg-white w-full sm:w-auto">
-                    <option value="">All Status</option>
-                    <option value="Active">Active</option>
-                    <option value="Inactive">Inactive</option>
-                    <option value="On Trip">On Trip</option>
-                </select>
+                <form method="GET" class="w-full sm:w-2/3 flex flex-col sm:flex-row gap-2 sm:gap-3">
+                    <input
+                        type="text"
+                        name="search"
+                        value="{{ request('search') }}"
+                        placeholder="Search taxis or driver name"
+                        class="w-full sm:flex-1 px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#1F8FB2]"
+                    >
+                    <select name="status"
+                        class="px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#1F8FB2] bg-white w-full sm:w-auto"
+                        onchange="this.form.submit()">
+                        <option value="">All Status</option>
+                        @foreach($statusOptions as $value => $label)
+                            <option value="{{ $value }}" @selected(request('status') === $value)>{{ $label }}</option>
+                        @endforeach
+                    </select>
+                    <button type="submit" class="px-3 py-2 bg-[#1F8FB2] text-white rounded-md text-xs sm:text-sm hover:bg-[#157799]">
+                        Search
+                    </button>
+                </form>
             </div>
         </div>
 
@@ -74,26 +81,25 @@
                     </thead>
                     <tbody class="divide-y divide-gray-100">
 
-                        <!-- Taxi 1 -->
+                        @forelse($taxis as $taxi)
                         <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-2 sm:px-4 py-3 font-medium text-gray-900">#T101</td>
-                            <td class="px-2 sm:px-4 py-3">John Doe</td>
-                            <td class="px-2 sm:px-4 py-3">Toyota Prius</td>
+                            <td class="px-2 sm:px-4 py-3 font-medium text-gray-900">#T{{ $taxi->id }}</td>
+                            <td class="px-2 sm:px-4 py-3">{{ $taxi->drivers->first()?->name ?? 'No Driver' }}</td>
+                            <td class="px-2 sm:px-4 py-3">{{ $taxi->type?->name ?? 'Unknown' }} - {{ $taxi->number_plate }}</td>
                             <td class="px-2 sm:px-4 py-3">
                                 <div class="relative">
-                                    <select onchange="handleTaxiStatusChange(this, 'T101')"
-                                        class="appearance-none bg-green-100 text-green-800 font-medium text-xs sm:text-sm rounded-full pl-6 pr-4 py-1 focus:outline-none focus:ring-2 focus:ring-[#1F8FB2] transition">
-                                        <option value="Active" selected>Active</option>
-                                        <option value="Inactive">Inactive</option>
-                                        <option value="On Trip">On Trip</option>
+                                    <select onchange="handleTaxiStatusChange(this, 'T{{ $taxi->id }}')"
+                                        class="appearance-none @if($taxi->status === 'Active') bg-green-100 text-green-800 @elseif($taxi->status === 'Inactive') bg-yellow-100 text-yellow-800 @else bg-red-100 text-red-800 @endif font-medium text-xs sm:text-sm rounded-full pl-6 pr-4 py-1 focus:outline-none focus:ring-2 focus:ring-[#1F8FB2] transition">
+                                        <option value="Active" @selected($taxi->status === 'Active')>Active</option>
+                                        <option value="Inactive" @selected($taxi->status === 'Inactive')>Inactive</option>
+                                        <option value="On Trip" @selected($taxi->status === 'On Trip')>On Trip</option>
                                     </select>
-                                    <span
-                                        class="absolute top-1/2 left-2 -translate-y-1/2 w-2 h-2 rounded-full bg-green-800 pointer-events-none status-dot"></span>
+                                    <span class="absolute top-1/2 left-2 -translate-y-1/2 w-2 h-2 rounded-full @if($taxi->status === 'Active') bg-green-800 @elseif($taxi->status === 'Inactive') bg-yellow-800 @else bg-red-800 @endif pointer-events-none status-dot"></span>
                                 </div>
                             </td>
                             <td class="px-2 sm:px-4 py-3">
                                 <div class="flex flex-wrap gap-2 sm:gap-3">
-                                    <a href="{{ url('/admin/admin-taxi-details') }}"
+                                    <a href="{{ route('admin.taxi.details', $taxi->id) }}"
                                         class="text-[#1F8FB2] hover:text-[#157799] text-xs sm:text-sm font-medium inline-flex items-center">
                                         <i class="fas fa-eye mr-1"></i> View
                                     </a>
@@ -104,37 +110,13 @@
                                 </div>
                             </td>
                         </tr>
-
-                        <!-- Taxi 2 -->
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-2 sm:px-4 py-3 font-medium text-gray-900">#T102</td>
-                            <td class="px-2 sm:px-4 py-3">Jane Smith</td>
-                            <td class="px-2 sm:px-4 py-3">Honda Civic</td>
-                            <td class="px-2 sm:px-4 py-3">
-                                <div class="relative">
-                                    <select onchange="handleTaxiStatusChange(this, 'T102')"
-                                        class="appearance-none bg-yellow-100 text-yellow-800 font-medium text-xs sm:text-sm rounded-full pl-6 pr-4 py-1 focus:outline-none focus:ring-2 focus:ring-[#1F8FB2] transition">
-                                        <option value="Active">Active</option>
-                                        <option value="Inactive" selected>Inactive</option>
-                                        <option value="On Trip">On Trip</option>
-                                    </select>
-                                    <span
-                                        class="absolute top-1/2 left-2 -translate-y-1/2 w-2 h-2 rounded-full bg-yellow-800 pointer-events-none status-dot"></span>
-                                </div>
-                            </td>
-                            <td class="px-2 sm:px-4 py-3">
-                                <div class="flex flex-wrap gap-2 sm:gap-3">
-                                    <a href="{{ url('/admin/admin-taxi-details') }}"
-                                        class="text-[#1F8FB2] hover:text-[#157799] text-xs sm:text-sm font-medium inline-flex items-center">
-                                        <i class="fas fa-eye mr-1"></i> View
-                                    </a>
-                                    <button
-                                        class="text-red-600 hover:text-red-800 text-xs sm:text-sm font-medium inline-flex items-center">
-                                        <i class="fas fa-trash mr-1"></i> Delete
-                                    </button>
-                                </div>
+                        @empty
+                        <tr>
+                            <td colspan="5" class="px-4 py-8 text-center text-gray-500">
+                                No taxis found.
                             </td>
                         </tr>
+                        @endforelse
 
                     </tbody>
                 </table>
@@ -142,11 +124,11 @@
 
             <!-- Pagination -->
             <div class="px-3 sm:px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-gray-200">
-                <p class="text-xs text-gray-700">Showing 1 to 2 of 2 results</p>
+                <p class="text-xs text-gray-700">
+                    Showing {{ $taxis->firstItem() ?? 0 }} to {{ $taxis->lastItem() ?? 0 }} of {{ $taxis->total() }} results
+                </p>
                 <div class="space-x-1">
-                    <button class="px-3 py-1 text-xs bg-white border border-gray-300 rounded text-gray-500 hover:bg-gray-50">&lt;</button>
-                    <button class="px-3 py-1 text-xs bg-[#1F8FB2] text-white rounded shadow">1</button>
-                    <button class="px-3 py-1 text-xs bg-white border border-gray-300 rounded text-gray-500 hover:bg-gray-50">&gt;</button>
+                    {{ $taxis->links('pagination::simple-bootstrap-4') }}
                 </div>
             </div>
         </div>
