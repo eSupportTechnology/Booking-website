@@ -833,10 +833,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/partners/partner-details', [\App\Http\Controllers\Admin\PartnerViewController::class, 'show'])->name('admin.partner.view');
 
         // Admin Dashboard rental Route
-        Route::view('/rental/taxi', 'admin.admin-taxi')->name('rental.taxi');
-        Route::view('/rental/taxi/taxi-details', 'admin.admin-taxi-details')->name('rental.taxi.details');
-        Route::view('/rental/airport', 'admin.admin-airport')->name('rental.airport');
-        Route::view('/rental/airport/airport-details', 'admin.admin-airport-details')->name('rental.airport.details');
+        Route::get('/rental/taxi', \App\Http\Controllers\Admin\TaxiController::class)->name('rental.taxi');
+        Route::get('/rental/taxi/{id}', \App\Http\Controllers\Admin\TaxiDetailController::class)->name('taxi.details');
+        Route::get('/rental/airport', \App\Http\Controllers\Admin\AirportTransferController::class)->name('rental.airport');
+        Route::get('/rental/airport/{id}', \App\Http\Controllers\Admin\AirportTransferDetailController::class)->name('airport.details');
 
 
         //admin dashboard admin account management
@@ -945,12 +945,12 @@ Route::get('/property/vedio', function () {
 
 
 // Admin Dashboard Route - Updated to use dynamic controller (public access for testing)
-Route::get('/admin/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, '__invoke']);
-Route::view('/admin/rental/taxi', 'frontend.admin.taxi')->name('admin.taxi');
-Route::view('/admin/rental/airport', 'frontend.admin.airport')->name('admin.airport');
-Route::view('/admin/taxi-details', 'frontend.admin.taxi-details');
+// Route::get('/admin/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, '__invoke']);
+// Route::view('/admin/rental/taxi', 'frontend.admin.taxi')->name('admin.taxi');
+// Route::view('/admin/rental/airport', 'frontend.admin.airport')->name('admin.airport');
+// Route::view('/admin/taxi-details', 'frontend.admin.taxi-details');
 // Airport Details Page
-Route::view('/admin/airport-details', 'frontend.admin.airport-details')->name('admin.airport.details');
+// Route::view('/admin/airport-details', 'frontend.admin.airport-details')->name('admin.airport.details');
 // Route::get('/admin', function () {
 //     return view('frontend.admin.admin');
 // })->name('admin.dashboard');

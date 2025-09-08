@@ -155,8 +155,8 @@
                     </button>
                     <!-- Toggle Links -->
                     <div x-show="openRental" x-collapse class="ml-8 mt-2 space-y-1 border-l border-blue-300 pl-4">
-                        <a href="{{ route('admin.taxi') }}" class="block py-1 hover:text-blue-700 font-semibold">Taxi</a>
-                        <a href="{{ route('admin.airport') }}" class="block py-1 hover:text-blue-700 font-semibold">Airport</a>
+                        <a href="{{ route('admin.rental.taxi') }}" class="block py-1 hover:text-blue-700 font-semibold">Taxi</a>
+                        <a href="{{ route('admin.rental.airport') }}" class="block py-1 hover:text-blue-700 font-semibold">Airport</a>
                     </div>
                 </div>
 

@@ -36,12 +36,12 @@
             <h1 class="text-xl sm:text-2xl font-bold text-gray-800 mb-4 sm:mb-6">Airport Details</h1>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                 <div class="space-y-2 sm:space-y-3 text-sm sm:text-base">
-                    <p class="text-gray-700"><span class="font-semibold">Airport ID:</span> #A101</p>
-                    <p class="text-gray-700"><span class="font-semibold">Airport Name:</span> Bandaranaike International Airport</p>
-                    <p class="text-gray-700"><span class="font-semibold">Location:</span> Katunayake, Sri Lanka</p>
-                    <p class="text-gray-700"><span class="font-semibold">Type:</span> International</p>
+                    <p class="text-gray-700"><span class="font-semibold">Transfer ID:</span> #AT{{ $transfer->id }}</p>
+                    <p class="text-gray-700"><span class="font-semibold">Vehicle:</span> {{ $transfer->type?->name ?? 'Unknown' }}</p>
+                    <p class="text-gray-700"><span class="font-semibold">Vehicle Number:</span> {{ $transfer->number_plate ?? 'N/A' }}</p>
+                    <p class="text-gray-700"><span class="font-semibold">Type:</span> Airport Transfer</p>
                     <p class="text-gray-700"><span class="font-semibold">Status:</span>
-                        <span class="px-2 sm:px-3 py-1 rounded-full text-white bg-green-500 text-xs sm:text-sm">Active</span>
+                        <span class="px-2 sm:px-3 py-1 rounded-full text-white @if($transfer->status === 'Active') bg-green-500 @elseif($transfer->status === 'Inactive') bg-yellow-500 @else bg-red-500 @endif text-xs sm:text-sm">{{ $transfer->status }}</span>
                     </p>
                 </div>
                 <div class="flex items-center justify-center">
@@ -87,15 +87,15 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
                 <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-5 shadow">
                     <h3 class="text-base sm:text-lg font-semibold text-blue-700">Total Passengers</h3>
-                    <p class="text-lg sm:text-2xl font-bold text-gray-800 mt-1 sm:mt-2">12.5M</p>
+                    <p class="text-lg sm:text-2xl font-bold text-gray-800 mt-1 sm:mt-2">{{ $statistics['total_passengers'] }}</p>
                 </div>
                 <div class="bg-green-50 border border-green-200 rounded-lg p-3 sm:p-5 shadow">
                     <h3 class="text-base sm:text-lg font-semibold text-green-700">Monthly Flights</h3>
-                    <p class="text-lg sm:text-2xl font-bold text-gray-800 mt-1 sm:mt-2">1,200</p>
+                    <p class="text-lg sm:text-2xl font-bold text-gray-800 mt-1 sm:mt-2">{{ $statistics['monthly_flights'] }}</p>
                 </div>
                 <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 sm:p-5 shadow">
                     <h3 class="text-base sm:text-lg font-semibold text-yellow-700">Total Airlines</h3>
-                    <p class="text-lg sm:text-2xl font-bold text-gray-800 mt-1 sm:mt-2">45</p>
+                    <p class="text-lg sm:text-2xl font-bold text-gray-800 mt-1 sm:mt-2">{{ $statistics['total_airlines'] }}</p>
                 </div>
             </div>
         </div>
@@ -106,17 +106,17 @@
                class="absolute top-3 sm:top-4 right-3 sm:right-4 bg-[#3CC0E9] hover:bg-[#33aad1] text-white px-3 py-1 sm:px-4 sm:py-2 rounded shadow text-xs sm:text-sm">Edit</a>
             <h2 class="text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4">Customer Insights</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 text-sm sm:text-base">
-                <p class="text-gray-700"><span class="font-semibold">Unique Customers:</span> 150K</p>
-                <p class="text-gray-700"><span class="font-semibold">Repeat Customers:</span> 60%</p>
-                <p class="text-gray-700"><span class="font-semibold">Customer Rating:</span> ⭐ 4.8 / 5</p>
-                <p class="text-gray-700"><span class="font-semibold">Customer Reviews:</span> 12,000</p>
+                <p class="text-gray-700"><span class="font-semibold">Unique Customers:</span> {{ $insights['unique_customers'] }}</p>
+                <p class="text-gray-700"><span class="font-semibold">Repeat Customers:</span> {{ $insights['repeat_customers'] }}</p>
+                <p class="text-gray-700"><span class="font-semibold">Customer Rating:</span> ⭐ {{ $insights['customer_rating'] }} / 5</p>
+                <p class="text-gray-700"><span class="font-semibold">Customer Reviews:</span> {{ $insights['customer_reviews'] }}</p>
             </div>
         </div>
 
 
         <!-- Back Button -->
         <div class="mt-4 sm:mt-6">
-            <a href="{{ url('/admin/rental/airport') }}"
+            <a href="{{ route('admin.rental.airport') }}"
                class="bg-[#1F8FB2] hover:bg-[#157799] text-white px-3 py-2 sm:px-4 sm:py-2 rounded shadow text-sm sm:text-base">
                 ← Back to Airport List
             </a>
