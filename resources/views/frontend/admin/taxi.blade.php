@@ -29,6 +29,7 @@
 
         <!-- Search & Add Button Section -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+
             <!-- Search & Filter Section -->
             <div class="w-full sm:w-2/3 flex flex-col sm:flex-row gap-2 sm:gap-3">
                 <input
@@ -99,7 +100,7 @@
                                 </div>
                             </td>
                             <td class="px-2 sm:px-4 py-3">
-                                <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                                <div class="flex flex-wrap gap-2 sm:gap-3">
                                     <a href="{{ url('/admin/taxi-details') }}"
                                         class="text-[#1F8FB2] hover:text-[#157799] text-xs sm:text-sm font-medium inline-flex items-center">
                                         <i class="fas fa-eye mr-1"></i> View
@@ -130,7 +131,7 @@
                                 </div>
                             </td>
                             <td class="px-2 sm:px-4 py-3">
-                                <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                                <div class="flex flex-wrap gap-2 sm:gap-3">
                                     <a href="{{ url('/admin/taxi-details') }}"
                                         class="text-[#1F8FB2] hover:text-[#157799] text-xs sm:text-sm font-medium inline-flex items-center">
                                         <i class="fas fa-eye mr-1"></i> View
@@ -161,18 +162,19 @@
 </section>
 
 <script>
+    
     function handleTaxiStatusChange(selectEl, id) {
         const value = selectEl.value;
         const wrapper = selectEl.parentElement;
         const dot = wrapper.querySelector('.status-dot');
 
-        // Reset styles
+        
         selectEl.className =
             'appearance-none font-medium text-xs sm:text-sm rounded-full pl-6 pr-4 py-1 transition focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#1F8FB2]';
         dot.className =
             'absolute top-1/2 left-2 -translate-y-1/2 w-2 h-2 rounded-full status-dot';
 
-        // Apply colors based on status
+       
         switch (value) {
             case 'Active':
                 selectEl.classList.add('bg-green-100', 'text-green-800');
@@ -189,7 +191,6 @@
         }
     }
 
-    // Live search + filter
     document.addEventListener('DOMContentLoaded', function () {
         const searchInput = document.getElementById('taxiSearchInput');
         const statusFilter = document.getElementById('statusFilter');
