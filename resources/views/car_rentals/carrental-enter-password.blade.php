@@ -27,7 +27,27 @@
                         style="background-color:#3CC0E9;">
                     Sign in
                 </button>
+                <a href="{{ route('partner.password.request') }}"
+                        class="block text-center text-blue-600 hover:underline mt-4">
+                        Forgotten your password?
+                    </a>
             </form>
+             <div class="border-t border-gray-200 my-6"></div>
+
+                <p class="text-xs text-gray-600 text-center" style="font-family: 'Noto Sans', sans-serif;">
+                    By signing in or creating an account, you agree with our
+                    <a href="#" class="text-blue-600 hover:underline"
+                        style="font-family: 'Noto Sans', sans-serif;">Terms & conditions</a> and
+                    <a href="#" class="text-blue-600 hover:underline"
+                        style="font-family: 'Noto Sans', sans-serif;">Privacy statement</a>
+                </p>
+
+                <p class="text-[11px] text-gray-400 text-center mt-4" style="font-family: 'Noto Sans', sans-serif;">
+                    All rights reserved.</p>
+
+                <p class="text-[11px] text-gray-400 text-center mt-1" style="font-family: 'Noto Sans', sans-serif;">
+                    Copyright (2006 – 2025){{ config('domains.domain') }}™</p>
+            </div>
         </div>
     </div>
 </section>

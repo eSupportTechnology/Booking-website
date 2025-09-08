@@ -47,7 +47,7 @@
                 <a href="#">
                     <div class="h-48 bg-gray-200 relative">
                        @if($car->files?->first())
-    <img src="{{ asset('storage/' . $car->files->first()->path) }}" alt="Car" class="w-full h-full object-cover">
+    <img src="{{ asset($car->image->path) }}" alt="Car Image" class="w-32 h-32 object-cover">
 @else
     <img src="https://via.placeholder.com/400x300" alt="Car" class="w-full h-full object-cover">
 @endif
@@ -73,7 +73,7 @@
                         </span>
                     </div>
                     <div class="flex space-x-2">
-                        <a href="#"
+                        <a href="{{ route('carrentals.show', $car->id) }}"
                             class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-center text-sm transition-colors duration-200">
                             <i class="fas fa-eye mr-1"></i>View
                         </a>

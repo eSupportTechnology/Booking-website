@@ -52,7 +52,7 @@
     <p class="text-sm text-gray-600 mb-4">Please provide your company details to register your {{ config('domains.domain') }} account.</p>
 
     <div>
-      <label for="logo" class="block text-sm font-medium text-gray-800">Company Logo</label>
+      <label for="logo" class="block text-sm font-medium text-gray-800">Company Logo <span class="text-red-500">*</span></label>
       <input type="file" id="logo" name="logo" accept="image/png, image/jpeg" class="mt-1 block w-full text-sm text-gray-700 border border-gray-300 rounded-md px-3 py-2" />
       <p class="text-xs text-gray-500 mt-1">Upload PNG or JPG format only.</p>
     </div>
@@ -63,13 +63,13 @@
     </div>
 
     <div>
-      <label for="business_reg" class="block text-sm font-medium text-gray-800">Business Registration Number</label>
+      <label for="business_reg" class="block text-sm font-medium text-gray-800">Business Registration Number <span class="text-red-500">*</span></label>
       <input type="text" id="business_reg" name="business_reg" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2" />
     </div>
 
     <div>
-      <label for="tin_no" class="block text-sm font-medium text-gray-800">Tin Number</label>
-      <input type="text" id="business_reg" name="business_reg" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2" />
+      <label for="tin_no" class="block text-sm font-medium text-gray-800">Tin Number <span class="text-red-500">*</span></label>
+      <input type="text" id="tin_no" name="tin_number" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2" />
     </div>
 
     <div>
@@ -92,7 +92,7 @@
     </div>
 
     <div>
-      <label for="address" class="block text-sm font-medium text-gray-800">Company Address</label>
+      <label for="address" class="block text-sm font-medium text-gray-800">Company Address <span class="text-red-500">*</span></label>
       <textarea id="address" name="address" rows="2" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2"></textarea>
     </div>
 
@@ -121,8 +121,8 @@
     </div>
 
       <div>
-      <label for="individual_phone" class="block text-sm font-medium text-gray-800 mb-1">Phone number 2<span class="text-red-500">*</span></label>
-      <input type="tel" id="individual_phone" name="individual_phone" required class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2" />
+      <label for="individual_phone2" class="block text-sm font-medium text-gray-800 mb-1">Phone number 2 <span class="text-red-500">*</span></label>
+      <input type="tel" id="individual_phone2" name="individual_phone2" required class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2" />
     </div>
 
     <div>
@@ -131,7 +131,7 @@
     </div>
 
     <div>
-      <label for="individual_address" class="block text-sm font-medium text-gray-800">Address</label>
+      <label for="individual_address" class="block text-sm font-medium text-gray-800">Address <span class="text-red-500">*</span></label>
       <textarea id="individual_address" name="individual_address" rows="2" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2"></textarea>
     </div>
 

@@ -68,7 +68,7 @@ class CarRenterLoginController extends Controller
     public function dashboard()
     {
         $user = Auth::guard('car_renter')->user();
-        return view('car_rentals.dashboard', compact('user'));
+        return view('car_rentals.carrenters_control_panel', compact('user'));
     }
 
     // Logout

@@ -26,6 +26,8 @@ class CarRenterAuthController extends Controller
             'company_name'  => 'required|string|max:255',
             'company_email' => 'required|email',
             'phone'         => 'required|string|max:20',
+            'business_reg_no'  => 'required|string|max:100',
+            'tin_number'       => 'required|string|max:100',
             'logo'          => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
@@ -34,6 +36,7 @@ class CarRenterAuthController extends Controller
         $companyData = [
             'company_name'     => $request->company_name,
             'business_reg_no'  => $request->business_reg,
+            'tin_number'       => $request->tin_number,
             'email'            => $request->company_email,
             'phone'            => $request->phone,
             'address'          => $request->address,
@@ -56,6 +59,7 @@ class CarRenterAuthController extends Controller
             'full_name'         => 'required|string|max:255',
             'individual_email'  => 'required|email',
             'individual_phone'  => 'required|string|max:20',
+            'individual_phone2' => 'required|string|max:20',
             'individual_nic'    => 'required|string|max:20',
         ]);
 
@@ -66,6 +70,7 @@ class CarRenterAuthController extends Controller
             'nic_number'  => $request->individual_nic,
             'email'       => $request->individual_email,
             'phone'       => $request->individual_phone,
+            'phone2'      => $request->individual_phone2,
             'address'     => $request->individual_address,
         ];
 
