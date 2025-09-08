@@ -262,16 +262,17 @@ function carForm() {
                         "Content-Type": "application/json",
                         "X-CSRF-TOKEN": document.querySelector('meta[name=csrf-token]').content
                     },
-             body: JSON.stringify({
+            body: JSON.stringify({
     step: this.step,
     car: this.car,
-    car_id: this.car_id,
+    car_id: this.car_id, // ✅ included
     selectedImage: this.selectedImage,
-    pricingType: this.car.pricingType,   // ✅ send separately
+    pricingType: this.car.pricingType,
     pricePerDay: this.car.pricePerDay,
     pricePerKm: this.car.pricePerKm,
     deposit: this.car.deposit ?? 0
 })
+
 
                 });
                 const data = await response.json();
@@ -295,7 +296,7 @@ function carForm() {
                                 };
                                 this.selectedImage='';
                             } else {
-                                window.location.href="/carrentals/types";
+                                window.location.href="/car-renter/dashboard";
                             }
                         });
                     } else {
