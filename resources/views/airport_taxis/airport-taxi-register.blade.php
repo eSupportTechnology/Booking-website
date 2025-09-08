@@ -258,6 +258,20 @@
         </div>
     </template>
 
+    <!-- Modal -->
+    <div x-show="showModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+        x-transition>
+        <div class="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full text-center">
+            <h2 class="text-lg font-semibold mb-4">Do you want to add more Taxis?</h2>
+            <div class="flex justify-center space-x-4">
+                <button @click="step=1; showModal=false"
+                    class="px-4 py-2 bg-[#3CC0E9] text-white rounded hover:bg-blue-600">Yes</button>
+                <a href="{{ route('carrentals.dashboard') }}">
+                    <button type="button" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">No</button>
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -451,18 +465,8 @@ document.addEventListener("alpine:init", () => {
 
 
         async saveStep4() {
-            if (!this.pricingType || !this.baseFare || 
-                (this.pricingType === 'perKm' && !this.pricePerKm) || 
-                (this.pricingType === 'perDay' && !this.pricePerDay)) {
-                Swal.fire({
-                    icon: "warning",
-                    title: "Required",
-                    text: "Please fill all required fields!",
-                    position: "top-end",
-                    toast: true,
-                    timer: 2000,
-                    showConfirmButton: false
-                });
+            if (!this.pricingType || !this.baseFare || (this.pricingType === 'perKm' && !this.pricePerKm) || (this.pricingType === 'perDay' && !this.pricePerDay)) {
+                alert("Please fill all required fields!");
                 return;
             }
 
