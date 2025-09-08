@@ -25,6 +25,18 @@ class CarRenterControlPanel extends Controller
             ->where('car_renter_id', $user->id)
             ->get();
 
-        return view('car_rentals.car_rentals', compact('cars'));
+        return view('car_rentals.my_car_rentals', compact('cars'));
+    }
+
+    public function show($id)
+    {
+        $user = Auth::guard('car_renter')->user();
+
+        // Fetch the car that belongs to this car renter
+        $car = Car::with(['carType', 'company', 'model'])
+            ->where('car_renter_id', $user->id)
+            ->findOrFail($id);
+
+        return view('car_rentals.show_car', compact('car'));
     }
 }

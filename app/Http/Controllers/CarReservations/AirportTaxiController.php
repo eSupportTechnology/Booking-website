@@ -56,8 +56,8 @@ class AirportTaxiController extends Controller
             'taxi_id' => 'required|exists:taxis,id',
             'number_plate' => 'required|string|unique:taxis,number_plate,' . $request->taxi_id,
             'color' => 'required|string',
-            'passenger_capacity' => 'required|integer|min:1|max:50',
-            'luggage_capacity' => 'nullable|integer|min:0|max:20',
+            'passenger_capacity' => 'required|integer|min:1',
+            'luggage_capacity' => 'nullable|integer|min:0',
         ]);
 
         $taxi = Taxi::where('id', $validated['taxi_id'])
@@ -82,9 +82,9 @@ class AirportTaxiController extends Controller
     {
         $validated = $request->validate([
             'taxi_id' => 'required|exists:taxis,id',
-            'name' => 'required|string|max:255',
-            'contact_number' => 'required|string|max:20',
-            'email' => 'nullable|email|max:255',
+            'name' => 'required|string',
+            'contact_number' => 'required|string',
+            'email' => 'nullable|email',
             'license_number' => 'required|string|unique:drivers,license_number',
             'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);

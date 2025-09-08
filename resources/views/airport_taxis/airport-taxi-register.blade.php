@@ -5,6 +5,8 @@
 @section('content')
 
 <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
 <div x-data="taxiWizard()" @open-modal.window="showModal = true">
     <!-- Progress Bar -->
@@ -256,20 +258,6 @@
         </div>
     </template>
 
-    <!-- Modal -->
-    <div x-show="showModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
-        x-transition>
-        <div class="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full text-center">
-            <h2 class="text-lg font-semibold mb-4">Do you want to add more Taxis?</h2>
-            <div class="flex justify-center space-x-4">
-                <button @click="step=1; showModal=false"
-                    class="px-4 py-2 bg-[#3CC0E9] text-white rounded hover:bg-blue-600">Yes</button>
-                <a href="{{ route('carrentals.dashboard') }}">
-                    <button type="button" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">No</button>
-                </a>
-            </div>
-        </div>
-    </div>
 </div>
 
 <script>
@@ -297,7 +285,14 @@ document.addEventListener("alpine:init", () => {
 
         async saveStep1() {
             if (!this.selectedCategory) {
-                alert("Please select a taxi type before continuing!");
+                Swal.fire({
+                    icon: "warning",
+                    title: "Required",
+                    text: "Please select a taxi type before continuing!",
+                    position: "top-end",
+                    timer: 2000,
+                    showConfirmButton: false
+                });
                 return;
             }
 
@@ -315,79 +310,159 @@ document.addEventListener("alpine:init", () => {
                 if (data.success) {
                     this.taxi_id = data.taxi_id;
                     this.step++;
+
+                    Swal.fire({
+                        icon: "success",
+                        title: "Saved",
+                        text: data.message || "Step 1 completed!",
+                        position: "top-end",
+                        toast: true,
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
                 } else {
-                    alert("Error: " + (data.message || "Failed to save step 1"));
+                    Swal.fire({ icon: "error", title: "Error", text: data.message || "Failed to save step 1" });
                 }
             } catch (error) {
                 console.error("Error:", error);
-                alert("Something went wrong while saving.");
+                Swal.fire({ icon: "error", title: "Error", text: "Something went wrong while saving." });
             }
         },
 
-        async saveStep2() {
-            if (!this.number_plate || !this.color || !this.passenger_capacity) {
-                alert("Please fill all required fields!");
-                return;
-            }
+       async saveStep2() {
+    if (!this.number_plate || !this.color || !this.passenger_capacity) {
+        Swal.fire({
+            icon: "warning",
+            title: "Required",
+            text: "Please fill all required fields!",
+            position: "top-end",
+            toast: true,
+            timer: 2000,
+            showConfirmButton: false
+        });
+        return;
+    }
 
-            const response = await fetch("{{ route('taxis.storeStep2') }}", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                },
-                body: JSON.stringify({
-                    taxi_id: this.taxi_id,
-                    number_plate: this.number_plate,
-                    color: this.color,
-                    passenger_capacity: this.passenger_capacity,
-                    luggage_capacity: this.luggage_capacity
-                })
-            });
-            const data = await response.json();
+    try {
+        const response = await fetch("{{ route('taxis.storeStep2') }}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": "{{ csrf_token() }}"
+            },
+            body: JSON.stringify({
+                taxi_id: this.taxi_id,
+                number_plate: this.number_plate,
+                color: this.color,
+                passenger_capacity: this.passenger_capacity,
+                luggage_capacity: this.luggage_capacity
+            })
+        });
 
-            if (data.success) {
-                this.step++;
+        if (!response.ok) {
+            const errorData = await response.json();
+            if (errorData.errors) {
+                let errorMsg = Object.values(errorData.errors).flat().join("\n");
+                Swal.fire({ icon: "error", title: "Validation Error", text: errorMsg });
             } else {
-                alert("Error: " + (data.message || "Failed to save step 2"));
+                Swal.fire({ icon: "error", title: "Error", text: "Something went wrong" });
             }
-        },
+            return;
+        }
 
-        async saveStep3() {
-            if (!this.driver_name || !this.driver_contact || !this.driver_license) {
-                alert("Please fill all required fields!");
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append("taxi_id", this.taxi_id);
-            formData.append("name", this.driver_name);
-            formData.append("contact_number", this.driver_contact);
-            formData.append("email", this.driver_email);
-            formData.append("license_number", this.driver_license);
-            if (this.driver_photo) {
-                formData.append("photo", this.driver_photo);
-            }
-
-            const response = await fetch("{{ route('taxis.storeStep3') }}", {
-                method: "POST",
-                headers: {
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                },
-                body: formData
+        const data = await response.json();
+        if (data.success) {
+            this.step++;
+            Swal.fire({
+                icon: "success",
+                title: "Saved",
+                text: data.message || "Step 2 completed!",
+                toast: true,
+                position: "top-end",
+                timer: 2000,
+                showConfirmButton: false
             });
-            const data = await response.json();
+        }
+    } catch (error) {
+        Swal.fire({ icon: "error", title: "Error", text: "Unexpected error occurred" });
+    }
+},
 
-            if (data.success) {
-                this.step++;
+
+      async saveStep3() {
+    if (!this.driver_name || !this.driver_contact || !this.driver_license) {
+        Swal.fire({
+            icon: "warning",
+            title: "Required",
+            text: "Please fill all required fields!",
+            position: "top-end",
+            toast: true,
+            timer: 2000,
+            showConfirmButton: false
+        });
+        return;
+    }
+
+    try {
+        const formData = new FormData();
+        formData.append("taxi_id", this.taxi_id);
+        formData.append("name", this.driver_name);
+        formData.append("contact_number", this.driver_contact);
+        formData.append("email", this.driver_email);
+        formData.append("license_number", this.driver_license);
+        if (this.driver_photo) {
+            formData.append("photo", this.driver_photo);
+        }
+
+        const response = await fetch("{{ route('taxis.storeStep3') }}", {
+            method: "POST",
+            headers: { "X-CSRF-TOKEN": "{{ csrf_token() }}" },
+            body: formData
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            if (errorData.errors) {
+                let errorMsg = Object.values(errorData.errors).flat().join("\n");
+                Swal.fire({ icon: "error", title: "Validation Error", text: errorMsg });
             } else {
-                alert("Error: " + (data.message || "Failed to save driver"));
+                Swal.fire({ icon: "error", title: "Error", text: "Something went wrong" });
             }
-        },
+            return;
+        }
+
+        const data = await response.json();
+        if (data.success) {
+            this.step++;
+            Swal.fire({
+                icon: "success",
+                title: "Saved",
+                text: data.message || "Driver details saved!",
+                position: "top-end",
+                toast: true,
+                timer: 2000,
+                showConfirmButton: false
+            });
+        }
+    } catch (error) {
+        Swal.fire({ icon: "error", title: "Error", text: "Unexpected error occurred" });
+    }
+},
+
 
         async saveStep4() {
-            if (!this.pricingType || !this.baseFare || (this.pricingType === 'perKm' && !this.pricePerKm) || (this.pricingType === 'perDay' && !this.pricePerDay)) {
-                alert("Please fill all required fields!");
+            if (!this.pricingType || !this.baseFare || 
+                (this.pricingType === 'perKm' && !this.pricePerKm) || 
+                (this.pricingType === 'perDay' && !this.pricePerDay)) {
+                Swal.fire({
+                    icon: "warning",
+                    title: "Required",
+                    text: "Please fill all required fields!",
+                    position: "top-end",
+                    toast: true,
+                    timer: 2000,
+                    showConfirmButton: false
+                });
                 return;
             }
 
@@ -411,12 +486,48 @@ document.addEventListener("alpine:init", () => {
 
             if (data.success) {
                 this.showModal = true;
+                Swal.fire({
+                    icon: "success",
+                    title: "Step successful!",
+                    text: "Do you want to add more taxis?",
+                    showCancelButton: true,
+                    confirmButtonText: "Yes",
+                    cancelButtonText: "No"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Reset to Step 1 for new taxi
+                        this.step = 1;
+                        this.selectedCategory = '';
+                        this.number_plate = '';
+                        this.color = '';
+                        this.passenger_capacity = '';
+                        this.luggage_capacity = '';
+                        this.driver_name = '';
+                        this.driver_contact = '';
+                        this.driver_email = '';
+                        this.driver_license = '';
+                        this.driver_photo = null;
+                        this.pricePerDay = 0;
+                        this.pricingType = '';
+                        this.baseFare = '';
+                        this.pricePerKm = '';
+                        this.airportFee = 0;
+                        this.luggageFee = 0;
+                        this.taxi_id = null;
+                    } else {
+                        // Navigate to dashboard
+                        window.location.href = "/car-renter/dashboard";
+                    }
+                });
             } else {
-                alert("Error: " + (data.message || "Failed to save fare"));
+                Swal.fire({ icon: "error", title: "Error", text: data.message || "Failed to save fare" });
             }
         }
     }));
 });
 </script>
+
+
+
 
 @endsection

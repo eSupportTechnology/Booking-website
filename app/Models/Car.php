@@ -35,6 +35,16 @@ class Car extends Model
     {
         return $this->belongsTo(CarRenter::class, 'car_renter_id');
     }
+// App\Models\Car.php
+public function files()
+{
+    return $this->hasMany(File::class, 'car_id');
+}
+
+public function image()
+{
+    return $this->hasOne(File::class, 'car_id')->where('file_type', 'image');
+}
 
 
 }

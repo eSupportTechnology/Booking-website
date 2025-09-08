@@ -16,7 +16,7 @@
         </div>
         <a href="{{ route('carrentals.dashboard') }}"
            class="bg-white text-[#1F8FB2] px-6 py-3 rounded-xl font-semibold hover:bg-blue-50 transition-all duration-200 shadow-lg">
-            <i class="fa-solid fa-plus mr-2"></i> Add New Vehicle
+            <i class="fa-solid fa-plus mr-2"></i>Add Vehicle
         </a>
     </div>
 </div>
