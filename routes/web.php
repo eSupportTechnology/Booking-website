@@ -29,6 +29,7 @@ use App\Http\Controllers\Admin\AdminAccountController;
 use App\Http\Controllers\Admin\CustomersController;
 use App\Http\Controllers\CarReservations\CarRenterAuthController;
 use App\Http\Controllers\CarReservations\CarRenterLoginController;
+use App\Http\Controllers\CarReservations\CarRenterControlPanel;
 
 Route::post('/accommodation/save-verification/{propertyId}', [AccommodationController::class, 'saveVerification']);
 
@@ -1128,3 +1129,17 @@ Route::middleware(['auth:car_renter'])->prefix('taxi')->name('taxis.')->group(fu
     Route::post('/store-step4', [AirportTaxiController::class, 'storeStep4'])->name('storeStep4');
 });
 
+Route::get('/car-renters/control-panel', function () {
+    return view('car_rentals.carrenters_control_panel');
+})->name('home-listing');
+
+Route::middleware('auth:car_renter')->group(function () {
+    Route::get('/renter/control-panel', [CarRenterControlPanel::class, 'index'])->name('renter.control.panel');
+});
+
+
+
+Route::middleware('auth:car_renter')->group(function () {
+    Route::get('/car-rentals', [CarRenterControlPanel::class, 'myCars'])
+        ->name('car_rentals-listing');
+});

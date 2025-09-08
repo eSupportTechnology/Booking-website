@@ -36,44 +36,66 @@ class CarRentalController extends Controller
 
         try {
             // Step 1: Basic car info + optional driver
-            if ($step == 1) {
-                $validated = $request->validate([
-                    'car.car_type_id' => 'required|integer|exists:car_types,id',
-                    'car.company_id'  => 'required|integer|exists:companies,id',
-                    'car.brand'       => 'required|integer|exists:car_brands,id',
-                    'car.model_id'    => 'required|integer|exists:car_models,id',
-                    'car.seats'       => 'required|integer|min:2|max:20',
-                    'car.with_driver' => 'required|in:yes,no',
+          if ($step == 1) {
+    $validated = $request->validate([
+        'car.car_type_id' => 'required|integer|exists:car_types,id',
+        'car.company_id'  => 'required|integer|exists:companies,id',
+        'car.brand'       => 'required|integer|exists:car_brands,id',
+        'car.model_id'    => 'required|integer|exists:car_models,id',
+        'car.seats'       => 'required|integer|min:2|max:20',
+        'car.with_driver' => 'required|in:yes,no',
+        'car.driver_name'       => 'nullable|required_if:car.with_driver,yes|string|max:255',
+        'car.driver_phone'      => 'nullable|required_if:car.with_driver,yes|string|max:20',
+        'car.driver_age'        => 'nullable|required_if:car.with_driver,yes|integer|min:18|max:80',
+        'car.driver_experience' => 'nullable|required_if:car.with_driver,yes|integer|min:0|max:60',
+        'car.driver_nic'        => 'nullable|required_if:car.with_driver,yes|string|unique:cars,driver_nic,' . ($request->car_id ?? 'NULL'),
+    ]);
 
- 'car.driver_name'       => 'nullable|required_if:car.with_driver,yes|string|max:255',
-    'car.driver_phone'      => 'nullable|required_if:car.with_driver,yes|string|max:20',
-    'car.driver_age'        => 'nullable|required_if:car.with_driver,yes|integer|min:18|max:80',
-    'car.driver_experience' => 'nullable|required_if:car.with_driver,yes|integer|min:0|max:60',
-    'car.driver_nic'        => 'nullable|required_if:car.with_driver,yes|string|unique:cars,driver_nic',
-                ]);
+    if ($request->filled('car_id')) {
+        // 🔄 Update existing car
+        $car = Car::where('id', $request->car_id)
+            ->where('car_renter_id', $user->id)
+            ->firstOrFail();
 
-                $car = Car::create([
-                    'car_type_id' => $validated['car']['car_type_id'],
-                    'company_id'  => $validated['car']['company_id'],
-                    'model_id'    => $validated['car']['model_id'],
-                    'car_renter_id' => $user->id,
-                    'seats'       => $validated['car']['seats'],
-                    'with_driver' => $validated['car']['with_driver'],
-                    'driver_name' => $validated['car']['driver_name'] ?? null,
-                    'driver_phone'=> $validated['car']['driver_phone'] ?? null,
-                    'driver_age'  => $validated['car']['driver_age'] ?? null,
-                    'driver_experience' => $validated['car']['driver_experience'] ?? null,
-                    'driver_nic' => $validated['car']['driver_nic'] ?? null,
-                    'price_per_day' => 0,
-                    'deposit' => 0,
-                ]);
+        $car->update([
+            'car_type_id' => $validated['car']['car_type_id'],
+            'company_id'  => $validated['car']['company_id'],
+            'model_id'    => $validated['car']['model_id'],
+            'seats'       => $validated['car']['seats'],
+            'with_driver' => $validated['car']['with_driver'],
+            'driver_name' => $validated['car']['driver_name'] ?? null,
+            'driver_phone'=> $validated['car']['driver_phone'] ?? null,
+            'driver_age'  => $validated['car']['driver_age'] ?? null,
+            'driver_experience' => $validated['car']['driver_experience'] ?? null,
+            'driver_nic' => $validated['car']['driver_nic'] ?? null,
+        ]);
+    } else {
+        // 🆕 Create new car
+        $car = Car::create([
+            'car_type_id'   => $validated['car']['car_type_id'],
+            'company_id'    => $validated['car']['company_id'],
+            'model_id'      => $validated['car']['model_id'],
+            'car_renter_id' => $user->id,
+            'seats'         => $validated['car']['seats'],
+            'with_driver'   => $validated['car']['with_driver'],
+            'driver_name'   => $validated['car']['driver_name'] ?? null,
+            'driver_phone'  => $validated['car']['driver_phone'] ?? null,
+            'driver_age'    => $validated['car']['driver_age'] ?? null,
+            'driver_experience' => $validated['car']['driver_experience'] ?? null,
+            'driver_nic'    => $validated['car']['driver_nic'] ?? null,
+            'price_per_day' => 0,
+            'deposit'       => 0,
+        ]);
+    }
 
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Step 1 saved successfully',
-                    'car_id' => $car->id
-                ]);
-            }
+    return response()->json([
+        'success' => true,
+        'message' => $request->filled('car_id') 
+            ? 'Step 1 updated successfully' 
+            : 'Step 1 saved successfully',
+        'car_id' => $car->id
+    ]);
+}
 
             // Step 2: Specifications
             if ($step == 2) {

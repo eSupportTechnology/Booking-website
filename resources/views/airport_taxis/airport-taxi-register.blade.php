@@ -264,7 +264,7 @@
             <div class="flex justify-center space-x-4">
                 <button @click="step=1; showModal=false"
                     class="px-4 py-2 bg-[#3CC0E9] text-white rounded hover:bg-blue-600">Yes</button>
-                <a href="{{ route('partner.carrentals.types') }}">
+                <a href="{{ route('carrentals.dashboard') }}">
                     <button type="button" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">No</button>
                 </a>
             </div>
