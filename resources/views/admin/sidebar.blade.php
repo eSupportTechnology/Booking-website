@@ -16,6 +16,9 @@
                     <a class="nav-link" href="{{ route('admin.aging-report') }}">Aging Report</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="{{ route('admin.commission-aging') }}">Commission Aging</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="{{ route('admin.hotels') }}">Hotels</a>
                 </li>
                 @if(Auth::guard('admin')->user()->hasRole('superAdmin'))
