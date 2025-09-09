@@ -30,6 +30,7 @@ use App\Http\Controllers\Admin\CustomersController;
 use App\Http\Controllers\CarReservations\CarRenterAuthController;
 use App\Http\Controllers\CarReservations\CarRenterLoginController;
 use App\Http\Controllers\CarReservations\CarRenterControlPanel;
+use App\Http\Controllers\CarReservations\AirportTaxiControlPanel;
 
 Route::post('/accommodation/save-verification/{propertyId}', [AccommodationController::class, 'saveVerification']);
 
@@ -1140,7 +1141,7 @@ Route::get('/car-renters/control-panel', function () {
 })->name('home-listing');
 
 Route::middleware('auth:car_renter')->group(function () {
-    Route::get('/renter/control-panel', [CarRenterControlPanel::class, 'index'])->name('renter.control.panel');
+    Route::get('/renter/types', [CarRenterControlPanel::class, 'index'])->name('renter.types');
 });
 
 
@@ -1148,4 +1149,13 @@ Route::middleware('auth:car_renter')->group(function () {
 Route::middleware('auth:car_renter')->group(function () {
     Route::get('/my/car-rentals', [CarRenterControlPanel::class, 'myCars'])
         ->name('car_rentals-listing');
+});
+Route::middleware(['auth:car_renter'])->group(function () {
+    
+    Route::get('/cars/{id}', [CarRenterControlPanel::class, 'show'])->name('cars.show');
+});
+
+Route::middleware('auth:car_renter')->group(function () {
+    Route::get('/my/taxi', [AirportTaxiControlPanel ::class, 'myTaxi'])
+        ->name('taxi.listing');
 });

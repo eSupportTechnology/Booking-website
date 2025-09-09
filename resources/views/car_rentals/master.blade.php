@@ -123,7 +123,7 @@
                         <i :class="openProperty ? 'fa-chevron-up' : 'fa-chevron-down'" class="fas text-sm text-gray-400"></i>
                     </button>
                     <div x-show="openProperty" x-collapse class="ml-12 space-y-1">
-                        <a href="#"
+                        <a href="{{ route('renter.types') }}"
                             class="flex items-center justify-between px-4 py-2 rounded-lg hover:bg-blue-50 text-gray-600 hover:text-[#1F8FB2] transition-colors duration-200">
                             <span class="text-sm font-medium">Add vehicle</span>
                             <i class="fas fa-plus text-xs"></i>
@@ -135,7 +135,7 @@
                             <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-1 rounded-full">{{ $propertyCounts->apartments }}</span>
                         </a>
 
-                        <a href="#"
+                        <a href="{{ route('taxi.listing') }}"
                             class="flex justify-between items-center px-4 py-2 rounded-lg hover:bg-blue-50 text-gray-600 hover:text-[#1F8FB2] transition-colors duration-200">
                             <span class="text-sm font-medium">Airport Taxi</span>
                             <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-1 rounded-full">{{ $propertyCounts->homes }}</span>
