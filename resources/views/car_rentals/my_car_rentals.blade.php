@@ -9,9 +9,9 @@
                 <h1 class="text-4xl font-bold mb-2">Car Rentals</h1>
                 <p class="text-blue-100 text-lg">Manage your car rental listings</p>
             </div>
-            <a href="{{ route('carrentals.dashboard') }}"
+            <a href="{{ route('renter.types') }}"
                 class="bg-white text-blue-600 px-6 py-3 rounded-xl font-semibold hover:bg-blue-50 transition-all duration-200 shadow-lg">
-                <i class="fas fa-plus mr-2"></i>Add Car Rental
+                <i class="fas fa-plus mr-2"></i>Add Vehicle
             </a>
         </div>
     </div>
@@ -73,7 +73,7 @@
                         </span>
                     </div>
                     <div class="flex space-x-2">
-                        <a href="{{ route('carrentals.show', $car->id) }}"
+                        <a href="{{ route('cars.show', $car->id) }}"
                             class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-center text-sm transition-colors duration-200">
                             <i class="fas fa-eye mr-1"></i>View
                         </a>
