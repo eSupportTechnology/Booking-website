@@ -13,7 +13,7 @@ class CarRenterControlPanel extends Controller
     {
         $carRenter = Auth::guard('car_renter')->user();
 
-        return view('car_rentals.carrenters_control_panel', compact('carRenter'));
+        return view('car_rentals.dashboard', compact('carRenter'));
     }
     
     public function myCars()
