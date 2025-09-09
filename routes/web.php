@@ -857,6 +857,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Aging Report
         Route::get('/aging-report', \App\Http\Controllers\Admin\AgingReportController::class)->name('aging-report');
+        
+        // Commission Aging Report
+        Route::get('/commission-aging', \App\Http\Controllers\Admin\CommissionAgingController::class)->name('commission-aging');
 
         // Status management routes
         Route::prefix('status')->name('status.')->group(function () {
