@@ -814,10 +814,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/customer/{customer}', [\App\Http\Controllers\Admin\CustomerViewController::class, 'show'])->name('customer.view');
         Route::get('/partners/{partner_id}', [\App\Http\Controllers\Admin\PartnerViewController::class, 'show'])->name('partner.view');
 
-        // Customer and Partner detail routes
-        Route::get('/customer/{customer_id}', [\App\Http\Controllers\Admin\CustomerViewController::class, 'show'])->name('customer.view');
-        Route::get('/partners/{partner_id}', [\App\Http\Controllers\Admin\PartnerViewController::class, 'show'])->name('partner.view');
-
         // Property management
         Route::get('/Property/Apartment', \App\Http\Controllers\Admin\ApartmentsController::class)->name('apartments');
         Route::get('/Property/Home', \App\Http\Controllers\Admin\HomesController::class)->name('homes');
@@ -838,7 +834,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/rental/airport', \App\Http\Controllers\Admin\AirportTransferController::class)->name('rental.airport');
         Route::get('/rental/airport/{id}', \App\Http\Controllers\Admin\AirportTransferDetailController::class)->name('airport.details');
 
-
         //admin dashboard admin account management
         Route::get('/accounts', [AdminAccountController::class, 'index'])->name('accounts.index');
         Route::post('/accounts/{id}/status', [AdminAccountController::class, 'updateStatus'])->name('accounts.updateStatus');
@@ -853,6 +848,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/pending', [\App\Http\Controllers\Admin\AdminApprovalController::class, 'index'])->name('approvals.index');
             Route::post('/pending/{admin}/approve', [\App\Http\Controllers\Admin\AdminApprovalController::class, 'approve'])->name('approvals.approve');
             Route::post('/pending/{admin}/reject', [\App\Http\Controllers\Admin\AdminApprovalController::class, 'reject'])->name('approvals.reject');
+            
+            // Permission management routes
+            Route::get('/permissions/{admin}', [\App\Http\Controllers\Admin\AdminPermissionController::class, 'show'])->name('permissions.manage');
+            Route::put('/permissions/{admin}', [\App\Http\Controllers\Admin\AdminPermissionController::class, 'update'])->name('permissions.update');
         });
 
         // Aging Report

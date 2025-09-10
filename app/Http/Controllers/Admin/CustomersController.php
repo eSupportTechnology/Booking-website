@@ -70,6 +70,12 @@ class CustomersController extends Controller
 
     public function __invoke(Request $request)
     {
+        $admin = \Illuminate\Support\Facades\Auth::guard('admin')->user();
+        
+        if (!$admin->isSuperAdmin() && !$admin->can('view_customers')) {
+            abort(403, 'You do not have permission to access this page.');
+        }
+        
         $perPage = $request->input('per_page', 10);
         $perPage = in_array($perPage, [5, 10, 20, 50]) ? $perPage : 10;
 

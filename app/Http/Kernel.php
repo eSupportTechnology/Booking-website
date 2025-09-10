@@ -65,6 +65,9 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         //'admin' => \App\Http\Middleware\AdminMiddleware::class,
         'ensure.partner' => \App\Http\Middleware\EnsurePartner::class,
+        'permission' => \Spatie\Permission\Middlewares\PermissionMiddleware::class,
+        'role' => \Spatie\Permission\Middlewares\RoleMiddleware::class,
+        'role_or_permission' => \Spatie\Permission\Middlewares\RoleOrPermissionMiddleware::class,
     ];
 
     protected $middlewareAliases = [
@@ -72,5 +75,6 @@ class Kernel extends HttpKernel
         'admin' => \App\Http\Middleware\AdminMiddleware::class,
         'superAdmin' => \App\Http\Middleware\SuperAdminMiddleware::class,
         'prevent.back' => \App\Http\Middleware\PreventBackHistory::class,
+        'admin.permission' => \App\Http\Middleware\AdminPermissionMiddleware::class,
     ];
 }
