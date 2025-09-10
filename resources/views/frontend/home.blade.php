@@ -289,7 +289,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 class="text-2xl font-semibold text-gray-800 mb-6">Browse by property type</h2>
         <div class="flex space-x-4 overflow-x-auto pb-2">
-            
+
           <!-- Hotels -->
             <a href="{{ route('hotel-listing') }}" class="min-w-[250px]">
                 <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
@@ -302,7 +302,7 @@
                 </div>
             </a>
 
-            
+
             <!-- Apartments -->
             <a href="{{ route('apartment-listing') }}" class="min-w-[250px]">
                 <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
@@ -316,7 +316,7 @@
             </a>
 
             <!-- Resorts -->
-            <a href="{{ route('home-listing') }}" class="min-w-[250px]">
+            <a href="{{ route('homes-listing') }}" class="min-w-[250px]">
                 <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
                     <img src="{{ asset('images/villas.jpg') }}" alt="Resorts" class="w-full h-48 object-cover">
                 </div>
@@ -328,15 +328,15 @@
             </a>
 
 
-          
+
             <!-- Villas -->
-            <a href="{{ route('hotel-listing') }}" class="min-w-[250px]">
+            <a href="{{ route('alternative-places-listing') }}" class="min-w-[250px]">
                 <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
                     <img src="{{ asset('images/resorts.jpg') }}" alt="Villas" class="w-full h-48 object-cover">
                 </div>
                 <div class="mt-2">
                     <h6 class="text-base font-semibold text-gray-800" style="font-family: 'Noto Sans', sans-serif;">
-                        Villas
+                        Alternative Places
                     </h6>
                 </div>
             </a>

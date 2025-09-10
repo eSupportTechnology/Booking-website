@@ -94,82 +94,40 @@
         <div class="mt-10">
             <!-- Responsive Grid: 1 on mobile, 2 on tablet, 4 on desktop -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                
-                <!-- Car 1 -->
-                <div class="bg-white shadow-md rounded-lg overflow-hidden hover:shadow-xl transition-shadow">
-    <img src="{{ asset('images/9.jpg') }}" alt="Car 1" class="w-full h-48 object-cover">
-    <div class="p-4">
-        <h3 class="text-lg font-bold">Toyota Corolla</h3>
-        <!-- Company Name -->
-        <p class="text-sm text-gray-500">By: <span class="font-medium text-gray-700">ABC Car Rentals</span></p>
-        
-        <p class="text-gray-600 mt-1">Comfortable sedan with driver included.</p>
-        <div class="mt-2 flex justify-between items-center">
-            <span class="text-blue-600 font-semibold">$50/day</span>
-            <a href="#" class="text-white bg-[#3CC0E9] px-4 py-2 rounded hover:bg-blue-700">Book Now</a>
-        </div>
-    </div>
-</div>
-
-
-                <!-- Car 2 -->
-                <div class="bg-white shadow-md rounded-lg overflow-hidden hover:shadow-xl transition-shadow">
-                    <img src="{{ asset('images/9.jpg') }}" alt="Car 2" class="w-full h-48 object-cover">
-                    <div class="p-4">
-                        <h3 class="text-lg font-bold">Honda Civic</h3>
-                        <p class="text-sm text-gray-500">By: <span class="font-medium text-gray-700">ABC Car Rentals</span></p>
-        
-                        <p class="text-gray-600 mt-1">Reliable sedan, driver included for city tours.</p>
-                        <div class="mt-2 flex justify-between items-center">
-                            <span class="text-blue-600 font-semibold">$55/day</span>
-                            <a href="#" class="text-white bg-[#3CC0E9] px-4 py-2 rounded hover:bg-blue-700">Book Now</a>
+                @forelse($cars as $car)
+                    <div class="bg-white shadow-md rounded-lg overflow-hidden hover:shadow-xl transition-shadow">
+                        <img src="{{ $car->files->first() ? asset('storage/' . $car->files->first()->path) : asset('images/9.jpg') }}" 
+                             alt="{{ $car->brand }} {{ $car->model->name ?? '' }}" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="text-lg font-bold">{{ $car->brand }} {{ $car->model->name ?? '' }}</h3>
+                            <p class="text-sm text-gray-500">By: <span class="font-medium text-gray-700">{{ $car->company->name ?? $car->renter->name ?? 'Car Rental' }}</span></p>
+                            
+                            <p class="text-gray-600 mt-1">
+                                {{ $car->seats }} seats • {{ $car->transmission }} • {{ $car->fuel_type }}
+                                @if($car->with_driver)
+                                    • Driver included
+                                @endif
+                            </p>
+                            <div class="mt-2 flex justify-between items-center">
+                                <span class="text-blue-600 font-semibold">${{ $car->price_per_day }}/day</span>
+                                <a href="#" class="text-white bg-[#3CC0E9] px-4 py-2 rounded hover:bg-blue-700">Book Now</a>
+                            </div>
                         </div>
                     </div>
-                </div>
-
-                <!-- Car 3 -->
-                <div class="bg-white shadow-md rounded-lg overflow-hidden hover:shadow-xl transition-shadow">
-                    <img src="{{ asset('images/10.jpg') }}" alt="Car 3" class="w-full h-48 object-cover">
-                    <div class="p-4">
-                        <h3 class="text-lg font-bold">Nissan Altima</h3>
-                        <p class="text-sm text-gray-500">By: <span class="font-medium text-gray-700">ABC Car Rentals</span></p>
-        
-                        <p class="text-gray-600 mt-1">Spacious sedan with professional driver service.</p>
-                        <div class="mt-2 flex justify-between items-center">
-                            <span class="text-blue-600 font-semibold">$65/day</span>
-                            <a href="#" class="text-white bg-[#3CC0E9] px-4 py-2 rounded hover:bg-blue-700">Book Now</a>
-                        </div>
+                @empty
+                    <div class="col-span-full text-center py-8">
+                        <p class="text-gray-500 text-lg">No cars available for rental at the moment.</p>
                     </div>
-                </div>
-
-                <!-- Car 4 -->
-                <div class="bg-white shadow-md rounded-lg overflow-hidden hover:shadow-xl transition-shadow">
-                    <img src="{{ asset('images/10.jpg') }}" alt="Car 4" class="w-full h-48 object-cover">
-                    <div class="p-4">
-                        <h3 class="text-lg font-bold">BMW 3 Series</h3>
-                        <p class="text-sm text-gray-500">By: <span class="font-medium text-gray-700">ABC Car Rentals</span></p>
-        
-                        <p class="text-gray-600 mt-1">Luxury sedan with driver for business trips.</p>
-                        <div class="mt-2 flex justify-between items-center">
-                            <span class="text-blue-600 font-semibold">$80/day</span>
-                            <a href="#" class="text-white bg-[#3CC0E9] px-4 py-2 rounded hover:bg-blue-700">Book Now</a>
-                        </div>
-                    </div>
-                </div>
-
+                @endforelse
             </div>
         </div>
 
         <!-- Pagination -->
-        <div class="mt-10 flex justify-center">
-            <nav class="inline-flex space-x-2">
-                <a href="#" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">Prev</a>
-                <a href="#" class="px-4 py-2 bg-blue-500 text-white rounded-lg">1</a>
-                <a href="#" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">2</a>
-                <a href="#" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">3</a>
-                <a href="#" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">Next</a>
-            </nav>
-        </div>
+        @if($cars->hasPages())
+            <div class="mt-10 flex justify-center">
+                {{ $cars->links() }}
+            </div>
+        @endif
     </div>
 </section>
 

@@ -849,7 +849,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/pending', [\App\Http\Controllers\Admin\AdminApprovalController::class, 'index'])->name('approvals.index');
             Route::post('/pending/{admin}/approve', [\App\Http\Controllers\Admin\AdminApprovalController::class, 'approve'])->name('approvals.approve');
             Route::post('/pending/{admin}/reject', [\App\Http\Controllers\Admin\AdminApprovalController::class, 'reject'])->name('approvals.reject');
-            
+
             // Permission management routes
             Route::get('/permissions/{admin}', [\App\Http\Controllers\Admin\AdminPermissionController::class, 'show'])->name('permissions.manage');
             Route::put('/permissions/{admin}', [\App\Http\Controllers\Admin\AdminPermissionController::class, 'update'])->name('permissions.update');
@@ -857,7 +857,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Aging Report
         Route::get('/aging-report', \App\Http\Controllers\Admin\AgingReportController::class)->name('aging-report');
-        
+
         // Commission Aging Report
         Route::get('/commission-aging', \App\Http\Controllers\Admin\CommissionAgingController::class)->name('commission-aging');
 
@@ -921,24 +921,15 @@ Route::get('/car-listing', function () {
     return view('frontend.car-listing');
 })->name('car-listing');
 
-Route::get('/hotel-listing', function () {
-    return view('Customer.hotel-lisitng');
-})->name('hotel-listing');
+Route::get('/hotel-listing', [\App\Http\Controllers\Customer\PropertyListingController::class, 'hotelListing'])->name('hotel-listing');
 
+Route::get('/apartment-listing', [\App\Http\Controllers\Customer\PropertyListingController::class, 'apartmentListing'])->name('apartment-listing');
 
+Route::get('/home-listing', [\App\Http\Controllers\Customer\PropertyListingController::class, 'homeListing'])->name('homes-listing');
 
-Route::get('/apartment-listing', function () {
-    return view('Customer.apartment-listing');
-})->name('apartment-listing');
+Route::get('/car-rental-listing', [\App\Http\Controllers\Customer\PropertyListingController::class, 'carRentalListing'])->name('car-rental-listing');
 
-Route::get('/home-listing', function () {
-    return view('Customer.home-listing');
-})->name('home-listing');
-
-Route::get('/car-rental-listing', function () {
-    return view('Customer.car-rental-listing');
-})->name('car-rental-listing');
-
+Route::get('/alternative-places-listing', [\App\Http\Controllers\Customer\PropertyListingController::class, 'alternativePlacesListing'])->name('alternative-places-listing');
 
 
 Route::get('/property/vedio', function () {
@@ -1150,7 +1141,7 @@ Route::middleware('auth:car_renter')->group(function () {
         ->name('car_rentals-listing');
 });
 Route::middleware(['auth:car_renter'])->group(function () {
-    
+
     Route::get('/cars/{id}', [CarRenterControlPanel::class, 'show'])->name('cars.show');
 });
 
