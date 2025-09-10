@@ -508,7 +508,7 @@ document.addEventListener("alpine:init", () => {
                         this.taxi_id = null;
                     } else {
                         // Navigate to dashboard
-                        window.location.href = "/car-renter/dashboard";
+                        window.location.href = "/my/taxi";
                     }
                 });
             } else {
