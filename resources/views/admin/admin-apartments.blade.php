@@ -21,22 +21,6 @@
                 </li>
             </ol>
         </nav>
-        <!-- Breadcrumb -->
-        <nav class="flex mb-2 sm:mb-4" aria-label="Breadcrumb">
-            <ol class="inline-flex items-center space-x-1 md:space-x-3 text-xs sm:text-sm md:text-base">
-                <li class="inline-flex items-center">
-                    <a href="{{ route('admin.dashboard') }}" class="text-gray-700 hover:text-blue-600 flex items-center">
-                        <i class="fas fa-home mr-1"></i> Dashboard
-                    </a>
-                </li>
-                <li>
-                    <div class="flex items-center">
-                        <i class="fas fa-chevron-right text-gray-400 mx-1 sm:mx-2"></i>
-                        <span class="text-gray-500">Apartments</span>
-                    </div>
-                </li>
-            </ol>
-        </nav>
 
         <!-- Title -->
         <h1 class="text-lg sm:text-2xl md:text-3xl font-bold text-gray-800 mb-2 sm:mb-4">Apartment Listings</h1>
@@ -67,8 +51,7 @@
         </div>
 
         <!-- Desktop / Tablet Table -->
-        <div class="hidden sm:block bg-white rounded-lg shadow-lg border border-gray-100">
-        <!-- Desktop / Tablet Table -->
+
         <div class="hidden sm:block bg-white rounded-lg shadow-lg border border-gray-100">
             <div class="overflow-x-auto">
                 <table class="min-w-full text-xs sm:text-sm text-left text-gray-700" id="apartmentsTable">
