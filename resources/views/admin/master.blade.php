@@ -95,15 +95,17 @@
             <nav class="space-y-5 text-sm font-medium">
 
                 <!-- MAIN SECTION -->
+                @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('view_dashboard'))
                 <div>
                     <a href="{{ route('admin.dashboard') }}"
                         class="flex items-center px-4 py-2 rounded hover:bg-blue-200 transition font-bold text-blue-900">
                         <i class="fas fa-tachometer-alt mr-3 text-bg-[#1F8FB2] text-lg"></i> Dashboard
                     </a>
-
                 </div>
+                @endif
 
                 <!-- USERS SECTION -->
+                @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('view_customers') || Auth::guard('admin')->user()->can('view_partners'))
                 <div>
                     <button @click="openUsers = !openUsers"
                         class="w-full flex justify-between items-center px-4 py-2 rounded hover:bg-blue-200 transition focus:outline-none font-bold text-blue-900">
@@ -114,15 +116,20 @@
                         <i :class="openUsers ? 'fa-chevron-up' : 'fa-chevron-down'" class="fas text-xs"></i>
                     </button>
                     <div x-show="openUsers" x-collapse class="ml-8 mt-2 space-y-1 border-l border-blue-300 pl-4">
+                        @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('view_customers'))
                         <a href="{{ route('admin.customers') }}"
                             class="block py-1 hover:text-blue-700 font-semibold">Customer</a>
+                        @endif
+                        @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('view_partners'))
                         <a href="{{ route('admin.partners') }}"
                             class="block py-1 hover:text-blue-700 font-semibold">Partners</a>
-
+                        @endif
                     </div>
                 </div>
+                @endif
 
                 <!-- PROPERTY SECTION -->
+                @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('view_apartments') || Auth::guard('admin')->user()->can('view_homes') || Auth::guard('admin')->user()->can('view_hotels') || Auth::guard('admin')->user()->can('view_alternative_places'))
                 <div>
                     <button @click="openProperty = !openProperty"
                         class="w-full flex justify-between items-center px-4 py-2 rounded hover:bg-blue-200 transition focus:outline-none font-bold text-blue-900">
@@ -132,19 +139,28 @@
                         <i :class="openProperty ? 'fa-chevron-up' : 'fa-chevron-down'" class="fas text-xs"></i>
                     </button>
                     <div x-show="openProperty" x-collapse class="ml-8 mt-2 space-y-1 border-l border-blue-300 pl-4">
+                        @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('view_apartments'))
                         <a href="{{ route('admin.apartments') }}"
                             class="block py-1 hover:text-blue-700 font-semibold">Apartments</a>
+                        @endif
+                        @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('view_homes'))
                         <a href="{{ route('admin.homes') }}"
                             class="block py-1 hover:text-blue-700 font-semibold">Homes</a>
+                        @endif
+                        @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('view_hotels'))
                         <a href="{{ route('admin.hotels') }}"
                             class="block py-1 hover:text-blue-700 font-semibold">Hotels</a>
+                        @endif
+                        @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('view_alternative_places'))
                         <a href="{{ route('admin.alternative.places') }}"
                             class="block py-1 hover:text-blue-700 font-semibold">Alternative Places</a>
+                        @endif
                     </div>
-
                 </div>
+                @endif
 
                 <!-- Rental SECTION -->
+                @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('view_taxi') || Auth::guard('admin')->user()->can('view_airport'))
                 <div>
                     <button @click="openRental = !openRental"
                         class="w-full flex justify-between items-center px-4 py-2 rounded hover:bg-blue-200 transition focus:outline-none font-bold text-blue-900">
@@ -153,38 +169,36 @@
                         </div>
                         <i :class="openRental ? 'fa-chevron-up' : 'fa-chevron-down'" class="fas text-xs"></i>
                     </button>
-                    <!-- Toggle Links -->
                     <div x-show="openRental" x-collapse class="ml-8 mt-2 space-y-1 border-l border-blue-300 pl-4">
+                        @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('view_taxi'))
                         <a href="{{ route('admin.rental.taxi') }}" class="block py-1 hover:text-blue-700 font-semibold">Taxi</a>
+                        @endif
+                        @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('view_airport'))
                         <a href="{{ route('admin.rental.airport') }}" class="block py-1 hover:text-blue-700 font-semibold">Airport</a>
+                        @endif
                     </div>
                 </div>
+                @endif
 
-
-                @if (Auth::guard('admin')->user()->hasRole('superAdmin'))
-                    <!-- ADMIN MANAGEMENT -->
-                    <div>
-                        <button @click="openAdminManagement = !openAdminManagement"
-                            class="w-full flex justify-between items-center px-4 py-2 rounded hover:bg-blue-200 transition focus:outline-none font-bold text-blue-900">
-                            <div class="flex items-center">
-                                <i class="fas fa-user-shield mr-3 text-bg-[#1F8FB2] text-lg"></i> <span>Admin Management</span>
-                            </div>
-                            <i :class="openAdminManagement ? 'fa-chevron-up' : 'fa-chevron-down'" class="fas text-xs"></i>
-                        </button>
-                        <!-- Toggle Links -->
-                        <div x-show="openAdminManagement" x-collapse class="ml-8 mt-2 space-y-1 border-l border-blue-300 pl-4">
-                            <div>
-                                <a href="{{ route('admin.approvals.index') }}" class="block py-1 hover:text-blue-700 font-semibold">Pending Admins</a>
-                                <a href="{{ route('admin.accounts.index') }}" class="block py-1 hover:text-blue-700 font-semibold">Admins Accounts</a>
-                            </div>
+                <!-- ADMIN MANAGEMENT -->
+                @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('view_pending_admins') || Auth::guard('admin')->user()->can('view_admin_accounts'))
+                <div>
+                    <button @click="openAdminManagement = !openAdminManagement"
+                        class="w-full flex justify-between items-center px-4 py-2 rounded hover:bg-blue-200 transition focus:outline-none font-bold text-blue-900">
+                        <div class="flex items-center">
+                            <i class="fas fa-user-shield mr-3 text-bg-[#1F8FB2] text-lg"></i> <span>Admin Management</span>
                         </div>
+                        <i :class="openAdminManagement ? 'fa-chevron-up' : 'fa-chevron-down'" class="fas text-xs"></i>
+                    </button>
+                    <div x-show="openAdminManagement" x-collapse class="ml-8 mt-2 space-y-1 border-l border-blue-300 pl-4">
+                        @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('view_pending_admins'))
+                        <a href="{{ route('admin.approvals.index') }}" class="block py-1 hover:text-blue-700 font-semibold">Pending Admins</a>
+                        @endif
+                        @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('view_admin_accounts'))
+                        <a href="{{ route('admin.accounts.index') }}" class="block py-1 hover:text-blue-700 font-semibold">Admin Accounts</a>
+                        @endif
                     </div>
-                    {{-- <div>
-                        <a href="{{ route('admin.approvals.index') }}"
-                            class="flex items-center px-4 py-2 rounded hover:bg-blue-200 transition text-blue-800 font-bold text-base">
-                            <i class="fas fa-user-shield mr-3 text-bg-[#1F8FB2] text-lg"></i> Pending Admins
-                        </a>
-                    </div> --}}
+                </div>
                 @endif
 
                 <!-- SETTINGS -->

@@ -3,29 +3,73 @@
         <a class="navbar-brand" href="#">Admin Panel</a>
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav me-auto">
+                @can('view_dashboard')
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('admin.dashboard') }}">Dashboard</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.customers') }}">Customers</a>
+                @endcan
+                
+                @canany(['view_customers', 'view_partners'])
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Users</a>
+                    <ul class="dropdown-menu">
+                        @can('view_customers')
+                        <li><a class="dropdown-item" href="{{ route('admin.customers') }}">Customers</a></li>
+                        @endcan
+                        @can('view_partners')
+                        <li><a class="dropdown-item" href="{{ route('admin.partners') }}">Partners</a></li>
+                        @endcan
+                    </ul>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.apartments') }}">Apartments</a>
+                @endcanany
+                
+                @canany(['view_apartments', 'view_homes', 'view_hotels', 'view_alternative_places'])
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Property</a>
+                    <ul class="dropdown-menu">
+                        @can('view_apartments')
+                        <li><a class="dropdown-item" href="{{ route('admin.apartments') }}">Apartments</a></li>
+                        @endcan
+                        @can('view_homes')
+                        <li><a class="dropdown-item" href="{{ route('admin.homes') }}">Homes</a></li>
+                        @endcan
+                        @can('view_hotels')
+                        <li><a class="dropdown-item" href="{{ route('admin.hotels') }}">Hotels</a></li>
+                        @endcan
+                        @can('view_alternative_places')
+                        <li><a class="dropdown-item" href="{{ route('admin.alternative.places') }}">Alternative Places</a></li>
+                        @endcan
+                    </ul>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.aging-report') }}">Aging Report</a>
+                @endcanany
+                
+                @canany(['view_taxi', 'view_airport'])
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Rental</a>
+                    <ul class="dropdown-menu">
+                        @can('view_taxi')
+                        <li><a class="dropdown-item" href="{{ route('admin.rental.taxi') }}">Taxi</a></li>
+                        @endcan
+                        @can('view_airport')
+                        <li><a class="dropdown-item" href="{{ route('admin.rental.airport') }}">Airport</a></li>
+                        @endcan
+                    </ul>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.commission-aging') }}">Commission Aging</a>
+                @endcanany
+                
+                @canany(['view_pending_admins', 'view_admin_accounts'])
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Admin Management</a>
+                    <ul class="dropdown-menu">
+                        @can('view_pending_admins')
+                        <li><a class="dropdown-item" href="{{ route('admin.approvals.index') }}">Pending Admins</a></li>
+                        @endcan
+                        @can('view_admin_accounts')
+                        <li><a class="dropdown-item" href="{{ route('admin.accounts.index') }}">Admin Accounts</a></li>
+                        @endcan
+                    </ul>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.hotels') }}">Hotels</a>
-                </li>
-                @if(Auth::guard('admin')->user()->hasRole('superAdmin'))
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.approvals.index') }}">Pending Admins</a>
-                </li>
-                @endif
+                @endcanany
             </ul>
             <ul class="navbar-nav">
                 <li class="nav-item dropdown">

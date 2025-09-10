@@ -23,7 +23,11 @@ class AdminApprovalController extends Controller
             'approved_at' => now()
         ]);
 
-        return back()->with('success', 'Admin approved successfully!');
+        // Assign basic admin role
+        $admin->assignRole('admin');
+
+        return redirect()->route('admin.permissions.manage', $admin)
+            ->with('success', 'Admin approved successfully! Please configure permissions.');
     }
 
     public function reject(Admin $admin)

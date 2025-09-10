@@ -38,15 +38,26 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4">
-                                <form action="{{ route('admin.accounts.updateStatus', $account->id) }}" method="POST" class="inline">
-                                    @csrf
-                                    <input type="hidden" name="status" value="{{ $account->status === 'approved' ? 'rejected' : 'approved' }}">
-                                    <button type="submit"
-                                        class="px-3 py-1 text-xs font-semibold rounded-lg text-white
-                                        {{ $account->status === 'approved' ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600' }}">
-                                        {{ $account->status === 'approved' ? 'Deactivate' : 'Activate' }}
-                                    </button>
-                                </form>
+                                <div class="flex space-x-2">
+                                    @if($account->status === 'approved' && (Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('manage_admin_permissions')))
+                                        <a href="{{ route('admin.permissions.manage', $account->id) }}"
+                                           class="px-3 py-1 text-xs font-semibold rounded-lg bg-blue-500 hover:bg-blue-600 text-white">
+                                            Manage Permissions
+                                        </a>
+                                    @endif
+                                    
+                                    @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('edit_admin_accounts'))
+                                    <form action="{{ route('admin.accounts.updateStatus', $account->id) }}" method="POST" class="inline">
+                                        @csrf
+                                        <input type="hidden" name="status" value="{{ $account->status === 'approved' ? 'rejected' : 'approved' }}">
+                                        <button type="submit"
+                                            class="px-3 py-1 text-xs font-semibold rounded-lg text-white
+                                            {{ $account->status === 'approved' ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600' }}">
+                                            {{ $account->status === 'approved' ? 'Deactivate' : 'Activate' }}
+                                        </button>
+                                    </form>
+                                    @endif
+                                </div>
                             </td>
                         </tr>
                     @endforeach
