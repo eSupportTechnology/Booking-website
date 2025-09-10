@@ -88,6 +88,7 @@
                             <td class="px-2 sm:px-4 py-3">{{ $taxi->type?->name ?? 'Unknown' }} - {{ $taxi->number_plate }}</td>
                             <td class="px-2 sm:px-4 py-3">
                                 <div class="relative">
+                                    @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('change_taxi_status'))
                                     <select onchange="handleTaxiStatusChange(this, 'T{{ $taxi->id }}')"
                                         class="appearance-none @if($taxi->status === 'Active') bg-green-100 text-green-800 @elseif($taxi->status === 'Inactive') bg-yellow-100 text-yellow-800 @else bg-red-100 text-red-800 @endif font-medium text-xs sm:text-sm rounded-full pl-6 pr-4 py-1 focus:outline-none focus:ring-2 focus:ring-[#1F8FB2] transition">
                                         <option value="Active" @selected($taxi->status === 'Active')>Active</option>
@@ -95,18 +96,27 @@
                                         <option value="On Trip" @selected($taxi->status === 'On Trip')>On Trip</option>
                                     </select>
                                     <span class="absolute top-1/2 left-2 -translate-y-1/2 w-2 h-2 rounded-full @if($taxi->status === 'Active') bg-green-800 @elseif($taxi->status === 'Inactive') bg-yellow-800 @else bg-red-800 @endif pointer-events-none status-dot"></span>
+                                    @else
+                                    <span class="px-3 py-1 rounded-full text-xs font-semibold @if($taxi->status === 'Active') bg-green-100 text-green-800 @elseif($taxi->status === 'Inactive') bg-yellow-100 text-yellow-800 @else bg-red-100 text-red-800 @endif">
+                                        {{ $taxi->status }}
+                                    </span>
+                                    @endif
                                 </div>
                             </td>
                             <td class="px-2 sm:px-4 py-3">
                                 <div class="flex flex-wrap gap-2 sm:gap-3">
+                                    @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('view_taxi'))
                                     <a href="{{ route('admin.taxi.details', $taxi->id) }}"
                                         class="text-[#1F8FB2] hover:text-[#157799] text-xs sm:text-sm font-medium inline-flex items-center">
                                         <i class="fas fa-eye mr-1"></i> View
                                     </a>
+                                    @endif
+                                    @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('edit_taxi'))
                                     <button
                                         class="text-red-600 hover:text-red-800 text-xs sm:text-sm font-medium inline-flex items-center">
                                         <i class="fas fa-trash mr-1"></i> Delete
                                     </button>
+                                    @endif
                                 </div>
                             </td>
                         </tr>

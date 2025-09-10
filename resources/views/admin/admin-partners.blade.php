@@ -50,6 +50,7 @@
                     <td class="px-4 py-3">{{ $partner['email'] }}</td>
                     <td class="px-4 py-3">{{ $partner['propertyCount'] }}</td>
                     <td class="px-4 py-3">
+                        @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('edit_partners'))
                         <select onchange="handlePartnerStatusChange(this, '{{ $partner['id'] }}')"
                                 class="appearance-none {{ $partner['status'] === 'Active' ? 'bg-green-100 text-green-800' : ($partner['status'] === 'Pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }} font-semibold text-xs rounded-full px-3 py-1 focus:outline-none focus:ring-2 focus:ring-[#1F8FB2] transition"
                                 data-original-value="{{ strtolower($partner['status']) }}">
@@ -57,12 +58,19 @@
                             <option value="pending" {{ $partner['status'] === 'Pending' ? 'selected' : '' }}>Pending</option>
                             <option value="inactive" {{ $partner['status'] === 'Inactive' ? 'selected' : '' }}>Inactive</option>
                         </select>
+                        @else
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold {{ $partner['status'] === 'Active' ? 'bg-green-100 text-green-800' : ($partner['status'] === 'Pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
+                            {{ $partner['status'] }}
+                        </span>
+                        @endif
                     </td>
                     <td class="px-4 py-3">
+                        @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('view_partners'))
                         <a href="{{ route('admin.partner.view', ['partner_id' => $partner['id']]) }}"
                             class="text-[#1F8FB2] hover:text-[#157799] flex items-center">
                             <i class="fas fa-eye mr-1"></i> View Details
                         </a>
+                        @endif
                     </td>
                 </tr>
                 @empty
@@ -93,10 +101,12 @@
                 <div class="text-sm"><span class="font-semibold">Email:</span> {{ $partner['email'] }}</div>
                 <div class="text-sm"><span class="font-semibold">Properties:</span> {{ $partner['propertyCount'] }}</div>
                 <div class="px-6 py-4">
+                    @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('view_partners'))
                     <a href="{{ route('admin.partner.view', ['partner_id' => $partner['id']]) }}"
                         class="text-[#1F8FB2] hover:text-[#157799] flex items-center">
                         <i class="fas fa-eye mr-1"></i> View Details
                     </a>
+                    @endif
                 </div>
             </div>
             @empty

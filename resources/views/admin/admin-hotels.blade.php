@@ -86,6 +86,7 @@
                             <td class="px-2 sm:px-4 py-2 sm:py-3">{{ $property->createdAt }}</td>
                             <td class="px-2 sm:px-4 py-2 sm:py-3">
                                 <div class="relative">
+                                    @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('change_hotel_status'))
                                     <select onchange="handleStatusChange(this, '{{ $property->id }}')"
                                         class="appearance-none font-medium text-[10px] sm:text-xs rounded-full pl-5 pr-3 py-0.5 focus:outline-none focus:ring-2 focus:ring-[#3CC0E9] transition
                                         {{ $property->status === 'active' ? 'bg-green-100 text-green-800' : ($property->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}"
@@ -95,6 +96,11 @@
                                         <option value="inactive" {{ $property->status === 'inactive' ? 'selected' : '' }}>Inactive</option>
                                     </select>
                                     <span class="absolute top-1/2 left-1.5 -translate-y-1/2 w-1.5 h-1.5 rounded-full {{ $property->status === 'active' ? 'bg-green-800' : ($property->status === 'pending' ? 'bg-yellow-800' : 'bg-red-800') }}"></span>
+                                    @else
+                                    <span class="px-3 py-1 rounded-full text-xs font-semibold {{ $property->status === 'active' ? 'bg-green-100 text-green-800' : ($property->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
+                                        {{ ucfirst($property->status) }}
+                                    </span>
+                                    @endif
                                 </div>
                             </td>
                             {{-- <td class="px-2 sm:px-4 py-2 sm:py-3 flex items-center space-x-2">
