@@ -72,113 +72,42 @@
            Find a great deal on your perfect apartment stay
         </p>
 
-        <!-- Hotels Grid -->
+        <!-- Apartments Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-
-          <!-- Hotel Card 1 -->
-          <div class="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden flex flex-col w-full max-w-sm">
-              <img src="{{ asset('images/AA.png') }}" alt="Hotel" class="w-full h-48 object-cover">
-              <div class="p-4 flex flex-col justify-between flex-1">
-                  <div class="flex justify-between items-center mb-2">
-                      <h3 class="text-lg font-semibold">Orbit88 Apartment </h3>
-                     <span class="ml-2 text-sm text-gray-600">4.0 (320 reviews)</span>
-                  </div>
-                  <p class="text-sm text-gray-500 mb-2">Kandy • 2.4 km from center</p>
-                 
-                  <div class="flex justify-between items-center">
-                      <button class="bg-[#3CC0E9] hover:bg-blue-600 text-white text-sm px-4 py-2 rounded-lg transition">
-                          Reserve this apartment
-                      </button>
-                  </div>
-              </div>
-          </div>
-
-          <!-- Hotel Card 2 -->
-          <div class="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden flex flex-col w-full max-w-sm">
-              <img src="{{ asset('images/AA.png') }}" alt="Hotel" class="w-full h-48 object-cover">
-              <div class="p-4 flex flex-col justify-between flex-1">
-                  <div class="flex justify-between items-center mb-2">
-                      <h3 class="text-lg font-semibold">Orbit88 Apartment</h3>
-                      <span class="ml-2 text-sm text-gray-600">4.0 (320 reviews)</span>
-                  </div>
-                  <p class="text-sm text-gray-500 mb-2">Kandy • 2.4 km from center</p>
-                 
-                  <div class="flex justify-between items-center">
-                      <button class="bg-[#3CC0E9] hover:bg-blue-600 text-white text-sm px-4 py-2 rounded-lg transition">
-                               Reserve this apartment
-                      </button>
-                  </div>
-              </div>
-          </div>
-
-          <!-- Hotel Card 3 -->
-          <div class="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden flex flex-col w-full max-w-sm">
-              <img src="{{ asset('images/AA.png') }}" alt="Hotel" class="w-full h-48 object-cover">
-              <div class="p-4 flex flex-col justify-between flex-1">
-                  <div class="flex justify-between items-center mb-2">
-                      <h3 class="text-lg font-semibold">Orbit88 Apartment </h3>
-                   <span class="ml-2 text-sm text-gray-600">4.0 (320 reviews)</span>
-                  </div>
-                  <p class="text-sm text-gray-500 mb-2">Kandy • 2.4 km from center</p>
-                 
-                  <div class="flex justify-between items-center">
-                      <button class="bg-[#3CC0E9] hover:bg-blue-600 text-white text-sm px-4 py-2 rounded-lg transition">
-                                     Reserve this apartment
-                      </button>
-                  </div>
-              </div>
-          </div>
-
-          <!-- Hotel Card 4 -->
-          <div class="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden flex flex-col w-full max-w-sm">
-              <img src="{{ asset('images/AA.png') }}" alt="Hotel" class="w-full h-48 object-cover">
-              <div class="p-4 flex flex-col justify-between flex-1">
-                  <div class="flex justify-between items-center mb-2">
-                      <h3 class="text-lg font-semibold">Orbit88 Apartment </h3>
-                   <span class="ml-2 text-sm text-gray-600">4.0 (320 reviews)</span>
-                  </div>
-                  <p class="text-sm text-gray-500 mb-2">Kandy • 2.4 km from center</p>
-                 
-                  <div class="flex justify-between items-center">
-                      <button class="bg-[#3CC0E9] hover:bg-blue-600 text-white text-sm px-4 py-2 rounded-lg transition">
-                                     Reserve this apartment
-                      </button>
-                  </div>
-              </div>
-          </div>
-
-
-          <!-- Hotel Card 5 -->
-         <div class="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden flex flex-col w-full max-w-sm">
-              <img src="{{ asset('images/AA.png') }}" alt="Hotel" class="w-full h-48 object-cover">
-              <div class="p-4 flex flex-col justify-between flex-1">
-                  <div class="flex justify-between items-center mb-2">
-                      <h3 class="text-lg font-semibold">Orbit88 Apartment </h3>
-                   <span class="ml-2 text-sm text-gray-600">4.0 (320 reviews)</span>
-                  </div>
-                  <p class="text-sm text-gray-500 mb-2">Kandy • 2.4 km from center</p>
-                 
-                  <div class="flex justify-between items-center">
-                      <button class="bg-[#3CC0E9] hover:bg-blue-600 text-white text-sm px-4 py-2 rounded-lg transition">
-                                     Reserve this apartment
-                      </button>
-                  </div>
-              </div>
-          </div>
-
-
-        </div> <!-- End of Hotels Grid -->
+            @forelse($properties as $property)
+                <div class="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden flex flex-col w-full max-w-sm">
+                    <img src="{{ $property->photos->first() ? asset('storage/' . $property->photos->first()->path) : asset('images/AA.png') }}" 
+                         alt="{{ $property->title }}" class="w-full h-48 object-cover">
+                    <div class="p-4 flex flex-col justify-between flex-1">
+                        <div class="flex justify-between items-center mb-2">
+                            <h3 class="text-lg font-semibold">{{ $property->title }}</h3>
+                            @php
+                                $avgRating = $property->reviews->avg('rating') ?? 0;
+                                $reviewCount = $property->reviews->count();
+                            @endphp
+                            <span class="ml-2 text-sm text-gray-600">{{ number_format($avgRating, 1) }} ({{ $reviewCount }} reviews)</span>
+                        </div>
+                        <p class="text-sm text-gray-500 mb-2">{{ $property->city }} • {{ $property->address }}</p>
+                        <div class="flex justify-between items-center">
+                            <button class="bg-[#3CC0E9] hover:bg-blue-600 text-white text-sm px-4 py-2 rounded-lg transition">
+                                Reserve this apartment
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <div class="col-span-full text-center py-8">
+                    <p class="text-gray-500 text-lg">No apartments available at the moment.</p>
+                </div>
+            @endforelse
+        </div> <!-- End of Apartments Grid -->
 
         <!-- Pagination -->
-        <div class="mt-10 flex justify-center">
-            <nav class="inline-flex space-x-2">
-                <a href="#" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">Prev</a>
-                <a href="#" class="px-4 py-2 bg-blue-500 text-white rounded-lg">1</a>
-                <a href="#" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">2</a>
-                <a href="#" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">3</a>
-                <a href="#" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">Next</a>
-            </nav>
-        </div>
+        @if($properties->hasPages())
+            <div class="mt-10 flex justify-center">
+                {{ $properties->links() }}
+            </div>
+        @endif
 
     </div>
 
