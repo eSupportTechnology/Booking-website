@@ -87,11 +87,13 @@
                     </td>
                     <td class="px-4 sm:px-6 py-4">{{ $customer['registrationDate'] }}</td>
                     <td class="px-4 sm:px-6 py-4">
+                        @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('view_customers'))
                         <a href="{{ route('admin.customers.view', ['id' => $customer['id']]) }}"
                            class="text-[#1F8FB2] hover:text-[#157799] flex items-center gap-1">
                             <i class="fas fa-eye"></i>
                             <span>View</span>
                         </a>
+                        @endif
                     </td>
                 </tr>
                 @empty
@@ -123,10 +125,12 @@
             <p class="text-sm text-gray-600"><strong>Phone:</strong> {{ $customer['phone'] ?? 'Not provided' }}</p>
             <p class="text-sm text-gray-600"><strong>Registered:</strong> {{ $customer['registrationDate'] }}</p>
             <div class="pt-2">
+                @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('view_customers'))
                 <a href="{{ route('admin.customers.view', ['id' => $customer['id']]) }}"
                    class="inline-flex items-center bg-[#1F8FB2] hover:bg-[#157799] text-white px-3 py-1.5 rounded-lg text-xs">
                     <i class="fas fa-eye mr-1"></i> View Details
                 </a>
+                @endif
             </div>
         </div>
         @empty

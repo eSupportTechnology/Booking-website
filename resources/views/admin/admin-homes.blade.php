@@ -84,6 +84,7 @@
                             <td class="px-2 sm:px-4 py-3">{{ $property->createdAt }}</td>
                             <td class="px-2 sm:px-4 py-3">
                                 <div class="relative">
+                                    @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('change_home_status'))
                                     <select onchange="handleStatusChange(this, '{{ $property->id }}')"
                                             class="appearance-none {{ $property->status === 'active' ? 'bg-green-100 text-green-800' : ($property->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }} font-medium text-[10px] sm:text-xs rounded-full pl-6 pr-4 py-0.5 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#3CC0E9] transition"
                                             data-original-value="{{ $property->status === 'suspended' ? 'inactive' : $property->status }}">
@@ -92,6 +93,11 @@
                                         <option value="inactive" {{ $property->status === 'suspended' ? 'selected' : '' }}>Inactive</option>
                                     </select>
                                     <span class="absolute top-1/2 left-2 -translate-y-1/2 w-1.5 h-1.5 rounded-full status-dot {{ $property->status === 'active' ? 'bg-green-800' : ($property->status === 'pending' ? 'bg-yellow-800' : 'bg-red-800') }}"></span>
+                                    @else
+                                    <span class="px-3 py-1 rounded-full text-xs font-semibold {{ $property->status === 'active' ? 'bg-green-100 text-green-800' : ($property->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
+                                        {{ ucfirst($property->status) }}
+                                    </span>
+                                    @endif
                                 </div>
                             </td>
                             {{-- <td class="px-2 sm:px-4 py-3 flex space-x-2 sm:pt-6">
@@ -120,12 +126,18 @@
             <div class="bg-gray-50 rounded-lg shadow p-3">
                 <div class="flex justify-between items-center">
                     <span class="text-sm font-semibold text-gray-900">#{{ $property->id }} - {{ $property->title }}</span>
+                    @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('change_home_status'))
                     <select onchange="handleStatusChange(this, '{{ $property->id }}')"
                         class="appearance-none {{ $property->status === 'active' ? 'bg-green-100 text-green-800' : ($property->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }} rounded-full px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-[#3CC0E9]">
                         <option value="active" {{ $property->status === 'active' ? 'selected' : '' }}>Active</option>
                         <option value="pending" {{ $property->status === 'pending' ? 'selected' : '' }}>Pending</option>
                         <option value="inactive" {{ $property->status === 'suspended' ? 'selected' : '' }}>Inactive</option>
                     </select>
+                    @else
+                    <span class="px-2 py-1 rounded-full text-xs font-semibold {{ $property->status === 'active' ? 'bg-green-100 text-green-800' : ($property->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
+                        {{ ucfirst($property->status) }}
+                    </span>
+                    @endif
                 </div>
                 <div class="flex gap-3 mt-2">
                     @if($property->primaryImage)
