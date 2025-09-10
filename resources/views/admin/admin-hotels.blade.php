@@ -63,7 +63,7 @@
                             <th class="px-2 sm:px-4 py-2 sm:py-3">Image</th>
                             <th class="px-2 sm:px-4 py-2 sm:py-3">Date</th>
                             <th class="px-2 sm:px-4 py-2 sm:py-3">Status</th>
-                            <th class="px-2 sm:px-4 py-2 sm:py-3">Actions</th>
+                            {{-- <th class="px-2 sm:px-4 py-2 sm:py-3">Actions</th> --}}
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
@@ -97,10 +97,10 @@
                                     <span class="absolute top-1/2 left-1.5 -translate-y-1/2 w-1.5 h-1.5 rounded-full {{ $property->status === 'active' ? 'bg-green-800' : ($property->status === 'pending' ? 'bg-yellow-800' : 'bg-red-800') }}"></span>
                                 </div>
                             </td>
-                            <td class="px-2 sm:px-4 py-2 sm:py-3 flex items-center space-x-2">
+                            {{-- <td class="px-2 sm:px-4 py-2 sm:py-3 flex items-center space-x-2">
                                 <button class="text-[#3CC0E9] hover:text-[#3CC0E9]/80 text-[10px] sm:text-xs font-medium flex items-center">Edit</button>
                                 <button class="text-red-600 hover:text-red-800 text-[10px] sm:text-xs font-medium flex items-center">Delete</button>
-                            </td>
+                            </td> --}}
                         </tr>
                         @empty
                         <tr>

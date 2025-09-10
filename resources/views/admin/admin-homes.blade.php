@@ -64,7 +64,7 @@
                             <th class="px-2 sm:px-4 py-3 sm:py-4">Image</th>
                             <th class="px-2 sm:px-4 py-3 sm:py-4">Date Added</th>
                             <th class="px-2 sm:px-4 py-3 sm:py-4">Status</th>
-                            <th class="px-2 sm:px-4 py-3 sm:py-4">Actions</th>
+                            {{-- <th class="px-2 sm:px-4 py-3 sm:py-4">Actions</th> --}}
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100 text-xs sm:text-sm">
@@ -94,10 +94,10 @@
                                     <span class="absolute top-1/2 left-2 -translate-y-1/2 w-1.5 h-1.5 rounded-full status-dot {{ $property->status === 'active' ? 'bg-green-800' : ($property->status === 'pending' ? 'bg-yellow-800' : 'bg-red-800') }}"></span>
                                 </div>
                             </td>
-                            <td class="px-2 sm:px-4 py-3 flex space-x-2 sm:pt-6">
+                            {{-- <td class="px-2 sm:px-4 py-3 flex space-x-2 sm:pt-6">
                                 <button class="text-[#3CC0E9] text-xs">Edit</button>
                                 <button class="text-red-600 text-xs">Delete</button>
-                            </td>
+                            </td> --}}
 
 
                         </tr>
