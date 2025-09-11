@@ -84,9 +84,13 @@
                                 class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-center text-sm transition-colors duration-200">
                                 <i class="fas fa-eye mr-1"></i>View
                             </a>
-                            <button
-                                class="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-sm transition-colors duration-200">
+                            <a href="{{ route('partner.properties.edit', $property['id']) }}"
+                                class="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-center text-sm transition-colors duration-200">
                                 <i class="fas fa-edit mr-1"></i>Edit
+                            </a>
+                            <button onclick="deleteProperty({{ $property['id'] }})"
+                                class="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg text-sm transition-colors duration-200">
+                                <i class="fas fa-trash"></i>
                             </button>
                         </div>
                     </div>
@@ -105,3 +109,28 @@
         </div>
     </div>
 @endsection
+
+<script>
+function deleteProperty(propertyId) {
+    if (confirm('Are you sure you want to delete this property? This action cannot be undone.')) {
+        fetch(`/partner/properties/${propertyId}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Error deleting property: ' + data.message);
+            }
+        })
+        .catch(error => {
+            alert('Error deleting property');
+        });
+    }
+}
+</script>

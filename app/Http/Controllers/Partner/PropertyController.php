@@ -50,4 +50,39 @@ class PropertyController extends Controller
         
         return view('partner.properties.bookings', $data);
     }
+
+    public function edit($propertyId)
+    {
+        $property = \App\Models\Property::where('id', $propertyId)
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
+            
+        $categoryName = strtolower($property->category->name ?? 'apartment');
+        
+        // Redirect to existing edit forms based on category
+        switch ($categoryName) {
+            case 'apartment':
+                return redirect()->route('partner.property.apartment.step2', $property->id);
+            case 'home':
+                return redirect()->route('partner.homes.edit', $property->id);
+            case 'hotel':
+                return redirect()->route('partner.hotels.edit');
+            default:
+                return redirect()->route('partner.property.apartment.step2', $property->id);
+        }
+    }
+
+    public function destroy($propertyId)
+    {
+        $property = \App\Models\Property::where('id', $propertyId)
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
+            
+        $property->delete();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Property deleted successfully'
+        ]);
+    }
 }

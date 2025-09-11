@@ -605,6 +605,10 @@ Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddle
 
     // Settings
     Route::get('/settings', [\App\Http\Controllers\Partner\SettingsController::class, 'index'])->name('partner.settings');
+    
+    // Property Edit/Delete
+    Route::get('/properties/{property}/edit', [\App\Http\Controllers\Partner\PropertyController::class, 'edit'])->name('partner.properties.edit');
+    Route::delete('/properties/{property}', [\App\Http\Controllers\Partner\PropertyController::class, 'destroy'])->name('partner.properties.destroy');
     Route::get('/property_category', [PropertyController::class, 'categories'])->name('partner.property.category');
     Route::get('/property_subcategory/{id}/{property_id?}', [PropertyController::class, 'subcategories'])->name('partner.property.subcategory');
     Route::get('/hotels/rooms/{id}', [PropertyController::class, 'rooms'])->name('partner.hotels.room');
