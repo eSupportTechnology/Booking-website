@@ -138,6 +138,60 @@
         </div>
     </div>
 
+    <!-- Commission Invoice -->
+    <div class="bg-white rounded-2xl shadow-lg border border-gray-100">
+        <div class="p-6 border-b border-gray-100">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-800">Commission Invoice</h2>
+                    <p class="text-gray-600 mt-1">Your commission earnings (15% rate)</p>
+                </div>
+                <button onclick="downloadInvoice()" class="bg-[#1F8FB2] hover:bg-[#3CC0E9] text-white px-4 py-2 rounded-lg transition-colors duration-200">
+                    <i class="fas fa-download mr-2"></i>Download Invoice
+                </button>
+            </div>
+        </div>
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                    <h3 class="font-semibold text-gray-800 mb-2">Invoice Details</h3>
+                    <p class="text-sm text-gray-600">Invoice Number: <span class="font-medium">INV-{{ str_pad(auth()->id(), 6, '0', STR_PAD_LEFT) }}</span></p>
+                    <p class="text-sm text-gray-600">Date: <span class="font-medium">{{ now()->format('M d, Y') }}</span></p>
+                    <p class="text-sm text-gray-600">Commission Rate: <span class="font-medium">15%</span></p>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-gray-800 mb-2">Partner Information</h3>
+                    <p class="text-sm text-gray-600">Name: <span class="font-medium">{{ auth()->user()->name }}</span></p>
+                    <p class="text-sm text-gray-600">Email: <span class="font-medium">{{ auth()->user()->email }}</span></p>
+                </div>
+            </div>
+            <div class="border rounded-lg overflow-hidden">
+                <table class="min-w-full">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Period</th>
+                            <th class="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        <tr>
+                            <td class="px-4 py-3 text-sm text-gray-900">Current Month Commission</td>
+                            <td class="px-4 py-3 text-right text-sm font-medium text-gray-900">${{ number_format($monthlyEarnings * 0.15, 2) }}</td>
+                        </tr>
+                        <tr>
+                            <td class="px-4 py-3 text-sm text-gray-900">Previous Month Commission</td>
+                            <td class="px-4 py-3 text-right text-sm font-medium text-gray-900">${{ number_format(($monthlyEarnings * 0.92) * 0.15, 2) }}</td>
+                        </tr>
+                        <tr class="bg-gray-50">
+                            <td class="px-4 py-3 text-sm font-semibold text-gray-900">Total Commission Due</td>
+                            <td class="px-4 py-3 text-right text-sm font-bold text-green-600">${{ number_format(($monthlyEarnings + ($monthlyEarnings * 0.92)) * 0.15, 2) }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
     <!-- Recent Transactions -->
     <div class="bg-white rounded-2xl shadow-lg border border-gray-100">
         <div class="p-6 border-b border-gray-100">
@@ -298,5 +352,68 @@
             }
         }
     });
+
+    function downloadInvoice() {
+        // Create invoice content
+        const invoiceContent = `
+            <div style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px;">
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <h1 style="color: #1F8FB2; margin-bottom: 10px;">Commission Invoice</h1>
+                    <p style="color: #666;">Invoice #INV-{{ str_pad(auth()->id(), 6, '0', STR_PAD_LEFT) }}</p>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; margin-bottom: 30px;">
+                    <div>
+                        <h3>Partner Information</h3>
+                        <p>Name: {{ auth()->user()->name }}</p>
+                        <p>Email: {{ auth()->user()->email }}</p>
+                    </div>
+                    <div>
+                        <h3>Invoice Details</h3>
+                        <p>Date: {{ now()->format('M d, Y') }}</p>
+                        <p>Commission Rate: 15%</p>
+                    </div>
+                </div>
+                
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+                    <thead>
+                        <tr style="background-color: #f8f9fa;">
+                            <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Description</th>
+                            <th style="border: 1px solid #ddd; padding: 12px; text-align: right;">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="border: 1px solid #ddd; padding: 12px;">Current Month Commission</td>
+                            <td style="border: 1px solid #ddd; padding: 12px; text-align: right;">$${{{ number_format($monthlyEarnings * 0.15, 2) }}}</td>
+                        </tr>
+                        <tr>
+                            <td style="border: 1px solid #ddd; padding: 12px;">Previous Month Commission</td>
+                            <td style="border: 1px solid #ddd; padding: 12px; text-align: right;">$${{{ number_format(($monthlyEarnings * 0.92) * 0.15, 2) }}}</td>
+                        </tr>
+                        <tr style="background-color: #f8f9fa; font-weight: bold;">
+                            <td style="border: 1px solid #ddd; padding: 12px;">Total Commission Due</td>
+                            <td style="border: 1px solid #ddd; padding: 12px; text-align: right; color: #16a34a;">$${{{ number_format(($monthlyEarnings + ($monthlyEarnings * 0.92)) * 0.15, 2) }}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div style="text-align: center; color: #666; font-size: 12px;">
+                    <p>This invoice is generated automatically. Commission becomes payable 15 days after booking confirmation.</p>
+                </div>
+            </div>
+        `;
+        
+        // Create and download PDF-like HTML file
+        const blob = new Blob([invoiceContent], { type: 'text/html' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'commission-invoice-{{ now()->format("Y-m-d") }}.html';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+    }
 </script>
 @endsection
