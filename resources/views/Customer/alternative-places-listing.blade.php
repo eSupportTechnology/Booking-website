@@ -61,7 +61,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             @forelse($properties as $property)
                 <div class="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden flex flex-col w-full max-w-sm">
-                    <img src="{{ $property->photos->first() ? asset('storage/' . $property->photos->first()->path) : asset('images/AA.png') }}" 
+                    <img src="{{ $property->files->where('file_type', 'image')->first() ? asset('storage/' . $property->files->where('file_type', 'image')->first()->path) : asset('images/AA.png') }}" 
                          alt="{{ $property->title }}" class="w-full h-48 object-cover">
                     <div class="p-4 flex flex-col justify-between flex-1">
                         <div class="flex justify-between items-center mb-2">

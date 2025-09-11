@@ -925,11 +925,12 @@ Route::get('/hotel-listing', [\App\Http\Controllers\Customer\PropertyListingCont
 
 Route::get('/apartment-listing', [\App\Http\Controllers\Customer\PropertyListingController::class, 'apartmentListing'])->name('apartment-listing');
 
-Route::get('/home-listing', [\App\Http\Controllers\Customer\PropertyListingController::class, 'homeListing'])->name('homes-listing');
+Route::get('/home-listing', [\App\Http\Controllers\Customer\PropertyListingController::class, 'homeListing'])->name('home-listing');
 
 Route::get('/car-rental-listing', [\App\Http\Controllers\Customer\PropertyListingController::class, 'carRentalListing'])->name('car-rental-listing');
 
 Route::get('/alternative-places-listing', [\App\Http\Controllers\Customer\PropertyListingController::class, 'alternativePlacesListing'])->name('alternative-places-listing');
+
 
 
 Route::get('/property/vedio', function () {
@@ -1128,7 +1129,7 @@ Route::middleware(['auth:car_renter'])->prefix('taxi')->name('taxis.')->group(fu
 
 Route::get('/car-renters/control-panel', function () {
     return view('car_rentals.carrenters_control_panel');
-})->name('home-listing');
+})->name('car-renters.control-panel');
 
 Route::middleware('auth:car_renter')->group(function () {
     Route::get('/renter/types', [CarRenterControlPanel::class, 'index'])->name('renter.types');

@@ -96,7 +96,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 @forelse($cars as $car)
                     <div class="bg-white shadow-md rounded-lg overflow-hidden hover:shadow-xl transition-shadow">
-                        <img src="{{ $car->files->first() ? asset('storage/' . $car->files->first()->path) : asset('images/9.jpg') }}" 
+                        <img src="{{ $car->files->where('file_type', 'image')->first() ? asset('storage/' . $car->files->where('file_type', 'image')->first()->path) : asset('images/9.jpg') }}" 
                              alt="{{ $car->brand }} {{ $car->model->name ?? '' }}" class="w-full h-48 object-cover">
                         <div class="p-4">
                             <h3 class="text-lg font-bold">{{ $car->brand }} {{ $car->model->name ?? '' }}</h3>
