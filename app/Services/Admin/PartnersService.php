@@ -10,7 +10,7 @@ class PartnersService
 {
     public function getPartnersData(int $perPage = 10): LengthAwarePaginator
     {
-        return Partner::with('properties')
+        return Partner::with(['properties', 'user'])
             ->withCount('properties')
             ->orderBy('created_at', 'desc')
             ->paginate($perPage)

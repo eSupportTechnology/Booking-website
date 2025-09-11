@@ -98,7 +98,7 @@
                                     <span class="absolute top-1/2 left-2 -translate-y-1/2 w-1.5 h-1.5 rounded-full status-dot {{ $property->status === 'active' ? 'bg-green-800' : ($property->status === 'pending' ? 'bg-yellow-800' : 'bg-red-800') }}"></span>
                                     @else
                                     <span class="px-3 py-1 rounded-full text-xs font-semibold {{ $property->status === 'active' ? 'bg-green-100 text-green-800' : ($property->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
-                                        {{ ucfirst($property->status) }}
+                                        {{ $property->status === 'suspended' ? 'Inactive' : ucfirst($property->status) }}
                                     </span>
                                     @endif
                                 </div>
@@ -204,25 +204,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const statusFilter = document.getElementById('statusFilter');
     const table = document.getElementById('apartmentsTable');
     const rows = table.querySelectorAll('tbody tr');
-document.addEventListener('DOMContentLoaded', function () {
-    const rowsPerPageSelect = document.getElementById('rowsPerPage');
-    const searchInput = document.getElementById('apartmentSearchInput');
-    const statusFilter = document.getElementById('statusFilter');
-    const table = document.getElementById('apartmentsTable');
-    const rows = table.querySelectorAll('tbody tr');
 
-    // Initialize original values for status selects
-    document.querySelectorAll('select[onchange*="handleStatusChange"]').forEach(select => {
-        select.setAttribute('data-original-value', select.value);
-    });
-
-    // Handle Rows per page change
-    rowsPerPageSelect.addEventListener('change', function () {
-        const url = new URL(window.location.href);
-        url.searchParams.set('per_page', this.value);
-        url.searchParams.delete('page');
-        window.location.href = url.toString();
-    });
     // Initialize original values for status selects
     document.querySelectorAll('select[onchange*="handleStatusChange"]').forEach(select => {
         select.setAttribute('data-original-value', select.value);
@@ -252,121 +234,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
             },
             body: JSON.stringify({ status: value })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                updateStatusStyling(selectEl, dot, value);
-                showNotification('success', data.message);
-            } else {
-                selectEl.value = selectEl.getAttribute('data-original-value') || 'pending';
-                showNotification('error', data.message || 'Failed to update status');
-            }
-        })
-        .catch(() => {
-            selectEl.value = selectEl.getAttribute('data-original-value') || 'pending';
-            showNotification('error', 'Failed to update status. Please try again.');
-        })
-        .finally(() => {
-            selectEl.disabled = false;
-            selectEl.style.opacity = '1';
-        });
-    }
-
-    function updateStatusStyling(selectEl, dot, value) {
-        selectEl.className = 'appearance-none font-medium text-[10px] sm:text-xs rounded-full pl-5 pr-3 py-0.5 focus:outline-none focus:ring-2 focus:ring-[#3CC0E9] transition';
-        dot.className = 'absolute top-1/2 left-1.5 -translate-y-1/2 w-1.5 h-1.5 rounded-full';
-
-        switch (value) {
-            case 'active':
-                selectEl.classList.add('bg-green-100', 'text-green-800');
-                dot.classList.add('bg-green-800');
-                break;
-            case 'pending':
-                selectEl.classList.add('bg-yellow-100', 'text-yellow-800');
-                dot.classList.add('bg-yellow-800');
-                break;
-            case 'inactive':
-                selectEl.classList.add('bg-red-100', 'text-red-800');
-                dot.classList.add('bg-red-800');
-                break;
-        }
-
-        selectEl.setAttribute('data-original-value', value);
-    }
-
-    function showNotification(type, message) {
-        const notification = document.createElement('div');
-        notification.className = `fixed top-4 right-4 z-50 px-4 py-3 rounded-md shadow-lg transition-all duration-300 ${
-            type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
-        }`;
-        notification.textContent = message;
-        document.body.appendChild(notification);
-        setTimeout(() => {
-            notification.style.opacity = '0';
-            setTimeout(() => document.body.removeChild(notification), 300);
-        }, 3000);
-    }
-
-    // Filter function for table and mobile cards
-    function filterTable() {
-        const searchTerm = searchInput.value.toLowerCase();
-        const statusTerm = statusFilter.value.toLowerCase();
-
-        // Desktop table rows
-        rows.forEach(row => {
-            const id = row.children[0]?.textContent.toLowerCase() || '';
-            const partnerName = row.children[1]?.textContent.toLowerCase() || '';
-            const apartmentName = row.children[2]?.textContent.toLowerCase() || '';
-            const location = row.children[3]?.textContent.toLowerCase() || '';
-            const statusSelect = row.children[6]?.querySelector('select');
-            const status = statusSelect ? statusSelect.value.toLowerCase() : '';
-
-            const matchesSearch = id.includes(searchTerm) || partnerName.includes(searchTerm) || apartmentName.includes(searchTerm) || location.includes(searchTerm);
-            const matchesStatus = !statusTerm || status === statusTerm;
-
-            row.style.display = matchesSearch && matchesStatus ? '' : 'none';
-        });
-
-        // Mobile card view
-        const mobileCards = document.querySelectorAll('.sm\\:hidden .bg-white');
-        mobileCards.forEach(card => {
-            const title = card.querySelector('h3')?.textContent.toLowerCase() || '';
-            const partner = card.querySelector('p strong:contains("Partner")')?.parentElement.textContent.toLowerCase() || '';
-            const location = card.querySelector('p strong:contains("Location")')?.parentElement.textContent.toLowerCase() || '';
-            const statusSelect = card.querySelector('select');
-            const status = statusSelect ? statusSelect.value.toLowerCase() : '';
-
-            const matchesSearch = title.includes(searchTerm) || partner.includes(searchTerm) || location.includes(searchTerm);
-            const matchesStatus = !statusTerm || status === statusTerm;
-
-            card.style.display = matchesSearch && matchesStatus ? '' : 'none';
-        });
-    }
-
-        searchInput.addEventListener('input', filterTable);
-        statusFilter.addEventListener('change', filterTable);
-    });
-
-    // Status change handler
-    function handleStatusChange(selectEl, id) {
-        const originalValue = selectEl.dataset.originalValue;
-        const value = selectEl.value;
-        const wrapper = selectEl.parentElement;
-        const dot = wrapper.querySelector('span');
-
-        selectEl.disabled = true;
-        selectEl.style.opacity = '0.6';
-
-        fetch(`/admin/status/property/${id}`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            },
-            body: JSON.stringify({
-                status: value
-            })
         })
         .then(response => response.json())
         .then(data => {

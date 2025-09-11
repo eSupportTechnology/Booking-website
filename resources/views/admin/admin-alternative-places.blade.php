@@ -33,9 +33,9 @@
                 <select id="statusFilter"
                     class="px-2 py-1.5 text-xs sm:text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#3CC0E9] bg-white">
                     <option value="">All Status</option>
-                    <option value="available">Available</option>
+                    <option value="active">Active</option>
                     <option value="pending">Pending</option>
-                    <option value="unavailable">Unavailable</option>
+                    <option value="suspended">Inactive</option>
                 </select>
             </div>
         </div>
@@ -89,16 +89,16 @@
                                     @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('change_alternative_status'))
                                     <select onchange="handleStatusChange(this, '{{ $property->id }}')"
                                         class="appearance-none font-medium text-[10px] sm:text-xs rounded-full pl-5 pr-3 py-0.5 focus:outline-none focus:ring-2 focus:ring-[#3CC0E9] transition
-                                        {{ $property->status === 'available' ? 'bg-green-100 text-green-800' : ($property->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}"
-                                        data-original-value="{{ $property->status }}">
-                                        <option value="available" {{ $property->status === 'available' ? 'selected' : '' }}>Available</option>
+                                        {{ $property->status === 'active' ? 'bg-green-100 text-green-800' : ($property->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}"
+                                        data-original-value="{{ $property->status === 'suspended' ? 'inactive' : $property->status }}">
+                                        <option value="active" {{ $property->status === 'active' ? 'selected' : '' }}>Active</option>
                                         <option value="pending" {{ $property->status === 'pending' ? 'selected' : '' }}>Pending</option>
-                                        <option value="unavailable" {{ $property->status === 'unavailable' ? 'selected' : '' }}>Unavailable</option>
+                                        <option value="inactive" {{ $property->status === 'suspended' ? 'selected' : '' }}>Inactive</option>
                                     </select>
-                                    <span class="absolute top-1/2 left-1.5 -translate-y-1/2 w-1.5 h-1.5 rounded-full {{ $property->status === 'available' ? 'bg-green-800' : ($property->status === 'pending' ? 'bg-yellow-800' : 'bg-red-800') }}"></span>
+                                    <span class="absolute top-1/2 left-1.5 -translate-y-1/2 w-1.5 h-1.5 rounded-full {{ $property->status === 'active' ? 'bg-green-800' : ($property->status === 'pending' ? 'bg-yellow-800' : 'bg-red-800') }}"></span>
                                     @else
-                                    <span class="px-3 py-1 rounded-full text-xs font-semibold {{ $property->status === 'available' ? 'bg-green-100 text-green-800' : ($property->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
-                                        {{ ucfirst($property->status) }}
+                                    <span class="px-3 py-1 rounded-full text-xs font-semibold {{ $property->status === 'active' ? 'bg-green-100 text-green-800' : ($property->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
+                                        {{ $property->status === 'suspended' ? 'Inactive' : ucfirst($property->status) }}
                                     </span>
                                     @endif
                                 </div>
@@ -132,8 +132,8 @@
                 <div class="flex justify-between items-center">
                     <h3 class="font-semibold text-base sm:text-lg truncate">{{ $property->title }}</h3>
                     <span class="px-2 py-1 rounded-full text-xs font-semibold
-                        {{ $property->status === 'available' ? 'bg-green-100 text-green-800' : ($property->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
-                        {{ ucfirst($property->status) }}
+                        {{ $property->status === 'active' ? 'bg-green-100 text-green-800' : ($property->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
+                        {{ $property->status === 'suspended' ? 'Inactive' : ucfirst($property->status) }}
                     </span>
                 </div>
                 <p class="text-sm text-gray-600"><strong>ID:</strong> #{{ $property->id }}</p>
@@ -223,16 +223,15 @@ document.addEventListener('DOMContentLoaded', function () {
         dot.className = 'absolute top-1/2 left-1.5 -translate-y-1/2 w-1.5 h-1.5 rounded-full';
 
         switch (value) {
-            case 'available':
+            case 'active':
                 selectEl.classList.add('bg-green-100', 'text-green-800');
                 dot.classList.add('bg-green-800');
                 break;
             case 'pending':
-            case 'pending':
                 selectEl.classList.add('bg-yellow-100', 'text-yellow-800');
                 dot.classList.add('bg-yellow-800');
                 break;
-            case 'unavailable':
+            case 'inactive':
                 selectEl.classList.add('bg-red-100', 'text-red-800');
                 dot.classList.add('bg-red-800');
                 break;
@@ -266,10 +265,13 @@ document.addEventListener('DOMContentLoaded', function () {
             const placeName = row.children[2]?.textContent.toLowerCase() || '';
             const location = row.children[3]?.textContent.toLowerCase() || '';
             const statusSelect = row.children[6]?.querySelector('select');
-            const status = statusSelect ? statusSelect.value.toLowerCase() : '';
+            let status = statusSelect ? statusSelect.value.toLowerCase() : '';
+            
+            // Map display status to filter status
+            if (status === 'inactive') status = 'suspended';
 
             const matchesSearch = id.includes(searchTerm) || partnerName.includes(searchTerm) || placeName.includes(searchTerm) || location.includes(searchTerm);
-            const matchesStatus = !statusTerm || status === statusTerm;
+            const matchesStatus = !statusTerm || status === statusTerm || (statusTerm === 'suspended' && status === 'inactive');
 
             row.style.display = matchesSearch && matchesStatus ? '' : 'none';
         });
