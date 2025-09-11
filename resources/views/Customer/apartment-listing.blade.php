@@ -76,7 +76,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             @forelse($properties as $property)
                 <div class="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden flex flex-col w-full max-w-sm">
-                    <img src="{{ $property->files->where('file_type', 'image')->first() ? asset('storage/' . $property->files->where('file_type', 'image')->first()->path) : asset('images/AA.png') }}" 
+                    <img src="{{ $property->files->where('file_type', 'image')->first() ? asset('storage/' . $property->files->where('file_type', 'image')->first()->path) : asset('images/AA.png') }}"
                          alt="{{ $property->title }}" class="w-full h-48 object-cover">
                     <div class="p-4 flex flex-col justify-between flex-1">
                         <div class="flex justify-between items-center mb-2">
@@ -117,7 +117,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 class="text-2xl font-semibold text-gray-800 mb-6">Browse by property type</h2>
         <div class="flex space-x-4 overflow-x-auto pb-2">
-            
+
           <!-- Hotels -->
             <a href="{{ route('hotel-listing') }}" class="min-w-[250px]">
                 <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
@@ -130,7 +130,7 @@
                 </div>
             </a>
 
-            
+
             <!-- Apartments -->
             <a href="{{ route('apartment-listing') }}" class="min-w-[250px]">
                 <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
@@ -156,9 +156,9 @@
             </a>
 
 
-          
+
             <!-- Villas -->
-            <a href="{{ route('hotel-listing') }}" class="min-w-[250px]">
+            <a href="{{ route('alternative-places-listing') }}" class="min-w-[250px]">
                 <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
                     <img src="{{ asset('images/resorts.jpg') }}" alt="Villas" class="w-full h-48 object-cover">
                 </div>
