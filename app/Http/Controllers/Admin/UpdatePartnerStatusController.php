@@ -24,10 +24,25 @@ class UpdatePartnerStatusController extends Controller
 
         try {
             $user = $partner->user;
-            $oldStatus = $partner->status;
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Partner has no associated user account.'
+                ], 400);
+            }
+
+            $oldStatus = $partner->status ?? ($user->email_verified_at ? 'active' : 'pending');
+
+            // Map frontend status to database status
+            $dbStatus = match($request->status) {
+                'active' => 'active',
+                'inactive' => 'suspended',
+                'pending' => 'pending',
+                default => 'pending'
+            };
 
             // Update partner status
-            $partner->status = $request->status === 'inactive' ? 'suspended' : $request->status;
+            $partner->status = $dbStatus;
 
             // Update user email verification status based on partner status
             switch($request->status) {
@@ -38,7 +53,7 @@ class UpdatePartnerStatusController extends Controller
                     $user->email_verified_at = null;
                     break;
                 case 'pending':
-                    $user->email_verified_at = now();
+                    // Keep existing verification if any, otherwise set to null
                     break;
             }
 
@@ -59,7 +74,7 @@ class UpdatePartnerStatusController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to update partner status. ' . $e->getMessage()
+                'message' => 'Failed to update partner status. Please try again.'
             ], 500);
         }
     }

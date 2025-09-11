@@ -869,6 +869,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::prefix('status')->name('status.')->group(function () {
             // Property status routes
             Route::patch('/property/{property}', \App\Http\Controllers\Admin\UpdatePropertyStatusController::class)->name('property.update');
+            Route::patch('/alternative-place/{property}', \App\Http\Controllers\Admin\UpdatePropertyStatusController::class)->name('alternative-place.update');
 
             // User status routes
             Route::patch('/customer/{user}', \App\Http\Controllers\Admin\UpdateCustomerStatusController::class)->name('customer.update');
