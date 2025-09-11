@@ -235,7 +235,7 @@
                     <input type="number" x-model="pricePerDay" placeholder="e.g., 16000" class="w-full p-2 border rounded-lg" step="0.01">
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
+               <!-- <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block font-semibold text-sm mb-1">Airport Fee (Optional)</label>
                         <input type="number" x-model="airportFee" placeholder="e.g., 200" class="w-full p-2 border rounded-lg" step="0.01">
@@ -244,7 +244,7 @@
                         <label class="block font-semibold text-sm mb-1">Luggage Fee (Optional)</label>
                         <input type="number" x-model="luggageFee" placeholder="e.g., 50" class="w-full p-2 border rounded-lg" step="0.01">
                     </div>
-                </div>
+                </div>-->
             </div>
 
             <!-- Navigation Buttons -->

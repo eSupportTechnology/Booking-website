@@ -18,47 +18,7 @@
         <div class="max-w-full mx-auto px-4">
             <div class="flex justify-between h-16 items-center">
 
-                <!-- Left: Logo + Hamburger -->
-                <div class="flex items-center space-x-4">
-                    <!-- Hamburger -->
-                    <button id="menuToggle" class="text-white focus:outline-none block md:hidden">
-                        <i class="fas fa-bars text-xl"></i>
-                    </button>
-                    <a href="{{ route('partner.dashboard') }}" class="text-xl font-bold">Partner Panel</a>
-                </div>
-
-                <!-- Center: Search -->
-                <div class="hidden md:flex">
-                    <input type="text" placeholder="Search..."
-                        class="px-3 py-1 rounded bg-[#3CC0E9] placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-yellow-300 text-sm" />
-                </div>
-
-                <!-- Right: Notifications + Profile -->
-                <div class="flex items-center space-x-4">
-                    <div class="relative">
-                        <button class="text-white">
-                            <i class="fas fa-bell"></i>
-                        </button>
-                        <span class="absolute -top-1 -right-2 bg-red-500 text-xs px-1.5 rounded-full">3</span>
-                    </div>
-                    <div class="relative group">
-                        <button class="text-white flex items-center space-x-1">
-                            <i class="fas fa-user-circle text-lg"></i>
-                            <span class="text-sm">{{ Auth::user()->name ?? 'Partner' }}</span>
-                        </button>
-                        <div
-                            class="absolute right-0 bg-white text-black shadow-lg rounded hidden group-hover:block min-w-[150px] z-50">
-                            <a href="{{ route('partner.earnings') }}" class="block px-4 py-2 hover:bg-gray-100 rounded">Profile</a>
-                            <a href="{{ route('partner.settings') }}" class="block px-4 py-2 hover:bg-gray-100 rounded">Settings</a>
-                            <div class="border-t"></div>
-                            <form method="POST" action="{{ route('partner.logout') }}">
-                                @csrf
-                                <button type="submit"
-                                    class="block w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100 rounded">Logout</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+               
             </div>
         </div>
     </nav>
@@ -132,13 +92,13 @@
                         <a href="{{ route('car_rentals-listing') }}"
                             class="flex justify-between items-center px-4 py-2 rounded-lg hover:bg-blue-50 text-gray-600 hover:text-[#1F8FB2] transition-colors duration-200">
                             <span class="text-sm font-medium">Car Rentals</span>
-                            <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-1 rounded-full">{{ $propertyCounts->apartments }}</span>
+                            <!--<span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-1 rounded-full">0</span>-->
                         </a>
 
                         <a href="{{ route('taxi.listing') }}"
                             class="flex justify-between items-center px-4 py-2 rounded-lg hover:bg-blue-50 text-gray-600 hover:text-[#1F8FB2] transition-colors duration-200">
                             <span class="text-sm font-medium">Airport Taxi</span>
-                            <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-1 rounded-full">{{ $propertyCounts->homes }}</span>
+                            <!--<span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-1 rounded-full">0</span>-->
                         </a>
 
                        

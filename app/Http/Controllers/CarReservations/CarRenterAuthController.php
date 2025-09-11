@@ -125,7 +125,7 @@ class CarRenterAuthController extends Controller
         $request->session()->forget('car_renter_registration');
         $request->session()->put('car_renter_email', $email);
 
-        return redirect()->route('carrentals.register.email.verify');
+        return redirect()->route('carrentals.login.email');
     }
 
     // Email verification page

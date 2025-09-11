@@ -39,5 +39,20 @@ class CarRenterControlPanel extends Controller
 
         return view('car_rentals.show_car', compact('car'));
     }
+
+    public function destroy($id)
+{
+    $user = Auth::guard('car_renter')->user();
+
+    // Find car that belongs to this renter
+    $car = Car::where('car_renter_id', $user->id)->findOrFail($id);
+
+    // Delete the car
+    $car->delete();
+
+    // Redirect back with success message
+    return redirect()->route('car_rentals-listing')->with('success', 'Car deleted successfully.');
+}
+
 }
 

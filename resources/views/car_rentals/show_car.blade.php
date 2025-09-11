@@ -8,11 +8,11 @@
     <div class="bg-white p-6 rounded-2xl shadow-lg flex flex-col md:flex-row gap-6">
       
       <!-- Left Column: Car Image -->
-      <div class="md:w-1/2 flex justify-center items-center border border-gray-200 p-2">
-        <img src="{{ $car->image_url ?? 'https://via.placeholder.com/400x300' }}" 
-             alt="{{ $car->brand->brand_name ?? '' }} {{ $car->model->model_name ?? '' }}" 
-             class="w-full h-auto rounded-xl object-cover">
-      </div>
+   <div class="md:w-1/2 flex justify-center items-center border border-gray-200 p-2">
+    <img src="{{ asset('images/11.jpg') }}" 
+         class="w-1/2 h-auto rounded-xl">
+</div>
+
 
       <!-- Right Column: Basic Car Details -->
       <div class="md:w-1/2 flex flex-col justify-start space-y-2">
@@ -63,7 +63,7 @@
             <p><strong>Pricing Type:</strong> {{ $car->pricingType ?? 'N/A' }}</p>
             <p><strong>Price Per Day:</strong> {{ $car->pricePerDay ?? 'N/A' }}</p>
             <p><strong>Price Per Km:</strong> {{ $car->pricePerKm ?? 'N/A' }}</p>
-            <p><strong>Deposit:</strong> {{ $car->deposit ?? 'N/A' }}</p>
+     
         </div>
 
     </div>
@@ -71,12 +71,12 @@
     <!-- Back Button -->
 <div class="flex justify-between mt-4 max-w-6xl mx-auto">
     <!-- Back Button -->
-    <a href="{{ url()->previous() }}" class="bg-gray-600 text-white font-semibold px-6 py-2 rounded-lg hover:bg-gray-700 min-w-[100px] text-center">
+    <a href="/my/car-rentals" class="bg-gray-600 text-white font-semibold px-6 py-2 rounded-lg hover:bg-gray-700 min-w-[100px] text-center">
         Back
     </a>
 
     <!-- Edit Button -->
-    <a href="#" class="bg-blue-600 text-white font-semibold px-6 py-2 rounded-lg hover:bg-blue-700 min-w-[100px] text-center">
+    <a href="" class="bg-blue-600 text-white font-semibold px-6 py-2 rounded-lg hover:bg-blue-700 min-w-[100px] text-center">
         Edit
     </a>
 </div>
