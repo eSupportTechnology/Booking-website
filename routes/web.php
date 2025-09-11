@@ -124,7 +124,7 @@ Route::get('/welcome', function () {
 });
 
 Route::get('/stays', function () {
-    return view('frontend.home');
+    return view('Customer.home');
 })->name('stays');
 
 Route::get('/car-rentals', function () {
@@ -605,7 +605,7 @@ Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddle
 
     // Settings
     Route::get('/settings', [\App\Http\Controllers\Partner\SettingsController::class, 'index'])->name('partner.settings');
-    
+
     // Property Edit/Delete
     Route::get('/properties/{property}/edit', [\App\Http\Controllers\Partner\PropertyController::class, 'edit'])->name('partner.properties.edit');
     Route::delete('/properties/{property}', [\App\Http\Controllers\Partner\PropertyController::class, 'destroy'])->name('partner.properties.destroy');
