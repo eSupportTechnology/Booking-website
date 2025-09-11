@@ -296,7 +296,7 @@ function carForm() {
                                 };
                                 this.selectedImage='';
                             } else {
-                                window.location.href="/car-renter/dashboard";
+                                window.location.href="/my/car-rentals";
                             }
                         });
                     } else {

@@ -46,15 +46,7 @@
                 class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 overflow-hidden hover:scale-105">
                 <a href="#">
                     <div class="h-48 bg-gray-200 relative">
-                        @if($taxi->drivers?->first()?->photo)
-                            <img src="{{ asset('storage/' . $taxi->drivers->first()->photo) }}"
-                                 alt="Taxi"
-                                 class="w-full h-full object-cover">
-                        @else
-                            <img src="https://via.placeholder.com/400x300"
-                                 alt="Taxi"
-                                 class="w-full h-full object-cover">
-                        @endif
+                        <img  src="{{ asset('images/11.jpg') }}" alt="Car" class="w-full h-full object-cover">
                         <div class="absolute top-4 right-4">
                             <span
                                 class="bg-{{ $taxi->is_active ? 'green' : 'yellow' }}-100 text-{{ $taxi->is_active ? 'green' : 'yellow' }}-800 px-3 py-1 rounded-full text-xs font-semibold">
@@ -83,14 +75,21 @@
                         </p>
                     @endif
                     <div class="flex space-x-2">
-                        <a href="#"
+                        <a href="{{ route('renter.taxis.show', $taxi->id) }}"
                            class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-center text-sm transition-colors duration-200">
                             <i class="fas fa-eye mr-1"></i>View
                         </a>
-                        <a href="#"
-                           class="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-center text-sm transition-colors duration-200">
-                            <i class="fas fa-edit mr-1"></i>Edit
-                        </a>
+                       <a href="#" 
+   onclick="event.preventDefault(); if(confirm('Are you sure you want to delete this taxi?')) { document.getElementById('delete-taxi-{{ $taxi->id }}').submit(); }"
+   class="flex-1 inline-flex items-center justify-center bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm transition-colors duration-200">
+   <i class="fas fa-trash-alt mr-1"></i>Delete
+</a>
+
+<form id="delete-taxi-{{ $taxi->id }}" action="{{ route('renter.taxis.destroy', $taxi->id) }}" method="POST" class="hidden">
+    @csrf
+    @method('DELETE')
+</form>
+
                     </div>
                 </div>
             </div>
@@ -99,7 +98,7 @@
                 <i class="fas fa-car text-gray-300 text-6xl mb-4"></i>
                 <h3 class="text-xl font-semibold text-gray-600 mb-2">No Taxis Found</h3>
                 <p class="text-gray-500 mb-6">Start by adding your first taxi</p>
-                <a href="{{ route('carrentals.dashboard') }}"
+                <a href="{{ route('renter.types') }}"
                    class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-200">
                     <i class="fas fa-plus mr-2"></i>Add Taxi
                 </a>

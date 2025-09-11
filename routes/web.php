@@ -1149,6 +1149,12 @@ Route::middleware('auth:car_renter')->group(function () {
 Route::middleware(['auth:car_renter'])->group(function () {
 
     Route::get('/cars/{id}', [CarRenterControlPanel::class, 'show'])->name('cars.show');
+    Route::delete('/renter/cars/{id}', [CarRenterControlPanel::class, 'destroy'])->name('renter.cars.destroy');
+    Route::delete('/renter/taxis/{id}', [AirportTaxiControlPanel::class, 'destroy'])->name('renter.taxis.destroy');
+    Route::get('/renter/taxis/{id}', [AirportTaxiControlPanel::class, 'show'])->name('renter.taxis.show');
+
+
+
 });
 
 Route::middleware('auth:car_renter')->group(function () {
