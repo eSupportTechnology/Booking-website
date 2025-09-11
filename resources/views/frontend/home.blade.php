@@ -316,7 +316,7 @@
             </a>
 
             <!-- Resorts -->
-            <a href="{{ route('homesss-listing') }}" class="min-w-[250px]">
+            <a href="{{ route('home-listing') }}" class="min-w-[250px]">
                 <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
                     <img src="{{ asset('images/villas.jpg') }}" alt="Resorts" class="w-full h-48 object-cover">
                 </div>
