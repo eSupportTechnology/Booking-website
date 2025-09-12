@@ -86,7 +86,8 @@
                                 <div class="relative">
                                     @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('change_airport_status'))
                                     <select onchange="handleTransferStatusChange(this, 'AT{{ $transfer->id }}')"
-                                        class="appearance-none @if($transfer->status === 'Scheduled') bg-green-100 text-green-800 @elseif($transfer->status === 'Completed') bg-yellow-100 text-yellow-800 @else bg-red-100 text-red-800 @endif font-medium text-[10px] sm:text-xs rounded-full pl-6 pr-4 py-1 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#1F8FB2] transition">
+                                        class="appearance-none @if($transfer->status === 'Scheduled') bg-green-100 text-green-800 @elseif($transfer->status === 'Completed') bg-yellow-100 text-yellow-800 @else bg-red-100 text-red-800 @endif font-medium text-[10px] sm:text-xs rounded-full pl-6 pr-4 py-1 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#1F8FB2] transition"
+                                        data-original-value="{{ $transfer->status }}">
                                         <option value="Scheduled" @selected($transfer->status === 'Scheduled')>Scheduled</option>
                                         <option value="Completed" @selected($transfer->status === 'Completed')>Completed</option>
                                         <option value="Cancelled" @selected($transfer->status === 'Cancelled')>Cancelled</option>
@@ -144,12 +145,42 @@
     function handleTransferStatusChange(selectEl, id) {
         const value = selectEl.value;
         const dot = selectEl.parentElement.querySelector('.status-dot');
+        const transferId = id.replace('AT', '');
 
+        selectEl.disabled = true;
+        selectEl.style.opacity = '0.6';
 
-        selectEl.className =
-            'appearance-none font-medium text-[10px] sm:text-xs rounded-full pl-6 pr-4 py-1 transition focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#1F8FB2]';
+        fetch(`/admin/status/airport-transfer/${transferId}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({ status: value })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                updateTransferStatusStyling(selectEl, dot, value);
+                showNotification('success', data.message);
+            } else {
+                selectEl.value = selectEl.getAttribute('data-original-value') || 'Scheduled';
+                showNotification('error', data.message || 'Failed to update status');
+            }
+        })
+        .catch(() => {
+            selectEl.value = selectEl.getAttribute('data-original-value') || 'Scheduled';
+            showNotification('error', 'Failed to update status. Please try again.');
+        })
+        .finally(() => {
+            selectEl.disabled = false;
+            selectEl.style.opacity = '1';
+        });
+    }
+
+    function updateTransferStatusStyling(selectEl, dot, value) {
+        selectEl.className = 'appearance-none font-medium text-[10px] sm:text-xs rounded-full pl-6 pr-4 py-1 transition focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#1F8FB2]';
         dot.className = 'absolute top-1/2 left-2 -translate-y-1/2 w-2 h-2 rounded-full status-dot';
-
 
         switch (value) {
             case 'Scheduled':
@@ -165,6 +196,20 @@
                 dot.classList.add('bg-red-800');
                 break;
         }
+        selectEl.setAttribute('data-original-value', value);
+    }
+
+    function showNotification(type, message) {
+        const notification = document.createElement('div');
+        notification.className = `fixed top-4 right-4 z-50 px-4 py-3 rounded-md shadow-lg transition-all duration-300 ${
+            type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+        }`;
+        notification.textContent = message;
+        document.body.appendChild(notification);
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            setTimeout(() => document.body.removeChild(notification), 300);
+        }, 3000);
     }
 
 

@@ -80,7 +80,7 @@
                          alt="{{ $property->title }}" class="w-full h-48 object-cover">
                     <div class="p-4 flex flex-col justify-between flex-1">
                         <div class="flex justify-between items-center mb-2">
-                            <h3 class="text-lg font-semibold">{{ $property->title }}</h3>
+                            <a href="{{ route('single-hotel', $property->id) }}" class="text-lg font-semibold hover:text-blue-600 transition">{{ $property->title }}</a>
                             @php
                                 $avgRating = $property->reviews->avg('rating') ?? 0;
                                 $reviewCount = $property->reviews->count();
@@ -89,9 +89,9 @@
                         </div>
                         <p class="text-sm text-gray-500 mb-2">{{ $property->city }} • {{ $property->address }}</p>
                         <div class="flex justify-between items-center">
-                            <button class="bg-[#3CC0E9] hover:bg-blue-600 text-white text-sm px-4 py-2 rounded-lg transition">
+                            <a href="{{ route('single-hotel', $property->id) }}" class="bg-[#3CC0E9] hover:bg-blue-600 text-white text-sm px-4 py-2 rounded-lg transition">
                                 Reserve this home
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>

@@ -80,7 +80,7 @@
                          alt="{{ $property->title }}" class="w-full h-48 object-cover">
                     <div class="p-4 flex flex-col justify-between flex-1">
                         <div class="flex justify-between items-center mb-2">
-                            <h3 class="text-lg font-semibold">{{ $property->title }}</h3>
+                            <a href="{{ route('single-hotel', $property->id) }}" class="text-lg font-semibold hover:text-blue-600 transition">{{ $property->title }}</a>
                             @if($property->stars)
                                 <span class="inline-block bg-yellow-400 text-white text-xs font-medium px-2 py-1 rounded">
                                     {{ $property->stars }}-Star
@@ -101,9 +101,9 @@
                             <span class="ml-2 text-sm text-gray-600">{{ number_format($avgRating, 1) }} ({{ $reviewCount }} reviews)</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <button class="bg-[#3CC0E9] hover:bg-blue-600 text-white text-sm px-4 py-2 rounded-lg transition">
+                            <a href="{{ route('single-hotel', $property->id) }}" class="bg-[#3CC0E9] hover:bg-blue-600 text-white text-sm px-4 py-2 rounded-lg transition">
                                 See Availability
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>

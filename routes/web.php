@@ -874,6 +874,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
             // User status routes
             Route::patch('/customer/{user}', \App\Http\Controllers\Admin\UpdateCustomerStatusController::class)->name('customer.update');
             Route::patch('/partner/{partner}', \App\Http\Controllers\Admin\UpdatePartnerStatusController::class)->name('partner.update');
+            
+            // Rental status routes
+            Route::patch('/taxi/{taxi}', \App\Http\Controllers\Admin\UpdateTaxiStatusController::class)->name('taxi.update');
+            Route::patch('/airport-transfer/{transfer}', \App\Http\Controllers\Admin\UpdateAirportTransferStatusController::class)->name('airport-transfer.update');
         });
     });
 });
@@ -935,6 +939,8 @@ Route::get('/home-listing', [\App\Http\Controllers\Customer\PropertyListingContr
 Route::get('/car-rental-listing', [\App\Http\Controllers\Customer\PropertyListingController::class, 'carRentalListing'])->name('car-rental-listing');
 
 Route::get('/alternative-places-listing', [\App\Http\Controllers\Customer\PropertyListingController::class, 'alternativePlacesListing'])->name('alternative-places-listing');
+
+Route::get('/single-hotel/{id}', [\App\Http\Controllers\Customer\PropertyListingController::class, 'singleHotel'])->name('single-hotel');
 
 
 
