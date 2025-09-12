@@ -120,10 +120,7 @@
       <input type="tel" id="individual_phone" name="individual_phone" required class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2" />
     </div>
 
-      <div>
-      <label for="individual_phone" class="block text-sm font-medium text-gray-800 mb-1">Phone number 2<span class="text-red-500">*</span></label>
-      <input type="tel" id="individual_phone" name="individual_phone" required class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2" />
-    </div>
+   
 
       <div>
       <label for="individual_phone2" class="block text-sm font-medium text-gray-800 mb-1">Phone number 2 <span class="text-red-500">*</span></label>

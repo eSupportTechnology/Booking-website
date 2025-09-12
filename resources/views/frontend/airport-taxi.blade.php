@@ -409,7 +409,7 @@ properties worldwide
                     
                     <p class="font-medium font-semibold" style="font-family: 'Noto Sans', sans-serif;"> Join our platform to showcase your airport taxis and connect with thousands of travelers searching for reliable rides.</p>
                    <!-- Get Started Now Button -->
-                   <a href="/carrentals/account/create">
+                   <a href="/carrentals/register/details">
                        <button class="text-white px-4 py-1 rounded mt-2 w-auto font-semibold" 
                                style="font-family: 'Noto Sans', sans-serif; background-color:#3CC0E9;">
                            Get Started Now  
@@ -419,7 +419,7 @@ properties worldwide
 <!-- Already Registered Sign In Link -->
 <p class="mt-2 text-sm" style="font-family: 'Noto Sans', sans-serif;">
   Already registered? 
-  <a href="/carrentals/signin" class="text-blue-600 hover:underline">
+  <a href="/car-renter/login/email" class="text-blue-600 hover:underline">
     Sign In
   </a>
 </p>
