@@ -955,6 +955,9 @@ Route::get('/property/vedio', function () {
 //     return view('frontend.admin.admin');
 // })->name('admin.dashboard');
 
+Route::view('/search', 'frontend.search-page')->name('search-page');
+
+
 
 
 
