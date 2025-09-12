@@ -65,4 +65,12 @@ class PropertyListingController extends Controller
 
         return view('Customer.alternative-places-listing', compact('properties'));
     }
+
+    public function singleHotel($id)
+    {
+        $property = Property::with(['files', 'reviews.user', 'category'])
+            ->findOrFail($id);
+
+        return view('Customer.single-hotel', compact('property'));
+    }
 }

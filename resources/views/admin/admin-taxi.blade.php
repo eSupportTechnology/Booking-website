@@ -151,13 +151,42 @@
         const value = selectEl.value;
         const wrapper = selectEl.parentElement;
         const dot = wrapper.querySelector('.status-dot');
+        const taxiId = id.replace('T', '');
 
+        selectEl.disabled = true;
+        selectEl.style.opacity = '0.6';
 
-        selectEl.className =
-            'appearance-none font-medium text-xs sm:text-sm rounded-full pl-6 pr-4 py-1 transition focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#1F8FB2]';
-        dot.className =
-            'absolute top-1/2 left-2 -translate-y-1/2 w-2 h-2 rounded-full status-dot';
+        fetch(`/admin/status/taxi/${taxiId}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({ status: value })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                updateTaxiStatusStyling(selectEl, dot, value);
+                showNotification('success', data.message);
+            } else {
+                selectEl.value = selectEl.getAttribute('data-original-value') || 'Active';
+                showNotification('error', data.message || 'Failed to update status');
+            }
+        })
+        .catch(() => {
+            selectEl.value = selectEl.getAttribute('data-original-value') || 'Active';
+            showNotification('error', 'Failed to update status. Please try again.');
+        })
+        .finally(() => {
+            selectEl.disabled = false;
+            selectEl.style.opacity = '1';
+        });
+    }
 
+    function updateTaxiStatusStyling(selectEl, dot, value) {
+        selectEl.className = 'appearance-none font-medium text-xs sm:text-sm rounded-full pl-6 pr-4 py-1 transition focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#1F8FB2]';
+        dot.className = 'absolute top-1/2 left-2 -translate-y-1/2 w-2 h-2 rounded-full status-dot';
 
         switch (value) {
             case 'Active':
@@ -173,6 +202,20 @@
                 dot.classList.add('bg-red-800');
                 break;
         }
+        selectEl.setAttribute('data-original-value', value);
+    }
+
+    function showNotification(type, message) {
+        const notification = document.createElement('div');
+        notification.className = `fixed top-4 right-4 z-50 px-4 py-3 rounded-md shadow-lg transition-all duration-300 ${
+            type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+        }`;
+        notification.textContent = message;
+        document.body.appendChild(notification);
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            setTimeout(() => document.body.removeChild(notification), 300);
+        }, 3000);
     }
 
     document.addEventListener('DOMContentLoaded', function () {
