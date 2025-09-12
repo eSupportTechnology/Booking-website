@@ -28,7 +28,7 @@
     </style>
 </head>
 <body class="bg-gray-100">
-<header class="bg-blue-800 text-white">
+<header class="bg-[#1F8FB2] text-white">
   <div class="max-w-6xl mx-auto px-4 py-3">
     <!-- Top bar: Logo + Actions -->
     <div class="flex flex-col sm:flex-row justify-between items-center sm:items-center gap-3 sm:gap-0">
