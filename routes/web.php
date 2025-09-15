@@ -605,6 +605,12 @@ Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddle
 
     // Settings
     Route::get('/settings', [\App\Http\Controllers\Partner\SettingsController::class, 'index'])->name('partner.settings');
+    Route::get('/account-settings', [\App\Http\Controllers\Partner\AccountSettingsController::class, 'index'])->name('partner.account.settings');
+    Route::post('/settings/profile', [\App\Http\Controllers\Partner\AccountSettingsController::class, 'updateProfile'])->name('partner.settings.profile.update');
+    Route::post('/settings/password', [\App\Http\Controllers\Partner\AccountSettingsController::class, 'updatePassword'])->name('partner.settings.password.update');
+    Route::post('/settings/notifications', [\App\Http\Controllers\Partner\AccountSettingsController::class, 'updateNotifications'])->name('partner.settings.notifications.update');
+    Route::post('/settings/payout', [\App\Http\Controllers\Partner\AccountSettingsController::class, 'updatePayout'])->name('partner.settings.payout.update');
+    Route::post('/settings/two-factor', [\App\Http\Controllers\Partner\AccountSettingsController::class, 'toggleTwoFactor'])->name('partner.settings.two-factor.toggle');
 
     // Property Edit/Delete
     Route::get('/properties/{property}/edit', [\App\Http\Controllers\Partner\PropertyController::class, 'edit'])->name('partner.properties.edit');
@@ -844,9 +850,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/accounts/{id}/status', [AdminAccountController::class, 'updateStatus'])->name('accounts.updateStatus');
 
         // Settings
-        Route::get('/settings', function () {
-            return view('admin.admin-settings');
-        })->name('settings');
+        Route::get('/settings', [\App\Http\Controllers\Admin\AdminSettingsController::class, 'index'])->name('settings');
+        Route::post('/settings/profile', [\App\Http\Controllers\Admin\AdminSettingsController::class, 'updateProfile'])->name('settings.profile.update');
+        Route::post('/settings/password', [\App\Http\Controllers\Admin\AdminSettingsController::class, 'updatePassword'])->name('settings.password.update');
+        Route::post('/settings/notifications', [\App\Http\Controllers\Admin\AdminSettingsController::class, 'updateNotifications'])->name('settings.notifications.update');
+        Route::post('/settings/two-factor', [\App\Http\Controllers\Admin\AdminSettingsController::class, 'toggleTwoFactor'])->name('settings.two-factor.toggle');
 
         // Super admin only routes
         Route::middleware(\App\Http\Middleware\SuperAdminMiddleware::class)->group(function () {

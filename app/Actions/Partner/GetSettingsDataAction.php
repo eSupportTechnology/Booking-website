@@ -15,7 +15,8 @@ class GetSettingsDataAction
         return [
             'profile' => $this->settingsService->getProfile(),
             'notifications' => $this->settingsService->getNotificationSettings(),
-            'security' => $this->settingsService->getSecuritySettings()
+            'security' => $this->settingsService->getSecuritySettings(),
+            'payout' => $this->settingsService->getPayoutSettings()
         ];
     }
 }
