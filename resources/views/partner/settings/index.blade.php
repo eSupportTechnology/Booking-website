@@ -41,52 +41,73 @@
         <div x-show="activeTab === 'profile'" class="p-8">
             <div class="max-w-2xl">
                 <h3 class="text-2xl font-bold text-gray-900 mb-6">Profile Information</h3>
-                <div class="space-y-6">
-                    <div class="flex items-center space-x-6">
-                        <div class="h-24 w-24 bg-gradient-to-r from-gray-400 to-gray-500 rounded-full flex items-center justify-center">
-                            <i class="fas fa-user text-white text-2xl"></i>
+                <form action="{{ route('partner.settings.profile.update') }}" method="POST">
+                    @csrf
+                    <div class="space-y-6">
+                        <div class="flex items-center space-x-6">
+                            <div class="h-24 w-24 bg-gradient-to-r from-gray-400 to-gray-500 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user text-white text-2xl"></i>
+                            </div>
+                            <div>
+                                <button type="button" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors duration-200">
+                                    <i class="fas fa-camera mr-2"></i>Change Photo
+                                </button>
+                                <p class="text-sm text-gray-500 mt-2">JPG, GIF or PNG. Max size 2MB.</p>
+                            </div>
                         </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Full Name</label>
+                                <input type="text" name="full_name" value="{{ $profile['name'] }}" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all duration-200" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
+                                <input type="email" name="email" value="{{ $profile['email'] }}" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all duration-200" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Phone Number</label>
+                                <input type="tel" name="phone" value="{{ $profile['phone'] }}" placeholder="+1 234 567 8900" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all duration-200">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Language</label>
+                                <select name="language" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all duration-200" required>
+                                    <option value="en" {{ $profile['language'] == 'English' ? 'selected' : '' }}>English</option>
+                                    <option value="es" {{ $profile['language'] == 'Spanish' ? 'selected' : '' }}>Spanish</option>
+                                    <option value="fr" {{ $profile['language'] == 'French' ? 'selected' : '' }}>French</option>
+                                    <option value="de" {{ $profile['language'] == 'German' ? 'selected' : '' }}>German</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Timezone</label>
+                                <select name="timezone" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all duration-200" required>
+                                    <option value="UTC" {{ $profile['timezone'] == 'UTC' ? 'selected' : '' }}>UTC</option>
+                                    <option value="America/New_York" {{ $profile['timezone'] == 'America/New_York' ? 'selected' : '' }}>Eastern Time</option>
+                                    <option value="America/Chicago" {{ $profile['timezone'] == 'America/Chicago' ? 'selected' : '' }}>Central Time</option>
+                                    <option value="America/Los_Angeles" {{ $profile['timezone'] == 'America/Los_Angeles' ? 'selected' : '' }}>Pacific Time</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Currency</label>
+                                <select name="currency" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all duration-200" required>
+                                    <option value="USD" {{ $profile['currency'] == 'USD' ? 'selected' : '' }}>USD ($)</option>
+                                    <option value="EUR" {{ $profile['currency'] == 'EUR' ? 'selected' : '' }}>EUR (€)</option>
+                                    <option value="GBP" {{ $profile['currency'] == 'GBP' ? 'selected' : '' }}>GBP (£)</option>
+                                    <option value="CAD" {{ $profile['currency'] == 'CAD' ? 'selected' : '' }}>CAD (C$)</option>
+                                </select>
+                            </div>
+                        </div>
+                        
                         <div>
-                            <button class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors duration-200">
-                                <i class="fas fa-camera mr-2"></i>Change Photo
-                            </button>
-                            <p class="text-sm text-gray-500 mt-2">JPG, GIF or PNG. Max size 2MB.</p>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Bio</label>
+                            <textarea name="bio" rows="4" placeholder="Tell guests about yourself..." class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all duration-200">{{ $profile['bio'] }}</textarea>
                         </div>
+                        
+                        <button type="submit" class="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg">
+                            <i class="fas fa-save mr-2"></i>Update Profile
+                        </button>
                     </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Full Name</label>
-                            <input type="text" value="{{ $profile['name'] }}" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all duration-200">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
-                            <input type="email" value="{{ $profile['email'] }}" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all duration-200">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Phone Number</label>
-                            <input type="tel" value="{{ $profile['phone'] }}" placeholder="+1 234 567 8900" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all duration-200">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Language</label>
-                            <select class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all duration-200">
-                                <option>English</option>
-                                <option>Spanish</option>
-                                <option>French</option>
-                                <option>German</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Bio</label>
-                        <textarea rows="4" placeholder="Tell guests about yourself..." class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all duration-200">{{ $profile['bio'] }}</textarea>
-                    </div>
-                    
-                    <button class="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg">
-                        <i class="fas fa-save mr-2"></i>Update Profile
-                    </button>
-                </div>
+                </form>
             </div>
         </div>
 
@@ -94,83 +115,86 @@
         <div x-show="activeTab === 'notifications'" class="p-8">
             <div class="max-w-2xl">
                 <h3 class="text-2xl font-bold text-gray-900 mb-6">Notification Preferences</h3>
-                <div class="space-y-6">
-                    <div class="bg-gray-50 p-6 rounded-xl">
-                        <h4 class="font-semibold text-gray-900 mb-4">Email Notifications</h4>
-                        <div class="space-y-4">
-                            <label class="flex items-center justify-between">
-                                <div class="flex items-center">
-                                    <i class="fas fa-calendar-check text-green-600 mr-3"></i>
-                                    <div>
-                                        <span class="font-medium text-gray-900">New Bookings</span>
-                                        <p class="text-sm text-gray-600">Get notified when you receive a new booking</p>
+                <form action="{{ route('partner.settings.notifications.update') }}" method="POST">
+                    @csrf
+                    <div class="space-y-6">
+                        <div class="bg-gray-50 p-6 rounded-xl">
+                            <h4 class="font-semibold text-gray-900 mb-4">Email Notifications</h4>
+                            <div class="space-y-4">
+                                <label class="flex items-center justify-between">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-calendar-check text-green-600 mr-3"></i>
+                                        <div>
+                                            <span class="font-medium text-gray-900">New Bookings</span>
+                                            <p class="text-sm text-gray-600">Get notified when you receive a new booking</p>
+                                        </div>
                                     </div>
-                                </div>
-                                <input type="checkbox" {{ $notifications['email_bookings'] ? 'checked' : '' }} class="h-5 w-5 text-gray-600 rounded focus:ring-gray-500">
-                            </label>
-                            <label class="flex items-center justify-between">
-                                <div class="flex items-center">
-                                    <i class="fas fa-envelope text-purple-600 mr-3"></i>
-                                    <div>
-                                        <span class="font-medium text-gray-900">Messages</span>
-                                        <p class="text-sm text-gray-600">Get notified when guests send you messages</p>
+                                    <input type="checkbox" name="email_bookings" value="1" {{ $notifications['email_bookings'] ? 'checked' : '' }} class="h-5 w-5 text-gray-600 rounded focus:ring-gray-500">
+                                </label>
+                                <label class="flex items-center justify-between">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-envelope text-purple-600 mr-3"></i>
+                                        <div>
+                                            <span class="font-medium text-gray-900">Messages</span>
+                                            <p class="text-sm text-gray-600">Get notified when guests send you messages</p>
+                                        </div>
                                     </div>
-                                </div>
-                                <input type="checkbox" {{ $notifications['email_messages'] ? 'checked' : '' }} class="h-5 w-5 text-gray-600 rounded focus:ring-gray-500">
-                            </label>
-                            <label class="flex items-center justify-between">
-                                <div class="flex items-center">
-                                    <i class="fas fa-star text-yellow-600 mr-3"></i>
-                                    <div>
-                                        <span class="font-medium text-gray-900">Reviews</span>
-                                        <p class="text-sm text-gray-600">Get notified when guests leave reviews</p>
+                                    <input type="checkbox" name="email_messages" value="1" {{ $notifications['email_messages'] ? 'checked' : '' }} class="h-5 w-5 text-gray-600 rounded focus:ring-gray-500">
+                                </label>
+                                <label class="flex items-center justify-between">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-star text-yellow-600 mr-3"></i>
+                                        <div>
+                                            <span class="font-medium text-gray-900">Reviews</span>
+                                            <p class="text-sm text-gray-600">Get notified when guests leave reviews</p>
+                                        </div>
                                     </div>
-                                </div>
-                                <input type="checkbox" class="h-5 w-5 text-gray-600 rounded focus:ring-gray-500">
-                            </label>
-                            <label class="flex items-center justify-between">
-                                <div class="flex items-center">
-                                    <i class="fas fa-dollar-sign text-green-600 mr-3"></i>
-                                    <div>
-                                        <span class="font-medium text-gray-900">Payments</span>
-                                        <p class="text-sm text-gray-600">Get notified about payment updates</p>
+                                    <input type="checkbox" name="email_reviews" value="1" {{ $notifications['email_reviews'] ? 'checked' : '' }} class="h-5 w-5 text-gray-600 rounded focus:ring-gray-500">
+                                </label>
+                                <label class="flex items-center justify-between">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-dollar-sign text-green-600 mr-3"></i>
+                                        <div>
+                                            <span class="font-medium text-gray-900">Payments</span>
+                                            <p class="text-sm text-gray-600">Get notified about payment updates</p>
+                                        </div>
                                     </div>
-                                </div>
-                                <input type="checkbox" checked class="h-5 w-5 text-gray-600 rounded focus:ring-gray-500">
-                            </label>
+                                    <input type="checkbox" name="email_payments" value="1" {{ $notifications['email_payments'] ? 'checked' : '' }} class="h-5 w-5 text-gray-600 rounded focus:ring-gray-500">
+                                </label>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <div class="bg-blue-50 p-6 rounded-xl">
-                        <h4 class="font-semibold text-gray-900 mb-4">SMS Notifications</h4>
-                        <div class="space-y-4">
-                            <label class="flex items-center justify-between">
-                                <div class="flex items-center">
-                                    <i class="fas fa-mobile-alt text-blue-600 mr-3"></i>
-                                    <div>
-                                        <span class="font-medium text-gray-900">Urgent Messages</span>
-                                        <p class="text-sm text-gray-600">Receive SMS for urgent guest messages</p>
+                        
+                        <div class="bg-blue-50 p-6 rounded-xl">
+                            <h4 class="font-semibold text-gray-900 mb-4">SMS Notifications</h4>
+                            <div class="space-y-4">
+                                <label class="flex items-center justify-between">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-mobile-alt text-blue-600 mr-3"></i>
+                                        <div>
+                                            <span class="font-medium text-gray-900">Urgent Messages</span>
+                                            <p class="text-sm text-gray-600">Receive SMS for urgent guest messages</p>
+                                        </div>
                                     </div>
-                                </div>
-                                <input type="checkbox" class="h-5 w-5 text-gray-600 rounded focus:ring-gray-500">
-                            </label>
-                            <label class="flex items-center justify-between">
-                                <div class="flex items-center">
-                                    <i class="fas fa-exclamation-triangle text-red-600 mr-3"></i>
-                                    <div>
-                                        <span class="font-medium text-gray-900">Booking Issues</span>
-                                        <p class="text-sm text-gray-600">Get SMS alerts for booking problems</p>
+                                    <input type="checkbox" name="sms_urgent" value="1" {{ $notifications['sms_urgent'] ? 'checked' : '' }} class="h-5 w-5 text-gray-600 rounded focus:ring-gray-500">
+                                </label>
+                                <label class="flex items-center justify-between">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-exclamation-triangle text-red-600 mr-3"></i>
+                                        <div>
+                                            <span class="font-medium text-gray-900">Booking Issues</span>
+                                            <p class="text-sm text-gray-600">Get SMS alerts for booking problems</p>
+                                        </div>
                                     </div>
-                                </div>
-                                <input type="checkbox" checked class="h-5 w-5 text-gray-600 rounded focus:ring-gray-500">
-                            </label>
+                                    <input type="checkbox" name="sms_issues" value="1" {{ $notifications['sms_issues'] ? 'checked' : '' }} class="h-5 w-5 text-gray-600 rounded focus:ring-gray-500">
+                                </label>
+                            </div>
                         </div>
+                        
+                        <button type="submit" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg">
+                            <i class="fas fa-save mr-2"></i>Save Preferences
+                        </button>
                     </div>
-                    
-                    <button class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg">
-                        <i class="fas fa-save mr-2"></i>Save Preferences
-                    </button>
-                </div>
+                </form>
             </div>
         </div>
 
@@ -181,23 +205,26 @@
                 <div class="space-y-8">
                     <div class="bg-red-50 p-6 rounded-xl">
                         <h4 class="font-semibold text-gray-900 mb-4">Change Password</h4>
-                        <div class="space-y-4">
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Current Password</label>
-                                <input type="password" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200">
+                        <form action="{{ route('partner.settings.password.update') }}" method="POST">
+                            @csrf
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Current Password</label>
+                                    <input type="password" name="current_password" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">New Password</label>
+                                    <input type="password" name="password" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Confirm New Password</label>
+                                    <input type="password" name="password_confirmation" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200" required>
+                                </div>
+                                <button type="submit" class="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg">
+                                    <i class="fas fa-key mr-2"></i>Change Password
+                                </button>
                             </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">New Password</label>
-                                <input type="password" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Confirm New Password</label>
-                                <input type="password" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200">
-                            </div>
-                            <button class="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg">
-                                <i class="fas fa-key mr-2"></i>Change Password
-                            </button>
-                        </div>
+                        </form>
                     </div>
                     
                     <div class="bg-green-50 p-6 rounded-xl">
@@ -205,39 +232,39 @@
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-gray-700">Add an extra layer of security to your account</p>
-                                <p class="text-sm text-gray-600 mt-1">Currently disabled</p>
+                                <p class="text-sm text-gray-600 mt-1">Currently {{ $security['two_factor_enabled'] ? 'enabled' : 'disabled' }}</p>
                             </div>
-                            <button class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg">
-                                <i class="fas fa-shield-alt mr-2"></i>Enable 2FA
-                            </button>
+                            <form action="{{ route('partner.settings.two-factor.toggle') }}" method="POST" class="inline">
+                                @csrf
+                                <input type="hidden" name="enabled" value="{{ $security['two_factor_enabled'] ? '0' : '1' }}">
+                                <button type="submit" class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg">
+                                    <i class="fas fa-shield-alt mr-2"></i>{{ $security['two_factor_enabled'] ? 'Disable' : 'Enable' }} 2FA
+                                </button>
+                            </form>
                         </div>
                     </div>
                     
                     <div class="bg-yellow-50 p-6 rounded-xl">
                         <h4 class="font-semibold text-gray-900 mb-4">Login Sessions</h4>
                         <div class="space-y-3">
+                            @foreach($security['active_sessions'] as $session)
                             <div class="flex items-center justify-between p-3 bg-white rounded-lg">
                                 <div class="flex items-center">
-                                    <i class="fas fa-desktop text-blue-600 mr-3"></i>
+                                    <i class="fas {{ $session['device'] == 'Windows PC - Chrome' ? 'fa-desktop' : 'fa-mobile-alt' }} text-blue-600 mr-3"></i>
                                     <div>
-                                        <p class="font-medium text-gray-900">Windows PC - Chrome</p>
-                                        <p class="text-sm text-gray-600">Current session • New York, US</p>
+                                        <p class="font-medium text-gray-900">{{ $session['device'] }}</p>
+                                        <p class="text-sm text-gray-600">{{ $session['last_active'] }} • {{ $session['location'] }}</p>
                                     </div>
                                 </div>
-                                <span class="bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 rounded-full">Active</span>
+                                @if($session['status'] == 'current')
+                                    <span class="bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 rounded-full">Active</span>
+                                @else
+                                    <button class="text-red-600 hover:text-red-700 text-sm font-medium">
+                                        Revoke
+                                    </button>
+                                @endif
                             </div>
-                            <div class="flex items-center justify-between p-3 bg-white rounded-lg">
-                                <div class="flex items-center">
-                                    <i class="fas fa-mobile-alt text-green-600 mr-3"></i>
-                                    <div>
-                                        <p class="font-medium text-gray-900">iPhone - Safari</p>
-                                        <p class="text-sm text-gray-600">2 hours ago • New York, US</p>
-                                    </div>
-                                </div>
-                                <button class="text-red-600 hover:text-red-700 text-sm font-medium">
-                                    Revoke
-                                </button>
-                            </div>
+                            @endforeach
                         </div>
                     </div>
                 </div>
@@ -248,74 +275,54 @@
         <div x-show="activeTab === 'payout'" class="p-8">
             <div class="max-w-4xl">
                 <h3 class="text-2xl font-bold text-gray-900 mb-6">Payout Settings</h3>
-                <div class="space-y-8">
-                    <div class="bg-blue-50 p-6 rounded-xl">
-                        <h4 class="font-semibold text-gray-900 mb-4">Bank Account Information</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Bank Name</label>
-                                <input type="text" placeholder="Enter bank name" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Account Number</label>
-                                <input type="text" placeholder="Enter account number" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Account Holder Name</label>
-                                <input type="text" placeholder="Enter account holder name" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Swift/Routing Code</label>
-                                <input type="text" placeholder="Enter swift code" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+                <form action="{{ route('partner.settings.payout.update') }}" method="POST">
+                    @csrf
+                    <div class="space-y-8">
+                        <div class="bg-blue-50 p-6 rounded-xl">
+                            <h4 class="font-semibold text-gray-900 mb-4">Bank Account Information</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Bank Name</label>
+                                    <input type="text" name="bank_name" value="{{ $payout['bank_name'] }}" placeholder="Enter bank name" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Account Number</label>
+                                    <input type="text" name="account_number" value="{{ $payout['account_number'] }}" placeholder="Enter account number" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Account Holder Name</label>
+                                    <input type="text" name="account_holder" value="{{ $payout['account_holder'] }}" placeholder="Enter account holder name" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Swift/Routing Code</label>
+                                    <input type="text" name="swift_code" value="{{ $payout['swift_code'] }}" placeholder="Enter swift code" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" required>
+                                </div>
                             </div>
                         </div>
-                        <button class="mt-6 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg">
-                            <i class="fas fa-save mr-2"></i>Save Bank Details
+                        
+                        <div class="bg-green-50 p-6 rounded-xl">
+                            <h4 class="font-semibold text-gray-900 mb-4">Payout Schedule</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Payout Frequency</label>
+                                    <select name="payout_frequency" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200" required>
+                                        <option value="weekly" {{ $payout['payout_frequency'] == 'weekly' ? 'selected' : '' }}>Weekly</option>
+                                        <option value="bi-weekly" {{ $payout['payout_frequency'] == 'bi-weekly' ? 'selected' : '' }}>Bi-weekly</option>
+                                        <option value="monthly" {{ $payout['payout_frequency'] == 'monthly' ? 'selected' : '' }}>Monthly</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Minimum Payout Amount</label>
+                                    <input type="number" name="minimum_payout" value="{{ $payout['minimum_payout'] }}" min="50" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg">
+                            <i class="fas fa-save mr-2"></i>Save Payout Settings
                         </button>
                     </div>
-                    
-                    <div class="bg-green-50 p-6 rounded-xl">
-                        <h4 class="font-semibold text-gray-900 mb-4">Payout Schedule</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Payout Frequency</label>
-                                <select class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200">
-                                    <option>Weekly</option>
-                                    <option>Bi-weekly</option>
-                                    <option>Monthly</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Minimum Payout Amount</label>
-                                <select class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200">
-                                    <option>$50</option>
-                                    <option>$100</option>
-                                    <option>$250</option>
-                                    <option>$500</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="bg-yellow-50 p-6 rounded-xl">
-                        <h4 class="font-semibold text-gray-900 mb-4">Tax Information</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Tax ID / SSN</label>
-                                <input type="text" placeholder="Enter tax ID" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Tax Country</label>
-                                <select class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200">
-                                    <option>United States</option>
-                                    <option>Canada</option>
-                                    <option>United Kingdom</option>
-                                    <option>Other</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                </form>
             </div>
         </div>
 

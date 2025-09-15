@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Partner extends Model
 {
@@ -37,6 +38,14 @@ class Partner extends Model
     public function properties(): HasMany
     {
         return $this->hasMany(Property::class, 'user_id', 'user_id');
+    }
+
+    /**
+     * Get the partner settings.
+     */
+    public function settings(): HasOne
+    {
+        return $this->hasOne(PartnerSettings::class, 'user_id', 'user_id');
     }
 
     /**
