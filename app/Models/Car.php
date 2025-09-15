@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Car extends Model
 {
-      protected $fillable = [
+    protected $fillable = [
         'car_renter_id','car_type_id','company_id','model_id','brand','seats','with_driver',
         'driver_name','driver_phone','driver_age','driver_experience','driver_nic',
-        'transmission','mileage_type','fuel_type','image','price_per_day','price_per_km'
+        'driver_license_front','driver_license_back',
+        'transmission','mileage_type','fuel_type','car_front', 'car_back', 'car_inside','price_per_day','price_per_km','deposit'
     ];
 
     public function carType()
@@ -29,22 +30,21 @@ class Car extends Model
 
     public function reservations()
     {
-        return $this->hasMany(Car_Reservation::class);
+        return $this->hasMany(CarReservation::class);
     }
-     public function renter()
+
+    public function renter()
     {
         return $this->belongsTo(CarRenter::class, 'car_renter_id');
     }
-// App\Models\Car.php
-public function files()
-{
-    return $this->hasMany(File::class, 'car_id');
-}
 
-public function image()
-{
-    return $this->hasOne(File::class, 'car_id')->where('file_type', 'image');
-}
+    public function files()
+    {
+        return $this->hasMany(File::class, 'car_id');
+    }
 
-
+    public function mainImage()
+    {
+        return $this->hasOne(File::class, 'car_id')->where('file_type', 'image');
+    }
 }

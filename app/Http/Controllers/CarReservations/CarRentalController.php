@@ -36,7 +36,8 @@ class CarRentalController extends Controller
 
         try {
             // Step 1: Basic car info + optional driver
-          if ($step == 1) {
+       // Step 1: Basic car info + optional driver
+if ($step == 1) {
     $validated = $request->validate([
         'car.car_type_id' => 'required|integer|exists:car_types,id',
         'car.company_id'  => 'required|integer|exists:companies,id',
@@ -49,13 +50,25 @@ class CarRentalController extends Controller
         'car.driver_age'        => 'nullable|required_if:car.with_driver,yes|integer|min:18|max:80',
         'car.driver_experience' => 'nullable|required_if:car.with_driver,yes|integer|min:0|max:60',
         'car.driver_nic'        => 'nullable|required_if:car.with_driver,yes|string|unique:cars,driver_nic,' . ($request->car_id ?? 'NULL'),
+        'driver_license_front' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+        'driver_license_back'  => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
     ]);
 
+    // Handle file uploads
+    $frontPath = null;
+    $backPath  = null;
+
+    if ($request->hasFile('driver_license_front')) {
+        $frontPath = $request->file('driver_license_front')->store('driver_licenses', 'public');
+    }
+
+    if ($request->hasFile('driver_license_back')) {
+        $backPath = $request->file('driver_license_back')->store('driver_licenses', 'public');
+    }
+
     if ($request->filled('car_id')) {
-        // 🔄 Update existing car
-        $car = Car::where('id', $request->car_id)
-            ->where('car_renter_id', $user->id)
-            ->firstOrFail();
+        // Update existing car
+        $car = Car::where('id', $request->car_id)->where('car_renter_id', $user->id)->firstOrFail();
 
         $car->update([
             'car_type_id' => $validated['car']['car_type_id'],
@@ -68,9 +81,11 @@ class CarRentalController extends Controller
             'driver_age'  => $validated['car']['driver_age'] ?? null,
             'driver_experience' => $validated['car']['driver_experience'] ?? null,
             'driver_nic' => $validated['car']['driver_nic'] ?? null,
+            'driver_license_front' => $frontPath ?? $car->driver_license_front,
+            'driver_license_back'  => $backPath ?? $car->driver_license_back,
         ]);
     } else {
-        // 🆕 Create new car
+        // Create new car
         $car = Car::create([
             'car_type_id'   => $validated['car']['car_type_id'],
             'company_id'    => $validated['car']['company_id'],
@@ -83,6 +98,8 @@ class CarRentalController extends Controller
             'driver_age'    => $validated['car']['driver_age'] ?? null,
             'driver_experience' => $validated['car']['driver_experience'] ?? null,
             'driver_nic'    => $validated['car']['driver_nic'] ?? null,
+            'driver_license_front' => $frontPath,
+            'driver_license_back'  => $backPath,
             'price_per_day' => 0,
             'deposit'       => 0,
         ]);
@@ -90,12 +107,11 @@ class CarRentalController extends Controller
 
     return response()->json([
         'success' => true,
-        'message' => $request->filled('car_id') 
-            ? 'Step 1 updated successfully' 
-            : 'Step 1 saved successfully',
+        'message' => $request->filled('car_id') ? 'Step 1 updated successfully' : 'Step 1 saved successfully',
         'car_id' => $car->id
     ]);
 }
+
 
             // Step 2: Specifications
             if ($step == 2) {
@@ -129,28 +145,42 @@ return response()->json([
             }
 
             // Step 3: Image
-            if ($step == 3) {
-                $validated = $request->validate([
-                    'selectedImage' => 'required|string',
-                    'car_id' => 'required|exists:cars,id'
-                ]);
+    // Step 3: Image
+if ($step == 3) {
+    $validated = $request->validate([
+        'car_id'    => 'required|exists:cars,id',
+        'car_front' => 'required|file|mimes:jpg,jpeg,png|max:8192',
+        'car_back'  => 'required|file|mimes:jpg,jpeg,png|max:8192',
+        'car_inside'=> 'required|file|mimes:jpg,jpeg,png|max:8192',
+    ]);
 
-                File::create([
-                    'file_type' => 'image',
-                    'path' => 'images/' . $validated['selectedImage'] . '.jpg',
-                    'property_type' => 'car',
-                    'car_id' => $validated['car_id'],
-                ]);
+    $car = Car::findOrFail($validated['car_id']);
 
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Demo image saved successfully',
-                    'car_id' => $validated['car_id']
-                ]);
-            }
+    if ($request->hasFile('car_front')) {
+        $frontPath = $request->file('car_front')->store('cars', 'public');
+        $car->car_front = $frontPath;   // <-- use the DB column name from migration
+    }
 
-            // Step 4: Pricing
-         // Step 4: Pricing
+    if ($request->hasFile('car_back')) {
+        $backPath = $request->file('car_back')->store('cars', 'public');
+        $car->car_back = $backPath;
+    }
+
+    if ($request->hasFile('car_inside')) {
+        $insidePath = $request->file('car_inside')->store('cars', 'public');
+        $car->car_inside = $insidePath;
+    }
+
+    $car->save();
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Step 3 images uploaded successfully',
+        'car_id'  => $car->id
+    ]);
+}
+
+
 if ($step == 4) {
     $validated = $request->validate([
         'car_id'      => 'required|exists:cars,id',

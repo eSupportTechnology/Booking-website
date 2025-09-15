@@ -16,7 +16,7 @@
         </div>
     </div>
 
-    <!-- Search & Filter (optional, can leave static for now) -->
+    <!-- Search & Filter -->
     <div class="bg-white rounded-2xl p-6 shadow-lg">
         <form method="GET" class="flex flex-col md:flex-row gap-4">
             <div class="flex-1">
@@ -45,11 +45,38 @@
             <div
                 class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 overflow-hidden hover:scale-105">
                 <a href="#">
-                    <div class="h-48 bg-gray-200 relative">
-                    
-    
-    <img  src="{{ asset('images/11.jpg') }}" alt="Car" class="w-full h-full object-cover">
+                    <!-- Swiper Container -->
+                    <div class="relative h-56">
+                        <div class="swiper car-swiper h-full">
+                            <div class="swiper-wrapper">
+                                @if($car->car_front)
+                                    <div class="swiper-slide">
+                                        <img src="{{ asset('storage/' . $car->car_front) }}" 
+                                             alt="Car Front" 
+                                             class="w-full h-56 object-cover">
+                                    </div>
+                                @endif
+                                @if($car->car_back)
+                                    <div class="swiper-slide">
+                                        <img src="{{ asset('storage/' . $car->car_back) }}" 
+                                             alt="Car Back" 
+                                             class="w-full h-56 object-cover">
+                                    </div>
+                                @endif
+                                @if($car->car_inside)
+                                    <div class="swiper-slide">
+                                        <img src="{{ asset('storage/' . $car->car_inside) }}" 
+                                             alt="Car Inside" 
+                                             class="w-full h-56 object-cover">
+                                    </div>
+                                @endif
+                            </div>
 
+                            <!-- Pagination & Nav -->
+                            <div class="swiper-pagination"></div>
+                           <div class="swiper-button-prev !w-6 !h-6 after:!text-[20px]"></div>
+<div class="swiper-button-next !w-6 !h-6 after:!text-[20px]"></div>
+                        </div>
 
                         <div class="absolute top-4 right-4">
                             <span
@@ -59,6 +86,7 @@
                         </div>
                     </div>
                 </a>
+
                 <div class="p-6">
                     <h3 class="text-xl font-bold text-gray-800 mb-2">
                         {{ $car->brand->brand_name ?? 'Brand' }} {{ $car->model->model_name ?? 'Model' }}
@@ -72,27 +100,24 @@
                             {{ $car->fuel_type ?? 'Fuel' }}
                         </span>
                     </div>
-  <div class="flex space-x-2">
-    <!-- View button -->
-    <a href="{{ route('cars.show', $car->id) }}"
-       class="flex-1 inline-flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm transition-colors duration-200">
-        <i class="fas fa-eye mr-1"></i>View
-    </a>
+                    <div class="flex space-x-2">
+                        <!-- View button -->
+                        <a href="{{ route('cars.show', $car->id) }}"
+                           class="flex-1 inline-flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm transition-colors duration-200">
+                            <i class="fas fa-eye mr-1"></i>View
+                        </a>
 
-    <!-- Delete button -->
-    <form action="{{ route('renter.cars.destroy', $car->id) }}" method="POST" class="flex-1"
-          onsubmit="return confirm('Are you sure you want to delete this car?');">
-        @csrf
-        @method('DELETE')
-        <button type="submit"
-                class="w-full inline-flex items-center justify-center bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm transition-colors duration-200">
-            <i class="fas fa-trash-alt mr-1"></i>Delete
-        </button>
-    </form>
-</div>
-
-
-
+                        <!-- Delete button -->
+                        <form action="{{ route('renter.cars.destroy', $car->id) }}" method="POST" class="flex-1"
+                              onsubmit="return confirm('Are you sure you want to delete this car?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit"
+                                    class="w-full inline-flex items-center justify-center bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm transition-colors duration-200">
+                                <i class="fas fa-trash-alt mr-1"></i>Delete
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         @empty
@@ -108,4 +133,23 @@
         @endforelse
     </div>
 </div>
+
+<!-- SwiperJS CDN -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        new Swiper(".car-swiper", {
+            loop: true,
+            pagination: {
+                el: ".swiper-pagination",
+                clickable: true,
+            },
+            navigation: {
+                nextEl: ".swiper-button-next",
+                prevEl: ".swiper-button-prev",
+            },
+        });
+    });
+</script>
 @endsection
