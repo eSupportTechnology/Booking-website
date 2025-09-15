@@ -882,7 +882,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             // User status routes
             Route::patch('/customer/{user}', \App\Http\Controllers\Admin\UpdateCustomerStatusController::class)->name('customer.update');
             Route::patch('/partner/{partner}', \App\Http\Controllers\Admin\UpdatePartnerStatusController::class)->name('partner.update');
-            
+
             // Rental status routes
             Route::patch('/taxi/{taxi}', \App\Http\Controllers\Admin\UpdateTaxiStatusController::class)->name('taxi.update');
             Route::patch('/airport-transfer/{transfer}', \App\Http\Controllers\Admin\UpdateAirportTransferStatusController::class)->name('airport-transfer.update');
