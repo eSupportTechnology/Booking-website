@@ -89,7 +89,7 @@
 
                     @if (session('partner_name'))
                     <span class="bg-white text-[#1F8FB2] px-4 py-2 rounded font-bold"
-                        style="font-family: 'Noto Sans', sans-serif;">{{ session('partner_name') }}</span>
+                        style="font-family: 'Noto Sans', sans-serif;"><a href="{{ route('partner.dashboard') }}">{{ session('partner_name') }}</a></span>
                     <!-- Logout Link -->
                     <a href="#"
                         onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
@@ -103,7 +103,7 @@
                     </form>
                     @elseif(Auth::check())
                         <span class="bg-white text-[#1F8FB2] px-4 py-2 rounded font-bold"
-                            style="font-family: 'Noto Sans', sans-serif;">{{ Auth::user()->name }}</span>
+                            style="font-family: 'Noto Sans', sans-serif;"><a href="{{ route('partner.dashboard') }}">{{ Auth::user()->name }}</a></span>
                         <!-- Logout Link -->
                        <a href="#"
                             onclick="event.preventDefault(); document.getElementById('logout-form').submit();"

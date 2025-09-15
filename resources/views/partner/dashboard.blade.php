@@ -9,7 +9,7 @@
                 <h1 class="text-4xl font-bold mb-2">Welcome back, {{ Auth::user()->name ?? 'Partner' }}! 👋</h1>
                 <p class="text-blue-100 text-lg">Manage your properties and track your success</p>
             </div>
-            <a href="{{ route('partner.list-your-property') }}" class="bg-white text-[#1F8FB2] px-6 py-3 rounded-xl font-semibold hover:bg-blue-50 transition-all duration-200 shadow-lg">
+            <a href="{{ route('partner.property.category') }}" class="bg-white text-[#1F8FB2] px-6 py-3 rounded-xl font-semibold hover:bg-blue-50 transition-all duration-200 shadow-lg">
                 <i class="fas fa-plus mr-2"></i>Add New Property
             </a>
         </div>
