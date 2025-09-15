@@ -100,18 +100,33 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                             <div>
                                 <label class="block text-sm font-medium mb-1">Current Password</label>
-                                <input type="password" name="current_password" 
-                                       class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1F8FB2]" required>
+                                <div class="relative">
+                                    <input type="password" name="current_password" id="current_password"
+                                           class="w-full border rounded px-3 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-[#1F8FB2]" required>
+                                    <button type="button" onclick="togglePassword('current_password')" class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                        <i id="current_password_icon" class="fas fa-eye text-gray-400"></i>
+                                    </button>
+                                </div>
                             </div>
                             <div>
                                 <label class="block text-sm font-medium mb-1">New Password</label>
-                                <input type="password" name="password" 
-                                       class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1F8FB2]" required>
+                                <div class="relative">
+                                    <input type="password" name="password" id="new_password"
+                                           class="w-full border rounded px-3 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-[#1F8FB2]" required>
+                                    <button type="button" onclick="togglePassword('new_password')" class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                        <i id="new_password_icon" class="fas fa-eye text-gray-400"></i>
+                                    </button>
+                                </div>
                             </div>
                             <div class="md:col-span-2">
                                 <label class="block text-sm font-medium mb-1">Confirm New Password</label>
-                                <input type="password" name="password_confirmation" 
-                                       class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1F8FB2]" required>
+                                <div class="relative">
+                                    <input type="password" name="password_confirmation" id="confirm_password"
+                                           class="w-full border rounded px-3 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-[#1F8FB2]" required>
+                                    <button type="button" onclick="togglePassword('confirm_password')" class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                        <i id="confirm_password_icon" class="fas fa-eye text-gray-400"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                         <button type="submit" class="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 transition">
@@ -176,6 +191,34 @@
                                 <div class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-all peer-checked:translate-x-full"></div>
                             </label>
                         </div>
+
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <span class="font-medium text-gray-700">Security Alerts</span>
+                                <p class="text-sm text-gray-600">Receive alerts for security-related events</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" name="security_alerts" value="1" 
+                                       {{ ($notifications['security_alerts'] ?? true) ? 'checked' : '' }} 
+                                       class="sr-only peer">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-[#1F8FB2] rounded-full peer peer-checked:bg-[#1F8FB2] transition-all"></div>
+                                <div class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-all peer-checked:translate-x-full"></div>
+                            </label>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <span class="font-medium text-gray-700">Report Notifications</span>
+                                <p class="text-sm text-gray-600">Get notified when reports are generated</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" name="report_notifications" value="1" 
+                                       {{ ($notifications['report_notifications'] ?? false) ? 'checked' : '' }} 
+                                       class="sr-only peer">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-[#1F8FB2] rounded-full peer peer-checked:bg-[#1F8FB2] transition-all"></div>
+                                <div class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-all peer-checked:translate-x-full"></div>
+                            </label>
+                        </div>
                     </div>
                     <button type="submit" class="bg-[#1F8FB2] text-white px-6 py-2 rounded hover:bg-[#157799] transition">
                         Save Preferences
@@ -197,6 +240,21 @@ function showTab(tabName) {
     const activeTab = document.getElementById(tabName + '-tab');
     activeTab.classList.remove('bg-gray-100', 'text-gray-700');
     activeTab.classList.add('bg-[#E6F7FC]', 'text-[#1F8FB2]');
+}
+
+function togglePassword(fieldId) {
+    const field = document.getElementById(fieldId);
+    const icon = document.getElementById(fieldId + '_icon');
+    
+    if (field.type === 'password') {
+        field.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        field.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
 }
 </script>
 @endsection

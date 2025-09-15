@@ -72,19 +72,24 @@
                             @endif
                             {{ $category }}
                         </h3>
-                        <button type="button" class="category-toggle text-xs px-2 py-1 bg-blue-100 text-blue-600 rounded hover:bg-blue-200">
-                            <i class="fas fa-check-square mr-1"></i> Toggle All
-                        </button>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" class="category-toggle sr-only peer">
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            <span class="ml-2 text-xs text-gray-600">Toggle All</span>
+                        </label>
                     </div>
                     
                     <div class="space-y-2">
                         @foreach($categoryPermissions as $permission)
                         <label class="flex items-center p-2 rounded hover:bg-white transition-colors cursor-pointer group">
-                            <input type="checkbox" 
-                                   name="permissions[]" 
-                                   value="{{ $permission->name }}"
-                                   class="permission-checkbox w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                                   {{ in_array($permission->name, $adminPermissions) ? 'checked' : '' }}>
+                            <div class="relative">
+                                <input type="checkbox" 
+                                       name="permissions[]" 
+                                       value="{{ $permission->name }}"
+                                       class="permission-checkbox sr-only peer"
+                                       {{ in_array($permission->name, $adminPermissions) ? 'checked' : '' }}>
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            </div>
                             <div class="ml-3 flex-1">
                                 <div class="text-sm font-medium text-gray-700 group-hover:text-gray-900">
                                     {{ ucwords(str_replace('_', ' ', $permission->name)) }}
@@ -130,32 +135,56 @@ document.addEventListener('DOMContentLoaded', function() {
         permissionCount.textContent = `${checkedCount} permissions currently assigned`;
     }
     
+    // Initialize category toggle states
+    function initializeCategoryToggles() {
+        document.querySelectorAll('.permission-category').forEach(category => {
+            const categoryToggle = category.querySelector('.category-toggle');
+            const categoryCheckboxes = category.querySelectorAll('.permission-checkbox');
+            const allChecked = Array.from(categoryCheckboxes).every(checkbox => checkbox.checked);
+            categoryToggle.checked = allChecked;
+        });
+    }
+    
+    initializeCategoryToggles();
+    
     // Select/Clear all functionality
     selectAllBtn.addEventListener('click', function() {
         checkboxes.forEach(cb => cb.checked = true);
+        document.querySelectorAll('.category-toggle').forEach(toggle => toggle.checked = true);
         updateCount();
     });
     
     clearAllBtn.addEventListener('click', function() {
         checkboxes.forEach(cb => cb.checked = false);
+        document.querySelectorAll('.category-toggle').forEach(toggle => toggle.checked = false);
         updateCount();
     });
     
     // Category toggle functionality
-    document.querySelectorAll('.category-toggle').forEach(btn => {
-        btn.addEventListener('click', function() {
+    document.querySelectorAll('.category-toggle').forEach(toggle => {
+        toggle.addEventListener('change', function() {
             const category = this.closest('.permission-category');
             const categoryCheckboxes = category.querySelectorAll('.permission-checkbox');
-            const allChecked = Array.from(categoryCheckboxes).every(cb => cb.checked);
             
-            categoryCheckboxes.forEach(cb => cb.checked = !allChecked);
+            categoryCheckboxes.forEach(cb => cb.checked = this.checked);
             updateCount();
         });
     });
     
-    // Update count on individual checkbox change
+    // Update count on individual checkbox change and sync category toggles
     checkboxes.forEach(cb => {
-        cb.addEventListener('change', updateCount);
+        cb.addEventListener('change', function() {
+            updateCount();
+            
+            // Update category toggle state
+            const category = this.closest('.permission-category');
+            const categoryToggle = category.querySelector('.category-toggle');
+            const categoryCheckboxes = category.querySelectorAll('.permission-checkbox');
+            const allChecked = Array.from(categoryCheckboxes).every(checkbox => checkbox.checked);
+            const anyChecked = Array.from(categoryCheckboxes).some(checkbox => checkbox.checked);
+            
+            categoryToggle.checked = allChecked;
+        });
     });
 });
 </script>

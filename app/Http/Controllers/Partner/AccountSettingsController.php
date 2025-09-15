@@ -14,7 +14,30 @@ class AccountSettingsController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $settings = $user->partner->settings ?? new PartnerSettings();
+        $partner = $user->partner;
+        $settings = $partner ? $partner->settings : null;
+        
+        if (!$settings) {
+            $settings = new PartnerSettings([
+                'user_id' => $user->id,
+                'full_name' => $user->name,
+                'timezone' => 'UTC',
+                'language' => 'en',
+                'currency' => 'USD',
+                'notification_preferences' => [
+                    'email_bookings' => true,
+                    'email_messages' => true,
+                    'email_reviews' => false,
+                    'email_payments' => true,
+                    'sms_urgent' => false,
+                    'sms_issues' => true
+                ],
+                'payout_settings' => [
+                    'payout_frequency' => 'monthly',
+                    'minimum_payout' => 100
+                ]
+            ]);
+        }
         
         return view('partner.settings.account', compact('user', 'settings'));
     }
