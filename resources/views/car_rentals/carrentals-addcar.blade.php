@@ -109,6 +109,19 @@
                         <label>NIC Number</label>
                         <input type="text" x-model="car.driver_nic" placeholder="Enter NIC number" class="w-full border rounded px-3 py-2">
                     </div>
+                   
+       <div class="grid grid-cols-2 gap-4">
+    <div>
+        <label>Driver License (Front)</label>
+        <input type="file" @change="handleFile($event, 'driver_license_front')" class="w-full border rounded px-3 py-2" accept="image/*,application/pdf">
+    </div>
+    <div>
+        <label>Driver License (Back)</label>
+        <input type="file" @change="handleFile($event, 'driver_license_back')" class="w-full border rounded px-3 py-2" accept="image/*,application/pdf">
+    </div>
+
+
+    </div>
                 </div>
             </div>
 
@@ -161,29 +174,83 @@
             </div>
         </div>
     </template>
+<!-- Step 3: Image Upload & Preview -->
+   <template x-if="step === 3">
+        <div class="px-6 py-8 mt-16 w-full max-w-4xl mx-auto lg:ml-24 space-y-6 bg-white rounded-lg shadow border">
+            <h1 class="text-2xl font-bold mb-4">Upload Car Images</h1>
 
-    <!-- Step 3: Image Selection -->
-    <template x-if="step === 3">
-        <div class="px-6 py-8 mt-6 w-full max-w-4xl mx-auto lg:ml-24 space-y-6 bg-white rounded-lg shadow border">
-            <h1 class="text-2xl font-bold mb-2">Select a Car Image</h1>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                @for($i = 1; $i <= 11; $i++)
-                    <div
-                        class="border rounded-lg p-2 cursor-pointer hover:ring-2 hover:ring-blue-400 relative"
-                        :class="selectedImage === '{{ $i }}' ? 'ring-4 ring-blue-500' : ''"
-                        @click="selectedImage='{{ $i }}'">
-                        <img src="{{ asset('images/'.$i.'.jpg') }}" class="w-full h-32 object-cover rounded-lg">
-                        <span x-show="selectedImage === '{{ $i }}'" class="absolute top-2 right-2 bg-blue-500 text-white text-xs px-2 py-1 rounded">Selected</span>
-                    </div>
-                @endfor
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Front Image -->
+                <div class="space-y-2">
+                    <label class="block font-semibold text-sm">Front View <span class="text-red-500">*</span></label>
+                    <input type="file" accept="image/*"
+                           @change="handleImagePreview($event, 'front')"
+                           class="w-full text-sm border rounded-lg p-2" />
+
+                    <template x-if="carImages.frontPreview">
+                        <div class="relative">
+                            <img :src="carImages.frontPreview" class="w-full h-40 object-cover rounded-lg shadow" />
+                            <button type="button"
+                                    @click="removeImage('front')"
+                                    class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center">
+                                ✕
+                            </button>
+                        </div>
+                    </template>
+                </div>
+
+                <!-- Back Image -->
+                <div class="space-y-2">
+                    <label class="block font-semibold text-sm">Back View <span class="text-red-500">*</span></label>
+                    <input type="file" accept="image/*"
+                           @change="handleImagePreview($event, 'back')"
+                           class="w-full text-sm border rounded-lg p-2" />
+
+                    <template x-if="carImages.backPreview">
+                        <div class="relative">
+                            <img :src="carImages.backPreview" class="w-full h-40 object-cover rounded-lg shadow" />
+                            <button type="button"
+                                    @click="removeImage('back')"
+                                    class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center">
+                                ✕
+                            </button>
+                        </div>
+                    </template>
+                </div>
+
+                <!-- Inside Image -->
+                <div class="space-y-2">
+                    <label class="block font-semibold text-sm">Inside View <span class="text-red-500">*</span></label>
+                    <input type="file" accept="image/*"
+                           @change="handleImagePreview($event, 'inside')"
+                           class="w-full text-sm border rounded-lg p-2" />
+
+                    <template x-if="carImages.insidePreview">
+                        <div class="relative">
+                            <img :src="carImages.insidePreview" class="w-full h-40 object-cover rounded-lg shadow" />
+                            <button type="button"
+                                    @click="removeImage('inside')"
+                                    class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center">
+                                ✕
+                            </button>
+                        </div>
+                    </template>
+                </div>
             </div>
 
             <div class="flex justify-between items-center mt-6">
-                <button @click="step--" class="flex items-center border border-[#3CC0E9] rounded text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12">←</button>
-                <button @click="submitStep()" class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition">Continue</button>
+                <button @click="step--"
+                        class="flex items-center border border-[#3CC0E9] rounded text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12">
+                    ←
+                </button>
+                <button @click="submitStep()"
+                        class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition">
+                    Continue
+                </button>
             </div>
         </div>
     </template>
+
 
     <!-- Step 4: Pricing -->
     <template x-if="step === 4">
@@ -218,6 +285,8 @@
     </template>
 </div>
 
+
+
 <script>
 function carForm() {
     return {
@@ -235,50 +304,116 @@ function carForm() {
             driver_age: '',
             driver_experience: '',
             driver_nic: '',
+            driver_license_front: null,
+            driver_license_back: null,
             transmission: '',
             mileage_type: '',
             fuel_type: '',
             pricingType: '',
             pricePerDay: '',
             pricePerKm: '',
+            deposit: 0
         },
-        selectedImage: '',
         models: @json($car_models),
         get filteredModels() {
             return this.car.brand ? this.models.filter(m => m.brand_id == this.car.brand) : [];
         },
+
+        // step 3 image files + previews
+        carImages: {
+            front: null,
+            back: null,
+            inside: null,
+            frontPreview: null,
+            backPreview: null,
+            insidePreview: null
+        },
+
+        // handle driver license files
+        handleFile(event, field) {
+            const file = event.target.files[0];
+            if (file) {
+                this.car[field] = file;
+            }
+        },
+
+        // handle step 3 preview + store file
+        handleImagePreview(event, type) {
+            const file = event.target.files[0];
+            if (file) {
+                this.carImages[type] = file;
+                const reader = new FileReader();
+                reader.onload = e => {
+                    this.carImages[type + 'Preview'] = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        },
+
+        removeImage(type) {
+            this.carImages[type] = null;
+            this.carImages[type + 'Preview'] = null;
+        },
+
         async submitStep() {
-        if (this.step === 1 && this.car.with_driver === 'no') {
-        this.car.driver_name = null;
-        this.car.driver_phone = null;
-        this.car.driver_age = null;
-        this.car.driver_experience = null;
-        this.car.driver_nic = null;
-    }
+            if (this.step === 1 && this.car.with_driver === 'no') {
+                this.car.driver_name = null;
+                this.car.driver_phone = null;
+                this.car.driver_age = null;
+                this.car.driver_experience = null;
+                this.car.driver_nic = null;
+                this.car.driver_license_front = null;
+                this.car.driver_license_back = null;
+            }
+
             try {
+                let formData = new FormData();
+                formData.append("step", this.step);
+                if (this.car_id) {
+                    formData.append("car_id", this.car_id);
+                }
+
+                const pricingKeys = ['pricingType', 'pricePerDay', 'pricePerKm', 'deposit'];
+
+                // step 3 images
+                if (this.step === 3) {
+                    if (this.carImages.front) formData.append("car_front", this.carImages.front);
+                    if (this.carImages.back) formData.append("car_back", this.carImages.back);
+                    if (this.carImages.inside) formData.append("car_inside", this.carImages.inside);
+                }
+
+                // other fields
+                Object.keys(this.car).forEach(key => {
+                    const val = this.car[key];
+                    if (val === null || val === "") return;
+                    if (this.step === 4 && pricingKeys.includes(key)) return;
+
+                    if (val instanceof File) {
+                        formData.append(key, val);
+                    } else {
+                        formData.append(`car[${key}]`, val);
+                    }
+                });
+
+                if (this.step === 4) {
+                    formData.append("pricingType", this.car.pricingType ?? "");
+                    formData.append("pricePerDay", this.car.pricePerDay ?? "");
+                    formData.append("pricePerKm", this.car.pricePerKm ?? "");
+                    formData.append("deposit", this.car.deposit ?? 0);
+                }
+
                 const response = await fetch("/cars/register-step", {
                     method: "POST",
                     headers: {
-                        "Content-Type": "application/json",
                         "X-CSRF-TOKEN": document.querySelector('meta[name=csrf-token]').content
                     },
-            body: JSON.stringify({
-    step: this.step,
-    car: this.car,
-    car_id: this.car_id, // ✅ included
-    selectedImage: this.selectedImage,
-    pricingType: this.car.pricingType,
-    pricePerDay: this.car.pricePerDay,
-    pricePerKm: this.car.pricePerKm,
-    deposit: this.car.deposit ?? 0
-})
-
-
+                    body: formData
                 });
+
                 const data = await response.json();
 
-                if(data.success){
-                    if(this.step === 4){
+                if (data.success) {
+                    if (this.step === 4) {
                         Swal.fire({
                             title: "Car added successfully!",
                             text: "Do you want to add more cars?",
@@ -286,22 +421,15 @@ function carForm() {
                             showCancelButton: true,
                             confirmButtonText: "Yes",
                             cancelButtonText: "No"
-                        }).then((result)=>{
-                            if(result.isConfirmed){
-                                this.step=1;
-                                this.car = {
-                                    car_type_id:'', company_id:'', brand:'', model_id:'', seats:'', with_driver:'',
-                                    driver_name:'', driver_phone:'', driver_age:'', driver_experience:'', driver_nic:'',
-                                    transmission:'', mileage_type:'', fuel_type:'', pricingType:'', pricePerDay:'', pricePerKm:''
-                                };
-                                this.selectedImage='';
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                this.resetForm();
                             } else {
-                                window.location.href="/my/car-rentals";
+                                window.location.href = "/my/car-rentals";
                             }
                         });
                     } else {
-                     this.car_id = data.car_id; // correct key from backend
-
+                        this.car_id = data.car_id;
                         this.step++;
                         Swal.fire({
                             title: data.message || "Step submitted",
@@ -316,27 +444,55 @@ function carForm() {
                     Swal.fire({
                         title: data.message || "Error occurred",
                         icon: "error",
-                        toast:true,
-                        position:"top-end",
-                        timer:2000,
-                        showConfirmButton:false
+                        toast: true,
+                        position: "top-end",
+                        timer: 2000,
+                        showConfirmButton: false
                     });
                 }
-
             } catch (err) {
                 console.error(err);
                 Swal.fire({
                     title: "Error submitting step",
-                    icon:"error",
-                    toast:true,
-                    position:"top-end",
-                    timer:2000,
-                    showConfirmButton:false
+                    icon: "error",
+                    toast: true,
+                    position: "top-end",
+                    timer: 2000,
+                    showConfirmButton: false
                 });
             }
+        },
+
+        resetForm() {
+            this.step = 1;
+            this.car_id = '';
+            this.car = {
+                car_type_id: '',
+                company_id: '',
+                brand: '',
+                model_id: '',
+                seats: '',
+                with_driver: '',
+                driver_name: '',
+                driver_phone: '',
+                driver_age: '',
+                driver_experience: '',
+                driver_nic: '',
+                driver_license_front: null,
+                driver_license_back: null,
+                transmission: '',
+                mileage_type: '',
+                fuel_type: '',
+                pricingType: '',
+                pricePerDay: '',
+                pricePerKm: '',
+                deposit: 0
+            };
+            this.carImages = { front: null, back: null, inside: null, frontPreview: null, backPreview: null, insidePreview: null };
         }
     }
 }
 </script>
+
 
 @endsection
