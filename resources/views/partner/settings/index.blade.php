@@ -1,6 +1,16 @@
 @extends('partner.master')
 
 @section('content')
+<!-- Notification Toast -->
+<div id="notification" class="fixed top-4 right-4 z-50 hidden">
+    <div class="bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center space-x-2">
+        <i class="fas fa-check-circle"></i>
+        <span id="notification-text"></span>
+        <button onclick="hideNotification()" class="ml-2 text-white hover:text-gray-200">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+</div>
 <div class="space-y-8">
     <!-- Header -->
     <div class="bg-gradient-to-r from-gray-700 to-gray-800 rounded-2xl p-8 text-white">
@@ -103,7 +113,7 @@
                             <textarea name="bio" rows="4" placeholder="Tell guests about yourself..." class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all duration-200">{{ $profile['bio'] }}</textarea>
                         </div>
                         
-                        <button type="submit" class="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg">
+                        <button type="submit" onclick="showNotification('Profile updated successfully!')" class="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg">
                             <i class="fas fa-save mr-2"></i>Update Profile
                         </button>
                     </div>
@@ -121,7 +131,7 @@
                         <div class="bg-gray-50 p-6 rounded-xl">
                             <h4 class="font-semibold text-gray-900 mb-4">Email Notifications</h4>
                             <div class="space-y-4">
-                                <label class="flex items-center justify-between">
+                                <div class="flex items-center justify-between">
                                     <div class="flex items-center">
                                         <i class="fas fa-calendar-check text-green-600 mr-3"></i>
                                         <div>
@@ -129,9 +139,13 @@
                                             <p class="text-sm text-gray-600">Get notified when you receive a new booking</p>
                                         </div>
                                     </div>
-                                    <input type="checkbox" name="email_bookings" value="1" {{ $notifications['email_bookings'] ? 'checked' : '' }} class="h-5 w-5 text-gray-600 rounded focus:ring-gray-500">
-                                </label>
-                                <label class="flex items-center justify-between">
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" name="email_bookings" value="1" {{ $notifications['email_bookings'] ? 'checked' : '' }} class="sr-only peer">
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-gray-500 rounded-full peer peer-checked:bg-gray-600 transition-all"></div>
+                                        <div class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-all peer-checked:translate-x-full"></div>
+                                    </label>
+                                </div>
+                                <div class="flex items-center justify-between">
                                     <div class="flex items-center">
                                         <i class="fas fa-envelope text-purple-600 mr-3"></i>
                                         <div>
@@ -139,9 +153,13 @@
                                             <p class="text-sm text-gray-600">Get notified when guests send you messages</p>
                                         </div>
                                     </div>
-                                    <input type="checkbox" name="email_messages" value="1" {{ $notifications['email_messages'] ? 'checked' : '' }} class="h-5 w-5 text-gray-600 rounded focus:ring-gray-500">
-                                </label>
-                                <label class="flex items-center justify-between">
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" name="email_messages" value="1" {{ $notifications['email_messages'] ? 'checked' : '' }} class="sr-only peer">
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-gray-500 rounded-full peer peer-checked:bg-gray-600 transition-all"></div>
+                                        <div class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-all peer-checked:translate-x-full"></div>
+                                    </label>
+                                </div>
+                                <div class="flex items-center justify-between">
                                     <div class="flex items-center">
                                         <i class="fas fa-star text-yellow-600 mr-3"></i>
                                         <div>
@@ -149,9 +167,13 @@
                                             <p class="text-sm text-gray-600">Get notified when guests leave reviews</p>
                                         </div>
                                     </div>
-                                    <input type="checkbox" name="email_reviews" value="1" {{ $notifications['email_reviews'] ? 'checked' : '' }} class="h-5 w-5 text-gray-600 rounded focus:ring-gray-500">
-                                </label>
-                                <label class="flex items-center justify-between">
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" name="email_reviews" value="1" {{ $notifications['email_reviews'] ? 'checked' : '' }} class="sr-only peer">
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-gray-500 rounded-full peer peer-checked:bg-gray-600 transition-all"></div>
+                                        <div class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-all peer-checked:translate-x-full"></div>
+                                    </label>
+                                </div>
+                                <div class="flex items-center justify-between">
                                     <div class="flex items-center">
                                         <i class="fas fa-dollar-sign text-green-600 mr-3"></i>
                                         <div>
@@ -159,15 +181,19 @@
                                             <p class="text-sm text-gray-600">Get notified about payment updates</p>
                                         </div>
                                     </div>
-                                    <input type="checkbox" name="email_payments" value="1" {{ $notifications['email_payments'] ? 'checked' : '' }} class="h-5 w-5 text-gray-600 rounded focus:ring-gray-500">
-                                </label>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" name="email_payments" value="1" {{ $notifications['email_payments'] ? 'checked' : '' }} class="sr-only peer">
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-gray-500 rounded-full peer peer-checked:bg-gray-600 transition-all"></div>
+                                        <div class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-all peer-checked:translate-x-full"></div>
+                                    </label>
+                                </div>
                             </div>
                         </div>
                         
                         <div class="bg-blue-50 p-6 rounded-xl">
                             <h4 class="font-semibold text-gray-900 mb-4">SMS Notifications</h4>
                             <div class="space-y-4">
-                                <label class="flex items-center justify-between">
+                                <div class="flex items-center justify-between">
                                     <div class="flex items-center">
                                         <i class="fas fa-mobile-alt text-blue-600 mr-3"></i>
                                         <div>
@@ -175,9 +201,13 @@
                                             <p class="text-sm text-gray-600">Receive SMS for urgent guest messages</p>
                                         </div>
                                     </div>
-                                    <input type="checkbox" name="sms_urgent" value="1" {{ $notifications['sms_urgent'] ? 'checked' : '' }} class="h-5 w-5 text-gray-600 rounded focus:ring-gray-500">
-                                </label>
-                                <label class="flex items-center justify-between">
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" name="sms_urgent" value="1" {{ $notifications['sms_urgent'] ? 'checked' : '' }} class="sr-only peer">
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500 rounded-full peer peer-checked:bg-blue-600 transition-all"></div>
+                                        <div class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-all peer-checked:translate-x-full"></div>
+                                    </label>
+                                </div>
+                                <div class="flex items-center justify-between">
                                     <div class="flex items-center">
                                         <i class="fas fa-exclamation-triangle text-red-600 mr-3"></i>
                                         <div>
@@ -185,12 +215,16 @@
                                             <p class="text-sm text-gray-600">Get SMS alerts for booking problems</p>
                                         </div>
                                     </div>
-                                    <input type="checkbox" name="sms_issues" value="1" {{ $notifications['sms_issues'] ? 'checked' : '' }} class="h-5 w-5 text-gray-600 rounded focus:ring-gray-500">
-                                </label>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" name="sms_issues" value="1" {{ $notifications['sms_issues'] ? 'checked' : '' }} class="sr-only peer">
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500 rounded-full peer peer-checked:bg-blue-600 transition-all"></div>
+                                        <div class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-all peer-checked:translate-x-full"></div>
+                                    </label>
+                                </div>
                             </div>
                         </div>
                         
-                        <button type="submit" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg">
+                        <button type="submit" onclick="showNotification('Notification preferences saved!')" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg">
                             <i class="fas fa-save mr-2"></i>Save Preferences
                         </button>
                     </div>
@@ -210,17 +244,32 @@
                             <div class="space-y-4">
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-700 mb-2">Current Password</label>
-                                    <input type="password" name="current_password" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200" required>
+                                    <div class="relative">
+                                        <input type="password" name="current_password" id="partner_current_password" class="w-full border border-gray-300 rounded-xl px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200" required>
+                                        <button type="button" onclick="togglePartnerPassword('partner_current_password')" class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                            <i id="partner_current_password_icon" class="fas fa-eye text-gray-400"></i>
+                                        </button>
+                                    </div>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-700 mb-2">New Password</label>
-                                    <input type="password" name="password" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200" required>
+                                    <div class="relative">
+                                        <input type="password" name="password" id="partner_new_password" class="w-full border border-gray-300 rounded-xl px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200" required>
+                                        <button type="button" onclick="togglePartnerPassword('partner_new_password')" class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                            <i id="partner_new_password_icon" class="fas fa-eye text-gray-400"></i>
+                                        </button>
+                                    </div>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-700 mb-2">Confirm New Password</label>
-                                    <input type="password" name="password_confirmation" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200" required>
+                                    <div class="relative">
+                                        <input type="password" name="password_confirmation" id="partner_confirm_password" class="w-full border border-gray-300 rounded-xl px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200" required>
+                                        <button type="button" onclick="togglePartnerPassword('partner_confirm_password')" class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                            <i id="partner_confirm_password_icon" class="fas fa-eye text-gray-400"></i>
+                                        </button>
+                                    </div>
                                 </div>
-                                <button type="submit" class="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg">
+                                <button type="submit" onclick="showNotification('Password changed successfully!')" class="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg">
                                     <i class="fas fa-key mr-2"></i>Change Password
                                 </button>
                             </div>
@@ -237,7 +286,7 @@
                             <form action="{{ route('partner.settings.two-factor.toggle') }}" method="POST" class="inline">
                                 @csrf
                                 <input type="hidden" name="enabled" value="{{ $security['two_factor_enabled'] ? '0' : '1' }}">
-                                <button type="submit" class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg">
+                                <button type="submit" onclick="showNotification('Two-factor authentication {{ $security['two_factor_enabled'] ? 'disabled' : 'enabled' }}!')" class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg">
                                     <i class="fas fa-shield-alt mr-2"></i>{{ $security['two_factor_enabled'] ? 'Disable' : 'Enable' }} 2FA
                                 </button>
                             </form>
@@ -318,7 +367,7 @@
                             </div>
                         </div>
                         
-                        <button type="submit" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg">
+                        <button type="submit" onclick="showNotification('Payout settings saved!')" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg">
                             <i class="fas fa-save mr-2"></i>Save Payout Settings
                         </button>
                     </div>
@@ -383,4 +432,34 @@
         </div>
     </div>
 </div>
+<script>
+function togglePartnerPassword(fieldId) {
+    const field = document.getElementById(fieldId);
+    const icon = document.getElementById(fieldId + '_icon');
+    
+    if (field.type === 'password') {
+        field.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        field.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+}
+
+function showNotification(message) {
+    const notification = document.getElementById('notification');
+    const text = document.getElementById('notification-text');
+    text.textContent = message;
+    notification.classList.remove('hidden');
+    setTimeout(() => {
+        hideNotification();
+    }, 3000);
+}
+
+function hideNotification() {
+    document.getElementById('notification').classList.add('hidden');
+}
+</script>
 @endsection

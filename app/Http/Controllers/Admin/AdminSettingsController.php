@@ -14,7 +14,22 @@ class AdminSettingsController extends Controller
     public function index()
     {
         $admin = Auth::guard('admin')->user();
-        $settings = $admin->settings ?? new AdminSettings();
+        $settings = $admin->settings;
+        
+        if (!$settings) {
+            $settings = new AdminSettings([
+                'admin_id' => $admin->id,
+                'full_name' => $admin->username,
+                'timezone' => 'UTC',
+                'language' => 'en',
+                'notification_preferences' => [
+                    'email_alerts' => true,
+                    'system_notifications' => true,
+                    'security_alerts' => true,
+                    'report_notifications' => false
+                ]
+            ]);
+        }
         
         return view('admin.settings.index', compact('admin', 'settings'));
     }
