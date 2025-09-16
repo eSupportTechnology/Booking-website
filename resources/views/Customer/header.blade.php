@@ -95,11 +95,7 @@
                     
 
                     <!-- List property -->
-                    <a href="/list-your-property"
-                    class="hover:underline text-xs sm:text-sm md:text-base"
-                    style="font-family: 'Noto Sans', sans-serif;">
-                        List your property
-                    </a>
+                   <a href="/list-your-property" class="hover:underline">List your property</a>
 
                     <!-- Auth -->
                     @auth('customer')

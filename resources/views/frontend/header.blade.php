@@ -121,16 +121,32 @@
                     </button>
                 </form>
             @else
-                <p class="px-4 py-2 text-gray-500 text-sm">Please sign in to view account options</p>
+               <p class="px-2 py-1 text-gray-500 text-xs md:px-4 md:py-2 md:text-sm">
+                    Please sign in to view account options
+                </p>
+
             @endauth
         </div>
     </div>
 
-    <!-- Guest buttons (always visible) -->
+   <!-- ✅ Guest buttons -->
+<!-- ✅ Guest buttons -->
+<!-- ✅ Guest buttons -->
+<div class="flex gap-2">
     <a href="{{ route('customer.login') }}"
-        class="bg-white px-4 py-2 rounded hover:bg-blue-100 text-[#3CC0E9]">Register</a>
+       class="bg-white text-[#3CC0E9] rounded hover:bg-blue-100 
+              px-2 py-1 text-sm md:px-4 md:py-2 md:text-base">
+       Register
+    </a>
     <a href="{{ route('customer.login') }}"
-        class="bg-white px-4 py-2 rounded hover:bg-blue-100 text-[#3CC0E9]">Sign in</a>
+       class="bg-white text-[#3CC0E9] rounded hover:bg-blue-100 
+              px-2 py-1 text-sm md:px-4 md:py-2 md:text-base">
+       Sign in
+    </a>
+</div>
+
+
+
 </div>
 
 
@@ -219,6 +235,8 @@
             }
         });
     }
+
+    
 });
 
 document.addEventListener("DOMContentLoaded", () => {
