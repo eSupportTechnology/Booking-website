@@ -9,7 +9,7 @@
                     <h1 class="text-4xl font-bold mb-2">Alternative Places</h1>
                     <p class="text-orange-100 text-lg">Manage your unique property listings</p>
                 </div>
-                <a href="{{ route('partner.list-your-property') }}"
+                <a href="{{ route('partner.property.category') }}"
                     class="bg-white text-orange-600 px-6 py-3 rounded-xl font-semibold hover:bg-orange-50 transition-all duration-200 shadow-lg">
                     <i class="fas fa-plus mr-2"></i>Add Property
                 </a>
