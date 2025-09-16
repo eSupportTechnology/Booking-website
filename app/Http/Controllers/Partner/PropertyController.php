@@ -12,42 +12,42 @@ class PropertyController extends Controller
     public function index(GetPropertyDataAction $action)
     {
         $data = $action->execute();
-        
+
         return view('partner.properties.index', $data);
     }
 
     public function apartments(GetPropertyByTypeAction $action)
     {
         $data = $action->execute('apartments');
-        
+
         return view('partner.properties.apartments', $data);
     }
 
     public function homes(GetPropertyByTypeAction $action)
     {
         $data = $action->execute('homes');
-        
+
         return view('partner.properties.homes', $data);
     }
 
     public function hotels(GetPropertyByTypeAction $action)
     {
         $data = $action->execute('hotels');
-        
+
         return view('partner.properties.hotels', $data);
     }
 
     public function alternativePlaces(GetPropertyByTypeAction $action)
     {
         $data = $action->execute('alternative-places');
-        
+
         return view('partner.properties.alternative-places', $data);
     }
 
     public function bookings(GetBookingDataAction $action)
     {
         $data = $action->execute();
-        
+
         return view('partner.properties.bookings', $data);
     }
 
@@ -56,9 +56,9 @@ class PropertyController extends Controller
         $property = \App\Models\Property::where('id', $propertyId)
             ->where('user_id', auth()->id())
             ->firstOrFail();
-            
-        $categoryName = strtolower($property->category->name ?? 'apartment');
-        
+
+        $categoryName = strtolower($property->category->name ?? 'home');
+
         // Redirect to existing edit forms based on category
         switch ($categoryName) {
             case 'apartment':
@@ -77,9 +77,9 @@ class PropertyController extends Controller
         $property = \App\Models\Property::where('id', $propertyId)
             ->where('user_id', auth()->id())
             ->firstOrFail();
-            
+
         $property->delete();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Property deleted successfully'
