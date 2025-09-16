@@ -12,7 +12,11 @@ class Driver extends Model
         'contact_number',
         'email',
         'license_number',
-        'photo'
+        'photo',
+        'driver_license_front',
+        'driver_license_back',
+        'tourism_license_front',
+        'tourism_license_back'
     ];
 
     // Each driver belongs to one taxi
