@@ -64,60 +64,63 @@
 
                 <!-- Right Section -->
                 <!-- Right Section -->
-<div class="flex items-center flex-wrap justify-end gap-2 sm:gap-3 md:gap-5 mt-2 md:mt-0 w-full md:w-auto">
+                <div class="flex items-center flex-wrap justify-end gap-2 sm:gap-3 md:gap-5 mt-2 md:mt-0 w-full md:w-auto">
 
-    <!-- Currency -->
-    <div class="flex items-center">
-        <span id="current-currency"
-              class="font-semibold cursor-pointer select-none text-sm md:text-base"
-              title="Click to change currency">
-            LKR
-        </span>
-    </div>
+                    <!-- Currency -->
+                    <div class="flex items-center">
+                        <span id="current-currency"
+                            class="font-semibold cursor-pointer select-none text-sm md:text-base"
+                            title="Click to change currency">
+                            LKR
+                        </span>
+                    </div>
 
-    <!-- Language -->
-    @php
-        $locale = app()->getLocale();
-        $language = config('languages.' . $locale);
-        $flag = isset($language['flag']) ? asset($language['flag']) : asset('images/flags/uk.png');
-    @endphp
-    <button id="language-button" type="button"
-            class="flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 bg-white rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-hidden">
-        <img src="{{ $flag }}" alt="{{ $language['name'] ?? 'Language' }}"
-             class="w-full h-full object-cover rounded-full" />
-    </button>
+                    <!-- Language -->
+                    @php
+                        $locale = app()->getLocale();
+                        $language = config('languages.' . $locale);
+                        $flag = isset($language['flag']) ? asset($language['flag']) : asset('images/flags/uk.png');
+                    @endphp
+                    <button id="language-button" type="button"
+                            class="flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 bg-white rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-hidden">
+                        <img src="{{ $flag }}" alt="{{ $language['name'] ?? 'Language' }}"
+                            class="w-full h-full object-cover rounded-full" />
+                    </button>
 
-    <!-- Help -->
-    <a href="#" class="flex items-center">
-        <img src="{{ asset('assets/question.svg') }}" alt="Help"
-             class="w-4 h-4 sm:w-5 sm:h-5 cursor-pointer" />
-    </a>
+                    <!-- Help -->
+                    <a href="#" class="flex items-center">
+                        <img src="{{ asset('assets/question.svg') }}" alt="Help"
+                            class="w-4 h-4 sm:w-5 sm:h-5 cursor-pointer" />
+                    </a>
+                    
 
-    <!-- List property -->
-    <a href="/list-your-property"
-       class="hover:underline text-xs sm:text-sm md:text-base"
-       style="font-family: 'Noto Sans', sans-serif;">
-        List your property
-    </a>
+                    <!-- List property -->
+                    <a href="/list-your-property"
+                    class="hover:underline text-xs sm:text-sm md:text-base"
+                    style="font-family: 'Noto Sans', sans-serif;">
+                        List your property
+                    </a>
 
-    <!-- Auth -->
-    @auth('customer')
-        <!-- Profile dropdown here -->
-    @else
-        <div class="flex items-center gap-1 sm:gap-2">
-            <a href="{{ route('customer.login') }}"
-               class="bg-white font-base px-2 py-1 sm:px-3 sm:py-1 md:px-4 md:py-2 rounded hover:bg-blue-100 text-xs sm:text-sm md:text-base"
-               style="font-family: 'Noto Sans', sans-serif; color:#3CC0E9;">
-                Register
-            </a>
-            <a href="{{ route('customer.login') }}"
-               class="bg-white font-base px-2 py-1 sm:px-3 sm:py-1 md:px-4 md:py-2 rounded hover:bg-blue-100 text-xs sm:text-sm md:text-base"
-               style="font-family: 'Noto Sans', sans-serif; color:#3CC0E9;">
-                Sign in
-            </a>
-        </div>
-    @endauth
-</div>
+                    <!-- Auth -->
+                    @auth('customer')
+                        <!-- Profile dropdown here -->
+                    @else
+                        <div class="flex items-center gap-1 sm:gap-2">
+                            <a href="{{ route('customer.login') }}"
+                            class="bg-white font-base px-2 py-1 sm:px-3 sm:py-1 md:px-4 md:py-2 rounded hover:bg-blue-100 text-xs sm:text-sm md:text-base"
+                            style="font-family: 'Noto Sans', sans-serif; color:#3CC0E9;">
+                                Register
+                            </a>
+                            <a href="{{ route('customer.login') }}"
+                            class="bg-white font-base px-2 py-1 sm:px-3 sm:py-1 md:px-4 md:py-2 rounded hover:bg-blue-100 text-xs sm:text-sm md:text-base"
+                            style="font-family: 'Noto Sans', sans-serif; color:#3CC0E9;">
+                                Sign in
+                            </a>
+                        </div>
+                    @endauth
+
+                    
+                </div>
 
             </div>
         </div>
