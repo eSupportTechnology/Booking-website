@@ -62,100 +62,88 @@
                     </div>
                 </div>
 
-                <!-- Right Section -->
-<div class="flex flex-wrap items-center justify-start md:justify-end gap-3 w-full md:w-auto mt-4 md:mt-0">
-    <!-- Currency -->
-    <span id="current-currency"
-        class="font-semibold cursor-pointer select-none">LKR</span>
+        <!-- Right Section -->
+    <div class="flex flex-wrap items-center justify-start md:justify-end gap-3 w-full md:w-auto mt-4 md:mt-0">
+        <!-- Currency -->
+        <span id="current-currency"
+            class="font-semibold cursor-pointer select-none">LKR</span>
 
-    <!-- Language -->
-    @php
-        $locale = app()->getLocale();
-        $language = config('languages.' . $locale);
-        $flag = isset($language['flag']) ? asset($language['flag']) : asset('images/flags/uk.png');
-    @endphp
-    <button id="language-button" type="button"
-        class="flex items-center justify-center w-7 h-7 bg-white rounded-full hover:bg-gray-100 overflow-hidden">
-        <img src="{{ $flag }}" alt="{{ $language['name'] ?? 'Language' }}"
-            class="w-full h-full object-cover rounded-full" />
-    </button>
-
-    <!-- Help -->
-    <a href="">
-        <img src="{{ asset('assets/question.svg') }}" class="w-5 h-5" />
-    </a>
-
-    <!-- List property -->
-    <a href="/list-your-property" class="hover:underline">List your property</a>
-
-    <!--Your Account -->
-    <div class="relative">
-        <button id="account-btn" class="flex items-center space-x-2">
-            <div class="bg-white p-2 border border-[#3CC0E9] rounded-full">
-                <img src="{{ asset('assets/user.svg') }}" class="w-5 h-5" />
-            </div>
-            <span>Your Account</span>
+        <!-- Language -->
+        @php
+            $locale = app()->getLocale();
+            $language = config('languages.' . $locale);
+            $flag = isset($language['flag']) ? asset($language['flag']) : asset('images/flags/uk.png');
+        @endphp
+        <button id="language-button" type="button"
+            class="flex items-center justify-center w-7 h-7 bg-white rounded-full hover:bg-gray-100 overflow-hidden">
+            <img src="{{ $flag }}" alt="{{ $language['name'] ?? 'Language' }}"
+                class="w-full h-full object-cover rounded-full" />
         </button>
 
-        <!-- Dropdown -->
-        <div id="account-menu"
-            class="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-md shadow-lg hidden z-50">
-            @auth('customer')
-                <a href="/profile"
-                   class="block px-4 py-2 text-gray-700 text-base hover:bg-gray-100 flex items-center gap-2">
-                   <img src="{{ asset('assets/mynaui_user.svg') }}" class="w-5 h-5" /> My Account
-                </a>
-                <a href="/profile"
-                   class="block px-4 py-2 text-gray-700 text-base hover:bg-gray-100 flex items-center gap-2">
-                   <img src="{{ asset('assets/streamline_baggage.svg') }}" class="w-4 h-4" /> Bookings & Trips
-                </a>
-                <a href="/profile"
-                   class="block px-4 py-2 text-gray-700 text-base hover:bg-gray-100 flex items-center gap-2">
-                   <img src="{{ asset('assets/mynaui_letter-g-circle.svg') }}" class="w-5 h-5" /> Genius loyalty programme
-                </a>
-                <form method="POST" action="{{ route('customer.logout') }}">
-                    @csrf
-                    <button type="submit"
-                        class="w-full text-left px-4 py-2 text-gray-700 text-base hover:bg-gray-100 flex items-center gap-2">
-                        <img src="{{ asset('assets/simple-line-icons_logout.svg') }}" class="w-4 h-4" /> Logout
-                    </button>
-                </form>
-            @else
-               <p class="px-2 py-1 text-gray-500 text-xs md:px-4 md:py-2 md:text-sm">
-                    Please sign in to view account options
-                </p>
+        <!-- Help -->
+        <a href="">
+            <img src="{{ asset('assets/question.svg') }}" class="w-5 h-5" />
+        </a>
 
-            @endauth
-        </div>
-    </div>
+        <!-- List property -->
+        <a href="/list-your-property" class="hover:underline">List your property</a>
 
-   <!-- ✅ Guest buttons -->
-<!-- ✅ Guest buttons -->
-<!-- ✅ Guest buttons -->
-<div class="flex gap-2">
-    <a href="{{ route('customer.login') }}"
-       class="bg-white text-[#3CC0E9] rounded hover:bg-blue-100 
-              px-2 py-1 text-sm md:px-4 md:py-2 md:text-base">
-       Register
-    </a>
-    <a href="{{ route('customer.login') }}"
-       class="bg-white text-[#3CC0E9] rounded hover:bg-blue-100 
-              px-2 py-1 text-sm md:px-4 md:py-2 md:text-base">
-       Sign in
-    </a>
-</div>
+                    <!--Your Account -->
+                    <div class="relative">
+                        <button id="account-btn" class="flex items-center space-x-2">
+                            <div class="bg-white p-2 border border-[#3CC0E9] rounded-full">
+                                <img src="{{ asset('assets/user.svg') }}" class="w-5 h-5" />
+                            </div>
+                            <span>Your Account</span>
+                        </button>
 
+                        <!-- Dropdown -->
+                        <div id="account-menu"
+                            class="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-md shadow-lg hidden z-50">
+                            @auth('customer')
+                                <a href="/profile"
+                                class="block px-4 py-2 text-gray-700 text-base hover:bg-gray-100 flex items-center gap-2">
+                                <img src="{{ asset('assets/mynaui_user.svg') }}" class="w-5 h-5" /> My Account
+                                </a>
+                                <a href="/profile"
+                                class="block px-4 py-2 text-gray-700 text-base hover:bg-gray-100 flex items-center gap-2">
+                                <img src="{{ asset('assets/streamline_baggage.svg') }}" class="w-4 h-4" /> Bookings & Trips
+                                </a>
+                                <a href="/profile"
+                                class="block px-4 py-2 text-gray-700 text-base hover:bg-gray-100 flex items-center gap-2">
+                                <img src="{{ asset('assets/mynaui_letter-g-circle.svg') }}" class="w-5 h-5" /> Genius loyalty programme
+                                </a>
+                                <form method="POST" action="{{ route('customer.logout') }}">
+                                    @csrf
+                                    <button type="submit"
+                                        class="w-full text-left px-4 py-2 text-gray-700 text-base hover:bg-gray-100 flex items-center gap-2">
+                                        <img src="{{ asset('assets/simple-line-icons_logout.svg') }}" class="w-4 h-4" /> Logout
+                                    </button>
+                                </form>
+                            @else
+                            <p class="px-10 py-1 text-gray-500 text-xs md:px-4 md:py-2 md:text-sm">
+                                    Please sign in to view account options
+                                </p>
 
+                            @endauth
+                        </div>
+                    </div>
 
-</div>
-
-
-    
-</div>
-
-
-
-
+                        <!-- ✅ Guest buttons -->
+                        <div class="flex gap-2">
+                            <a href="{{ route('customer.login') }}"
+                            class="bg-white text-[#3CC0E9] rounded hover:bg-blue-100 
+                                    px-2 py-1 text-sm md:px-4 md:py-2 md:text-base">
+                            Register
+                            </a>
+                            <a href="{{ route('customer.login') }}"
+                            class="bg-white text-[#3CC0E9] rounded hover:bg-blue-100 
+                                    px-2 py-1 text-sm md:px-4 md:py-2 md:text-base">
+                            Sign in
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -167,24 +155,22 @@
         const currencyCloseBtn = document.getElementById("currency-close-btn");
 
         if (currentCurrency && currencyModal && currencyCloseBtn) {
-            // Open currency modal
+            
             currentCurrency.addEventListener("click", () => {
                 currencyModal.classList.remove("hidden");
             });
 
-            // Close modal with "×" button
+            
             currencyCloseBtn.addEventListener("click", () => {
                 currencyModal.classList.add("hidden");
             });
 
-            // Close modal when clicking outside
+            
             window.addEventListener("click", (e) => {
                 if (e.target === currencyModal) {
                     currencyModal.classList.add("hidden");
                 }
             });
-
-            // Change currency when clicked
             currencyModal.querySelectorAll("button[data-currency]").forEach((btn) => {
                 btn.addEventListener("click", () => {
                     const selectedCurrency = btn.getAttribute("data-currency");
@@ -199,17 +185,16 @@
         const closeBtn = languageModal ? languageModal.querySelector(".close-btn") : null;
 
         if (languageButton && languageModal && closeBtn) {
-            // Open language modal
             languageButton.addEventListener("click", () => {
                 languageModal.classList.remove("hidden");
             });
 
-            // Close modal with "×" button
+            
             closeBtn.addEventListener("click", () => {
                 languageModal.classList.add("hidden");
             });
 
-            // Close modal when clicking outside
+        
             window.addEventListener("click", (event) => {
                 if (event.target === languageModal) {
                     languageModal.classList.add("hidden");
@@ -225,10 +210,10 @@
     if (accountBtn && accountMenu) {
         accountBtn.addEventListener("click", (e) => {
             e.stopPropagation();
-            accountMenu.classList.remove("hidden"); // show menu
+            accountMenu.classList.remove("hidden"); 
         });
 
-        // Close dropdown when clicking outside
+        
         window.addEventListener("click", (e) => {
             if (!accountMenu.contains(e.target) && !accountBtn.contains(e.target)) {
                 accountMenu.classList.add("hidden");
