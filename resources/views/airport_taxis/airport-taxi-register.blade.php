@@ -186,6 +186,42 @@
                     <input type="text" placeholder="Enter License Number" class="w-full p-2 border rounded-md text-sm" x-model="driver_license">
                     <p class="text-gray-500 text-sm mt-1">Official driver’s license number.</p>
                 </div>
+                <!-- Driver License Front -->
+<div>
+    <label class="block font-semibold text-sm mb-1">
+        Driver License Front
+    </label>
+    <input type="file" class="w-full p-2 border rounded-md text-sm" accept="image/*"
+           @change="driver_license_front = $event.target.files[0]">
+</div>
+
+<!-- Driver License Back -->
+<div>
+    <label class="block font-semibold text-sm mb-1">
+        Driver License Back
+    </label>
+    <input type="file" class="w-full p-2 border rounded-md text-sm" accept="image/*"
+           @change="driver_license_back = $event.target.files[0]">
+</div>
+
+<!-- Tourism License Front -->
+<div>
+    <label class="block font-semibold text-sm mb-1">
+        Tourism License Front
+    </label>
+    <input type="file" class="w-full p-2 border rounded-md text-sm" accept="image/*"
+           @change="tourism_license_front = $event.target.files[0]">
+</div>
+
+<!-- Tourism License Back -->
+<div>
+    <label class="block font-semibold text-sm mb-1">
+        Tourism License Back
+    </label>
+    <input type="file" class="w-full p-2 border rounded-md text-sm" accept="image/*"
+           @change="tourism_license_back = $event.target.files[0]">
+</div>
+
 
                 <div>
                     <label class="block font-semibold text-sm mb-1">
@@ -258,6 +294,57 @@
         </div>
     </template>
 
+        <!-- Step 5: Upload Taxi Images -->
+    <template x-if="step === 5">
+        <div class="px-6 py-8 mt-6 w-full max-w-2xl mx-auto lg:ml-24 space-y-6 bg-white rounded-lg shadow border">
+            <h1 class="text-2xl font-bold mb-2">Upload Taxi Images</h1>
+            <p class="text-gray-500 text-sm mb-4">Upload clear photos of the taxi (front, back, inside). Preview before submitting.</p>
+
+            <div class="space-y-4">
+                <!-- Front Image -->
+                <div>
+                    <label class="block font-semibold text-sm mb-1">Front Image <span class="text-red-500">*</span></label>
+                    <input type="file" accept="image/*" class="w-full p-2 border rounded-md text-sm"
+                        @change="previewImage($event, 'front')">
+                    <template x-if="images.front">
+                        <img :src="images.frontPreview" class="w-40 h-28 object-cover rounded mt-2 border">
+                    </template>
+                </div>
+
+                <!-- Back Image -->
+                <div>
+                    <label class="block font-semibold text-sm mb-1">Back Image <span class="text-red-500">*</span></label>
+                    <input type="file" accept="image/*" class="w-full p-2 border rounded-md text-sm"
+                        @change="previewImage($event, 'back')">
+                    <template x-if="images.back">
+                        <img :src="images.backPreview" class="w-40 h-28 object-cover rounded mt-2 border">
+                    </template>
+                </div>
+
+                <!-- Inside Image -->
+                <div>
+                    <label class="block font-semibold text-sm mb-1">Inside Image <span class="text-red-500">*</span></label>
+                    <input type="file" accept="image/*" class="w-full p-2 border rounded-md text-sm"
+                        @change="previewImage($event, 'inside')">
+                    <template x-if="images.inside">
+                        <img :src="images.insidePreview" class="w-40 h-28 object-cover rounded mt-2 border">
+                    </template>
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="flex justify-between items-center mt-6">
+                <button @click="step--"
+                    class="flex items-center border border-[#3CC0E9] rounded text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12">←</button>
+                <button @click="saveStep5"
+                    class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition">
+                    Submit Images
+                </button>
+            </div>
+        </div>
+    </template>
+
+
     <!-- Modal -->
     
 </div>
@@ -269,28 +356,50 @@ document.addEventListener("alpine:init", () => {
         selectedCategory: '',
         showModal: false,
         taxi_id: null,
+
+        // Step 2
         number_plate: '',
         color: '',
         passenger_capacity: '',
         luggage_capacity: '',
+
+        // Step 3
         driver_name: '',
         driver_contact: '',
         driver_email: '',
         driver_license: '',
         driver_photo: null,
-        pricePerDay: 0,
+        driver_license_front: null,
+driver_license_back: null,
+tourism_license_front: null,
+tourism_license_back: null,
+
+        // Step 4
         pricingType: '',
         baseFare: '',
         pricePerKm: '',
+        pricePerDay: '',
         airportFee: 0,
         luggageFee: 0,
 
+        // Step 5
+        images: {
+            front: null,
+            back: null,
+            inside: null,
+            frontPreview: null,
+            backPreview: null,
+            insidePreview: null,
+        },
+
+        // ================= Step 1 =================
         async saveStep1() {
             if (!this.selectedCategory) {
                 Swal.fire({
                     icon: "warning",
                     title: "Required",
                     text: "Please select a taxi type before continuing!",
+                    toast: true,
                     position: "top-end",
                     timer: 2000,
                     showConfirmButton: false
@@ -312,13 +421,12 @@ document.addEventListener("alpine:init", () => {
                 if (data.success) {
                     this.taxi_id = data.taxi_id;
                     this.step++;
-
                     Swal.fire({
                         icon: "success",
                         title: "Saved",
                         text: data.message || "Step 1 completed!",
-                        position: "top-end",
                         toast: true,
+                        position: "top-end",
                         timer: 2000,
                         showConfirmButton: false
                     });
@@ -326,79 +434,77 @@ document.addEventListener("alpine:init", () => {
                     Swal.fire({ icon: "error", title: "Error", text: data.message || "Failed to save step 1" });
                 }
             } catch (error) {
-                console.error("Error:", error);
                 Swal.fire({ icon: "error", title: "Error", text: "Something went wrong while saving." });
             }
         },
 
-       async saveStep2() {
-    if (!this.number_plate || !this.color || !this.passenger_capacity) {
-        Swal.fire({
-            icon: "warning",
-            title: "Required",
-            text: "Please fill all required fields!",
-            position: "top-end",
-            toast: true,
-            timer: 2000,
-            showConfirmButton: false
-        });
-        return;
-    }
-
-    try {
-        const response = await fetch("{{ route('taxis.storeStep2') }}", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-TOKEN": "{{ csrf_token() }}"
-            },
-            body: JSON.stringify({
-                taxi_id: this.taxi_id,
-                number_plate: this.number_plate,
-                color: this.color,
-                passenger_capacity: this.passenger_capacity,
-                luggage_capacity: this.luggage_capacity
-            })
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            if (errorData.errors) {
-                let errorMsg = Object.values(errorData.errors).flat().join("\n");
-                Swal.fire({ icon: "error", title: "Validation Error", text: errorMsg });
-            } else {
-                Swal.fire({ icon: "error", title: "Error", text: "Something went wrong" });
+        // ================= Step 2 =================
+        async saveStep2() {
+            if (!this.number_plate || !this.color || !this.passenger_capacity) {
+                Swal.fire({
+                    icon: "warning",
+                    title: "Required",
+                    text: "Please fill all required fields!",
+                    toast: true,
+                    position: "top-end",
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+                return;
             }
-            return;
-        }
 
-        const data = await response.json();
-        if (data.success) {
-            this.step++;
-            Swal.fire({
-                icon: "success",
-                title: "Saved",
-                text: data.message || "Step 2 completed!",
-                toast: true,
-                position: "top-end",
-                timer: 2000,
-                showConfirmButton: false
-            });
-        }
-    } catch (error) {
-        Swal.fire({ icon: "error", title: "Error", text: "Unexpected error occurred" });
-    }
-},
+            try {
+                const response = await fetch("{{ route('taxis.storeStep2') }}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                    },
+                    body: JSON.stringify({
+                        taxi_id: this.taxi_id,
+                        number_plate: this.number_plate,
+                        color: this.color,
+                        passenger_capacity: this.passenger_capacity,
+                        luggage_capacity: this.luggage_capacity
+                    })
+                });
 
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    if (errorData.errors) {
+                        let errorMsg = Object.values(errorData.errors).flat().join("\n");
+                        Swal.fire({ icon: "error", title: "Validation Error", text: errorMsg });
+                    }
+                    return;
+                }
 
-      async saveStep3() {
+                const data = await response.json();
+                if (data.success) {
+                    this.step++;
+                    Swal.fire({
+                        icon: "success",
+                        title: "Saved",
+                        text: data.message || "Step 2 completed!",
+                        toast: true,
+                        position: "top-end",
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                }
+            } catch (error) {
+                Swal.fire({ icon: "error", title: "Error", text: "Unexpected error occurred" });
+            }
+        },
+
+     // ================= Step 3 =================
+async saveStep3() {
     if (!this.driver_name || !this.driver_contact || !this.driver_license) {
         Swal.fire({
             icon: "warning",
             title: "Required",
             text: "Please fill all required fields!",
-            position: "top-end",
             toast: true,
+            position: "top-end",
             timer: 2000,
             showConfirmButton: false
         });
@@ -412,26 +518,23 @@ document.addEventListener("alpine:init", () => {
         formData.append("contact_number", this.driver_contact);
         formData.append("email", this.driver_email);
         formData.append("license_number", this.driver_license);
-        if (this.driver_photo) {
-            formData.append("photo", this.driver_photo);
-        }
+
+        // Driver photo
+        if (this.driver_photo) formData.append("photo", this.driver_photo);
+
+        // Driver license images
+        if (this.driver_license_front) formData.append("driver_license_front", this.driver_license_front);
+        if (this.driver_license_back) formData.append("driver_license_back", this.driver_license_back);
+
+        // Tourism license images
+        if (this.tourism_license_front) formData.append("tourism_license_front", this.tourism_license_front);
+        if (this.tourism_license_back) formData.append("tourism_license_back", this.tourism_license_back);
 
         const response = await fetch("{{ route('taxis.storeStep3') }}", {
             method: "POST",
             headers: { "X-CSRF-TOKEN": "{{ csrf_token() }}" },
             body: formData
         });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            if (errorData.errors) {
-                let errorMsg = Object.values(errorData.errors).flat().join("\n");
-                Swal.fire({ icon: "error", title: "Validation Error", text: errorMsg });
-            } else {
-                Swal.fire({ icon: "error", title: "Error", text: "Something went wrong" });
-            }
-            return;
-        }
 
         const data = await response.json();
         if (data.success) {
@@ -440,21 +543,25 @@ document.addEventListener("alpine:init", () => {
                 icon: "success",
                 title: "Saved",
                 text: data.message || "Driver details saved!",
-                position: "top-end",
                 toast: true,
+                position: "top-end",
                 timer: 2000,
                 showConfirmButton: false
             });
         }
     } catch (error) {
         Swal.fire({ icon: "error", title: "Error", text: "Unexpected error occurred" });
+        console.error(error);
     }
 },
 
 
+        // ================= Step 4 =================
         async saveStep4() {
-            if (!this.pricingType || !this.baseFare || (this.pricingType === 'perKm' && !this.pricePerKm) || (this.pricingType === 'perDay' && !this.pricePerDay)) {
-                alert("Please fill all required fields!");
+            if (!this.pricingType || !this.baseFare ||
+                (this.pricingType === 'perKm' && !this.pricePerKm) ||
+                (this.pricingType === 'perDay' && !this.pricePerDay)) {
+                Swal.fire({ icon: "warning", title: "Required", text: "Please fill all required fields!" });
                 return;
             }
 
@@ -467,52 +574,84 @@ document.addEventListener("alpine:init", () => {
             formData.append("airport_fee", this.airportFee);
             formData.append("luggage_fee", this.luggageFee);
 
-            const response = await fetch("{{ route('taxis.storeStep4') }}", {
-                method: "POST",
-                headers: {
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                },
-                body: formData
-            });
-            const data = await response.json();
-
-            if (data.success) {
-                this.showModal = true;
-                Swal.fire({
-                    icon: "success",
-                    title: "Step successful!",
-                    text: "Do you want to add more taxis?",
-                    showCancelButton: true,
-                    confirmButtonText: "Yes",
-                    cancelButtonText: "No"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Reset to Step 1 for new taxi
-                        this.step = 1;
-                        this.selectedCategory = '';
-                        this.number_plate = '';
-                        this.color = '';
-                        this.passenger_capacity = '';
-                        this.luggage_capacity = '';
-                        this.driver_name = '';
-                        this.driver_contact = '';
-                        this.driver_email = '';
-                        this.driver_license = '';
-                        this.driver_photo = null;
-                        this.pricePerDay = 0;
-                        this.pricingType = '';
-                        this.baseFare = '';
-                        this.pricePerKm = '';
-                        this.airportFee = 0;
-                        this.luggageFee = 0;
-                        this.taxi_id = null;
-                    } else {
-                        // Navigate to dashboard
-                        window.location.href = "/my/taxi";
-                    }
+            try {
+                const response = await fetch("{{ route('taxis.storeStep4') }}", {
+                    method: "POST",
+                    headers: { "X-CSRF-TOKEN": "{{ csrf_token() }}" },
+                    body: formData
                 });
-            } else {
-                Swal.fire({ icon: "error", title: "Error", text: data.message || "Failed to save fare" });
+                const data = await response.json();
+
+                if (data.success) {
+                    this.step++; // ✅ Move to Step 5
+                    Swal.fire({
+                        icon: "success",
+                        title: "Fare Saved",
+                        text: "Now upload taxi images.",
+                        toast: true,
+                        position: "top-end",
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                } else {
+                    Swal.fire({ icon: "error", title: "Error", text: data.message || "Failed to save fare" });
+                }
+            } catch (error) {
+                Swal.fire({ icon: "error", title: "Error", text: "Unexpected error occurred" });
+            }
+        },
+
+        // ================= Step 5 =================
+        previewImage(event, type) {
+            const file = event.target.files[0];
+            if (file) {
+                this.images[type] = file;
+                this.images[type + "Preview"] = URL.createObjectURL(file);
+            }
+        },
+
+        async saveStep5() {
+            if (!this.images.front || !this.images.back || !this.images.inside) {
+                Swal.fire({
+                    icon: "warning",
+                    title: "Required",
+                    text: "Please upload all required images (front, back, inside).",
+                    toast: true,
+                    position: "top-end",
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("taxi_id", this.taxi_id);
+            formData.append("front", this.images.front);
+            formData.append("back", this.images.back);
+            formData.append("inside", this.images.inside);
+
+            try {
+                const response = await fetch("{{ route('taxis.storeStep5') }}", {
+                    method: "POST",
+                    headers: { "X-CSRF-TOKEN": "{{ csrf_token() }}" },
+                    body: formData
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    Swal.fire({
+                        icon: "success",
+                        title: "Taxi Registered!",
+                        text: "Your taxi has been successfully registered.",
+                        confirmButtonText: "Go to Dashboard"
+                    }).then(() => {
+                        window.location.href = "/my/taxi";
+                    });
+                } else {
+                    Swal.fire({ icon: "error", title: "Error", text: data.message || "Failed to upload images" });
+                }
+            } catch (error) {
+                Swal.fire({ icon: "error", title: "Error", text: "Unexpected error occurred" });
             }
         }
     }));

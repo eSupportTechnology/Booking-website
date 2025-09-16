@@ -8,7 +8,9 @@ class Taxi extends Model
 {
     protected $fillable = [
         'car_renter_id', 'taxi_type_id', 'number_plate',
-        'color', 'passenger_capacity', 'luggage_capacity', 'status'
+        'color', 'passenger_capacity', 'luggage_capacity', 'status', 'front_image',   
+        'back_image',    
+        'inside_image',  
     ];
 
     protected $casts = [

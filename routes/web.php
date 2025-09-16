@@ -1147,7 +1147,9 @@ Route::middleware(['auth:car_renter'])->prefix('taxi')->name('taxis.')->group(fu
     Route::post('/store-step2', [AirportTaxiController::class, 'storeStep2'])->name('storeStep2');
     Route::post('/store-step3', [AirportTaxiController::class, 'storeStep3'])->name('storeStep3');
     Route::post('/store-step4', [AirportTaxiController::class, 'storeStep4'])->name('storeStep4');
+    Route::post('/store-step5', [AirportTaxiController::class, 'storeStep5'])->name('storeStep5'); // ✅ Added
 });
+
 
 Route::get('/car-renters/control-panel', function () {
     return view('car_rentals.carrenters_control_panel');

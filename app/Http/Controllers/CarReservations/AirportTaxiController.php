@@ -78,42 +78,57 @@ class AirportTaxiController extends Controller
         ]);
     }
 
-    public function storeStep3(Request $request)
-    {
-        $validated = $request->validate([
-            'taxi_id' => 'required|exists:taxis,id',
-            'name' => 'required|string',
-            'contact_number' => 'required|string',
-            'email' => 'nullable|email',
-            'license_number' => 'required|string|unique:drivers,license_number',
-            'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-        ]);
+  public function storeStep3(Request $request)
+{
+    $validated = $request->validate([
+        'taxi_id' => 'required|exists:taxis,id',
+        'name' => 'required|string',
+        'contact_number' => 'required|string',
+        'email' => 'nullable|email',
+        'license_number' => 'required|string|unique:drivers,license_number',
+        'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        'driver_license_front' => 'nullable|image|mimes:jpg,jpeg,png|max:4096',
+        'driver_license_back' => 'nullable|image|mimes:jpg,jpeg,png|max:4096',
+        'tourism_license_front' => 'nullable|image|mimes:jpg,jpeg,png|max:4096',
+        'tourism_license_back' => 'nullable|image|mimes:jpg,jpeg,png|max:4096',
+    ]);
 
-        $taxi = Taxi::where('id', $validated['taxi_id'])
-                    ->where('car_renter_id', Auth::guard('car_renter')->id())
-                    ->firstOrFail();
+    $taxi = Taxi::where('id', $validated['taxi_id'])
+        ->where('car_renter_id', Auth::guard('car_renter')->id())
+        ->firstOrFail();
 
-        $driver = Driver::create([
-            'taxi_id' => $taxi->id,
-            'name' => $validated['name'],
-            'contact_number' => $validated['contact_number'],
-            'email' => $validated['email'] ?? null,
-            'license_number' => $validated['license_number'],
-            'photo' => null,
-        ]);
+    $driver = Driver::create([
+        'taxi_id' => $taxi->id,
+        'name' => $validated['name'],
+        'contact_number' => $validated['contact_number'],
+        'email' => $validated['email'] ?? null,
+        'license_number' => $validated['license_number'],
+        'photo' => null,
+    ]);
 
-        if ($request->hasFile('photo')) {
-            $fileService = app(FileUploadService::class);
-            $file = $fileService->uploadAndSave($request->file('photo'), 'driver_photo', 'driver', null);
-            if ($file) $driver->update(['photo' => $file->id]);
-        }
+    $fileService = app(FileUploadService::class);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Driver saved successfully',
-            'driver_id' => $driver->id
-        ]);
+    // Driver photo
+    if ($request->hasFile('photo')) {
+        $file = $fileService->uploadAndSave($request->file('photo'), 'driver_photo', 'driver', null);
+        if ($file) $driver->update(['photo' => $file->id]);
     }
+
+    // Driver license images
+    foreach (['driver_license_front', 'driver_license_back', 'tourism_license_front', 'tourism_license_back'] as $field) {
+        if ($request->hasFile($field)) {
+            $file = $fileService->uploadAndSave($request->file($field), $field, 'driver', null);
+            if ($file) $driver->update([$field => $file->id]);
+        }
+    }
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Driver saved successfully',
+        'driver_id' => $driver->id
+    ]);
+}
+
 
     public function storeStep4(Request $request)
     {
@@ -142,6 +157,39 @@ class AirportTaxiController extends Controller
             'success' => true,
             'fare_id' => $fare->id,
             'message' => 'Taxi fare saved successfully.'
+        ]);
+    }
+
+    public function storeStep5(Request $request)
+    {
+        $validated = $request->validate([
+            'taxi_id' => 'required|exists:taxis,id',
+            'front' => 'required|image|mimes:jpg,jpeg,png|max:4096',
+            'back' => 'required|image|mimes:jpg,jpeg,png|max:4096',
+            'inside' => 'required|image|mimes:jpg,jpeg,png|max:4096',
+        ]);
+
+        $taxi = Taxi::where('id', $validated['taxi_id'])
+            ->where('car_renter_id', Auth::guard('car_renter')->id())
+            ->firstOrFail();
+
+        $images = [];
+        foreach (['front', 'back', 'inside'] as $side) {
+            if ($request->hasFile($side)) {
+                $images[$side] = $request->file($side)->store("taxis/{$taxi->id}", 'public');
+            }
+        }
+
+        $taxi->update([
+            'front_image' => $images['front'] ?? null,
+            'back_image' => $images['back'] ?? null,
+            'inside_image' => $images['inside'] ?? null,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Taxi images uploaded successfully',
+            'taxi_id' => $taxi->id
         ]);
     }
 }
