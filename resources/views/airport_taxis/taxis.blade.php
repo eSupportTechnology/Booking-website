@@ -1,6 +1,9 @@
 @extends('car_rentals.master')
 
 @section('content')
+<!-- Swiper CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+
 <div class="space-y-8">
     <!-- Header -->
     <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl p-8 text-white">
@@ -16,7 +19,7 @@
         </div>
     </div>
 
-    <!-- Search & Filter (optional) -->
+    <!-- Search & Filter -->
     <div class="bg-white rounded-2xl p-6 shadow-lg">
         <form method="GET" class="flex flex-col md:flex-row gap-4">
             <div class="flex-1">
@@ -46,7 +49,39 @@
                 class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 overflow-hidden hover:scale-105">
                 <a href="#">
                     <div class="h-48 bg-gray-200 relative">
-                        <img  src="{{ asset('images/11.jpg') }}" alt="Car" class="w-full h-full object-cover">
+                        <!-- Swiper -->
+                        <div class="swiper taxi-swiper h-48">
+                            <div class="swiper-wrapper">
+                                @if($taxi->front_image)
+                                    <div class="swiper-slide">
+                                        <img src="{{ asset('storage/'.$taxi->front_image) }}" alt="Front View"
+                                             class="w-full h-48 object-cover">
+                                    </div>
+                                @endif
+                                @if($taxi->back_image)
+                                    <div class="swiper-slide">
+                                        <img src="{{ asset('storage/'.$taxi->back_image) }}" alt="Back View"
+                                             class="w-full h-48 object-cover">
+                                    </div>
+                                @endif
+                                @if($taxi->inside_image)
+                                    <div class="swiper-slide">
+                                        <img src="{{ asset('storage/'.$taxi->inside_image) }}" alt="Inside View"
+                                             class="w-full h-48 object-cover">
+                                    </div>
+                                @endif
+
+                                @if(!$taxi->front_image && !$taxi->back_image && !$taxi->inside_image)
+                                    <div class="swiper-slide">
+                                        <img src="{{ asset('images/placeholder-car.jpg') }}" alt="No Image"
+                                             class="w-full h-48 object-cover">
+                                    </div>
+                                @endif
+                            </div>
+                            <!-- Pagination -->
+                            <div class="swiper-pagination"></div>
+                        </div>
+
                         <div class="absolute top-4 right-4">
                             <span
                                 class="bg-{{ $taxi->is_active ? 'green' : 'yellow' }}-100 text-{{ $taxi->is_active ? 'green' : 'yellow' }}-800 px-3 py-1 rounded-full text-xs font-semibold">
@@ -106,4 +141,20 @@
         @endforelse
     </div>
 </div>
+
+<!-- Swiper JS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.taxi-swiper').forEach(function (el) {
+        new Swiper(el, {
+            loop: true,
+            pagination: {
+                el: el.querySelector('.swiper-pagination'),
+                clickable: true,
+            },
+        });
+    });
+});
+</script>
 @endsection
