@@ -12,6 +12,9 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Translation\FileLoader;
 use Illuminate\Translation\Translator;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\Gate;
+use App\Models\Property;
+use App\Policies\PropertyPolicy;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -47,5 +50,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Gate::policy(Property::class, PropertyPolicy::class);
     }
 }

@@ -59,16 +59,16 @@ class PropertyController extends Controller
 
         $categoryName = strtolower($property->category->name ?? 'home');
 
-        // Redirect to existing edit forms based on category
+        // Redirect to specific property type edit controllers
         switch ($categoryName) {
             case 'apartment':
-                return redirect()->route('partner.property.apartment.step2', $property->id);
+                return redirect()->route('partner.apartments.edit', $property->id);
             case 'home':
-                return redirect()->route('partner.homes.edit', $property->id);
+                return redirect()->route('partner.homes.edit.new', $property->id);
             case 'hotel':
-                return redirect()->route('partner.hotels.edit');
+                return redirect()->route('partner.hotels.edit.new', $property->id);
             default:
-                return redirect()->route('partner.property.apartment.step2', $property->id);
+                return redirect()->route('partner.homes.edit.new', $property->id);
         }
     }
 

@@ -615,6 +615,16 @@ Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddle
     // Property Edit/Delete
     Route::get('/properties/{property}/edit', [\App\Http\Controllers\Partner\PropertyController::class, 'edit'])->name('partner.properties.edit');
     Route::delete('/properties/{property}', [\App\Http\Controllers\Partner\PropertyController::class, 'destroy'])->name('partner.properties.destroy');
+    
+    // Specific Property Type Edit Routes
+    Route::get('/apartments/{property}/edit', [\App\Http\Controllers\Partner\ApartmentEditController::class, 'edit'])->name('partner.apartments.edit');
+    Route::put('/apartments/{property}', [\App\Http\Controllers\Partner\ApartmentEditController::class, 'update'])->name('partner.apartments.update');
+    
+    Route::get('/homes/{property}/edit', [\App\Http\Controllers\Partner\HomeEditController::class, 'edit'])->name('partner.homes.edit.new');
+    Route::put('/homes/{property}', [\App\Http\Controllers\Partner\HomeEditController::class, 'update'])->name('partner.homes.update');
+    
+    Route::get('/hotels/{property}/edit', [\App\Http\Controllers\Partner\HotelEditController::class, 'edit'])->name('partner.hotels.edit.new');
+    Route::put('/hotels/{property}', [\App\Http\Controllers\Partner\HotelEditController::class, 'update'])->name('partner.hotels.update');
     Route::get('/property_category', [PropertyController::class, 'categories'])->name('partner.property.category');
     Route::get('/property_subcategory/{id}/{property_id?}', [PropertyController::class, 'subcategories'])->name('partner.property.subcategory');
     Route::get('/hotels/rooms/{id}', [PropertyController::class, 'rooms'])->name('partner.hotels.room');

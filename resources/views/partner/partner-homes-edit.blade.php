@@ -4,6 +4,9 @@
 
 @section('content')
 <script>
+    window.isEditMode = true;
+</script>
+<script>
     console.log('Script tag loaded...');
     window.addEventListener('DOMContentLoaded', () => {
         console.log('DOM loaded, initializing script...');
@@ -158,13 +161,17 @@ console.log('propertyType:', propertyType, '(type:', typeof propertyType, ')');
         console.log('Property ID:', propertyId);
         console.log('Property Type:', propertyType);
 
-        // Set up photo and rooms links immediately
+        // Set up links immediately
         if (photoLink) {
             photoLink.href = `/partner-homes-images/${propertyId}?details=true&propertyType=${encodeURIComponent(propertyType)}`;
         }
         
         if (roomsEditLink) {
             roomsEditLink.href = `/partner-homes-rooms/${propertyId}?details=true&propertyType=${encodeURIComponent(propertyType)}`;
+        }
+
+        if (paymenEditLink) {
+            paymenEditLink.href = `/partner-homes-payments/${propertyId}?propertyType=${encodeURIComponent(propertyType)}`;
         }
 
         // Function to set up complete registration button
@@ -195,6 +202,8 @@ console.log('propertyType:', propertyType, '(type:', typeof propertyType, ')');
                 if (paymenEditLink) {
                     paymenEditLink.href = `/partner-homes-payments/${propertyId}?propertyType=${encodeURIComponent(propertyType)}`;
                 }
+
+                
                 // Property details edit navigates via form submit to homes details
                 if (detailsLink && form) {
                     const newDetailsLink = detailsLink.cloneNode(true);
@@ -246,6 +255,11 @@ console.log('propertyType:', propertyType, '(type:', typeof propertyType, ')');
 
         // Set up default button behavior immediately (homes route as fallback)
         setupCompleteRegistrationButton(1);
+        
+        // Pre-populate form if in edit mode
+        if (typeof isEditMode !== 'undefined' && isEditMode) {
+            console.log('Edit mode detected - form should be pre-populated');
+        }
 
         // Then try to fetch the actual category and update if needed
         fetch(`/api/property/${propertyId}/category`)
@@ -402,6 +416,8 @@ console.log('propertyType:', propertyType, '(type:', typeof propertyType, ')');
             });
         }
 
+
+        
         console.log('Script initialization complete');
         
         // Debug function to check button state
