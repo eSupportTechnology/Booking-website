@@ -3,6 +3,9 @@
 @section('title', 'Hotels Edit | ' . config('domains.app_name'))
 
 @section('content')
+<script>
+    window.isEditMode = true;
+</script>
 
 <script>
     window.addEventListener('DOMContentLoaded', () => {
@@ -25,11 +28,26 @@
         const propertyId = document.getElementById('propertyId').value;
         const subtypeId = document.getElementById('subtypeId').value;
         const completeRegistrationBtn = document.getElementById('completeRegistrationBtn');
+        
+        // Check if in edit mode
+        const isEditMode = typeof window.isEditMode !== 'undefined' ? window.isEditMode : false;
+        if (isEditMode) {
+            console.log('Hotel edit mode detected');
+        }
 
 
-        photoLink.href = `/partner-homes-images/${propertyId}?details=true&propertyType=${encodeURIComponent(propertyType)}`;
-        roomsEditLink.href = `/partner-homes-rooms/${propertyId}?details=true&propertyType=${encodeURIComponent(propertyType)}`;
-        paymenEditLink.href = `/partner/partner-hotels-payment/${propertyId}?propertyType=${encodeURIComponent(propertyType)}`;
+        // Set up links immediately
+        if (photoLink) {
+            photoLink.href = `/partner-homes-images/${propertyId}?details=true&propertyType=${encodeURIComponent(propertyType)}`;
+        }
+        
+        if (roomsEditLink) {
+            roomsEditLink.href = `/partner-homes-rooms/${propertyId}?details=true&propertyType=${encodeURIComponent(propertyType)}`;
+        }
+
+        if (paymenEditLink) {
+            paymenEditLink.href = `/partner/partner-hotels-payment/${propertyId}?propertyType=${encodeURIComponent(propertyType)}`;
+        }
         if (uploaded === 'true') {
             // Update the icon (optional - if not already done)
             if (icon) {

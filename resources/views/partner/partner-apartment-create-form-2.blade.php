@@ -2433,6 +2433,13 @@ function wizardApp() {
         // Initialize watchers
         async init() {
             this.log('Alpine.js initialized');
+            
+            // Check if in edit mode
+            this.isEdit = typeof window.isEditMode !== 'undefined' ? window.isEditMode : (typeof isEdit !== 'undefined' ? isEdit : false);
+            if (this.isEdit) {
+                console.log('Edit mode detected');
+            }
+            
             this.loadLanguages();
             console.log('Before restoreWizardState - step:', this.step);
             this.restoreWizardState();
@@ -2613,6 +2620,7 @@ function wizardApp() {
         description: '',
         channelManager: 'yes',
         isLoading: false,
+        isEdit: false,
         
         // Guest and amenity data
         guests: 4,
