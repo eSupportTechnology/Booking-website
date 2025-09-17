@@ -25,8 +25,8 @@
 
         <!-- Booking form -->
         <form method="GET"
-            class="bg-white rounded-xl px-3 py-3 shadow-lg border-4 border-yellow-400 
-                   w-full mx-auto text-sm">
+             class="bg-white rounded-xl px-3 py-2 md:py-1 shadow-lg border-4 border-yellow-400 
+           w-full mx-auto text-sm">
 
             <div class="flex flex-col md:flex-row md:items-center w-full gap-3 md:gap-4">
                 
