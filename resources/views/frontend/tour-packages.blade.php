@@ -20,49 +20,60 @@
 <!-- Search Box: Overlapping both sections -->
 <div class="relative z-10 -mt-8 px-4">
   <!-- Alpine.js CDN (Required for Dropdowns) -->
-<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
-<form method="GET" class="bg-white rounded-xl px-2 py-1 shadow-lg flex flex-col md:flex-row items-center gap-1 md:gap-0 border-4 border-yellow-400 max-w-6xl mx-auto overflow-visible text-sm">
+  <form method="GET"
+    class="bg-white rounded-xl px-2 py-2 md:py-1 shadow-lg flex flex-col md:flex-row 
+           items-stretch md:items-center gap-2 md:gap-0 border-4 border-yellow-400 
+           max-w-6xl mx-auto overflow-visible text-sm">
 
-    <!-- Destination Selector (Styled Like Guests) -->
-    <div x-data="{ open: false, destination: '' }" class="relative px-2 py-1 flex-1 border-r md:border-r border-gray-500">
-        <button @click="open = !open" type="button" class="flex items-center gap-2 w-full text-left text-sm">
-       <i class="fas fa-search text-lg"></i>
+    <!-- Destination Selector -->
+    <div x-data="{ open: false, destination: '' }"
+      class="relative flex-1 px-2 py-1 md:border-r border-gray-300">
+      
+      <button @click="open = !open" type="button"
+        class="flex items-center gap-2 w-full text-left text-sm">
+        
+        <!-- Search Icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M10 2a6 6 0 00-6 6c0 4.25 6 10 6 10s6-5.75 6-10a6 6 0 00-6-6zm0 8a2 2 0 110-4 2 2 0 010 4z" />
+        </svg>
 
-                <path d="M10 2a6 6 0 00-6 6c0 4.25 6 10 6 10s6-5.75 6-10a6 6 0 00-6-6zm0 8a2 2 0 110-4 2 2 0 010 4z" />
-            </svg>
-            <span x-text="destination || 'Search by destination'" style="font-family: 'Noto Sans', sans-serif;" class="text-gray-800 truncate text-base"></span>
-        </button>
+        <span x-text="destination || 'Search by destination'"
+          class="text-gray-800 truncate text-base"
+          style="font-family: 'Noto Sans', sans-serif;">
+        </span>
+      </button>
 
-        <!-- Dropdown Box -->
-        <div x-show="open" @click.away="open = false" class="absolute z-20 bg-white shadow-xl rounded-xl p-4 mt-2 w-72 right-0 text-gray-800 space-y-2 text-sm">
-            <template x-for="city in ['New York', 'Los Angeles', 'London', 'Paris', 'Tokyo']" :key="city">
-                <button type="button" @click="destination = city; open = false" class="block w-full text-left px-3 py-2 hover:bg-gray-100 rounded">
-                    <span x-text="city"></span>
-                </button>
-            </template>
-        </div>
+      <!-- Dropdown -->
+      <div x-show="open" @click.away="open = false"
+        class="absolute z-20 bg-white shadow-xl rounded-xl p-4 mt-2 w-72 right-0 text-gray-800 space-y-2 text-sm">
+        <template x-for="city in ['New York', 'Los Angeles', 'London', 'Paris', 'Tokyo']" :key="city">
+          <button type="button"
+            @click="destination = city; open = false"
+            class="block w-full text-left px-3 py-2 hover:bg-gray-100 rounded">
+            <span x-text="city"></span>
+          </button>
+        </template>
+      </div>
 
-        <!-- Hidden field to submit the selected destination -->
-        <input type="hidden" name="destination" :value="destination">
+      <!-- Hidden field -->
+      <input type="hidden" name="destination" :value="destination">
     </div>
-
-   <!-- Dates Selector -->
-<!-- Include Alpine.js if not already -->
-<!-- Include Alpine.js -->
-<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-
 
     <!-- Search Button -->
-    <div class="px-2 py-1">
-        <button type="submit" class="w-full md:w-auto h-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg text-sm" style="background-color:#3CC0E9;">
-            Search
-        </button>
+    <div class="px-2 py-1 w-full md:w-auto">
+      <button type="submit"
+        class="w-full md:w-auto h-full bg-blue-600 hover:bg-blue-700 
+               text-white font-semibold px-4 py-2 rounded-lg text-sm"
+        style="background-color:#3CC0E9;">
+        Search
+      </button>
     </div>
-</form>
-
-
+  </form>
 </div>
+
 
 
 <!-- AlpineJS -->
