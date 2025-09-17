@@ -1148,6 +1148,8 @@ Route::middleware(['auth:car_renter'])->prefix('taxi')->name('taxis.')->group(fu
     Route::post('/store-step3', [AirportTaxiController::class, 'storeStep3'])->name('storeStep3');
     Route::post('/store-step4', [AirportTaxiController::class, 'storeStep4'])->name('storeStep4');
     Route::post('/store-step5', [AirportTaxiController::class, 'storeStep5'])->name('storeStep5'); // ✅ Added
+        Route::get('/{taxi}/edit', [AirportTaxiController::class, 'edit'])->name('airport-taxis.edit');
+    Route::put('/{taxi}', [AirportTaxiController::class, 'update'])->name('airport-taxis.update');
 });
 
 
@@ -1164,7 +1166,11 @@ Route::middleware('auth:car_renter')->group(function () {
 Route::middleware('auth:car_renter')->group(function () {
     Route::get('/my/car-rentals', [CarRenterControlPanel::class, 'myCars'])
         ->name('car_rentals-listing');
+        Route::get('/cars/{car}/edit', [CarRenterControlPanel::class, 'edit'])->name('cars.edit');
+    Route::put('/cars/{car}', [CarRenterControlPanel::class, 'update'])->name('cars.update');
 });
+
+
 Route::middleware(['auth:car_renter'])->group(function () {
 
     Route::get('/cars/{id}', [CarRenterControlPanel::class, 'show'])->name('cars.show');

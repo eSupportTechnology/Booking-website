@@ -76,7 +76,7 @@
     </a>
 
     <!-- Edit Button -->
-    <a href="" class="bg-blue-600 text-white font-semibold px-6 py-2 rounded-lg hover:bg-blue-700 min-w-[100px] text-center">
+    <a href="{{ route('cars.edit', $car->id) }}" class="bg-blue-600 text-white font-semibold px-6 py-2 rounded-lg hover:bg-blue-700 min-w-[100px] text-center">
         Edit
     </a>
 </div>

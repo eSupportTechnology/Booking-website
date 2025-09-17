@@ -192,4 +192,101 @@ class AirportTaxiController extends Controller
             'taxi_id' => $taxi->id
         ]);
     }
+
+
+
+  public function edit(Taxi $taxi)
+{
+    $taxi->load('drivers', 'fare', 'type');
+
+    return view('airport_taxis.taxi_edit', [
+        'taxi' => $taxi,
+        'taxi_types' => TaxiType::all()
+    ]);
+}
+
+public function update(Request $request, Taxi $taxi)
+{
+    // Ensure the taxi belongs to the logged-in car renter
+    if ($taxi->car_renter_id !== Auth::guard('car_renter')->id()) {
+        abort(403, 'Unauthorized action.');
+    }
+
+    // Validate taxi general info
+    $validatedTaxi = $request->validate([
+        'taxi_type_id' => 'required|exists:taxi_types,id',
+        'number_plate' => 'required|string|unique:taxis,number_plate,' . $taxi->id,
+        'color' => 'required|string',
+        'passenger_capacity' => 'required|integer|min:1',
+        'luggage_capacity' => 'nullable|integer|min:0',
+        'with_driver' => 'required|in:yes,no',
+    ]);
+
+    // Update taxi info
+    $taxi->update([
+        'taxi_type_id' => $validatedTaxi['taxi_type_id'],
+        'number_plate' => $validatedTaxi['number_plate'],
+        'color' => $validatedTaxi['color'],
+        'passenger_capacity' => $validatedTaxi['passenger_capacity'],
+        'luggage_capacity' => $validatedTaxi['luggage_capacity'] ?? null,
+        'with_driver' => $validatedTaxi['with_driver'],
+    ]);
+
+    // Update driver if exists and taxi has driver
+    if ($validatedTaxi['with_driver'] === 'yes') {
+        $validatedDriver = $request->validate([
+            'driver_name' => 'required|string',
+            'driver_contact' => 'required|string',
+            'driver_email' => 'nullable|email',
+            'driver_license_number' => 'required|string|unique:drivers,license_number,' . ($taxi->driver?->id ?? '0'),
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'driver_license_front' => 'nullable|image|mimes:jpg,jpeg,png|max:4096',
+            'driver_license_back' => 'nullable|image|mimes:jpg,jpeg,png|max:4096',
+            'tourism_license_front' => 'nullable|image|mimes:jpg,jpeg,png|max:4096',
+            'tourism_license_back' => 'nullable|image|mimes:jpg,jpeg,png|max:4096',
+        ]);
+
+        $driver = $taxi->driver ?? new Driver(['taxi_id' => $taxi->id]);
+
+        $driver->fill([
+            'name' => $validatedDriver['driver_name'],
+            'contact_number' => $validatedDriver['driver_contact'],
+            'email' => $validatedDriver['driver_email'] ?? null,
+            'license_number' => $validatedDriver['driver_license_number'],
+        ])->save();
+
+        $fileService = app(FileUploadService::class);
+
+        foreach (['photo', 'driver_license_front', 'driver_license_back', 'tourism_license_front', 'tourism_license_back'] as $field) {
+            if ($request->hasFile($field)) {
+                $file = $fileService->uploadAndSave($request->file($field), $field, 'driver', null);
+                if ($file) $driver->update([$field => $file->id]);
+            }
+        }
+    }
+
+    // Update fare
+    $validatedFare = $request->validate([
+        'pricing_type' => 'required|string|in:perKm,perDay',
+        'price_per_day' => 'nullable|numeric|min:0',
+        'price_per_km' => 'nullable|numeric|min:0',
+        'base_fare' => 'required|numeric|min:0',
+    ]);
+
+    $fareData = [
+        'taxi_id' => $taxi->id,
+        'pricing_type' => $validatedFare['pricing_type'],
+        'base_fare' => $validatedFare['base_fare'],
+        'price' => $validatedFare['pricing_type'] === 'perKm'
+            ? $validatedFare['price_per_km'] ?? 0
+            : $validatedFare['price_per_day'] ?? 0,
+    ];
+
+    $taxi->fare()->updateOrCreate([], $fareData);
+
+    return redirect()->route('airport-taxis.edit', $taxi->id)
+        ->with('success', 'Taxi updated successfully.');
+}
+
+
 }
