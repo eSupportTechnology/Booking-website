@@ -615,14 +615,24 @@ Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddle
     // Property Edit/Delete
     Route::get('/properties/{property}/edit', [\App\Http\Controllers\Partner\PropertyController::class, 'edit'])->name('partner.properties.edit');
     Route::delete('/properties/{property}', [\App\Http\Controllers\Partner\PropertyController::class, 'destroy'])->name('partner.properties.destroy');
-    
+
     // Specific Property Type Edit Routes
     Route::get('/apartments/{property}/edit', [\App\Http\Controllers\Partner\ApartmentEditController::class, 'edit'])->name('partner.apartments.edit');
     Route::put('/apartments/{property}', [\App\Http\Controllers\Partner\ApartmentEditController::class, 'update'])->name('partner.apartments.update');
-    
-    Route::get('/homes/{property}/edit', [\App\Http\Controllers\Partner\HomeEditController::class, 'edit'])->name('partner.homes.edit.new');
-    Route::put('/homes/{property}', [\App\Http\Controllers\Partner\HomeEditController::class, 'update'])->name('partner.homes.update');
-    
+
+    Route::get('/homes/{property}/edit', [\App\Http\Controllers\Partner\HomeEditController::class, 'edit'])->name('partner.homes.edit');
+    Route::post('/homes/{property}/basic-details', [\App\Http\Controllers\Partner\HomeEditController::class, 'updateBasicDetails'])->name('partner.homes.update.basic');
+    Route::post('/homes/{property}/amenities', [\App\Http\Controllers\Partner\HomeEditController::class, 'updateAmenities'])->name('partner.homes.update.amenities');
+    Route::post('/homes/{property}/photos', [\App\Http\Controllers\Partner\HomeEditController::class, 'updatePhotos'])->name('partner.homes.update.photos');
+    Route::delete('/homes/{property}/photos/{photo}', [\App\Http\Controllers\Partner\HomeEditController::class, 'deletePhoto'])->name('partner.homes.delete.photo');
+    Route::post('/homes/{property}/services', [\App\Http\Controllers\Partner\HomeEditController::class, 'updateServices'])->name('partner.homes.update.services');
+    Route::post('/homes/{property}/languages', [\App\Http\Controllers\Partner\HomeEditController::class, 'updateLanguages'])->name('partner.homes.update.languages');
+    Route::post('/homes/{property}/house-rules', [\App\Http\Controllers\Partner\HomeEditController::class, 'updateHouseRules'])->name('partner.homes.update.rules');
+    Route::post('/homes/{property}/host-profile', [\App\Http\Controllers\Partner\HomeEditController::class, 'updateHostProfile'])->name('partner.homes.update.profile');
+    Route::post('/homes/{property}/payments', [\App\Http\Controllers\Partner\HomeEditController::class, 'updatePayments'])->name('partner.homes.update.payments');
+    Route::post('/homes/{property}/rooms', [\App\Http\Controllers\Partner\HomeEditController::class, 'updateRooms'])->name('partner.homes.update.rooms');
+    Route::post('/homes/{property}/verification', [\App\Http\Controllers\Partner\HomeEditController::class, 'updateVerification'])->name('partner.homes.update.verification');
+
     Route::get('/hotels/{property}/edit', [\App\Http\Controllers\Partner\HotelEditController::class, 'edit'])->name('partner.hotels.edit.new');
     Route::put('/hotels/{property}', [\App\Http\Controllers\Partner\HotelEditController::class, 'update'])->name('partner.hotels.update');
     Route::get('/property_category', [PropertyController::class, 'categories'])->name('partner.property.category');
