@@ -189,7 +189,7 @@
                 <!-- Driver License Front -->
 <div>
     <label class="block font-semibold text-sm mb-1">
-        Driver License Front
+        Driver License Front <span class="text-red-500">*</span>
     </label>
     <input type="file" class="w-full p-2 border rounded-md text-sm" accept="image/*"
            @change="driver_license_front = $event.target.files[0]">
@@ -198,7 +198,7 @@
 <!-- Driver License Back -->
 <div>
     <label class="block font-semibold text-sm mb-1">
-        Driver License Back
+        Driver License Back <span class="text-red-500">*</span>
     </label>
     <input type="file" class="w-full p-2 border rounded-md text-sm" accept="image/*"
            @change="driver_license_back = $event.target.files[0]">
@@ -207,7 +207,7 @@
 <!-- Tourism License Front -->
 <div>
     <label class="block font-semibold text-sm mb-1">
-        Tourism License Front
+        Tourism License Front <span class="text-gray-500">(Optional)</span>
     </label>
     <input type="file" class="w-full p-2 border rounded-md text-sm" accept="image/*"
            @change="tourism_license_front = $event.target.files[0]">
@@ -216,7 +216,7 @@
 <!-- Tourism License Back -->
 <div>
     <label class="block font-semibold text-sm mb-1">
-        Tourism License Back
+        Tourism License Back <span class="text-gray-500">(Optional)</span>
     </label>
     <input type="file" class="w-full p-2 border rounded-md text-sm" accept="image/*"
            @change="tourism_license_back = $event.target.files[0]">
@@ -225,7 +225,7 @@
 
                 <div>
                     <label class="block font-semibold text-sm mb-1">
-                        Upload Driver Photo
+                        Upload Driver Photo <span class="text-red-500">*</span>
                     </label>
                     <input type="file" class="w-full p-2 border rounded-md text-sm" accept="image/*" @change="driver_photo = $event.target.files[0]">
                     <p class="text-gray-500 text-sm mt-1">Upload a clear photo of the driver.</p>

@@ -2,6 +2,7 @@
 
 @section('content')
 <div class="max-w-6xl mx-auto mt-6 space-y-6">
+
     @if(session('success'))
         <div class="bg-green-100 text-green-700 p-3 rounded mb-4">{{ session('success') }}</div>
     @endif
@@ -10,8 +11,8 @@
         @csrf
         @method('PUT')
 
-        <!-- Taxi Info -->
-        <div class="bg-white p-6 rounded-lg shadow-lg space-y-4">
+        {{-- Taxi Info --}}
+        <div class="bg-white p-6 rounded-lg shadow space-y-4">
             <h2 class="text-xl font-bold mb-4 border-b pb-2">Taxi Information</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -26,65 +27,71 @@
                 </div>
                 <div>
                     <label class="block font-semibold mb-1">Number Plate</label>
-                    <input type="text" name="number_plate" value="{{ $taxi->number_plate }}" class="w-full border rounded p-2">
+                    <input type="text" name="number_plate" value="{{ old('number_plate', $taxi->number_plate) }}" class="w-full border rounded p-2">
                 </div>
                 <div>
                     <label class="block font-semibold mb-1">Color</label>
-                    <input type="text" name="color" value="{{ $taxi->color }}" class="w-full border rounded p-2">
+                    <input type="text" name="color" value="{{ old('color', $taxi->color) }}" class="w-full border rounded p-2">
                 </div>
                 <div>
                     <label class="block font-semibold mb-1">Passenger Capacity</label>
-                    <input type="number" name="passenger_capacity" value="{{ $taxi->passenger_capacity }}" class="w-full border rounded p-2">
+                    <input type="number" name="passenger_capacity" value="{{ old('passenger_capacity', $taxi->passenger_capacity) }}" class="w-full border rounded p-2">
                 </div>
                 <div>
                     <label class="block font-semibold mb-1">Luggage Capacity</label>
-                    <input type="number" name="luggage_capacity" value="{{ $taxi->luggage_capacity }}" class="w-full border rounded p-2">
-                </div>
-                <div>
-                    <label class="block font-semibold mb-1">With Driver?</label>
-                    <select name="with_driver" class="w-full border rounded p-2">
-                        <option value="yes" {{ $taxi->with_driver === 'yes' ? 'selected' : '' }}>Yes</option>
-                        <option value="no" {{ $taxi->with_driver === 'no' ? 'selected' : '' }}>No</option>
-                    </select>
+                    <input type="number" name="luggage_capacity" value="{{ old('luggage_capacity', $taxi->luggage_capacity) }}" class="w-full border rounded p-2">
                 </div>
             </div>
         </div>
 
-        <!-- Driver Info -->
-        @if($taxi->with_driver === 'yes')
-        <div class="bg-white p-6 rounded-lg shadow-lg space-y-4">
+        {{-- Driver Info --}}
+        <div class="bg-white p-6 rounded-lg shadow space-y-4">
             <h2 class="text-xl font-bold mb-4 border-b pb-2">Driver Details</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label class="block font-semibold mb-1">Name</label>
-                    <input type="text" name="driver_name" value="{{ $taxi->driver->name ?? '' }}" class="w-full border rounded p-2">
+                    <input type="text" name="driver_name" value="{{ old('driver_name', $taxi->driver->name ?? '') }}" class="w-full border rounded p-2" required>
                 </div>
                 <div>
                     <label class="block font-semibold mb-1">Contact Number</label>
-                    <input type="text" name="driver_contact" value="{{ $taxi->driver->contact_number ?? '' }}" class="w-full border rounded p-2">
+                    <input type="text" name="driver_contact" value="{{ old('driver_contact', $taxi->driver->contact_number ?? '') }}" class="w-full border rounded p-2" required>
                 </div>
                 <div>
                     <label class="block font-semibold mb-1">Email</label>
-                    <input type="email" name="driver_email" value="{{ $taxi->driver->email ?? '' }}" class="w-full border rounded p-2">
+                    <input type="email" name="driver_email" value="{{ old('driver_email', $taxi->driver->email ?? '') }}" class="w-full border rounded p-2">
                 </div>
                 <div>
                     <label class="block font-semibold mb-1">License Number</label>
-                    <input type="text" name="driver_license_number" value="{{ $taxi->driver->license_number ?? '' }}" class="w-full border rounded p-2">
+                    <input type="text" name="driver_license_number" value="{{ old('driver_license_number', $taxi->driver->license_number ?? '') }}" class="w-full border rounded p-2" required>
                 </div>
+
+                {{-- Driver File Uploads --}}
+                @foreach(['photo', 'driver_license_front', 'driver_license_back', 'tourism_license_front', 'tourism_license_back'] as $field)
+                    <div>
+                        <label class="block font-semibold mb-1">{{ ucwords(str_replace('_', ' ', $field)) }}</label>
+                        <input type="file" name="{{ $field }}" class="w-full border rounded p-2">
+                        @if($taxi->driver?->$field)
+                            <img src="{{ asset('storage/' . $taxi->driver->$field) }}" class="mt-2 w-32 h-32 object-cover rounded">
+                        @endif
+                    </div>
+                @endforeach
             </div>
         </div>
-        @endif
 
-        <!-- Pricing -->
-        <div class="bg-white p-6 rounded-lg shadow-lg space-y-4">
+        {{-- Pricing --}}
+        <div class="bg-white p-6 rounded-lg shadow space-y-4">
             <h2 class="text-xl font-bold mb-4 border-b pb-2">Pricing</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div>
                     <label class="block font-semibold mb-1">Pricing Type</label>
                     <select name="pricing_type" class="w-full border rounded p-2">
                         <option value="perDay" {{ $taxi->fare?->pricing_type === 'perDay' ? 'selected' : '' }}>Per Day</option>
                         <option value="perKm" {{ $taxi->fare?->pricing_type === 'perKm' ? 'selected' : '' }}>Per Km</option>
                     </select>
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">Base Fare</label>
+                    <input type="number" step="0.01" name="base_fare" value="{{ old('base_fare', $taxi->fare->base_fare ?? 0) }}" class="w-full border rounded p-2">
                 </div>
                 <div>
                     <label class="block font-semibold mb-1">Price Per Day</label>
@@ -94,6 +101,22 @@
                     <label class="block font-semibold mb-1">Price Per Km</label>
                     <input type="number" step="0.01" name="price_per_km" value="{{ $taxi->fare?->pricing_type === 'perKm' ? $taxi->fare->price : '' }}" class="w-full border rounded p-2">
                 </div>
+            </div>
+        </div>
+
+        {{-- Taxi Images --}}
+        <div class="bg-white p-6 rounded-lg shadow space-y-4">
+            <h2 class="text-xl font-bold mb-4 border-b pb-2">Taxi Images</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                @foreach(['front', 'back', 'inside'] as $side)
+                    <div>
+                        <label class="block font-semibold mb-1">{{ ucwords($side) }} Image</label>
+                        <input type="file" name="{{ $side }}" class="w-full border rounded p-2">
+                        @if($taxi->{$side.'_image'})
+                            <img src="{{ asset('storage/' . $taxi->{$side.'_image'}) }}" class="mt-2 w-32 h-32 object-cover rounded">
+                        @endif
+                    </div>
+                @endforeach
             </div>
         </div>
 
