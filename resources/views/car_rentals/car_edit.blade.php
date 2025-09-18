@@ -111,50 +111,59 @@
                     <div class="space-y-4">
                         <h3 class="text-base sm:text-lg font-semibold mb-2">Car Images</h3>
 
-                        <!-- Front Image -->
-                        <div>
-                            <label class="block font-semibold mb-1 text-sm">Front View</label>
-                            <div class="mb-2">
-                                @if($car->front_image)
-                                    <img src="{{ asset('storage/'.$car->front_image) }}" alt="Front Image" class="w-full h-30 object-cover rounded border">
-                                @else
-                                    <div class="w-full h-40 bg-gray-100 rounded border flex items-center justify-center text-gray-400">
-                                        No Image
-                                    </div>
-                                @endif
-                            </div>
-                            <input type="file" name="front_image" class="w-full text-sm">
-                        </div>
+                     <!-- Front Image -->
+<div>
+    <label class="block font-semibold mb-1 text-sm">Front View</label>
+    <div class="mb-2">
+        @if($car->car_front)
+            <img src="{{ asset('storage/' . $car->car_front) }}" 
+                 alt="Car Front" 
+                 class="w-full h-56 object-cover rounded">
+        @else
+            <div class="w-full h-40 bg-gray-100 rounded border flex items-center justify-center text-gray-400">
+                No Image
+            </div>
+        @endif
+    </div>
+    <input type="file" name="car_front" class="w-full text-sm">
+</div>
 
-                        <!-- Back Image -->
-                        <div>
-                            <label class="block font-semibold mb-1 text-sm">Back View</label>
-                            <div class="mb-2">
-                                @if($car->back_image)
-                                    <img src="{{ asset('storage/'.$car->back_image) }}" alt="Back Image" class="w-full h-40 object-cover rounded border">
-                                @else
-                                    <div class="w-full h-40 bg-gray-100 rounded border flex items-center justify-center text-gray-400">
-                                        No Image
-                                    </div>
-                                @endif
-                            </div>
-                            <input type="file" name="back_image" class="w-full text-sm">
-                        </div>
+<!-- Back Image -->
+<div>
+    <label class="block font-semibold mb-1 text-sm">Back View</label>
+    <div class="mb-2">
+        @if($car->car_back)
+            <img src="{{ asset('storage/' . $car->car_back) }}" 
+                 alt="Car Back" 
+                 class="w-full h-56 object-cover rounded">
+        @else
+            <div class="w-full h-40 bg-gray-100 rounded border flex items-center justify-center text-gray-400">
+                No Image
+            </div>
+        @endif
+    </div>
+    <input type="file" name="car_back" class="w-full text-sm">
+</div>
 
-                        <!-- Inside Image -->
-                        <div>
-                            <label class="block font-semibold mb-1 text-sm">Inside View</label>
-                            <div class="mb-2">
-                                @if($car->inside_image)
-                                    <img src="{{ asset('storage/'.$car->inside_image) }}" alt="Inside Image" class="w-full h-40 object-cover rounded border">
-                                @else
-                                    <div class="w-full h-40 bg-gray-100 rounded border flex items-center justify-center text-gray-400">
-                                        No Image
-                                    </div>
-                                @endif
-                            </div>
-                            <input type="file" name="inside_image" class="w-full text-sm">
-                        </div>
+<!-- Inside Image -->
+<div>
+    <label class="block font-semibold mb-1 text-sm">Inside View</label>
+    <div class="mb-2">
+        @if($car->car_inside)
+            <img src="{{ asset('storage/' . $car->car_inside) }}" 
+                 alt="Car Inside" 
+                 class="w-full h-56 object-cover rounded">
+        @else
+            <div class="w-full h-40 bg-gray-100 rounded border flex items-center justify-center text-gray-400">
+                No Image
+            </div>
+        @endif
+    </div>
+    <input type="file" name="car_inside" class="w-full text-sm">
+</div>
+
+
+
                     </div>
                 </div>
             </div>

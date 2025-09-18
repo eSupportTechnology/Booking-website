@@ -58,8 +58,11 @@ class CarRenterControlPanel extends Controller
     return redirect()->route('car_rentals-listing')->with('success', 'Car deleted successfully.');
 }
 
-public function edit(Car $car)
+   public function edit($id)
     {
+        $user = Auth::guard('car_renter')->user();
+        $car = Car::where('car_renter_id', $user->id)->findOrFail($id);
+
         $car_types = CarType::all();
         $companies = Company::all();
         $car_brands = CarBrand::all();
@@ -68,24 +71,40 @@ public function edit(Car $car)
         return view('car_rentals.car_edit', compact('car', 'car_types', 'companies', 'car_brands', 'car_models'));
     }
 
-    public function update(Request $request, Car $car)
+    public function update(Request $request, $id)
     {
+        $user = Auth::guard('car_renter')->user();
+        $car = Car::where('car_renter_id', $user->id)->findOrFail($id);
+
         $request->validate([
-            'car_type_id' => 'required',
-            'company_id' => 'required',
-            'brand' => 'required',
-            'model_id' => 'required',
-            'seats' => 'required|integer|min:2|max:20',
-            'transmission' => 'required',
-            'mileage_type' => 'required',
-            'fuel_type' => 'required',
+            'car_type_id' => 'required|exists:car_types,id',
+            'company_id'  => 'required|exists:companies,id',
+            'brand_id'    => 'required|exists:car_brands,id',
+            'model_id'    => 'required|exists:car_models,id',
+            'seats'       => 'required|integer|min:2|max:20',
+            'transmission'=> 'required',
+            'mileage_type'=> 'required',
+            'fuel_type'   => 'required',
             'pricingType' => 'required',
+            'car_front' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'car_back'  => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'car_inside'=> 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        $car->update($request->all());
+        // Fill other fields
+        $car->fill($request->except(['car_front', 'car_back', 'car_inside']));
 
-        return redirect()->route('cars.edit', $car->id)
-                         ->with('success', 'Car details updated successfully.');
+        // Update images if uploaded
+      foreach (['car_front', 'car_back', 'car_inside'] as $field) {
+    if ($request->hasFile($field)) {
+        $car->$field = $request->file($field)->store('cars', 'public');
     }
 }
 
+
+        $car->save();
+
+        return redirect()->route('car_rentals-listing')
+                         ->with('success', 'Car details updated successfully.');
+    }
+}
