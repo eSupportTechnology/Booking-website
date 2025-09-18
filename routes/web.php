@@ -1166,8 +1166,8 @@ Route::middleware('auth:car_renter')->group(function () {
 Route::middleware('auth:car_renter')->group(function () {
     Route::get('/my/car-rentals', [CarRenterControlPanel::class, 'myCars'])
         ->name('car_rentals-listing');
-        Route::get('/cars/{car}/edit', [CarRenterControlPanel::class, 'edit'])->name('cars.edit');
-    Route::put('/cars/{car}', [CarRenterControlPanel::class, 'update'])->name('cars.update');
+        Route::get('/cars/{id}/edit', [CarRenterControlPanel::class, 'edit'])->name('cars.edit');
+    Route::put('/cars/{id}', [CarRenterControlPanel::class, 'update'])->name('cars.update');
 });
 
 
