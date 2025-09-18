@@ -10,6 +10,7 @@ class CommissionAgingDTO
         public readonly ?int $partnerId,
         public readonly array $commissionData,
         public readonly array $partners,
-        public readonly array $totals
+        public readonly array $totals,
+        public readonly float $commissionRate = 0.15
     ) {}
 }

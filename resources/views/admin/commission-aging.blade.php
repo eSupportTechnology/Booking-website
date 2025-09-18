@@ -37,8 +37,13 @@
     <!-- Commission Aging Table -->
     <div class="bg-white rounded-lg shadow overflow-hidden">
         <div class="px-6 py-4 border-b">
-            <h3 class="text-lg font-medium">Commission Aging (15% Commission Rate)</h3>
+            <h3 class="text-lg font-medium">Commission Aging ({{ number_format($commissionRate * 100, 1) }}% Commission Rate)</h3>
             <p class="text-sm text-gray-600">Commissions become invoiceable 15 days after booking date</p>
+            <p class="text-xs text-gray-500 mt-1">
+                <i class="fas fa-info-circle"></i> 
+                To change the commission rate, go to 
+                <a href="{{ route('admin.settings') }}" class="text-[#1F8FB2] hover:underline">Admin Settings</a>
+            </p>
         </div>
         <div class="overflow-x-auto">
             <table class="min-w-full table-auto text-sm">

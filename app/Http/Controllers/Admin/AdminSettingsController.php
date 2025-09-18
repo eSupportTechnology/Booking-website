@@ -27,7 +27,8 @@ class AdminSettingsController extends Controller
                     'system_notifications' => true,
                     'security_alerts' => true,
                     'report_notifications' => false
-                ]
+                ],
+                'commission_rate' => 0.15
             ]);
         }
         
@@ -121,5 +122,21 @@ class AdminSettingsController extends Controller
         $message = $request->boolean('enabled') ? 'Two-factor authentication enabled.' : 'Two-factor authentication disabled.';
         
         return back()->with('success', $message);
+    }
+
+    public function updateCommissionSettings(Request $request)
+    {
+        $request->validate([
+            'commission_rate' => 'required|numeric|min:0|max:1'
+        ]);
+
+        $admin = Auth::guard('admin')->user();
+        
+        $admin->settings()->updateOrCreate(
+            ['admin_id' => $admin->id],
+            ['commission_rate' => $request->commission_rate]
+        );
+
+        return back()->with('success', 'Commission settings updated successfully.');
     }
 }

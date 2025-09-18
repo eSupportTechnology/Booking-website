@@ -11,18 +11,18 @@
     window.addEventListener('DOMContentLoaded', () => {
         console.log('DOM loaded, initializing script...');
         console.log('Script is running...');
-        
+
         // Add error handling to catch any JavaScript errors
         window.addEventListener('error', (e) => {
             console.error('JavaScript error caught:', e.error);
         });
-        
+
         try {
             console.log('Try block started...');
-        
+
             const urlParams = new URLSearchParams(window.location.search);
         console.log('URLSearchParams created successfully');
-        
+
         const uploaded = urlParams.get('uploaded');
         console.log('uploaded parameter read:', uploaded);
 // Step-by-step debugging with error catching
@@ -100,11 +100,11 @@ console.log('=== STEP 5: MANUAL URL PARSING ===');
 try {
     const queryString = window.location.search;
     console.log('Query string:', queryString);
-    
+
     if (queryString) {
         const params = queryString.substring(1).split('&');
         console.log('Split parameters:', params);
-        
+
         params.forEach((param, index) => {
             const [key, value] = param.split('=');
             console.log(`Manual param ${index + 1}: ${key} = ${value}`);
@@ -120,10 +120,10 @@ console.log('details:', details, '(type:', typeof details, ')');
 console.log('rooms:', rooms, '(type:', typeof rooms, ')');
 console.log('paymentDetails:', paymentDetails, '(type:', typeof paymentDetails, ')');
 console.log('propertyType:', propertyType, '(type:', typeof propertyType, ')');
-        
+
         // Test if we can continue
         console.log('Parameters read successfully, continuing...');
-        
+
         // Get all DOM elements with null checks
         const detailsLink = document.getElementById('detailsEditLink');
         const detailsIcon = document.getElementById('detailsStatusIcon');
@@ -165,7 +165,7 @@ console.log('propertyType:', propertyType, '(type:', typeof propertyType, ')');
         if (photoLink) {
             photoLink.href = `/partner-homes-images/${propertyId}?details=true&propertyType=${encodeURIComponent(propertyType)}`;
         }
-        
+
         if (roomsEditLink) {
             roomsEditLink.href = `/partner-homes-rooms/${propertyId}?details=true&propertyType=${encodeURIComponent(propertyType)}`;
         }
@@ -179,10 +179,10 @@ console.log('propertyType:', propertyType, '(type:', typeof propertyType, ')');
             // Remove any existing event listeners by cloning the button
             const newBtn = completeRegistrationBtn.cloneNode(true);
             completeRegistrationBtn.parentNode.replaceChild(newBtn, completeRegistrationBtn);
-            
+
             // Check if all required steps are completed
             const allStepsCompleted = uploaded === 'true' && paymentDetails === 'true' && rooms === 'true';
-            
+
             if (allStepsCompleted) {
                 // Enable the complete registration button
                 newBtn.disabled = false;
@@ -195,7 +195,7 @@ console.log('propertyType:', propertyType, '(type:', typeof propertyType, ')');
                 console.log('Steps not completed - disabling complete registration button');
                 console.log('Uploaded:', uploaded, 'Payment Details:', paymentDetails, 'Rooms:', rooms);
             }
-            
+
             if (categoryId == 1) {
                 // Homes routes
                 console.log('Setting up homes routes');
@@ -203,7 +203,7 @@ console.log('propertyType:', propertyType, '(type:', typeof propertyType, ')');
                     paymenEditLink.href = `/partner-homes-payments/${propertyId}?propertyType=${encodeURIComponent(propertyType)}`;
                 }
 
-                
+
                 // Property details edit navigates via form submit to homes details
                 if (detailsLink && form) {
                     const newDetailsLink = detailsLink.cloneNode(true);
@@ -213,7 +213,7 @@ console.log('propertyType:', propertyType, '(type:', typeof propertyType, ')');
                         form.submit();
                     });
                 }
-                
+
                 newBtn.addEventListener('click', (e) => {
                     e.preventDefault();
                     if (!allStepsCompleted) {
@@ -238,7 +238,7 @@ console.log('propertyType:', propertyType, '(type:', typeof propertyType, ')');
                         window.location.href = `/partner/partner-hotels-create-1/${propertyId}?propertyType=${encodeURIComponent(propertyType)}`;
                     });
                 }
-                
+
                 newBtn.addEventListener('click', (e) => {
                     e.preventDefault();
                     if (!allStepsCompleted) {
@@ -249,13 +249,13 @@ console.log('propertyType:', propertyType, '(type:', typeof propertyType, ')');
                     window.location.href = `/partner/partner-hotels-complete-registration/${propertyId}?propertyType=${encodeURIComponent(propertyType)}`;
                 });
             }
-            
+
             console.log('Complete registration button set up successfully');
         }
 
         // Set up default button behavior immediately (homes route as fallback)
         setupCompleteRegistrationButton(1);
-        
+
         // Pre-populate form if in edit mode
         if (typeof isEditMode !== 'undefined' && isEditMode) {
             console.log('Edit mode detected - form should be pre-populated');
@@ -323,14 +323,14 @@ console.log('propertyType:', propertyType, '(type:', typeof propertyType, ')');
 
         // Add completion status indicator
         const allStepsCompleted = uploaded === 'true' && paymentDetails === 'true' && rooms === 'true';
-        
+
         // Calculate completion percentage
         let completedSteps = 0;
         if (uploaded === 'true') completedSteps++;
         if (paymentDetails === 'true') completedSteps++;
         if (rooms === 'true') completedSteps++;
         const completionPercentage = (completedSteps / 3) * 100;
-        
+
         // Add progress bar above the complete registration button
         const progressSection = document.createElement('div');
         progressSection.className = 'mb-4';
@@ -342,7 +342,7 @@ console.log('propertyType:', propertyType, '(type:', typeof propertyType, ')');
                 <div class="bg-[#3CC0E9] h-2 rounded-full transition-all duration-300" style="width: ${completionPercentage}%"></div>
             </div>
         `;
-        
+
         if (allStepsCompleted) {
             // Add a success message above the complete registration button
             const successMessage = document.createElement('div');
@@ -355,7 +355,7 @@ console.log('propertyType:', propertyType, '(type:', typeof propertyType, ')');
                     <span class="font-medium">All steps completed! You can now complete your registration.</span>
                 </div>
             `;
-            
+
             const completeRegistrationSection = document.querySelector('.flex.justify-center');
             if (completeRegistrationSection) {
                 completeRegistrationSection.parentNode.insertBefore(progressSection, completeRegistrationSection);
@@ -372,7 +372,7 @@ console.log('propertyType:', propertyType, '(type:', typeof propertyType, ')');
         // Now update the complete registration button based on completion status
         console.log('Final completion check - Uploaded:', uploaded, 'Payment Details:', paymentDetails, 'Rooms:', rooms);
         console.log('All steps completed:', allStepsCompleted);
-        
+
         if (allStepsCompleted) {
             // Re-enable the button since all steps are completed
             const currentBtn = document.getElementById('completeRegistrationBtn');
@@ -395,10 +395,10 @@ console.log('propertyType:', propertyType, '(type:', typeof propertyType, ')');
         }
 
         form.action = actionUrl;
-        
+
         const formPropertyId = document.getElementById('formPropertyId');
         const formSubtypeId = document.getElementById('formSubtypeId');
-        
+
         if (formPropertyId) {
             formPropertyId.value = propertyId;
         }
@@ -417,9 +417,9 @@ console.log('propertyType:', propertyType, '(type:', typeof propertyType, ')');
         }
 
 
-        
+
         console.log('Script initialization complete');
-        
+
         // Debug function to check button state
         function debugButtonState() {
             const btn = document.getElementById('completeRegistrationBtn');
@@ -430,12 +430,12 @@ console.log('propertyType:', propertyType, '(type:', typeof propertyType, ')');
                 console.log('- Text:', btn.textContent);
             }
         }
-        
+
         // Check button state after a short delay to ensure all updates are complete
         setTimeout(() => {
             debugButtonState();
         }, 1000);
-        
+
         } catch (error) {
             console.error('Error in script execution:', error);
         }
@@ -449,7 +449,7 @@ console.log('propertyType:', propertyType, '(type:', typeof propertyType, ')');
             <input type="hidden" id="propertyId" value="{{ $property->id }}">
             <input type="hidden" id="subtypeId" value="{{ $property->subtype_id }}">
         </div>
-        
+
         <form id="editForm" method="POST">
             @csrf
             <input type="hidden" name="propertyId" id="formPropertyId">
@@ -519,7 +519,7 @@ console.log('propertyType:', propertyType, '(type:', typeof propertyType, ')');
             </div>
 
             <a id="paymentEditLink" href="#">
-                <button type="button" id="paymentEditLinkBtn" 
+                <button type="button" id="paymentEditLinkBtn"
                     class="bg-sky-400 border border-sky-400 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-sky-500">
                     Add final details
                 </button>
