@@ -86,37 +86,37 @@
                 </div>
 
                 <!-- Driver Details -->
-                <div x-show="car.with_driver === 'yes'" x-cloak class="space-y-4 p-4 border rounded-lg bg-gray-50">
+                <div x-show="car.with_driver === 'yes'" x-cloak class="space-y-4 p-4 border rounded-lg bg-gray-50 text-sm">
                     <div>
-                        <label>Driver Name</label>
+                        <label class="font-semibold">Driver Name <span class="text-red-500">*</span></label>
                         <input type="text" x-model="car.driver_name" placeholder="Enter driver name" class="w-full border rounded px-3 py-2">
                     </div>
                     <div>
-                        <label>Phone Number</label>
+                        <label class="font-semibold">Phone Number <span class="text-red-500">*</span></label>
                         <input type="text" x-model="car.driver_phone" placeholder="Enter phone number" class="w-full border rounded px-3 py-2">
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label>Age</label>
+                            <label class="font-semibold">Age <span class="text-red-500">*</span></label>
                             <input type="number" x-model.number="car.driver_age" placeholder="Enter age" class="w-full border rounded px-3 py-2">
                         </div>
                         <div>
-                            <label>Experience (Years)</label>
+                            <label class="font-semibold">Experience (Years) <span class="text-red-500">*</span></label>
                             <input type="number" x-model.number="car.driver_experience" placeholder="Enter years of experience" class="w-full border rounded px-3 py-2">
                         </div>
                     </div>
                     <div>
-                        <label>NIC Number</label>
+                        <label class="font-semibold">NIC Number <span class="text-red-500">*</span></label>
                         <input type="text" x-model="car.driver_nic" placeholder="Enter NIC number" class="w-full border rounded px-3 py-2">
                     </div>
                    
        <div class="grid grid-cols-2 gap-4">
     <div>
-        <label>Driver License (Front)</label>
+        <label class="font-semibold">Driver License (Front) <span class="text-red-500">*</span></label>
         <input type="file" @change="handleFile($event, 'driver_license_front')" class="w-full border rounded px-3 py-2" accept="image/*,application/pdf">
     </div>
     <div>
-        <label>Driver License (Back)</label>
+        <label class="font-semibold">Driver License (Back) <span class="text-red-500">*</span></label>
         <input type="file" @change="handleFile($event, 'driver_license_back')" class="w-full border rounded px-3 py-2" accept="image/*,application/pdf">
     </div>
 
