@@ -5,13 +5,21 @@ namespace App\Services\Admin;
 use App\DTOs\Admin\CommissionAgingDTO;
 use App\Models\Booking;
 use App\Models\Partner;
+use App\Models\AdminSettings;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class CommissionAgingService
 {
-    private const COMMISSION_RATE = 0.15;
     private const INVOICEABLE_DAYS = 15;
+
+    private function getCommissionRate(): float
+    {
+        $admin = Auth::guard('admin')->user();
+        $settings = $admin?->settings;
+        return $settings?->commission_rate ?? 0.15;
+    }
 
     public function getCommissionAgingData(Request $request): CommissionAgingDTO
     {
@@ -29,7 +37,8 @@ class CommissionAgingService
             partnerId: $partnerId,
             commissionData: $commissionData,
             partners: Partner::with('user')->get()->toArray(),
-            totals: $totals
+            totals: $totals,
+            commissionRate: $this->getCommissionRate()
         );
     }
 
@@ -59,7 +68,7 @@ class CommissionAgingService
             if (!$partner) continue;
 
             $partnerKey = $partner->id;
-            $commissionAmount = $booking->total_price * self::COMMISSION_RATE;
+            $commissionAmount = $booking->total_price * $this->getCommissionRate();
             $daysOverdue = Carbon::now()->diffInDays($booking->created_at->addDays(self::INVOICEABLE_DAYS));
             $bucket = $this->getAgingBucket($daysOverdue);
 

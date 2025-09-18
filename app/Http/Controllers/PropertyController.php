@@ -89,23 +89,13 @@ class PropertyController extends Controller
                 return view('partner.partner-homes-create-form-1', compact('subcategories', 'categoryId', 'amenities', 'roomTypes', 'bedTypes', 'languages'));
 
             case 2:  // Apartment
-                // Hardcode subcategories for Apartment
-                $subcategories = collect([
-                    (object)[
-                        'id' => 1,
-                        'category_id' => 2,
-                        'name' => 'One',
-                    ],
-                    (object)[
-                        'id' => 2,
-                        'category_id' => 2,
-                        'name' => 'Multiple',
-                    ],
-                ]);
-                return view('partner.partner-apartment-create-form-1', [
-                    'subcategories' => $subcategories,
-                    'category' => 'apartment',
-                ]);
+                // For apartment category, redirect to apartment step 2 page
+                if ($propertyId) {
+                    return redirect()->route('partner.property.apartment.step2', ['propertyId' => $propertyId]);
+                } else {
+                    // If no property ID, redirect to apartment step 1 (property selection)
+                    return redirect()->route('partner.property.apartment.1');
+                }
 
             case 3:  // Hotel
                 if ($subcategories->isEmpty()) {
@@ -202,6 +192,97 @@ class PropertyController extends Controller
         }
     }
 
+    public function apartmentSubcategories(PropertyAction $action)
+    {
+        // Hardcode subcategories for Apartment
+        $subcategories = collect([
+            (object)[
+                'id' => 1,
+                'category_id' => 2,
+                'name' => 'One',
+            ],
+            (object)[
+                'id' => 2,
+                'category_id' => 2,
+                'name' => 'Multiple',
+            ],
+        ]);
+        return view('partner.partner-apartment-create-form-1', [
+            'subcategories' => $subcategories,
+            'category' => 'apartment',
+        ]);
+    }
+
+    public function storeApartment(Request $request, PropertyAction $action)
+    {
+        Log::info('storeApartment called', [
+            'request' => $request->all(),
+            'session' => session()->all(),
+            'partner_id' => $request->input('partner_id'),
+            'address_type_id' => $request->input('address_type_id'),
+            'expects_json' => $request->expectsJson(),
+            'is_ajax' => $request->ajax(),
+            'method' => $request->method(),
+            'url' => $request->url(),
+        ]);
+
+        $category = $request->input('category_id');
+
+        try {
+            // Check if this is an apartment form (category_id = 2 for apartments)
+            if ($category == 2) {
+                // Use ApartmentStep1DTO for apartments (no subcategory_id required)
+                $dto = ApartmentStep1DTO::fromRequest($request);
+                if (Auth::check()) {
+                    $dto->user_id = Auth::id();
+                }
+                $dto->category = $category;
+
+                $property = $action->createApartmentStep1($dto);
+            } else {
+                // Use PropertyStep1DTO for other categories (homes, hotels, etc.)
+                $dto = PropertyStep1DTO::fromRequest($request);
+                if (Auth::check()) {
+                    $dto->user_id = Auth::id();
+                }
+                $dto->category = $category;
+
+                $property = $action->createPropertyStep1($dto);
+            }
+
+            session(['property_id' => $property->id]);
+
+            $categoryString = strtolower(PropertyCategory::find($property->category_id)?->name ?? 'apartment');
+
+            // Check if the request expects JSON (i.e., it's from fetch/AJAX)
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'property_id' => $property->id,
+                    'message' => 'Step 1 data saved successfully',
+                ]);
+            }
+
+            // For apartment, redirect to apartment step 2
+            if ($category == 2) {
+                return redirect()->route('partner.property.apartment.step2', [
+                    'propertyId' => $property->id,
+                ])->with('success', 'Step 1 data saved successfully');
+            }
+
+            // Fallback for regular form submission
+            return redirect()->route('partner.property.step2', [
+                'category' => $categoryString,
+                'property' => $property->id,
+            ])->with('success', 'Step 1 data saved successfully');
+        } catch (\Exception $e) {
+            Log::error('storeApartment exception', ['message' => $e->getMessage()]);
+
+            // Return error as JSON
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 422);
+        }
+    }
+
     public function storeStep1(Request $request, PropertyAction $action)
     {
         Log::info('storeStep1 called', [
@@ -250,6 +331,13 @@ class PropertyController extends Controller
                     'property_id' => $property->id,
                     'message' => 'Step 1 data saved successfully',
                 ]);
+            }
+
+            // 🔁 For apartment, redirect to apartment step 2
+            if ($category == 2) {
+                return redirect()->route('partner.property.apartment.step2', [
+                    'propertyId' => $property->id,
+                ])->with('success', 'Step 1 data saved successfully');
             }
 
             // 🔁 Fallback for regular form submission

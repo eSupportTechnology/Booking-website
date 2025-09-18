@@ -18,7 +18,8 @@ class CommissionAgingViewModel
             'partnerId' => $this->dto->partnerId,
             'commissionData' => $this->dto->commissionData,
             'partners' => $this->dto->partners,
-            'totals' => $this->dto->totals
+            'totals' => $this->dto->totals,
+            'commissionRate' => $this->dto->commissionRate
         ];
     }
 }

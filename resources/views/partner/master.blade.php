@@ -80,7 +80,7 @@
                 $domain = config('domains.domain');
                 $subdomain = config('domains.subdomain');
             @endphp
-            
+
             <!-- Branding -->
             <div class="p-6 border-b border-gray-200">
                 <div class="flex items-center space-x-3">
@@ -123,7 +123,7 @@
                         </div>
                         <i :class="openProperty ? 'fa-chevron-up' : 'fa-chevron-down'" class="fas text-sm text-gray-400"></i>
                     </button>
-                    <div x-show="openProperty" x-collapse class="ml-12 space-y-1">
+                    <div x-show="!openProperty" x-collapse class="ml-12 space-y-1">
                         <a href="{{ route('partner.list-your-property') }}"
                             class="flex items-center justify-between px-4 py-2 rounded-lg hover:bg-blue-50 text-gray-600 hover:text-[#1F8FB2] transition-colors duration-200">
                             <span class="text-sm font-medium">Add Property</span>
@@ -205,7 +205,7 @@
                         @csrf
                         <button type="submit"
                             class="w-full flex items-center justify-center px-4 py-3 rounded-xl bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200">
-                            <i class="fas fa-sign-out-alt mr-2"></i> 
+                            <i class="fas fa-sign-out-alt mr-2"></i>
                             <span>Logout</span>
                         </button>
                     </form>

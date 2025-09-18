@@ -39,6 +39,9 @@
             <button onclick="showTab('notifications')" id="notifications-tab" class="w-full text-left px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 font-medium">
                 🔔 Notifications
             </button>
+            <button onclick="showTab('commission')" id="commission-tab" class="w-full text-left px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 font-medium">
+                💰 Commission
+            </button>
         </div>
 
         <!-- Settings Content -->
@@ -225,6 +228,40 @@
                     </button>
                 </form>
             </div>
+
+            <!-- Commission Settings -->
+            <div id="commission-content" class="bg-gray-50 border rounded-lg shadow p-6 hidden">
+                <h3 class="text-xl font-semibold text-gray-700 mb-4">💰 Commission Settings</h3>
+                <form action="{{ route('admin.settings.commission.update') }}" method="POST">
+                    @csrf
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Commission Rate</label>
+                        <div class="flex items-center space-x-4">
+                            <div class="flex-1">
+                                <input type="number" 
+                                       name="commission_rate" 
+                                       value="{{ $settings->commission_rate ?? 0.15 }}" 
+                                       step="0.0001" 
+                                       min="0" 
+                                       max="1" 
+                                       class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1F8FB2]" 
+                                       required>
+                                <p class="text-xs text-gray-500 mt-1">Enter as decimal (e.g., 0.15 for 15%)</p>
+                            </div>
+                            <div class="text-lg font-semibold text-gray-700">
+                                <span id="commission-percentage">{{ number_format(($settings->commission_rate ?? 0.15) * 100, 1) }}%</span>
+                            </div>
+                        </div>
+                        <div class="mt-2 text-sm text-gray-600">
+                            <p>Current commission rate: <strong>{{ number_format(($settings->commission_rate ?? 0.15) * 100, 1) }}%</strong></p>
+                            <p class="text-xs text-gray-500 mt-1">This rate will be applied to all new bookings for commission calculations.</p>
+                        </div>
+                    </div>
+                    <button type="submit" class="bg-[#1F8FB2] text-white px-6 py-2 rounded hover:bg-[#157799] transition">
+                        Update Commission Rate
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 </div>
@@ -256,5 +293,19 @@ function togglePassword(fieldId) {
         icon.classList.add('fa-eye');
     }
 }
+
+// Update commission percentage display
+document.addEventListener('DOMContentLoaded', function() {
+    const commissionInput = document.querySelector('input[name="commission_rate"]');
+    const percentageDisplay = document.getElementById('commission-percentage');
+    
+    if (commissionInput && percentageDisplay) {
+        commissionInput.addEventListener('input', function() {
+            const value = parseFloat(this.value) || 0;
+            const percentage = (value * 100).toFixed(1);
+            percentageDisplay.textContent = percentage + '%';
+        });
+    }
+});
 </script>
 @endsection

@@ -28,7 +28,7 @@
         const propertyId = document.getElementById('propertyId').value;
         const subtypeId = document.getElementById('subtypeId').value;
         const completeRegistrationBtn = document.getElementById('completeRegistrationBtn');
-        
+
         // Check if in edit mode
         const isEditMode = typeof window.isEditMode !== 'undefined' ? window.isEditMode : false;
         if (isEditMode) {
@@ -40,7 +40,7 @@
         if (photoLink) {
             photoLink.href = `/partner-homes-images/${propertyId}?details=true&propertyType=${encodeURIComponent(propertyType)}`;
         }
-        
+
         if (roomsEditLink) {
             roomsEditLink.href = `/partner-homes-rooms/${propertyId}?details=true&propertyType=${encodeURIComponent(propertyType)}`;
         }
@@ -81,10 +81,10 @@
                 }
             }
 
-                
+
 
         }
-      
+
         if (paymentDetails === 'true') {
             if (paymentEditLinkBtn) {
                 paymentEditLinkBtn.innerText = "Edit";
@@ -125,14 +125,14 @@
 
         // Check if all required steps are completed
         const allStepsCompleted = paymentDetails === 'true' && rooms === 'true' && uploaded === 'true';
-        
+
         console.log('=== HOTELS EDIT COMPLETION CHECK ===');
         console.log('paymentDetails:', paymentDetails);
         console.log('rooms:', rooms);
         console.log('uploaded:', uploaded);
         console.log('All steps completed:', allStepsCompleted);
         console.log('=== END CHECK ===');
-        
+
         if (!allStepsCompleted) {
             console.log('One or more required steps are not completed. Complete all steps before proceeding.');
             completeRegistrationBtn.disabled = true;
@@ -153,9 +153,9 @@
                 console.log('Cannot proceed - not all steps are completed');
                 return;
             }
-            
+
             console.log('Registration completed successfully! Redirecting to list-your-property page.');
-            
+
             // Show success toast message
             Swal.fire({
                 icon: 'success',
@@ -170,7 +170,7 @@
                 window.location.href = '{{ url("/list-your-property") }}';
             });
         });
-        
+
         // Add progress indicator and success message
         // Calculate completion percentage
         let completedSteps = 0;
@@ -178,7 +178,7 @@
         if (paymentDetails === 'true') completedSteps++;
         if (rooms === 'true') completedSteps++;
         const completionPercentage = (completedSteps / 3) * 100;
-        
+
         // Add progress bar above the complete registration button
         const progressSection = document.createElement('div');
         progressSection.className = 'mb-4';
@@ -187,7 +187,7 @@
                 <div class="bg-[#3CC0E9] h-2 rounded-full transition-all duration-300" style="width: ${completionPercentage}%"></div>
             </div>
         `;
-        
+
         if (allStepsCompleted) {
             // Add a success message above the complete registration button
             const successMessage = document.createElement('div');
@@ -200,7 +200,7 @@
                     <span class="font-medium">All steps completed! You can now complete your registration.</span>
                 </div>
             `;
-            
+
             const completeRegistrationSection = document.querySelector('.flex.justify-center');
             if (completeRegistrationSection) {
                 completeRegistrationSection.parentNode.insertBefore(progressSection, completeRegistrationSection);

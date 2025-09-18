@@ -865,6 +865,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/settings/password', [\App\Http\Controllers\Admin\AdminSettingsController::class, 'updatePassword'])->name('settings.password.update');
         Route::post('/settings/notifications', [\App\Http\Controllers\Admin\AdminSettingsController::class, 'updateNotifications'])->name('settings.notifications.update');
         Route::post('/settings/two-factor', [\App\Http\Controllers\Admin\AdminSettingsController::class, 'toggleTwoFactor'])->name('settings.two-factor.toggle');
+        Route::post('/settings/commission', [\App\Http\Controllers\Admin\AdminSettingsController::class, 'updateCommissionSettings'])->name('settings.commission.update');
 
         // Super admin only routes
         Route::middleware(\App\Http\Middleware\SuperAdminMiddleware::class)->group(function () {
