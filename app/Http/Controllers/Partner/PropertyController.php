@@ -64,11 +64,11 @@ class PropertyController extends Controller
             case 'apartment':
                 return redirect()->route('partner.apartments.edit', $property->id);
             case 'home':
-                return redirect()->route('partner.homes.edit.new', $property->id);
+                return redirect()->route('partner.homes.edit', $property->id);
             case 'hotel':
                 return redirect()->route('partner.hotels.edit.new', $property->id);
             default:
-                return redirect()->route('partner.homes.edit.new', $property->id);
+                return redirect()->route('partner.homes.edit', $property->id);
         }
     }
 
