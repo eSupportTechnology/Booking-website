@@ -25,7 +25,7 @@ class CarRenterControlPanel extends Controller
         $user = Auth::guard('car_renter')->user();
 
         // fetch only cars that belong to this car renter
-        $cars = Car::with(['carType', 'company', 'model'])
+        $cars = Car::with(['carType', 'company', 'brand','model'])
             ->where('car_renter_id', $user->id)
             ->get();
 
@@ -37,7 +37,7 @@ class CarRenterControlPanel extends Controller
         $user = Auth::guard('car_renter')->user();
 
         // Fetch the car that belongs to this car renter
-        $car = Car::with(['carType', 'company', 'model'])
+        $car = Car::with(['carType', 'company', 'brand','model'])
             ->where('car_renter_id', $user->id)
             ->findOrFail($id);
 
@@ -86,6 +86,8 @@ class CarRenterControlPanel extends Controller
             'mileage_type'=> 'required',
             'fuel_type'   => 'required',
             'pricingType' => 'required',
+            'pricePerDay' => 'required_if:pricingType,perDay|nullable|numeric|min:0',
+            'pricePerKm'  => 'required_if:pricingType,perKm|nullable|numeric|min:0',
             'car_front' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'car_back'  => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'car_inside'=> 'nullable|image|mimes:jpg,jpeg,png|max:2048',

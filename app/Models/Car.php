@@ -27,7 +27,10 @@ class Car extends Model
     {
         return $this->belongsTo(CarModel::class);
     }
-
+    public function brand()
+    {
+        return $this->belongsTo(CarBrand::class); // ✅ FIXED
+    }
     public function reservations()
     {
         return $this->hasMany(CarReservation::class);

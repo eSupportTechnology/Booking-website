@@ -105,7 +105,79 @@
                                 <option value="limited" {{ $car->mileage_type == 'limited' ? 'selected' : '' }}>Limited</option>
                             </select>
                         </div>
+
+                           @if($car->with_driver === 'yes')
+            <div>
+                <h2 class="text-lg sm:text-xl font-semibold mb-4 border-b pb-2">Driver Details</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="mb-4">
+                        <label class="block font-semibold mb-1 text-sm sm:text-base">Driver Name</label>
+                        <input type="text" name="driver_name" value="{{ $car->driver_name }}" class="w-full border rounded p-2 text-sm sm:text-base">
                     </div>
+                    <div class="mb-4">
+                        <label class="block font-semibold mb-1 text-sm sm:text-base">Driver Phone</label>
+                        <input type="text" name="driver_phone" value="{{ $car->driver_phone }}" class="w-full border rounded p-2 text-sm sm:text-base">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block font-semibold mb-1 text-sm sm:text-base">Driver Age</label>
+                        <input type="number" name="driver_age" value="{{ $car->driver_age }}" class="w-full border rounded p-2 text-sm sm:text-base">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block font-semibold mb-1 text-sm sm:text-base">Driver Experience (Years)</label>
+                        <input type="number" name="driver_experience" value="{{ $car->driver_experience }}" class="w-full border rounded p-2 text-sm sm:text-base">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block font-semibold mb-1 text-sm sm:text-base">Driver NIC</label>
+                        <input type="text" name="driver_nic" value="{{ $car->driver_nic }}" class="w-full border rounded p-2 text-sm sm:text-base">
+                    </div>
+                </div>
+            </div>
+            @endif
+<!-- Driver License Images -->
+<div class="mt-4">
+    <h3 class="text-base sm:text-lg font-semibold mb-2">Driver License</h3>
+    <div class="grid grid-cols-2 gap-4">
+
+        <!-- Front License -->
+        <div>
+            <label class="block font-semibold mb-1 text-sm sm:text-base">Front License</label>
+            <div class="mb-2">
+                @if($car->driver_license_front)
+                    <img src="{{ asset('storage/' . $car->driver_license_front) }}" 
+                         alt="Driver License Front" 
+                         class="w-full h-40 object-cover rounded border">
+                @else
+                    <div class="w-full h-40 bg-gray-100 rounded border flex items-center justify-center text-gray-400">
+                        No Image
+                    </div>
+                @endif
+            </div>
+            <input type="file" name="driver_license_front" class="w-full text-sm">
+        </div>
+
+        <!-- Back License -->
+        <div>
+            <label class="block font-semibold mb-1 text-sm sm:text-base">Back License</label>
+            <div class="mb-2">
+                @if($car->driver_license_back)
+                    <img src="{{ asset('storage/' . $car->driver_license_back) }}" 
+                         alt="Driver License Back" 
+                         class="w-full h-40 object-cover rounded border">
+                @else
+                    <div class="w-full h-40 bg-gray-100 rounded border flex items-center justify-center text-gray-400">
+                        No Image
+                    </div>
+                @endif
+            </div>
+            <input type="file" name="driver_license_back" class="w-full text-sm">
+        </div>
+
+    </div>
+</div>
+
+                    </div>
+                    
 
                     <!-- Right: Car Images -->
                     <div class="space-y-4">
@@ -162,67 +234,47 @@
     <input type="file" name="car_inside" class="w-full text-sm">
 </div>
 
+      <!-- ===================== Pricing ===================== -->
+           <div>
+    <h2 class="text-lg sm:text-xl font-semibold mb-4 border-b pb-2">Pricing</h2>
 
+    <!-- Determine which pricing type is currently active -->
+    @php
+        $pricingType = $car->price_per_day !== null ? 'perDay' : ($car->price_per_km !== null ? 'perKm' : '');
+    @endphp
 
-                    </div>
-                </div>
-            </div>
+    <!-- Pricing Type -->
+    <div class="mb-4 w-1/2">
+        <label class="block font-semibold mb-1 text-sm sm:text-base">Pricing Type</label>
+        <select name="pricingType" class="w-full border rounded p-2 text-sm sm:text-base">
+            <option value="perDay" {{ $pricingType === 'perDay' ? 'selected' : '' }}>Per Day</option>
+            <option value="perKm" {{ $pricingType === 'perKm' ? 'selected' : '' }}>Per Km</option>
+        </select>
+    </div>
 
-            <!-- ===================== Driver Details (if with_driver) ===================== -->
-            @if($car->with_driver === 'yes')
-            <div>
-                <h2 class="text-lg sm:text-xl font-semibold mb-4 border-b pb-2">Driver Details</h2>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="mb-4">
-                        <label class="block font-semibold mb-1 text-sm sm:text-base">Driver Name</label>
-                        <input type="text" name="driver_name" value="{{ $car->driver_name }}" class="w-full border rounded p-2 text-sm sm:text-base">
-                    </div>
-                    <div class="mb-4">
-                        <label class="block font-semibold mb-1 text-sm sm:text-base">Driver Phone</label>
-                        <input type="text" name="driver_phone" value="{{ $car->driver_phone }}" class="w-full border rounded p-2 text-sm sm:text-base">
-                    </div>
-                    <div class="mb-4">
-                        <label class="block font-semibold mb-1 text-sm sm:text-base">Driver Age</label>
-                        <input type="number" name="driver_age" value="{{ $car->driver_age }}" class="w-full border rounded p-2 text-sm sm:text-base">
-                    </div>
-                    <div class="mb-4">
-                        <label class="block font-semibold mb-1 text-sm sm:text-base">Driver Experience (Years)</label>
-                        <input type="number" name="driver_experience" value="{{ $car->driver_experience }}" class="w-full border rounded p-2 text-sm sm:text-base">
-                    </div>
-                    <div class="mb-4">
-                        <label class="block font-semibold mb-1 text-sm sm:text-base">Driver NIC</label>
-                        <input type="text" name="driver_nic" value="{{ $car->driver_nic }}" class="w-full border rounded p-2 text-sm sm:text-base">
-                    </div>
-                </div>
-            </div>
-            @endif
+    <!-- Price Inputs -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+            <label class="block font-semibold mb-1 text-sm sm:text-base">Price Per Day</label>
+            <input type="number" name="pricePerDay" value="{{ $car->price_per_day }}" class="w-full border rounded p-2 text-sm sm:text-base">
+        </div>
+        <div>
+            <label class="block font-semibold mb-1 text-sm sm:text-base">Price Per Km</label>
+            <input type="number" name="pricePerKm" value="{{ $car->price_per_km }}" class="w-full border rounded p-2 text-sm sm:text-base">
+        </div>
+    </div>
 
-            <!-- ===================== Pricing ===================== -->
-            <div>
-                <h2 class="text-lg sm:text-xl font-semibold mb-4 border-b pb-2">Pricing</h2>
-
-                <!-- Pricing Type -->
-               <div class="mb-4 w-1/2">
-    <label class="block font-semibold mb-1 text-sm sm:text-base">Pricing Type</label>
-    <select name="pricingType" class="w-full border rounded p-2 text-sm sm:text-base">
-        <option value="perDay" {{ $car->pricingType == 'perDay' ? 'selected' : '' }}>Per Day</option>
-        <option value="perKm" {{ $car->pricingType == 'perKm' ? 'selected' : '' }}>Per Km</option>
-    </select>
+   
 </div>
 
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block font-semibold mb-1 text-sm sm:text-base">Price Per Day</label>
-                        <input type="number" name="pricePerDay" value="{{ $car->pricePerDay }}" class="w-full border rounded p-2 text-sm sm:text-base">
-                    </div>
-                    <div>
-                        <label class="block font-semibold mb-1 text-sm sm:text-base">Price Per Km</label>
-                        <input type="number" name="pricePerKm" value="{{ $car->pricePerKm }}" class="w-full border rounded p-2 text-sm sm:text-base">
+
                     </div>
                 </div>
             </div>
+
+           
+          
 
             <!-- Submit -->
             <div class="flex flex-col sm:flex-row justify-between gap-3 mt-6">
