@@ -2,7 +2,7 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-                <div class="p-6" x-data="{ 
+                <div class="p-6" x-data="{
                     currentSection: window.location.hash ? window.location.hash.substring(1) : 'basic-info',
                     sections: ['basic-info', 'rooms', 'images', 'payments'],
                     scrollToSection(section) {
@@ -15,7 +15,7 @@
                     <div class="fixed right-8 top-1/4 bg-white p-4 rounded-lg shadow-lg">
                         <nav class="space-y-2">
                             <template x-for="section in sections" :key="section">
-                                <button 
+                                <button
                                     @click="scrollToSection(section)"
                                     :class="{'bg-primary-600 text-white': currentSection === section,
                                             'hover:bg-gray-100': currentSection !== section}"
@@ -26,7 +26,7 @@
                         </nav>
                     </div>
 
-                    <form id="partner-home-form" method="POST" action="{{ route('partner.homes.update', $home) }}" 
+                    <form id="partner-home-form" method="POST" action="{{ route('partner.homes.update', $home) }}"
                           enctype="multipart/form-data" class="space-y-12" x-data="partnerHomeForm()">
                         @csrf
                         @method('PUT')
