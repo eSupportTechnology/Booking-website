@@ -139,10 +139,10 @@ class PropertyService
     private function getCategoryIdByType(string $type): ?int
     {
         $categoryMap = [
-            'apartments' => 'Apartment',
-            'homes' => 'Home', 
-            'hotels' => 'Hotel',
-            'alternative-places' => 'Alternative Place'
+            'homes' => 'Homes',           // Should map to category_id = 1
+            'apartments' => 'Apartment',  // Should map to category_id = 2
+            'hotels' => 'Hotel, B&Bs, and more',     // Should map to category_id = 3
+            'alternative-places' => 'Alternative places'  // Should map to category_id = 4
         ];
         
         $categoryName = $categoryMap[$type] ?? null;
