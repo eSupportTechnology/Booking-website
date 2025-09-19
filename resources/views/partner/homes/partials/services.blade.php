@@ -1,12 +1,11 @@
 <div class="p-8 max-w-4xl mx-auto">
     <div class="mb-8 text-center">
-        <h3 class="text-3xl font-bold text-gray-900 mb-2">PropertyParams Services</h3>
+        <h3 class="text-3xl font-bold text-gray-900 mb-2">Property Services</h3>
         <p class="text-gray-600 text-lg">Enhance your guest experience with premium services</p>
     </div>
 
     <form id="services-form" class="space-y-8 bg-white rounded-3xl shadow-xl p-8 border border-gray-100" action="{{ route('partner.homes.update.services', $property) }}" method="POST">
         @csrf
-        @method('PATCH')
 
         <!-- Breakfast Section -->
         <section class="bg-gradient-to-br from-orange-50 to-yellow-50 rounded-2xl p-6 border border-orange-100 transition-all duration-300 hover:shadow-md">
@@ -22,10 +21,7 @@
 
             <!-- Serve Breakfast Toggle -->
             <label class="group flex items-center p-5 bg-white rounded-xl border-2 border-gray-200 hover:border-orange-400 cursor-pointer transition-all duration-200 mb-6 shadow-sm">
-                <input type="checkbox" name="serve_breakfast" value="1" id="serve_breakfast" {{ $property->services?->serve_breakfast ? 'checked' : '' }} class="hidden peer">
-                <div class="w-6 h-6 border-2 border-gray-300 rounded-lg mr-4 flex items-center justify-center transition-all duration-200 peer-checked:bg-orange-500 peer-checked:border-orange-500 group-hover:border-orange-400">
-                    <i class="fas fa-check text-white text-sm opacity-0 peer-checked:opacity-100"></i>
-                </div>
+                <input type="checkbox" name="serve_breakfast" value="1" id="serve_breakfast" {{ $property->services?->serve_breakfast ? 'checked' : '' }} class="sr-only peer">
                 <div>
                     <span class="font-semibold text-gray-900 text-base">We serve breakfast</span>
                     <p class="text-gray-600 text-sm">Provide morning meals for your guests</p>
@@ -67,10 +63,7 @@
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
                         @foreach(['continental' => '🥐 Continental', 'american' => '🍳 American', 'buffet' => '🍽️ Buffet', 'asian' => '🍜 Asian'] as $type => $label)
                             <label class="group flex items-center p-3 bg-white rounded-xl border-2 border-gray-200 hover:border-orange-300 cursor-pointer transition-all duration-200">
-                                <input type="checkbox" name="breakfast_type[]" value="{{ $type }}" {{ in_array($type, $breakfastTypes) ? 'checked' : '' }} class="hidden peer">
-                                <div class="w-4 h-4 border-2 border-gray-300 rounded mr-2 flex items-center justify-center transition-all duration-200 peer-checked:bg-orange-500 peer-checked:border-orange-500 group-hover:border-orange-300">
-                                    <i class="fas fa-check text-white text-xs opacity-0 peer-checked:opacity-100"></i>
-                                </div>
+                                <input type="checkbox" name="breakfast_type[]" value="{{ $type }}" {{ in_array($type, $breakfastTypes) ? 'checked' : '' }} class="sr-only peer">
                                 <span class="text-sm font-medium">{{ $label }}</span>
                             </label>
                         @endforeach
@@ -97,10 +90,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                         @foreach(['no' => '🚫 No parking', 'free' => '🆓 Free parking', 'paid' => '💰 Paid parking'] as $value => $label)
                             <label class="group flex items-center p-4 bg-white rounded-xl border-2 border-gray-200 hover:border-blue-400 cursor-pointer transition-all duration-200">
-                                <input type="radio" name="parking_available" value="{{ $value }}" {{ $property->services?->parking_available == $value ? 'checked' : '' }} class="hidden peer">
-                                <div class="w-5 h-5 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center transition-all duration-200 peer:checked:border-blue-500 group-hover:border-blue-400">
-                                    <div class="w-2 h-2 bg-blue-600 rounded-full opacity-0 peer:checked:opacity-100"></div>
-                                </div>
+                                <input type="radio" name="parking_available" value="{{ $value }}" {{ $property->services?->parking_available == $value ? 'checked' : '' }} class="sr-only peer">
                                 <span class="font-medium text-sm">{{ $label }}</span>
                             </label>
                         @endforeach
@@ -160,131 +150,56 @@
 // Enhanced interactive logic
 document.addEventListener('DOMContentLoaded', function () {
     const $ = (sel) => document.querySelector(sel);
-    const $$ = (sel) => document.querySelectorAll(sel);
 
-    // Initialize all states
-    initializeCheckboxes();
-    initializeRadios();
+    // Handle conditional visibility on page load
+    const serveBreakfastInput = $('#serve_breakfast');
+    if (serveBreakfastInput && serveBreakfastInput.checked) {
+        $('#breakfast-details').style.display = 'block';
+    }
 
-    // Handle checkbox clicks
-    document.addEventListener('click', e => {
-        const label = e.target.closest('label');
-        if (!label || !label.querySelector('input')) return;
-
-        const input = label.querySelector('input');
-
-        if (input.type === 'checkbox') {
-            toggleCheckbox(input, label);
-            handleConditionalVisibility(input);
-        }
-
-        if (input.type === 'radio') {
-            selectRadio(input, label);
-            handleConditionalVisibility(input);
+    const parkingInputs = document.querySelectorAll('input[name="parking_available"]');
+    parkingInputs.forEach(input => {
+        if (input.checked && ['free', 'paid'].includes(input.value)) {
+            $('#parking-details').style.display = 'block';
         }
     });
 
-    function toggleCheckbox(input, label) {
-        input.checked = !input.checked;
-        const indicator = label.querySelector('.w-6.h-6') || label.querySelector('.w-4.h-4') || label.querySelector('.w-5.h-5');
-        const icon = indicator ? indicator.querySelector('i') : null;
-
-        if (input.checked) {
-            if (indicator) {
-                indicator.classList.add('bg-green-500', 'border-green-500');
-                indicator.classList.remove('border-gray-300', 'bg-blue-500', 'border-blue-500');
+    // Handle checkbox and radio changes for conditional visibility and styling
+    document.addEventListener('change', function(e) {
+        if (e.target.type === 'radio') {
+            // Clear all radio buttons in the same group
+            document.querySelectorAll(`input[name="${e.target.name}"]`).forEach(radio => {
+                const label = radio.closest('label');
+                if (label) {
+                    label.classList.remove('border-blue-500', 'bg-blue-50', 'border-green-500', 'bg-green-50');
+                    label.classList.add('border-gray-200');
+                }
+            });
+            
+            // Style the selected radio
+            const selectedLabel = e.target.closest('label');
+            if (selectedLabel) {
+                selectedLabel.classList.remove('border-gray-200');
+                if (e.target.name === 'payment_method') {
+                    selectedLabel.classList.add('border-green-500', 'bg-green-50');
+                } else {
+                    selectedLabel.classList.add('border-blue-500', 'bg-blue-50');
+                }
             }
-            if (icon) {
-                icon.classList.remove('opacity-0');
-                icon.classList.add('opacity-100');
-            }
-            label.classList.remove('border-gray-200', 'border-blue-500', 'bg-blue-50');
-            label.classList.add('border-green-500', 'bg-green-50');
-        } else {
-            if (indicator) {
-                indicator.classList.remove('bg-green-500', 'border-green-500', 'bg-blue-500', 'border-blue-500');
-                indicator.classList.add('border-gray-300');
-            }
-            if (icon) {
-                icon.classList.add('opacity-0');
-                icon.classList.remove('opacity-100');
-            }
-            label.classList.remove('border-green-500', 'bg-green-50', 'border-blue-500', 'bg-blue-50');
-            label.classList.add('border-gray-200');
         }
-    }
-
-    function selectRadio(input, label) {
-        // Clear all radio buttons in the same group
-        document.querySelectorAll(`input[name="${input.name}"]`).forEach(radio => {
-            radio.checked = false;
-            const radioLabel = radio.closest('label');
-            const radioIndicator = radioLabel.querySelector('.w-5.h-5');
-            const dot = radioIndicator ? radioIndicator.querySelector('div') : null;
-
-            if (dot) {
-                dot.classList.add('opacity-0');
-                dot.classList.remove('opacity-100');
-            }
-            radioLabel.classList.remove('border-blue-500', 'bg-blue-50');
-            radioLabel.classList.add('border-gray-200');
-        });
-
-        // Select current radio
-        input.checked = true;
-        const indicator = label.querySelector('.w-5.h-5');
-        const dot = indicator ? indicator.querySelector('div') : null;
-
-        if (dot) {
-            dot.classList.remove('opacity-0');
-            dot.classList.add('opacity-100');
-        }
-        label.classList.remove('border-gray-200');
-        label.classList.add('border-blue-500', 'bg-blue-50');
-    }
-
-    function handleConditionalVisibility(input) {
-        if (input.id === 'serve_breakfast') {
-            $('#breakfast-details').style.display = input.checked ? 'block' : 'none';
+        
+        if (e.target.id === 'serve_breakfast') {
+            $('#breakfast-details').style.display = e.target.checked ? 'block' : 'none';
         }
 
-        if (input.name === 'parking_available') {
-            $('#parking-details').style.display = ['free', 'paid'].includes(input.value) ? 'block' : 'none';
+        if (e.target.name === 'parking_available') {
+            $('#parking-details').style.display = ['free', 'paid'].includes(e.target.value) ? 'block' : 'none';
         }
-    }
-
-    function initializeCheckboxes() {
-        $$('input[type="checkbox"]:checked').forEach(checkbox => {
-            const label = checkbox.closest('label');
-            const indicator = label.querySelector('.w-6.h-6') || label.querySelector('.w-4.h-4') || label.querySelector('.w-5.h-5');
-            const icon = indicator ? indicator.querySelector('i') : null;
-
-            if (indicator) {
-                indicator.classList.add('bg-green-500', 'border-green-500');
-                indicator.classList.remove('border-gray-300', 'bg-blue-500', 'border-blue-500');
-            }
-            if (icon) {
-                icon.classList.remove('opacity-0');
-                icon.classList.add('opacity-100');
-            }
-            label.classList.remove('border-gray-200', 'border-blue-500', 'bg-blue-50');
-            label.classList.add('border-green-500', 'bg-green-50');
-        });
-    }
-
-    function initializeRadios() {
-        $$('input[type="radio"]:checked').forEach(radio => {
-            const label = radio.closest('label');
-            const indicator = label.querySelector('.w-5.h-5');
-            const dot = indicator ? indicator.querySelector('div') : null;
-
-            if (dot) {
-                dot.classList.remove('opacity-0');
-                dot.classList.add('opacity-100');
-            }
-            label.classList.remove('border-gray-200');
-            label.classList.add('border-blue-500', 'bg-blue-50');
-        });
-    }
+    });
+    
+    // Initialize radio button styles
+    document.querySelectorAll('input[type="radio"]:checked').forEach(input => {
+        input.dispatchEvent(new Event('change'));
+    });
 });
 </script>

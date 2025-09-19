@@ -6,9 +6,9 @@
 
     <form id="languages-form" class="space-y-8" action="{{ route('partner.homes.update.languages', $property) }}" method="POST">
         @csrf
-        
+
         @php
-            $selectedLanguages = $property->languages->pluck('id')->toArray();
+            $selectedLanguages = $property->languages ? $property->languages->pluck('id')->toArray() : [];
             $popularLanguages = [
                 ['id' => 1, 'name' => 'English', 'flag' => '🇺🇸'],
                 ['id' => 2, 'name' => 'Spanish', 'flag' => '🇪🇸'],
@@ -39,11 +39,8 @@
 
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                 @foreach($popularLanguages as $language)
-                    <label class="flex items-center p-4 bg-white rounded-xl border-2 border-gray-200 hover:border-purple-300 cursor-pointer transition-all duration-200 group transform hover:scale-105 language-checkbox {{ in_array($language['id'], $selectedLanguages) ? 'border-purple-500 bg-purple-50' : '' }}">
-                        <input type="checkbox" name="languages[]" value="{{ $language['id'] }}" id="lang_{{ $language['id'] }}" {{ in_array($language['id'], $selectedLanguages) ? 'checked' : '' }} class="sr-only language-input">
-                        <div class="w-5 h-5 border-2 {{ in_array($language['id'], $selectedLanguages) ? 'border-purple-500 bg-purple-500' : 'border-gray-300' }} rounded mr-3 flex items-center justify-center group-hover:border-purple-500 transition-colors language-indicator">
-                            <i class="fas fa-check text-white text-xs {{ in_array($language['id'], $selectedLanguages) ? 'opacity-100' : 'opacity-0' }} language-check"></i>
-                        </div>
+                    <label class="flex items-center p-4 bg-white rounded-xl border-2 border-gray-200 hover:border-purple-300 cursor-pointer transition-all duration-200 group transform hover:scale-105 language-checkbox peer-checked:border-purple-500 peer-checked:bg-purple-50">
+                        <input type="checkbox" name="languages[]" value="{{ $language['id'] }}" id="lang_{{ $language['id'] }}" {{ in_array($language['id'], $selectedLanguages) ? 'checked' : '' }} class="sr-only peer language-input">
                         <div class="flex items-center">
                             <span class="text-lg mr-2">{{ $language['flag'] }}</span>
                             <span class="font-medium text-gray-700 group-hover:text-purple-700">{{ $language['name'] }}</span>
@@ -126,32 +123,6 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Handle language checkbox selection
-    document.addEventListener('click', function(e) {
-        if (e.target.closest('.language-checkbox')) {
-            e.preventDefault();
-            const label = e.target.closest('.language-checkbox');
-            const checkbox = label.querySelector('.language-input');
-            const indicator = label.querySelector('.language-indicator');
-            const checkIcon = label.querySelector('.language-check');
-            
-            checkbox.checked = !checkbox.checked;
-            
-            if (checkbox.checked) {
-                indicator.classList.add('bg-purple-500', 'border-purple-500');
-                indicator.classList.remove('border-gray-300');
-                checkIcon.classList.remove('opacity-0');
-                checkIcon.classList.add('opacity-100');
-                label.classList.add('border-purple-500', 'bg-purple-50');
-            } else {
-                indicator.classList.remove('bg-purple-500', 'border-purple-500');
-                indicator.classList.add('border-gray-300');
-                checkIcon.classList.add('opacity-0');
-                checkIcon.classList.remove('opacity-100');
-                label.classList.remove('border-purple-500', 'bg-purple-50');
-            }
-        }
-    });
 
     // Add language button
     const addLanguageBtn = document.getElementById('add-language');
@@ -173,7 +144,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Remove language button
     document.addEventListener('click', function(e) {
         if (e.target.closest('.remove-language')) {
-            e.preventDefault();
             e.target.closest('.flex').remove();
         }
     });

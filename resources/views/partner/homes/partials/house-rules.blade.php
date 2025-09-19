@@ -6,7 +6,7 @@
 
     <form id="rules-form" action="{{ route('partner.homes.update.rules', $property) }}" method="POST" class="space-y-8">
         @csrf
-        
+
         <!-- Basic Rules -->
         <div class="bg-gradient-to-br from-red-50 to-pink-50 rounded-2xl p-6 border border-red-100">
             <div class="flex items-center mb-6">
@@ -21,11 +21,8 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label class="flex items-center p-4 bg-white rounded-xl border-2 border-gray-200 hover:border-red-300 cursor-pointer transition-all duration-200">
+                    <label class="flex items-center p-4 bg-white rounded-xl border-2 border-gray-200 hover:border-red-300 cursor-pointer transition-all duration-200 has-[:checked]:border-red-500 has-[:checked]:bg-red-50">
                         <input type="checkbox" name="smoking_allowed" value="1" {{ $property->policies?->smoking_allowed ? 'checked' : '' }} class="sr-only">
-                        <div class="w-6 h-6 border-2 border-gray-300 rounded-lg mr-4 flex items-center justify-center">
-                            <i class="fas fa-check text-white text-sm opacity-0"></i>
-                        </div>
                         <div>
                             <span class="font-semibold text-gray-900">🚬 Smoking allowed</span>
                             <p class="text-gray-600 text-sm">Allow guests to smoke on the property</p>
@@ -34,11 +31,8 @@
                 </div>
 
                 <div>
-                    <label class="flex items-center p-4 bg-white rounded-xl border-2 border-gray-200 hover:border-red-300 cursor-pointer transition-all duration-200">
+                    <label class="flex items-center p-4 bg-white rounded-xl border-2 border-gray-200 hover:border-red-300 cursor-pointer transition-all duration-200 has-[:checked]:border-red-500 has-[:checked]:bg-red-50">
                         <input type="checkbox" name="children_allowed" value="1" {{ $property->policies?->children_allowed ? 'checked' : '' }} class="sr-only">
-                        <div class="w-6 h-6 border-2 border-gray-300 rounded-lg mr-4 flex items-center justify-center">
-                            <i class="fas fa-check text-white text-sm opacity-0"></i>
-                        </div>
                         <div>
                             <span class="font-semibold text-gray-900">👶 Children allowed</span>
                             <p class="text-gray-600 text-sm">Welcome families with children</p>
@@ -47,11 +41,8 @@
                 </div>
 
                 <div>
-                    <label class="flex items-center p-4 bg-white rounded-xl border-2 border-gray-200 hover:border-red-300 cursor-pointer transition-all duration-200">
+                    <label class="flex items-center p-4 bg-white rounded-xl border-2 border-gray-200 hover:border-red-300 cursor-pointer transition-all duration-200 has-[:checked]:border-red-500 has-[:checked]:bg-red-50">
                         <input type="checkbox" name="parties_allowed" value="1" {{ $property->policies?->parties_allowed ? 'checked' : '' }} class="sr-only">
-                        <div class="w-6 h-6 border-2 border-gray-300 rounded-lg mr-4 flex items-center justify-center">
-                            <i class="fas fa-check text-white text-sm opacity-0"></i>
-                        </div>
                         <div>
                             <span class="font-semibold text-gray-900">🎉 Parties/events allowed</span>
                             <p class="text-gray-600 text-sm">Allow guests to host events</p>
@@ -63,11 +54,8 @@
                     <label class="block text-sm font-semibold text-gray-700 mb-3">Do you allow pets?</label>
                     <div class="space-y-2">
                         @foreach(['yes' => '✅ Yes', 'upon_request' => '❓ Upon request', 'no' => '❌ No'] as $value => $label)
-                            <label class="flex items-center p-3 bg-white rounded-xl border-2 border-gray-200 hover:border-red-300 cursor-pointer transition-all duration-200">
-                                <input type="radio" name="pets_allowed" value="{{ $value }}" {{ $property->policies?->pets_allowed == $value ? 'checked' : '' }} class="sr-only">
-                                <div class="w-5 h-5 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
-                                    <div class="w-2 h-2 bg-red-600 rounded-full opacity-0"></div>
-                                </div>
+                            <label class="flex items-center p-3 bg-white rounded-xl border-2 border-gray-200 hover:border-red-300 cursor-pointer transition-all duration-200 peer-checked:border-red-500 peer-checked:bg-red-50">
+                                <input type="radio" name="pets_allowed" value="{{ $value }}" {{ $property->policies?->pets_allowed == $value ? 'checked' : '' }} class="sr-only peer">
                                 <span class="font-medium">{{ $label }}</span>
                             </label>
                         @endforeach
@@ -75,21 +63,15 @@
                 </div>
             </div>
 
-            <div id="pet-fees" class="mt-6" style="display: {{ in_array($property->policies?->pets_allowed, ['yes', 'upon_request']) ? 'block' : 'none' }};">
+            <div id="pet-fees" class="mt-6 {{ in_array($property->policies?->pets_allowed, ['yes', 'upon_request']) ? '' : 'hidden' }}">
                 <label class="block text-sm font-semibold text-gray-700 mb-3">Pet fees</label>
                 <div class="flex space-x-4">
-                    <label class="flex items-center p-3 bg-white rounded-xl border-2 border-gray-200 hover:border-red-300 cursor-pointer transition-all duration-200">
-                        <input type="radio" name="pets_fees" value="free" {{ $property->policies?->pets_fees == 'free' ? 'checked' : '' }} class="sr-only">
-                        <div class="w-5 h-5 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
-                            <div class="w-2 h-2 bg-red-600 rounded-full opacity-0"></div>
-                        </div>
+                    <label class="flex items-center p-3 bg-white rounded-xl border-2 border-gray-200 hover:border-red-300 cursor-pointer transition-all duration-200 peer-checked:border-red-500 peer-checked:bg-red-50">
+                        <input type="radio" name="pets_fees" value="free" {{ $property->policies?->pets_fees == 'free' ? 'checked' : '' }} class="sr-only peer">
                         <span class="font-medium">🆓 Free</span>
                     </label>
-                    <label class="flex items-center p-3 bg-white rounded-xl border-2 border-gray-200 hover:border-red-300 cursor-pointer transition-all duration-200">
-                        <input type="radio" name="pets_fees" value="charges" {{ $property->policies?->pets_fees == 'charges' ? 'checked' : '' }} class="sr-only">
-                        <div class="w-5 h-5 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
-                            <div class="w-2 h-2 bg-red-600 rounded-full opacity-0"></div>
-                        </div>
+                    <label class="flex items-center p-3 bg-white rounded-xl border-2 border-gray-200 hover:border-red-300 cursor-pointer transition-all duration-200 peer-checked:border-red-500 peer-checked:bg-red-50">
+                        <input type="radio" name="pets_fees" value="charges" {{ $property->policies?->pets_fees == 'charges' ? 'checked' : '' }} class="sr-only peer">
                         <span class="font-medium">💰 Charges apply</span>
                     </label>
                 </div>
@@ -166,83 +148,44 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Handle checkbox selections
-    document.addEventListener('click', function(e) {
-        const target = e.target.closest('label');
-        if (!target) return;
-        
-        const input = target.querySelector('input');
-        if (!input) return;
-        
-        if (input.type === 'checkbox') {
-            input.checked = !input.checked;
-            const indicator = target.querySelector('div[class*="border-"]');
-            const icon = target.querySelector('i');
-            
-            if (input.checked) {
-                indicator.classList.add('bg-red-500', 'border-red-500');
-                indicator.classList.remove('border-gray-300');
-                icon.classList.remove('opacity-0');
-                icon.classList.add('opacity-100');
-                target.classList.add('border-red-500', 'bg-red-50');
-            } else {
-                indicator.classList.remove('bg-red-500', 'border-red-500');
-                indicator.classList.add('border-gray-300');
-                icon.classList.add('opacity-0');
-                icon.classList.remove('opacity-100');
-                target.classList.remove('border-red-500', 'bg-red-50');
-            }
+    // Handle pet fees visibility on page load
+    const petsAllowedInputs = document.querySelectorAll('input[name="pets_allowed"]');
+    const petFeesEl = document.getElementById('pet-fees');
+    
+    petsAllowedInputs.forEach(input => {
+        if (input.checked && petFeesEl) {
+            petFeesEl.classList.toggle('hidden', !['yes', 'upon_request'].includes(input.value));
         }
-        
-        if (input.type === 'radio') {
+    });
+
+    // Handle radio button changes for conditional visibility and styling
+    document.addEventListener('change', function(e) {
+        if (e.target.type === 'radio') {
             // Clear all radio buttons in the same group
-            document.querySelectorAll(`input[name="${input.name}"]`).forEach(radio => {
-                const radioLabel = radio.closest('label');
-                const radioIndicator = radioLabel.querySelector('div[class*="border-"]');
-                const radioDot = radioIndicator.querySelector('div');
-                
-                radioDot.classList.add('opacity-0');
-                radioLabel.classList.remove('border-red-500', 'bg-red-50');
+            document.querySelectorAll(`input[name="${e.target.name}"]`).forEach(radio => {
+                const label = radio.closest('label');
+                if (label) {
+                    label.classList.remove('border-red-500', 'bg-red-50');
+                    label.classList.add('border-gray-200');
+                }
             });
             
-            // Select current radio
-            input.checked = true;
-            const indicator = target.querySelector('div[class*="border-"]');
-            const dot = indicator.querySelector('div');
-            
-            dot.classList.remove('opacity-0');
-            dot.classList.add('opacity-100');
-            target.classList.add('border-red-500', 'bg-red-50');
-            
-            // Handle pet fees visibility
-            if (input.name === 'pets_allowed') {
-                document.getElementById('pet-fees').style.display = 
-                    ['yes', 'upon_request'].includes(input.value) ? 'block' : 'none';
+            // Style the selected radio
+            const selectedLabel = e.target.closest('label');
+            if (selectedLabel) {
+                selectedLabel.classList.remove('border-gray-200');
+                selectedLabel.classList.add('border-red-500', 'bg-red-50');
             }
+        }
+        
+        if (e.target.name === 'pets_allowed' && petFeesEl) {
+            petFeesEl.classList.toggle('hidden', !['yes', 'upon_request'].includes(e.target.value));
         }
     });
     
-    // Initialize selected states on page load
-    document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
-        const label = checkbox.closest('label');
-        const indicator = label.querySelector('div[class*="border-"]');
-        const icon = label.querySelector('i');
-        
-        indicator.classList.add('bg-red-500', 'border-red-500');
-        indicator.classList.remove('border-gray-300');
-        icon.classList.remove('opacity-0');
-        icon.classList.add('opacity-100');
-        label.classList.add('border-red-500', 'bg-red-50');
-    });
-    
-    document.querySelectorAll('input[type="radio"]:checked').forEach(radio => {
-        const label = radio.closest('label');
-        const indicator = label.querySelector('div[class*="border-"]');
-        const dot = indicator.querySelector('div');
-        
-        dot.classList.remove('opacity-0');
-        dot.classList.add('opacity-100');
-        label.classList.add('border-red-500', 'bg-red-50');
+    // Initialize radio button styles
+    document.querySelectorAll('input[type="radio"]:checked').forEach(input => {
+        input.dispatchEvent(new Event('change'));
     });
 });
 </script>

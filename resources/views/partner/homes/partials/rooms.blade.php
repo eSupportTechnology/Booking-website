@@ -21,11 +21,8 @@
             
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
                 @foreach(['entire_place' => 'Entire place', 'private_room' => 'Private room', 'shared_room' => 'Shared room', 'common_areas' => 'Common areas'] as $access => $label)
-                    <label class="flex items-center p-3 bg-white rounded-xl border-2 border-gray-200 hover:border-purple-300 cursor-pointer transition-all duration-200">
-                        <input type="checkbox" name="guest_access[]" value="{{ $access }}" class="hidden peer">
-                        <div class="w-5 h-5 border-2 border-gray-300 rounded mr-3 flex items-center justify-center transition-all duration-200">
-                            <i class="fas fa-check text-white text-xs opacity-0"></i>
-                        </div>
+                    <label class="access-item flex items-center p-3 bg-white rounded-xl border-2 border-gray-200 hover:border-purple-300 cursor-pointer transition-all duration-200" data-access="{{ $access }}">
+                        <input type="checkbox" name="guest_access[]" value="{{ $access }}" class="hidden">
                         <span class="font-medium text-sm">{{ $label }}</span>
                     </label>
                 @endforeach
@@ -171,7 +168,7 @@
                         <button type="button" class="w-10 h-10 bg-gray-200 hover:bg-gray-300 rounded-full flex items-center justify-center transition-colors" onclick="changeValue('guests', -1)">
                             <i class="fas fa-minus text-gray-600"></i>
                         </button>
-                        <input type="number" name="guests" id="guests" value="{{ $property->additionalDetails->guests ?? 1 }}" min="1" class="w-20 text-center px-3 py-2 bg-white border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all duration-200">
+                        <input type="number" name="guests" id="guests" value="{{ $property->additionalDetails?->guests ?? 1 }}" min="1" class="w-20 text-center px-3 py-2 bg-white border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all duration-200">
                         <button type="button" class="w-10 h-10 bg-gray-200 hover:bg-gray-300 rounded-full flex items-center justify-center transition-colors" onclick="changeValue('guests', 1)">
                             <i class="fas fa-plus text-gray-600"></i>
                         </button>
@@ -184,7 +181,7 @@
                         <button type="button" class="w-10 h-10 bg-gray-200 hover:bg-gray-300 rounded-full flex items-center justify-center transition-colors" onclick="changeValue('bathrooms', -1)">
                             <i class="fas fa-minus text-gray-600"></i>
                         </button>
-                        <input type="number" name="bathrooms" id="bathrooms" value="{{ $property->additionalDetails->bathrooms ?? 1 }}" min="1" class="w-20 text-center px-3 py-2 bg-white border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all duration-200">
+                        <input type="number" name="bathrooms" id="bathrooms" value="{{ $property->additionalDetails?->bathrooms ?? 1 }}" min="1" class="w-20 text-center px-3 py-2 bg-white border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all duration-200">
                         <button type="button" class="w-10 h-10 bg-gray-200 hover:bg-gray-300 rounded-full flex items-center justify-center transition-colors" onclick="changeValue('bathrooms', 1)">
                             <i class="fas fa-plus text-gray-600"></i>
                         </button>
@@ -196,19 +193,13 @@
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-3">Do you allow children?</label>
                     <div class="flex space-x-4">
-                        <label class="flex items-center p-3 bg-white rounded-xl border-2 border-gray-200 hover:border-green-300 cursor-pointer transition-all duration-200">
-                            <input type="radio" name="allow_children" value="yes" {{ $property->additionalDetails->allow_children == 'yes' ? 'checked' : '' }} class="hidden">
-                            <div class="w-5 h-5 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
-                                <div class="w-2 h-2 bg-green-600 rounded-full opacity-0"></div>
-                            </div>
-                            <span class="font-medium">Yes</span>
+                        <label class="radio-item flex items-center p-3 bg-white rounded-xl border-2 {{ ($property->additionalDetails?->allow_children ?? '') == 'yes' ? 'border-green-500 bg-green-50' : 'border-gray-200' }} hover:border-green-300 cursor-pointer transition-all duration-200" data-value="yes">
+                            <input type="radio" name="allow_children" value="yes" {{ ($property->additionalDetails?->allow_children ?? '') == 'yes' ? 'checked' : '' }} class="hidden">
+                            <span class="font-medium {{ ($property->additionalDetails?->allow_children ?? '') == 'yes' ? 'text-green-700' : 'text-gray-700' }}">Yes</span>
                         </label>
-                        <label class="flex items-center p-3 bg-white rounded-xl border-2 border-gray-200 hover:border-green-300 cursor-pointer transition-all duration-200">
-                            <input type="radio" name="allow_children" value="no" {{ $property->additionalDetails->allow_children == 'no' ? 'checked' : '' }} class="hidden">
-                            <div class="w-5 h-5 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
-                                <div class="w-2 h-2 bg-green-600 rounded-full opacity-0"></div>
-                            </div>
-                            <span class="font-medium">No</span>
+                        <label class="radio-item flex items-center p-3 bg-white rounded-xl border-2 {{ ($property->additionalDetails?->allow_children ?? '') == 'no' ? 'border-green-500 bg-green-50' : 'border-gray-200' }} hover:border-green-300 cursor-pointer transition-all duration-200" data-value="no">
+                            <input type="radio" name="allow_children" value="no" {{ ($property->additionalDetails?->allow_children ?? '') == 'no' ? 'checked' : '' }} class="hidden">
+                            <span class="font-medium {{ ($property->additionalDetails?->allow_children ?? '') == 'no' ? 'text-green-700' : 'text-gray-700' }}">No</span>
                         </label>
                     </div>
                 </div>
@@ -216,19 +207,13 @@
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-3">Do you offer cribs?</label>
                     <div class="flex space-x-4">
-                        <label class="flex items-center p-3 bg-white rounded-xl border-2 border-gray-200 hover:border-green-300 cursor-pointer transition-all duration-200">
-                            <input type="radio" name="offer_cribs" value="yes" {{ $property->additionalDetails->offer_cribs == 'yes' ? 'checked' : '' }} class="hidden">
-                            <div class="w-5 h-5 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
-                                <div class="w-2 h-2 bg-green-600 rounded-full opacity-0"></div>
-                            </div>
-                            <span class="font-medium">Yes</span>
+                        <label class="radio-item flex items-center p-3 bg-white rounded-xl border-2 {{ ($property->additionalDetails?->offer_cribs ?? '') == 'yes' ? 'border-green-500 bg-green-50' : 'border-gray-200' }} hover:border-green-300 cursor-pointer transition-all duration-200" data-value="yes">
+                            <input type="radio" name="offer_cribs" value="yes" {{ ($property->additionalDetails?->offer_cribs ?? '') == 'yes' ? 'checked' : '' }} class="hidden">
+                            <span class="font-medium {{ ($property->additionalDetails?->offer_cribs ?? '') == 'yes' ? 'text-green-700' : 'text-gray-700' }}">Yes</span>
                         </label>
-                        <label class="flex items-center p-3 bg-white rounded-xl border-2 border-gray-200 hover:border-green-300 cursor-pointer transition-all duration-200">
-                            <input type="radio" name="offer_cribs" value="no" {{ $property->additionalDetails->offer_cribs == 'no' ? 'checked' : '' }} class="hidden">
-                            <div class="w-5 h-5 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
-                                <div class="w-2 h-2 bg-green-600 rounded-full opacity-0"></div>
-                            </div>
-                            <span class="font-medium">No</span>
+                        <label class="radio-item flex items-center p-3 bg-white rounded-xl border-2 {{ ($property->additionalDetails?->offer_cribs ?? '') == 'no' ? 'border-green-500 bg-green-50' : 'border-gray-200' }} hover:border-green-300 cursor-pointer transition-all duration-200" data-value="no">
+                            <input type="radio" name="offer_cribs" value="no" {{ ($property->additionalDetails?->offer_cribs ?? '') == 'no' ? 'checked' : '' }} class="hidden">
+                            <span class="font-medium {{ ($property->additionalDetails?->offer_cribs ?? '') == 'no' ? 'text-green-700' : 'text-gray-700' }}">No</span>
                         </label>
                     </div>
                 </div>
@@ -237,10 +222,10 @@
             <div class="mt-6">
                 <label class="block text-sm font-semibold text-gray-700 mb-3">Property Size (optional)</label>
                 <div class="flex items-center space-x-4">
-                    <input type="number" name="apartment_size" value="{{ $property->additionalDetails->apartment_size }}" class="flex-1 px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all duration-200" placeholder="Size">
+                    <input type="number" name="apartment_size" value="{{ $property->additionalDetails?->apartment_size ?? '' }}" class="flex-1 px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all duration-200" placeholder="Size">
                     <select name="apartment_unit" class="px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all duration-200">
-                        <option value="square_meters" {{ $property->additionalDetails->apartment_unit == 'square_meters' ? 'selected' : '' }}>Square meters</option>
-                        <option value="square_feet" {{ $property->additionalDetails->apartment_unit == 'square_feet' ? 'selected' : '' }}>Square feet</option>
+                        <option value="square_meters" {{ ($property->additionalDetails?->apartment_unit ?? '') == 'square_meters' ? 'selected' : '' }}>Square meters</option>
+                        <option value="square_feet" {{ ($property->additionalDetails?->apartment_unit ?? '') == 'square_feet' ? 'selected' : '' }}>Square feet</option>
                     </select>
                 </div>
             </div>
@@ -263,55 +248,57 @@ function changeValue(fieldId, change) {
     input.value = newValue;
 }
 
-// Handle radio button selections
-document.addEventListener('click', function(e) {
-    const target = e.target.closest('label');
-    if (!target) return;
-    
-    const input = target.querySelector('input[type="radio"]');
-    if (!input) return;
-    
-    // Clear all radio buttons in the same group
-    document.querySelectorAll(`input[name="${input.name}"]`).forEach(radio => {
-        radio.checked = false;
-        const radioLabel = radio.closest('label');
-        const radioIndicator = radioLabel.querySelector('.w-5.h-5');
-        const radioDot = radioIndicator ? radioIndicator.querySelector('div') : null;
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle checkbox and radio styling changes
+    document.addEventListener('change', function(e) {
+        const input = e.target;
+        if (!input.matches('input[type="checkbox"], input[type="radio"]')) return;
         
-        if (radioDot) {
-            radioDot.classList.add('opacity-0');
-            radioDot.classList.remove('opacity-100');
+        const label = input.closest('label');
+        if (!label) return;
+        
+        if (input.type === 'checkbox' && label.classList.contains('access-item')) {
+            const span = label.querySelector('span');
+            if (input.checked) {
+                label.classList.remove('border-gray-200');
+                label.classList.add('border-purple-500', 'bg-purple-50');
+                if (span) span.classList.add('text-purple-700');
+            } else {
+                label.classList.remove('border-purple-500', 'bg-purple-50');
+                label.classList.add('border-gray-200');
+                if (span) span.classList.remove('text-purple-700');
+            }
         }
-        radioLabel.classList.remove('border-green-500', 'bg-green-50');
-        radioLabel.classList.add('border-gray-200');
+        
+        if (input.type === 'radio' && label.classList.contains('radio-item')) {
+            // Clear all radio buttons in the same group
+            document.querySelectorAll(`input[name="${input.name}"]`).forEach(radio => {
+                const radioLabel = radio.closest('label');
+                const radioSpan = radioLabel?.querySelector('span');
+                if (radioLabel) {
+                    radioLabel.classList.remove('border-green-500', 'bg-green-50');
+                    radioLabel.classList.add('border-gray-200');
+                }
+                if (radioSpan) {
+                    radioSpan.classList.remove('text-green-700');
+                    radioSpan.classList.add('text-gray-700');
+                }
+            });
+            
+            // Style the selected radio
+            const span = label.querySelector('span');
+            label.classList.remove('border-gray-200');
+            label.classList.add('border-green-500', 'bg-green-50');
+            if (span) {
+                span.classList.remove('text-gray-700');
+                span.classList.add('text-green-700');
+            }
+        }
     });
     
-    // Select current radio
-    input.checked = true;
-    const indicator = target.querySelector('.w-5.h-5');
-    const dot = indicator ? indicator.querySelector('div') : null;
-    
-    if (dot) {
-        dot.classList.remove('opacity-0');
-        dot.classList.add('opacity-100');
-    }
-    target.classList.remove('border-gray-200');
-    target.classList.add('border-green-500', 'bg-green-50');
-});
-
-// Initialize selected states on page load
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('input[type="radio"]:checked').forEach(radio => {
-        const label = radio.closest('label');
-        const indicator = label.querySelector('.w-5.h-5');
-        const dot = indicator ? indicator.querySelector('div') : null;
-        
-        if (dot) {
-            dot.classList.remove('opacity-0');
-            dot.classList.add('opacity-100');
-        }
-        label.classList.remove('border-gray-200');
-        label.classList.add('border-green-500', 'bg-green-50');
+    // Initialize selected states
+    document.querySelectorAll('input[type="checkbox"]:checked, input[type="radio"]:checked').forEach(input => {
+        input.dispatchEvent(new Event('change'));
     });
     
     // Add bedroom functionality
@@ -319,34 +306,41 @@ document.addEventListener('DOMContentLoaded', function() {
     if (addBedroomBtn) {
         addBedroomBtn.addEventListener('click', function() {
             const roomName = prompt('Enter room name (e.g., "Bedroom 2", "Living Room"):');
-            if (roomName) {
-                // Create a simple room entry
+            if (roomName && roomName.trim() !== '') {
+                const sanitizedName = roomName.replace(/[<>]/g, '');
+                
                 const roomsContainer = document.querySelector('.space-y-4');
                 const newRoom = document.createElement('div');
                 newRoom.className = 'bg-white rounded-xl border-2 border-gray-200 p-4';
-                newRoom.innerHTML = `
-                    <div class="flex items-center justify-between mb-3">
-                        <h5 class="font-semibold text-gray-900">${roomName}</h5>
-                        <div class="flex space-x-2">
-                            <button type="button" class="text-blue-600 hover:text-blue-800 font-medium">Edit</button>
-                            <button type="button" class="text-red-600 hover:text-red-800 font-medium remove-room">Delete</button>
-                        </div>
-                    </div>
-                    <div class="text-sm text-gray-600">
-                        <strong>Beds:</strong> No beds configured
-                    </div>
-                    <input type="hidden" name="new_rooms[]" value="${roomName}">
-                `;
                 
-                // Insert before the "No rooms" message or add button
-                const noRoomsMsg = roomsContainer.querySelector('.text-center');
-                if (noRoomsMsg) {
-                    roomsContainer.insertBefore(newRoom, noRoomsMsg);
-                    noRoomsMsg.style.display = 'none';
-                } else {
-                    const addBtn = roomsContainer.querySelector('button');
-                    roomsContainer.insertBefore(newRoom, addBtn);
-                }
+                const header = document.createElement('div');
+                header.className = 'flex items-center justify-between mb-3';
+                
+                const title = document.createElement('h5');
+                title.className = 'font-semibold text-gray-900';
+                title.textContent = sanitizedName;
+                
+                const buttons = document.createElement('div');
+                buttons.className = 'flex space-x-2';
+                buttons.innerHTML = '<button type="button" class="text-blue-600 hover:text-blue-800 font-medium">Edit</button><button type="button" class="text-red-600 hover:text-red-800 font-medium remove-room">Delete</button>';
+                
+                const content = document.createElement('div');
+                content.className = 'text-sm text-gray-600';
+                content.innerHTML = '<strong>Beds:</strong> No beds configured';
+                
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = 'new_rooms[]';
+                hiddenInput.value = sanitizedName;
+                
+                header.appendChild(title);
+                header.appendChild(buttons);
+                newRoom.appendChild(header);
+                newRoom.appendChild(content);
+                newRoom.appendChild(hiddenInput);
+                
+                const addBtn = roomsContainer.querySelector('#add-bedroom-btn');
+                roomsContainer.insertBefore(newRoom, addBtn);
             }
         });
     }
@@ -355,42 +349,6 @@ document.addEventListener('DOMContentLoaded', function() {
     document.addEventListener('click', function(e) {
         if (e.target.classList.contains('remove-room')) {
             e.target.closest('.bg-white').remove();
-        }
-    });
-    
-    // Handle guest access checkboxes
-    document.addEventListener('click', function(e) {
-        const label = e.target.closest('label');
-        if (!label || !label.querySelector('input[name="guest_access[]"]')) return;
-        
-        const input = label.querySelector('input');
-        const indicator = label.querySelector('.w-5.h-5');
-        const icon = indicator ? indicator.querySelector('i') : null;
-        
-        input.checked = !input.checked;
-        
-        if (input.checked) {
-            if (indicator) {
-                indicator.classList.add('bg-green-500', 'border-green-500');
-                indicator.classList.remove('border-gray-300');
-            }
-            if (icon) {
-                icon.classList.remove('opacity-0');
-                icon.classList.add('opacity-100');
-            }
-            label.classList.remove('border-gray-200');
-            label.classList.add('border-green-500', 'bg-green-50');
-        } else {
-            if (indicator) {
-                indicator.classList.remove('bg-green-500', 'border-green-500');
-                indicator.classList.add('border-gray-300');
-            }
-            if (icon) {
-                icon.classList.add('opacity-0');
-                icon.classList.remove('opacity-100');
-            }
-            label.classList.remove('border-green-500', 'bg-green-50');
-            label.classList.add('border-gray-200');
         }
     });
 });

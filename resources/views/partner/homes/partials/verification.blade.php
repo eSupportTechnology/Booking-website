@@ -20,12 +20,9 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <label class="flex flex-col p-6 bg-white rounded-xl border-2 border-gray-200 hover:border-blue-300 cursor-pointer transition-all duration-200">
-                    <input type="radio" name="type" value="individual" {{ $property->partnerVerification?->type == 'individual' ? 'checked' : '' }} class="sr-only">
+                <label class="flex flex-col p-6 bg-white rounded-xl border-2 border-gray-200 hover:border-blue-300 cursor-pointer transition-all duration-200 peer-checked:border-blue-500 peer-checked:bg-blue-50">
+                    <input type="radio" name="type" value="individual" {{ $property->partnerVerification?->type == 'individual' ? 'checked' : '' }} class="sr-only peer">
                     <div class="flex items-center mb-3">
-                        <div class="w-5 h-5 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
-                            <div class="w-2 h-2 bg-blue-600 rounded-full opacity-0"></div>
-                        </div>
                         <div class="flex items-center">
                             <i class="fas fa-user text-blue-600 text-xl mr-2"></i>
                             <span class="font-bold text-gray-900">Individual</span>
@@ -34,12 +31,9 @@
                     <p class="text-gray-600 text-sm">An individual or sole proprietor who owns and operates an unincorporated business on their own.</p>
                 </label>
 
-                <label class="flex flex-col p-6 bg-white rounded-xl border-2 border-gray-200 hover:border-blue-300 cursor-pointer transition-all duration-200">
-                    <input type="radio" name="type" value="business" {{ $property->partnerVerification?->type == 'business' ? 'checked' : '' }} class="sr-only">
+                <label class="flex flex-col p-6 bg-white rounded-xl border-2 border-gray-200 hover:border-blue-300 cursor-pointer transition-all duration-200 peer-checked:border-blue-500 peer-checked:bg-blue-50">
+                    <input type="radio" name="type" value="business" {{ $property->partnerVerification?->type == 'business' ? 'checked' : '' }} class="sr-only peer">
                     <div class="flex items-center mb-3">
-                        <div class="w-5 h-5 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
-                            <div class="w-2 h-2 bg-blue-600 rounded-full opacity-0"></div>
-                        </div>
                         <div class="flex items-center">
                             <i class="fas fa-building text-blue-600 text-xl mr-2"></i>
                             <span class="font-bold text-gray-900">Business</span>
@@ -51,7 +45,7 @@
         </div>
 
         <!-- Individual Details -->
-        <div id="individual-details" class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-6 border border-green-100" style="display: {{ $property->partnerVerification?->type == 'individual' ? 'block' : 'none' }};">
+        <div id="individual-details" class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-6 border border-green-100 {{ $property->partnerVerification?->type == 'individual' ? '' : 'hidden' }}">
             <div class="flex items-center mb-6">
                 <div class="bg-green-100 p-3 rounded-xl mr-4">
                     <i class="fas fa-user-circle text-green-600 text-xl"></i>
@@ -75,7 +69,7 @@
         </div>
 
         <!-- Business Details -->
-        <div id="business-details" class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6 border border-purple-100" style="display: {{ $property->partnerVerification?->type == 'business' ? 'block' : 'none' }};">
+        <div id="business-details" class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6 border border-purple-100 {{ $property->partnerVerification?->type == 'business' ? '' : 'hidden' }}">
             <div class="flex items-center mb-6">
                 <div class="bg-purple-100 p-3 rounded-xl mr-4">
                     <i class="fas fa-building text-purple-600 text-xl"></i>
@@ -136,22 +130,16 @@
                     <h4 class="text-lg font-bold text-gray-900 mb-4">Legal Compliance</h4>
                     
                     <div class="space-y-4">
-                        <label class="flex items-start p-4 bg-white rounded-xl border-2 border-gray-200 hover:border-yellow-300 cursor-pointer transition-all duration-200">
+                        <label class="flex items-start p-4 bg-white rounded-xl border-2 border-gray-200 hover:border-yellow-300 cursor-pointer transition-all duration-200 has-[:checked]:border-yellow-500 has-[:checked]:bg-yellow-50">
                             <input type="checkbox" name="legitimate_business" value="1" class="sr-only" required>
-                            <div class="w-6 h-6 border-2 border-gray-300 rounded-lg mr-4 mt-1 flex items-center justify-center">
-                                <i class="fas fa-check text-white text-sm opacity-0"></i>
-                            </div>
                             <div>
                                 <span class="font-semibold text-gray-900">I certify that this is a legitimate accommodation business</span>
                                 <p class="text-gray-600 text-sm mt-1">I confirm this business has all necessary licenses and permits, which can be shown upon request. The platform reserves the right to verify and investigate any details provided.</p>
                             </div>
                         </label>
 
-                        <label class="flex items-start p-4 bg-white rounded-xl border-2 border-gray-200 hover:border-yellow-300 cursor-pointer transition-all duration-200">
+                        <label class="flex items-start p-4 bg-white rounded-xl border-2 border-gray-200 hover:border-yellow-300 cursor-pointer transition-all duration-200 has-[:checked]:border-yellow-500 has-[:checked]:bg-yellow-50">
                             <input type="checkbox" name="terms_accepted" value="1" class="sr-only" required>
-                            <div class="w-6 h-6 border-2 border-gray-300 rounded-lg mr-4 mt-1 flex items-center justify-center">
-                                <i class="fas fa-check text-white text-sm opacity-0"></i>
-                            </div>
                             <div>
                                 <span class="font-semibold text-gray-900">I have read and accepted the General Delivery Terms</span>
                                 <p class="text-gray-600 text-sm mt-1">I agree to the platform's terms and conditions for property listing and management.</p>
@@ -173,85 +161,47 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Handle radio button selections
-    document.addEventListener('click', function(e) {
-        const target = e.target.closest('label');
-        if (!target) return;
-        
-        const input = target.querySelector('input');
-        if (!input) return;
-        
-        if (input.type === 'radio') {
+    // Handle visibility on page load
+    const typeInputs = document.querySelectorAll('input[name="type"]');
+    const individualEl = document.getElementById('individual-details');
+    const businessEl = document.getElementById('business-details');
+    
+    typeInputs.forEach(input => {
+        if (input.checked) {
+            if (individualEl) individualEl.classList.toggle('hidden', input.value !== 'individual');
+            if (businessEl) businessEl.classList.toggle('hidden', input.value !== 'business');
+        }
+    });
+
+    // Handle radio button changes for visibility toggles and styling
+    document.addEventListener('change', function(e) {
+        if (e.target.type === 'radio') {
             // Clear all radio buttons in the same group
-            document.querySelectorAll(`input[name="${input.name}"]`).forEach(radio => {
-                const radioLabel = radio.closest('label');
-                const radioIndicator = radioLabel.querySelector('div[class*="border-"]');
-                const radioDot = radioIndicator.querySelector('div');
-                
-                radioDot.classList.add('opacity-0');
-                radioLabel.classList.remove('border-blue-500', 'bg-blue-50');
+            document.querySelectorAll(`input[name="${e.target.name}"]`).forEach(radio => {
+                const label = radio.closest('label');
+                if (label) {
+                    label.classList.remove('border-blue-500', 'bg-blue-50');
+                    label.classList.add('border-gray-200');
+                }
             });
             
-            // Select current radio
-            input.checked = true;
-            const indicator = target.querySelector('div[class*="border-"]');
-            const dot = indicator.querySelector('div');
-            
-            dot.classList.remove('opacity-0');
-            dot.classList.add('opacity-100');
-            target.classList.add('border-blue-500', 'bg-blue-50');
-            
-            // Handle visibility toggles
-            if (input.name === 'type') {
-                document.getElementById('individual-details').style.display = 
-                    input.value === 'individual' ? 'block' : 'none';
-                document.getElementById('business-details').style.display = 
-                    input.value === 'business' ? 'block' : 'none';
+            // Style the selected radio
+            const selectedLabel = e.target.closest('label');
+            if (selectedLabel) {
+                selectedLabel.classList.remove('border-gray-200');
+                selectedLabel.classList.add('border-blue-500', 'bg-blue-50');
             }
         }
         
-        if (input.type === 'checkbox') {
-            input.checked = !input.checked;
-            const indicator = target.querySelector('div[class*="border-"]');
-            const icon = target.querySelector('i');
-            
-            if (input.checked) {
-                indicator.classList.add('bg-yellow-500', 'border-yellow-500');
-                indicator.classList.remove('border-gray-300');
-                icon.classList.remove('opacity-0');
-                icon.classList.add('opacity-100');
-                target.classList.add('border-yellow-500', 'bg-yellow-50');
-            } else {
-                indicator.classList.remove('bg-yellow-500', 'border-yellow-500');
-                indicator.classList.add('border-gray-300');
-                icon.classList.add('opacity-0');
-                icon.classList.remove('opacity-100');
-                target.classList.remove('border-yellow-500', 'bg-yellow-50');
-            }
+        if (e.target.name === 'type') {
+            if (individualEl) individualEl.classList.toggle('hidden', e.target.value !== 'individual');
+            if (businessEl) businessEl.classList.toggle('hidden', e.target.value !== 'business');
         }
     });
     
-    // Initialize selected states on page load
-    document.querySelectorAll('input[type="radio"]:checked').forEach(radio => {
-        const label = radio.closest('label');
-        const indicator = label.querySelector('div[class*="border-"]');
-        const dot = indicator.querySelector('div');
-        
-        dot.classList.remove('opacity-0');
-        dot.classList.add('opacity-100');
-        label.classList.add('border-blue-500', 'bg-blue-50');
-    });
-    
-    document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
-        const label = checkbox.closest('label');
-        const indicator = label.querySelector('div[class*="border-"]');
-        const icon = label.querySelector('i');
-        
-        indicator.classList.add('bg-yellow-500', 'border-yellow-500');
-        indicator.classList.remove('border-gray-300');
-        icon.classList.remove('opacity-0');
-        icon.classList.add('opacity-100');
-        label.classList.add('border-yellow-500', 'bg-yellow-50');
+    // Initialize radio button styles
+    document.querySelectorAll('input[type="radio"]:checked').forEach(input => {
+        input.dispatchEvent(new Event('change'));
     });
 });
 </script>
