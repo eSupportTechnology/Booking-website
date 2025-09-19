@@ -59,7 +59,7 @@
             </button>
         </div>
 
-        <div class="bg-blue-50 border border-blue-200 rounded-2xl p-4">
+        {{-- <div class="bg-blue-50 border border-blue-200 rounded-2xl p-4">
             <div class="flex items-start">
                 <i class="fas fa-lightbulb text-blue-600 mt-1 mr-3"></i>
                 <div>
@@ -67,7 +67,7 @@
                     <p class="text-blue-700 text-sm">Select amenities that best describe your property to help guests find exactly what they're looking for.</p>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         <div class="flex justify-end pt-6">
             <button type="submit" class="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transform transition-all duration-200 hover:scale-105">
@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (e.target.matches('.amenity-item input[type="checkbox"]')) {
             const amenityItem = e.target.closest('.amenity-item');
             const span = amenityItem.querySelector('span');
-            
+
             if (e.target.checked) {
                 amenityItem.classList.remove('border-gray-200');
                 amenityItem.classList.add('border-green-500', 'bg-green-50');

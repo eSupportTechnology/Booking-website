@@ -110,4 +110,34 @@ class HomeEditService
             $verification
         );
     }
+
+    public function updateRooms(Property $property, array $rooms): void
+    {
+        // Update additional details
+        $property->additionalDetails()->updateOrCreate(
+            ['property_id' => $property->id],
+            array_filter([
+                'guests' => $rooms['guests'] ?? null,
+                'bathrooms' => $rooms['bathrooms'] ?? null,
+                'allow_children' => $rooms['allow_children'] ?? null,
+                'offer_cribs' => $rooms['offer_cribs'] ?? null,
+                'apartment_size' => $rooms['apartment_size'] ?? null,
+                'apartment_unit' => $rooms['apartment_unit'] ?? null,
+            ])
+        );
+
+        // Handle guest access
+        if (isset($rooms['guest_access'])) {
+            $property->update(['guest_access' => json_encode($rooms['guest_access'])]);
+        }
+
+        // Handle new rooms
+        if (isset($rooms['new_rooms'])) {
+            foreach ($rooms['new_rooms'] as $roomName) {
+                if (!empty($roomName)) {
+                    $property->bedrooms()->create(['name' => $roomName]);
+                }
+            }
+        }
+    }
 }

@@ -122,7 +122,7 @@
             </div>
         </div>
 
-        <!-- Payment Benefits -->
+        {{-- <!-- Payment Benefits -->
         <div class="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-2xl p-6 border border-yellow-100">
             <div class="flex items-start">
                 <div class="bg-yellow-100 p-3 rounded-xl mr-4 mt-1">
@@ -150,7 +150,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         <div class="flex justify-end pt-6">
             <button type="submit" class="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transform transition-all duration-200 hover:scale-105">
@@ -166,7 +166,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle billing address visibility on page load
     const sameAddressInputs = document.querySelectorAll('input[name="same_address"]');
     const billingAddressEl = document.getElementById('billing-address');
-    
+
     sameAddressInputs.forEach(input => {
         if (input.checked && billingAddressEl) {
             billingAddressEl.classList.toggle('hidden', input.value !== 'no');
@@ -184,7 +184,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     label.classList.add('border-gray-200');
                 }
             });
-            
+
             // Style the selected radio
             const selectedLabel = e.target.closest('label');
             if (selectedLabel) {
@@ -192,12 +192,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 selectedLabel.classList.add('border-blue-500', 'bg-blue-50');
             }
         }
-        
+
         if (e.target.name === 'same_address' && billingAddressEl) {
             billingAddressEl.classList.toggle('hidden', e.target.value !== 'no');
         }
     });
-    
+
     // Initialize radio button styles
     document.querySelectorAll('input[type="radio"]:checked').forEach(input => {
         input.dispatchEvent(new Event('change'));

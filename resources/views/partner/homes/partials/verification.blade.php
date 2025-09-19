@@ -6,7 +6,7 @@
 
     <form id="verification-form" action="{{ route('partner.homes.update.verification', $property) }}" method="POST" class="space-y-8">
         @csrf
-        
+
         <!-- Business Type Selection -->
         <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">
             <div class="flex items-center mb-6">
@@ -128,7 +128,7 @@
                 </div>
                 <div class="flex-1">
                     <h4 class="text-lg font-bold text-gray-900 mb-4">Legal Compliance</h4>
-                    
+
                     <div class="space-y-4">
                         <label class="flex items-start p-4 bg-white rounded-xl border-2 border-gray-200 hover:border-yellow-300 cursor-pointer transition-all duration-200 has-[:checked]:border-yellow-500 has-[:checked]:bg-yellow-50">
                             <input type="checkbox" name="legitimate_business" value="1" class="sr-only" required>
@@ -165,7 +165,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const typeInputs = document.querySelectorAll('input[name="type"]');
     const individualEl = document.getElementById('individual-details');
     const businessEl = document.getElementById('business-details');
-    
+
     typeInputs.forEach(input => {
         if (input.checked) {
             if (individualEl) individualEl.classList.toggle('hidden', input.value !== 'individual');
@@ -184,7 +184,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     label.classList.add('border-gray-200');
                 }
             });
-            
+
             // Style the selected radio
             const selectedLabel = e.target.closest('label');
             if (selectedLabel) {
@@ -192,13 +192,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 selectedLabel.classList.add('border-blue-500', 'bg-blue-50');
             }
         }
-        
+
         if (e.target.name === 'type') {
             if (individualEl) individualEl.classList.toggle('hidden', e.target.value !== 'individual');
             if (businessEl) businessEl.classList.toggle('hidden', e.target.value !== 'business');
         }
     });
-    
+
     // Initialize radio button styles
     document.querySelectorAll('input[type="radio"]:checked').forEach(input => {
         input.dispatchEvent(new Event('change'));
