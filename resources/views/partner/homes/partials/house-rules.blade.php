@@ -127,7 +127,7 @@
             </div>
         </div>
 
-        <div class="bg-yellow-50 border border-yellow-200 rounded-2xl p-4">
+        {{-- <div class="bg-yellow-50 border border-yellow-200 rounded-2xl p-4">
             <div class="flex items-start">
                 <i class="fas fa-info-circle text-yellow-600 mt-1 mr-3"></i>
                 <div>
@@ -135,7 +135,7 @@
                     <p class="text-yellow-700 text-sm">You can easily customize these house rules later and additional house rules can be set after you complete registration.</p>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         <div class="flex justify-end pt-6">
             <button type="submit" class="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transform transition-all duration-200 hover:scale-105">
@@ -151,7 +151,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle pet fees visibility on page load
     const petsAllowedInputs = document.querySelectorAll('input[name="pets_allowed"]');
     const petFeesEl = document.getElementById('pet-fees');
-    
+
     petsAllowedInputs.forEach(input => {
         if (input.checked && petFeesEl) {
             petFeesEl.classList.toggle('hidden', !['yes', 'upon_request'].includes(input.value));
@@ -169,7 +169,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     label.classList.add('border-gray-200');
                 }
             });
-            
+
             // Style the selected radio
             const selectedLabel = e.target.closest('label');
             if (selectedLabel) {
@@ -177,12 +177,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 selectedLabel.classList.add('border-red-500', 'bg-red-50');
             }
         }
-        
+
         if (e.target.name === 'pets_allowed' && petFeesEl) {
             petFeesEl.classList.toggle('hidden', !['yes', 'upon_request'].includes(e.target.value));
         }
     });
-    
+
     // Initialize radio button styles
     document.querySelectorAll('input[type="radio"]:checked').forEach(input => {
         input.dispatchEvent(new Event('change'));

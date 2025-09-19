@@ -20,7 +20,7 @@
             </header>
 
             <!-- Serve Breakfast Toggle -->
-            <label class="group flex items-center p-5 bg-white rounded-xl border-2 border-gray-200 hover:border-orange-400 cursor-pointer transition-all duration-200 mb-6 shadow-sm">
+            <label class="group flex items-center p-5 bg-white rounded-xl border-2 {{ $property->services?->serve_breakfast ? 'border-orange-500 bg-orange-50' : 'border-gray-200' }} hover:border-orange-400 cursor-pointer transition-all duration-200 mb-6 shadow-sm">
                 <input type="checkbox" name="serve_breakfast" value="1" id="serve_breakfast" {{ $property->services?->serve_breakfast ? 'checked' : '' }} class="sr-only peer">
                 <div>
                     <span class="font-semibold text-gray-900 text-base">We serve breakfast</span>
@@ -62,7 +62,7 @@
                     @endphp
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
                         @foreach(['continental' => '🥐 Continental', 'american' => '🍳 American', 'buffet' => '🍽️ Buffet', 'asian' => '🍜 Asian'] as $type => $label)
-                            <label class="group flex items-center p-3 bg-white rounded-xl border-2 border-gray-200 hover:border-orange-300 cursor-pointer transition-all duration-200">
+                            <label class="group flex items-center p-3 bg-white rounded-xl border-2 {{ in_array($type, $breakfastTypes) ? 'border-orange-500 bg-orange-50' : 'border-gray-200' }} hover:border-orange-300 cursor-pointer transition-all duration-200">
                                 <input type="checkbox" name="breakfast_type[]" value="{{ $type }}" {{ in_array($type, $breakfastTypes) ? 'checked' : '' }} class="sr-only peer">
                                 <span class="text-sm font-medium">{{ $label }}</span>
                             </label>
@@ -89,7 +89,7 @@
                     <label class="block text-sm font-semibold text-gray-700 mb-3">Availability</label>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                         @foreach(['no' => '🚫 No parking', 'free' => '🆓 Free parking', 'paid' => '💰 Paid parking'] as $value => $label)
-                            <label class="group flex items-center p-4 bg-white rounded-xl border-2 border-gray-200 hover:border-blue-400 cursor-pointer transition-all duration-200">
+                            <label class="group flex items-center p-4 bg-white rounded-xl border-2 {{ $property->services?->parking_available == $value ? 'border-blue-500 bg-blue-50' : 'border-gray-200' }} hover:border-blue-400 cursor-pointer transition-all duration-200">
                                 <input type="radio" name="parking_available" value="{{ $value }}" {{ $property->services?->parking_available == $value ? 'checked' : '' }} class="sr-only peer">
                                 <span class="font-medium text-sm">{{ $label }}</span>
                             </label>
@@ -166,6 +166,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Handle checkbox and radio changes for conditional visibility and styling
     document.addEventListener('change', function(e) {
+        if (e.target.type === 'checkbox') {
+            const label = e.target.closest('label');
+            if (e.target.checked) {
+                label.classList.remove('border-gray-200');
+                label.classList.add('border-orange-500', 'bg-orange-50');
+            } else {
+                label.classList.remove('border-orange-500', 'bg-orange-50');
+                label.classList.add('border-gray-200');
+            }
+        }
+        
         if (e.target.type === 'radio') {
             // Clear all radio buttons in the same group
             document.querySelectorAll(`input[name="${e.target.name}"]`).forEach(radio => {

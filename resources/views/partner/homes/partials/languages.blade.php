@@ -39,7 +39,7 @@
 
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                 @foreach($popularLanguages as $language)
-                    <label class="flex items-center p-4 bg-white rounded-xl border-2 border-gray-200 hover:border-purple-300 cursor-pointer transition-all duration-200 group transform hover:scale-105 language-checkbox peer-checked:border-purple-500 peer-checked:bg-purple-50">
+                    <label class="flex items-center p-4 bg-white rounded-xl border-2 {{ in_array($language['id'], $selectedLanguages) ? 'border-purple-500 bg-purple-50' : 'border-gray-200' }} hover:border-purple-300 cursor-pointer transition-all duration-200 group transform hover:scale-105 language-checkbox peer-checked:border-purple-500 peer-checked:bg-purple-50">
                         <input type="checkbox" name="languages[]" value="{{ $language['id'] }}" id="lang_{{ $language['id'] }}" {{ in_array($language['id'], $selectedLanguages) ? 'checked' : '' }} class="sr-only peer language-input">
                         <div class="flex items-center">
                             <span class="text-lg mr-2">{{ $language['flag'] }}</span>
@@ -82,7 +82,7 @@
             </div>
         </div>
 
-        <!-- Language Benefits -->
+        {{-- <!-- Language Benefits -->
         <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-6 border border-green-100">
             <div class="flex items-start">
                 <div class="bg-green-100 p-3 rounded-xl mr-4 mt-1">
@@ -110,7 +110,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         <div class="flex justify-end pt-6">
             <button type="submit" class="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transform transition-all duration-200 hover:scale-105">
@@ -123,6 +123,24 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Handle checkbox styling
+    document.addEventListener('change', function(e) {
+        if (e.target.matches('.language-input')) {
+            const label = e.target.closest('.language-checkbox');
+            if (e.target.checked) {
+                label.classList.remove('border-gray-200');
+                label.classList.add('border-purple-500', 'bg-purple-50');
+            } else {
+                label.classList.remove('border-purple-500', 'bg-purple-50');
+                label.classList.add('border-gray-200');
+            }
+        }
+    });
+
+    // Initialize existing states
+    document.querySelectorAll('.language-input:checked').forEach(input => {
+        input.dispatchEvent(new Event('change'));
+    });
 
     // Add language button
     const addLanguageBtn = document.getElementById('add-language');
