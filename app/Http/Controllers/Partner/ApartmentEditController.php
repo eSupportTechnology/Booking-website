@@ -17,9 +17,8 @@ class ApartmentEditController extends Controller
             abort(403);
         }
         
-        $data = $action->execute($property);
-        
-        return view('partner.partner-apartment-edit', $data);
+        // Redirect directly to apartment step2 page instead of edit page
+        return redirect()->route('partner.property.apartment.step2', ['propertyId' => $property->id]);
     }
 
     public function update(Property $property, Request $request, UpdateApartmentDataAction $action)

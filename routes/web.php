@@ -616,8 +616,10 @@ Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddle
     Route::get('/properties/{property}/edit', [\App\Http\Controllers\Partner\PropertyController::class, 'edit'])->name('partner.properties.edit');
     Route::delete('/properties/{property}', [\App\Http\Controllers\Partner\PropertyController::class, 'destroy'])->name('partner.properties.destroy');
 
-    // Specific Property Type Edit Routes
-    Route::get('/apartments/{property}/edit', [\App\Http\Controllers\Partner\ApartmentEditController::class, 'edit'])->name('partner.apartments.edit');
+    // Specific Property Type Edit Routes - Redirect apartment edit to step2
+    Route::get('/apartments/{property}/edit', function($property) {
+        return redirect()->route('partner.property.apartment.step2', ['propertyId' => $property]);
+    })->name('partner.apartments.edit');
     Route::put('/apartments/{property}', [\App\Http\Controllers\Partner\ApartmentEditController::class, 'update'])->name('partner.apartments.update');
 
     Route::get('/homes/{property}/edit', [\App\Http\Controllers\Partner\HomeEditController::class, 'edit'])->name('partner.homes.edit');
