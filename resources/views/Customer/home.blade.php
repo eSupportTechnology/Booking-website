@@ -928,70 +928,78 @@
     </section>
 
     <!--Popular with Travellers-->
-    <section class="py-12 bg-white" style="margin-bottom:60px;">
+    <section class="py-12 bg-white mb-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-2xl font-semibold text-gray-800 mb-6">{{ __('messages.Popular with travelers from Sri Lanka')}}</h2>
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6">
+            {{ __('messages.Popular with travelers from Sri Lanka') }}
+            </h2>
 
             <!-- Tabs -->
             <div class="flex space-x-4 overflow-x-auto mb-4">
-                <button id="tab-domestic" class="rounded-full tab-button active-tab"
-                    onclick="toggleTab('domestic')">{{ __('messages.Domestic cities')}}</button>
-                <button id="tab-international" class="rounded-full tab-button"
-                    onclick="toggleTab('international')">{{ __('messages.International cities')}}</button>
-                <button id="tab-regions" class="rounded-full tab-button" onclick="toggleTab('regions')">{{ __('messages.Regions')}}</button>
-                <button id="tab-countries" class="rounded-full tab-button"
-                    onclick="toggleTab('countries')">{{ __('messages.Countries')}}</button>
-                <button id="tab-places" class="rounded-full tab-button" onclick="toggleTab('places')">{{ __('messages.Places to stay')}}</button>
+            <button id="tab-domestic" class="rounded-full tab-button active-tab"
+                onclick="toggleTab('domestic')">{{ __('messages.Domestic cities')}}</button>
+            <button id="tab-international" class="rounded-full tab-button"
+                onclick="toggleTab('international')">{{ __('messages.International cities')}}</button>
+            <button id="tab-regions" class="rounded-full tab-button"
+                onclick="toggleTab('regions')">{{ __('messages.Regions')}}</button>
+            <button id="tab-countries" class="rounded-full tab-button"
+                onclick="toggleTab('countries')">{{ __('messages.Countries')}}</button>
+            <button id="tab-places" class="rounded-full tab-button"
+                onclick="toggleTab('places')">{{ __('messages.Places to stay')}}</button>
             </div>
 
             <!-- Content Panels -->
             <div id="tab-content" class="mt-4">
-                <!-- Domestic -->
-                <div id="content-domestic" class="grid grid-cols-5 gap-y-2 w-full text-sm"
-                    style="font-family: 'Lato', sans-serif;">
-                    <span>Kandy hotels</span>
-                    <span>Nuwara Eliya hotels</span>
-                    <span>Colombo hotels</span>
-                    <span>Ella hotels</span>
-                    <span>Anuradhapura hotels</span>
+            <!-- Domestic -->
+            <div id="content-domestic"
+                class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-y-2 w-full text-sm"
+                style="font-family: 'Lato', sans-serif;">
+                
+                <span>Kandy hotels</span>
+                <span>Nuwara Eliya hotels</span>
+                <span>Colombo hotels</span>
+                <span>Ella hotels</span>
+                <span>Anuradhapura hotels</span>
 
-                    <span>Kandy hotels</span>
-                    <span>Nuwara Eliya hotels</span>
-                    <span>Colombo hotels</span>
-                    <span>Ella hotels</span>
-                    <span>Anuradhapura hotels</span>
+                <span>Kandy hotels</span>
+                <span>Nuwara Eliya hotels</span>
+                <span>Colombo hotels</span>
+                <span>Ella hotels</span>
+                <span>Anuradhapura hotels</span>
 
-                    <span>Kandy hotels</span>
-                    <span>Nuwara Eliya hotels</span>
-                    <span>Colombo hotels</span>
-                    <span>Ella hotels</span>
-                    <span>Anuradhapura hotels</span>
+                <span>Kandy hotels</span>
+                <span>Nuwara Eliya hotels</span>
+                <span>Colombo hotels</span>
+                <span>Ella hotels</span>
+                <span>Anuradhapura hotels</span>
 
-                    <span>Kandy hotels</span>
-                    <span>Nuwara Eliya hotels</span>
-                    <span>Colombo hotels</span>
-                    <span>Ella hotels</span>
-                    <span>Anuradhapura hotels</span>
+                <span>Kandy hotels</span>
+                <span>Nuwara Eliya hotels</span>
+                <span>Colombo hotels</span>
+                <span>Ella hotels</span>
+                <span>Anuradhapura hotels</span>
 
-                    <!-- Show more button aligned to the left -->
-                    <div class="col-span-full w-full text-left mt-2" style="margin-bottom:60px;">
-                        <button class="text-blue-600" style="color:rgb(31, 143, 178);">+ Show more</button>
-                    </div>
+                <!-- Show more button -->
+                <div class="col-span-full w-full text-left mt-2 mb-16">
+                <button class="text-blue-600 hover:underline" style="color:rgb(31, 143, 178);">+ Show more</button>
                 </div>
+            </div>
 
-                <!-- International -->
-                <div id="content-international" class="grid grid-cols-5 gap-4 hidden"></div>
+            <!-- International -->
+            <div id="content-international" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 hidden"></div>
 
-                <!-- Regions -->
-                <div id="content-regions" class="grid grid-cols-5 gap-4 hidden"></div>
+            <!-- Regions -->
+            <div id="content-regions" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 hidden"></div>
 
-                <!-- Countries -->
-                <div id="content-countries" class="grid grid-cols-5 gap-4 hidden"></div>
-                <div id="content-international" class="grid grid-cols-5 gap-4 hidden"></div>
+            <!-- Countries -->
+            <div id="content-countries" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 hidden"></div>
+
+            <!-- Places -->
+            <div id="content-places" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 hidden"></div>
             </div>
         </div>
-        </div>
     </section>
+
 
     @push('scripts')
         <script src="{{ asset('assets/Customer/js/home.js') }}"></script>
