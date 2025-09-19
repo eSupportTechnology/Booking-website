@@ -118,16 +118,23 @@
         <div class="bg-white p-6 rounded-2xl shadow-lg flex-1">
             <h2 class="text-xl font-bold mb-4">Price Details</h2>
 
-            @if($taxi->fare)
-                <p><strong>Pricing Type:</strong>
-                    {{ $taxi->fare->pricing_type === 'perKm' ? $taxi->fare->price_per_km.' / km' : $taxi->fare->price_per_day.' / day' }}
-                </p>
-                <p><strong>Base Fare:</strong> {{ $taxi->fare->base_fare }}</p>
-                <p><strong>Price Per Km:</strong> {{ $taxi->fare->pricing_type === 'perKm' ? $taxi->fare->price : '-' }}</p>
-                <p><strong>Price Per Day:</strong> {{ $taxi->fare->pricing_type === 'perDay' ? $taxi->fare->price : '-' }}</p>
-            @else
-                <p>Fare details not available</p>
-            @endif
+
+    @if($taxi->fare)
+        <p><strong>Pricing Type:</strong> 
+            {{ $taxi->fare->pricing_type === 'perKm' ? 'Per Km' : 'Per Day' }}
+        </p>
+
+        <p><strong>Base Fare:</strong> {{ $taxi->fare->base_fare }}</p>
+
+        <p><strong>Price:</strong> 
+            {{ $taxi->fare->price }} 
+            {{ $taxi->fare->pricing_type === 'perKm' ? '/ km' : '/ day' }}
+        </p>
+    @else
+        <p>Fare details not available</p>
+    @endif
+</div>
+
         </div>
     </div>
 <!-- Driver License & Tourism License Section -->

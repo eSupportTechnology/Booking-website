@@ -1,0 +1,123 @@
+[33m8b49165[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mbuddhini-booking[m[33m)[m HEAD@{0}: rebase (finish): returning to refs/heads/buddhini-booking
+[33m8b49165[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mbuddhini-booking[m[33m)[m HEAD@{1}: rebase (pick): taxi updates
+[33m0fa39c0[m HEAD@{2}: rebase (pick): new updates
+[33mba5144c[m HEAD@{3}: rebase (pick): car rentals edit errors fix
+[33mbc541b3[m HEAD@{4}: rebase (pick): car rentalas and taxi edit
+[33m9e82955[m HEAD@{5}: rebase (pick): taxi listing with images
+[33mc8b0fe8[m HEAD@{6}: rebase (pick): tour-packages search update
+[33m1f33b39[m HEAD@{7}: rebase (pick): airport-taxi class update
+[33m19640b5[m HEAD@{8}: rebase (pick): airport-taxi search box update
+[33mbbcfa73[m HEAD@{9}: rebase (pick): update car-rentals search box
+[33m51bf3ec[m HEAD@{10}: rebase (pick): update search bar
+[33me890b2e[m HEAD@{11}: rebase (pick): update
+[33me32c6e7[m HEAD@{12}: rebase (pick): update
+[33m6c86adf[m HEAD@{13}: rebase (pick): fixed some erros headers
+[33m4060841[m HEAD@{14}: rebase (pick): Update
+[33m4969828[m HEAD@{15}: rebase (pick): Update property links to point to the new category route across property views
+[33m10e468b[m HEAD@{16}: rebase (pick): aiport taxi images upload
+[33m42ec454[m HEAD@{17}: rebase (pick): update header right section
+[33mc4f63ad[m HEAD@{18}: rebase (pick): update header
+[33m5479c6d[m HEAD@{19}: rebase (pick): update header
+[33me9a27fd[m HEAD@{20}: rebase (pick): update-search
+[33mbb71095[m HEAD@{21}: rebase (pick): update customer header
+[33me12e35d[m HEAD@{22}: rebase (pick): Update property link in partner dashboard and make partner name clickable in header
+[33m5aa25db[m HEAD@{23}: rebase (pick): Enhance admin and partner settings pages with improved profile management and notification preferences
+[33m60c1cd4[m HEAD@{24}: rebase (pick): edit
+[33m93196f8[m HEAD@{25}: rebase (pick): Add single hotel view and update property links in listings
+[33m54ee5a2[m HEAD@{26}: rebase (pick): car images upload
+[33m32b2e5e[m HEAD@{27}: rebase (pick): Add single hotel view and update property links in listings
+[33m65c8a9c[m HEAD@{28}: rebase (pick): new chnages
+[33m1224739[m HEAD@{29}: rebase (pick): create search page
+[33m41ca9ab[m HEAD@{30}: rebase (pick): car-rentals new updates
+[33m3711eaa[m HEAD@{31}: rebase (pick): Status change bug fix
+[33mc978130[m HEAD@{32}: rebase (pick): edit
+[33m0cba41b[m HEAD@{33}: rebase (pick): web update
+[33m59a72b3[m HEAD@{34}: rebase (pick): home page changes
+[33m221e6e7[m HEAD@{35}: rebase (pick): partner Commission
+[33m99ec1dd[m HEAD@{36}: rebase (pick): partner property edit and delete
+[33ma7d5e2b[m HEAD@{37}: rebase (pick): taxi and car rentals updates
+[33m96652e6[m HEAD@{38}: rebase (pick): Update image source retrieval for property and car listings; fix route name for home listing
+[33m7b7d707[m HEAD@{39}: rebase (pick): Home page Browse by property type
+[33m39fd499[m HEAD@{40}: rebase (pick): admin permission
+[33m27b58d5[m HEAD@{41}: rebase (pick): car rentals and taxi new updates
+[33m69ef447[m HEAD@{42}: rebase (pick): new updates
+[33mff22c78[m HEAD@{43}: rebase (pick): fix bug
+[33madcc65a[m HEAD@{44}: rebase (pick): admin permission changes
+[33mfd5d842[m HEAD@{45}: rebase (pick): blade update in admin Property
+[33m98baa50[m HEAD@{46}: rebase (pick): migrate errors fix
+[33m593fe48[m HEAD@{47}: rebase (pick): car rental error fix
+[33m1ed39b4[m HEAD@{48}: rebase (pick): New updates
+[33me7d23a5[m HEAD@{49}: rebase (pick): commission ageing report
+[33m7181fa1[m HEAD@{50}: rebase (pick): update alternative-places
+[33m1b51bc9[m HEAD@{51}: rebase (pick): update admin.apartment
+[33m3d71d22[m HEAD@{52}: rebase (pick): rental
+[33md61ed7a[m HEAD@{53}: rebase (pick): car rentals new updates
+[33m5ee2ebd[m HEAD@{54}: rebase (pick): aging report and dashbord chart fix
+[33m39b9771[m HEAD@{55}: rebase (pick): partner dasbord chart fix
+[33m586d165[m HEAD@{56}: rebase (pick): customer view
+[33m851dd95[m HEAD@{57}: rebase (pick): admin partner
+[33m9eb424e[m HEAD@{58}: rebase (pick): Listings Status change update
+[33m6afcc20[m HEAD@{59}: rebase (pick): admin Partners
+[33mfccdc11[m HEAD@{60}: rebase (pick): partner view
+[33mf8db33c[m HEAD@{61}: rebase (pick): admin
+[33mcf6b7a4[m HEAD@{62}: rebase (pick): custermer listing and viwe
+[33m3ae1a32[m HEAD@{63}: rebase (pick): custermer listing and viwe
+[33med5153a[m HEAD@{64}: rebase (pick): update taxi code
+[33mca859b6[m HEAD@{65}: rebase (pick): fixed error
+[33m9d0377e[m HEAD@{66}: rebase (pick): update alternative-places
+[33me5d37b5[m HEAD@{67}: rebase (pick): admin-hotels update
+[33mbbe10ec[m HEAD@{68}: rebase (pick): update admin.apartment
+[33m4990e40[m HEAD@{69}: rebase (pick): update customer-blade
+[33md1d6489[m HEAD@{70}: rebase (pick): cars taxi new updates
+[33m97ce986[m HEAD@{71}: rebase (pick): car rentals new updates
+[33m95a8c3c[m HEAD@{72}: rebase (pick): airport taxi updates
+[33m73db0e5[m HEAD@{73}: rebase (pick): add car errros fix
+[33m0157c90[m HEAD@{74}: rebase (pick): errors fix add car
+[33m8c8fefa[m HEAD@{75}: rebase (pick): new updates
+[33m1b7cd51[m HEAD@{76}: rebase (pick): Add Car
+[33m20eaf9b[m HEAD@{77}: rebase (pick): partner view
+[33mdfd0f9a[m HEAD@{78}: rebase (pick): admin
+[33m673d05e[m HEAD@{79}: rebase (pick): custermer listing and viwe
+[33m2e7afcd[m HEAD@{80}: rebase (pick): custermer listing and viwe
+[33m2fa318e[m HEAD@{81}: rebase (pick): new updates
+[33m47960ab[m HEAD@{82}: rebase (pick): update admin-partner
+[33m4a37e9c[m HEAD@{83}: rebase (pick): update blade file
+[33m3918386[m HEAD@{84}: rebase (pick): migration error fixed 2
+[33mcee69c1[m HEAD@{85}: rebase (pick): migration error fixed
+[33mef30453[m HEAD@{86}: rebase (pick): change 2
+[33mb351b9a[m HEAD@{87}: rebase (pick): change
+[33m294bf86[m HEAD@{88}: rebase (pick): custermer listing and viwe
+[33m004a70e[m HEAD@{89}: rebase (pick): admin accounts
+[33mb773396[m HEAD@{90}: rebase (pick): web change
+[33m04701ec[m HEAD@{91}: rebase (pick): new chnages
+[33m5ebc0b2[m HEAD@{92}: rebase (pick): Car Rental Registration
+[33mc2a1d8d[m HEAD@{93}: rebase (pick): admin-dashbord update
+[33m791af5d[m HEAD@{94}: rebase (pick): create-admin blade
+[33m1fb4636[m HEAD@{95}: rebase (pick): update code
+[33madd444f[m HEAD@{96}: rebase (pick): taxi-details blade update
+[33mb96cecf[m HEAD@{97}: rebase (pick): remove add Button
+[33m067d25f[m HEAD@{98}: rebase (pick): bug fix
+[33m53571b2[m HEAD@{99}: rebase (pick): rental and admin added to admin dashbord
+[33m7c95fb6[m HEAD@{100}: rebase (pick): property vedio upload
+[33m8eef04c[m HEAD@{101}: rebase (pick): bug fix
+[33m95e09f1[m HEAD@{102}: rebase (pick): admin acount
+[33m61d2927[m HEAD@{103}: rebase (pick): fix property img bug
+[33mf5f6856[m HEAD@{104}: rebase (pick): feat(admin): enhance property management with AJAX status updates and pagination
+[33m92701be[m HEAD@{105}: rebase (pick): update airport & taxi blade
+[33mfe7f03f[m HEAD@{106}: rebase (pick): fixed erros
+[33m9a23c60[m HEAD@{107}: rebase (pick): new updates of header
+[33m8205f51[m HEAD@{108}: rebase (pick): header changes
+[33m0eacb9d[m HEAD@{109}: rebase (pick): header issues fix
+[33m10c20b2[m HEAD@{110}: rebase (pick): create hotel page changes
+[33m01da6f4[m HEAD@{111}: rebase (pick): car listing and footer changes
+[33mc3f72f5[m HEAD@{112}: rebase (pick): room name issue fix
+[33m090356c[m HEAD@{113}: rebase (pick): apartment single issue fix
+[33m5bd59e6[m HEAD@{114}: rebase (pick): implemented the admin panel status change
+[33m9211973[m HEAD@{115}: rebase (pick): add rental part to admin from frontend
+[33ma1e7c0d[m HEAD@{116}: rebase (pick): fix the routing error
+[33m40d1f34[m HEAD@{117}: rebase (pick): new change
+[33mf048af1[m HEAD@{118}: rebase (pick): create listings
+[33m3afa818[m HEAD@{119}: rebase (pick): airport-details update
+[33m67b6a36[m HEAD@{120}: rebase (pick): airport-detail update
+[33m80c0608[m HEAD@{121}: rebase (pick): update-airport details
+[33m80f5513[m HEAD@{122}: rebase (pick)

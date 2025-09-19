@@ -205,77 +205,115 @@ class AirportTaxiController extends Controller
         ]);
     }
 
-    public function update(Request $request, Taxi $taxi)
-    {
-        if ($taxi->car_renter_id !== Auth::guard('car_renter')->id()) {
-            abort(403, 'Unauthorized action.');
-        }
+   public function update(Request $request, Taxi $taxi)
+{
+    // authorization
+    if ($taxi->car_renter_id !== Auth::guard('car_renter')->id()) {
+        abort(403, 'Unauthorized action.');
+    }
 
-        // Validate taxi info
-        $validatedTaxi = $request->validate([
-            'taxi_type_id' => 'required|exists:taxi_types,id',
-            'number_plate' => 'required|string|unique:taxis,number_plate,' . $taxi->id,
-            'color' => 'required|string',
-            'passenger_capacity' => 'required|integer|min:1',
-            'luggage_capacity' => 'nullable|integer|min:0',
-        ]);
+    // make sure drivers relation is loaded so we can find existing driver
+    $taxi->load('drivers');
 
-        $taxi->update($validatedTaxi);
+    $existingDriver = $taxi->drivers->first(); // pick the first driver (you keep hasMany)
+    $existingDriverId = $existingDriver?->id ?? 0;
 
-        // Validate driver info
-        $validatedDriver = $request->validate([
-            'driver_name' => 'required|string',
-            'driver_contact' => 'required|string',
-            'driver_email' => 'nullable|email',
-            'driver_license_number' => 'required|string|unique:drivers,license_number,' . ($taxi->driver?->id ?? '0'),
-            'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-            'driver_license_front' => 'nullable|image|mimes:jpg,jpeg,png|max:4096',
-            'driver_license_back' => 'nullable|image|mimes:jpg,jpeg,png|max:4096',
-            'tourism_license_front' => 'nullable|image|mimes:jpg,jpeg,png|max:4096',
-            'tourism_license_back' => 'nullable|image|mimes:jpg,jpeg,png|max:4096',
-        ]);
+    // 1) Validate taxi basic info
+    $validatedTaxi = $request->validate([
+        'taxi_type_id' => 'required|exists:taxi_types,id',
+        'number_plate' => 'required|string|unique:taxis,number_plate,' . $taxi->id,
+        'color' => 'required|string',
+        'passenger_capacity' => 'required|integer|min:1',
+        'luggage_capacity' => 'nullable|integer|min:0',
+    ]);
 
-        // Get existing driver or create new
-        $driver = $taxi->driver ?? new Driver(['taxi_id' => $taxi->id]);
+    // Update taxi basic info (we'll update images later)
+    $taxi->update($validatedTaxi);
 
-        $driver->name = $validatedDriver['driver_name'];
-        $driver->contact_number = $validatedDriver['driver_contact'];
-        $driver->email = $validatedDriver['driver_email'] ?? null;
-        $driver->license_number = $validatedDriver['driver_license_number'];
-        $driver->save();
+    // 2) Validate driver fields
+    // NOTE: Blade inputs use names like: driver_name, driver_contact, driver_email,
+    // driver_license_number, driver_photo, driver_license_front, driver_license_back, tourism_license_front, tourism_license_back
+    $validatedDriver = $request->validate([
+        'driver_name' => 'required|string',
+        'driver_contact' => 'required|string',
+        'driver_email' => 'nullable|email',
+        // exclude current existing driver id from unique check
+        'driver_license_number' => 'required|string|unique:drivers,license_number,' . $existingDriverId,
+        'driver_photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        'driver_license_front' => 'nullable|image|mimes:jpg,jpeg,png|max:4096',
+        'driver_license_back' => 'nullable|image|mimes:jpg,jpeg,png|max:4096',
+        'tourism_license_front' => 'nullable|image|mimes:jpg,jpeg,png|max:4096',
+        'tourism_license_back' => 'nullable|image|mimes:jpg,jpeg,png|max:4096',
+    ]);
 
-        // File uploads
-        $fileService = app(FileUploadService::class);
-        foreach (['photo', 'driver_license_front', 'driver_license_back', 'tourism_license_front', 'tourism_license_back'] as $field) {
-            if ($request->hasFile($field)) {
-                $file = $fileService->uploadAndSave($request->file($field), $field, 'driver', null);
-                if ($file) {
-                    $driver->$field = $file->id;
-                    $driver->save();
-                }
+    // 3) Create or update driver (we use the first driver if exists)
+    $driver = $existingDriver ?? new Driver(['taxi_id' => $taxi->id]);
+
+    $driver->name = $validatedDriver['driver_name'];
+    $driver->contact_number = $validatedDriver['driver_contact'];
+    $driver->email = $validatedDriver['driver_email'] ?? null;
+    $driver->license_number = $validatedDriver['driver_license_number'];
+    $driver->taxi_id = $taxi->id;
+    $driver->save();
+
+    // 4) Handle driver file uploads (FileUploadService returns File model with id)
+    $fileService = app(FileUploadService::class);
+
+    // map input name => driver column
+    $driverFileMap = [
+        'driver_photo' => 'photo',
+        'driver_license_front' => 'driver_license_front',
+        'driver_license_back' => 'driver_license_back',
+        'tourism_license_front' => 'tourism_license_front',
+        'tourism_license_back' => 'tourism_license_back',
+    ];
+
+    foreach ($driverFileMap as $inputName => $driverColumn) {
+        if ($request->hasFile($inputName)) {
+            $file = $fileService->uploadAndSave($request->file($inputName), $inputName, 'driver', null);
+            if ($file) {
+                // save file id into driver column (your Blade expects driver->driver_license_front etc to contain file id)
+                $driver->{$driverColumn} = $file->id;
             }
         }
-
-        // Validate and update fare
-        $validatedFare = $request->validate([
-            'pricing_type' => 'required|string|in:perKm,perDay',
-            'price_per_day' => 'nullable|numeric|min:0',
-            'price_per_km' => 'nullable|numeric|min:0',
-            'base_fare' => 'required|numeric|min:0',
-        ]);
-
-        $fareData = [
-            'taxi_id' => $taxi->id,
-            'pricing_type' => $validatedFare['pricing_type'],
-            'base_fare' => $validatedFare['base_fare'],
-            'price' => $validatedFare['pricing_type'] === 'perKm'
-                ? $validatedFare['price_per_km'] ?? 0
-                : $validatedFare['price_per_day'] ?? 0,
-        ];
-
-        $taxi->fare()->updateOrCreate([], $fareData);
-
-        return redirect()->route('taxi.listing', $taxi->id)
-            ->with('success', 'Taxi updated successfully.');
     }
+
+    // persist any driver file id changes
+    $driver->save();
+
+    // 5) Handle taxi images (store in storage/app/public/taxis/{id} and save path)
+    foreach (['front_image', 'back_image', 'inside_image'] as $field) {
+        if ($request->hasFile($field)) {
+            $path = $request->file($field)->store("taxis/{$taxi->id}", 'public');
+            $taxi->{$field} = $path;
+        }
+    }
+    $taxi->save(); // persist taxi image paths if any
+
+    // 6) Validate and update fare
+    $validatedFare = $request->validate([
+        'pricing_type' => 'required|string|in:perKm,perDay',
+        'price_per_day' => 'nullable|numeric|min:0',
+        'price_per_km' => 'nullable|numeric|min:0',
+        'base_fare' => 'required|numeric|min:0',
+    ]);
+
+    $farePrice = $validatedFare['pricing_type'] === 'perKm'
+        ? ($validatedFare['price_per_km'] ?? 0)
+        : ($validatedFare['price_per_day'] ?? 0);
+
+    $fareData = [
+        'taxi_id' => $taxi->id,
+        'pricing_type' => $validatedFare['pricing_type'],
+        'base_fare' => $validatedFare['base_fare'],
+        'price' => $farePrice,
+    ];
+
+    // match on taxi_id explicitly
+    $taxi->fare()->updateOrCreate(['taxi_id' => $taxi->id], $fareData);
+
+    return redirect()->route('taxi.listing', $taxi->id)
+        ->with('success', 'Taxi updated successfully.');
+}
+
 }
