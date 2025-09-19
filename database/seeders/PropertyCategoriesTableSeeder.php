@@ -14,17 +14,22 @@ class PropertyCategoriesTableSeeder extends Seeder
     public function run(): void
     {
         $categories = [
-            'Apartment',
-            'Homes',
-            'Hotel, B&Bs, and more',
-            'Alternative places',
+            'Homes',           // ID 1
+            'Apartment',       // ID 2  
+            'Hotel, B&Bs, and more',  // ID 3
+            'Alternative places',     // ID 4
         ];
 
-        foreach ($categories as $category) {
-            DB::table('property_categories')->updateOrInsert(
-                ['name' => $category],
-                ['name' => $category] // or add more fields like 'updated_at' if needed
-            );
+        // Clear existing categories to ensure correct IDs
+        DB::table('property_categories')->truncate();
+        
+        foreach ($categories as $index => $category) {
+            DB::table('property_categories')->insert([
+                'id' => $index + 1,
+                'name' => $category,
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
         }
     }
 }

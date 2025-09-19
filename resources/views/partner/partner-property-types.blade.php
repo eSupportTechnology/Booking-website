@@ -28,17 +28,17 @@
       $showQuickStart = false;
 
       switch ($name) {
+      case 'Homes':
+      $image = 'images/accomm_single_home@2x (1).png';
+      $description = 'Properties like apartments, holiday homes, villas, etc.';
+      $route = url('/partner/property_subcategory/1');
+      break;
+
       case 'Apartment':
       $image = 'images/accomm_one_apt_main@2x.png';
       $description = 'Furnished and self-catering accommodation, where guests rent the entire place.';
       $route = url('/partner/property_subcategory/2');
       $showQuickStart = true;
-      break;
-
-      case 'Homes':
-      $image = 'images/accomm_single_home@2x (1).png';
-      $description = 'Properties like apartments, holiday homes, villas, etc.';
-      $route = url('/partner/property_subcategory/1');
       break;
 
       case 'Hotel, B&Bs, and more':

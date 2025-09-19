@@ -61,11 +61,11 @@ class PropertyController extends Controller
 
         // Redirect to specific property type edit controllers
         switch ($categoryName) {
+            case 'homes':
+                return redirect()->route('partner.homes.edit', $property->id);
             case 'apartment':
                 return redirect()->route('partner.apartments.edit', $property->id);
-            case 'home':
-                return redirect()->route('partner.homes.edit', $property->id);
-            case 'hotel':
+            case 'hotel, b&bs, and more':
                 return redirect()->route('partner.hotels.edit.new', $property->id);
             default:
                 return redirect()->route('partner.homes.edit', $property->id);
