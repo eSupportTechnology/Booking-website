@@ -6,7 +6,7 @@
 
     <form id="profile-form" action="{{ route('partner.homes.update.profile', $property) }}" method="POST" class="space-y-8">
         @csrf
-        
+
         <!-- The Property -->
         <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">
             <div class="flex items-center mb-6">
@@ -20,15 +20,12 @@
             </div>
 
             <div class="space-y-4">
-                <label class="flex items-center p-4 bg-white rounded-xl border-2 border-gray-200 hover:border-blue-300 cursor-pointer transition-all duration-200">
+                <label class="flex items-center p-4 bg-white rounded-xl border-2 border-gray-200 hover:border-blue-300 cursor-pointer transition-all duration-200 has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50">
                     <input type="checkbox" name="show_property" value="1" {{ $property->hostProfile?->show_property ? 'checked' : '' }} class="sr-only">
-                    <div class="w-6 h-6 border-2 border-gray-300 rounded-lg mr-4 flex items-center justify-center">
-                        <i class="fas fa-check text-white text-sm opacity-0"></i>
-                    </div>
                     <span class="font-semibold text-gray-900">Show property description on listing</span>
                 </label>
 
-                <div id="property-description" style="display: {{ $property->hostProfile?->show_property ? 'block' : 'none' }};">
+                <div id="property-description" class="{{ $property->hostProfile?->show_property ? '' : 'hidden' }}">
                     <label class="block text-sm font-semibold text-gray-700 mb-2">About the property</label>
                     <textarea name="about_property" rows="4" class="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 resize-none" placeholder="What makes your place unique? What can guests expect?" maxlength="1200">{{ $property->hostProfile?->about_property }}</textarea>
                     <div class="text-right text-sm text-gray-500 mt-1">
@@ -51,15 +48,12 @@
             </div>
 
             <div class="space-y-4">
-                <label class="flex items-center p-4 bg-white rounded-xl border-2 border-gray-200 hover:border-green-300 cursor-pointer transition-all duration-200">
+                <label class="flex items-center p-4 bg-white rounded-xl border-2 border-gray-200 hover:border-green-300 cursor-pointer transition-all duration-200 has-[:checked]:border-green-500 has-[:checked]:bg-green-50">
                     <input type="checkbox" name="show_host" value="1" {{ $property->hostProfile?->show_host ? 'checked' : '' }} class="sr-only">
-                    <div class="w-6 h-6 border-2 border-gray-300 rounded-lg mr-4 flex items-center justify-center">
-                        <i class="fas fa-check text-white text-sm opacity-0"></i>
-                    </div>
                     <span class="font-semibold text-gray-900">Show host information on listing</span>
                 </label>
 
-                <div id="host-details" style="display: {{ $property->hostProfile?->show_host ? 'block' : 'none' }};">
+                <div id="host-details" class="{{ $property->hostProfile?->show_host ? '' : 'hidden' }}">
                     <div class="space-y-4">
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-2">Host name</label>
@@ -68,7 +62,7 @@
                                 <span id="name-count">{{ strlen($property->hostProfile?->host_name ?? Auth::user()->name ?? '') }}</span>/80
                             </div>
                         </div>
-                        
+
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-2">About the host</label>
                             <textarea name="about_host" rows="4" class="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all duration-200 resize-none" placeholder="What are your interests? What do you like about hosting?" maxlength="1200">{{ $property->hostProfile?->about_host }}</textarea>
@@ -94,15 +88,12 @@
             </div>
 
             <div class="space-y-4">
-                <label class="flex items-center p-4 bg-white rounded-xl border-2 border-gray-200 hover:border-purple-300 cursor-pointer transition-all duration-200">
+                <label class="flex items-center p-4 bg-white rounded-xl border-2 border-gray-200 hover:border-purple-300 cursor-pointer transition-all duration-200 has-[:checked]:border-purple-500 has-[:checked]:bg-purple-50">
                     <input type="checkbox" name="show_neighborhood" value="1" {{ $property->hostProfile?->show_neighborhood ? 'checked' : '' }} class="sr-only">
-                    <div class="w-6 h-6 border-2 border-gray-300 rounded-lg mr-4 flex items-center justify-center">
-                        <i class="fas fa-check text-white text-sm opacity-0"></i>
-                    </div>
                     <span class="font-semibold text-gray-900">Show neighborhood information on listing</span>
                 </label>
 
-                <div id="neighborhood-description" style="display: {{ $property->hostProfile?->show_neighborhood ? 'block' : 'none' }};">
+                <div id="neighborhood-description" class="{{ $property->hostProfile?->show_neighborhood ? '' : 'hidden' }}">
                     <label class="block text-sm font-semibold text-gray-700 mb-2">About the neighborhood</label>
                     <textarea name="about_neighborhood" rows="4" class="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition-all duration-200 resize-none" placeholder="What's the area like? Are there any attractions nearby?" maxlength="1200">{{ $property->hostProfile?->about_neighborhood }}</textarea>
                     <div class="text-right text-sm text-gray-500 mt-1">
@@ -114,11 +105,8 @@
 
         <!-- Skip Option -->
         <div class="bg-gradient-to-r from-gray-50 to-slate-50 rounded-2xl p-6 border border-gray-200">
-            <label class="flex items-center p-4 bg-white rounded-xl border-2 border-gray-200 hover:border-gray-300 cursor-pointer transition-all duration-200">
+            <label class="flex items-center p-4 bg-white rounded-xl border-2 border-gray-200 hover:border-gray-300 cursor-pointer transition-all duration-200 has-[:checked]:border-gray-500 has-[:checked]:bg-gray-50">
                 <input type="checkbox" name="none_selected" value="1" {{ $property->hostProfile?->none_selected ? 'checked' : '' }} class="sr-only">
-                <div class="w-6 h-6 border-2 border-gray-300 rounded-lg mr-4 flex items-center justify-center">
-                    <i class="fas fa-check text-white text-sm opacity-0"></i>
-                </div>
                 <div>
                     <span class="font-semibold text-gray-900">None of the above / I'll add these later</span>
                     <p class="text-gray-600 text-sm">Skip this section for now and complete it later</p>
@@ -159,53 +147,18 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Handle checkbox selections
-    document.addEventListener('click', function(e) {
-        const target = e.target.closest('label');
-        if (!target) return;
-        
-        const input = target.querySelector('input[type="checkbox"]');
-        if (!input) return;
-        
-        input.checked = !input.checked;
-        const indicator = target.querySelector('div[class*="border-"]');
-        const icon = target.querySelector('i');
-        
-        if (input.checked) {
-            indicator.classList.add('bg-blue-500', 'border-blue-500');
-            indicator.classList.remove('border-gray-300');
-            icon.classList.remove('opacity-0');
-            icon.classList.add('opacity-100');
-            target.classList.add('border-blue-500', 'bg-blue-50');
-        } else {
-            indicator.classList.remove('bg-blue-500', 'border-blue-500');
-            indicator.classList.add('border-gray-300');
-            icon.classList.add('opacity-0');
-            icon.classList.remove('opacity-100');
-            target.classList.remove('border-blue-500', 'bg-blue-50');
+    // Handle checkbox changes for visibility toggles
+    document.addEventListener('change', function(e) {
+        if (e.target.name === 'show_property') {
+            const el = document.getElementById('property-description');
+            if (el) el.classList.toggle('hidden', !e.target.checked);
+        } else if (e.target.name === 'show_host') {
+            const el = document.getElementById('host-details');
+            if (el) el.classList.toggle('hidden', !e.target.checked);
+        } else if (e.target.name === 'show_neighborhood') {
+            const el = document.getElementById('neighborhood-description');
+            if (el) el.classList.toggle('hidden', !e.target.checked);
         }
-        
-        // Handle visibility toggles
-        if (input.name === 'show_property') {
-            document.getElementById('property-description').style.display = input.checked ? 'block' : 'none';
-        } else if (input.name === 'show_host') {
-            document.getElementById('host-details').style.display = input.checked ? 'block' : 'none';
-        } else if (input.name === 'show_neighborhood') {
-            document.getElementById('neighborhood-description').style.display = input.checked ? 'block' : 'none';
-        }
-    });
-    
-    // Initialize selected states on page load
-    document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
-        const label = checkbox.closest('label');
-        const indicator = label.querySelector('div[class*="border-"]');
-        const icon = label.querySelector('i');
-        
-        indicator.classList.add('bg-blue-500', 'border-blue-500');
-        indicator.classList.remove('border-gray-300');
-        icon.classList.remove('opacity-0');
-        icon.classList.add('opacity-100');
-        label.classList.add('border-blue-500', 'bg-blue-50');
     });
 });
 </script>

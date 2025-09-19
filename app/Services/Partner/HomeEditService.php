@@ -101,21 +101,7 @@ class HomeEditService
         ]);
     }
 
-    public function updateRooms(Property $property, array $data): void
-    {
-        // Update additional details (guests, bathrooms, etc.)
-        $property->additionalDetails()->updateOrCreate(
-            ['property_id' => $property->id],
-            [
-                'guests' => $data['guests'] ?? null,
-                'bathrooms' => $data['bathrooms'] ?? null,
-                'allow_children' => $data['allow_children'] ?? null,
-                'offer_cribs' => $data['offer_cribs'] ?? null,
-                'apartment_size' => $data['apartment_size'] ?? null,
-                'apartment_unit' => $data['apartment_unit'] ?? null,
-            ]
-        );
-    }
+
 
     public function updateVerification(Property $property, array $verification): void
     {

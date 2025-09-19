@@ -6,7 +6,7 @@
 
     <form id="basic-details-form" action="{{ route('partner.homes.update.basic', $property) }}" method="POST" class="space-y-8">
         @csrf
-        
+
         <!-- Property Name -->
         <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">
             <div class="flex items-center mb-4">
@@ -18,7 +18,10 @@
                     <p class="text-gray-600 text-sm">Choose a name that helps guests identify your property</p>
                 </div>
             </div>
-            <input type="text" name="title" value="{{ $property->title }}" class="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200" placeholder="e.g., Ocean View Apartment" required>
+            <input type="text" name="title" value="{{ $property->title ?? '' }}" class="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200" placeholder="e.g., Ocean View Apartment" required maxlength="100">
+            @error('title')
+                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+            @enderror
         </div>
 
         <!-- Property Description -->
@@ -32,7 +35,10 @@
                     <p class="text-gray-600 text-sm">Provide a brief description of your property</p>
                 </div>
             </div>
-            <textarea name="description" rows="4" class="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all duration-200 resize-none" placeholder="Enter your property description here...">{{ $property->description }}</textarea>
+            <textarea name="description" rows="4" class="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all duration-200 resize-none" placeholder="Enter your property description here..." maxlength="1000">{{ $property->description ?? '' }}</textarea>
+            @error('description')
+                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+            @enderror
         </div>
 
         <!-- Location Details -->
@@ -46,23 +52,35 @@
                     <p class="text-gray-600 text-sm">Update your property's address information</p>
                 </div>
             </div>
-            
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Address</label>
-                    <input type="text" name="address" value="{{ $property->address }}" class="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition-all duration-200" placeholder="Property address">
+                    <input type="text" name="address" value="{{ $property->address ?? '' }}" class="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition-all duration-200" placeholder="Property address" maxlength="200">
+                    @error('address')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">City</label>
-                    <input type="text" name="city" value="{{ $property->city }}" class="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition-all duration-200" placeholder="City">
+                    <input type="text" name="city" value="{{ $property->city ?? '' }}" class="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition-all duration-200" placeholder="City" maxlength="100">
+                    @error('city')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Country</label>
-                    <input type="text" name="country" value="{{ $property->country }}" class="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition-all duration-200" placeholder="Country">
+                    <input type="text" name="country" value="{{ $property->country ?? '' }}" class="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition-all duration-200" placeholder="Country" maxlength="100">
+                    @error('country')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Zip Code</label>
-                    <input type="text" name="zipcode" value="{{ $property->zipcode }}" class="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition-all duration-200" placeholder="Zip code">
+                    <input type="text" name="zipcode" value="{{ $property->zipcode ?? '' }}" class="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition-all duration-200" placeholder="Zip code" maxlength="20">
+                    @error('zipcode')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
             </div>
         </div>

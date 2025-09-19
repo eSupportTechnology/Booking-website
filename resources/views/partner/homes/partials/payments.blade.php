@@ -6,7 +6,7 @@
 
     <form id="payments-form" action="{{ route('partner.homes.update.payments', $property) }}" method="POST" class="space-y-8">
         @csrf
-        
+
         <!-- Payment Methods -->
         <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-6 border border-green-100">
             <div class="flex items-center mb-6">
@@ -20,11 +20,8 @@
             </div>
 
             <div class="space-y-4">
-                <label class="flex items-center p-4 bg-white rounded-xl border-2 border-gray-200 hover:border-green-300 cursor-pointer transition-all duration-200">
-                    <input type="radio" name="payment_method" value="online" {{ $property->payment_method == 'online' ? 'checked' : '' }} class="sr-only">
-                    <div class="w-5 h-5 border-2 border-gray-300 rounded-full mr-4 flex items-center justify-center">
-                        <div class="w-2 h-2 bg-green-600 rounded-full opacity-0"></div>
-                    </div>
+                <label class="flex items-center p-4 bg-white rounded-xl border-2 border-gray-200 hover:border-green-300 cursor-pointer transition-all duration-200 peer-checked:border-green-500 peer-checked:bg-green-50">
+                    <input type="radio" name="payment_method" value="online" {{ $property->payment_method == 'online' ? 'checked' : '' }} class="sr-only peer">
                     <div class="flex-1">
                         <div class="flex items-center mb-2">
                             <i class="fas fa-globe text-green-600 mr-2"></i>
@@ -41,11 +38,8 @@
                     </div>
                 </label>
 
-                <label class="flex items-center p-4 bg-white rounded-xl border-2 border-gray-200 hover:border-green-300 cursor-pointer transition-all duration-200">
-                    <input type="radio" name="payment_method" value="credit" {{ $property->payment_method == 'credit' ? 'checked' : '' }} class="sr-only">
-                    <div class="w-5 h-5 border-2 border-gray-300 rounded-full mr-4 flex items-center justify-center">
-                        <div class="w-2 h-2 bg-green-600 rounded-full opacity-0"></div>
-                    </div>
+                <label class="flex items-center p-4 bg-white rounded-xl border-2 border-gray-200 hover:border-green-300 cursor-pointer transition-all duration-200 peer-checked:border-green-500 peer-checked:bg-green-50">
+                    <input type="radio" name="payment_method" value="credit" {{ $property->payment_method == 'credit' ? 'checked' : '' }} class="sr-only peer">
                     <div class="flex-1">
                         <div class="flex items-center mb-2">
                             <i class="fas fa-credit-card text-green-600 mr-2"></i>
@@ -70,7 +64,14 @@
             </div>
 
             @php
-                $invoicingInfo = $property->invoicing_info ? json_decode($property->invoicing_info, true) : [];
+                try {
+                    $invoicingInfo = $property->invoicing_info ? json_decode($property->invoicing_info, true) : [];
+                    if (json_last_error() !== JSON_ERROR_NONE) {
+                        $invoicingInfo = [];
+                    }
+                } catch (Exception $e) {
+                    $invoicingInfo = [];
+                }
             @endphp
 
             <div class="space-y-6">
@@ -87,24 +88,18 @@
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-3">Billing Address</label>
                     <div class="space-y-3">
-                        <label class="flex items-center p-3 bg-white rounded-xl border-2 border-gray-200 hover:border-blue-300 cursor-pointer transition-all duration-200">
-                            <input type="radio" name="same_address" value="yes" {{ ($invoicingInfo['same_address'] ?? 'yes') == 'yes' ? 'checked' : '' }} class="sr-only">
-                            <div class="w-5 h-5 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
-                                <div class="w-2 h-2 bg-blue-600 rounded-full opacity-0"></div>
-                            </div>
+                        <label class="flex items-center p-3 bg-white rounded-xl border-2 border-gray-200 hover:border-blue-300 cursor-pointer transition-all duration-200 peer-checked:border-blue-500 peer-checked:bg-blue-50">
+                            <input type="radio" name="same_address" value="yes" {{ ($invoicingInfo['same_address'] ?? 'yes') == 'yes' ? 'checked' : '' }} class="sr-only peer">
                             <span class="font-medium">Same as property address</span>
                         </label>
-                        <label class="flex items-center p-3 bg-white rounded-xl border-2 border-gray-200 hover:border-blue-300 cursor-pointer transition-all duration-200">
-                            <input type="radio" name="same_address" value="no" {{ ($invoicingInfo['same_address'] ?? 'yes') == 'no' ? 'checked' : '' }} class="sr-only">
-                            <div class="w-5 h-5 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
-                                <div class="w-2 h-2 bg-blue-600 rounded-full opacity-0"></div>
-                            </div>
+                        <label class="flex items-center p-3 bg-white rounded-xl border-2 border-gray-200 hover:border-blue-300 cursor-pointer transition-all duration-200 peer-checked:border-blue-500 peer-checked:bg-blue-50">
+                            <input type="radio" name="same_address" value="no" {{ ($invoicingInfo['same_address'] ?? 'yes') == 'no' ? 'checked' : '' }} class="sr-only peer">
                             <span class="font-medium">Different address</span>
                         </label>
                     </div>
                 </div>
 
-                <div id="billing-address" style="display: {{ ($invoicingInfo['same_address'] ?? 'yes') == 'no' ? 'block' : 'none' }};">
+                <div id="billing-address" class="{{ ($invoicingInfo['same_address'] ?? 'yes') == 'no' ? '' : 'hidden' }}">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-2">Street Address</label>
@@ -168,59 +163,44 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Handle radio button selections
-    document.addEventListener('click', function(e) {
-        const target = e.target.closest('label');
-        if (!target) return;
-        
-        const input = target.querySelector('input[type="radio"]');
-        if (!input) return;
-        
-        // Clear all radio buttons in the same group
-        document.querySelectorAll(`input[name="${input.name}"]`).forEach(radio => {
-            const radioLabel = radio.closest('label');
-            const radioIndicator = radioLabel.querySelector('div[class*="border-"]');
-            const radioDot = radioIndicator.querySelector('div');
+    // Handle billing address visibility on page load
+    const sameAddressInputs = document.querySelectorAll('input[name="same_address"]');
+    const billingAddressEl = document.getElementById('billing-address');
+    
+    sameAddressInputs.forEach(input => {
+        if (input.checked && billingAddressEl) {
+            billingAddressEl.classList.toggle('hidden', input.value !== 'no');
+        }
+    });
+
+    // Handle radio button changes for conditional visibility and styling
+    document.addEventListener('change', function(e) {
+        if (e.target.type === 'radio') {
+            // Clear all radio buttons in the same group
+            document.querySelectorAll(`input[name="${e.target.name}"]`).forEach(radio => {
+                const label = radio.closest('label');
+                if (label) {
+                    label.classList.remove('border-blue-500', 'bg-blue-50');
+                    label.classList.add('border-gray-200');
+                }
+            });
             
-            radioDot.classList.add('opacity-0');
-            radioLabel.classList.remove('border-green-500', 'bg-green-50', 'border-blue-500', 'bg-blue-50');
-        });
-        
-        // Select current radio
-        input.checked = true;
-        const indicator = target.querySelector('div[class*="border-"]');
-        const dot = indicator.querySelector('div');
-        
-        dot.classList.remove('opacity-0');
-        dot.classList.add('opacity-100');
-        
-        if (input.name === 'payment_method') {
-            target.classList.add('border-green-500', 'bg-green-50');
-        } else {
-            target.classList.add('border-blue-500', 'bg-blue-50');
+            // Style the selected radio
+            const selectedLabel = e.target.closest('label');
+            if (selectedLabel) {
+                selectedLabel.classList.remove('border-gray-200');
+                selectedLabel.classList.add('border-blue-500', 'bg-blue-50');
+            }
         }
         
-        // Handle billing address visibility
-        if (input.name === 'same_address') {
-            document.getElementById('billing-address').style.display = 
-                input.value === 'no' ? 'block' : 'none';
+        if (e.target.name === 'same_address' && billingAddressEl) {
+            billingAddressEl.classList.toggle('hidden', e.target.value !== 'no');
         }
     });
     
-    // Initialize selected states on page load
-    document.querySelectorAll('input[type="radio"]:checked').forEach(radio => {
-        const label = radio.closest('label');
-        const indicator = label.querySelector('div[class*="border-"]');
-        const dot = indicator.querySelector('div');
-        
-        dot.classList.remove('opacity-0');
-        dot.classList.add('opacity-100');
-        
-        if (radio.name === 'payment_method') {
-            label.classList.add('border-green-500', 'bg-green-50');
-        } else {
-            label.classList.add('border-blue-500', 'bg-blue-50');
-        }
+    // Initialize radio button styles
+    document.querySelectorAll('input[type="radio"]:checked').forEach(input => {
+        input.dispatchEvent(new Event('change'));
     });
 });
 </script>

@@ -6,7 +6,7 @@
 
     <form id="photos-form" action="{{ route('partner.homes.update.photos', $property) }}" method="POST" enctype="multipart/form-data" class="space-y-8">
         @csrf
-        
+
         <!-- Upload Area -->
         <div class="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl p-8 border-2 border-dashed border-blue-300 text-center hover:border-blue-500 transition-all duration-300">
             <div class="mb-4">
@@ -40,9 +40,9 @@
                         </div>
                         <div class="p-4">
                             <div class="flex items-center justify-between">
-                                <label class="flex items-center cursor-pointer main-photo-radio">
-                                    <input type="radio" name="main_photo" value="{{ $photo->id }}" class="sr-only">
-                                    <div class="radio-indicator w-5 h-5 border-2 border-gray-300 rounded-full">
+                                <label class="flex items-center cursor-pointer main-photo-radio peer-checked:text-orange-600">
+                                    <input type="radio" name="main_photo" value="{{ $photo->id }}" class="sr-only peer">
+                                    <div class="radio-indicator w-5 h-5 border-2 border-gray-300 rounded-full peer-checked:bg-gradient-to-r peer-checked:from-yellow-400 peer-checked:to-orange-500 peer-checked:border-orange-500">
                                     </div>
                                     <span class="ml-2 text-sm font-medium text-gray-600">Set as Main</span>
                                 </label>
@@ -76,28 +76,46 @@ document.getElementById('photo-upload').addEventListener('change', function(e) {
         const file = files[i];
         const reader = new FileReader();
 
+        // Validate file size and type
+        if (file.size > 5 * 1024 * 1024) {
+            alert(`File ${file.name} is too large. Maximum size is 5MB.`);
+            continue;
+        }
+
+        if (!file.type.startsWith('image/')) {
+            alert(`File ${file.name} is not a valid image.`);
+            continue;
+        }
+
+        reader.onerror = function() {
+            console.error('Error reading file:', file.name);
+        };
+
         reader.onload = function(e) {
             const div = document.createElement('div');
             div.className = 'photo-item group relative bg-white rounded-2xl shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-xl';
-            div.innerHTML = `
-                <div class="aspect-w-4 aspect-h-3 relative">
-                    <img src="${e.target.result}" class="w-full h-48 object-cover">
-                    <div class="absolute top-2 right-2">
-                        <span class="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-medium">
-                            <i class="fas fa-plus mr-1"></i>New
-                        </span>
-                    </div>
-                </div>
-                <div class="p-4">
-                    <div class="flex items-center justify-between">
-                        <label class="flex items-center cursor-pointer">
-                            <input type="radio" name="main_photo_new" value="${i}" class="sr-only">
-                            <div class="w-5 h-5 border-2 border-gray-300 rounded-full"></div>
-                            <span class="ml-2 text-sm font-medium text-gray-600">Set as Main</span>
-                        </label>
-                    </div>
-                </div>
-            `;
+
+            const container = document.createElement('div');
+            container.className = 'aspect-w-4 aspect-h-3 relative';
+
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.className = 'w-full h-48 object-cover';
+            img.alt = 'Photo preview';
+
+            const badge = document.createElement('div');
+            badge.className = 'absolute top-2 right-2';
+            badge.innerHTML = '<span class="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-medium"><i class="fas fa-plus mr-1"></i>New</span>';
+
+            container.appendChild(img);
+            container.appendChild(badge);
+
+            const controls = document.createElement('div');
+            controls.className = 'p-4';
+            controls.innerHTML = `<div class="flex items-center justify-between"><label class="flex items-center cursor-pointer"><input type="radio" name="main_photo_new" value="${i}" class="sr-only"><div class="w-5 h-5 border-2 border-gray-300 rounded-full"></div><span class="ml-2 text-sm font-medium text-gray-600">Set as Main</span></label></div>`;
+
+            div.appendChild(container);
+            div.appendChild(controls);
             preview.appendChild(div);
         };
 
@@ -105,54 +123,26 @@ document.getElementById('photo-upload').addEventListener('change', function(e) {
     }
 });
 
-// Handle main photo radio selection
-document.addEventListener('click', function(e) {
-    if (e.target.closest('.main-photo-radio')) {
-        e.preventDefault();
-        const label = e.target.closest('.main-photo-radio');
-        const radio = label.querySelector('input[type="radio"]');
-        const indicator = label.querySelector('.radio-indicator');
-        const span = label.querySelector('span');
-        
-        // Uncheck all other radios
-        document.querySelectorAll('input[name="main_photo"]').forEach(r => {
-            r.checked = false;
-            const parentLabel = r.closest('.main-photo-radio');
-            const parentIndicator = parentLabel.querySelector('.radio-indicator');
-            const parentSpan = parentLabel.querySelector('span');
-            
-            parentIndicator.classList.remove('bg-gradient-to-r', 'from-yellow-400', 'to-orange-500', 'border-orange-500');
-            parentIndicator.classList.add('border-gray-300');
-            parentIndicator.innerHTML = '';
-            parentSpan.textContent = 'Set as Main';
-            parentSpan.classList.remove('text-orange-600');
-            parentSpan.classList.add('text-gray-600');
-        });
-        
-        // Check this radio
-        radio.checked = true;
-        indicator.classList.add('bg-gradient-to-r', 'from-yellow-400', 'to-orange-500', 'border-orange-500');
-        indicator.classList.remove('border-gray-300');
-        indicator.innerHTML = '<i class="fas fa-star text-white text-xs flex items-center justify-center h-full"></i>';
-        span.textContent = 'Main Photo';
-        span.classList.add('text-orange-600');
-        span.classList.remove('text-gray-600');
-    }
-});
+// Main photo radio selection works natively
 
 // Handle photo deletion
 document.addEventListener('click', function(e) {
     if (e.target.closest('.delete-photo')) {
-        e.preventDefault();
         const button = e.target.closest('.delete-photo');
         const photoId = button.dataset.photoId;
         const photoItem = button.closest('.photo-item');
-        
+
         if (confirm('Are you sure you want to delete this photo?')) {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]');
+            if (!csrfToken) {
+                alert('CSRF token not found');
+                return;
+            }
+
             fetch(`{{ route('partner.homes.delete.photo', ['property' => $property->id, 'photo' => '__PHOTO_ID__']) }}`.replace('__PHOTO_ID__', photoId), {
                 method: 'DELETE',
                 headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'X-CSRF-TOKEN': csrfToken.getAttribute('content'),
                     'Accept': 'application/json'
                 }
             })
