@@ -309,38 +309,24 @@ document.addEventListener('DOMContentLoaded', function() {
             if (roomName && roomName.trim() !== '') {
                 const sanitizedName = roomName.replace(/[<>]/g, '');
                 
-                const roomsContainer = document.querySelector('.space-y-4');
+                const roomsContainer = addBedroomBtn.parentElement;
                 const newRoom = document.createElement('div');
                 newRoom.className = 'bg-white rounded-xl border-2 border-gray-200 p-4';
+                newRoom.innerHTML = `
+                    <div class="flex items-center justify-between mb-3">
+                        <h5 class="font-semibold text-gray-900">${sanitizedName}</h5>
+                        <div class="flex space-x-2">
+                            <button type="button" class="text-blue-600 hover:text-blue-800 font-medium">Edit</button>
+                            <button type="button" class="text-red-600 hover:text-red-800 font-medium remove-room">Delete</button>
+                        </div>
+                    </div>
+                    <div class="text-sm text-gray-600">
+                        <strong>Beds:</strong> No beds configured
+                    </div>
+                    <input type="hidden" name="new_rooms[]" value="${sanitizedName}">
+                `;
                 
-                const header = document.createElement('div');
-                header.className = 'flex items-center justify-between mb-3';
-                
-                const title = document.createElement('h5');
-                title.className = 'font-semibold text-gray-900';
-                title.textContent = sanitizedName;
-                
-                const buttons = document.createElement('div');
-                buttons.className = 'flex space-x-2';
-                buttons.innerHTML = '<button type="button" class="text-blue-600 hover:text-blue-800 font-medium">Edit</button><button type="button" class="text-red-600 hover:text-red-800 font-medium remove-room">Delete</button>';
-                
-                const content = document.createElement('div');
-                content.className = 'text-sm text-gray-600';
-                content.innerHTML = '<strong>Beds:</strong> No beds configured';
-                
-                const hiddenInput = document.createElement('input');
-                hiddenInput.type = 'hidden';
-                hiddenInput.name = 'new_rooms[]';
-                hiddenInput.value = sanitizedName;
-                
-                header.appendChild(title);
-                header.appendChild(buttons);
-                newRoom.appendChild(header);
-                newRoom.appendChild(content);
-                newRoom.appendChild(hiddenInput);
-                
-                const addBtn = roomsContainer.querySelector('#add-bedroom-btn');
-                roomsContainer.insertBefore(newRoom, addBtn);
+                roomsContainer.insertBefore(newRoom, addBedroomBtn);
             }
         });
     }

@@ -135,7 +135,10 @@ class HomeEditService
         if (isset($rooms['new_rooms'])) {
             foreach ($rooms['new_rooms'] as $roomName) {
                 if (!empty($roomName)) {
-                    $property->bedrooms()->create(['name' => $roomName]);
+                    $property->bedrooms()->create([
+                        'name' => $roomName,
+                        'room_type' => 'bedroom'
+                    ]);
                 }
             }
         }
