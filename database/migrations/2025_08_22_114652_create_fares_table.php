@@ -14,9 +14,10 @@ return new class extends Migration
         Schema::create('fares', function (Blueprint $table) {
             $table->id();
             $table->foreignId('taxi_id')->constrained('taxis')->cascadeOnDelete();
-            $table->enum('fare_type', ['per_km', 'per_day']);
+             $table->decimal('price_per_km', 10, 2)->nullable();
+             $table->decimal('price_per_day', 10, 2)->nullable();
             $table->decimal('base_fare', 10, 2)->default(0);
-            $table->decimal('price', 10, 2);
+           
             $table->decimal('airport_fee', 10, 2)->nullable();
             $table->decimal('luggage_fee', 10, 2)->nullable();
             $table->timestamps();

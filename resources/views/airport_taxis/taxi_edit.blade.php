@@ -162,32 +162,48 @@
     </div>
 </div>
 
-        {{-- Pricing --}}
-        <div class="bg-white p-6 rounded-xl shadow space-y-4">
-            <h2 class="text-xl font-bold border-b pb-2">Pricing</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                    <label class="block font-semibold mb-1">Pricing Type</label>
-                    <select name="pricing_type" class="w-full border rounded p-2">
-                        <option value="perDay" {{ $taxi->fare?->pricing_type == 'perDay' ? 'selected':'' }}>Per Day</option>
-                        <option value="perKm" {{ $taxi->fare?->pricing_type == 'perKm' ? 'selected':'' }}>Per Km</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block font-semibold mb-1">Base Fare</label>
-                    <input type="number" step="0.01" name="base_fare" 
-                           value="{{ old('base_fare',$taxi->fare?->base_fare) }}" 
-                           class="w-full border rounded p-2">
-                </div>
-                <div>
-                    <label class="block font-semibold mb-1">Price</label>
-                    <input type="number" step="0.01" 
-                           name="{{ $taxi->fare?->pricing_type=='perKm'?'price_per_km':'price_per_day' }}" 
-                           value="{{ old('price', $taxi->fare?->price) }}" 
-                           class="w-full border rounded p-2">
-                </div>
-            </div>
+      {{-- Pricing --}}
+<div class="bg-white p-6 rounded-xl shadow space-y-4">
+    <h2 class="text-xl font-bold border-b pb-2">Pricing</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+        {{-- Pricing Type --}}
+        <div>
+            <label class="block font-semibold mb-1">Pricing Type</label>
+            <select name="pricing_type" class="w-full border rounded p-2">
+                <option value="perDay" {{ $taxi->fare?->price_per_day ? 'selected' : '' }}>Per Day</option>
+                <option value="perKm" {{ $taxi->fare?->price_per_km ? 'selected' : '' }}>Per Km</option>
+            </select>
         </div>
+
+        {{-- Base Fare --}}
+        <div>
+            <label class="block font-semibold mb-1">Base Fare</label>
+            <input type="number" step="0.01" name="base_fare"
+                   value="{{ old('base_fare', $taxi->fare?->base_fare) }}"
+                   class="w-full border rounded p-2">
+        </div>
+
+        {{-- Price per Km --}}
+        <div>
+            <label class="block font-semibold mb-1">Price per Km</label>
+            <input type="number" step="0.01" name="price_per_km"
+                   value="{{ old('price_per_km', $taxi->fare?->price_per_km) }}"
+                   class="w-full border rounded p-2">
+        </div>
+
+        {{-- Price per Day --}}
+        <div>
+            <label class="block font-semibold mb-1">Price per Day</label>
+            <input type="number" step="0.01" name="price_per_day"
+                   value="{{ old('price_per_day', $taxi->fare?->price_per_day) }}"
+                   class="w-full border rounded p-2">
+        </div>
+
+
+    </div>
+</div>
+
 
         {{-- Taxi Images --}}
         <div class="bg-white p-6 rounded-xl shadow space-y-4">
