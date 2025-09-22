@@ -31,6 +31,7 @@ use App\Http\Controllers\CarReservations\CarRenterAuthController;
 use App\Http\Controllers\CarReservations\CarRenterLoginController;
 use App\Http\Controllers\CarReservations\CarRenterControlPanel;
 use App\Http\Controllers\CarReservations\AirportTaxiControlPanel;
+use App\Http\Controllers\Customer\CustomerTaxiController;
 
 Route::post('/accommodation/save-verification/{propertyId}', [AccommodationController::class, 'saveVerification']);
 
@@ -967,7 +968,7 @@ Route::get('/apartment-listing', [\App\Http\Controllers\Customer\PropertyListing
 
 Route::get('/home-listing', [\App\Http\Controllers\Customer\PropertyListingController::class, 'homeListing'])->name('home-listing');
 
-Route::get('/car-rental-listing', [\App\Http\Controllers\Customer\PropertyListingController::class, 'carRentalListing'])->name('car-rental-listing');
+
 
 Route::get('/alternative-places-listing', [\App\Http\Controllers\Customer\PropertyListingController::class, 'alternativePlacesListing'])->name('alternative-places-listing');
 
@@ -1209,3 +1210,6 @@ Route::middleware('auth:car_renter')->group(function () {
     Route::get('/my/taxi', [AirportTaxiControlPanel ::class, 'myTaxi'])
         ->name('taxi.listing');
 });
+Route::get('/car-rental-listing', [\App\Http\Controllers\Customer\PropertyListingController::class, 'carRentalListing'])->name('car-rental-listing');
+Route::get('/customer/taxis', [\App\Http\Controllers\Customer\CustomerTaxiController::class, 'index'])->name('customer.taxis');
+
