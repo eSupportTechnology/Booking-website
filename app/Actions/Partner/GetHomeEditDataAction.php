@@ -31,7 +31,7 @@ class GetHomeEditDataAction
         $property->facilities = $property->facilities()->get();
 
         $rooms = Room::where('property_id', $property->id)
-            ->with(['roomType', 'beds.bedType'])
+            ->with(['roomType', 'beds'])
             ->get()
             ->groupBy('room_type_id');
 
