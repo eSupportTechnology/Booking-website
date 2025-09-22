@@ -120,18 +120,21 @@
 
 
     @if($taxi->fare)
-        <p><strong>Pricing Type:</strong> 
-            {{ $taxi->fare->pricing_type === 'perKm' ? 'Per Km' : 'Per Day' }}
-        </p>
+        <ul class="mt-2 space-y-1 text-gray-700">
+            <li><strong>Base Fare:</strong> Rs {{ number_format($taxi->fare->base_fare, 2) }}</li>
+            
+            @if($taxi->fare->price_per_km)
+                <li><strong>Per Km:</strong> Rs {{ number_format($taxi->fare->price_per_km, 2) }}</li>
+            @endif
+            
+            @if($taxi->fare->price_per_day)
+                <li><strong>Per Day:</strong> Rs {{ number_format($taxi->fare->price_per_day, 2) }}</li>
+            @endif
 
-        <p><strong>Base Fare:</strong> {{ $taxi->fare->base_fare }}</p>
-
-        <p><strong>Price:</strong> 
-            {{ $taxi->fare->price }} 
-            {{ $taxi->fare->pricing_type === 'perKm' ? '/ km' : '/ day' }}
-        </p>
+           
+        </ul>
     @else
-        <p>Fare details not available</p>
+        <p class="text-gray-500">No pricing details available.</p>
     @endif
 </div>
 
@@ -152,7 +155,7 @@
         ? \App\Models\File::find($driver->tourism_license_back)
         : null;
 @endphp
-   <div class="bg-white p-6 rounded-2xl shadow-lg flex-1">
+   <div class="bg-white p-6 rounded-2xl shadow-lg flex-1 mt-6">
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 border-b pb-6">
     <!-- Driver License -->
     <div>

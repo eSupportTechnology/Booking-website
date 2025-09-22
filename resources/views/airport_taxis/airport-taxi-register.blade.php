@@ -241,58 +241,56 @@
     </template>
 
     <!-- Step 4: Taxi Payment & Submit -->
-    <template x-if="step === 4">
-        <div class="px-6 py-8 mt-6 w-full max-w-xl mx-auto lg:ml-24 space-y-6 bg-white rounded-lg shadow border">
-            <h1 class="text-2xl font-bold mb-2">Set Taxi Fare & Complete Submission</h1>
-            <p class="text-gray-500 text-sm mb-4">Specify how the taxi payment will be calculated for customers.</p>
+  <!-- Step 4: Taxi Payment & Submit -->
+<template x-if="step === 4">
+    <div class="px-6 py-8 mt-6 w-full max-w-xl mx-auto lg:ml-24 space-y-6 bg-white rounded-lg shadow border">
+        <h1 class="text-2xl font-bold mb-2">Set Taxi Fare & Complete Submission</h1>
+        <p class="text-gray-500 text-sm mb-4">Specify how the taxi payment will be calculated for customers.</p>
 
-            <div>
-                <label class="block font-semibold text-sm mb-1">Select Fare Calculation Type <span class="text-red-500">*</span></label>
-                <select x-model="pricingType" class="w-full p-2 border rounded-md text-sm">
-                    <option selected>Select an option</option>
-                    <option value="perKm">Per Kilometer</option>
-                    <option value="perDay">Per Day</option>
-                </select>
-            </div>
-
-            <div class="space-y-4 mt-4">
-                <div>
-                    <label class="block font-semibold text-sm mb-1">Base Fare (Flag Fall) <span class="text-red-500">*</span></label>
-                    <input type="number" x-model="baseFare" placeholder="e.g., 300" class="w-full p-2 border rounded-lg" step="0.01">
-                </div>
-
-                <div x-show="pricingType === 'perKm'" class="transition-all">
-                    <label class="block font-semibold text-sm mb-1">Price per Kilometer <span class="text-red-500">*</span></label>
-                    <input type="number" x-model="pricePerKm" placeholder="e.g., 50" class="w-full p-2 border rounded-lg" step="0.01">
-                </div>
-
-                <div x-show="pricingType === 'perDay'" class="transition-all">
-                    <label class="block font-semibold text-sm mb-1">Price per Day <span class="text-red-500">*</span></label>
-                    <input type="number" x-model="pricePerDay" placeholder="e.g., 16000" class="w-full p-2 border rounded-lg" step="0.01">
-                </div>
-
-               <!-- <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block font-semibold text-sm mb-1">Airport Fee (Optional)</label>
-                        <input type="number" x-model="airportFee" placeholder="e.g., 200" class="w-full p-2 border rounded-lg" step="0.01">
-                    </div>
-                    <div>
-                        <label class="block font-semibold text-sm mb-1">Luggage Fee (Optional)</label>
-                        <input type="number" x-model="luggageFee" placeholder="e.g., 50" class="w-full p-2 border rounded-lg" step="0.01">
-                    </div>
-                </div>-->
-            </div>
-
-            <!-- Navigation Buttons -->
-            <div class="flex justify-between items-center mt-6">
-                <button @click="step--" class="flex items-center border border-[#3CC0E9] rounded text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12">←</button>
-                <button type="button" @click="saveStep4"
-                    class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition">
-                    Submit
-                </button>
-            </div>
+        <!-- Pricing Type -->
+        <div>
+            <label class="block font-semibold text-sm mb-1">
+                Select Fare Calculation Type <span class="text-red-500">*</span>
+            </label>
+            <select x-model="pricingType" class="w-full p-2 border rounded-md text-sm">
+                <option disabled value="">-- Select Fare Type --</option>
+                <option value="perKm">Per Kilometer</option>
+                <option value="perDay">Per Day</option>
+            </select>
         </div>
-    </template>
+
+        <!-- Base Fare -->
+        <div class="mt-4">
+            <label class="block font-semibold text-sm mb-1">Base Fare (Flag Fall) <span class="text-red-500">*</span></label>
+            <input type="number" x-model="baseFare" placeholder="e.g., 300" class="w-full p-2 border rounded-lg" step="0.01">
+        </div>
+
+        <!-- Per KM Price -->
+        <template x-if="pricingType === 'perKm'">
+            <div class="mt-4">
+                <label class="block font-semibold text-sm mb-1">Price per Kilometer <span class="text-red-500">*</span></label>
+                <input type="number" x-model="pricePerKm" placeholder="e.g., 50" class="w-full p-2 border rounded-lg" step="0.01">
+            </div>
+        </template>
+
+        <!-- Per Day Price -->
+        <template x-if="pricingType === 'perDay'">
+            <div class="mt-4">
+                <label class="block font-semibold text-sm mb-1">Price per Day <span class="text-red-500">*</span></label>
+                <input type="number" x-model="pricePerDay" placeholder="e.g., 16000" class="w-full p-2 border rounded-lg" step="0.01">
+            </div>
+        </template>
+
+        <!-- Navigation Buttons -->
+        <div class="flex justify-between items-center mt-6">
+            <button @click="step--" class="flex items-center border border-[#3CC0E9] rounded text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12">←</button>
+            <button type="button" @click="saveStep4"
+                class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition">
+                Submit
+            </button>
+        </div>
+    </div>
+</template>
 
         <!-- Step 5: Upload Taxi Images -->
     <template x-if="step === 5">
@@ -556,50 +554,50 @@ async saveStep3() {
 },
 
 
-        // ================= Step 4 =================
-        async saveStep4() {
-            if (!this.pricingType || !this.baseFare ||
-                (this.pricingType === 'perKm' && !this.pricePerKm) ||
-                (this.pricingType === 'perDay' && !this.pricePerDay)) {
-                Swal.fire({ icon: "warning", title: "Required", text: "Please fill all required fields!" });
-                return;
-            }
+     // ================= Step 4 =================
+async saveStep4() {
+    if (!this.pricingType || !this.baseFare ||
+        (this.pricingType === 'perKm' && !this.pricePerKm) ||
+        (this.pricingType === 'perDay' && !this.pricePerDay)) {
+        Swal.fire({ icon: "warning", title: "Required", text: "Please fill all required fields!" });
+        return;
+    }
 
-            const formData = new FormData();
-            formData.append("taxi_id", this.taxi_id);
-            formData.append("pricing_type", this.pricingType);
-            formData.append("base_fare", this.baseFare);
-            if (this.pricingType === 'perKm') formData.append("price_per_km", this.pricePerKm);
-            if (this.pricingType === 'perDay') formData.append("price_per_day", this.pricePerDay);
-            formData.append("airport_fee", this.airportFee);
-            formData.append("luggage_fee", this.luggageFee);
+    const formData = new FormData();
+    formData.append("taxi_id", this.taxi_id);
+    formData.append("pricing_type", this.pricingType);
+    formData.append("base_fare", this.baseFare);
 
-            try {
-                const response = await fetch("{{ route('taxis.storeStep4') }}", {
-                    method: "POST",
-                    headers: { "X-CSRF-TOKEN": "{{ csrf_token() }}" },
-                    body: formData
-                });
-                const data = await response.json();
+    if (this.pricingType === 'perKm') {
+        formData.append("price_per_km", this.pricePerKm);
+    }
+    if (this.pricingType === 'perDay') {
+        formData.append("price_per_day", this.pricePerDay);
+    }
 
-                if (data.success) {
-                    this.step++; // ✅ Move to Step 5
-                    Swal.fire({
-                        icon: "success",
-                        title: "Fare Saved",
-                        text: "Now upload taxi images.",
-                        toast: true,
-                        position: "top-end",
-                        timer: 2000,
-                        showConfirmButton: false
-                    });
-                } else {
-                    Swal.fire({ icon: "error", title: "Error", text: data.message || "Failed to save fare" });
-                }
-            } catch (error) {
-                Swal.fire({ icon: "error", title: "Error", text: "Unexpected error occurred" });
-            }
-        },
+    formData.append("airport_fee", this.airportFee || 0);
+    formData.append("luggage_fee", this.luggageFee || 0);
+
+    try {
+        const response = await fetch("{{ route('taxis.storeStep4') }}", {
+            method: "POST",
+            headers: { "X-CSRF-TOKEN": "{{ csrf_token() }}" },
+            body: formData
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            this.step++;
+            Swal.fire({ icon: "success", title: "Fare Saved", text: "Now upload taxi images.", toast: true, position: "top-end", timer: 2000, showConfirmButton: false });
+        } else {
+            Swal.fire({ icon: "error", title: "Error", text: data.message || "Failed to save fare" });
+        }
+    } catch (error) {
+        Swal.fire({ icon: "error", title: "Error", text: "Unexpected error occurred" });
+    }
+}
+,
+
 
         // ================= Step 5 =================
         previewImage(event, type) {

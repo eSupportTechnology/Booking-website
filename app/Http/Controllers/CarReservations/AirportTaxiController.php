@@ -130,35 +130,42 @@ class AirportTaxiController extends Controller
 }
 
 
-    public function storeStep4(Request $request)
-    {
-        $validated = $request->validate([
-            'taxi_id' => 'required|exists:taxis,id',
-            'pricing_type' => 'required|string|in:perKm,perDay',
-            'base_fare' => 'required|numeric|min:0',
-            'price_per_km' => 'nullable|numeric|min:0',
-            'price_per_day' => 'nullable|numeric|min:0',
-        ]);
+ public function storeStep4(Request $request)
+{
+    $validated = $request->validate([
+        'taxi_id' => 'required|exists:taxis,id',
+        'pricing_type' => 'required|string|in:perKm,perDay',
+        'base_fare' => 'required|numeric|min:0',
+        'price_per_km' => 'required_if:pricing_type,perKm|nullable|numeric|min:0',
+        'price_per_day' => 'required_if:pricing_type,perDay|nullable|numeric|min:0',
+        'airport_fee' => 'nullable|numeric|min:0',
+        'luggage_fee' => 'nullable|numeric|min:0',
+    ]);
 
-        $taxi = Taxi::where('id', $validated['taxi_id'])
-            ->where('car_renter_id', Auth::guard('car_renter')->id())
-            ->firstOrFail();
+    $taxi = Taxi::where('id', $validated['taxi_id'])
+        ->where('car_renter_id', Auth::guard('car_renter')->id())
+        ->firstOrFail();
 
-        $fareData = [
-            'taxi_id' => $taxi->id,
-            'pricing_type' => $validated['pricing_type'],
-            'base_fare' => $validated['base_fare'],
-            'price' => $validated['pricing_type'] === 'perKm' ? $validated['price_per_km'] : $validated['price_per_day']
-        ];
+    $fareData = [
+        'taxi_id' => $taxi->id,
+        'base_fare' => $validated['base_fare'],
+        'price_per_km' => $validated['pricing_type'] === 'perKm' ? $validated['price_per_km'] : null,
+        'price_per_day' => $validated['pricing_type'] === 'perDay' ? $validated['price_per_day'] : null,
+        'airport_fee' => $validated['airport_fee'] ?? 0,
+        'luggage_fee' => $validated['luggage_fee'] ?? 0,
+    ];
 
-        $fare = $taxi->fare()->updateOrCreate([], $fareData);
+    $fare = $taxi->fare()->updateOrCreate(
+        ['taxi_id' => $taxi->id], // Match taxi to update or create
+        $fareData
+    );
 
-        return response()->json([
-            'success' => true,
-            'fare_id' => $fare->id,
-            'message' => 'Taxi fare saved successfully.'
-        ]);
-    }
+    return response()->json([
+        'success' => true,
+        'fare_id' => $fare->id,
+        'message' => 'Taxi fare saved successfully.'
+    ]);
+}
 
     public function storeStep5(Request $request)
     {
@@ -291,23 +298,25 @@ class AirportTaxiController extends Controller
     $taxi->save(); // persist taxi image paths if any
 
     // 6) Validate and update fare
-    $validatedFare = $request->validate([
-        'pricing_type' => 'required|string|in:perKm,perDay',
-        'price_per_day' => 'nullable|numeric|min:0',
-        'price_per_km' => 'nullable|numeric|min:0',
-        'base_fare' => 'required|numeric|min:0',
-    ]);
+$validatedFare = $request->validate([
+    'pricing_type'   => 'required|string|in:perKm,perDay',
+    'base_fare'      => 'required|numeric|min:0',
+    'price_per_km'   => 'required_if:pricing_type,perKm|nullable|numeric|min:0',
+    'price_per_day'  => 'required_if:pricing_type,perDay|nullable|numeric|min:0',
+    'airport_fee'    => 'nullable|numeric|min:0',
+    'luggage_fee'    => 'nullable|numeric|min:0',
+]);
 
-    $farePrice = $validatedFare['pricing_type'] === 'perKm'
-        ? ($validatedFare['price_per_km'] ?? 0)
-        : ($validatedFare['price_per_day'] ?? 0);
+$fareData = [
+    'taxi_id'       => $taxi->id,
+    'base_fare'     => $validatedFare['base_fare'],
+    'price_per_km'  => $validatedFare['pricing_type'] === 'perKm' ? $validatedFare['price_per_km'] : null,
+    'price_per_day' => $validatedFare['pricing_type'] === 'perDay' ? $validatedFare['price_per_day'] : null,
+    'airport_fee'   => $validatedFare['airport_fee'] ?? 0,
+    'luggage_fee'   => $validatedFare['luggage_fee'] ?? 0,
+];
 
-    $fareData = [
-        'taxi_id' => $taxi->id,
-        'pricing_type' => $validatedFare['pricing_type'],
-        'base_fare' => $validatedFare['base_fare'],
-        'price' => $farePrice,
-    ];
+
 
     // match on taxi_id explicitly
     $taxi->fare()->updateOrCreate(['taxi_id' => $taxi->id], $fareData);
