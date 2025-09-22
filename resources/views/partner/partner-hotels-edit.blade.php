@@ -38,11 +38,11 @@
 
         // Set up links immediately
         if (photoLink) {
-            photoLink.href = `/partner-homes-images/${propertyId}?details=true&propertyType=${encodeURIComponent(propertyType)}`;
+            photoLink.href = `/partner/hotels/${propertyId}/edit-comprehensive#photos`;
         }
 
         if (roomsEditLink) {
-            roomsEditLink.href = `/partner-homes-rooms/${propertyId}?details=true&propertyType=${encodeURIComponent(propertyType)}`;
+            roomsEditLink.href = `/partner/hotels/${propertyId}/edit-comprehensive#rooms`;
         }
 
         if (paymenEditLink) {
@@ -112,16 +112,7 @@
             }
         }
 
-        let actionUrl = '';
-
-        if (propertyType === 'multiple') {
-            actionUrl = '/partner-homes-multiple';
-        } else if (propertyType === 'single') {
-            actionUrl = '/partner-homes-single';
-        } else {
-            alert('Unknown property type');
-            return;
-        }
+        // Property type check removed for hotels
 
         // Check if all required steps are completed
         const allStepsCompleted = paymentDetails === 'true' && rooms === 'true' && uploaded === 'true';
@@ -415,9 +406,7 @@
                             more</p>
                     </div>
                 </div>
-                <!-- <a href="{{ url('/partner/property_subcategory/' . $property->category_id . '/' . $property->id) }}"
-                    class="text-sky-600 font-medium text-sm hover:underline">Edit</a> -->
-
+                <a href="/partner/hotels/{{ $property->id }}/edit-comprehensive#basic" class="text-sky-600 font-medium text-sm hover:underline">Edit</a>
             </div>
 
             <div class="border border-gray-300 rounded-lg p-4 flex flex-col gap-6">

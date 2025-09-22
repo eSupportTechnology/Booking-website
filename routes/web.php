@@ -637,6 +637,21 @@ Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddle
 
     Route::get('/hotels/{property}/edit', [\App\Http\Controllers\Partner\HotelEditController::class, 'edit'])->name('partner.hotels.edit.new');
     Route::put('/hotels/{property}', [\App\Http\Controllers\Partner\HotelEditController::class, 'update'])->name('partner.hotels.update');
+    
+    // New comprehensive hotel edit routes
+    Route::get('/hotels/{property}/edit-comprehensive', [\App\Http\Controllers\Partner\HotelPropertyEditController::class, 'edit'])->name('partner.hotels.edit.comprehensive');
+    Route::post('/hotels/{property}/basic-details', [\App\Http\Controllers\Partner\HotelPropertyEditController::class, 'updateBasicDetails'])->name('partner.hotels.update.basic-details');
+    Route::post('/hotels/{property}/amenities', [\App\Http\Controllers\Partner\HotelPropertyEditController::class, 'updateAmenities'])->name('partner.hotels.update.amenities');
+    Route::post('/hotels/{property}/pricing', [\App\Http\Controllers\Partner\HotelPropertyEditController::class, 'updatePricing'])->name('partner.hotels.update.pricing');
+    Route::post('/hotels/{property}/policies', [\App\Http\Controllers\Partner\HotelPropertyEditController::class, 'updatePolicies'])->name('partner.hotels.update.policies');
+    Route::post('/hotels/{property}/photos', [\App\Http\Controllers\Partner\HotelPropertyEditController::class, 'uploadPhotos'])->name('partner.hotels.upload.photos');
+    Route::delete('/hotels/{property}/photos/{photo}', [\App\Http\Controllers\Partner\HotelPropertyEditController::class, 'deletePhoto'])->name('partner.hotels.delete.photo');
+    Route::post('/hotels/{property}/photos/{photo}/set-primary', [\App\Http\Controllers\Partner\HotelPropertyEditController::class, 'setPrimaryPhoto'])->name('partner.hotels.set.primary.photo');
+    // Hotel room management routes
+    Route::post('/hotels/{property}/rooms', [\App\Http\Controllers\Partner\HotelPropertyEditController::class, 'createRoom'])->name('partner.hotels.create.room');
+    Route::put('/hotels/{property}/rooms/{room}', [\App\Http\Controllers\Partner\HotelPropertyEditController::class, 'updateRoom'])->name('partner.hotels.update.room');
+    Route::delete('/hotels/{property}/rooms/{roomType}', [\App\Http\Controllers\Partner\HotelPropertyEditController::class, 'deleteRoomType'])->name('partner.hotels.delete.room.type');
+    
     Route::get('/property_category', [PropertyController::class, 'categories'])->name('partner.property.category');
     Route::get('/property_subcategory/{id}/{property_id?}', [PropertyController::class, 'subcategories'])->name('partner.property.subcategory');
     Route::get('/hotels/rooms/{id}', [PropertyController::class, 'rooms'])->name('partner.hotels.room');
