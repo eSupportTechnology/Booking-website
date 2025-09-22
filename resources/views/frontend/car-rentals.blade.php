@@ -215,35 +215,30 @@
             <!-- Offer Card -->
             <div class="bg-white-50 p-2 rounded flex items-center justify-between border border-solid border-gray-300">
                 <!-- Text Content -->
-                <div class="ml-4">
-                    
+                <div class="ml-4"> 
                     <p class="font-medium font-semibold" style="font-family: 'Noto Sans', sans-serif;"> Join our platform to showcase your cars and connect with thousands of customers searching for rentals.</p>
-                   <!-- Get Started Now Button -->
-                   <a href="/carrentals/register/details">
-                       <button class="text-white px-4 py-1 rounded mt-2 w-auto font-semibold" 
-                               style="font-family: 'Noto Sans', sans-serif; background-color:#3CC0E9;">
-                           Get Started Now  
-                       </button>
-                   </a>
+                        <!-- Get Started Now Button -->
+                        <a href="/carrentals/register/details">
+                            <button class="text-white px-4 py-1 rounded mt-2 w-auto font-semibold" 
+                                    style="font-family: 'Noto Sans', sans-serif; background-color:#3CC0E9;">
+                                Get Started Now  
+                            </button>
+                        </a>
 
-<!-- Already Registered Sign In Link -->
-<p class="mt-2 text-sm" style="font-family: 'Noto Sans', sans-serif;">
-  Already registered? 
-  <a href="/car-renter/login/email" class="text-blue-600 hover:underline">
-    Sign In
-  </a>
-</p>
+                        <!-- Already Registered Sign In Link -->
+                        <p class="mt-2 text-sm" style="font-family: 'Noto Sans', sans-serif;">
+                            Already registered? 
+                            <a href="/car-renter/login/email" class="text-blue-600 hover:underline">
+                                Sign In
+                            </a>
+                        </p>
 
                 </div>
-
-
-
-
                 <!-- Image -->
                 <img src="{{ asset('images/rental.jpg') }}" alt="Offer Image" class="w-38 h-32 rounded ml-4">
             </div>
         </div>
-    </section>
+</section>
 <section class="scroll-section py-12 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Heading and link -->
