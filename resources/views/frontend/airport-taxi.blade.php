@@ -367,43 +367,45 @@ properties worldwide
 </script>
 
 <section class="py-12 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <!-- Title -->
-            <h2 class="text-2xl font-semibold text-gray-800 mb-2">Register Your Airport Taxi Service</h2>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Title -->
+    <h2 class="text-2xl sm:text-3xl font-semibold text-gray-800 mb-6 text-center sm:text-left">
+      Register Your Airport Taxi Service
+    </h2>
 
+    <!-- Offer Card -->
+    <div class="bg-gray-50 p-4 sm:p-6 rounded-lg flex flex-col sm:flex-row items-center sm:justify-between border border-gray-300">
+      
+      <!-- Text Content -->
+      <div class="flex-1 mb-4 sm:mb-0 sm:mr-6">
+        <p class="font-medium text-gray-700 mb-3" style="font-family: 'Noto Sans', sans-serif;">
+          Join our platform to showcase your airport taxis and connect with thousands of travelers searching for reliable rides.
+        </p>
 
-            <!-- Offer Card -->
-            <div class="bg-white-50 p-2 rounded flex items-center justify-between border border-solid border-gray-300">
-                <!-- Text Content -->
-                <div class="ml-4">
-                    
-                    <p class="font-medium font-semibold" style="font-family: 'Noto Sans', sans-serif;"> Join our platform to showcase your airport taxis and connect with thousands of travelers searching for reliable rides.</p>
-                   <!-- Get Started Now Button -->
-                   <a href="/carrentals/register/details">
-                       <button class="text-white px-4 py-1 rounded mt-2 w-auto font-semibold" 
-                               style="font-family: 'Noto Sans', sans-serif; background-color:#3CC0E9;">
-                           Get Started Now  
-                       </button>
-                   </a>
+        <!-- Get Started Button -->
+        <a href="/carrentals/register/details">
+          <button class="text-white px-6 py-2 rounded font-semibold bg-[#3CC0E9] hover:bg-[#34b7d6] transition-colors w-full sm:w-auto" style="font-family: 'Noto Sans', sans-serif;">
+            Get Started Now
+          </button>
+        </a>
 
-<!-- Already Registered Sign In Link -->
-<p class="mt-2 text-sm" style="font-family: 'Noto Sans', sans-serif;">
-  Already registered? 
-  <a href="/car-renter/login/email" class="text-blue-600 hover:underline">
-    Sign In
-  </a>
-</p>
+        <!-- Already Registered Sign In Link -->
+        <p class="mt-3 text-sm text-gray-600" style="font-family: 'Noto Sans', sans-serif;">
+          Already registered? 
+          <a href="/car-renter/login/email" class="text-blue-600 hover:underline">
+            Sign In
+          </a>
+        </p>
+      </div>
 
-                </div>
+      <!-- Image -->
+      <div class="flex-shrink-0">
+        <img src="{{ asset('images/taxi-airport.jpg') }}" alt="Airport Taxi" class="w-full sm:w-48 h-32 sm:h-40 rounded object-cover">
+      </div>
+    </div>
+  </div>
+</section>
 
-
-
-
-                <!-- Image -->
-                <img src="{{ asset('images/taxi-airport.jpg') }}" alt="Offer Image" class="w-38 h-32 rounded ml-4">
-            </div>
-        </div>
-    </section>
 
 <section class="bg-white py-12">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
