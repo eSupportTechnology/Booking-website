@@ -38,15 +38,15 @@
 
         // Set up links immediately
         if (photoLink) {
-            photoLink.href = `/partner/hotels/${propertyId}/edit-comprehensive#photos`;
+            photoLink.href = `/partner/hotels/${propertyId}/photos`;
         }
 
         if (roomsEditLink) {
-            roomsEditLink.href = `/partner/hotels/${propertyId}/edit-comprehensive#rooms`;
+            roomsEditLink.href = `/partner/hotels/${propertyId}/rooms`;
         }
 
         if (paymenEditLink) {
-            paymenEditLink.href = `/partner/partner-hotels-payment/${propertyId}?propertyType=${encodeURIComponent(propertyType)}`;
+            paymenEditLink.href = `/partner/hotels/${propertyId}/payment`;
         }
         if (uploaded === 'true') {
             // Update the icon (optional - if not already done)
@@ -406,7 +406,7 @@
                             more</p>
                     </div>
                 </div>
-                <a href="/partner/hotels/{{ $property->id }}/edit-comprehensive#basic" class="text-sky-600 font-medium text-sm hover:underline">Edit</a>
+                <a href="/partner/hotels/{{ $property->id }}/edit-comprehensive" class="text-sky-600 font-medium text-sm hover:underline">Edit</a>
             </div>
 
             <div class="border border-gray-300 rounded-lg p-4 flex flex-col gap-6">

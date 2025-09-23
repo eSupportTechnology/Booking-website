@@ -83,7 +83,7 @@
                                 class="flex-1 bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg text-center text-sm transition-colors duration-200">
                                 <i class="fas fa-eye mr-1"></i>View
                             </a>
-                            <a href="{{ route('partner.properties.edit', $property['id']) }}"
+                            <a href="{{ route('partner.hotels.edit', $property['id']) }}"
                                 class="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-center text-sm transition-colors duration-200">
                                 <i class="fas fa-edit mr-1"></i>Edit
                             </a>
