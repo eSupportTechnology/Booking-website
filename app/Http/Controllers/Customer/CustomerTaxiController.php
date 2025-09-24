@@ -19,5 +19,17 @@ class CustomerTaxiController extends Controller
     return view('customer.airport-taxi-listing', compact('activeTaxis'));
 }
 
+public function showLatestTaxis(){
+    // Get latest 10 active taxis
+    $latestActiveTaxis = Taxi::where('status', 'Active')
+        ->with('type', 'drivers', 'fare')
+        ->latest() // order by created_at descending
+        ->take(10) // limit to 10 taxis
+        ->get();
+
+    return view('frontend.airport-taxi', compact('latestActiveTaxis'));
+}
+
+
 }
 

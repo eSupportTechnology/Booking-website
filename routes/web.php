@@ -487,9 +487,9 @@ Route::get('/partner-hotels-multiple', function () {
 // })->name('email.verify');
 
 
-Route::get('/airport-taxis', function () {
-    return view('frontend.airport-taxi');
-})->name('airport.taxis');
+//Route::get('/airport-taxis', function () {
+//    return view('frontend.airport-taxi');
+//})->name('airport.taxis');
 
 // routes/web.php
 // Route::prefix('traveler')->group(function () {
@@ -1230,6 +1230,7 @@ Route::middleware('auth:car_renter')->group(function () {
 });
 Route::get('/car-rental-listing', [\App\Http\Controllers\Customer\PropertyListingController::class, 'carRentalListing'])->name('car-rental-listing');
 Route::get('/customer/taxis', [\App\Http\Controllers\Customer\CustomerTaxiController::class, 'index'])->name('customer.taxis');
+Route::get('/airport-taxis', [\App\Http\Controllers\Customer\CustomerTaxiController::class, 'showLatestTaxis'])->name('customer.airport-taxis');
 
 Route::get('/single-taxi', function () {
     return view('Customer.single-airport-taxi');
