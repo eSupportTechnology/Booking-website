@@ -369,7 +369,8 @@ properties worldwide
 
 <section class="scroll-section py-12 bg-white">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Airport Taxi Options</h2>
+    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Our Latest Airport Taxis</h2>
+   <p class="mb-8 text-gray-600" style="font-family: 'Noto Sans', sans-serif;">Check out our newly added, comfortable, and reliable airport taxis ready for your next ride.</p>
 
     <div class="relative">
       <!-- Scroll Container -->
@@ -417,17 +418,21 @@ properties worldwide
             <h3 class="text-sm font-bold mt-2" style="font-family: 'Noto Sans', sans-serif;">
                 {{ $taxi->name ?? 'Unnamed Taxi' }} – {{ $taxi->type->name ?? 'Standard' }}
             </h3>
+              <h5 class="text-xs font-bold mt-1" style="font-family: 'Noto Sans', sans-serif;">
+                {{ $taxi->number_plate ?? 'Unnamed Taxi' }} 
+            </h5>
 
             <!-- Capacity Info -->
             <div class="mt-2 text-left flex space-x-4" style="font-family: 'Noto Sans', sans-serif;">
-                <p class="text-xs text-gray-500">{{ $taxi->capacity ?? 4 }} persons</p>
-                <p class="text-xs text-gray-500">{{ $taxi->luggage ?? 2 }} luggage</p>
+                <p class="text-xs text-gray-500">{{ $taxi->passenger_capacity}} persons</p>
+                <p class="text-xs text-gray-500">{{ $taxi->luggage_capacity}} luggage</p>
+               
             </div>
 
             <!-- Book Now Button -->
             <div class="mt-2 text-left">
-                <a href=""
-                   class="bg-blue-600 text-white text-xs font-semibold px-3 py-1 rounded hover:bg-blue-700">
+                <a href="{{ route('customer.taxis.show', $taxi->id) }}"
+                   class="bg-[#3CC0E9] text-white text-xs font-semibold px-3 py-1 rounded hover:bg-blue-700">
                     Book Now
                 </a>
             </div>

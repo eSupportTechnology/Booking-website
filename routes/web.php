@@ -1235,3 +1235,6 @@ Route::get('/airport-taxis', [\App\Http\Controllers\Customer\CustomerTaxiControl
 Route::get('/single-taxi', function () {
     return view('Customer.single-airport-taxi');
 })->name('single-taxi');
+
+Route::get('/customer/taxis/{id}', [CustomerTaxiController::class, 'show'])
+    ->name('customer.taxis.show');
