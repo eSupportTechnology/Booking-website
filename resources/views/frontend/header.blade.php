@@ -43,9 +43,9 @@
                         </a>
 
                         <!-- Airport Taxis -->
-                        <a href="{{ route('airport.taxis') }}"
+                        <a href="{{ route('customer.airport-taxis') }}"
                         class="flex items-center justify-center space-x-1 px-3 py-1 rounded-full border text-white transition 
-                                {{ $currentRoute == 'airport.taxis' ? 'border-white bg-[#1F8FB2]' : 'border-transparent hover:border-white' }}">
+                                {{ $currentRoute == 'customer.airport-taxis' ? 'border-white bg-[#1F8FB2]' : 'border-transparent hover:border-white' }}">
                             <img src="{{ asset('assets/taxi.svg') }}" alt="Taxi" class="w-4 h-4" />
                             <span style="font-family: 'Noto Sans', sans-serif;">Airport taxis</span>
                         </a>
