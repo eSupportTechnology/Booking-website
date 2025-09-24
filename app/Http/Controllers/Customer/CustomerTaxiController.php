@@ -30,6 +30,15 @@ public function showLatestTaxis(){
     return view('frontend.airport-taxi', compact('latestActiveTaxis'));
 }
 
+public function show($id)
+{
+    // Find taxi by id (only active ones)
+    $taxi = Taxi::where('status', 'Active')
+        ->with('type', 'drivers', 'fare')
+        ->findOrFail($id);
+
+    return view('Customer.single-airport-taxi', compact('taxi'));
+}
 
 }
 
