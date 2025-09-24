@@ -209,7 +209,7 @@
 <section class="py-12 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Title -->
-        <h2 class="text-2xl font-semibold text-gray-800 mb-4">
+        <h2 class="text-2xl sm:text-3xl font-semibold text-gray-800 mb-6 text-center sm:text-left">
             Register Your Car Rental Brand
         </h2>
 
