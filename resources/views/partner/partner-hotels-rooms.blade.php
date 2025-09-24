@@ -112,7 +112,9 @@
             saveStep1() {
                 const url = window.location.href;
                 const pathname = new URL(url).pathname;
-                const propertyId = pathname.substring(pathname.lastIndexOf("/") + 1);
+                // Extract property ID from URL like /partner/hotels/56/rooms
+                const pathSegments = pathname.split('/').filter(segment => segment !== '');
+                const propertyId = pathSegments[pathSegments.length - 2]; // Get second-to-last segment
                 const roomType = document.querySelector('.room-type-id')?.value;
                 const roomCount = document.querySelector('[name="property_count"]')?.value;
                 const smokingAllowed = document.querySelector('input[name="smoking"]:checked')?.nextElementSibling?.innerText.trim().toLowerCase() === 'yes';

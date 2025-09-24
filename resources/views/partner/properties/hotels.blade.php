@@ -83,7 +83,7 @@
                                 class="flex-1 bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg text-center text-sm transition-colors duration-200">
                                 <i class="fas fa-eye mr-1"></i>View
                             </a>
-                            <a href="{{ route('partner.hotels.edit', $property['id']) }}"
+                            <a href="{{ route('partner.hotels.edit.overview', $property['id']) }}"
                                 class="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-center text-sm transition-colors duration-200">
                                 <i class="fas fa-edit mr-1"></i>Edit
                             </a>
@@ -112,23 +112,44 @@
 <script>
 function deleteProperty(propertyId) {
     if (confirm('Are you sure you want to delete this property? This action cannot be undone.')) {
+        // Show loading state
+        const deleteButton = event.target;
+        const originalContent = deleteButton.innerHTML;
+        deleteButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        deleteButton.disabled = true;
+        
         fetch(`/partner/properties/${propertyId}`, {
             method: 'DELETE',
             headers: {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
             }
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.success) {
+                // Show success message
+                alert('Property deleted successfully!');
                 location.reload();
             } else {
-                alert('Error deleting property: ' + data.message);
+                alert('Error deleting property: ' + (data.message || 'Unknown error'));
+                // Restore button state
+                deleteButton.innerHTML = originalContent;
+                deleteButton.disabled = false;
             }
         })
         .catch(error => {
-            alert('Error deleting property');
+            console.error('Delete error:', error);
+            alert('Error deleting property: ' + error.message);
+            // Restore button state
+            deleteButton.innerHTML = originalContent;
+            deleteButton.disabled = false;
         });
     }
 }

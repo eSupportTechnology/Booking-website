@@ -24,7 +24,7 @@ class HotelPropertyEditController extends Controller
         $data['amenities'] = Amenity::all()->groupBy('category');
         $data['roomTypes'] = RoomType::all();
         
-        return view('partner.hotel-edit.index', $data);
+        return view('partner.hotel-edit.partner-hotels-edit', $data);
     }
     
     public function update(Property $property, Request $request, UpdateHotelPropertyAction $action)

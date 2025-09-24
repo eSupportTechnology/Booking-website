@@ -31,6 +31,9 @@ class GetHotelEditDataAction
         return [
             'property' => $property,
             'rooms' => $rooms,
+            'hasPhotos' => $property->photos->count() > 0,
+            'hasRooms' => $rooms->count() > 0,
+            'hasPaymentDetails' => $property->pricing !== null,
             'isEdit' => true
         ];
     }

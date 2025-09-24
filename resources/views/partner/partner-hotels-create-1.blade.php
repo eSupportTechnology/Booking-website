@@ -1223,8 +1223,9 @@
                                             can add more.</p>
                                     </div>
                                 </div>
-                                <a href="{{ route('partner.hotels.room', ['id' => $categoryId]) }}"
-                                    class=" bg-sky-400 border border-sky-400 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-sky-500">
+                                <a :href="propertyId ? '{{ route('partner.hotels.room', ':property') }}'.replace(':property', propertyId) : '#'"
+                                    :class="propertyId ? 'bg-sky-400 border border-sky-400 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-sky-500' : 'bg-gray-300 border border-gray-300 text-gray-500 text-sm font-semibold px-4 py-2 rounded cursor-not-allowed'"
+                                    :onclick="!propertyId ? 'event.preventDefault(); alert(\"Please complete the previous steps first.\")' : ''">
                                     Add room
                                 </a>
                             </div>
@@ -1242,8 +1243,9 @@
                                             expect.</p>
                                     </div>
                                 </div>
-                                <a href="{{ route('partner.hotels.photos') }}"
-                                    class="border border-sky-400 text-sky-400 text-sm font-semibold px-4 py-2 rounded hover:bg-sky-50">
+                                <a :href="propertyId ? '{{ route('partner.hotels.photos', ':property') }}'.replace(':property', propertyId) : '#'"
+                                    :class="propertyId ? 'border border-sky-400 text-sky-400 text-sm font-semibold px-4 py-2 rounded hover:bg-sky-50' : 'border border-gray-300 text-gray-500 text-sm font-semibold px-4 py-2 rounded cursor-not-allowed'"
+                                    :onclick="!propertyId ? 'event.preventDefault(); alert(\"Please complete the previous steps first.\")' : ''">
                                     Add Photos
                                 </a>
 

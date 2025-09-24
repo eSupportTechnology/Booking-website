@@ -56,7 +56,7 @@
                     <div id="photoPreview" class="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-4"></div>
 
                     <div class="mt-6 flex justify-between">
-                        <a href="{{ url('/partner-homes-edit/' . $property->id) }}">
+                        <a href="{{ route('partner.hotels.edit.overview', $property->id) }}">
                             <button
                                 class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
                                 ←
@@ -120,6 +120,20 @@
         const continueButton = document.getElementById('continueBtn');
         const propertyId = document.getElementById('propertyId').value;
         const propertyType = urlParams.get('propertyType');
+        
+        // Load existing photos
+        @if($property->photos->count() > 0)
+            @foreach($property->photos as $photo)
+                uploadedPhotos.push({
+                    file: null,
+                    url: '{{ asset("storage/" . $photo->photo_path) }}',
+                    existing: true,
+                    id: {{ $photo->id }},
+                    isPrimary: {{ $photo->is_primary ? 'true' : 'false' }}
+                });
+            @endforeach
+            renderPreview();
+        @endif
 
         // Function to clean up oversized files
         function cleanupOversizedFiles() {
@@ -218,25 +232,75 @@
                 const wrapper = document.createElement('div');
                 wrapper.className = 'relative group border rounded overflow-hidden';
 
-                if (index === 0) {
+                if ((photo.existing && photo.isPrimary) || (!photo.existing && index === 0)) {
                     const mainLabel = document.createElement('span');
                     mainLabel.className = 'absolute top-1 left-1 bg-green-600 text-white text-xs px-2 py-1 rounded z-10';
                     mainLabel.textContent = 'Main Photo';
                     wrapper.appendChild(mainLabel);
                 }
+                
+                // Add set as primary button for existing photos
+                if (photo.existing && !photo.isPrimary) {
+                    const primaryBtn = document.createElement('button');
+                    primaryBtn.className = 'absolute bottom-1 right-1 bg-blue-600 text-white text-xs px-2 py-1 rounded hover:bg-blue-700';
+                    primaryBtn.textContent = 'Set Main';
+                    primaryBtn.addEventListener('click', async () => {
+                        try {
+                            const response = await fetch(`/partner/hotels/${propertyId}/photos/${photo.id}/primary`, {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                    'Accept': 'application/json'
+                                }
+                            });
+                            const result = await response.json();
+                            if (result.success) {
+                                // Update primary status in local array
+                                uploadedPhotos.forEach(p => p.isPrimary = false);
+                                photo.isPrimary = true;
+                                renderPreview();
+                            }
+                        } catch (error) {
+                            console.error('Error setting primary photo:', error);
+                        }
+                    });
+                    wrapper.appendChild(primaryBtn);
+                }
 
-                // Add file size indicator
-                const sizeLabel = document.createElement('span');
-                sizeLabel.className = 'absolute bottom-1 left-1 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded';
-                sizeLabel.textContent = `${(photo.file.size / (1024 * 1024)).toFixed(2)} MB`;
-                wrapper.appendChild(sizeLabel);
+                // Add file size indicator only for new files
+                if (photo.file) {
+                    const sizeLabel = document.createElement('span');
+                    sizeLabel.className = 'absolute bottom-1 left-1 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded';
+                    sizeLabel.textContent = `${(photo.file.size / (1024 * 1024)).toFixed(2)} MB`;
+                    wrapper.appendChild(sizeLabel);
+                }
 
                 const removeBtn = document.createElement('button');
-                removeBtn.className = 'absolute top-1 right-1 bg-black bg-opacity-50 text-white rounded-full p-1 z-10 hover:bg-opacity-75';
-                removeBtn.innerHTML = '&times;';
-                removeBtn.addEventListener('click', () => {
-                    uploadedPhotos.splice(index, 1);
-                    renderPreview();
+                removeBtn.className = 'absolute top-1 right-1 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-700';
+                removeBtn.innerHTML = '×';
+                removeBtn.addEventListener('click', async () => {
+                    if (photo.existing) {
+                        // Delete existing photo from server
+                        try {
+                            const response = await fetch(`/partner/hotels/${propertyId}/photos/${photo.id}`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                    'Accept': 'application/json'
+                                }
+                            });
+                            const result = await response.json();
+                            if (result.success) {
+                                uploadedPhotos.splice(index, 1);
+                                renderPreview();
+                            }
+                        } catch (error) {
+                            console.error('Error deleting photo:', error);
+                        }
+                    } else {
+                        uploadedPhotos.splice(index, 1);
+                        renderPreview();
+                    }
                 });
 
                 const img = document.createElement('img');
@@ -250,7 +314,7 @@
 
             // Check if all files are valid and we have at least 3 photos
             const hasValidFiles = uploadedPhotos.length >= 3 && 
-                                uploadedPhotos.every(photo => photo.file.size <= maxSize);
+                                uploadedPhotos.every(photo => !photo.file || photo.file.size <= maxSize);
             
             continueButton.disabled = !hasValidFiles;
             continueButton.className = !hasValidFiles ?
@@ -277,9 +341,18 @@
                 return;
             }
 
+            // Only upload new photos (not existing ones)
+            const newPhotos = uploadedPhotos.filter(photo => !photo.existing && photo.file);
+            
+            if (newPhotos.length === 0) {
+                // No new photos to upload, just redirect
+                window.location.href = `{{ route('partner.hotels.edit.overview', $property->id) }}?uploaded=true&rooms=true&propertyType=${encodeURIComponent(propertyType)}`;
+                return;
+            }
+            
             const formData = new FormData();
             formData.append('property_id', propertyId);
-            uploadedPhotos.forEach((photo, index) => {
+            newPhotos.forEach((photo, index) => {
                 formData.append(`photos[${index}]`, photo.file);
             });
 
@@ -379,7 +452,7 @@
                         timer: 3000
                     });
                     setTimeout(() => {
-                        window.location.href = `{{ url('/partner-homes-edit/' . $property->id) }}?uploaded=true&rooms=true&propertyType=${encodeURIComponent(propertyType)}`;
+                        window.location.href = `{{ route('partner.hotels.edit.overview', $property->id) }}?uploaded=true&rooms=true&propertyType=${encodeURIComponent(propertyType)}`;
                     }, 3000);
                 } else {
                     Swal.fire({

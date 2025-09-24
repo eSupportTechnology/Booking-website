@@ -418,7 +418,7 @@ Route::get('/partner-homes-images/{id}', [PropertyController::class, 'showPrivat
 
 Route::get('/partner-apartments-final/{property?}', [PropertyController::class, 'showFinalStep'])->name('partner.apartments.final');
 
-Route::get('/partner-hotels-edit/{property}', [\App\Http\Controllers\Partner\HotelEditController::class, 'edit'])->name('partner.hotels.edit');
+Route::get('/partner-hotels-edit/{property}', [\App\Http\Controllers\Partner\HotelEditController::class, 'overview'])->name('partner.hotels.edit.main');
 
 Route::get('/partner-hotels-cancel-policies', function () {
     return view('frontend.partner-hotels-cancel-policies');
@@ -634,11 +634,13 @@ Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddle
     Route::post('/homes/{property}/rooms', [\App\Http\Controllers\Partner\HomeEditController::class, 'updateRooms'])->name('partner.homes.update.rooms');
     Route::post('/homes/{property}/verification', [\App\Http\Controllers\Partner\HomeEditController::class, 'updateVerification'])->name('partner.homes.update.verification');
 
-    Route::get('/hotels/{property}/edit', [\App\Http\Controllers\Partner\HotelEditController::class, 'edit'])->name('partner.hotels.edit.new');
+    Route::get('/hotels/{property}/overview', [\App\Http\Controllers\Partner\HotelEditController::class, 'overview'])->name('partner.hotels.edit.overview');
+    Route::get('/hotels/{property}/edit', [\App\Http\Controllers\Partner\HotelEditController::class, 'edit'])->name('partner.hotels.edit');
+    Route::get('/hotels/{property}/amenities', [\App\Http\Controllers\Partner\HotelEditController::class, 'editAmenities'])->name('partner.hotels.amenities');
     Route::get('/hotels/{property}/photos', [\App\Http\Controllers\Partner\HotelEditController::class, 'editPhotos'])->name('partner.hotels.photos');
     Route::get('/hotels/{property}/rooms', [\App\Http\Controllers\Partner\HotelEditController::class, 'editRooms'])->name('partner.hotels.rooms');
-    Route::get('/hotels/{property}/payment', [\App\Http\Controllers\Partner\HotelEditController::class, 'editPayment'])->name('partner.hotels.payment');
-    Route::get('/hotels/{property}/complete', [\App\Http\Controllers\Partner\HotelEditController::class, 'completeRegistration'])->name('partner.hotels.complete');
+    Route::get('/hotels/{property}/payment', [\App\Http\Controllers\Partner\HotelEditController::class, 'editPayment'])->name('partner.hotels.payments');
+    Route::get('/hotels/{property}/policies', [\App\Http\Controllers\Partner\HotelEditController::class, 'editPolicies'])->name('partner.hotels.policies');
     
     // New comprehensive hotel edit routes
     Route::get('/hotels/{property}/edit-comprehensive', [\App\Http\Controllers\Partner\HotelPropertyEditController::class, 'edit'])->name('partner.hotels.edit.comprehensive');

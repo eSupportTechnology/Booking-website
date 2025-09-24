@@ -163,15 +163,15 @@ console.log('propertyType:', propertyType, '(type:', typeof propertyType, ')');
 
         // Set up links immediately
         if (photoLink) {
-            photoLink.href = `/partner-homes-images/${propertyId}?details=true&propertyType=${encodeURIComponent(propertyType)}`;
+            photoLink.href = `/partner-homes-images/${propertyId}`;
         }
 
         if (roomsEditLink) {
-            roomsEditLink.href = `/partner-homes-rooms/${propertyId}?details=true&propertyType=${encodeURIComponent(propertyType)}`;
+            roomsEditLink.href = `/partner-homes-rooms/${propertyId}`;
         }
 
         if (paymenEditLink) {
-            paymenEditLink.href = `/partner-homes-payments/${propertyId}?propertyType=${encodeURIComponent(propertyType)}`;
+            paymenEditLink.href = `/partner-homes-payments/${propertyId}`;
         }
 
         // Function to set up complete registration button
@@ -200,7 +200,7 @@ console.log('propertyType:', propertyType, '(type:', typeof propertyType, ')');
                 // Homes routes
                 console.log('Setting up homes routes');
                 if (paymenEditLink) {
-                    paymenEditLink.href = `/partner-homes-payments/${propertyId}?propertyType=${encodeURIComponent(propertyType)}`;
+                    paymenEditLink.href = `/partner-homes-payments/${propertyId}`;
                 }
 
 
@@ -221,13 +221,13 @@ console.log('propertyType:', propertyType, '(type:', typeof propertyType, ')');
                         return;
                     }
                     console.log('Complete registration clicked - navigating to homes route');
-                    window.location.href = `/partner/partner-homes-complete-registration/${propertyId}?propertyType=${encodeURIComponent(propertyType)}`;
+                    window.location.href = `/partner-homes-complete-registration/${propertyId}`;
                 });
             } else {
                 // Hotels routes
                 console.log('Setting up hotels routes');
                 if (paymenEditLink) {
-                    paymenEditLink.href = `/partner/partner-hotels-payment/${propertyId}?propertyType=${encodeURIComponent(propertyType)}`;
+                    paymenEditLink.href = `/partner/partner-hotels-payment/${propertyId}`;
                 }
                 // Property details edit should go to hotels wizard with prefill by propertyId
                 if (detailsLink) {
@@ -235,7 +235,7 @@ console.log('propertyType:', propertyType, '(type:', typeof propertyType, ')');
                     detailsLink.parentNode.replaceChild(newDetailsLink, detailsLink);
                     newDetailsLink.addEventListener('click', (e) => {
                         e.preventDefault();
-                        window.location.href = `/partner/partner-hotels-create-1/${propertyId}?propertyType=${encodeURIComponent(propertyType)}`;
+                        window.location.href = `/partner-hotels-create-1`;
                     });
                 }
 
@@ -246,7 +246,7 @@ console.log('propertyType:', propertyType, '(type:', typeof propertyType, ')');
                         return;
                     }
                     console.log('Complete registration clicked - navigating to hotels route');
-                    window.location.href = `/partner/partner-hotels-complete-registration/${propertyId}?propertyType=${encodeURIComponent(propertyType)}`;
+                    window.location.href = `/partner-hotels-complete-registration`;
                 });
             }
 
