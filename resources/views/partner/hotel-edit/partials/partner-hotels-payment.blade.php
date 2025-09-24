@@ -30,16 +30,16 @@
         step: 1,
         propertyId: {{ $propertyModel ? $propertyModel->id : 'null' }},
         formData: {
-            payment_method: 'credit',
-            invoice_name: 'user',
-            same_address: 'yes',
-            legal_company_name: '',
-            ownership_type: '',
-            owners: [{ firstName: '', lastName: '', dob: '' }],
-            business_address: '',
-            business_zip_code: '',
-            business_city: '',
-            business_country: ''
+            payment_method: '{{ $propertyModel->payment_method ?? "credit" }}',
+            invoice_name: '{{ $propertyModel->invoice_name ?? "user" }}',
+            same_address: '{{ $propertyModel->same_address ?? "yes" }}',
+            legal_company_name: '{{ $propertyModel->legal_company_name ?? "" }}',
+            ownership_type: '{{ $propertyModel->ownership_type ?? "" }}',
+            owners: @json($propertyModel->owners ?? [['firstName' => '', 'lastName' => '', 'dob' => '']]),
+            business_address: '{{ $propertyModel->business_address ?? "" }}',
+            business_zip_code: '{{ $propertyModel->business_zip_code ?? "" }}',
+            business_city: '{{ $propertyModel->business_city ?? "" }}',
+            business_country: '{{ $propertyModel->business_country ?? "" }}'
         },
         
         init() {
@@ -293,7 +293,7 @@
                     this.clearFormData();
                     // Redirect to a GET route after successful completion
                     setTimeout(() => {
-                        window.location.href =`/partner-homes-edit/${this.propertyId}?propertyType=single&paymentDetails=true&uploaded=true&rooms=true`;
+                        window.location.href = `{{ route('partner.hotels.edit.overview', $propertyModel->id) }}?propertyType=single&paymentDetails=true&uploaded=true&rooms=true`;
                     }, 2000);
                 } else {
                     showToast('Error: ' + data.message, 'error');
@@ -390,7 +390,7 @@
 
             <!-- Continue Button -->
             <div class="flex justify-between items-center pt-4">
-                <button @click="window.location.href =`/partner-homes-edit/${propertyId}?propertyType=single&uploaded=true&rooms=true`"
+                <button @click="window.location.href = `{{ route('partner.hotels.edit.overview', $propertyModel->id) }}?propertyType=single&uploaded=true&rooms=true`"
                     class="flex items-center border border-[#3CC0E9] rounded text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12">
                     ←
                 </button>

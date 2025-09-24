@@ -110,9 +110,20 @@
                 };
             },
             saveStep1() {
-                const url = window.location.href;
-                const pathname = new URL(url).pathname;
-                const propertyId = pathname.substring(pathname.lastIndexOf("/") + 1);
+                // Get property ID from hidden input field
+                const propertyId = document.getElementById('propertyId')?.value;
+                
+                if (!propertyId) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Property ID not found',
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    return;
+                }
                 const roomType = document.querySelector('.room-type-id')?.value;
                 const roomCount = document.querySelector('[name="property_count"]')?.value;
                 const smokingAllowed = document.querySelector('input[name="smoking"]:checked')?.nextElementSibling?.innerText.trim().toLowerCase() === 'yes';
@@ -365,9 +376,20 @@
             },
 
             async saveStep6() {
-                const url = window.location.href;
-                const pathname = new URL(url).pathname;
-                const propertyId = pathname.substring(pathname.lastIndexOf("/") + 1);
+                // Get property ID from hidden input field
+                const propertyId = document.getElementById('propertyId')?.value;
+                
+                if (!propertyId) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Property ID not found',
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    return;
+                }
                 try {
                     const response = await fetch('/save-step-6-room-rate-plans', {
                         method: 'POST',
@@ -395,7 +417,7 @@
                             position: 'top-end',
                         });
                         setTimeout(() => {
-                            window.location.href = `/partner-homes-edit/${propertyId}?rooms=true&propertyType=${encodeURIComponent(urlParams.get('propertyType'))}`;
+                            window.location.href = `{{ route('partner.hotels.edit.overview', $property->id) }}?rooms=true&propertyType=${encodeURIComponent(urlParams.get('propertyType'))}`;
 
                         }, 1500);
                     } else {
@@ -759,7 +781,7 @@
                         <div class="flex justify-between mt-6">
 
                             <!-- Back Button (Left-aligned) -->
-                            <a href="{{ route('partner.hotels.create.2') }}">
+                            <a href="{{ route('partner.hotels.edit.overview', $property->id) }}">
                                 <button type="button" @click="step > 1 ? step-- : step"
                                     :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
                                     class="border border-[#3CC0E9] text-blue-600 font-semibold py-2 px-4 rounded">

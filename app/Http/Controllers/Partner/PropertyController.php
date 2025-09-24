@@ -74,15 +74,72 @@ class PropertyController extends Controller
 
     public function destroy($propertyId)
     {
-        $property = \App\Models\Property::where('id', $propertyId)
-            ->where('user_id', auth()->id())
-            ->firstOrFail();
-
-        $property->delete();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Property deleted successfully'
+        \Log::info('Property deletion attempt', [
+            'property_id' => $propertyId,
+            'user_id' => auth()->id(),
+            'user_name' => auth()->user()->name ?? 'Unknown'
         ]);
+        
+        try {
+            $property = \App\Models\Property::where('id', $propertyId)
+                ->where('user_id', auth()->id())
+                ->first();
+
+            \Log::info('Property lookup result', [
+                'property_found' => $property ? true : false,
+                'property_id' => $propertyId,
+                'user_id' => auth()->id()
+            ]);
+
+            if (!$property) {
+                \Log::warning('Property not found or access denied', [
+                    'property_id' => $propertyId,
+                    'user_id' => auth()->id()
+                ]);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Property not found or you do not have permission to delete it'
+                ], 404);
+            }
+
+            // Check if property has any active bookings
+            $activeBookings = $property->bookings()->where('status', 'active')->count();
+            if ($activeBookings > 0) {
+                \Log::warning('Cannot delete property with active bookings', [
+                    'property_id' => $propertyId,
+                    'active_bookings' => $activeBookings
+                ]);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Cannot delete property with active bookings'
+                ], 400);
+            }
+
+            // Use soft delete which is safer
+            $property->delete();
+            
+            \Log::info('Property deleted successfully', [
+                'property_id' => $propertyId,
+                'user_id' => auth()->id()
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Property deleted successfully'
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error deleting property: ' . $e->getMessage(), [
+                'property_id' => $propertyId,
+                'user_id' => auth()->id(),
+                'error_message' => $e->getMessage(),
+                'error_file' => $e->getFile(),
+                'error_line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while deleting the property: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }
