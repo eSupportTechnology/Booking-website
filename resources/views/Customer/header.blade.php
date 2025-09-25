@@ -100,6 +100,7 @@
                             <img src="{{ asset('assets/taxi.svg') }}" alt="Taxi" class="w-4 h-4" />
                             <span style="font-family: 'Noto Sans', sans-serif;">Airport taxis</span>
                         </a>
+                        
 
                         <!-- Tour Packages -->
                         <a href="{{ route('airport.tours') }}"
