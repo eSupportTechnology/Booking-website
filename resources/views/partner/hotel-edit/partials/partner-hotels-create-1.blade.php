@@ -14,164 +14,12 @@
 
     <!-- Progress Bar -->
     <div class="w-full bg-gray-200 h-2">
-        <div class="bg-[#3CC0E9] h-2 transition-all duration-500" :style="'width:' + (step * 100 / 8) + '%'"></div>
+        <div class="bg-[#3CC0E9] h-2 transition-all duration-500" :style="'width:' + ((step - 4) * 100 / 8) + '%'"></div>
     </div>
 
     <div class="max-w-6xl p-4 ml-14">
         <form class="p-6 rounded-lg space-y-6" @submit.prevent>
-            <!-- STEP 1 -->
-            <div x-show="step === 1" x-cloak class="container mx-auto px-4 py-8 max-w-6xl">
-                <h2 class="text-2xl font-bold mb-6 mt-8">
-                    Which property category is most similar to your place?
-                </h2>
 
-                <div class="bg-white p-6 rounded-lg shadow">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                        <!-- Limit subcategories shown unless showMore is true -->
-
-                        <template x-for="(subcategory, index) in showMore ? subcategories : subcategories.slice(0, 6)"
-                            :key="subcategory.id">
-                            <div @click="selectedBox = subcategory.id,subtypeName = subcategory.name"
-                                :class="selectedBox === subcategory.id ? 'border-2 border-blue-500 bg-blue-50' : 'border border-gray-300'"
-                                class="block rounded p-4 cursor-pointer transition bg-white relative">
-                                <div>
-                                    <h3 class="font-semibold text-gray-900 mb-2" x-text="subcategory.name"></h3>
-                                    <p class="text-sm text-gray-700"
-                                        x-text="subcategoryDescriptions[subcategory.id] || 'Choose this type'"></p>
-                                </div>
-                                <div class="absolute top-2 right-2" x-show="selectedBox === subcategory.id">
-                                    <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M5 13l4 4L19 7" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </template>
-
-
-                        <!-- Show More / Less Button -->
-                        <div @click="showMore = !showMore"
-                            class="border border-gray-300 rounded p-4 cursor-pointer text-blue-600 hover:bg-gray-50 flex items-center justify-center font-medium transition">
-                            <span x-text="showMore ? '– Show less' : '+ More options'"></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex items-center justify-between pt-4">
-                    <button type="button" @click="window.location.href='{{ route('partner.property.category') }}'"
-                        class="border border-[#3CC0E9] text-blue-600 font-semibold py-2 px-4 rounded">
-                        ←
-                    </button>
-
-                    <button @click="submitStep1()" :disabled="!selectedBox"
-                        :class="!selectedBox ? 'bg-blue-300 cursor-not-allowed' : 'bg-[#3CC0E9] hover:bg-[#29ACD5]'"
-                        class="py-3 px-8 rounded transition-all duration-200 text-white font-semibold" type="button">
-                        Continue
-                    </button>
-                </div>
-            </div>
-
-
-            <!-- STEP 2 -->
-            <div x-show="step === 2" x-cloak class="container mx-auto px-2 py-8 max-w-6xl mt-8">
-                <div class="bg-white max-w-2xl w-full p-6 rounded-lg shadow space-y-6">
-                    <h2 class="text-xl font-bold text-left">How many <span x-text="subtypeName.toLowerCase()"></span>s are you listing?</h2>
-
-                    <div class="space-y-4">
-                        <label :class="unitType === 'one' ? 'border-blue-500 border-2' : 'border-gray-300'"
-                            class="block border rounded p-4 bg-white cursor-pointer" @click="unitType = 'one'">
-                            <div class="flex justify-between items-center">
-                                <div class="flex items-center space-x-4">
-                                    <img src="{{ asset('images/aprt-b.png') }}" class="w-14 h-10" />
-                                    <span class="text-base">One <span x-text="subtypeName.toLowerCase()"></span> with one or multiple rooms</span>
-                                </div>
-                                <template x-if="unitType === 'one'">
-                                    <span class="text-blue-500 font-bold text-xl">✔</span>
-                                </template>
-                            </div>
-                        </label>
-
-                        <label :class="unitType === 'multiple' ? 'border-blue-500 border-2' : 'border-gray-300'"
-                            class="block border rounded p-4 bg-white cursor-pointer" @click="unitType = 'multiple'">
-                            <div class="flex justify-between items-center">
-                                <div class="flex items-center space-x-4">
-                                    <img src="{{ asset('images/aprt-a.png') }}" class="w-14 h-10" />
-                                    <span class="text-base">Multiple <span x-text="subtypeName.toLowerCase()"></span>s with rooms</span>
-                                </div>
-                                <template x-if="unitType === 'multiple'">
-                                    <span class="text-blue-500 font-bold text-xl">✔</span>
-                                </template>
-                            </div>
-                        </label>
-                    </div>
-
-                    <div x-show="unitType === 'multiple'" x-transition class="mt-6 space-y-4 bg-gray-50 p-4 rounded">
-                        <div>
-                            <label class="block mb-1">Number of properties</label>
-                            <input type="number" min="2" value="2" class="border rounded w-24 p-2" />
-                        </div>
-                    </div>
-
-                    <div class="flex justify-between mt-6">
-                        <button @click="step = 1"
-                            class="border border-[#3CC0E9] text-[#3CC0E9] px-4 py-2 rounded font-semibold">←</button>
-                        <button @click="submitStep2()" :disabled="!unitType"
-                            :class="!unitType ? 'bg-blue-300 cursor-not-allowed' : 'bg-[#3CC0E9] hover:bg-[#29ACD5]'"
-                            class="text-white px-6 py-2 rounded font-semibold">Continue</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- STEP 3 -->
-            <div x-show="step === 3" x-cloak class="container mx-auto px-2 py-8 max-w-6xl mt-8">
-                <template x-if="unitType === 'one'">
-                    <div class="bg-white max-w-2xl w-full p-6 rounded-lg shadow text-center">
-                        <p class="text-base text-gray-600 mb-8">You're listing:</p>
-                        <div class="flex justify-center mb-8">
-                            <img src="{{ asset('images/accomm_one_apt_main@2x.png') }}" alt="One Hotel"
-                                class="w-16 h-16" />
-                        </div>
-                        <h2 class="text-lg md:text-xl font-bold text-gray-800 mb-8">
-                            One hotel where guests can book a room
-                        </h2>
-                        <p class="text-gray-700 mb-8">Does this sound like your property?</p>
-                        <div class="space-y-2">
-                            <button type="button" @click="submitStep3()"
-                                class="w-full bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded">
-                                Continue
-                            </button>
-                            <button type="button" @click="step = 2"
-                                class="w-full border border-[#3CC0E9] text-[#3CC0E9] font-semibold py-2 px-4 rounded mb-6">
-                                No, I need to make a change
-                            </button>
-                        </div>
-                    </div>
-                </template>
-
-                <template x-if="unitType === 'multiple'">
-                    <div class="bg-white max-w-2xl w-full p-6 rounded-lg shadow text-center">
-                        <p class="text-base text-gray-600 mb-8">You're listing:</p>
-                        <div class="flex justify-center mb-8">
-                            <img src="{{ asset('images/accomm_one_apt_main@2x.png') }}" alt="Multiple Hotels"
-                                class="w-16 h-16" />
-                        </div>
-                        <h2 class="text-lg md:text-xl font-bold text-gray-800 mb-8">
-                            Multiple hotels where guests can book a room
-                        </h2>
-                        <p class="text-gray-700 mb-8">Does this sound like your property?</p>
-                        <div class="space-y-2">
-                            <button type="button" @click="submitStep3()"
-                                class="w-full bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded">
-                                Continue
-                            </button>
-                            <button type="button" @click="step = 2"
-                                class="w-full border border-[#3CC0E9] text-[#3CC0E9] font-semibold py-2 px-4 rounded mb-6">
-                                No, I need to make a change
-                            </button>
-                        </div>
-                    </div>
-                </template>
-            </div>
 
             <!-- <template x-if="step === 4">
                 <form @submit.prevent="submitStep4">
@@ -255,7 +103,7 @@
                                         class="block text-sm font-medium text-gray-700">Country/region</label>
                                     <select x-model="property.country"
                                         class="mt-1 p-2 w-full border border-gray-300 rounded">
-                                        <option selected>Sri Lanka</option>
+                                        <option value="Sri Lanka">Sri Lanka</option>
                                     </select>
                                 </div>
                                 <div class="flex flex-col md:flex-row gap-4">
@@ -492,7 +340,7 @@
             </template>
 
             <template x-if="step === 8" x-cloak>
-                <form @submit.prevent="submitStep8">
+                <form @submit.prevent="submitStep8" x-init="console.log('Step 8 - Selected amenities:', selectedAmenities)">
                     <div class="max-w-4xl mx-auto lg:ml-24 px-4 py-8 mt-6">
                         <section class="mb-8">
                             <h1 class="text-xl text-gray-700 font-bold mb-4">What can guests use at your place?</h1>
@@ -507,12 +355,16 @@
 
                                         <div class="mt-2">
                                             <h3 class="text-gray-700 font-semibold mb-2">Select property type(s)</h3>
+                                            <div class="text-xs text-red-500 mb-2" x-show="selectedAmenities.length > 0">
+                                                Debug: Selected amenities: <span x-text="selectedAmenities.join(', ')"></span>
+                                            </div>
                                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-gray-700">
                                               
                                                     @foreach ($amenities as $amenity)
                                                         <label class="flex items-center space-x-2">
-                                                            <input type="checkbox" name="amenities[]" value="{{ $amenity['id'] }}" x-model="selectedAmenities" />
-                                                            <span>{{ $amenity['name'] }}</span>
+                                                            <input type="checkbox" name="amenities[]" value="{{ $amenity->id }}" 
+                                                                   x-model.number="selectedAmenities" />
+                                                            <span>{{ $amenity->name }}</span>
                                                         </label>
                                                     @endforeach
                                            
@@ -827,6 +679,9 @@
                             <div class="bg-white shadow-md rounded-lg p-6 mb-8">
                                 <h3 class="text-lg  mb-4 font-bold">Select languages
                                 </h3>
+                                <div class="text-xs text-red-500 mb-2" x-show="selectedLanguages.length > 0">
+                                    Debug: Selected languages: <span x-text="selectedLanguages.join(', ')"></span>
+                                </div>
                                 <div class="space-y-2">
                                     @php
                                     $initialLanguages = $languages->take(6);
@@ -836,8 +691,8 @@
                                     <label class="flex items-center cursor-pointer">
                                         <input type="checkbox"
                                             class="mr-2"
-                                            :value="'{{ $lang['id'] }}'" x-model="selectedLanguages" />
-                                        <span>{{ $lang['name'] }}</span>
+                                            value="{{ $lang->id }}" x-model="selectedLanguages" />
+                                        <span>{{ $lang->name }}</span>
                                     </label>
                                     @endforeach
 
@@ -873,8 +728,8 @@
                                             @foreach ($additionalLanguages as $lang)
                                             <li class="p-2 hover:bg-blue-100 cursor-pointer"
                                                 onclick="selectLanguage(this)"
-                                                data-id="{{ $lang['id'] }}">
-                                                {{ $lang['name'] }}
+                                                data-id="{{ $lang->id }}">
+                                                {{ $lang->name }}
                                             </li>
                                             @endforeach
                                         </ul>
@@ -1293,14 +1148,14 @@
     <!-- Alpine Component Script -->
     <script>
         const pathParts = window.location.pathname.split('/');
-        const URLpropertyId = pathParts[4] || null;
+        const URLpropertyId = pathParts[3] || null; // /partner/hotels/{id}/overview - id is at index 3
         console.log('Property ID from URL:', URLpropertyId);
     // Keep local storage to allow client-side persistence between navigations
 
         function stepForm() {
             return {
                 pets_fees: '',
-                step: 1,
+                step: 5,
                 selectedBox: '',
                 unitType: '',
                 propertyId: null,
@@ -1330,14 +1185,15 @@
                 },
 
                 property: {
-                    address: '',
-                    apartment: '',
-                    country: 'Sri Lanka',
-                    city: '',
-                    zipcode: '',
-                    channel_manager: 'yes',
-                    stars: '',
-                    group: '',
+                    address: '{{ $property->address ?? '' }}',
+                    apartment: '{{ $property->apartment ?? '' }}',
+                    country: '{{ $property->country ?? 'Sri Lanka' }}',
+                    city: '{{ $property->city ?? '' }}',
+                    zipcode: '{{ $property->zipcode ?? '' }}',
+                    channel_manager: '{{ $property->channel_manager ?? 'yes' }}',
+                    title: '{{ $property->title ?? '' }}',
+                    stars: '{{ $property->stars ?? '' }}',
+                    group: '{{ $property->group ?? '' }}',
                     breakfast: 'no',
                     parking: 'no',
                     smoking_allowed: 'no',
@@ -1412,13 +1268,14 @@
                 async prefillFromServer() {
                     try {
                         const [propRes, amenitiesRes, languagesRes] = await Promise.all([
-                            fetch(`/partner/property/${this.propertyId}`, { headers: { 'Accept': 'application/json' } }),
+                            fetch(`/partner/property/${this.propertyId}/details`, { headers: { 'Accept': 'application/json' } }),
                             fetch(`/partner/property/${this.propertyId}/amenities`, { headers: { 'Accept': 'application/json' } }),
                             fetch(`/partner/property/${this.propertyId}/languages`, { headers: { 'Accept': 'application/json' } }),
                         ]);
 
                         if (propRes.ok) {
-                            const propData = await propRes.json();
+                            const response = await propRes.json();
+                            const propData = response.property || response;
                             // Map incoming fields to our state if they exist
                             this.property.address = propData.address ?? this.property.address;
                             this.property.apartment = propData.apartment ?? this.property.apartment;
@@ -1455,11 +1312,23 @@
 
                         if (amenitiesRes.ok) {
                             const a = await amenitiesRes.json();
-                            this.selectedAmenities = Array.isArray(a) ? a.map(Number) : [];
+                            console.log('Raw amenities response:', a);
+                            // Handle both direct array and wrapped response
+                            const amenitiesArray = a.amenities || a;
+                            this.selectedAmenities = Array.isArray(amenitiesArray) ? amenitiesArray.map(Number) : [];
+                            console.log('Processed selectedAmenities:', this.selectedAmenities);
+                        } else {
+                            console.log('Amenities request failed:', amenitiesRes.status);
                         }
                         if (languagesRes.ok) {
                             const l = await languagesRes.json();
-                            this.selectedLanguages = Array.isArray(l) ? l.map(String) : [];
+                            console.log('Raw languages response:', l);
+                            // Handle both direct array and wrapped response
+                            const languagesArray = l.languages || l;
+                            this.selectedLanguages = Array.isArray(languagesArray) ? languagesArray.map(String) : [];
+                            console.log('Processed selectedLanguages:', this.selectedLanguages);
+                        } else {
+                            console.log('Languages request failed:', languagesRes.status);
                         }
                     } catch (e) {
                         console.error('Failed to prefill data', e);
