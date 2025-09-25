@@ -115,46 +115,7 @@
 
                 </div>
 
-                <!-- Navigation -->
-                <div class="w-full md:w-auto order-3 md:order-3 mt-2 md:mt-0">
-                    @php
-                        $currentRoute = request()->route()->getName();
-                    @endphp
-                    <nav class="grid grid-cols-2 gap-2 md:flex md:flex-nowrap md:gap-4 mt-2 md:mt-4">
-                        <!-- Stays -->
-                        <a href="{{ route('stays') }}"
-                           class="flex items-center justify-center space-x-1 px-3 py-1 rounded-full border text-white transition 
-                                {{ $currentRoute == 'stays' ? 'border-white bg-[#1F8FB2]' : 'border-transparent hover:border-white' }}">
-                            <img src="{{ asset('assets/stay.svg') }}" alt="Stay" class="w-4 h-4" />
-                            <span style="font-family: 'Noto Sans', sans-serif;">Stays</span>
-                        </a>
-
-                        <!-- Car Rentals -->
-                        <a href="{{ route('car.rentals') }}"
-                           class="flex items-center justify-center space-x-1 px-3 py-1 rounded-full border text-white transition 
-                                {{ $currentRoute == 'car.rentals' ? 'border-white bg-[#1F8FB2]' : 'border-transparent hover:border-white' }}">
-                            <img src="{{ asset('assets/car.svg') }}" alt="Car" class="w-4 h-4" />
-                            <span style="font-family: 'Noto Sans', sans-serif;">Car rentals</span>
-                        </a>
-
-                        <!-- Airport Taxis -->
-                        <a href="{{ route('airport.taxis') }}"
-                           class="flex items-center justify-center space-x-1 px-3 py-1 rounded-full border text-white transition 
-                                {{ $currentRoute == 'airport.taxis' ? 'border-white bg-[#1F8FB2]' : 'border-transparent hover:border-white' }}">
-                            <img src="{{ asset('assets/taxi.svg') }}" alt="Taxi" class="w-4 h-4" />
-                            <span style="font-family: 'Noto Sans', sans-serif;">Airport taxis</span>
-                        </a>
-                        
-
-                        <!-- Tour Packages -->
-                        <a href="{{ route('airport.tours') }}"
-                           class="flex items-center justify-center space-x-1 px-3 py-1 rounded-full border text-white transition 
-                                {{ $currentRoute == 'airport.tours' ? 'border-white bg-[#1F8FB2]' : 'border-transparent hover:border-white' }}">
-                            <img src="{{ asset('assets/tour.svg') }}" alt="Tour" class="w-4 h-4" />
-                            <span style="font-family: 'Noto Sans', sans-serif;">Tour packages</span>
-                        </a>
-                    </nav>
-                </div>
+               
 
             </div>
         </div>
