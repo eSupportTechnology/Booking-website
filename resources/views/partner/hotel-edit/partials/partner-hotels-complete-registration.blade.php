@@ -295,7 +295,7 @@
     </button>
 
     <!-- Open for bookings Button (take remaining space) -->
-   <a href="{{ route('open.booking') }}"
+   <a href="{{ route('open.booking', $property->id) }}"
    class="flex-1 px-6 py-3 bg-[#3CC0E9] text-white text-center font-semibold rounded-md hover:bg-[#29ACD5] transition">
    Open for bookings
 </a>
