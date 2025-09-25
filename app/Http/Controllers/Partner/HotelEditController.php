@@ -36,9 +36,11 @@ class HotelEditController extends Controller
         $subcategories = PropertySubcategory::where('category_id', 2)->get();
         $amenities = Amenity::all();
         $languages = Language::all();
+        $roomTypes = RoomType::all();
+        $groupedAmenities = Amenity::all()->groupBy('category');
         $categoryId = 2;
         
-        return view('partner.hotel-edit.partner-hotels-edit', compact('property', 'rooms', 'hasPhotos', 'hasRooms', 'hasAmenities', 'hasPolicies', 'hasPaymentDetails', 'subcategories', 'amenities', 'languages', 'categoryId'));
+        return view('partner.hotel-edit.partner-hotels-edit', compact('property', 'rooms', 'hasPhotos', 'hasRooms', 'hasAmenities', 'hasPolicies', 'hasPaymentDetails', 'subcategories', 'amenities', 'languages', 'roomTypes', 'groupedAmenities', 'categoryId'))->with('propertyModel', $property);
     }
     
     public function edit(Property $property)
