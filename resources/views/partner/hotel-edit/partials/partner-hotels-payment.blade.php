@@ -26,7 +26,7 @@
     }
 </script>
 
-<div x-data="{ 
+<div x-data="{
         step: 1,
         propertyId: {{ $propertyModel ? $propertyModel->id : 'null' }},
         formData: {
@@ -41,12 +41,12 @@
             business_city: '{{ $propertyModel->business_city ?? "" }}',
             business_country: '{{ $propertyModel->business_country ?? "" }}'
         },
-        
+
         init() {
             // Load saved data from localStorage on initialization
             this.loadFormData();
         },
-        
+
         saveFormData() {
             // Save current form data to localStorage
             if (this.propertyId) {
@@ -56,7 +56,7 @@
                 }));
             }
         },
-        
+
         loadFormData() {
             // Load saved form data from localStorage
             if (this.propertyId) {
@@ -72,27 +72,27 @@
                 }
             }
         },
-        
+
         clearFormData() {
             // Clear saved form data from localStorage
             if (this.propertyId) {
                 localStorage.removeItem(`payment_form_${this.propertyId}`);
             }
         },
-        
+
         goToStep(stepNumber) {
             this.saveFormData();
             this.step = stepNumber;
         },
-        
+
         goBack() {
             this.saveFormData();
             this.step--;
         },
-        
+
         submitStep1() {
             console.log('Property ID in submitStep1:', this.propertyId);
-            
+
             if (!this.propertyId) {
                 showToast('Property ID is required. Please go back and complete the previous steps first.', 'error');
                 return;
@@ -304,7 +304,7 @@
                 showToast('An error occurred while completing the payment process', 'error');
             });
         },
-    }" 
+    }"
     x-init="init()">
 
 

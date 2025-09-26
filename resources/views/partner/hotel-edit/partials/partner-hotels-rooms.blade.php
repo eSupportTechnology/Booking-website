@@ -112,7 +112,7 @@
             saveStep1() {
                 // Get property ID from hidden input field
                 const propertyId = document.getElementById('propertyId')?.value;
-                
+
                 if (!propertyId) {
                     Swal.fire({
                         icon: 'error',
@@ -212,7 +212,7 @@
                 const bathroomType = bathroomPrivate === 'yes' ? 'private' : 'shared';
 
                 const amenityCheckboxes = document.querySelectorAll('input[type="checkbox"]');
-                
+
 
                 // `this.rooms` should be accessible from Alpine — pass to JS if needed
                 const rooms = this.rooms || [] // make sure you assign this somewhere
@@ -378,7 +378,7 @@
             async saveStep6() {
                 // Get property ID from hidden input field
                 const propertyId = document.getElementById('propertyId')?.value;
-                
+
                 if (!propertyId) {
                     Swal.fire({
                         icon: 'error',
@@ -1172,8 +1172,8 @@
                             <!-- Like (Thumbs Up) -->
                             <button @click="feedback = 'like'" class="ml-2 focus:outline-none">
                                 <img
-                                    :src="feedback === 'like' 
-              ? '{{ asset('assets/iconamoon_like-thin (1).svg') }}' 
+                                    :src="feedback === 'like'
+              ? '{{ asset('assets/iconamoon_like-thin (1).svg') }}'
               : '{{ asset('assets/iconamoon_like-thin.svg') }}'"
                                     alt="Like" class="w-5 h-5" />
                             </button>
@@ -1182,8 +1182,8 @@
                             <!-- Dislike -->
                             <button @click="feedback = 'dislike'" class="ml-1 focus:outline-none">
                                 <img
-                                    :src="feedback === 'dislike' 
-              ? '{{ asset('assets/iconamoon_dislike-thin (1).svg') }}' 
+                                    :src="feedback === 'dislike'
+              ? '{{ asset('assets/iconamoon_dislike-thin (1).svg') }}'
               : '{{ asset('assets/iconamoon_dislike-thin.svg') }}'"
                                     alt="Dislike" class="w-5 h-5" />
                             </button>

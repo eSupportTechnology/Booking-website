@@ -643,8 +643,10 @@ Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddle
     Route::get('/hotels/{property}/payment', [\App\Http\Controllers\Partner\HotelEditController::class, 'editPayment'])->name('partner.hotels.payments');
     Route::get('/hotels/{property}/policies', [\App\Http\Controllers\Partner\HotelEditController::class, 'editPolicies'])->name('partner.hotels.policies');
     
-    // New comprehensive hotel edit routes
-    Route::get('/hotels/{property}/edit-comprehensive', [\App\Http\Controllers\Partner\HotelPropertyEditController::class, 'edit'])->name('partner.hotels.edit.comprehensive');
+    // New comprehensive hotel edit routes - redirect to overview
+    Route::get('/hotels/{property}/edit-comprehensive', function($property) {
+        return redirect()->route('partner.hotels.edit.overview', $property);
+    })->name('partner.hotels.edit.comprehensive');
     Route::post('/hotels/{property}/basic-details', [\App\Http\Controllers\Partner\HotelPropertyEditController::class, 'updateBasicDetails'])->name('partner.hotels.update.basic-details');
     Route::post('/hotels/{property}/amenities', [\App\Http\Controllers\Partner\HotelPropertyEditController::class, 'updateAmenities'])->name('partner.hotels.update.amenities');
     Route::post('/hotels/{property}/pricing', [\App\Http\Controllers\Partner\HotelPropertyEditController::class, 'updatePricing'])->name('partner.hotels.update.pricing');

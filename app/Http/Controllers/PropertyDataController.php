@@ -224,15 +224,18 @@ class PropertyDataController extends Controller
     public function getHouseRules(Request $request, Property $property)
     {
         try {
+            $policy = $property->policies;
+            
             $houseRules = [
-                'smoking_allowed' => $property->smoking_allowed ?? false,
-                'parties_allowed' => $property->parties_allowed ?? false,
-                'pets_allowed' => $property->pets_allowed ?? 'no',
-                'pets_fees' => $property->pets_fees,
-                'check_in_from' => $property->check_in_from ?? '15:00',
-                'check_in_until' => $property->check_in_until ?? '18:00',
-                'check_out_from' => $property->check_out_from ?? '08:00',
-                'check_out_until' => $property->check_out_until ?? '11:00'
+                'smoking_allowed' => $policy->smoking_allowed ?? false,
+                'parties_allowed' => $policy->parties_allowed ?? false,
+                'pets_allowed' => $policy->pets_allowed ?? 'no',
+                'pets_fees' => $policy->pets_fees,
+                'children_allowed' => $policy->children_allowed ?? true,
+                'check_in_from' => $policy->check_in_from ?? '15:00',
+                'check_in_until' => $policy->check_in_until ?? '18:00',
+                'check_out_from' => $policy->check_out_from ?? '08:00',
+                'check_out_until' => $policy->check_out_until ?? '11:00'
             ];
             
             return response()->json([
