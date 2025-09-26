@@ -359,15 +359,15 @@
                                                 Debug: Selected amenities: <span x-text="selectedAmenities.join(', ')"></span>
                                             </div>
                                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-gray-700">
-                                              
+
                                                     @foreach ($amenities as $amenity)
                                                         <label class="flex items-center space-x-2">
-                                                            <input type="checkbox" name="amenities[]" value="{{ $amenity->id }}" 
+                                                            <input type="checkbox" name="amenities[]" value="{{ $amenity->id }}"
                                                                    x-model.number="selectedAmenities" />
                                                             <span>{{ $amenity->name }}</span>
                                                         </label>
                                                     @endforeach
-                                           
+
 
                                             </div>
                                         </div>
@@ -382,7 +382,7 @@
                                 </button>
                             </div>
                                     </div>
-                                    
+
                                 </div>
 
                                 <!-- Tips and Information (1/3 Width) -->
@@ -427,7 +427,7 @@
 
                             <!-- Buttons Row (Outside grid, full width) -->
                             <!-- Buttons Row aligned with Checkbox Section -->
-                           
+
 
                         </section>
                     </div>
@@ -669,7 +669,7 @@
                   <div class="max-w-2xl mx-auto lg:ml-16 px-4 py-8">
                 <form @submit.prevent="submitStep10">
                     <div>
-                    
+
                             <!-- Header -->
                             <h2 class="text-2xl font-bold mb-8 text-left">
                                 What languages do you or your staff speak?
@@ -684,14 +684,16 @@
                                 </div>
                                 <div class="space-y-2">
                                     @php
-                                    $initialLanguages = $languages->take(6);
-                                    $additionalLanguages = $languages->slice(6);
+                                    $initialLanguages = $languages->where('id', '>', 0)->take(6);
+                                    $additionalLanguages = $languages->where('id', '>', 0)->slice(6);
                                     @endphp
                                     @foreach ($initialLanguages as $lang)
                                     <label class="flex items-center cursor-pointer">
                                         <input type="checkbox"
                                             class="mr-2"
-                                            value="{{ $lang->id }}" x-model="selectedLanguages" />
+                                            value="{{ $lang->id }}" 
+                                            x-model="selectedLanguages"
+                                            :checked="selectedLanguages.includes('{{ $lang->id }}')"/>
                                         <span>{{ $lang->name }}</span>
                                     </label>
                                     @endforeach
@@ -726,11 +728,13 @@
                                         <ul id="languageDropdown"
                                             class="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded max-h-40 overflow-auto shadow-lg hidden">
                                             @foreach ($additionalLanguages as $lang)
+                                            @if($lang->id > 0)
                                             <li class="p-2 hover:bg-blue-100 cursor-pointer"
                                                 onclick="selectLanguage(this)"
                                                 data-id="{{ $lang->id }}">
                                                 {{ $lang->name }}
                                             </li>
+                                            @endif
                                             @endforeach
                                         </ul>
 
@@ -762,7 +766,7 @@
                                 </button>
                             </div>
 
-                        
+
 
                         <script>
                             function selectLanguage(element) {
@@ -1037,9 +1041,9 @@
                             </div>
                         </div>
 
-                        
+
                     </div>
-                
+
 
             </template>
 
@@ -1267,10 +1271,11 @@
 
                 async prefillFromServer() {
                     try {
-                        const [propRes, amenitiesRes, languagesRes] = await Promise.all([
+                        const [propRes, amenitiesRes, languagesRes, houseRulesRes] = await Promise.all([
                             fetch(`/partner/property/${this.propertyId}/details`, { headers: { 'Accept': 'application/json' } }),
                             fetch(`/partner/property/${this.propertyId}/amenities`, { headers: { 'Accept': 'application/json' } }),
                             fetch(`/partner/property/${this.propertyId}/languages`, { headers: { 'Accept': 'application/json' } }),
+                            fetch(`/partner/property/${this.propertyId}/house-rules`, { headers: { 'Accept': 'application/json' } }),
                         ]);
 
                         if (propRes.ok) {
@@ -1325,10 +1330,35 @@
                             console.log('Raw languages response:', l);
                             // Handle both direct array and wrapped response
                             const languagesArray = l.languages || l;
-                            this.selectedLanguages = Array.isArray(languagesArray) ? languagesArray.map(String) : [];
+                            // Filter out any invalid language IDs (0 or negative)
+                            this.selectedLanguages = Array.isArray(languagesArray) ? 
+                                languagesArray.map(String).filter(id => parseInt(id) > 0) : [];
                             console.log('Processed selectedLanguages:', this.selectedLanguages);
+                            
+                            // Populate additional languages that are not in the first 6
+                            setTimeout(() => this.populateAdditionalLanguages(), 100);
                         } else {
                             console.log('Languages request failed:', languagesRes.status);
+                        }
+
+                        if (houseRulesRes.ok) {
+                            const h = await houseRulesRes.json();
+                            console.log('Raw house rules response:', h);
+                            const houseRules = h.houseRules || h;
+                            if (houseRules) {
+                                this.property.smoking_allowed = houseRules.smoking_allowed ? 'yes' : 'no';
+                                this.property.parties_allowed = houseRules.parties_allowed ? 'yes' : 'no';
+                                this.property.pets_allowed = houseRules.pets_allowed || 'no';
+                                this.property.pets_fees = houseRules.pets_fees || 'free';
+                                this.property.children_allowed = houseRules.children_allowed ? 'yes' : 'no';
+                                this.property.check_in_from = houseRules.check_in_from || '15:00';
+                                this.property.check_in_until = houseRules.check_in_until || '18:00';
+                                this.property.check_out_from = houseRules.check_out_from || '08:00';
+                                this.property.check_out_until = houseRules.check_out_until || '11:00';
+                                console.log('House rules loaded:', this.property);
+                            }
+                        } else {
+                            console.log('House rules request failed:', houseRulesRes.status);
                         }
                     } catch (e) {
                         console.error('Failed to prefill data', e);
@@ -1728,7 +1758,8 @@
 
                 async submitStep10() {
                     try {
-                        const selectedLanguages = this.selectedLanguages;
+                        // Filter out any invalid language IDs (0 or negative)
+                        const selectedLanguages = this.selectedLanguages.filter(id => parseInt(id) > 0);
 
                         console.log('Selected languages (state):', selectedLanguages);
 
@@ -1986,6 +2017,31 @@
                     } catch (error) {
                         console.error('Step 13 save failed:', error);
                     }
+                },
+
+                populateAdditionalLanguages() {
+                    const initialLanguageIds = @json($languages->where('id', '>', 0)->take(6)->pluck('id')->toArray());
+                    const allLanguages = @json($languages->where('id', '>', 0)->mapWithKeys(function($lang) { return [$lang->id => $lang->name]; }));
+                    const selectedContainer = document.getElementById('selectedAdditionalLanguages');
+                    
+                    if (!selectedContainer) return;
+                    
+                    // Clear existing additional languages
+                    selectedContainer.innerHTML = '';
+                    
+                    // Add selected languages that are not in the initial 6
+                    this.selectedLanguages.forEach(langId => {
+                        if (!initialLanguageIds.includes(parseInt(langId)) && allLanguages[langId]) {
+                            const label = document.createElement('label');
+                            label.className = 'flex items-center cursor-pointer';
+                            label.id = `lang-${langId}`;
+                            label.innerHTML = `
+                                <input type="checkbox" class="mr-2" name="languages[]" value="${langId}" checked />
+                                <span>${allLanguages[langId]}</span>
+                            `;
+                            selectedContainer.appendChild(label);
+                        }
+                    });
                 }
 
             };

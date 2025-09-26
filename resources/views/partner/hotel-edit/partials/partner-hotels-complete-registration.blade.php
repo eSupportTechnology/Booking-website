@@ -4,7 +4,7 @@
 
 @section('content')
 <section x-data="{ businessType: 'individual' }"  class="w-full px-4 py-8 max-w-2xl mx-auto lg:ml-32">
-   
+
 
     <div class="bg-white p-6 rounded-lg shadow-md space-y-6">
         <!-- <div>
@@ -266,7 +266,7 @@
 
 
 
- 
+
   <div class="mt-6 space-y-4 text-sm text-gray-700">
     <hr class="border-t border-gray-300 mb-4" />
     <label class="flex items-start gap-2">
@@ -284,7 +284,7 @@
     </label>
   </div>
 
-  
+
 </div>
 <!-- Button Row -->
 <div class="mt-6">

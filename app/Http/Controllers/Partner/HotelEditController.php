@@ -35,7 +35,7 @@ class HotelEditController extends Controller
         // Get required data for the partials
         $subcategories = PropertySubcategory::where('category_id', 2)->get();
         $amenities = Amenity::all();
-        $languages = Language::all();
+        $languages = Language::where('id', '>', 0)->get();
         $roomTypes = RoomType::all();
         $groupedAmenities = Amenity::all()->groupBy('category');
         $categoryId = 2;
@@ -51,7 +51,7 @@ class HotelEditController extends Controller
         
         $subcategories = PropertySubcategory::where('category_id', 2)->get();
         $amenities = Amenity::all();
-        $languages = Language::all();
+        $languages = Language::where('id', '>', 0)->get();
         $categoryId = 2;
         
         return view('partner.partner-hotels-create-1', compact('property', 'subcategories', 'amenities', 'languages', 'categoryId'));

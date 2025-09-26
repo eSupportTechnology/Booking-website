@@ -97,7 +97,7 @@
 </div>
 <script>
     const urlParams = new URLSearchParams(window.location.search);
-    
+
     document.addEventListener('DOMContentLoaded', function() {
         // Check if user is authenticated
         if (!document.querySelector('meta[name="csrf-token"]')) {
@@ -120,7 +120,7 @@
         const continueButton = document.getElementById('continueBtn');
         const propertyId = document.getElementById('propertyId').value;
         const propertyType = urlParams.get('propertyType');
-        
+
         // Load existing photos
         @if($property->photos->count() > 0)
             @foreach($property->photos as $photo)
@@ -139,18 +139,18 @@
         function cleanupOversizedFiles() {
             const maxSize = 5 * 1024 * 1024; // 5MB
             const oversizedCount = uploadedPhotos.filter(photo => photo.file.size > maxSize).length;
-            
+
             if (oversizedCount > 0) {
                 // Remove oversized files
                 uploadedPhotos = uploadedPhotos.filter(photo => photo.file.size <= maxSize);
-                
+
                 Swal.fire({
                     icon: 'warning',
                     title: 'Large Files Removed',
                     text: `${oversizedCount} file(s) exceeded 5MB and were automatically removed.`,
                     confirmButtonText: 'OK'
                 });
-                
+
                 renderPreview();
             }
         }
@@ -158,7 +158,7 @@
         fileInput.addEventListener('change', handleUpload);
         dropZone.addEventListener('dragover', (e) => e.preventDefault());
         dropZone.addEventListener('drop', handleDrop);
-        
+
         // Clean up any oversized files that might exist
         cleanupOversizedFiles();
 
@@ -175,7 +175,7 @@
 
         function addFiles(files) {
             let validFilesAdded = 0;
-            
+
             files.forEach(file => {
                 // Validate file type
                 if (!file.type.startsWith('image/')) {
@@ -218,7 +218,7 @@
                 });
                 validFilesAdded++;
             });
-            
+
             if (validFilesAdded > 0) {
                 renderPreview();
             }
@@ -227,7 +227,7 @@
         function renderPreview() {
             previewContainer.innerHTML = '';
             const maxSize = 5 * 1024 * 1024; // 5MB
-            
+
             uploadedPhotos.forEach((photo, index) => {
                 const wrapper = document.createElement('div');
                 wrapper.className = 'relative group border rounded overflow-hidden';
@@ -238,7 +238,7 @@
                     mainLabel.textContent = 'Main Photo';
                     wrapper.appendChild(mainLabel);
                 }
-                
+
                 // Add set as primary button for existing photos
                 if (photo.existing && !photo.isPrimary) {
                     const primaryBtn = document.createElement('button');
@@ -313,9 +313,9 @@
             });
 
             // Check if all files are valid and we have at least 3 photos
-            const hasValidFiles = uploadedPhotos.length >= 3 && 
+            const hasValidFiles = uploadedPhotos.length >= 3 &&
                                 uploadedPhotos.every(photo => !photo.file || photo.file.size <= maxSize);
-            
+
             continueButton.disabled = !hasValidFiles;
             continueButton.className = !hasValidFiles ?
                 'px-6 py-2 text-white rounded bg-gray-400 cursor-not-allowed' :
@@ -325,11 +325,11 @@
         continueButton.addEventListener('click', async (e) => {
             e.preventDefault();
             if (uploadedPhotos.length < 3) return;
-            
+
             // Check if any files are too large before uploading
             const maxSize = 5 * 1024 * 1024; // 5MB
             const oversizedFiles = uploadedPhotos.filter(photo => photo.file.size > maxSize);
-            
+
             if (oversizedFiles.length > 0) {
                 const fileNames = oversizedFiles.map(photo => photo.file.name).join(', ');
                 Swal.fire({
@@ -343,13 +343,13 @@
 
             // Only upload new photos (not existing ones)
             const newPhotos = uploadedPhotos.filter(photo => !photo.existing && photo.file);
-            
+
             if (newPhotos.length === 0) {
                 // No new photos to upload, just redirect
                 window.location.href = `{{ route('partner.hotels.edit.overview', $property->id) }}?uploaded=true&rooms=true&propertyType=${encodeURIComponent(propertyType)}`;
                 return;
             }
-            
+
             const formData = new FormData();
             formData.append('property_id', propertyId);
             newPhotos.forEach((photo, index) => {
@@ -361,7 +361,7 @@
                 console.log('CSRF Token:', '{{ csrf_token() }}');
                 console.log('Property ID:', propertyId);
                 console.log('Photos count:', uploadedPhotos.length);
-                
+
                 // Log file details for debugging
                 uploadedPhotos.forEach((photo, index) => {
                     console.log(`Photo ${index}:`, {
@@ -390,12 +390,12 @@
                         // Authentication or CSRF token error
                         throw new Error('Authentication failed. Please refresh the page and try again.');
                     }
-                    
+
                     // For 422 validation errors, try to get the detailed error message
                     if (response.status === 422) {
                         const errorData = await response.json();
                         console.error('Validation errors:', errorData);
-                        
+
                         if (errorData.errors) {
                             const errorMessages = Object.values(errorData.errors).flat().join(', ');
                             throw new Error(`Validation failed: ${errorMessages}`);
@@ -405,7 +405,7 @@
                             throw new Error('Validation failed. Please check your input and try again.');
                         }
                     }
-                    
+
                     // For other error statuses, try to get error details
                     if (response.status >= 400) {
                         try {
@@ -419,29 +419,29 @@
                             throw new Error(`Request failed: ${response.statusText}`);
                         }
                     }
-                    
+
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
                 const contentType = response.headers.get('content-type');
                 console.log('Content-Type:', contentType);
-                
+
                 if (!contentType || !contentType.includes('application/json')) {
                     // If response is not JSON, get the text and show error
                     const textResponse = await response.text();
                     console.error('Non-JSON response:', textResponse);
-                    
+
                     // Check if it's an authentication page
                     if (textResponse.includes('login') || textResponse.includes('Login') || textResponse.includes('auth')) {
                         throw new Error('Your session has expired. Please log in again.');
                     }
-                    
+
                     throw new Error('Server returned non-JSON response. Please try again.');
                 }
 
                 const result = await response.json();
                 console.log('Response data:', result);
-                
+
                 if (result.success) {
                     Swal.fire({
                         icon: 'success',
@@ -464,7 +464,7 @@
                 }
             } catch (error) {
                 console.error('Upload error:', error);
-                
+
                 // Handle specific authentication errors
                 if (error.message.includes('Authentication failed') || error.message.includes('session has expired')) {
                     Swal.fire({

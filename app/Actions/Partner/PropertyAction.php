@@ -68,8 +68,12 @@ class PropertyAction
         return \App\Models\Amenity::where('category', 'multiple_apartment')->get();
     }
 
-    public function getLanguages(): Collection
+    public function getLanguages(Property $property = null): Collection
     {
+        if ($property) {
+            return $property->languages()->pluck('languages.id');
+        }
+        
         return \App\Models\Language::all()->map(function ($language) {
             return [
                 'id' => $language->id,

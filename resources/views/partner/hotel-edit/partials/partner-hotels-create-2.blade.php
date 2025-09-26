@@ -8,7 +8,7 @@
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
     <div x-data="{ step: 1 }">
-    
+
     <!-- Progress Bar -->
     <div class="w-full bg-gray-200 h-2">
         <div class="bg-[#3CC0E9] h-2 transition-all duration-500" :style="'width:' + (step * 100 / 8) + '%'"></div>
