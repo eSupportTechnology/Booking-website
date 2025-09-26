@@ -1,35 +1,70 @@
 @extends('frontend.master')
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+ <!-- Top Bar: Back + Favorite -->
+<div class="flex justify-between items-center mb-6">
+  <!-- Back Button -->
+  <a href="#"
+   class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 hover:bg-gray-300 text-gray-700 rounded-lg shadow-sm text-sm font-medium">
+   <i class="fa-solid fa-arrow-left mr-2"></i> <strong>Back to Taxis</strong>
+</a>
+
+
+  <!-- Favorite Button -->
+  <button class="p-2 rounded-full border border-gray-300 hover:bg-red-50 shadow-sm transition">
+    <!-- Outline Heart -->
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" 
+         viewBox="0 0 24 24" class="w-6 h-6 text-gray-600">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+            d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 
+               4.5 0 116.364 6.364L12 21.364l-7.682-7.682a4.5 
+               4.5 0 010-6.364z"/>
+    </svg>
+  </button>
+</div>
+
+  <h1 class="text-xl font-bold mb-2">Honda Civic</h1>
+<div class="flex items-center space-x-2 mb-4">
+  <!-- Stars -->
+  <div class="flex text-yellow-400">
+    ★★★★☆
+  </div>
+  <!-- Total Reviews -->
+  <p class="text-gray-600 text-sm">(124 reviews)</p>
+</div>
+
+  
+
   <div class="flex flex-col lg:flex-row gap-8">
 
     <!-- Left Column: Image Grid -->
-    <div class="flex-1 grid gap-4">
+    <div class="flex-1 grid grid-cols-1 ">
       
       <!-- Row 1: Front Image -->
       @if($taxi->front_image)
       <div class="w-full">
         <img src="{{ asset('storage/'.$taxi->front_image) }}" 
              alt="Front View"
-             class="w-full h-auto rounded-lg object-cover cursor-pointer"
+             class="w-full h-full rounded-lg object-cover cursor-pointer border border-gray-300 shadow-sm"
              onclick="openModal('{{ asset('storage/'.$taxi->front_image) }}')">
       </div>
       @endif
 
       <!-- Row 2: Inside & Back Images -->
-      <div class="grid grid-cols-2 gap-4">
+      <div class="grid grid-cols-2 ">
         @if($taxi->inside_image)
         <img src="{{ asset('storage/'.$taxi->inside_image) }}" 
              alt="Inside View"
-             class="w-full h-auto rounded-lg object-cover cursor-pointer"
+             class="w-full h-full rounded-lg object-cover cursor-pointer border border-gray-300 shadow-sm"
              onclick="openModal('{{ asset('storage/'.$taxi->inside_image) }}')">
         @endif
 
         @if($taxi->back_image)
         <img src="{{ asset('storage/'.$taxi->back_image) }}" 
              alt="Back View"
-             class="w-full h-auto rounded-lg object-cover cursor-pointer"
+             class="w-full h-full rounded-lg object-cover cursor-pointer border border-gray-300 shadow-sm"
              onclick="openModal('{{ asset('storage/'.$taxi->back_image) }}')">
         @endif
       </div>
@@ -39,7 +74,7 @@
       <div class="w-full">
         <img src="{{ asset('images/placeholder-car.jpg') }}" 
              alt="No Image"
-             class="w-full h-auto rounded-lg object-cover cursor-pointer"
+             class="w-full h-full rounded-lg object-cover cursor-pointer border border-gray-300 shadow-sm"
              onclick="openModal('{{ asset('images/placeholder-car.jpg') }}')">
       </div>
       @endif
@@ -58,12 +93,8 @@
           <div><strong class="text-sm text-gray-500">Passenger Capacity:</strong><br>{{ $taxi->passenger_capacity ?? 0 }}</div>
           <div><strong class="text-sm text-gray-500">Luggage Capacity:</strong><br>{{ $taxi->luggage_capacity ?? 0 }}</div>
         </div>
-      </div>
-
-      <!-- Driver Details -->
-      @foreach($taxi->drivers as $driver)
-      <div class="bg-white p-6 rounded-lg shadow-md border border-gray-400 mb-6">
-        <h2 class="text-lg font-semibold mb-4">Driver Details</h2>
+              @foreach($taxi->drivers as $driver)
+         <h2 class="text-lg font-semibold mb-4">Driver Details</h2>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center">
           @php
             $photoFile = $driver->photo ? \App\Models\File::find($driver->photo) : null;
@@ -73,11 +104,11 @@
             @if($photoFile?->path)
               <img src="{{ asset('storage/' . $photoFile->path) }}"
                    alt="{{ $driver->name }}"
-                   class="w-32 h-32 rounded-full object-cover shadow">
+                   class="w-32 h-32 rounded-full object-cover shadow border border-gray-300">
             @else
               <img src="{{ asset('images/user.jpeg') }}"
                    alt="Default Profile"
-                   class="w-32 h-32 rounded-full object-cover shadow">
+                   class="w-32 h-32 rounded-full object-cover shadow border border-gray-300">
             @endif
           </div>
 
@@ -98,13 +129,78 @@
               <p class="text-sm text-gray-500">License Number</p>
               <p class="font-medium text-gray-800">{{ $driver->license_number ?? 'N/A' }}</p>
             </div>
-          </div>
-        </div>
       </div>
-      @endforeach
+  @endforeach
+      <!-- Driver Details -->
+
+      
+        </div>
+        
+      </div>
+    <!-- Booking Now Button -->
+    <div class="mt-6 flex justify-center ">
+      <a href="#"
+         class="w-full sm:w-auto px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md text-center transition">
+        Book Now
+      </a>
+    </div>
     </div>
 
   </div>
+  <!-- Reviews Section -->
+<!-- Reviews Section -->
+<div class="bg-white border border-gray-300 rounded-lg shadow-sm p-6 mt-8 relative">
+  <!-- Your Feedback Button (top-right) -->
+  <a href="#"
+     class="absolute top-4 right-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg shadow-md transition">
+    Your Feedback
+  </a>
+
+  <h2 class="text-lg font-semibold mb-4">Reviews</h2>
+
+  <!-- Single Review -->
+  <div class="mb-4 border-b border-gray-200 pb-4 flex items-start gap-4">
+    <img src="https://via.placeholder.com/40" alt="John Doe" class="w-10 h-10 rounded-full object-cover shadow-sm">
+    <div>
+      <div class="flex items-center gap-2 mb-1">
+        <span class="font-semibold text-gray-600">John Doe</span>
+        <span class="text-gray-500 text-xs">(USA)</span>
+        <div class="flex text-yellow-400 ml-4">★★★★☆</div>
+      </div>
+      <p class="text-gray-600 text-sm">Great car and smooth ride. Highly recommend!Very clean and comfortable taxi. Excellent driver</p>
+    </div>
+  </div>
+
+  <!-- Single Review -->
+  <div class="mb-4 border-b border-gray-200 pb-4 flex items-start gap-4">
+    <img src="https://via.placeholder.com/40" alt="Jane Smith" class="w-10 h-10 rounded-full object-cover shadow-sm">
+    <div>
+      <div class="flex items-center gap-2 mb-1">
+        <span class="font-semibold text-gray-600">Jane Smith</span>
+        <span class="text-gray-500 text-xs">(Canada)</span>
+        <div class="flex text-yellow-400 ml-4">★★★★★</div>
+      </div>
+      <p class="text-gray-600 text-sm">Very clean and comfortable taxi. Excellent driver.Very clean and comfortable taxi. Excellent driver</p>
+    </div>
+  </div>
+
+  <!-- Single Review -->
+  <div class="flex items-start gap-4">
+    <img src="https://via.placeholder.com/40" alt="Alex Johnson" class="w-10 h-10 rounded-full object-cover shadow-sm">
+    <div>
+      <div class="flex items-center gap-2 mb-1">
+        <span class="font-semibold text-gray-600">Alex Johnson</span>
+        <span class="text-gray-500 text-xs">(UK)</span>
+        <div class="flex text-yellow-400 ml-4">★★★★☆</div>
+      </div>
+      <p class="text-gray-600 text-sm">Good experience overall, would book again.Very clean and comfortable taxi. Excellent driver</p>
+    </div>
+  </div>
+
+</div>
+
+
+
 </div>
 
 <!-- Modal for Image Preview -->
