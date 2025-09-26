@@ -24,69 +24,96 @@
     </svg>
   </button>
 </div>
-
-  <h1 class="text-xl font-bold mb-2">Honda Civic</h1>
-<div class="flex items-center space-x-2 mb-4">
-  <!-- Stars -->
-  <div class="flex text-yellow-400">
-    ★★★★☆
+<div class="flex items-center justify-between mb-4">
+  <!-- Left side: Title + Reviews -->
+  <div>
+    <h1 class="text-xl font-bold">Honda Civic</h1>
+    <div class="flex items-center space-x-2">
+      <!-- Stars -->
+      <div class="flex text-yellow-400">
+        ★★★★☆
+      </div>
+      <!-- Total Reviews -->
+      <p class="text-gray-600 text-sm">(124 reviews)</p>
+    </div>
   </div>
-  <!-- Total Reviews -->
-  <p class="text-gray-600 text-sm">(124 reviews)</p>
+
+  <!-- Right side: Book Now Button -->
+  <div>
+    <button class="px-6 py-2 bg-[#3CC0E9]  text-white text-base font-semibold rounded-lg shadow hover:bg-blue-700">
+      Book Now
+    </button>
+  </div>
 </div>
 
-  
+
 
   <div class="flex flex-col lg:flex-row gap-8">
 
-    <!-- Left Column: Image Grid -->
-    <div class="flex-1 grid grid-cols-1 ">
-      
-      <!-- Row 1: Front Image -->
-      @if($taxi->front_image)
-      <div class="w-full">
-        <img src="{{ asset('storage/'.$taxi->front_image) }}" 
-             alt="Front View"
-             class="w-full h-full rounded-lg object-cover cursor-pointer border border-gray-300 shadow-sm"
-             onclick="openModal('{{ asset('storage/'.$taxi->front_image) }}')">
-      </div>
-      @endif
+<div class="flex-1 space-y-2"> <!-- vertical spacing only 0.5rem -->
 
-      <!-- Row 2: Inside & Back Images -->
-      <div class="grid grid-cols-2 ">
-        @if($taxi->inside_image)
-        <img src="{{ asset('storage/'.$taxi->inside_image) }}" 
-             alt="Inside View"
-             class="w-full h-full rounded-lg object-cover cursor-pointer border border-gray-300 shadow-sm"
-             onclick="openModal('{{ asset('storage/'.$taxi->inside_image) }}')">
-        @endif
+  <!-- Row 1: Front Image -->
+  @if($taxi->front_image)
+  <div class="w-full h-72">
+    <img src="{{ asset('storage/'.$taxi->front_image) }}" 
+         alt="Front View"
+         class="w-full h-full rounded-lg object-cover cursor-pointer border border-gray-300 shadow-sm"
+         onclick="openModal('{{ asset('storage/'.$taxi->front_image) }}')">
+  </div>
+  @endif
 
-        @if($taxi->back_image)
-        <img src="{{ asset('storage/'.$taxi->back_image) }}" 
-             alt="Back View"
-             class="w-full h-full rounded-lg object-cover cursor-pointer border border-gray-300 shadow-sm"
-             onclick="openModal('{{ asset('storage/'.$taxi->back_image) }}')">
-        @endif
-      </div>
-
-      <!-- Fallback if no images -->
-      @if(!$taxi->front_image && !$taxi->inside_image && !$taxi->back_image)
-      <div class="w-full">
-        <img src="{{ asset('images/placeholder-car.jpg') }}" 
-             alt="No Image"
-             class="w-full h-full rounded-lg object-cover cursor-pointer border border-gray-300 shadow-sm"
-             onclick="openModal('{{ asset('images/placeholder-car.jpg') }}')">
-      </div>
-      @endif
-
+  <!-- Row 2: Inside & Back Images -->
+  <div class="grid grid-cols-2 gap-2"> <!-- tiny horizontal gap -->
+    @if($taxi->inside_image)
+    <div class="h-50">
+      <img src="{{ asset('storage/'.$taxi->inside_image) }}" 
+           alt="Inside View"
+           class="w-full h-full rounded-lg object-cover cursor-pointer border border-gray-300 shadow-sm"
+           onclick="openModal('{{ asset('storage/'.$taxi->inside_image) }}')">
     </div>
+    @endif
+
+    @if($taxi->back_image)
+    <div class="h-50">
+      <img src="{{ asset('storage/'.$taxi->back_image) }}" 
+           alt="Back View"
+           class="w-full h-full rounded-lg object-cover cursor-pointer border border-gray-300 shadow-sm"
+           onclick="openModal('{{ asset('storage/'.$taxi->back_image) }}')">
+    </div>
+    @endif
+  </div>
+
+  <!-- Fallback if no images -->
+  @if(!$taxi->front_image && !$taxi->inside_image && !$taxi->back_image)
+  <div class="w-full h-50">
+    <img src="{{ asset('images/placeholder-car.jpg') }}" 
+         alt="No Image"
+         class="w-full h-full rounded-lg object-cover cursor-pointer border border-gray-300 shadow-sm"
+         onclick="openModal('{{ asset('images/placeholder-car.jpg') }}')">
+  </div>
+  @endif
+
+</div>
+
+
+
+  
+
+    
 
     <!-- Right Column: Vehicle & Driver Details -->
     <div class="flex-1">
+       <div class="bg-white p-6 rounded-lg shadow-md border border-gray-400 mb-6">
+        <h2 class="text-lg font-semibold mb-4">Pricing Details</h2>
+       
+           <div><strong class="text-sm text-gray-500">Price per day:</strong>{{ $taxi->taxiType->name ?? 'Taxi' }}</div>
+          <div><strong class="text-sm text-gray-500">Price per km:</strong>{{ $taxi->number_plate ?? 'N/A' }}</div>
+           <div><strong class="text-sm text-gray-500">Base fare:</strong>{{ $taxi->number_plate ?? 'N/A' }}</div>
+      </div>
       <!-- Vehicle Details -->
       <div class="bg-white p-6 rounded-lg shadow-md border border-gray-400 mb-6">
         <h2 class="text-lg font-semibold mb-4">Vehicle Details</h2>
-        <div class="grid grid-cols-2 gap-4 text-sm text-gray-700">
+        <div class="grid grid-cols-2 gap-2 text-sm text-gray-700">
           <div><strong class="text-sm text-gray-500">Brand and Model:</strong><br>{{ $taxi->taxiType->name ?? 'Taxi' }}</div>
           <div><strong class="text-sm text-gray-500">Number Plate:</strong><br>{{ $taxi->number_plate ?? 'N/A' }}</div>
           <div><strong class="text-sm text-gray-500">Vehicle Color:</strong><br>{{ $taxi->color ?? 'N/A' }}</div>
@@ -94,7 +121,7 @@
           <div><strong class="text-sm text-gray-500">Luggage Capacity:</strong><br>{{ $taxi->luggage_capacity ?? 0 }}</div>
         </div>
               @foreach($taxi->drivers as $driver)
-         <h2 class="text-lg font-semibold mb-4">Driver Details</h2>
+         <h2 class="text-lg font-semibold mb-4 mt-6">Driver Details</h2>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center">
           @php
             $photoFile = $driver->photo ? \App\Models\File::find($driver->photo) : null;
@@ -104,30 +131,30 @@
             @if($photoFile?->path)
               <img src="{{ asset('storage/' . $photoFile->path) }}"
                    alt="{{ $driver->name }}"
-                   class="w-32 h-32 rounded-full object-cover shadow border border-gray-300">
+                   class="w-24 h-24 rounded-full object-cover shadow border border-gray-300">
             @else
               <img src="{{ asset('images/user.jpeg') }}"
                    alt="Default Profile"
-                   class="w-32 h-32 rounded-full object-cover shadow border border-gray-300">
+                   class="w-24 h-24 rounded-full object-cover shadow border border-gray-300">
             @endif
           </div>
 
-          <div class="sm:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="sm:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
             <div>
-              <p class="text-sm text-gray-500">Name</p>
-              <p class="font-medium text-gray-800">{{ $driver->name ?? 'N/A' }}</p>
+              <p class="text-sm text-gray-500 font-semibold">Name</p>
+              <p class="text-sm text-gray-800">{{ $driver->name ?? 'N/A' }}</p>
             </div>
             <div>
-              <p class="text-sm text-gray-500">Contact Number</p>
-              <p class="font-medium text-gray-800">{{ $driver->contact_number ?? 'N/A' }}</p>
+              <p class="text-sm text-gray-500 font-semibold">Contact Number</p>
+              <p class="text-sm text-gray-800">{{ $driver->contact_number ?? 'N/A' }}</p>
             </div>
             <div>
-              <p class="text-sm text-gray-500">Email</p>
-              <p class="font-medium text-gray-800">{{ $driver->email ?? 'N/A' }}</p>
+              <p class="text-sm text-gray-500 font-semibold">Email</p>
+              <p class="text-sm text-gray-800">{{ $driver->email ?? 'N/A' }}</p>
             </div>
             <div>
-              <p class="text-sm text-gray-500">License Number</p>
-              <p class="font-medium text-gray-800">{{ $driver->license_number ?? 'N/A' }}</p>
+              <p class="text-sm text-gray-500 font-semibold">License Number</p>
+              <p class="text-sm text-gray-800">{{ $driver->license_number ?? 'N/A' }}</p>
             </div>
       </div>
   @endforeach
@@ -137,13 +164,7 @@
         </div>
         
       </div>
-    <!-- Booking Now Button -->
-    <div class="mt-6 flex justify-center ">
-      <a href="#"
-         class="w-full sm:w-auto px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md text-center transition">
-        Book Now
-      </a>
-    </div>
+    
     </div>
 
   </div>
@@ -152,7 +173,7 @@
 <div class="bg-white border border-gray-300 rounded-lg shadow-sm p-6 mt-8 relative">
   <!-- Your Feedback Button (top-right) -->
   <a href="#"
-     class="absolute top-4 right-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg shadow-md transition">
+     class="absolute top-4 right-4 px-4 py-2 bg-[#3CC0E9] hover:bg-blue-700 text-white text-sm font-semibold rounded-lg shadow-md transition">
     Your Feedback
   </a>
 
