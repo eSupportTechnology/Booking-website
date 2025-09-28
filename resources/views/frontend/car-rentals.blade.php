@@ -208,6 +208,98 @@
         </div>
     </div>
 </section>
+<section class="scroll-section py-12 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Our Latest Airport Taxis</h2>
+   <p class="mb-8 text-gray-600" style="font-family: 'Noto Sans', sans-serif;">Check out our newly added, comfortable, and reliable airport taxis ready for your next ride. <a href="/customer/taxis" class="text-blue-500 hover:underline">Show All Taxis</a></p>
+
+    <div class="relative">
+      <!-- Scroll Container -->
+      <div id="scrollContainer" class="scroll-container flex space-x-4 overflow-x-auto pb-2 scroll-smooth no-scrollbar">
+    @foreach ($latestActiveCars as $car)
+    <div class="bg-white rounded-lg shadow-md overflow-hidden relative min-w-[250px] max-w-[250px] h-[350px]">
+        
+        <!-- Car Image -->
+        <img src="{{ $car->image ? asset('storage/' . $car->image) : asset('images/taxi.jpg') }}" 
+             alt="{{ $car->name }}" 
+             class="w-full h-48 object-cover">
+
+        <!-- Taxi Info -->
+        <div class="p-3">
+            <!-- Rating (you can replace with real average rating if available) -->
+            <div class="flex items-center mt-2">
+                <div class="flex ml-2">
+                    @for ($i = 0; $i < 4; $i++)
+                        <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 
+                            1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.293c.3.921-.755 
+                            1.688-1.538 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.782.57-1.837-.197-
+                            1.538-1.118l1.07-3.293a1 1 0 00-.364-1.118L2.98 
+                            8.719c-.783-.57-.38-1.81.588-1.81h3.461a1 1 
+                            0 00.951-.69l1.07-3.292z"/>
+                        </svg>
+                    @endfor
+                    <svg class="w-4 h-4 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 
+                        00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 
+                        2.034a1 1 0 00-.364 1.118l1.07 3.293c.3.921-.755 
+                        1.688-1.538 1.118l-2.8-2.034a1 1 0 
+                        00-1.175 0l-2.8 2.034c-.782.57-1.837-.197-
+                        1.538-1.118l1.07-3.293a1 1 
+                        0 00-.364-1.118L2.98 
+                        8.719c-.783-.57-.38-1.81.588-
+                        1.81h3.461a1 1 
+                        0 00.951-.69l1.07-3.292z"/>
+                    </svg>
+                    <span class="text-xs ml-2 block">122 Rides</span>
+                </div>
+            </div>
+  
+                           
+            <!-- Taxi Name -->
+            <h3 class="text-sm font-bold mt-2" style="font-family: 'Noto Sans', sans-serif;">
+                {{ $car->brand->brand_name ?? 'Brand' }} {{ $car->model->model_name ?? 'Model' }}
+            </h3>
+              <h5 class="text-xs font-bold mt-1" style="font-family: 'Noto Sans', sans-serif;">
+                {{ $car->number_plate ?? 'Unnamed Car' }} 
+            </h5>
+
+            <!-- Capacity Info -->
+            <div class="mt-2 text-left flex space-x-4" style="font-family: 'Noto Sans', sans-serif;">
+                <p class="text-xs text-gray-500"> {{ $car->fuel_type ?? 'Fuel' }}</p>
+                <p class="text-xs text-gray-500">{{ $car->seats ?? 0 }} seats</p>
+               
+            </div>
+
+            <!-- Book Now Button -->
+            <div class="mt-2 text-left">
+                <a href=""
+                   class="bg-[#3CC0E9] text-white text-xs font-semibold px-3 py-1 rounded hover:bg-blue-700">
+                    Book Now
+                </a>
+            </div>
+        </div>
+    </div>
+    @endforeach
+</div>
+
+
+      <!-- Arrow Buttons -->
+      <button id="scrollLeft" class="scroll-left absolute top-1/2 left-0 -translate-y-1/2 bg-white border shadow p-2 rounded-full z-10 hover:bg-gray-100 ml-2" style="margin-left: -20px;">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+      <button id="scrollRight" class="scroll-right absolute top-1/2 right-0 -translate-y-1/2 bg-white border shadow p-2 rounded-full z-10 hover:bg-gray-100 mr-2" style="margin-right: -20px;">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+  </div>
+</section>
+
+
 <section class="py-12 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Title -->

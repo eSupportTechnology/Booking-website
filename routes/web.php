@@ -32,6 +32,7 @@ use App\Http\Controllers\CarReservations\CarRenterLoginController;
 use App\Http\Controllers\CarReservations\CarRenterControlPanel;
 use App\Http\Controllers\CarReservations\AirportTaxiControlPanel;
 use App\Http\Controllers\Customer\CustomerTaxiController;
+use App\Http\Controllers\Customer\CustomerCarRentalController;
 
 Route::post('/accommodation/save-verification/{propertyId}', [AccommodationController::class, 'saveVerification']);
 
@@ -1238,3 +1239,8 @@ Route::get('/single-taxi', function () {
 
 Route::get('/customer/taxis/{id}', [CustomerTaxiController::class, 'show'])
     ->name('customer.taxis.show');
+
+Route::get('/customer/car-rentals', [\App\Http\Controllers\Customer\CustomerCarRentalController::class, 'showLatestCars'])->name('customer.car-rentals');
+
+Route::get('/customer/car-rentals/listing', [\App\Http\Controllers\Customer\CustomerCarRentalController::class, 'index'])
+    ->name('customer.car-rentals.listing');
