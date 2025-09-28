@@ -35,9 +35,9 @@
                         </a>
 
                         <!-- Car Rentals -->
-                        <a href="{{ route('car.rentals') }}"
+                        <a href="{{ route('customer.car-rentals') }}"
                         class="flex items-center justify-center space-x-1 px-3 py-1 rounded-full border text-white transition 
-                                {{ $currentRoute == 'car.rentals' ? 'border-white bg-[#1F8FB2]' : 'border-transparent hover:border-white' }}">
+                                {{ $currentRoute == 'customer.car-rentals' ? 'border-white bg-[#1F8FB2]' : 'border-transparent hover:border-white' }}">
                             <img src="{{ asset('assets/car.svg') }}" alt="Car" class="w-4 h-4" />
                             <span style="font-family: 'Noto Sans', sans-serif;">Car rentals</span>
                         </a>
