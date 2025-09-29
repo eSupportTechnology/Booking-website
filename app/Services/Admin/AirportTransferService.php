@@ -28,7 +28,10 @@ class AirportTransferService
             $query->where('status', $dto->status);
         }
 
-        return $query->paginate($dto->perPage);
+        // Show all transfers regardless of approval status for admin review
+        return $query->orderBy('approval_status', 'asc')
+                    ->orderBy('created_at', 'desc')
+                    ->paginate($dto->perPage);
     }
 
     public function getTransferById(int $id): ?Taxi

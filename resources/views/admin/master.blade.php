@@ -124,6 +124,10 @@
                         <a href="{{ route('admin.partners') }}"
                             class="block py-1 hover:text-blue-700 font-semibold">Partners</a>
                         @endif
+                         @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('view_partners'))
+                        <a href="{{ route('admin.rental-providers') }}"
+                            class="block py-1 hover:text-blue-700 font-semibold">Rental Service Providers</a>
+                        @endif
                     </div>
                 </div>
                 @endif

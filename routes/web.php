@@ -901,6 +901,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/partners', [\App\Http\Controllers\Admin\PartnersController::class, '__invoke'])->name('partners');
         Route::post('/partners/partner-details', [\App\Http\Controllers\Admin\PartnerViewController::class, 'show'])->name('admin.partner.view');
 
+        // Rental Service Providers management
+        Route::get('/rental-providers', [\App\Http\Controllers\Admin\UsersController::class, '__invoke'])->name('rental-providers');
+        Route::get('/rental-providers/{provider}', [\App\Http\Controllers\Admin\UsersController::class, 'show'])->name('rental-providers.view');
+
         // Admin Dashboard rental Route
         Route::get('/rental/taxi', \App\Http\Controllers\Admin\TaxiController::class)->name('rental.taxi');
         Route::get('/rental/taxi/{id}', \App\Http\Controllers\Admin\TaxiDetailController::class)->name('taxi.details');
@@ -950,6 +954,20 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::patch('/taxi/{taxi}', \App\Http\Controllers\Admin\UpdateTaxiStatusController::class)->name('taxi.update');
             Route::patch('/airport-transfer/{transfer}', \App\Http\Controllers\Admin\UpdateAirportTransferStatusController::class)->name('airport-transfer.update');
         });
+
+        // Approval routes
+        Route::prefix('approval')->name('approval.')->group(function () {
+            Route::post('/taxis/{taxi}/approve', [\App\Http\Controllers\Admin\TaxiApprovalController::class, 'approve'])->name('taxi.approve');
+            Route::post('/taxis/{taxi}/reject', [\App\Http\Controllers\Admin\TaxiApprovalController::class, 'reject'])->name('taxi.reject');
+            Route::post('/transfers/{transfer}/approve', [\App\Http\Controllers\Admin\TaxiApprovalController::class, 'approve'])->name('transfer.approve');
+            Route::post('/transfers/{transfer}/reject', [\App\Http\Controllers\Admin\TaxiApprovalController::class, 'reject'])->name('transfer.reject');
+        });
+
+        // Direct approval routes for AJAX calls
+        Route::post('/taxis/{taxi}/approve', [\App\Http\Controllers\Admin\TaxiApprovalController::class, 'approve']);
+        Route::post('/taxis/{taxi}/reject', [\App\Http\Controllers\Admin\TaxiApprovalController::class, 'reject']);
+        Route::post('/transfers/{transfer}/approve', [\App\Http\Controllers\Admin\TaxiApprovalController::class, 'approve']);
+        Route::post('/transfers/{transfer}/reject', [\App\Http\Controllers\Admin\TaxiApprovalController::class, 'reject']);
     });
 });
 

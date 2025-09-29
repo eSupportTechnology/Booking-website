@@ -73,6 +73,7 @@
                             <th class="px-2 sm:px-4 py-3 sm:py-4">Passenger</th>
                             <th class="px-2 sm:px-4 py-3 sm:py-4">Flight</th>
                             <th class="px-2 sm:px-4 py-3 sm:py-4">Status</th>
+                            <th class="px-2 sm:px-4 py-3 sm:py-4">Approval</th>
                             <th class="px-2 sm:px-4 py-3 sm:py-4">Actions</th>
                         </tr>
                     </thead>
@@ -101,6 +102,26 @@
                                 </div>
                             </td>
                             <td class="px-2 sm:px-4 py-3 sm:py-4">
+                                @if($transfer->approval_status === 'pending')
+                                    <div class="flex gap-2">
+                                        <button onclick="approveTransfer({{ $transfer->id }})"
+                                            class="px-2 py-1 bg-green-500 text-white text-xs rounded hover:bg-green-600">
+                                            <i class="fas fa-check mr-1"></i> Approve
+                                        </button>
+                                        <button onclick="rejectTransfer({{ $transfer->id }})"
+                                            class="px-2 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600">
+                                            <i class="fas fa-times mr-1"></i> Reject
+                                        </button>
+                                    </div>
+                                @else
+                                    <span class="px-2 py-1 rounded-full text-xs font-semibold 
+                                        @if($transfer->approval_status === 'approved') bg-green-100 text-green-800 
+                                        @else bg-red-100 text-red-800 @endif">
+                                        {{ ucfirst($transfer->approval_status) }}
+                                    </span>
+                                @endif
+                            </td>
+                            <td class="px-2 sm:px-4 py-3 sm:py-4">
                                 <div class="flex flex-col sm:flex-row sm:items-center gap-2">
                                     @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('view_airport'))
                                     <a href="{{ route('admin.airport.details', $transfer->id) }}"
@@ -119,7 +140,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="5" class="px-4 py-8 text-center text-gray-500">
+                            <td colspan="6" class="px-4 py-8 text-center text-gray-500">
                                 No airport transfers found.
                             </td>
                         </tr>
@@ -238,6 +259,56 @@
         searchInput.addEventListener('input', filterTable);
         statusFilter.addEventListener('change', filterTable);
     });
+
+    function approveTransfer(transferId) {
+        if (confirm('Are you sure you want to approve this airport transfer?')) {
+            fetch(`/admin/transfers/${transferId}/approve`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('success', data.message);
+                    location.reload();
+                } else {
+                    showNotification('error', data.message);
+                }
+            })
+            .catch(() => {
+                showNotification('error', 'Failed to approve transfer');
+            });
+        }
+    }
+
+    function rejectTransfer(transferId) {
+        const reason = prompt('Please provide a reason for rejection:');
+        if (reason && reason.trim()) {
+            fetch(`/admin/transfers/${transferId}/reject`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({ reason: reason.trim() })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('success', data.message);
+                    location.reload();
+                } else {
+                    showNotification('error', data.message);
+                }
+            })
+            .catch(() => {
+                showNotification('error', 'Failed to reject transfer');
+            });
+        }
+    }
 </script>
 
 @endsection

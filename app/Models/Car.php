@@ -10,7 +10,7 @@ class Car extends Model
         'car_renter_id','car_type_id','company_id','model_id','brand','seats','with_driver',
         'driver_name','driver_phone','driver_age','driver_experience','driver_nic',
         'driver_license_front','driver_license_back',
-        'transmission','mileage_type','fuel_type','car_front', 'car_back', 'car_inside','price_per_day','price_per_km','deposit','status'
+        'transmission','mileage_type','fuel_type','car_front', 'car_back', 'car_inside','price_per_day','price_per_km','deposit','status','approval_status','rejection_reason'
     ];
 
     protected $casts = [

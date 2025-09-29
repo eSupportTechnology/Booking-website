@@ -8,7 +8,7 @@
                     <a class="nav-link" href="{{ route('admin.dashboard') }}">Dashboard</a>
                 </li>
                 @endcan
-                
+
                 @canany(['view_customers', 'view_partners'])
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Users</a>
@@ -19,10 +19,11 @@
                         @can('view_partners')
                         <li><a class="dropdown-item" href="{{ route('admin.partners') }}">Partners</a></li>
                         @endcan
+                        <li><a class="dropdown-item" href="{{ route('admin.rental-providers') }}">Rental Service Providers</a></li>
                     </ul>
                 </li>
                 @endcanany
-                
+
                 @canany(['view_apartments', 'view_homes', 'view_hotels', 'view_alternative_places'])
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Property</a>
@@ -42,7 +43,7 @@
                     </ul>
                 </li>
                 @endcanany
-                
+
                 @canany(['view_taxi', 'view_airport'])
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Rental</a>
@@ -56,7 +57,7 @@
                     </ul>
                 </li>
                 @endcanany
-                
+
                 @canany(['view_pending_admins', 'view_admin_accounts'])
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Admin Management</a>

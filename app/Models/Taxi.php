@@ -10,7 +10,7 @@ class Taxi extends Model
         'car_renter_id', 'taxi_type_id', 'number_plate',
         'color', 'passenger_capacity', 'luggage_capacity', 'status', 'front_image',   
         'back_image',    
-        'inside_image',  
+        'inside_image', 'approval_status', 'rejection_reason'
     ];
 
     protected $casts = [
