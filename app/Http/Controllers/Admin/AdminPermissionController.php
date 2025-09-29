@@ -23,7 +23,8 @@ class AdminPermissionController extends Controller
             if (str_contains($permission->name, 'customer') || str_contains($permission->name, 'partner')) return 'Users';
             if (str_contains($permission->name, 'apartment') || str_contains($permission->name, 'home') || 
                 str_contains($permission->name, 'hotel') || str_contains($permission->name, 'alternative')) return 'Property';
-            if (str_contains($permission->name, 'taxi') || str_contains($permission->name, 'airport')) return 'Rental';
+            if (str_contains($permission->name, 'taxi') || str_contains($permission->name, 'airport') || 
+                str_contains($permission->name, 'car') || str_contains($permission->name, 'rental_provider')) return 'Rental';
             if (str_contains($permission->name, 'admin')) return 'Admin Management';
             return 'Other';
         });

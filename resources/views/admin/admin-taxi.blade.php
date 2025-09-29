@@ -105,16 +105,20 @@
                                 </div>
                             </td>
                             <td class="px-2 sm:px-4 py-3">
-                                @if($taxi->approval_status === 'pending')
+                                @if($taxi->approval_status === 'pending' && (Auth::guard('admin')->user()->can('approve_taxis') || Auth::guard('admin')->user()->can('reject_taxis')))
                                     <div class="flex gap-2">
+                                        @can('approve_taxis')
                                         <button onclick="approveTaxi({{ $taxi->id }})"
                                             class="px-2 py-1 bg-green-500 text-white text-xs rounded hover:bg-green-600">
                                             <i class="fas fa-check mr-1"></i> Approve
                                         </button>
+                                        @endcan
+                                        @can('reject_taxis')
                                         <button onclick="rejectTaxi({{ $taxi->id }})"
                                             class="px-2 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600">
                                             <i class="fas fa-times mr-1"></i> Reject
                                         </button>
+                                        @endcan
                                     </div>
                                 @else
                                     <span class="px-2 py-1 rounded-full text-xs font-semibold 

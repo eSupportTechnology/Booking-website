@@ -11,6 +11,10 @@ class TaxiApprovalController extends Controller
 {
     public function approve(Request $request, Taxi $taxi): JsonResponse
     {
+        if (!auth('admin')->user()->can('approve_taxis')) {
+            return response()->json(['success' => false, 'message' => 'Permission denied'], 403);
+        }
+        
         try {
             $taxi->update([
                 'approval_status' => 'approved',
@@ -32,6 +36,10 @@ class TaxiApprovalController extends Controller
 
     public function reject(Request $request, Taxi $taxi): JsonResponse
     {
+        if (!auth('admin')->user()->can('reject_taxis')) {
+            return response()->json(['success' => false, 'message' => 'Permission denied'], 403);
+        }
+        
         $request->validate([
             'reason' => 'required|string|max:500'
         ]);

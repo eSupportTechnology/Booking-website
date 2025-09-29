@@ -124,7 +124,7 @@
                         <a href="{{ route('admin.partners') }}"
                             class="block py-1 hover:text-blue-700 font-semibold">Partners</a>
                         @endif
-                         @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('view_partners'))
+                        @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('view_rental_providers'))
                         <a href="{{ route('admin.rental-providers') }}"
                             class="block py-1 hover:text-blue-700 font-semibold">Rental Service Providers</a>
                         @endif
@@ -185,7 +185,7 @@
                 @endif
 
                 <!-- ADMIN MANAGEMENT -->
-                @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('view_pending_admins') || Auth::guard('admin')->user()->can('view_admin_accounts'))
+                @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('view_pending_admins') || Auth::guard('admin')->user()->can('view_admin_accounts') || Auth::guard('admin')->user()->can('manage_admin_permissions'))
                 <div>
                     <button @click="openAdminManagement = !openAdminManagement"
                         class="w-full flex justify-between items-center px-4 py-2 rounded hover:bg-blue-200 transition focus:outline-none font-bold text-blue-900">
@@ -201,6 +201,9 @@
                         @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('view_admin_accounts'))
                         <a href="{{ route('admin.accounts.index') }}" class="block py-1 hover:text-blue-700 font-semibold">Admin Accounts</a>
                         @endif
+                        {{-- @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('manage_admin_permissions'))
+                        <a href="{{ route('admin.accounts.index') }}" class="block py-1 hover:text-blue-700 font-semibold">Manage Permissions</a>
+                        @endif --}}
                     </div>
                 </div>
                 @endif
