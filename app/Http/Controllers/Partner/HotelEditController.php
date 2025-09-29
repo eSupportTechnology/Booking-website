@@ -72,7 +72,7 @@ class HotelEditController extends Controller
             abort(403);
         }
         
-        return view('partner.partner-hotels-photos', compact('property'));
+        return view('partner.hotel-edit.partials.partner-hotels-edit-photos', compact('property'));
     }
     
     public function editRooms(Property $property)
@@ -84,7 +84,7 @@ class HotelEditController extends Controller
         $roomTypes = RoomType::all();
         $groupedAmenities = Amenity::all()->groupBy('category');
         
-        return view('partner.partner-hotels-rooms', compact('property', 'roomTypes', 'groupedAmenities'));
+        return view('partner.hotel-edit.partials.partner-hotels-edit-rooms', compact('property', 'roomTypes', 'groupedAmenities'));
     }
     
     public function editPayment(Property $property)
@@ -93,7 +93,7 @@ class HotelEditController extends Controller
             abort(403);
         }
         
-        return view('partner.partner-hotels-payment', ['propertyModel' => $property]);
+        return view('partner.hotel-edit.partials.partner-hotels-edit-payment', ['propertyModel' => $property]);
     }
     
     public function editPolicies(Property $property)
@@ -163,5 +163,40 @@ class HotelEditController extends Controller
                 'cancellation_policy' => $property->cancellation_policy
             ]
         ]);
+    }
+    
+    // New methods for edit step pages
+    public function editCreate1(Property $property)
+    {
+        if ($property->user_id !== auth()->id()) {
+            abort(403);
+        }
+        
+        $subcategories = PropertySubcategory::where('category_id', 2)->get();
+        $amenities = Amenity::all();
+        $languages = Language::where('id', '>', 0)->get();
+        $categoryId = 2;
+        
+        return view('partner.hotel-edit.partials.partner-hotels-edit-create-1', compact('property', 'subcategories', 'amenities', 'languages', 'categoryId'));
+    }
+    
+    public function editCreate2(Property $property)
+    {
+        if ($property->user_id !== auth()->id()) {
+            abort(403);
+        }
+        
+        $amenities = Amenity::all();
+        
+        return view('partner.hotel-edit.partials.partner-hotels-edit-create-2', compact('property', 'amenities'));
+    }
+    
+    public function editComplete(Property $property)
+    {
+        if ($property->user_id !== auth()->id()) {
+            abort(403);
+        }
+        
+        return view('partner.hotel-edit.partials.partner-hotels-edit-complete-content', compact('property'));
     }
 }

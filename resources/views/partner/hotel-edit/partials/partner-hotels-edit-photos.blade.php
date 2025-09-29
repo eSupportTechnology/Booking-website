@@ -3,7 +3,9 @@
 @section('title', ' Hotels Photos | ' . config('domains.app_name'))
 
 @section('content')
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <div x-data="{ step: 1 }">
     <!-- ✅ Static Progress Bar (100%) -->
@@ -24,7 +26,40 @@
                <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6 items-start">
                 <!-- 📸 Upload Area -->
                 <div class="border rounded-lg p-6 bg-white shadow-sm">
-                    <p class="font-semibold text-gray-800 mb-2">Upload at least 5 photos of your property.</p>
+                    <!-- Existing photos -->
+                    @php
+                        $photos = $property->files()->where('file_type', 'image')->get();
+                    @endphp
+                    @if($photos->count() > 0)
+                    <div class="mb-6">
+                        <h3 class="text-sm font-semibold text-gray-700 mb-3">Current Photos ({{ $photos->count() }})</h3>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                            @foreach($photos as $index => $photo)
+                            <div class="relative group border rounded overflow-hidden">
+                                @if($index === 0)
+                                <span class="absolute top-1 left-1 bg-green-600 text-white text-xs px-2 py-1 rounded z-10">Main Photo</span>
+                                @else
+                                <button onclick="setPrimaryPhoto({{ $photo->id }})"
+                                    class="absolute bottom-1 right-1 bg-blue-600 text-white text-xs px-2 py-1 rounded hover:bg-blue-700">
+                                    Set Main
+                                </button>
+                                @endif
+                                
+                                <button onclick="deletePhoto({{ $photo->id }})"
+                                    class="absolute top-1 right-1 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-700">
+                                    ×
+                                </button>
+                                
+                                <img src="{{ asset('storage/' . $photo->path) }}" 
+                                     alt="Property Photo" 
+                                     class="w-full h-32 object-cover">
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+                    @endif
+
+                    <p class="font-semibold text-gray-800 mb-2">Upload at least 3 photos of your property.</p>
                     <p class="text-sm text-gray-600 mb-4">
                         The more you upload, the more likely you are to get bookings. You can add more later.
                     </p>
@@ -52,7 +87,7 @@
                         </p>
                     </div>
 
-                    <!-- Uploaded photo previews -->
+                    <!-- New photo previews -->
                     <div id="photoPreview" class="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-4"></div>
 
                     <div class="mt-6 flex justify-between">
@@ -121,19 +156,8 @@
         const propertyId = document.getElementById('propertyId').value;
         const propertyType = urlParams.get('propertyType');
 
-        // Load existing photos
-        @if($property->photos->count() > 0)
-            @foreach($property->photos as $photo)
-                uploadedPhotos.push({
-                    file: null,
-                    url: '{{ asset("storage/" . $photo->photo_path) }}',
-                    existing: true,
-                    id: {{ $photo->id }},
-                    isPrimary: {{ $photo->is_primary ? 'true' : 'false' }}
-                });
-            @endforeach
-            renderPreview();
-        @endif
+        // Initialize with empty array for new photos only
+        // Existing photos are shown separately above
 
         // Function to clean up oversized files
         function cleanupOversizedFiles() {
@@ -312,8 +336,10 @@
                 previewContainer.appendChild(wrapper);
             });
 
-            // Check if all files are valid and we have at least 3 photos
-            const hasValidFiles = uploadedPhotos.length >= 3 &&
+            // Check if all files are valid and we have at least 3 photos total
+            const existingPhotosCount = {{ $property->files()->where('file_type', 'image')->count() }};
+            const totalPhotos = existingPhotosCount + uploadedPhotos.length;
+            const hasValidFiles = totalPhotos >= 3 &&
                                 uploadedPhotos.every(photo => !photo.file || photo.file.size <= maxSize);
 
             continueButton.disabled = !hasValidFiles;
@@ -341,8 +367,20 @@
                 return;
             }
 
-            // Only upload new photos (not existing ones)
+            // Check if we have existing photos or new photos
+            const existingPhotosCount = {{ $property->files()->where('file_type', 'image')->count() }};
             const newPhotos = uploadedPhotos.filter(photo => !photo.existing && photo.file);
+            const totalPhotos = existingPhotosCount + newPhotos.length;
+
+            if (totalPhotos < 3) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Minimum 3 photos required',
+                    text: 'Please add more photos. You need at least 3 photos total.',
+                    confirmButtonText: 'OK'
+                });
+                return;
+            }
 
             if (newPhotos.length === 0) {
                 // No new photos to upload, just redirect
@@ -487,5 +525,71 @@
             }
         });
     });
+</script>
+
+<script>
+function deletePhoto(photoId) {
+    Swal.fire({
+        title: 'Delete Photo?',
+        text: 'This action cannot be undone.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`/partner/hotels/{{ $property->id }}/photos/${photoId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire('Deleted!', 'Photo has been deleted.', 'success')
+                    .then(() => location.reload());
+                } else {
+                    Swal.fire('Error!', 'Failed to delete photo.', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire('Error!', 'Network error occurred.', 'error');
+            });
+        }
+    });
+}
+
+function setPrimaryPhoto(photoId) {
+    fetch(`/partner/hotels/{{ $property->id }}/photos/${photoId}/primary`, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Primary photo updated!',
+                showConfirmButton: false,
+                timer: 1500,
+                toast: true,
+                position: 'top-end'
+            }).then(() => location.reload());
+        } else {
+            Swal.fire('Error!', 'Failed to set primary photo.', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        Swal.fire('Error!', 'Network error occurred.', 'error');
+    });
+}
 </script>
 @endsection

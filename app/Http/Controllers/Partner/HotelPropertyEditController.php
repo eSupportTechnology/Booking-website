@@ -160,9 +160,10 @@ class HotelPropertyEditController extends Controller
         foreach ($request->file('photos') as $photo) {
             $path = $photo->store('property-photos', 'public');
             
-            $propertyPhoto = $property->photos()->create([
-                'photo_path' => $path,
-                'is_primary' => $property->photos()->count() === 0
+            $propertyPhoto = $property->files()->create([
+                'path' => $path,
+                'file_type' => 'image',
+                'property_type' => 'hotel'
             ]);
             
             $uploadedPhotos[] = $propertyPhoto;
@@ -181,15 +182,15 @@ class HotelPropertyEditController extends Controller
             return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
         }
         
-        $photo = $property->photos()->find($photoId);
+        $photo = $property->files()->find($photoId);
         
         if (!$photo) {
             return response()->json(['success' => false, 'message' => 'Photo not found'], 404);
         }
         
         // Delete file from storage
-        if ($photo->photo_path) {
-            \Storage::disk('public')->delete($photo->photo_path);
+        if ($photo->path) {
+            \Storage::disk('public')->delete($photo->path);
         }
         
         $photo->delete();
@@ -206,17 +207,14 @@ class HotelPropertyEditController extends Controller
             return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
         }
         
-        $photo = $property->photos()->find($photoId);
+        $photo = $property->files()->find($photoId);
         
         if (!$photo) {
             return response()->json(['success' => false, 'message' => 'Photo not found'], 404);
         }
         
-        // Remove primary status from all photos
-        $property->photos()->update(['is_primary' => false]);
-        
-        // Set this photo as primary
-        $photo->update(['is_primary' => true]);
+        // Move this photo to first position by updating created_at
+        $photo->update(['created_at' => now()]);
         
         return response()->json([
             'success' => true,

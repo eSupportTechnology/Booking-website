@@ -1,83 +1,619 @@
 @extends('partner.partner-layout')
 
-@section('title', 'Edit Hotel | ' . config('domains.app_name'))
+@section('title', ' Hotels Edit | ' . config('domains.app_name'))
 
 @section('content')
-<div class="container mx-auto px-4 py-8">
-    <div class="max-w-4xl mx-auto">
-        <h1 class="text-2xl font-bold mb-6">Edit Hotel Property</h1>
-        
-        <!-- Navigation Tabs -->
-        <div class="border-b border-gray-200 mb-6">
-            <nav class="-mb-px flex space-x-8">
-                <button onclick="showTab('details')" id="details-tab" class="tab-button active py-2 px-1 border-b-2 border-blue-500 font-medium text-sm text-blue-600">
-                    Property Details
-                </button>
-                <button onclick="showTab('amenities')" id="amenities-tab" class="tab-button py-2 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700">
-                    Amenities
-                </button>
-                <button onclick="showTab('rooms')" id="rooms-tab" class="tab-button py-2 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700">
-                    Rooms
-                </button>
-                <button onclick="showTab('photos')" id="photos-tab" class="tab-button py-2 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700">
-                    Photos
-                </button>
-                <button onclick="showTab('payment')" id="payment-tab" class="tab-button py-2 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700">
+<script>
+    window.isEditMode = true;
+</script>
+<script>
+    console.log('Script tag loaded...');
+    window.addEventListener('DOMContentLoaded', () => {
+        console.log('DOM loaded, initializing script...');
+        console.log('Script is running...');
+
+        // Add error handling to catch any JavaScript errors
+        window.addEventListener('error', (e) => {
+            console.error('JavaScript error caught:', e.error);
+        });
+
+        try {
+            console.log('Try block started...');
+
+            const urlParams = new URLSearchParams(window.location.search);
+        console.log('URLSearchParams created successfully');
+
+        const uploaded = urlParams.get('uploaded');
+        console.log('uploaded parameter read:', uploaded);
+// Step-by-step debugging with error catching
+console.log('=== STEP 1: URL ANALYSIS ===');
+try {
+    console.log('Full URL:', window.location.href);
+    console.log('Search string:', window.location.search);
+} catch (e) {
+    console.error('Error accessing window.location:', e);
+}
+
+console.log('=== STEP 2: URLSearchParams CREATION ===');
+let urlParams;
+try {
+    urlParams = new URLSearchParams(window.location.search);
+    console.log('URLSearchParams created successfully');
+} catch (e) {
+    console.error('Error creating URLSearchParams:', e);
+    return;
+}
+
+console.log('=== STEP 3: ALL PARAMETERS ITERATION ===');
+try {
+    let paramCount = 0;
+    for (const [key, value] of urlParams.entries()) {
+        paramCount++;
+        console.log(`Param ${paramCount}: ${key} = "${value}"`);
+    }
+    console.log(`Total parameters found: ${paramCount}`);
+} catch (e) {
+    console.error('Error iterating parameters:', e);
+}
+
+console.log('=== STEP 4: INDIVIDUAL PARAMETER READING ===');
+
+// Test each parameter individually with try-catch
+let uploaded, details, rooms, paymentDetails, propertyType;
+
+try {
+    uploaded = urlParams.get('uploaded');
+    console.log('✓ uploaded read successfully:', uploaded);
+} catch (e) {
+    console.error('✗ Error reading uploaded:', e);
+}
+
+try {
+    details = urlParams.get('details');
+    console.log('✓ details read successfully:', details);
+} catch (e) {
+    console.error('✗ Error reading details:', e);
+}
+
+try {
+    rooms = urlParams.get('rooms');
+    console.log('✓ rooms read successfully:', rooms);
+} catch (e) {
+    console.error('✗ Error reading rooms:', e);
+}
+
+try {
+    paymentDetails = urlParams.get('paymentDetails');
+    console.log('✓ paymentDetails read successfully:', paymentDetails);
+} catch (e) {
+    console.error('✗ Error reading paymentDetails:', e);
+}
+
+try {
+    propertyType = urlParams.get('propertyType');
+    console.log('✓ propertyType read successfully:', propertyType);
+} catch (e) {
+    console.error('✗ Error reading propertyType:', e);
+}
+
+console.log('=== STEP 5: MANUAL URL PARSING ===');
+try {
+    const queryString = window.location.search;
+    console.log('Query string:', queryString);
+
+    if (queryString) {
+        const params = queryString.substring(1).split('&');
+        console.log('Split parameters:', params);
+
+        params.forEach((param, index) => {
+            const [key, value] = param.split('=');
+            console.log(`Manual param ${index + 1}: ${key} = ${value}`);
+        });
+    }
+} catch (e) {
+    console.error('Error in manual parsing:', e);
+}
+
+console.log('=== STEP 6: FINAL VALUES SUMMARY ===');
+console.log('uploaded:', uploaded, '(type:', typeof uploaded, ')');
+console.log('details:', details, '(type:', typeof details, ')');
+console.log('rooms:', rooms, '(type:', typeof rooms, ')');
+console.log('paymentDetails:', paymentDetails, '(type:', typeof paymentDetails, ')');
+console.log('propertyType:', propertyType, '(type:', typeof propertyType, ')');
+
+        // Test if we can continue
+        console.log('Parameters read successfully, continuing...');
+
+        // Get all DOM elements with null checks
+        const detailsLink = document.getElementById('detailsEditLink');
+        const detailsIcon = document.getElementById('detailsStatusIcon');
+        const photoLink = document.getElementById('photoEditLink');
+        const icon = document.getElementById('statusIcon');
+        const finalicon = document.getElementById('finalStatusIcon');
+        const roomsStatusIcon = document.getElementById('roomsStatusIcon');
+        const paymenEditLink = document.getElementById('paymentEditLink');
+        const paymentEditLinkBtn = document.getElementById('paymentEditLinkBtn');
+        const roomsEditLink = document.getElementById('roomsEditLink');
+        const propertyIdElement = document.getElementById('propertyId');
+        const subtypeIdElement = document.getElementById('subtypeId');
+        const completeRegistrationBtn = document.getElementById('completeRegistrationBtn');
+        const form = document.getElementById('editForm');
+
+        // Check if essential elements exist
+        if (!propertyIdElement || !subtypeIdElement) {
+            console.error('Property ID or Subtype ID elements not found');
+            return;
+        }
+
+        if (!form) {
+            console.error('Edit form not found');
+            return;
+        }
+
+        if (!completeRegistrationBtn) {
+            console.error('Complete registration button not found');
+            return;
+        }
+
+        const propertyId = propertyIdElement.value;
+        const subtypeId = subtypeIdElement.value;
+
+        console.log('Property ID:', propertyId);
+        console.log('Property Type:', propertyType);
+
+        // Set up links immediately
+        if (photoLink) {
+            photoLink.href = `/partner-hotels-images/${propertyId}`;
+        }
+
+        if (roomsEditLink) {
+            roomsEditLink.href = `/partner-hotels-rooms/${propertyId}`;
+        }
+
+        if (paymenEditLink) {
+            paymenEditLink.href = `/partner/partner-hotels-payment/${propertyId}`;
+        }
+
+        // Function to set up complete registration button
+        function setupCompleteRegistrationButton(categoryId = 1) {
+            // Remove any existing event listeners by cloning the button
+            const newBtn = completeRegistrationBtn.cloneNode(true);
+            completeRegistrationBtn.parentNode.replaceChild(newBtn, completeRegistrationBtn);
+
+            // Check if all required steps are completed
+            const allStepsCompleted = uploaded === 'true' && paymentDetails === 'true' && rooms === 'true';
+
+            if (allStepsCompleted) {
+                // Enable the complete registration button
+                newBtn.disabled = false;
+                newBtn.className = "mt-4 w-full bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 text-sm font-semibold px-6 py-2 rounded shadow";
+                console.log('All steps completed - enabling complete registration button');
+            } else {
+                // Disable the complete registration button
+                newBtn.disabled = true;
+                newBtn.className = "mt-4 w-full bg-gray-400 font-semibold text-white rounded text-sm font-semibold px-6 py-2 rounded shadow cursor-not-allowed";
+                console.log('Steps not completed - disabling complete registration button');
+                console.log('Uploaded:', uploaded, 'Payment Details:', paymentDetails, 'Rooms:', rooms);
+            }
+
+            if (categoryId == 1) {
+                // Homes routes
+                console.log('Setting up homes routes');
+                if (paymenEditLink) {
+                    paymenEditLink.href = `/partner-homes-payments/${propertyId}`;
+                }
+
+
+                // Property details edit navigates via form submit to homes details
+                if (detailsLink && form) {
+                    const newDetailsLink = detailsLink.cloneNode(true);
+                    detailsLink.parentNode.replaceChild(newDetailsLink, detailsLink);
+                    newDetailsLink.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        form.submit();
+                    });
+                }
+
+                newBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (!allStepsCompleted) {
+                        console.log('Cannot proceed - not all steps are completed');
+                        return;
+                    }
+                    console.log('Complete registration clicked - navigating to homes route');
+                    window.location.href = `/partner-homes-complete-registration/${propertyId}`;
+                });
+            } else {
+                // Hotels routes
+                console.log('Setting up hotels routes');
+                if (paymenEditLink) {
+                    paymenEditLink.href = `/partner/partner-hotels-payment/${propertyId}`;
+                }
+                // Property details edit should go to hotels wizard with prefill by propertyId
+                if (detailsLink) {
+                    const newDetailsLink = detailsLink.cloneNode(true);
+                    detailsLink.parentNode.replaceChild(newDetailsLink, detailsLink);
+                    newDetailsLink.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        window.location.href = `/partner-hotels-create-1`;
+                    });
+                }
+
+                newBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (!allStepsCompleted) {
+                        console.log('Cannot proceed - not all steps are completed');
+                        return;
+                    }
+                    console.log('Complete registration clicked - navigating to hotels route');
+                    window.location.href = `/partner-hotels-complete-registration`;
+                });
+            }
+
+            console.log('Complete registration button set up successfully');
+        }
+
+        // Set up default button behavior immediately (hotels route as fallback)
+        setupCompleteRegistrationButton(2);
+
+        // Pre-populate form if in edit mode
+        if (typeof isEditMode !== 'undefined' && isEditMode) {
+            console.log('Edit mode detected - form should be pre-populated');
+        }
+
+        // Then try to fetch the actual category and update if needed
+        fetch(`/api/property/${propertyId}/category`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Property category data:', data);
+                if (data.category_id) {
+                    setupCompleteRegistrationButton(data.category_id);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching property category:', error);
+                // Keep the default homes route setup
+                console.log('Using default homes routes due to fetch error');
+            });
+
+        // Handle UI updates based on URL parameters
+        if (uploaded === 'true') {
+            if (icon) {
+                icon.src = "{{ asset('assets/flat-color-icons_ok.svg') }}";
+                icon.className = "w-6 h-6 md:w-7 md:h-7";
+            }
+
+            if (photoLink) {
+                photoLink.innerHTML = '';
+                photoLink.className = '';
+
+                const btn = document.createElement('button');
+                btn.className = "text-sky-600 font-medium text-sm hover:underline";
+                btn.innerText = "Edit";
+                photoLink.appendChild(btn);
+            }
+        }
+
+        if (paymentDetails === 'true') {
+            if (paymentEditLinkBtn) {
+                paymentEditLinkBtn.innerText = "Edit";
+                paymentEditLinkBtn.className = "text-sky-600 font-medium text-sm hover:underline";
+            }
+            if (finalicon) {
+                finalicon.src = "{{ asset('assets/flat-color-icons_ok.svg') }}";
+                finalicon.className = "w-6 h-6 md:w-7 md:h-7";
+            }
+        }
+
+        if (rooms === 'true') {
+            if (roomsStatusIcon) {
+                roomsStatusIcon.src = "{{ asset('assets/flat-color-icons_ok.svg') }}";
+                roomsStatusIcon.className = "w-6 h-6 md:w-7 md:h-7";
+            }
+            if (roomsEditLink) {
+                roomsEditLink.innerText = "Edit";
+                roomsEditLink.className = "text-sky-600 font-medium text-sm hover:underline";
+            }
+        }
+
+        // Add completion status indicator
+        const allStepsCompleted = uploaded === 'true' && paymentDetails === 'true' && rooms === 'true';
+
+        // Calculate completion percentage
+        let completedSteps = 0;
+        if (uploaded === 'true') completedSteps++;
+        if (paymentDetails === 'true') completedSteps++;
+        if (rooms === 'true') completedSteps++;
+        const completionPercentage = (completedSteps / 3) * 100;
+
+        // Add progress bar above the complete registration button
+        const progressSection = document.createElement('div');
+        progressSection.className = 'mb-4';
+        progressSection.innerHTML = `
+            <div class="text-center mb-2">
+                <span class="text-sm text-gray-600">Registration Progress: ${completedSteps}/3 steps completed</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="bg-[#3CC0E9] h-2 rounded-full transition-all duration-300" style="width: ${completionPercentage}%"></div>
+            </div>
+        `;
+
+        if (allStepsCompleted) {
+            // Add a success message above the complete registration button
+            const successMessage = document.createElement('div');
+            successMessage.className = 'text-center p-4 bg-green-50 border border-green-200 rounded-lg mb-4';
+            successMessage.innerHTML = `
+                <div class="flex items-center justify-center gap-2 text-green-700">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                    </svg>
+                    <span class="font-medium">All steps completed! You can now complete your registration.</span>
+                </div>
+            `;
+
+            const completeRegistrationSection = document.querySelector('.flex.justify-center');
+            if (completeRegistrationSection) {
+                completeRegistrationSection.parentNode.insertBefore(progressSection, completeRegistrationSection);
+                completeRegistrationSection.parentNode.insertBefore(successMessage, completeRegistrationSection);
+            }
+        } else {
+            // Add progress bar without success message
+            const completeRegistrationSection = document.querySelector('.flex.justify-center');
+            if (completeRegistrationSection) {
+                completeRegistrationSection.parentNode.insertBefore(progressSection, completeRegistrationSection);
+            }
+        }
+
+        // Now update the complete registration button based on completion status
+        console.log('Final completion check - Uploaded:', uploaded, 'Payment Details:', paymentDetails, 'Rooms:', rooms);
+        console.log('All steps completed:', allStepsCompleted);
+
+        if (allStepsCompleted) {
+            // Re-enable the button since all steps are completed
+            const currentBtn = document.getElementById('completeRegistrationBtn');
+            if (currentBtn) {
+                currentBtn.disabled = false;
+                currentBtn.className = "mt-4 w-full bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 text-sm font-semibold px-6 py-2 rounded shadow";
+                console.log('Button re-enabled after UI updates');
+            }
+        }
+
+        // Set up form action
+        let actionUrl = '';
+        if (propertyType === 'multiple') {
+            actionUrl = '/partner-hotels-multiple/' + propertyId;
+        } else if (propertyType === 'single') {
+            actionUrl = '/partner-hotels-single/' + propertyId;
+        } else {
+            console.error('Unknown property type:', propertyType);
+            return;
+        }
+
+        form.action = actionUrl;
+
+        const formPropertyId = document.getElementById('formPropertyId');
+        const formSubtypeId = document.getElementById('formSubtypeId');
+
+        if (formPropertyId) {
+            formPropertyId.value = propertyId;
+        }
+        if (formSubtypeId) {
+            formSubtypeId.value = subtypeId;
+        }
+
+        // Set up details link click handler; will be overridden by setupCompleteRegistrationButton
+        if (detailsLink && form) {
+            const initialDetailsLink = detailsLink.cloneNode(true);
+            detailsLink.parentNode.replaceChild(initialDetailsLink, detailsLink);
+            initialDetailsLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                form.submit();
+            });
+        }
+
+
+
+        console.log('Script initialization complete');
+
+        // Debug function to check button state
+        function debugButtonState() {
+            const btn = document.getElementById('completeRegistrationBtn');
+            if (btn) {
+                console.log('Button current state:');
+                console.log('- Disabled:', btn.disabled);
+                console.log('- Class:', btn.className);
+                console.log('- Text:', btn.textContent);
+            }
+        }
+
+        // Check button state after a short delay to ensure all updates are complete
+        setTimeout(() => {
+            debugButtonState();
+        }, 1000);
+
+        } catch (error) {
+            console.error('Error in script execution:', error);
+        }
+    });
+</script>
+<script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+function deleteRoomType(propertyId, roomTypeId) {
+    Swal.fire({
+        title: 'Delete Room Type?',
+        text: 'This will delete all rooms of this type. This action cannot be undone.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`/rooms/${propertyId}/${roomTypeId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire('Deleted!', data.message, 'success')
+                    .then(() => location.reload());
+                } else {
+                    Swal.fire('Error!', 'Failed to delete room type.', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire('Error!', 'Network error occurred.', 'error');
+            });
+        }
+    });
+}
+</script>
+
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<div class="mt-16">
+    <div class="max-w-3xl mx-auto p-4 space-y-4">
+        <div>
+            <input type="hidden" id="propertyId" value="{{ $property->id }}">
+            <input type="hidden" id="subtypeId" value="{{ $property->subtype_id }}">
+        </div>
+
+        <form id="editForm" method="POST">
+            @csrf
+            <input type="hidden" name="propertyId" id="formPropertyId">
+            <input type="hidden" name="subtypeId" id="formSubtypeId">
+        </form>
+
+        <!-- Step 1 - Completed -->
+        <div class="border border-gray-300 border rounded-lg p-4 flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <img id="detailsStatusIcon" src="{{ asset('assets/flat-color-icons_ok.svg') }}" alt="Icon"
+                    class="w-6 h-6 md:w-7 md:h-7" />
+                <div>
+                    <p class="text-sm text-gray-500">Step 1</p>
+                    <h2 class="text-base font-semibold">Hotel details</h2>
+                    <p class="text-xs text-gray-600">The basics, Add your hotel name, address, facilities and more</p>
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <a href="{{ route('partner.hotels.edit.create1', $property->id) }}"
+                   class="bg-sky-400 border border-sky-400 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-sky-500">Basic details</a>
+            </div>
+        </div>
+
+        <div class="border border-gray-300 rounded-lg p-4 flex flex-col gap-6">
+            <!-- Step 2 Header -->
+            <div class="border border-gray-300 rounded-lg p-4 flex justify-between items-center">
+                <div class="flex items-center gap-4">
+                    <img id="roomsStatusIcon" src="{{ asset('assets/Group 3926.svg') }}" alt="Icon"
+                        class="w-6 h-6 md:w-7 md:h-7" />
+                    <div>
+                        <p class="text-sm text-gray-500">Step 2</p>
+                        <h2 class="text-base font-semibold">Hotel Rooms</h2>
+                        <p class="text-xs text-gray-600">Tell us about your hotel rooms. Once you've set one up you can add more.</p>
+                    </div>
+                </div>
+                <a href="{{ route('partner.hotels.edit.rooms', $property->id) }}"
+                    class="bg-sky-400 border border-sky-400 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-sky-500">
+                    Add rooms
+                </a>
+            </div>
+
+            <!-- Existing Rooms -->
+            @if($property->rooms->count() > 0)
+            <div class="space-y-3">
+                <h3 class="text-sm font-semibold text-gray-700">Existing Rooms</h3>
+                @foreach($property->rooms->groupBy('room_type_id') as $roomTypeId => $rooms)
+                <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                    <div class="flex justify-between items-start">
+                        <div class="flex-1">
+                            <h4 class="font-medium text-gray-800">{{ $rooms->first()->roomType->name ?? 'Unknown Type' }}</h4>
+                            <div class="text-sm text-gray-600 mt-1 space-y-1">
+                                <p>{{ $rooms->count() }} room(s) • {{ $rooms->first()->max_guests }} guests max</p>
+                                @if($rooms->first()->name)
+                                <p>Room name: {{ $rooms->first()->name }}</p>
+                                @endif
+                                @if($rooms->first()->price_per_night)
+                                <p>Price: ${{ number_format($rooms->first()->price_per_night, 2) }}/night</p>
+                                @endif
+                                @if($rooms->first()->size_sq_m)
+                                <p>Size: {{ $rooms->first()->size_sq_m }}m²</p>
+                                @endif
+                                <p>Bathroom: {{ ucfirst($rooms->first()->bathroom_type ?? 'Not set') }}</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-2 ml-4">
+                            <a href="{{ route('partner.hotels.edit.rooms', $property->id) }}?edit={{ $roomTypeId }}"
+                                class="text-sky-600 text-sm hover:underline px-2 py-1 border border-sky-300 rounded">
+                                Edit
+                            </a>
+                            <button onclick="deleteRoomType({{ $property->id }}, {{ $roomTypeId }})"
+                                class="text-red-600 text-sm hover:underline px-2 py-1 border border-red-300 rounded">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+            @endif
+        </div>
+
+        <!-- Step 3 - Photos -->
+        <div class="border border-gray-300 rounded-lg p-4 flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <img id="statusIcon" src="{{ asset('assets/Vector (40).svg') }}" alt="Icon"
+                    class="w-4 h-4 md:w-5 md:h-5 cursor-pointer" />
+                <div>
+                    <p class="text-sm text-gray-500">Step 3</p>
+                    <h2 class="text-base font-semibold">Hotel Photos</h2>
+                    <p class="text-xs text-gray-600">Share some photos of your hotel so guests know what to expect.</p>
+                </div>
+            </div>
+            <a href="{{ route('partner.hotels.edit.photos', $property->id) }}"
+                class="mt-4 text-sky-600 text-sm font-semibold px-4 py-2 rounded border border-sky-300 hover:bg-sky-100">Add photos</a>
+        </div>
+
+        <!-- Step 4 - Final -->
+        {{-- <div class="border border-gray-300 rounded-lg p-4 flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <img id="finalStatusIcon" src="{{ asset('assets/Vector (41).svg') }}" alt="Icon"
+                    class="w-4 h-4 md:w-5 md:h-5 cursor-pointer" />
+                <div>
+                    <p class="text-sm text-gray-500">Step 4</p>
+                    <h2 class="text-base font-semibold">Final steps</h2>
+                    <p class="text-xs text-gray-600">Set up payments and invoicing before you open your hotel for bookings.</p>
+                </div>
+            </div>
+
+            <div class="flex gap-2">
+                <a href="{{ route('partner.hotels.edit.payment', $property->id) }}"
+                    class="bg-sky-400 border border-sky-400 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-sky-500">
                     Payment
-                </button>
-                <button onclick="showTab('complete')" id="complete-tab" class="tab-button py-2 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700">
-                    Complete
-                </button>
-            </nav>
-        </div>
+                </a>
+                <a href="{{ route('partner.hotels.edit.complete', $property->id) }}"
+                    class="text-sky-600 font-medium text-sm hover:underline px-2 py-1 border border-sky-300 rounded">
+                    Completion
+                </a>
+            </div>
+        </div> --}}
 
-        <!-- Tab Content -->
-        <div id="details-content" class="tab-content">
-            @include('partner.hotel-edit.partials.partner-hotels-edit-create-1')
-        </div>
-
-        <div id="amenities-content" class="tab-content hidden">
-            @include('partner.hotel-edit.partials.partner-hotels-edit-create-2')
-        </div>
-
-        <div id="rooms-content" class="tab-content hidden">
-            @include('partner.hotel-edit.partials.partner-hotels-edit-rooms')
-        </div>
-
-        <div id="photos-content" class="tab-content hidden">
-            @include('partner.hotel-edit.partials.partner-hotels-edit-photos')
-        </div>
-
-        <div id="payment-content" class="tab-content hidden">
-            @include('partner.hotel-edit.partials.partner-hotels-edit-payment')
-        </div>
-
-        <div id="complete-content" class="tab-content hidden">
-            @include('partner.hotel-edit.partials.partner-hotels-edit-complete-registration')
-        </div>
+        {{-- <div class="flex justify-center">
+            <button type="button" id="completeRegistrationBtn"
+                class="mt-4 w-full bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 text-sm font-semibold px-6 py-2 rounded shadow">
+                Complete Registration
+            </button>
+        </div> --}}
     </div>
 </div>
 
-<script>
-function showTab(tabName) {
-    // Hide all content
-    document.querySelectorAll('.tab-content').forEach(content => {
-        content.classList.add('hidden');
-    });
-    
-    // Remove active class from all tabs
-    document.querySelectorAll('.tab-button').forEach(tab => {
-        tab.classList.remove('active', 'border-blue-500', 'text-blue-600');
-        tab.classList.add('border-transparent', 'text-gray-500');
-    });
-    
-    // Show selected content
-    document.getElementById(tabName + '-content').classList.remove('hidden');
-    
-    // Add active class to selected tab
-    const activeTab = document.getElementById(tabName + '-tab');
-    activeTab.classList.add('active', 'border-blue-500', 'text-blue-600');
-    activeTab.classList.remove('border-transparent', 'text-gray-500');
-}
-</script>
 @endsection
