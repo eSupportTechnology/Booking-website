@@ -420,6 +420,7 @@ Route::get('/partner-homes-images/{id}', [PropertyController::class, 'showPrivat
 Route::get('/partner-apartments-final/{property?}', [PropertyController::class, 'showFinalStep'])->name('partner.apartments.final');
 
 Route::get('/partner-hotels-edit/{property}', [\App\Http\Controllers\Partner\HotelEditController::class, 'overview'])->name('partner.hotels.edit.main');
+Route::get('/partner-hotels-edit-edit/{property}', [\App\Http\Controllers\Partner\HotelEditController::class, 'overview'])->name('partner.hotels.edit.edit');
 
 Route::get('/partner-hotels-cancel-policies', function () {
     return view('frontend.partner-hotels-cancel-policies');
@@ -643,6 +644,14 @@ Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddle
     Route::get('/hotels/{property}/payment', [\App\Http\Controllers\Partner\HotelEditController::class, 'editPayment'])->name('partner.hotels.payments');
     Route::get('/hotels/{property}/policies', [\App\Http\Controllers\Partner\HotelEditController::class, 'editPolicies'])->name('partner.hotels.policies');
     
+    // Hotel edit step pages
+    Route::get('/hotels/{property}/edit/create-1', [\App\Http\Controllers\Partner\HotelEditController::class, 'editCreate1'])->name('partner.hotels.edit.create1');
+    Route::get('/hotels/{property}/edit/create-2', [\App\Http\Controllers\Partner\HotelEditController::class, 'editCreate2'])->name('partner.hotels.edit.create2');
+    Route::get('/hotels/{property}/edit/photos', [\App\Http\Controllers\Partner\HotelEditController::class, 'editPhotos'])->name('partner.hotels.edit.photos');
+    Route::get('/hotels/{property}/edit/rooms', [\App\Http\Controllers\Partner\HotelEditController::class, 'editRooms'])->name('partner.hotels.edit.rooms');
+    Route::get('/hotels/{property}/edit/payment', [\App\Http\Controllers\Partner\HotelEditController::class, 'editPayment'])->name('partner.hotels.edit.payment');
+    Route::get('/hotels/{property}/edit/complete', [\App\Http\Controllers\Partner\HotelEditController::class, 'editComplete'])->name('partner.hotels.edit.complete');
+    
     // API routes for AJAX calls
     Route::get('/hotels/{property}/api/data', [\App\Http\Controllers\Partner\HotelEditController::class, 'getPropertyData'])->name('partner.hotels.api.data');
     Route::get('/hotels/{property}/api/amenities', [\App\Http\Controllers\Partner\HotelEditController::class, 'getAmenities'])->name('partner.hotels.api.amenities');
@@ -659,7 +668,9 @@ Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddle
     Route::post('/hotels/{property}/policies', [\App\Http\Controllers\Partner\HotelPropertyEditController::class, 'updatePolicies'])->name('partner.hotels.update.policies');
     Route::post('/hotels/{property}/photos', [\App\Http\Controllers\Partner\HotelPropertyEditController::class, 'uploadPhotos'])->name('partner.hotels.upload.photos');
     Route::delete('/hotels/{property}/photos/{photo}', [\App\Http\Controllers\Partner\HotelPropertyEditController::class, 'deletePhoto'])->name('partner.hotels.delete.photo');
+    Route::delete('/partner/hotels/{property}/photos/{photo}', [\App\Http\Controllers\Partner\HotelPropertyEditController::class, 'deletePhoto'])->name('partner.hotels.photos.delete');
     Route::post('/hotels/{property}/photos/{photo}/set-primary', [\App\Http\Controllers\Partner\HotelPropertyEditController::class, 'setPrimaryPhoto'])->name('partner.hotels.set.primary.photo');
+    Route::post('/hotels/{property}/photos/{photo}/primary', [\App\Http\Controllers\Partner\HotelPropertyEditController::class, 'setPrimaryPhoto'])->name('partner.hotels.photos.set.primary');
     // Hotel room management routes
     Route::post('/hotels/{property}/rooms', [\App\Http\Controllers\Partner\HotelPropertyEditController::class, 'createRoom'])->name('partner.hotels.create.room');
     Route::put('/hotels/{property}/rooms/{room}', [\App\Http\Controllers\Partner\HotelPropertyEditController::class, 'updateRoom'])->name('partner.hotels.update.room');
@@ -791,6 +802,7 @@ Route::post('/save-step-4-room-name', [RoomController::class, 'saveStep4RoomName
 Route::post('/save-step-5-room-prices', [RoomController::class, 'saveStep5RoomPrices']);
 Route::post('/save-step-6-room-rate-plans', [RoomController::class, 'storeRatePlans'])->name('rooms.ratePlans');
 Route::delete('/rooms/{propertyId}/{roomTypeId}', [RoomController::class, 'destroyByType'])->name('rooms.destroyByType');
+Route::get('/api/rooms/{propertyId}/{roomTypeId}', [RoomController::class, 'getRoomData'])->name('rooms.getRoomData');
 Route::post('/rooms/{roomTypeId}', [RoomController::class, 'update'])->name('rooms.update');
 Route::post('/properties/{id}/open-for-bookings', [RoomController::class, 'updateBookingStatus']);
 

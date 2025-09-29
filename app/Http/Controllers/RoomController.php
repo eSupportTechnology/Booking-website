@@ -160,6 +160,31 @@ class RoomController extends Controller
         ]);
     }
 
+    public function getRoomData($propertyId, $roomTypeId)
+    {
+        try {
+            $rooms = Room::where('property_id', $propertyId)
+                ->where('room_type_id', $roomTypeId)
+                ->with('roomType')
+                ->get();
+                
+            if ($rooms->isEmpty()) {
+                return response()->json(['success' => false, 'message' => 'No rooms found']);
+            }
+            
+            $firstRoom = $rooms->first();
+            
+            return response()->json([
+                'success' => true,
+                'room' => $firstRoom,
+                'roomIds' => $rooms->pluck('id')->toArray(),
+                'roomCount' => $rooms->count()
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
     public function update(Request $request, $roomTypeId)
     {
         Log::info('Updating room details for room_type_id: ' . $roomTypeId, $request->all());

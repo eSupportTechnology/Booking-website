@@ -26,7 +26,7 @@
     }
 </script>
 
-<div x-data="{
+<div x-cloak x-data="{
         step: 1,
         propertyId: {{ $propertyModel ? $propertyModel->id : 'null' }},
         formData: {
@@ -293,7 +293,7 @@
                     this.clearFormData();
                     // Redirect to a GET route after successful completion
                     setTimeout(() => {
-                        window.location.href = `{{ route('partner.hotels.edit.overview', $propertyModel->id) }}?propertyType=single&paymentDetails=true&uploaded=true&rooms=true`;
+                        window.location.href = `/partner/hotels/${this.propertyId}/overview?propertyType=single&paymentDetails=true&uploaded=true&rooms=true`;
                     }, 2000);
                 } else {
                     showToast('Error: ' + data.message, 'error');
@@ -306,6 +306,11 @@
         },
     }"
     x-init="init()">
+
+<style>
+/* Hide the raw JavaScript from displaying */
+[x-cloak] { display: none !important; }
+</style>
 
 
     <!-- ✅ Progress Bar (now works correctly) -->

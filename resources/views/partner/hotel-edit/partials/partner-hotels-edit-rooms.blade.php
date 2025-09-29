@@ -31,14 +31,70 @@
                 return (this.discountedPrice=(this.price * 0.8).toFixed(2));
             },
             init() {
-                // Load saved state if exists on init and when returning to step 1
-                this.loadRoomDetailsState();
+                // Check if we're in edit mode
+                const urlParams = new URLSearchParams(window.location.search);
+                const editRoomTypeId = urlParams.get('edit');
+                
+                if (editRoomTypeId) {
+                    this.loadExistingRoomData(editRoomTypeId);
+                } else {
+                    // Load saved state if exists on init and when returning to step 1
+                    this.loadRoomDetailsState();
+                }
+                
                 this.$watch('step', (n) => {
                     if (n === 1) {
                         // Defer to ensure DOM for step 1 exists
                         setTimeout(() => this.loadRoomDetailsState(), 0);
                     }
                 });
+            },
+            
+            async loadExistingRoomData(roomTypeId) {
+                try {
+                    const propertyId = document.getElementById('propertyId')?.value;
+                    const response = await fetch(`/api/rooms/${propertyId}/${roomTypeId}`);
+                    const data = await response.json();
+                    
+                    if (data.success && data.room) {
+                        const room = data.room;
+                        this.rooms = data.roomIds || [];
+                        
+                        // Pre-populate form fields
+                        setTimeout(() => {
+                            const roomTypeSel = document.querySelector('.room-type-id');
+                            if (roomTypeSel) roomTypeSel.value = room.room_type_id;
+                            
+                            const roomCountInput = document.querySelector('[name="property_count"]');
+                            if (roomCountInput) roomCountInput.value = data.roomCount || 1;
+                            
+                            const guestsSpan = document.querySelector('.room-guests');
+                            if (guestsSpan) guestsSpan.innerText = room.max_guests || 2;
+                            
+                            const sizeInput = document.querySelector('.room-size');
+                            if (sizeInput && room.size_sq_m) sizeInput.value = room.size_sq_m;
+                            
+                            // Set smoking preference
+                            const smokingInputs = document.querySelectorAll('input[name="smoking"]');
+                            smokingInputs.forEach(input => {
+                                const isYes = input.nextElementSibling?.innerText?.trim().toLowerCase() === 'yes';
+                                input.checked = (room.smoking_allowed && isYes) || (!room.smoking_allowed && !isYes);
+                            });
+                            
+                            // Set room name if available
+                            if (room.name) {
+                                this.selectedRoomName = room.name;
+                            }
+                            
+                            // Set price if available
+                            if (room.price_per_night) {
+                                this.price = parseFloat(room.price_per_night);
+                            }
+                        }, 100);
+                    }
+                } catch (error) {
+                    console.error('Error loading existing room data:', error);
+                }
             },
             saveRoomDetailsState() {
                 try {
@@ -270,16 +326,24 @@
             },
 
             async saveStep3() {
-                const form = new FormData();
-                this.rooms.forEach(id => form.append('rooms[]', id));
-                document.querySelectorAll('input[name="amenities[]"]:checked').forEach(cb => {
-                    form.append('amenities[]', cb.value);
-                });
+                const payload = {
+                    rooms: this.rooms,
+                    amenities: this.selectedRoomAmenities
+                };
+                
                 try {
-                    const response = await axios.post('/save-step-3-amenities', form);
-                    console.log(response.data);
+                    const response = await fetch('/save-step-3-amenities', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: JSON.stringify(payload)
+                    });
+                    
+                    const data = await response.json();
 
-                    if (response.data.success) {
+                    if (data.success) {
                         Swal.fire({
                             icon: 'success',
                             title: 'Amenities saved!',
@@ -292,30 +356,45 @@
                     } else {
                         Swal.fire({
                             icon: 'error',
-                            title: 'Something went wrong: ' + (response.data.message || 'Unknown error'),
+                            title: 'Something went wrong: ' + (data.message || 'Unknown error'),
                             showConfirmButton: true,
                             toast: true,
                             position: 'top-end',
                         });
                     }
                 } catch (error) {
-                    console.error('Error saving amenities', error.response?.data || error.message);
+                    console.error('Error saving amenities', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Network error occurred',
+                        showConfirmButton: true,
+                        toast: true,
+                        position: 'top-end',
+                    });
                 }
             },
 
             async saveStep4() {
                 try {
-
                     const payload = {
                         rooms: this.rooms.map(roomId => ({
                             id: roomId,
                             name: this.selectedRoomName
-
                         }))
                     };
-                    const response = await axios.post('/save-step-4-room-name', payload);
+                    
+                    const response = await fetch('/save-step-4-room-name', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: JSON.stringify(payload)
+                    });
+                    
+                    const data = await response.json();
 
-                    if (response.data.success) {
+                    if (data.success) {
                         Swal.fire({
                             icon: 'success',
                             title: 'Room name saved!',
@@ -323,35 +402,50 @@
                             timer: 1500,
                             toast: true,
                             position: 'top-end',
-                        })
+                        });
                         this.step++;
                     } else {
                         Swal.fire({
                             icon: 'error',
-                            title: 'Something went wrong: ' + (response.data.message || 'Unknown error'),
+                            title: 'Something went wrong: ' + (data.message || 'Unknown error'),
                             showConfirmButton: true,
                             toast: true,
                             position: 'top-end',
                         });
                     }
                 } catch (err) {
-                    console.error(err.response?.data || err.message);
+                    console.error('Error saving room name:', err);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Network error occurred',
+                        showConfirmButton: true,
+                        toast: true,
+                        position: 'top-end',
+                    });
                 }
             },
 
             async saveStep5() {
                 try {
-
                     const payload = {
                         rooms: this.rooms.map(roomId => ({
                             id: roomId,
-                            price_per_night: this.discountedPrice?this.discountedPrice: this.price
-
+                            price_per_night: this.discountedPrice || this.price
                         }))
                     };
-                    const response = await axios.post('/save-step-5-room-prices', payload);
+                    
+                    const response = await fetch('/save-step-5-room-prices', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: JSON.stringify(payload)
+                    });
+                    
+                    const data = await response.json();
 
-                    if (response.data.success) {
+                    if (data.success) {
                         Swal.fire({
                             icon: 'success',
                             title: 'Room prices saved!',
@@ -364,14 +458,21 @@
                     } else {
                         Swal.fire({
                             icon: 'error',
-                            title: 'Something went wrong: ' + (response.data.message || 'Unknown error'),
+                            title: 'Something went wrong: ' + (data.message || 'Unknown error'),
                             showConfirmButton: true,
                             toast: true,
                             position: 'top-end',
                         });
                     }
                 } catch (err) {
-                    console.error(err.response?.data || err.message);
+                    console.error('Error saving room prices:', err);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Network error occurred',
+                        showConfirmButton: true,
+                        toast: true,
+                        position: 'top-end',
+                    });
                 }
             },
 
