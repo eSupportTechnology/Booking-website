@@ -33,27 +33,27 @@
 
         <!-- Tab Content -->
         <div id="details-content" class="tab-content">
-            @include('partner.hotel-edit.partials.partner-hotels-create-1')
+            @include('partner.hotel-edit.partials.partner-hotels-edit-create-1')
         </div>
 
         <div id="amenities-content" class="tab-content hidden">
-            @include('partner.hotel-edit.partials.partner-hotels-create-2')
+            @include('partner.hotel-edit.partials.partner-hotels-edit-create-2')
         </div>
 
         <div id="rooms-content" class="tab-content hidden">
-            @include('partner.hotel-edit.partials.partner-hotels-rooms')
+            @include('partner.hotel-edit.partials.partner-hotels-edit-rooms')
         </div>
 
         <div id="photos-content" class="tab-content hidden">
-            @include('partner.hotel-edit.partials.partner-hotels-photos')
+            @include('partner.hotel-edit.partials.partner-hotels-edit-photos')
         </div>
 
         <div id="payment-content" class="tab-content hidden">
-            @include('partner.hotel-edit.partials.partner-hotels-payment')
+            @include('partner.hotel-edit.partials.partner-hotels-edit-payment')
         </div>
 
         <div id="complete-content" class="tab-content hidden">
-            @include('partner.hotel-edit.partials.partner-hotels-complete-registration')
+            @include('partner.hotel-edit.partials.partner-hotels-edit-complete-registration')
         </div>
     </div>
 </div>

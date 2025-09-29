@@ -150,13 +150,13 @@
                                     the
                                     map to move the pin.
                                 </p>
-                                <div class="flex justify-between mt-6">
+                                <div class="flex justify-center items-center mt-6">
                                     <!-- Back Button (Left) -->
-                                    <button type="button" @click="step > 2 ? step -= 2 : step = 1"
+                                    {{-- <button type="button" @click="step > 2 ? step -= 2 : step = 1"
                                         :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
                                         class="border border-[#3CC0E9]  text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
                                         ←
-                                    </button>
+                                    </button> --}}
 
 
                                     <!-- Continue Button (Right) -->
@@ -691,7 +691,7 @@
                                     <label class="flex items-center cursor-pointer">
                                         <input type="checkbox"
                                             class="mr-2"
-                                            value="{{ $lang->id }}" 
+                                            value="{{ $lang->id }}"
                                             x-model="selectedLanguages"
                                             :checked="selectedLanguages.includes('{{ $lang->id }}')"/>
                                         <span>{{ $lang->name }}</span>
@@ -852,7 +852,7 @@
                                 const input = document.getElementById("languageInput");
                                 const container = document.getElementById("additionalLanguagesSection");
                                 if (
-                                    !container.contains(event.target)
+                                    container && !container.contains(event.target)
                                 ) {
                                     hideDropdown();
                                 }
@@ -1160,11 +1160,11 @@
             return {
                 pets_fees: '',
                 step: 5,
-                selectedBox: '',
+                selectedBox: '{{ $property->subcategory_id ?? '' }}',
                 unitType: '',
-                propertyId: null,
-                selectedAmenities: [],
-                selectedLanguages: [],
+                propertyId: URLpropertyId || '{{ $property->id ?? null }}',
+                selectedAmenities: @json($property->amenities->pluck('id')->toArray() ?? []),
+                selectedLanguages: @json($property->languages->pluck('id')->map(function($id) { return (string)$id; })->toArray() ?? []),
                 subtypes: [],
                 subcategories: @json($subcategories),
                 subtypeName: '',
@@ -1198,18 +1198,18 @@
                     title: '{{ $property->title ?? '' }}',
                     stars: '{{ $property->stars ?? '' }}',
                     group: '{{ $property->group ?? '' }}',
-                    breakfast: 'no',
-                    parking: 'no',
-                    smoking_allowed: 'no',
-                    children_allowed: 'no',
-                    parties_allowed: 'no',
-                    pets_allowed: 'no',
-                    pets_fees: 'free',
-                    check_in_from: '15:00',
-                    check_in_until: '18:00',
-                    check_out_from: '08:00',
-                    check_out_until: '11:00',
-                    cancellation_policy: 'flexible',
+                    breakfast: '{{ $property->breakfast ?? 'no' }}',
+                    parking: '{{ $property->parking ?? 'no' }}',
+                    smoking_allowed: '{{ $property->smoking_allowed ? 'yes' : 'no' }}',
+                    children_allowed: '{{ $property->children_allowed ? 'yes' : 'no' }}',
+                    parties_allowed: '{{ $property->parties_allowed ? 'yes' : 'no' }}',
+                    pets_allowed: '{{ $property->pets_allowed ?? 'no' }}',
+                    pets_fees: '{{ $property->pets_fees ?? 'free' }}',
+                    check_in_from: '{{ $property->check_in_from ?? '15:00' }}',
+                    check_in_until: '{{ $property->check_in_until ?? '18:00' }}',
+                    check_out_from: '{{ $property->check_out_from ?? '08:00' }}',
+                    check_out_until: '{{ $property->check_out_until ?? '11:00' }}',
+                    cancellation_policy: '{{ $property->cancellation_policy ?? 'flexible' }}',
 
                     // add other fields as needed
                 },
@@ -1219,8 +1219,10 @@
                 },
 
                 async init() {
-                    if (URLpropertyId) {
-                        this.propertyId = URLpropertyId;
+                    // Set property ID from URL or passed property
+                    this.propertyId = URLpropertyId || '{{ $property->id ?? null }}';
+
+                    if (this.propertyId) {
                         await this.prefillFromServer();
                     }
                 },
@@ -1272,10 +1274,10 @@
                 async prefillFromServer() {
                     try {
                         const [propRes, amenitiesRes, languagesRes, houseRulesRes] = await Promise.all([
-                            fetch(`/partner/property/${this.propertyId}/details`, { headers: { 'Accept': 'application/json' } }),
-                            fetch(`/partner/property/${this.propertyId}/amenities`, { headers: { 'Accept': 'application/json' } }),
-                            fetch(`/partner/property/${this.propertyId}/languages`, { headers: { 'Accept': 'application/json' } }),
-                            fetch(`/partner/property/${this.propertyId}/house-rules`, { headers: { 'Accept': 'application/json' } }),
+                            fetch(`/partner/hotels/${this.propertyId}/api/data`, { headers: { 'Accept': 'application/json' } }),
+                            fetch(`/partner/hotels/${this.propertyId}/api/amenities`, { headers: { 'Accept': 'application/json' } }),
+                            fetch(`/partner/hotels/${this.propertyId}/api/languages`, { headers: { 'Accept': 'application/json' } }),
+                            fetch(`/partner/hotels/${this.propertyId}/api/policies`, { headers: { 'Accept': 'application/json' } }),
                         ]);
 
                         if (propRes.ok) {
@@ -1331,10 +1333,10 @@
                             // Handle both direct array and wrapped response
                             const languagesArray = l.languages || l;
                             // Filter out any invalid language IDs (0 or negative)
-                            this.selectedLanguages = Array.isArray(languagesArray) ? 
+                            this.selectedLanguages = Array.isArray(languagesArray) ?
                                 languagesArray.map(String).filter(id => parseInt(id) > 0) : [];
                             console.log('Processed selectedLanguages:', this.selectedLanguages);
-                            
+
                             // Populate additional languages that are not in the first 6
                             setTimeout(() => this.populateAdditionalLanguages(), 100);
                         } else {
@@ -1941,7 +1943,7 @@
                                 timer: 3000
                             });
                             setTimeout(() => {
-                                window.location.href = `/partner-homes-edit/${this.propertyId}?propertyType=single`;
+                                window.location.href = `/partner-hotels-edit/${this.propertyId}?propertyType=single`;
                             })
                         } else {
                             Swal.fire({
@@ -2023,12 +2025,12 @@
                     const initialLanguageIds = @json($languages->where('id', '>', 0)->take(6)->pluck('id')->toArray());
                     const allLanguages = @json($languages->where('id', '>', 0)->mapWithKeys(function($lang) { return [$lang->id => $lang->name]; }));
                     const selectedContainer = document.getElementById('selectedAdditionalLanguages');
-                    
+
                     if (!selectedContainer) return;
-                    
+
                     // Clear existing additional languages
                     selectedContainer.innerHTML = '';
-                    
+
                     // Add selected languages that are not in the initial 6
                     this.selectedLanguages.forEach(langId => {
                         if (!initialLanguageIds.includes(parseInt(langId)) && allLanguages[langId]) {

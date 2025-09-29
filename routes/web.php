@@ -643,10 +643,16 @@ Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddle
     Route::get('/hotels/{property}/payment', [\App\Http\Controllers\Partner\HotelEditController::class, 'editPayment'])->name('partner.hotels.payments');
     Route::get('/hotels/{property}/policies', [\App\Http\Controllers\Partner\HotelEditController::class, 'editPolicies'])->name('partner.hotels.policies');
     
-    // New comprehensive hotel edit routes - redirect to overview
-    Route::get('/hotels/{property}/edit-comprehensive', function($property) {
-        return redirect()->route('partner.hotels.edit.overview', $property);
-    })->name('partner.hotels.edit.comprehensive');
+    // API routes for AJAX calls
+    Route::get('/hotels/{property}/api/data', [\App\Http\Controllers\Partner\HotelEditController::class, 'getPropertyData'])->name('partner.hotels.api.data');
+    Route::get('/hotels/{property}/api/amenities', [\App\Http\Controllers\Partner\HotelEditController::class, 'getAmenities'])->name('partner.hotels.api.amenities');
+    Route::get('/hotels/{property}/api/languages', [\App\Http\Controllers\Partner\HotelEditController::class, 'getLanguages'])->name('partner.hotels.api.languages');
+    Route::get('/hotels/{property}/api/policies', [\App\Http\Controllers\Partner\HotelEditController::class, 'getPolicies'])->name('partner.hotels.api.policies');
+
+    // // New comprehensive hotel edit routes - redirect to overview
+    // Route::get('/hotels/{property}/edit-comprehensive', function($property) {
+    //     return redirect()->route('partner.hotels.edit.overview', $property);
+    // })->name('partner.hotels.edit.comprehensive');
     Route::post('/hotels/{property}/basic-details', [\App\Http\Controllers\Partner\HotelPropertyEditController::class, 'updateBasicDetails'])->name('partner.hotels.update.basic-details');
     Route::post('/hotels/{property}/amenities', [\App\Http\Controllers\Partner\HotelPropertyEditController::class, 'updateAmenities'])->name('partner.hotels.update.amenities');
     Route::post('/hotels/{property}/pricing', [\App\Http\Controllers\Partner\HotelPropertyEditController::class, 'updatePricing'])->name('partner.hotels.update.pricing');
@@ -658,7 +664,7 @@ Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddle
     Route::post('/hotels/{property}/rooms', [\App\Http\Controllers\Partner\HotelPropertyEditController::class, 'createRoom'])->name('partner.hotels.create.room');
     Route::put('/hotels/{property}/rooms/{room}', [\App\Http\Controllers\Partner\HotelPropertyEditController::class, 'updateRoom'])->name('partner.hotels.update.room');
     Route::delete('/hotels/{property}/rooms/{roomType}', [\App\Http\Controllers\Partner\HotelPropertyEditController::class, 'deleteRoomType'])->name('partner.hotels.delete.room.type');
-    
+
     Route::get('/property_category', [PropertyController::class, 'categories'])->name('partner.property.category');
     Route::get('/property_subcategory/{id}/{property_id?}', [PropertyController::class, 'subcategories'])->name('partner.property.subcategory');
     Route::get('/hotels/rooms/{id}', [PropertyController::class, 'rooms'])->name('partner.hotels.room');

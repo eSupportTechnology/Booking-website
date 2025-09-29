@@ -135,7 +135,7 @@
                 // 🛏️ Collect bed types and counts
                 const bedElements = document.querySelectorAll('[x-data^="{ guests:');
                 const bedCounts = [];
-                if(roomCount <= 0 || !roomType || maxGuests <= 0 || !roomSize) {
+                if(roomCount <= 0 || !roomType || maxGuests <= 0) {
                     Swal.fire({
                         icon: 'error',
                         title: 'Please fill in all required fields.',
@@ -163,7 +163,7 @@
                     room_type: roomType,
                     max_guests: maxGuests,
                     smoking_allowed: smokingAllowed,
-                    size_sq_m: sizeUnit === 'square feet' ? Math.round(roomSize * 0.092903) : roomSize,
+                    size_sq_m: roomSize ? (sizeUnit === 'square feet' ? Math.round(roomSize * 0.092903) : roomSize) : null,
                     beds: bedCounts
                 };
                 console.log(payload);
@@ -417,8 +417,7 @@
                             position: 'top-end',
                         });
                         setTimeout(() => {
-                            window.location.href = `{{ route('partner.hotels.edit.overview', $property->id) }}?rooms=true&propertyType=${encodeURIComponent(urlParams.get('propertyType'))}`;
-
+                            window.location.href = `/partner-hotels-edit/${propertyId}?propertyType=single`;
                         }, 1500);
                     } else {
                         Swal.fire({
@@ -735,10 +734,10 @@
                             <div class="w-full lg:w-2/4">
                                 <label class="block font-semibold text-sm text-gray-700 mb-1">How big is this
                                     room?</label>
-                                <p class="text-xs text-gray-500 ">Apartment size - optional</p>
+                                <p class="text-xs text-gray-500 ">Room size - optional</p>
 
                                 <input type="number" min="1" step="1" inputmode="numeric"
-                                    pattern="\d*" x name="room_size"
+                                    pattern="\d*" name="room_size"
                                     class="w-full border border-gray-300 rounded-md shadow-sm text-sm mt-2 px-2 py-2 room-size">
 
 
