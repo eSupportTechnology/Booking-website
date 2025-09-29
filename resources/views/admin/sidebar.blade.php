@@ -9,7 +9,7 @@
                 </li>
                 @endcan
 
-                @canany(['view_customers', 'view_partners'])
+                @canany(['view_customers', 'view_partners', 'view_rental_providers'])
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Users</a>
                     <ul class="dropdown-menu">
@@ -19,7 +19,9 @@
                         @can('view_partners')
                         <li><a class="dropdown-item" href="{{ route('admin.partners') }}">Partners</a></li>
                         @endcan
+                        @can('view_rental_providers')
                         <li><a class="dropdown-item" href="{{ route('admin.rental-providers') }}">Rental Service Providers</a></li>
+                        @endcan
                     </ul>
                 </li>
                 @endcanany
@@ -58,7 +60,7 @@
                 </li>
                 @endcanany
 
-                @canany(['view_pending_admins', 'view_admin_accounts'])
+                @canany(['view_pending_admins', 'view_admin_accounts', 'manage_admin_permissions'])
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Admin Management</a>
                     <ul class="dropdown-menu">
@@ -67,6 +69,9 @@
                         @endcan
                         @can('view_admin_accounts')
                         <li><a class="dropdown-item" href="{{ route('admin.accounts.index') }}">Admin Accounts</a></li>
+                        @endcan
+                        @can('manage_admin_permissions')
+                        <li><a class="dropdown-item" href="{{ route('admin.accounts.index') }}">Manage Permissions</a></li>
                         @endcan
                     </ul>
                 </li>
