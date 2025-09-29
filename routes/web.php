@@ -1244,3 +1244,6 @@ Route::get('/customer/car-rentals', [\App\Http\Controllers\Customer\CustomerCarR
 
 Route::get('/customer/car-rentals/listing', [\App\Http\Controllers\Customer\CustomerCarRentalController::class, 'index'])
     ->name('customer.car-rentals.listing');
+
+Route::get('/customer/car-rentals/{id}', [\App\Http\Controllers\Customer\CustomerCarRentalController::class, 'show'])
+    ->name('customer.car-rentals.show');

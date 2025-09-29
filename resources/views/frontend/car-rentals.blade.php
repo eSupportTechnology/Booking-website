@@ -211,7 +211,7 @@
 <section class="scroll-section py-12 bg-white">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <h2 class="text-2xl font-semibold text-gray-800 mb-4">Our Latest Airport Taxis</h2>
-   <p class="mb-8 text-gray-600" style="font-family: 'Noto Sans', sans-serif;">Check out our newly added, comfortable, and reliable airport taxis ready for your next ride. <a href="/customer/taxis" class="text-blue-500 hover:underline">Show All Taxis</a></p>
+   <p class="mb-8 text-gray-600" style="font-family: 'Noto Sans', sans-serif;">Check out our newly added, comfortable, and reliable airport taxis ready for your next ride. <a href="/customer/car-rentals/listing" class="text-blue-500 hover:underline">Show All Car Rentals</a></p>
 
     <div class="relative">
       <!-- Scroll Container -->
@@ -273,7 +273,7 @@
 
             <!-- Book Now Button -->
             <div class="mt-2 text-left">
-                <a href=""
+                <a href="{{ route('customer.car-rentals.show', $car->id) }}"
                    class="bg-[#3CC0E9] text-white text-xs font-semibold px-3 py-1 rounded hover:bg-blue-700">
                     Book Now
                 </a>

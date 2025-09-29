@@ -28,6 +28,15 @@ public function showLatestCars(){
     return view('frontend.car-rentals', compact('latestActiveCars'));
 }
 
+public function show($id)
+{
+    // Find taxi by id (only active ones)
+    $car = Car::where('status', 'Active')
+        ->with('carType', 'company', 'brand','model')
+        ->findOrFail($id);
+
+    return view('Customer.single-car-rental', compact('car'));
+}
 
 
 }
