@@ -355,9 +355,9 @@
 
                                         <div class="mt-2">
                                             <h3 class="text-gray-700 font-semibold mb-2">Select property type(s)</h3>
-                                            <div class="text-xs text-red-500 mb-2" x-show="selectedAmenities.length > 0">
+                                            {{-- <div class="text-xs text-red-500 mb-2" x-show="selectedAmenities.length > 0">
                                                 Debug: Selected amenities: <span x-text="selectedAmenities.join(', ')"></span>
-                                            </div>
+                                            </div> --}}
                                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-gray-700">
 
                                                     @foreach ($amenities as $amenity)
@@ -679,9 +679,9 @@
                             <div class="bg-white shadow-md rounded-lg p-6 mb-8">
                                 <h3 class="text-lg  mb-4 font-bold">Select languages
                                 </h3>
-                                <div class="text-xs text-red-500 mb-2" x-show="selectedLanguages.length > 0">
+                                {{-- <div class="text-xs text-red-500 mb-2" x-show="selectedLanguages.length > 0">
                                     Debug: Selected languages: <span x-text="selectedLanguages.join(', ')"></span>
-                                </div>
+                                </div> --}}
                                 <div class="space-y-2">
                                     @php
                                     $initialLanguages = $languages->where('id', '>', 0)->take(6);
