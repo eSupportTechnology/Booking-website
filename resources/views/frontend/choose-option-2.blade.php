@@ -67,7 +67,7 @@
 <body>
   <main class="card" role="main">
     <header style="text-align:center">
-      <h1>How would you like to continue? (Page 1 - Sing in)</h1>
+      <h1>How would you like to continue? (Page 2 - Register)</h1>
       <p class="lead">Choose an option below — same style, different page.</p>
     </header>
 
@@ -95,7 +95,7 @@
     const status = document.getElementById('status');
     const actions = {
       btnGuest: ()=>{ status.textContent = 'Continuing as guest...'; },
-      btnPartner: ()=>{ status.textContent = 'Partner portal — redirecting...'; location.href = '/partner/login'; },
+      btnPartner: ()=>{ status.textContent = 'Partner portal — redirecting...'; location.href = '/partner/register/email'; },
       btnRental: ()=>{ status.textContent = 'Showing car & taxi rental options...'; }
     };
 
