@@ -74,9 +74,20 @@
                         </div>
                         <p class="text-sm text-gray-500 mb-2">{{ $property->city }} • {{ $property->address }}</p>
                         <div class="flex justify-between items-center">
-                            <a href="{{ route('single-hotel', $property->id) }}" class="bg-[#3CC0E9] hover:bg-blue-600 text-white text-sm px-4 py-2 rounded-lg transition">
-                                Reserve this place
-                            </a>
+                            <div class="text-right">
+                                @if($property->pricing)
+                                    <p class="text-sm text-gray-500">Starting from</p>
+                                    <p class="text-lg font-bold text-gray-800">LKR {{ number_format($property->pricing->base_price) }}</p>
+                                @endif
+                            </div>
+                            <div class="flex gap-2">
+                                <a href="{{ route('single-hotel', $property->id) }}" class="bg-gray-500 hover:bg-gray-600 text-white text-sm px-3 py-2 rounded-lg transition">
+                                    View Details
+                                </a>
+                                <a href="{{ route('customer.bookings.show', $property->id) }}" class="bg-[#3CC0E9] hover:bg-blue-600 text-white text-sm px-3 py-2 rounded-lg transition">
+                                    Book Now
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>

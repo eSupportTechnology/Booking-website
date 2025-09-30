@@ -16,7 +16,7 @@ class PropertyListingController extends Controller
         
         $properties = Property::where('category_id', $category->id)
             ->where('status', 'active')
-            ->with(['photos', 'reviews', 'category'])
+            ->with(['photos', 'reviews', 'category', 'pricing'])
             ->paginate(12);
 
         return view('Customer.hotel-listing', compact('properties'));
@@ -28,7 +28,7 @@ class PropertyListingController extends Controller
         
         $properties = Property::where('category_id', $category->id)
             ->where('status', 'active')
-            ->with(['photos', 'reviews', 'category'])
+            ->with(['photos', 'reviews', 'category', 'pricing'])
             ->paginate(12);
 
         return view('Customer.apartment-listing', compact('properties'));
@@ -40,7 +40,7 @@ class PropertyListingController extends Controller
         
         $properties = Property::where('category_id', $category->id)
             ->where('status', 'active')
-            ->with(['photos', 'reviews', 'category'])
+            ->with(['photos', 'reviews', 'category', 'pricing'])
             ->paginate(12);
 
         return view('Customer.home-listing', compact('properties'));
@@ -60,7 +60,7 @@ class PropertyListingController extends Controller
         
         $properties = Property::where('category_id', $category->id)
             ->where('status', 'active')
-            ->with(['photos', 'reviews', 'category'])
+            ->with(['photos', 'reviews', 'category', 'pricing'])
             ->paginate(12);
 
         return view('Customer.alternative-places-listing', compact('properties'));

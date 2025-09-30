@@ -97,7 +97,27 @@
 
                     <!-- Auth -->
                     @auth('customer')
-                        <!-- Profile dropdown here -->
+                        <!-- My Bookings -->
+                        <a href="{{ route('customer.bookings.index') }}" class="flex items-center space-x-1 hover:underline">
+                            <img src="{{ asset('assets/booking.svg') }}" alt="Bookings" class="w-4 h-4" />
+                            <span class="text-sm" style="font-family: 'Noto Sans', sans-serif;">My Bookings</span>
+                        </a>
+                        
+                        <!-- Profile dropdown -->
+                        <div class="relative" x-data="{ open: false }">
+                            <button @click="open = !open" class="flex items-center space-x-1 hover:underline">
+                                <img src="{{ asset('assets/user.svg') }}" alt="Profile" class="w-4 h-4" />
+                                <span class="text-sm" style="font-family: 'Noto Sans', sans-serif;">Account</span>
+                            </button>
+                            <div x-show="open" @click.away="open = false" 
+                                 class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                                <a href="{{ route('customer.bookings.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Bookings</a>
+                                <form method="POST" action="{{ route('customer.logout') }}">
+                                    @csrf
+                                    <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sign Out</button>
+                                </form>
+                            </div>
+                        </div>
                     @else
                         <div class="flex items-center gap-1 sm:gap-2">
                             <a href="{{ route('customer.login') }}"
