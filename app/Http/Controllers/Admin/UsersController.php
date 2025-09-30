@@ -13,7 +13,6 @@ class UsersController extends Controller
         if (!auth('admin')->user()->can('view_rental_providers')) {
             abort(403, 'You do not have permission to view rental service providers.');
         }
-    {
         $query = CarRenter::query();
 
         // Search functionality

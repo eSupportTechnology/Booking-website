@@ -105,7 +105,7 @@
                 @endif
 
                 <!-- USERS SECTION -->
-                @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('view_customers') || Auth::guard('admin')->user()->can('view_partners'))
+                @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('view_customers') || Auth::guard('admin')->user()->can('view_partners') || Auth::guard('admin')->user()->can('view_rental_providers'))
                 <div>
                     <button @click="openUsers = !openUsers"
                         class="w-full flex justify-between items-center px-4 py-2 rounded hover:bg-blue-200 transition focus:outline-none font-bold text-blue-900">
