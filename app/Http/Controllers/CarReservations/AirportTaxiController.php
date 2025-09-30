@@ -54,6 +54,7 @@ class AirportTaxiController extends Controller
     {
         $validated = $request->validate([
             'taxi_id' => 'required|exists:taxis,id',
+            'brand_model' => 'required|string|max:255',
             'number_plate' => 'required|string|unique:taxis,number_plate,' . $request->taxi_id,
             'color' => 'required|string',
             'passenger_capacity' => 'required|integer|min:1',
@@ -65,6 +66,7 @@ class AirportTaxiController extends Controller
             ->firstOrFail();
 
         $taxi->update([
+            'brand_model' => $validated['brand_model'],
             'number_plate' => $validated['number_plate'],
             'color' => $validated['color'],
             'passenger_capacity' => $validated['passenger_capacity'],
@@ -228,6 +230,7 @@ class AirportTaxiController extends Controller
     // 1) Validate taxi basic info
     $validatedTaxi = $request->validate([
         'taxi_type_id' => 'required|exists:taxi_types,id',
+        'brand_model' => 'required|string|max:255',
         'number_plate' => 'required|string|unique:taxis,number_plate,' . $taxi->id,
         'color' => 'required|string',
         'passenger_capacity' => 'required|integer|min:1',

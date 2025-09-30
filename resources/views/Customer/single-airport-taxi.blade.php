@@ -27,7 +27,7 @@
 <div class="flex items-center justify-between mb-4">
   <!-- Left side: Title + Reviews -->
   <div>
-    <h1 class="text-xl font-bold">Honda Civic</h1>
+    <h1 class="text-xl font-bold">{{ $taxi->brand_model ?? 'Unnamed Taxi' }}</h1>
     <div class="flex items-center space-x-2">
       <!-- Stars -->
       <div class="flex text-yellow-400">
@@ -168,8 +168,9 @@
     </div>
 
   </div>
-  <!-- Reviews Section -->
+  
 <!-- Reviews Section -->
+ <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 <div class="bg-white border border-gray-300 rounded-lg shadow-sm p-6 mt-8 relative">
   <!-- Your Feedback Button (top-right) -->
   <a href="#"
@@ -219,7 +220,7 @@
   </div>
 
 </div>
-
+</div>
 
 
 </div>

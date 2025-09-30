@@ -416,7 +416,7 @@ properties worldwide
 
             <!-- Taxi Name -->
             <h3 class="text-sm font-bold mt-2" style="font-family: 'Noto Sans', sans-serif;">
-                {{ $taxi->name ?? 'Unnamed Taxi' }} – {{ $taxi->type->name ?? 'Standard' }}
+                {{ $taxi->brand_model ?? 'Unnamed Taxi' }} – {{ $taxi->type->name ?? 'Standard' }}
             </h3>
               <h5 class="text-xs font-bold mt-1" style="font-family: 'Noto Sans', sans-serif;">
                 {{ $taxi->number_plate ?? 'Unnamed Taxi' }} 

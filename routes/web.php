@@ -1305,3 +1305,7 @@ Route::get('/choose-option', function () {
 })->name('choose.option');
 
 Route::view('/choose-option-2', 'frontend.choose-option-2')->name('choose.option.2');
+
+Route::get('/customer/taxi/booking', function () {
+    return view('Customer.taxi-booking');
+})->name('customer.taxi.booking');

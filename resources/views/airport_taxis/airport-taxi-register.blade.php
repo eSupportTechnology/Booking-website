@@ -107,6 +107,13 @@
             <p class="text-gray-500 text-sm mb-4">Provide details for the airport taxi you are registering.</p>
 
             <div class="space-y-4">
+                     <div>
+                    <label class="block font-semibold text-sm mb-1">
+                        Brand & Model <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" placeholder="e.g., Toyota Prius" class="w-full p-2 border rounded-md text-sm" x-model="brand_model">
+                    <p class="text-gray-500 text-sm mt-1">Enter the taxi’s brand and model.</p>
+                </div>
                 <div>
                     <label class="block font-semibold text-sm mb-1">
                         Number Plate <span class="text-red-500">*</span>
@@ -356,6 +363,7 @@ document.addEventListener("alpine:init", () => {
         taxi_id: null,
 
         // Step 2
+        brand_model:'',
         number_plate: '',
         color: '',
         passenger_capacity: '',
@@ -460,6 +468,7 @@ tourism_license_back: null,
                     },
                     body: JSON.stringify({
                         taxi_id: this.taxi_id,
+                        brand_model: this.brand_model,
                         number_plate: this.number_plate,
                         color: this.color,
                         passenger_capacity: this.passenger_capacity,
