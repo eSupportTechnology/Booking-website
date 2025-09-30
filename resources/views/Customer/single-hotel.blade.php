@@ -197,73 +197,45 @@
             <div class="lg:col-span-1">
                 <div class="bg-white rounded-lg p-6 shadow-lg sticky top-4" x-data="{ adults: 2, children: 0, rooms: 1, checkIn: '', checkOut: '', totalPrice: {{ $property->price_per_night ?? 120 }} }">
                     <div class="mb-6">
-                        <div class="text-3xl font-bold text-blue-600 mb-1">${{ $property->price_per_night ?? '120' }}</div>
+                        <div class="text-3xl font-bold text-blue-600 mb-1">LKR {{ number_format($property->pricing->base_price ?? 5000) }}</div>
                         <div class="text-sm text-gray-600">per night</div>
                     </div>
 
-                    <form class="space-y-4">
+                    <form action="{{ route('customer.bookings.store', $property) }}" method="POST" class="space-y-4">
+                        @csrf
+                        <input type="hidden" name="property_id" value="{{ $property->id }}">
+                        
                         <!-- Check-in/Check-out -->
                         <div class="grid grid-cols-2 gap-2">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Check-in</label>
-                                <input type="date" x-model="checkIn" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <input type="date" name="check_in" x-model="checkIn" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Check-out</label>
-                                <input type="date" x-model="checkOut" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <input type="date" name="check_out" x-model="checkOut" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                             </div>
                         </div>
 
                         <!-- Guests -->
-                        <div x-data="{ open: false }" class="relative">
+                        <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Guests</label>
-                            <button @click="open = !open" type="button" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-left focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                <span x-text="`${adults} adults, ${children} children, ${rooms} room${rooms > 1 ? 's' : ''}`"></span>
-                            </button>
-                            
-                            <div x-show="open" @click.away="open = false" class="absolute z-20 w-full bg-white border border-gray-300 rounded-lg mt-1 p-4 shadow-lg">
-                                <div class="space-y-3">
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-sm">Adults</span>
-                                        <div class="flex items-center gap-2">
-                                            <button type="button" @click="if(adults > 1) adults--" class="w-8 h-8 border rounded-full flex items-center justify-center">-</button>
-                                            <span x-text="adults" class="w-8 text-center"></span>
-                                            <button type="button" @click="adults++" class="w-8 h-8 border rounded-full flex items-center justify-center">+</button>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-sm">Children</span>
-                                        <div class="flex items-center gap-2">
-                                            <button type="button" @click="if(children > 0) children--" class="w-8 h-8 border rounded-full flex items-center justify-center">-</button>
-                                            <span x-text="children" class="w-8 text-center"></span>
-                                            <button type="button" @click="children++" class="w-8 h-8 border rounded-full flex items-center justify-center">+</button>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-sm">Rooms</span>
-                                        <div class="flex items-center gap-2">
-                                            <button type="button" @click="if(rooms > 1) rooms--" class="w-8 h-8 border rounded-full flex items-center justify-center">-</button>
-                                            <span x-text="rooms" class="w-8 text-center"></span>
-                                            <button type="button" @click="rooms++" class="w-8 h-8 border rounded-full flex items-center justify-center">+</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <select name="guest_count" x-model="adults" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                @for($i = 1; $i <= 10; $i++)
+                                    <option value="{{ $i }}">{{ $i }} {{ $i === 1 ? 'guest' : 'guests' }}</option>
+                                @endfor
+                            </select>
                         </div>
 
                         <!-- Price Breakdown -->
                         <div class="border-t pt-4 space-y-2">
                             <div class="flex justify-between text-sm">
-                                <span>${{ $property->price_per_night ?? '120' }} × <span x-text="checkIn && checkOut ? Math.ceil((new Date(checkOut) - new Date(checkIn)) / (1000 * 60 * 60 * 24)) || 1 : 1"></span> nights</span>
-                                <span x-text="'$' + ({{ $property->price_per_night ?? 120 }} * (checkIn && checkOut ? Math.ceil((new Date(checkOut) - new Date(checkIn)) / (1000 * 60 * 60 * 24)) || 1 : 1))"></span>
-                            </div>
-                            <div class="flex justify-between text-sm">
-                                <span>Taxes and fees</span>
-                                <span>$25</span>
+                                <span>LKR {{ number_format($property->pricing->base_price ?? 5000) }} × <span x-text="checkIn && checkOut ? Math.ceil((new Date(checkOut) - new Date(checkIn)) / (1000 * 60 * 60 * 24)) || 1 : 1"></span> nights</span>
+                                <span x-text="'LKR ' + ({{ $property->pricing->base_price ?? 5000 }} * (checkIn && checkOut ? Math.ceil((new Date(checkOut) - new Date(checkIn)) / (1000 * 60 * 60 * 24)) || 1 : 1)).toLocaleString()"></span>
                             </div>
                             <div class="border-t pt-2 flex justify-between font-semibold">
                                 <span>Total</span>
-                                <span x-text="'$' + ({{ $property->price_per_night ?? 120 }} * (checkIn && checkOut ? Math.ceil((new Date(checkOut) - new Date(checkIn)) / (1000 * 60 * 60 * 24)) || 1 : 1) + 25)"></span>
+                                <span x-text="'LKR ' + ({{ $property->pricing->base_price ?? 5000 }} * (checkIn && checkOut ? Math.ceil((new Date(checkOut) - new Date(checkIn)) / (1000 * 60 * 60 * 24)) || 1 : 1)).toLocaleString()"></span>
                             </div>
                         </div>
 

@@ -81,6 +81,12 @@ Route::prefix('customer')->group(function () {
 
         Route::delete('/account/request-deletion', [CustomerAuthController::class, 'requestDeletion'])
             ->name('customer.account.request-deletion');
+
+        // Booking routes
+        Route::get('/bookings', [\App\Http\Controllers\Customer\BookingController::class, 'index'])
+            ->name('customer.bookings.index');
+        Route::get('/bookings/{booking}/confirmation', [\App\Http\Controllers\Customer\BookingController::class, 'confirmation'])
+            ->name('customer.bookings.confirmation');
     });
     Route::get('/account/confirm-deletion/{token}', [CustomerAuthController::class, 'confirmDeletion'])
         ->name('customer.account.confirm-deletion');
@@ -100,6 +106,12 @@ Route::prefix('customer')->group(function () {
     Route::post('/email/verify-otp', [EmailVerifyController::class, 'verifyOtp'])->name('email.verify-otp');
     Route::post('/email/resend-otp', [EmailVerifyController::class, 'resendOtp'])->name('email.resend-otp');
 
+
+    // Property booking routes (public access)
+    Route::get('/properties/{property}/book', [\App\Http\Controllers\Customer\BookingController::class, 'show'])
+        ->name('customer.bookings.show');
+    Route::post('/properties/{property}/book', [\App\Http\Controllers\Customer\BookingController::class, 'store'])
+        ->name('customer.bookings.store');
 
     Route::post('/customer/logout', function () {
         Auth::guard('customer')->logout();
