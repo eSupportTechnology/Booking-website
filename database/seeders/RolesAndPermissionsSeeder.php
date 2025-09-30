@@ -14,11 +14,32 @@ class RolesAndPermissionsSeeder extends Seeder
 
         // Create permissions for admin guard
         $adminPermissions = [
-            'manage-users',
-            'manage-properties', 
-            'manage-bookings',
-            'view-dashboard',
-            'manage-admins'
+            'view_dashboard',
+            'view_customers',
+            'edit_customers',
+            'view_partners',
+            'edit_partners',
+            'view_rental_providers',
+            'edit_rental_providers',
+            'view_apartments',
+            'edit_apartments',
+            'view_homes',
+            'edit_homes',
+            'view_hotels',
+            'edit_hotels',
+            'view_alternative_places',
+            'edit_alternative_places',
+            'view_taxi',
+            'edit_taxi',
+            'approve_taxis',
+            'reject_taxis',
+            'view_airport',
+            'edit_airport',
+            'approve_cars',
+            'reject_cars',
+            'view_pending_admins',
+            'view_admin_accounts',
+            'manage_admin_permissions'
         ];
 
         foreach ($adminPermissions as $permission) {
@@ -64,7 +85,7 @@ class RolesAndPermissionsSeeder extends Seeder
         ]);
 
         // Assign permissions to admin roles
-        $admin->syncPermissions(['manage-users', 'manage-properties', 'manage-bookings', 'view-dashboard']);
+        $admin->syncPermissions(['view_dashboard', 'view_customers', 'view_partners']);
         $superAdmin->syncPermissions(Permission::where('guard_name', 'admin')->get());
 
         // Assign permissions to web roles
