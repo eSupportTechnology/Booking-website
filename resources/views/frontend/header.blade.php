@@ -92,21 +92,21 @@
         </div>
     </div>
 
-    <!-- Guest buttons (Register / Sign in) -->
-    @guest('customer')
-        <div class="flex items-center gap-1 sm:gap-2">
-                            <a href="{{ route('customer.login') }}"
-                               class="bg-white font-base px-2 py-1 sm:px-3 sm:py-1 md:px-4 md:py-2 rounded hover:bg-blue-100 text-xs sm:text-sm md:text-base"
-                               style="font-family: 'Noto Sans', sans-serif; color:#3CC0E9;">
-                                Register
-                            </a>
-                            <a href="{{ route('customer.login') }}"
-                               class="bg-white font-base px-2 py-1 sm:px-3 sm:py-1 md:px-4 md:py-2 rounded hover:bg-blue-100 text-xs sm:text-sm md:text-base"
-                               style="font-family: 'Noto Sans', sans-serif; color:#3CC0E9;">
-                                Sign in
-                            </a>
-                        </div>
-    @endguest
+   
+    <!-- Always visible Register / Sign in buttons -->
+    <div class="flex items-center gap-1 sm:gap-2">
+        <a href="{{ route('customer.login') }}"
+        class="bg-white font-base px-2 py-1 sm:px-3 sm:py-1 md:px-4 md:py-2 rounded hover:bg-blue-100 text-xs sm:text-sm md:text-base"
+        style="font-family: 'Noto Sans', sans-serif; color:#3CC0E9;">
+            Register
+        </a>
+        <a href="{{ route('customer.login') }}"
+        class="bg-white font-base px-2 py-1 sm:px-3 sm:py-1 md:px-4 md:py-2 rounded hover:bg-blue-100 text-xs sm:text-sm md:text-base"
+        style="font-family: 'Noto Sans', sans-serif; color:#3CC0E9;">
+            Sign in
+        </a>
+    </div>
+
 </div>
  </div>
 
