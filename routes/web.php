@@ -1285,3 +1285,9 @@ Route::get('/customer/car-rentals/listing', [\App\Http\Controllers\Customer\Cust
 
 Route::get('/customer/car-rentals/{id}', [\App\Http\Controllers\Customer\CustomerCarRentalController::class, 'show'])
     ->name('customer.car-rentals.show');
+
+
+
+Route::get('/choose-option', function () {
+    return view('frontend.choose-option');
+})->name('choose.option'); 

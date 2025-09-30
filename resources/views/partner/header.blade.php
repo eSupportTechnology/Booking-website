@@ -118,7 +118,7 @@
                     @else
                     <a href="#" class="hover:underline font-sans"
                         style="font-family: 'Noto Sans', sans-serif;">Already a partner?</a>
-                    <a href="{{ url('partner/login') }}"
+                    <a href="/choose-option"
                         class="bg-[#1F8FB2] px-4 py-2 rounded hover:bg-[#29ACD5] text-white font-sans border border-white">Sign
                         in</a>
                     @endif
