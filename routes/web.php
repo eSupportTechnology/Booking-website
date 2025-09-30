@@ -1290,4 +1290,6 @@ Route::get('/customer/car-rentals/{id}', [\App\Http\Controllers\Customer\Custome
 
 Route::get('/choose-option', function () {
     return view('frontend.choose-option');
-})->name('choose.option'); 
+})->name('choose.option');
+
+Route::view('/choose-option-2', 'frontend.choose-option-2')->name('choose.option.2');

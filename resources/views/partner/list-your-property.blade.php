@@ -81,7 +81,7 @@
             @else
             <button
                 class="w-full bg-[#3CC0E9] text-white font-semibold py-2 rounded hover:bg-[#2bb3db] transition duration-200">
-                <a href="{{ url('partner/register/email') }}"
+                <a href="/choose-option-2"
                     class="block w-full h-full text-white">@lang('messages.get_started_now') →</a>
             </button>
             @endif
