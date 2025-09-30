@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Taxi extends Model
 {
     protected $fillable = [
-        'car_renter_id', 'taxi_type_id', 'number_plate',
+        'car_renter_id', 'taxi_type_id', 'brand_model', 'number_plate',
         'color', 'passenger_capacity', 'luggage_capacity', 'status', 'front_image',   
         'back_image',    
         'inside_image', 'approval_status', 'rejection_reason'
