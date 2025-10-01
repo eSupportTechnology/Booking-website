@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Customer;
 use App\Models\Car;
+
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -32,7 +33,7 @@ public function show($id)
 {
     // Find taxi by id (only active ones)
     $car = Car::where('status', 'Active')
-        ->with('carType', 'company', 'brand','model')
+        ->with('carType', 'company', 'brand','model','renter')
         ->findOrFail($id);
 
     return view('Customer.single-car-rental', compact('car'));
