@@ -101,49 +101,85 @@
     </div>
 </section>
 
-
-
 <!-- Taxi Listings Section -->
 <section class="bg-gray-50 py-10">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 class="text-2xl font-extrabold text-gray-900">Available Car Rentals</h2>
         <p class="mt-2 mb-8 text-gray-600">Browse available active car rentals with or without a driver</p>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            @forelse($activeCars as $car)
-                <div class="bg-white shadow-md rounded-lg overflow-hidden hover:shadow-xl transition-shadow">
-                    <img src="{{ $car->front_image ? asset('storage/' . $car->front_image) : asset('images/taxi-placeholder.jpg') }}" 
-                         alt="Car {{ $car->number_plate }}" class="w-full h-48 object-cover">
-                    <div class="p-4">
-                        <h3 class="text-lg font-bold"> {{ $car->brand->brand_name ?? 'Brand' }} {{ $car->model->model_name ?? 'Model' }}</h3>
-                        <p class="text-sm text-gray-500">
-                            Renter: <span class="font-medium text-gray-700">{{ $car->fuel_type ?? 'Fuel' }}</span>
-                        </p>
-
-                        <p class="text-gray-600 mt-1">
-                            {{ $car->seats ?? 0 }} seats
-                        </p>
-
-                        <div class="mt-2 flex justify-between items-center">
-                            <span class="text-blue-600 font-semibold">
-                                
-                            </span>
-                            <a href="#" class="text-white bg-[#3CC0E9] px-4 py-2 rounded hover:bg-blue-700">Book Now</a>
-                        </div>
-                    </div>
-                </div>
-            @empty
-                <div class="col-span-full text-center py-8">
-                    <p class="text-gray-500 text-lg">No active cars available at the moment.</p>
-                </div>
-            @endforelse
-        </div>
-
-        @if($activeCars->hasPages())
-            <div class="mt-10 flex justify-center">
-                {{ $activeCars->links() }}
+        <!-- Toggle Tabs -->
+        <div x-data="{ tab: 'with' }" class="mb-6">
+            <div class="flex justify-center space-x-4">
+                <button 
+                    @click="tab = 'with'" 
+                    :class="tab === 'with' ? 'bg-[#3CC0E9] text-white' : 'bg-white text-gray-600 border'"
+                    class="px-6 py-2 rounded-lg font-semibold shadow hover:bg-blue-100 transition">
+                    With Driver
+                </button>
+                <button 
+                    @click="tab = 'without'" 
+                    :class="tab === 'without' ? 'bg-[#3CC0E9] text-white' : 'bg-white text-gray-600 border'"
+                    class="px-6 py-2 rounded-lg font-semibold shadow hover:bg-blue-100 transition">
+                    Without Driver
+                </button>
             </div>
-        @endif
+
+            <!-- With Driver Cars -->
+            <div x-show="tab === 'with'" class="mt-8">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    @forelse($activeCars->where('with_driver', 'yes') as $car)
+                        <div class="bg-white shadow-md rounded-lg overflow-hidden hover:shadow-xl transition-shadow">
+                            <img src="{{ $car->front_image ? asset('storage/' . $car->front_image) : asset('images/taxi-placeholder.jpg') }}" 
+                                alt="Car {{ $car->number_plate }}" class="w-full h-48 object-cover">
+                            <div class="p-4">
+                                <h3 class="text-lg font-bold">{{ $car->brand->brand_name ?? 'Brand' }} {{ $car->model->model_name ?? 'Model' }}</h3>
+                                <p class="text-sm text-gray-500">
+                                    Fuel: <span class="font-medium text-gray-700">{{ $car->fuel_type ?? 'Fuel' }}</span>
+                                </p>
+                                <p class="text-gray-600 mt-1">{{ $car->seats ?? 0 }} seats</p>
+                                <div class="mt-2 flex justify-between items-center">
+                                    <span class="text-blue-600 font-semibold"></span>
+                                    <a href="#" class="text-white bg-[#3CC0E9] px-4 py-2 rounded hover:bg-blue-700">Book Now</a>
+                                </div>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="col-span-full text-center py-8">
+                            <p class="text-gray-500 text-lg">No cars with driver available at the moment.</p>
+                        </div>
+                    @endforelse
+                </div>
+            </div>
+
+            <!-- Without Driver Cars -->
+            <div x-show="tab === 'without'" class="mt-8">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    @forelse($activeCars->where('with_driver', 'no') as $car)
+                        <div class="bg-white shadow-md rounded-lg overflow-hidden hover:shadow-xl transition-shadow">
+                            <img src="{{ $car->front_image ? asset('storage/' . $car->front_image) : asset('images/taxi-placeholder.jpg') }}" 
+                                alt="Car {{ $car->number_plate }}" class="w-full h-48 object-cover">
+                            <div class="p-4">
+                                <h3 class="text-lg font-bold">{{ $car->brand->brand_name ?? 'Brand' }} {{ $car->model->model_name ?? 'Model' }}</h3>
+                                <p class="text-sm text-gray-500">
+                                    Fuel: <span class="font-medium text-gray-700">{{ $car->fuel_type ?? 'Fuel' }}</span>
+                                </p>
+                                <p class="text-gray-600 mt-1">{{ $car->seats ?? 0 }} seats</p>
+                                <div class="mt-2 flex justify-between items-center">
+                                    <span class="text-blue-600 font-semibold"></span>
+                                    <a href="#" class="text-white bg-[#3CC0E9] px-4 py-2 rounded hover:bg-blue-700">Book Now</a>
+                                </div>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="col-span-full text-center py-8">
+                            <p class="text-gray-500 text-lg">No cars without driver available at the moment.</p>
+                        </div>
+                    @endforelse
+                </div>
+            </div>
+        </div>
     </div>
 </section>
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
 @endsection
