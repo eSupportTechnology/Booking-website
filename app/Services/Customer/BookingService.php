@@ -14,7 +14,7 @@ class BookingService
         $booking = new Booking();
         $booking->user_id = Auth::guard('customer')->id();
         $booking->property_id = $bookingDTO->property_id;
-        $booking->room_id = $bookingDTO->room_id;
+        $booking->room_id = $bookingDTO->room_id ?? null;
         $booking->check_in = $bookingDTO->check_in;
         $booking->check_out = $bookingDTO->check_out;
         $booking->guest_count = $bookingDTO->guest_count;

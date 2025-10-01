@@ -4,6 +4,11 @@
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('assets/Customer/css/home.css') }}">
+    <style>
+        .noto-sans-font {
+            font-family: 'Noto Sans', sans-serif;
+        }
+    </style>
 @endpush
 
 @section('content')
@@ -44,7 +49,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <!-- Property Details -->
             <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                @if($booking->property->photos->count() > 0)
+                @if($booking->property->photos && $booking->property->photos->count() > 0)
                     <img src="{{ asset('storage/' . $booking->property->photos->first()->file_path) }}" 
                          alt="{{ $booking->property->title }}" 
                          class="w-full h-48 object-cover">
@@ -56,11 +61,11 @@
                 
                 <div class="p-6">
                     <h3 class="text-xl font-semibold text-gray-800 mb-2">{{ $booking->property->title }}</h3>
-                    <p class="text-gray-600 mb-4" style="font-family: 'Noto Sans', sans-serif;">
+                    <p class="text-gray-600 mb-4 noto-sans-font">
                         {{ $booking->property->address }}, {{ $booking->property->city }}
                     </p>
                     <span class="inline-block bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full">
-                        {{ $booking->property->category->name }}
+                        {{ optional($booking->property->category)->name ?? 'N/A' }}
                     </span>
                 </div>
             </div>
@@ -139,7 +144,7 @@
         <!-- Important Information -->
         <div class="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
             <h4 class="text-lg font-semibold text-blue-800 mb-3">Important Information</h4>
-            <ul class="text-blue-700 space-y-2" style="font-family: 'Noto Sans', sans-serif;">
+            <ul class="text-blue-700 space-y-2 noto-sans-font">
                 <li>• Please arrive at the property between 2:00 PM - 11:00 PM on your check-in date</li>
                 <li>• Check-out time is 11:00 AM</li>
                 <li>• Please bring a valid ID for verification</li>
