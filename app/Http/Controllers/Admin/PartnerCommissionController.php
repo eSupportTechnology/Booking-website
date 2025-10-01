@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Partner;
+use App\Models\CommissionInvoice;
 use App\Services\CommissionService;
 use Illuminate\Http\Request;
 
@@ -13,32 +14,35 @@ class PartnerCommissionController extends Controller
         private CommissionService $commissionService
     ) {}
 
-    public function index()
+    public function agingReport()
     {
-        $partners = Partner::with(['user', 'settings'])->paginate(15);
-        $globalCommissionRate = $this->commissionService->getGlobalCommissionRate();
-        
-        return view('admin.commission.index', compact('partners', 'globalCommissionRate'));
+        $report = $this->commissionService->getAgingReport();
+        return view('admin.commission.aging', compact('report'));
     }
 
-    public function updatePartnerCommission(Request $request, Partner $partner)
+    public function markPaid(CommissionInvoice $invoice)
     {
-        $request->validate([
-            'commission_rate' => 'nullable|numeric|min:0|max:1'
-        ]);
-
-        $this->commissionService->setPartnerCommissionRate(
-            $partner, 
-            $request->commission_rate ?: null
-        );
-
-        return back()->with('success', 'Partner commission rate updated successfully.');
+        $invoice->markAsPaid();
+        return back()->with('success', 'Invoice marked as paid.');
     }
 
-    public function removePartnerCommission(Partner $partner)
+    public function generateInvoices()
     {
-        $this->commissionService->removePartnerCommissionRate($partner);
+        $partners = Partner::all();
+        $generated = 0;
         
-        return back()->with('success', 'Partner commission rate removed. Using global rate.');
+        foreach ($partners as $partner) {
+            if ($this->commissionService->generateInvoice($partner)) {
+                $generated++;
+            }
+        }
+        
+        return back()->with('success', "Generated {$generated} invoices.");
+    }
+
+    public function deactivateOverdue()
+    {
+        $count = $this->commissionService->deactivateOverduePartners();
+        return back()->with('success', "Deactivated properties for {$count} partners.");
     }
 }

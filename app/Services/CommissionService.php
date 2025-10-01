@@ -3,59 +3,114 @@
 namespace App\Services;
 
 use App\Models\Partner;
-use App\Models\AdminSettings;
+use App\Models\CommissionInvoice;
+use App\Models\Booking;
+use Carbon\Carbon;
 
 class CommissionService
 {
     /**
-     * Calculate commission amount for a partner based on booking amount.
+     * Calculate commission for a booking.
      */
     public function calculateCommission(Partner $partner, float $bookingAmount): float
     {
-        $commissionRate = $partner->getEffectiveCommissionRate();
-        return $bookingAmount * $commissionRate;
+        return $bookingAmount * $partner->getEffectiveCommissionRate();
     }
 
     /**
-     * Get commission rate for a partner (individual or global).
+     * Generate invoice for partner's pending commissions.
      */
-    public function getCommissionRate(Partner $partner): float
+    public function generateInvoice(Partner $partner): ?CommissionInvoice
     {
-        return $partner->getEffectiveCommissionRate();
+        $amount = $this->getPendingCommissionAmount($partner);
+        
+        if ($amount <= 0) {
+            return null;
+        }
+
+        return CommissionInvoice::create([
+            'partner_id' => $partner->id,
+            'invoice_number' => $this->generateInvoiceNumber($partner),
+            'amount' => $amount,
+            'due_date' => now()->addDays(15),
+            'status' => 'pending'
+        ]);
     }
 
     /**
-     * Check if partner has individual commission rate.
+     * Get pending commission amount for partner.
      */
-    public function hasIndividualRate(Partner $partner): bool
+    private function getPendingCommissionAmount(Partner $partner): float
     {
-        return $partner->settings?->commission_rate !== null;
+        $bookings = Booking::whereHas('property', fn($q) => $q->where('user_id', $partner->user_id))
+            ->where('status', 'confirmed')
+            ->where('created_at', '>=', now()->subDays(15))
+            ->get();
+
+        return $bookings->sum(fn($booking) => $this->calculateCommission($partner, $booking->total_price));
     }
 
     /**
-     * Get global commission rate.
+     * Generate unique invoice number.
      */
-    public function getGlobalCommissionRate(): float
+    private function generateInvoiceNumber(Partner $partner): string
     {
-        return AdminSettings::getGlobalCommissionRate();
+        return 'INV-' . $partner->id . '-' . now()->format('Ymd') . '-' . rand(1000, 9999);
     }
 
     /**
-     * Set individual commission rate for a partner.
+     * Deactivate properties for partners with overdue invoices.
      */
-    public function setPartnerCommissionRate(Partner $partner, ?float $rate): void
+    public function deactivateOverduePartners(): int
     {
-        $partner->settings()->updateOrCreate(
-            ['user_id' => $partner->user_id],
-            ['commission_rate' => $rate]
-        );
+        $overduePartners = Partner::whereHas('commissionInvoices', function($q) {
+            $q->where('status', 'pending')
+              ->where('due_date', '<', now());
+        })->get();
+
+        foreach ($overduePartners as $partner) {
+            $partner->deactivateProperties();
+        }
+
+        return $overduePartners->count();
     }
 
     /**
-     * Remove individual commission rate for a partner.
+     * Get aging report data.
      */
-    public function removePartnerCommissionRate(Partner $partner): void
+    public function getAgingReport(): array
     {
-        $partner->settings()->update(['commission_rate' => null]);
+        $invoices = CommissionInvoice::with('partner.user')
+            ->where('status', 'pending')
+            ->get()
+            ->groupBy('partner_id');
+
+        $report = [];
+        foreach ($invoices as $partnerId => $partnerInvoices) {
+            $partner = $partnerInvoices->first()->partner;
+            $totalAmount = $partnerInvoices->sum('amount');
+            
+            $buckets = ['0-15' => 0, '16-30' => 0, '31-45' => 0, '46+' => 0];
+            
+            foreach ($partnerInvoices as $invoice) {
+                $daysOverdue = now()->diffInDays($invoice->due_date, false);
+                $bucket = match(true) {
+                    $daysOverdue <= 15 => '0-15',
+                    $daysOverdue <= 30 => '16-30', 
+                    $daysOverdue <= 45 => '31-45',
+                    default => '46+'
+                };
+                $buckets[$bucket] += $invoice->amount;
+            }
+
+            $report[] = [
+                'partner_name' => $partner->first_name . ' ' . $partner->last_name,
+                'partner_email' => $partner->user->email,
+                'total_amount' => $totalAmount,
+                'buckets' => $buckets
+            ];
+        }
+
+        return $report;
     }
 }

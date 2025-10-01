@@ -71,4 +71,31 @@ class Partner extends Model
         // Get global commission rate from admin settings
         return \App\Models\AdminSettings::getGlobalCommissionRate();
     }
+
+    /**
+     * Get commission invoices for this partner.
+     */
+    public function commissionInvoices()
+    {
+        return $this->hasMany(CommissionInvoice::class);
+    }
+
+    /**
+     * Check if partner has overdue invoices.
+     */
+    public function hasOverdueInvoices(): bool
+    {
+        return $this->commissionInvoices()
+            ->where('status', 'pending')
+            ->where('due_date', '<', now())
+            ->exists();
+    }
+
+    /**
+     * Deactivate all properties for this partner.
+     */
+    public function deactivateProperties(): void
+    {
+        $this->properties()->update(['status' => 'inactive']);
+    }
 }
