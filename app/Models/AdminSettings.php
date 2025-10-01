@@ -30,4 +30,12 @@ class AdminSettings extends Model
     {
         return $this->belongsTo(Admin::class);
     }
+
+    /**
+     * Get the global commission rate.
+     */
+    public static function getGlobalCommissionRate(): float
+    {
+        return static::first()?->commission_rate ?? 0.15;
+    }
 }
