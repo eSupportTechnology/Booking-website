@@ -94,21 +94,21 @@
 
    
     <!-- Show Register / Sign in only when user is not logged in -->
-@guest('customer')
-    <!-- Show Register / Sign in -->
-    <div class="flex items-center gap-1 sm:gap-2">
-        <a href="/choose-option"
-           class="bg-white font-base px-2 py-1 sm:px-3 sm:py-1 md:px-4 md:py-2 rounded hover:bg-blue-100 text-xs sm:text-sm md:text-base"
-           style="font-family: 'Noto Sans', sans-serif; color:#3CC0E9;">
-            Register
-        </a>
-        <a href="/choose-option"
-           class="bg-white font-base px-2 py-1 sm:px-3 sm:py-1 md:px-4 md:py-2 rounded hover:bg-blue-100 text-xs sm:text-sm md:text-base"
-           style="font-family: 'Noto Sans', sans-serif; color:#3CC0E9;">
-            Sign in
-        </a>
-    </div>
-@else
+    @guest('customer')
+        <!-- Show Register / Sign in -->
+        <div class="flex items-center gap-1 sm:gap-2">
+            <a href="/choose-option"
+            class="bg-white font-base px-2 py-1 sm:px-3 sm:py-1 md:px-4 md:py-2 rounded hover:bg-blue-100 text-xs sm:text-sm md:text-base"
+            style="font-family: 'Noto Sans', sans-serif; color:#3CC0E9;">
+                Register
+            </a>
+            <a href="/choose-option"
+            class="bg-white font-base px-2 py-1 sm:px-3 sm:py-1 md:px-4 md:py-2 rounded hover:bg-blue-100 text-xs sm:text-sm md:text-base"
+            style="font-family: 'Noto Sans', sans-serif; color:#3CC0E9;">
+                Sign in
+            </a>
+        </div>
+    @else
     <!-- Empty placeholder so layout doesn't shift -->
     <div class="flex items-center gap-1 sm:gap-2 invisible">
         <span class="px-2 py-1 sm:px-3 sm:py-1 md:px-4 md:py-2">Hidden</span>
