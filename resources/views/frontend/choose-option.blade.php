@@ -94,7 +94,7 @@
   <script>
     const status = document.getElementById('status');
     const actions = {
-      btnGuest: ()=>{ status.textContent = 'Continuing as guest...'; },
+      btnGuest: ()=>{ status.textContent = 'Continuing as guest...'; location.href = '/customer/login'; },
       btnPartner: ()=>{ status.textContent = 'Partner portal — redirecting...'; location.href = '/partner/login'; },
       btnRental: ()=>{ status.textContent = 'Showing car & taxi rental options...'; }
     };
