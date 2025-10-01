@@ -232,35 +232,55 @@
             <!-- Commission Settings -->
             <div id="commission-content" class="bg-gray-50 border rounded-lg shadow p-6 hidden">
                 <h3 class="text-xl font-semibold text-gray-700 mb-4">💰 Commission Settings</h3>
-                <form action="{{ route('admin.settings.commission.update') }}" method="POST">
-                    @csrf
-                    <div class="mb-6">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Commission Rate</label>
-                        <div class="flex items-center space-x-4">
-                            <div class="flex-1">
-                                <input type="number" 
-                                       name="commission_rate" 
-                                       value="{{ $settings->commission_rate ?? 0.15 }}" 
-                                       step="0.0001" 
-                                       min="0" 
-                                       max="1" 
-                                       class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1F8FB2]" 
-                                       required>
-                                <p class="text-xs text-gray-500 mt-1">Enter as decimal (e.g., 0.15 for 15%)</p>
+                
+                <!-- Global Commission Rate -->
+                <div class="mb-6">
+                    <h4 class="font-medium text-gray-700 mb-3">Global Commission Rate</h4>
+                    <form action="{{ route('admin.settings.commission.update') }}" method="POST">
+                        @csrf
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Default Rate for All Partners</label>
+                            <div class="flex items-center space-x-4">
+                                <div class="flex-1">
+                                    <input type="number" 
+                                           name="commission_rate" 
+                                           value="{{ $settings->commission_rate ?? 0.15 }}" 
+                                           step="0.0001" 
+                                           min="0" 
+                                           max="1" 
+                                           class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1F8FB2]" 
+                                           required>
+                                    <p class="text-xs text-gray-500 mt-1">Enter as decimal (e.g., 0.15 for 15%)</p>
+                                </div>
+                                <div class="text-lg font-semibold text-gray-700">
+                                    <span id="commission-percentage">{{ number_format(($settings->commission_rate ?? 0.15) * 100, 1) }}%</span>
+                                </div>
                             </div>
-                            <div class="text-lg font-semibold text-gray-700">
-                                <span id="commission-percentage">{{ number_format(($settings->commission_rate ?? 0.15) * 100, 1) }}%</span>
+                            <div class="mt-2 text-sm text-gray-600">
+                                <p>Current global rate: <strong>{{ number_format(($settings->commission_rate ?? 0.15) * 100, 1) }}%</strong></p>
+                                <p class="text-xs text-gray-500 mt-1">This rate applies to all partners unless they have an individual rate set.</p>
                             </div>
                         </div>
-                        <div class="mt-2 text-sm text-gray-600">
-                            <p>Current commission rate: <strong>{{ number_format(($settings->commission_rate ?? 0.15) * 100, 1) }}%</strong></p>
-                            <p class="text-xs text-gray-500 mt-1">This rate will be applied to all new bookings for commission calculations.</p>
+                        <button type="submit" class="bg-[#1F8FB2] text-white px-6 py-2 rounded hover:bg-[#157799] transition">
+                            Update Global Rate
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Individual Partner Commission Management -->
+                <div class="border-t pt-6">
+                    <h4 class="font-medium text-gray-700 mb-3">Individual Partner Rates</h4>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600">Set custom commission rates for specific partners</p>
+                            <p class="text-sm text-gray-500">Individual rates override the global rate when assigned</p>
                         </div>
+                        <a href="{{ route('admin.commission.index') }}" 
+                           class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">
+                            Manage Partner Rates
+                        </a>
                     </div>
-                    <button type="submit" class="bg-[#1F8FB2] text-white px-6 py-2 rounded hover:bg-[#157799] transition">
-                        Update Commission Rate
-                    </button>
-                </form>
+                </div>
             </div>
         </div>
     </div>

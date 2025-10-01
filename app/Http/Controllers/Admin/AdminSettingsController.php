@@ -137,6 +137,11 @@ class AdminSettingsController extends Controller
             ['commission_rate' => $request->commission_rate]
         );
 
-        return back()->with('success', 'Commission settings updated successfully.');
+        return back()->with('success', 'Global commission rate updated successfully.');
+    }
+
+    public function commissionManagement()
+    {
+        return redirect()->route('admin.commission.index');
     }
 }

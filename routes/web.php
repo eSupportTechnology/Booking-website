@@ -939,6 +939,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/settings/two-factor', [\App\Http\Controllers\Admin\AdminSettingsController::class, 'toggleTwoFactor'])->name('settings.two-factor.toggle');
         Route::post('/settings/commission', [\App\Http\Controllers\Admin\AdminSettingsController::class, 'updateCommissionSettings'])->name('settings.commission.update');
 
+        // Commission management routes
+        Route::get('/commission', [\App\Http\Controllers\Admin\PartnerCommissionController::class, 'index'])->name('commission.index');
+        Route::put('/commission/partner/{partner}', [\App\Http\Controllers\Admin\PartnerCommissionController::class, 'updatePartnerCommission'])->name('commission.update');
+        Route::delete('/commission/partner/{partner}', [\App\Http\Controllers\Admin\PartnerCommissionController::class, 'removePartnerCommission'])->name('commission.remove');
+
         // Super admin only routes
         Route::middleware(\App\Http\Middleware\SuperAdminMiddleware::class)->group(function () {
             Route::get('/pending', [\App\Http\Controllers\Admin\AdminApprovalController::class, 'index'])->name('approvals.index');

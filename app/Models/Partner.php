@@ -55,4 +55,20 @@ class Partner extends Model
     {
         return $this->properties()->count();
     }
+
+    /**
+     * Get the effective commission rate for this partner.
+     * Returns individual rate if set, otherwise global rate.
+     */
+    public function getEffectiveCommissionRate(): float
+    {
+        $partnerRate = $this->settings?->commission_rate;
+        
+        if ($partnerRate !== null) {
+            return (float) $partnerRate;
+        }
+        
+        // Get global commission rate from admin settings
+        return \App\Models\AdminSettings::getGlobalCommissionRate();
+    }
 }
