@@ -27,7 +27,7 @@
 <div class="flex items-center justify-between mb-4">
   <!-- Left side: Title + Reviews -->
   <div>
-    <h1 class="text-xl font-bold">Honda Civic</h1>
+    <h1 class="text-xl font-bold">{{ $car->brand->brand_name ?? '' }} {{ $car->model->model_name ?? '' }}</h1>
     <div class="flex items-center space-x-2">
       <!-- Stars -->
       <div class="flex text-yellow-400">
@@ -51,34 +51,35 @@
   <div class="flex flex-col lg:flex-row gap-8">
 
 <div class="flex-1 space-y-2"> <!-- vertical spacing only 0.5rem -->
-
+ 
+                      
   <!-- Row 1: Front Image -->
-  @if($car->front_image)
+  @if($car->car_front)
   <div class="w-full h-72">
-    <img src="{{ asset('storage/'.$car->front_image) }}" 
+    <img src="{{ asset('storage/' . $car->car_front) }}" 
          alt="Front View"
          class="w-full h-full rounded-lg object-cover cursor-pointer border border-gray-300 shadow-sm"
-         onclick="openModal('{{ asset('storage/'.$car->front_image) }}')">
+         onclick="openModal('{{ asset('storage/'.$car->car_front) }}')">
   </div>
   @endif
 
   <!-- Row 2: Inside & Back Images -->
   <div class="grid grid-cols-2 gap-2"> <!-- tiny horizontal gap -->
-    @if($car->inside_image)
+   @if($car->car_back)
     <div class="h-50">
-      <img src="{{ asset('storage/'.$car->inside_image) }}" 
+      <img src="{{ asset('storage/' . $car->car_back) }}"   
            alt="Inside View"
            class="w-full h-full rounded-lg object-cover cursor-pointer border border-gray-300 shadow-sm"
-           onclick="openModal('{{ asset('storage/'.$car->inside_image) }}')">
+           onclick="openModal('{{ asset('storage/'.$car->car_back) }}')">
     </div>
     @endif
 
-    @if($car->back_image)
+        @if($car->car_inside)
     <div class="h-50">
-      <img src="{{ asset('storage/'.$car->back_image) }}" 
+      <img src="{{ asset('storage/'.$car->car_inside) }}" 
            alt="Back View"
            class="w-full h-full rounded-lg object-cover cursor-pointer border border-gray-300 shadow-sm"
-           onclick="openModal('{{ asset('storage/'.$car->back_image) }}')">
+           onclick="openModal('{{ asset('storage/'.$car->car_inside) }}')">
     </div>
     @endif
   </div>
@@ -95,12 +96,7 @@
 
 </div>
 
-
-
-  
-
-    
-
+</strong> 
     <!-- Right Column: Vehicle & Driver Details -->
     <div class="flex-1">
        <div class="bg-white p-6 rounded-lg shadow-md border border-gray-400 mb-6">
@@ -114,52 +110,45 @@
       <div class="bg-white p-6 rounded-lg shadow-md border border-gray-400 mb-6">
         <h2 class="text-lg font-semibold mb-4">Vehicle Details</h2>
         <div class="grid grid-cols-2 gap-2 text-sm text-gray-700">
-          <div><strong class="text-sm text-gray-500">Brand and Model:</strong><br>{{ $car->carType->name ?? 'Car' }}</div>
-          <div><strong class="text-sm text-gray-500">Number Plate:</strong><br>{{ $car->number_plate ?? 'N/A' }}</div>
-          <div><strong class="text-sm text-gray-500">Vehicle Color:</strong><br>{{ $car->color ?? 'N/A' }}</div>
-          <div><strong class="text-sm text-gray-500">Passenger Capacity:</strong><br>{{ $car->passenger_capacity ?? 0 }}</div>
-          <div><strong class="text-sm text-gray-500">Luggage Capacity:</strong><br>{{ $car->luggage_capacity ?? 0 }}</div>
+          <div><strong class="text-sm text-gray-500">Brand and Model:</strong><br>{{ $car->brand->brand_name ?? '' }} {{ $car->model->model_name ?? '' }}</div>
+          <div><strong class="text-sm text-gray-500">Transmission:</strong><br>{{ $car->transmission ?? 'N/A' }}</div>
+          <div><strong class="text-sm text-gray-500">Mileage Type:</strong><br> {{ $car->mileage_type ?? 'N/A' }}</div>
+          <div><strong class="text-sm text-gray-500">Fuel Type:</strong><br>{{ $car->fuel_type ?? 'N/A' }}</div>
+          <div><strong class="text-sm text-gray-500">Seats:</strong><br>{{ $car->seats }}</div>
         </div>
-         @if($car->drivers && $car->drivers->count())
-    @foreach($car->drivers as $driver)
+
+        
+   @if($car->with_driver === 'yes')
         <h2 class="text-lg font-semibold mb-4 mt-6">Driver Details</h2>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center">
-          @php
-              $photoFile = $driver->photo ? \App\Models\File::find($driver->photo) : null;
-          @endphp
+        
 
-          <div class="flex items-center justify-center">
-            @if($photoFile?->path)
-              <img src="{{ asset('storage/' . $photoFile->path) }}" 
-                   alt="{{ $driver->name }}" 
-                   class="w-24 h-24 rounded-full object-cover shadow border border-gray-300">
-            @else
-              <img src="{{ asset('images/user.jpeg') }}" 
-                   alt="Default Profile" 
-                   class="w-24 h-24 rounded-full object-cover shadow border border-gray-300">
-            @endif
-          </div>
 
           <div class="sm:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
             <div>
               <p class="text-sm text-gray-500 font-semibold">Name</p>
-              <p class="text-sm text-gray-800">{{ $driver->name ?? 'N/A' }}</p>
+              <p class="text-sm text-gray-800">{{ $car->driver_name }}</p>
             </div>
             <div>
               <p class="text-sm text-gray-500 font-semibold">Contact Number</p>
-              <p class="text-sm text-gray-800">{{ $driver->contact_number ?? 'N/A' }}</p>
+              <p class="text-sm text-gray-800"> {{ $car->driver_phone }}</p>
             </div>
             <div>
-              <p class="text-sm text-gray-500 font-semibold">Email</p>
-              <p class="text-sm text-gray-800">{{ $driver->email ?? 'N/A' }}</p>
+              <p class="text-sm text-gray-500 font-semibold">Driver Age</p>
+              <p class="text-sm text-gray-800">{{ $car->driver_age }}</p>
             </div>
             <div>
-              <p class="text-sm text-gray-500 font-semibold">License Number</p>
-              <p class="text-sm text-gray-800">{{ $driver->license_number ?? 'N/A' }}</p>
+              <p class="text-sm text-gray-500 font-semibold">Driver Experience</p>
+              <p class="text-sm text-gray-800">{{ $car->driver_experience }} years</p>
+            </div>
+           
+            <div>
+              <p class="text-sm text-gray-500 font-semibold">NIC</p>
+              <p class="text-sm text-gray-800">{{ $car->driver_nic }}</p>
             </div>
           </div>
         </div>
-    @endforeach
+
 @endif
 
       <!-- Driver Details -->
