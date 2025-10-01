@@ -28,6 +28,18 @@
   <!-- Left side: Title + Reviews -->
   <div>
     <h1 class="text-xl font-bold">{{ $car->brand->brand_name ?? '' }} {{ $car->model->model_name ?? '' }}</h1>
+          <p class="text-gray-600 text-sm"><strong>Car provided by :</strong>
+  @if($car->renter)
+      @if($car->renter->account_type === 'individual')
+          {{ $car->renter->full_name }}
+      @elseif($car->renter->account_type === 'company')
+          {{ $car->renter->company_name }}
+      @endif
+  @else
+      N/A
+  @endif
+</p>
+
     <div class="flex items-center space-x-2">
       <!-- Stars -->
       <div class="flex text-yellow-400">
@@ -61,38 +73,31 @@
          class="w-full h-full rounded-lg object-cover cursor-pointer border border-gray-300 shadow-sm"
          onclick="openModal('{{ asset('storage/'.$car->car_front) }}')">
   </div>
-  @endif
+@endif
 
   <!-- Row 2: Inside & Back Images -->
   <div class="grid grid-cols-2 gap-2"> <!-- tiny horizontal gap -->
-   @if($car->car_back)
-    <div class="h-50">
-      <img src="{{ asset('storage/' . $car->car_back) }}"   
-           alt="Inside View"
-           class="w-full h-full rounded-lg object-cover cursor-pointer border border-gray-300 shadow-sm"
-           onclick="openModal('{{ asset('storage/'.$car->car_back) }}')">
-    </div>
+  
+    @if($car->car_inside)
+      <div class="h-50">
+        <img src="{{ asset('storage/'.$car->car_inside) }}" 
+             alt="Inside View"
+             class="w-full h-full rounded-lg object-cover cursor-pointer border border-gray-300 shadow-sm"
+             onclick="openModal('{{ asset('storage/'.$car->car_inside) }}')">
+      </div>
     @endif
 
-        @if($car->car_inside)
-    <div class="h-50">
-      <img src="{{ asset('storage/'.$car->car_inside) }}" 
-           alt="Back View"
-           class="w-full h-full rounded-lg object-cover cursor-pointer border border-gray-300 shadow-sm"
-           onclick="openModal('{{ asset('storage/'.$car->car_inside) }}')">
-    </div>
+        @if($car->car_back)
+      <div class="h-50">
+        <img src="{{ asset('storage/' . $car->car_back) }}"   
+             alt="Back View"
+             class="w-full h-full rounded-lg object-cover cursor-pointer border border-gray-300 shadow-sm"
+             onclick="openModal('{{ asset('storage/'.$car->car_back) }}')">
+      </div>
     @endif
   </div>
 
-  <!-- Fallback if no images -->
-  @if(!$car->front_image && !$car->inside_image && !$car->back_image)
-  <div class="w-full h-50">
-    <img src="{{ asset('images/placeholder-car.jpg') }}" 
-         alt="No Image"
-         class="w-full h-full rounded-lg object-cover cursor-pointer border border-gray-300 shadow-sm"
-         onclick="openModal('{{ asset('images/placeholder-car.jpg') }}')">
-  </div>
-  @endif
+  
 
 </div>
 
@@ -163,6 +168,7 @@
   </div>
   <!-- Reviews Section -->
 <!-- Reviews Section -->
+ <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 <div class="bg-white border border-gray-300 rounded-lg shadow-sm p-6 mt-8 relative">
   <!-- Your Feedback Button (top-right) -->
   <a href="#"
@@ -212,7 +218,7 @@
   </div>
 
 </div>
-
+</div>
 
 
 </div>
