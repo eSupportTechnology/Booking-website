@@ -20,8 +20,10 @@ class PropertyCategoriesTableSeeder extends Seeder
             'Alternative places',     // ID 4
         ];
 
-        // Clear existing categories to ensure correct IDs
+       // Clear existing categories to ensure correct IDs
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         DB::table('property_categories')->truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
         
         foreach ($categories as $index => $category) {
             DB::table('property_categories')->insert([

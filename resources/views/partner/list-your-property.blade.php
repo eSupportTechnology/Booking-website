@@ -659,7 +659,7 @@
                     <p>@lang('messages.payment_facilitation')</p>
                 </li>
             </ul>
-            <a href="{{ route('partner.property.category') }}"
+            <a href="/choose-option-2"
                 class="w-full bg-[#3CC0E9] text-white font-semibold py-2 rounded hover:bg-[#2bb3db] transition duration-200 text-center block">
                 @lang('messages.get_started_now') →
             </a>
