@@ -267,17 +267,17 @@
                     </form>
                 </div>
 
-                <!-- Individual Partner Commission Management -->
+                <!-- Commission Management -->
                 <div class="border-t pt-6">
-                    <h4 class="font-medium text-gray-700 mb-3">Individual Partner Rates</h4>
+                    <h4 class="font-medium text-gray-700 mb-3">Commission Management</h4>
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-gray-600">Set custom commission rates for specific partners</p>
-                            <p class="text-sm text-gray-500">Individual rates override the global rate when assigned</p>
+                            <p class="text-gray-600">View aging reports and manage commission invoices</p>
+                            <p class="text-sm text-gray-500">Track partner payments and overdue accounts</p>
                         </div>
-                        <a href="{{ route('admin.commission.index') }}" 
+                        <a href="{{ route('admin.commission.aging') }}" 
                            class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">
-                            Manage Partner Rates
+                            View Aging Report
                         </a>
                     </div>
                 </div>

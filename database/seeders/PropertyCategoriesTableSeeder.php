@@ -15,7 +15,7 @@ class PropertyCategoriesTableSeeder extends Seeder
     {
         $categories = [
             'Homes',           // ID 1
-            'Apartment',       // ID 2  
+            'Apartment',       // ID 2
             'Hotel, B&Bs, and more',  // ID 3
             'Alternative places',     // ID 4
         ];
@@ -24,7 +24,7 @@ class PropertyCategoriesTableSeeder extends Seeder
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         DB::table('property_categories')->truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
-        
+
         foreach ($categories as $index => $category) {
             DB::table('property_categories')->insert([
                 'id' => $index + 1,

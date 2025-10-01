@@ -940,9 +940,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/settings/commission', [\App\Http\Controllers\Admin\AdminSettingsController::class, 'updateCommissionSettings'])->name('settings.commission.update');
 
         // Commission management routes
-        Route::get('/commission', [\App\Http\Controllers\Admin\PartnerCommissionController::class, 'index'])->name('commission.index');
-        Route::put('/commission/partner/{partner}', [\App\Http\Controllers\Admin\PartnerCommissionController::class, 'updatePartnerCommission'])->name('commission.update');
-        Route::delete('/commission/partner/{partner}', [\App\Http\Controllers\Admin\PartnerCommissionController::class, 'removePartnerCommission'])->name('commission.remove');
+        Route::get('/commission/aging', [\App\Http\Controllers\Admin\PartnerCommissionController::class, 'agingReport'])->name('commission.aging');
+        Route::post('/commission/generate', [\App\Http\Controllers\Admin\PartnerCommissionController::class, 'generateInvoices'])->name('commission.generate');
+        Route::post('/commission/deactivate', [\App\Http\Controllers\Admin\PartnerCommissionController::class, 'deactivateOverdue'])->name('commission.deactivate');
+        Route::post('/commission/invoice/{invoice}/paid', [\App\Http\Controllers\Admin\PartnerCommissionController::class, 'markPaid'])->name('commission.mark-paid');
 
         // Super admin only routes
         Route::middleware(\App\Http\Middleware\SuperAdminMiddleware::class)->group(function () {
