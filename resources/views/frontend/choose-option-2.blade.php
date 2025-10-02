@@ -96,7 +96,7 @@
     const actions = {
       btnGuest: ()=>{ status.textContent = 'Continuing as guest...'; },
       btnPartner: ()=>{ status.textContent = 'Partner portal — redirecting...'; location.href = '/partner/register/email'; },
-      btnRental: ()=>{ status.textContent = 'Showing car & taxi rental options...'; }
+      btnRental: ()=>{ status.textContent = 'Showing car & taxi rental options...'; location.href = '/carrentals/register/details';  }
     };
 
     Object.keys(actions).forEach(id=>{
