@@ -3,72 +3,111 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Choose Mode — Page 2</title>
+  <title>Choose Mode — Page 1</title>
   <style>
     :root{
-      --bg:#f6f7fb; --card:#ffffff; --accent:#2563eb; --accent-2:#06b6d4; --muted:#6b7280;
+      --bg-1:#1F8FB2; 
+      --bg-2:#3CC0E9; 
+      --card:#ffffff; 
+      --accent:#1F8FB2; 
+      --accent-2:#3CC0E9; 
+      --muted:#6b7280;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
-      margin:0; font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      background:linear-gradient(180deg,var(--bg),#eef2ff 60%); color:#0f172a; -webkit-font-smoothing:antialiased;
-      display:flex; align-items:center; justify-content:center; padding:24px;
+      margin:0; 
+      font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background:linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 100%);
+      color:#0f172a; 
+      display:flex; 
+      align-items:center; 
+      justify-content:center; 
+      padding:24px;
     }
 
     .card{
-      width:100%; max-width:940px; background:var(--card); border-radius:16px; box-shadow:0 10px 30px rgba(16,24,40,0.08);
-      padding:28px; display:flex; flex-direction:column; gap:18px; align-items:center;
+      width:100%; 
+      max-width:1100px; /* bigger card */
+      background:rgba(255,255,255,0.95); 
+      border-radius:24px; 
+      box-shadow:0 16px 50px rgba(0,0,0,0.25);
+      padding:48px; /* more padding */
+      display:flex; 
+      flex-direction:column; 
+      gap:32px; 
+      align-items:center;
+      backdrop-filter: blur(10px);
+      animation:fadeIn 0.6s ease;
     }
 
-    h1{margin:0; font-size:1.375rem}
-    p.lead{margin:0; color:var(--muted); font-size:0.95rem}
+    @keyframes fadeIn {
+      from {opacity:0; transform:translateY(20px);}
+      to {opacity:1; transform:translateY(0);}
+    }
+
+    h1{margin:0; font-size:2rem; color:#0f172a;}
+    p.lead{margin:0; color:var(--muted); font-size:1.2rem}
 
     .buttons{
-      width:100%; display:flex; gap:14px; margin-top:6px; align-items:center; justify-content:center;
+      width:100%; display:flex; gap:24px; margin-top:20px; 
+      align-items:center; justify-content:center;
       flex-direction:column;
     }
 
     .btn{
-      -webkit-tap-highlight-color:transparent;
-      border:0; cursor:pointer; border-radius:12px; padding:14px 20px; font-size:1rem; font-weight:600;
-      display:inline-flex; gap:10px; align-items:center; justify-content:center; min-width:220px; transition:transform .12s ease, box-shadow .12s ease, background .12s ease, color .12s ease;
-      box-shadow:0 6px 18px rgba(15,23,42,0.06);
+      border:0; 
+      cursor:pointer; 
+      border-radius:18px; 
+      padding:22px 28px; /* bigger padding */
+      font-size:1.3rem; /* bigger text */
+      font-weight:600;
+      display:inline-flex; 
+      gap:14px; 
+      align-items:center; 
+      justify-content:center; 
+      min-width:260px; /* bigger button width */
+      transition:all .2s ease;
+      box-shadow:0 8px 24px rgba(15,23,42,0.1);
+      background:rgba(31,143,178,0.08);
+      color:var(--accent);
     }
 
-    .btn:active{transform:translateY(1px)}
+    .btn:hover{
+      background:rgba(60,192,233,0.18);
+      transform:translateY(-3px);
+      box-shadow:0 10px 28px rgba(0,0,0,0.18);
+    }
 
-    .btn--guest{background:transparent; color:var(--accent); border:2px solid rgba(37,99,235,0.12)}
-    .btn--partner{background:transparent; color:var(--accent); border:2px solid rgba(37,99,235,0.12)}
-    .btn--rental{background:transparent; color:var(--accent); border:2px solid rgba(37,99,235,0.12)}
+    .btn:active{transform:translateY(0)}
 
     .btn[aria-pressed="true"] {
       background:linear-gradient(90deg,var(--accent),var(--accent-2));
       color:white;
-      border:0;
+      box-shadow:0 10px 28px rgba(31,143,178,0.45);
     }
 
-    .btn svg{width:18px;height:18px;flex:0 0 18px}
+    .btn svg{width:28px;height:28px;flex:0 0 28px}
 
-    /* responsive layout: horizontal row on wider screens */
     @media (min-width:640px){
       .buttons{flex-direction:row}
-      .btn{min-width:160px}
+      .btn{min-width:220px}
     }
 
-    /* make touch targets larger on small screens */
     @media (max-width:420px){
-      .btn{padding:16px 18px; font-size:1.05rem; border-radius:14px}
+      .btn{padding:20px; font-size:1.2rem; border-radius:20px}
     }
 
-    .meta{display:flex; gap:12px; align-items:center; color:var(--muted); font-size:0.9rem}
+    .meta{
+      display:flex; gap:12px; align-items:center; 
+      color:#64748b; font-size:1.05rem;
+    }
   </style>
 </head>
 <body>
   <main class="card" role="main">
     <header style="text-align:center">
-      <h1>How would you like to continue? (Page 1 - Sing in)</h1>
-      <p class="lead">Choose an option below — same style, different page.</p>
+      <h1>How would you like to continue? (Sign in)</h1>
     </header>
 
     <nav class="buttons" aria-label="Primary actions">
