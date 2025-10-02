@@ -315,7 +315,7 @@
                 </p>
 
                 <!-- Get Started Now Button -->
-                <a href="/carrentals/register/details">
+                <a href="/choose-option-2">
                     <button class="text-white px-6 py-2 rounded mt-4 font-semibold w-full sm:w-auto"
                             style="font-family: 'Noto Sans', sans-serif; background-color:#3CC0E9;">
                         Get Started Now
