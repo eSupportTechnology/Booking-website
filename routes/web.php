@@ -1309,3 +1309,8 @@ Route::view('/choose-option-2', 'frontend.choose-option-2')->name('choose.option
 Route::get('/customer/taxi/booking', function () {
     return view('Customer.taxi-booking');
 })->name('customer.taxi.booking');
+
+Route::get('/customer/car-rental/booking', function () {
+    return view('Customer.without-driver-car-booking');
+})->name('customer.car-rental.booking');
+
