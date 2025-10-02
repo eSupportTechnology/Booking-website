@@ -1,7 +1,7 @@
 @extends('Customer.master')
 
 @section('content')
-<div class="min-h-screen bg-gray-50 py-8" x-data="bookingForm()">
+<div class="min-h-screen bg-gray-50 py-8" x-data="bookingForm()" x-init="init()">
     <div class="max-w-4xl mx-auto px-4">
         <div class="bg-white rounded-lg shadow-lg overflow-hidden">
             <!-- Header -->
@@ -84,6 +84,66 @@ function bookingForm() {
         checkOut: '',
         guests: 1,
         basePrice: {{ $property->pricing->base_price ?? 5000 }},
+        bookedDates: [],
+        
+        async init() {
+            await this.loadBookedDates();
+            this.setupDateRestrictions();
+        },
+        
+        async loadBookedDates() {
+            try {
+                const response = await fetch(`/customer/properties/{{ $property->id }}/booked-dates`);
+                this.bookedDates = await response.json();
+            } catch (error) {
+                console.error('Failed to load booked dates:', error);
+            }
+        },
+        
+        setupDateRestrictions() {
+            const checkInInput = document.querySelector('input[name="check_in"]');
+            const checkOutInput = document.querySelector('input[name="check_out"]');
+            
+            if (checkInInput && checkOutInput) {
+                // Set minimum date to today
+                const today = new Date().toISOString().split('T')[0];
+                checkInInput.min = today;
+                checkOutInput.min = today;
+                
+                // Add event listeners to validate dates
+                checkInInput.addEventListener('change', () => {
+                    if (this.bookedDates.includes(checkInInput.value)) {
+                        alert('This date is already booked. Please select another date.');
+                        checkInInput.value = '';
+                        return;
+                    }
+                    checkOutInput.min = checkInInput.value;
+                });
+                
+                checkOutInput.addEventListener('change', () => {
+                    if (this.bookedDates.includes(checkOutInput.value)) {
+                        alert('This date is already booked. Please select another date.');
+                        checkOutInput.value = '';
+                        return;
+                    }
+                    
+                    // Check if any dates in between are booked
+                    if (this.checkIn && this.checkOut) {
+                        const start = new Date(this.checkIn);
+                        const end = new Date(this.checkOut);
+                        
+                        for (let d = new Date(start); d < end; d.setDate(d.getDate() + 1)) {
+                            const dateStr = d.toISOString().split('T')[0];
+                            if (this.bookedDates.includes(dateStr)) {
+                                alert('Some dates in your selected range are already booked. Please choose different dates.');
+                                checkOutInput.value = '';
+                                return;
+                            }
+                        }
+                    }
+                });
+            }
+        },
         
         calculateNights() {
             if (!this.checkIn || !this.checkOut) return 0;
