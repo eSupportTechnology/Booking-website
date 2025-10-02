@@ -116,6 +116,8 @@ Route::prefix('customer')->group(function () {
         ->name('customer.bookings.show');
     Route::post('/properties/{property}/book', [\App\Http\Controllers\Customer\BookingController::class, 'store'])
         ->name('customer.bookings.store');
+    Route::get('/properties/{property}/booked-dates', [\App\Http\Controllers\Customer\BookingController::class, 'getBookedDates'])
+        ->name('customer.bookings.booked-dates');
 
     Route::post('/customer/logout', function () {
         Auth::guard('customer')->logout();

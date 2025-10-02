@@ -78,4 +78,29 @@ class BookingController extends Controller
         
         return view('Customer.bookings.confirmation', compact('booking'));
     }
+
+    public function getBookedDates(Property $property)
+    {
+        $bookedDates = Booking::where('property_id', $property->id)
+            ->where('status', '!=', 'cancelled')
+            ->select('check_in', 'check_out')
+            ->get()
+            ->map(function ($booking) {
+                $dates = [];
+                $start = new \DateTime($booking->check_in);
+                $end = new \DateTime($booking->check_out);
+                
+                while ($start < $end) {
+                    $dates[] = $start->format('Y-m-d');
+                    $start->add(new \DateInterval('P1D'));
+                }
+                
+                return $dates;
+            })
+            ->flatten()
+            ->unique()
+            ->values();
+
+        return response()->json($bookedDates);
+    }
 }
