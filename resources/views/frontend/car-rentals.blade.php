@@ -325,7 +325,7 @@
                 <!-- Already Registered Sign In Link -->
                 <p class="mt-3 text-sm" style="font-family: 'Noto Sans', sans-serif;">
                     Already registered? 
-                    <a href="/car-renter/login/email" class="text-blue-600 hover:underline">
+                    <a href="/choose-option" class="text-blue-600 hover:underline">
                         Sign In
                     </a>
                 </p>
