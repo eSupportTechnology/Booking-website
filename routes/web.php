@@ -91,6 +91,8 @@ Route::prefix('customer')->group(function () {
             ->name('customer.bookings.index');
         Route::get('/bookings/{booking}/confirmation', [\App\Http\Controllers\Customer\BookingController::class, 'confirmation'])
             ->name('customer.bookings.confirmation');
+        Route::patch('/bookings/{booking}/cancel', [\App\Http\Controllers\Customer\BookingController::class, 'cancel'])
+            ->name('customer.bookings.cancel');
         
         // Messages
         Route::get('/messages', [\App\Http\Controllers\Customer\MessageController::class, 'index'])
@@ -126,6 +128,8 @@ Route::prefix('customer')->group(function () {
         ->name('customer.bookings.store');
     Route::get('/properties/{property}/booked-dates', [\App\Http\Controllers\Customer\BookingController::class, 'getBookedDates'])
         ->name('customer.bookings.booked-dates');
+    Route::get('/properties/{property}/available-rooms', [\App\Http\Controllers\Customer\BookingController::class, 'getAvailableRooms'])
+        ->name('customer.bookings.available-rooms');
 
     Route::post('/customer/logout', function () {
         Auth::guard('customer')->logout();

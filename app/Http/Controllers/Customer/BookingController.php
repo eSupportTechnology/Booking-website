@@ -20,7 +20,7 @@ class BookingController extends Controller
 
     public function show(Property $property)
     {
-        $property->load(['photos', 'amenities', 'category', 'pricing', 'rooms.amenities']);
+        $property->load(['photos', 'amenities', 'category', 'pricing', 'rooms.amenities', 'rooms.roomType']);
         
         return view('Customer.bookings.show', compact('property'));
     }
@@ -33,6 +33,7 @@ class BookingController extends Controller
 
         $request->validate([
             'property_id' => 'required|exists:properties,id',
+            'room_id' => 'nullable|exists:rooms,id',
             'check_in' => 'required|date|after:today',
             'check_out' => 'required|date|after:check_in',
             'guest_count' => 'required|integer|min:1|max:20',
@@ -40,12 +41,13 @@ class BookingController extends Controller
 
         $bookingDTO = BookingDTO::fromRequest($request);
         
-        if (!$this->bookingService->isPropertyAvailable($property, $bookingDTO->check_in, $bookingDTO->check_out)) {
-            return back()->with('error', 'Property is not available for selected dates.');
+        if (!$this->bookingService->isRoomAvailable($property, $bookingDTO->room_id, $bookingDTO->check_in, $bookingDTO->check_out)) {
+            return back()->with('error', 'Selected room is not available for the chosen dates.');
         }
 
         $bookingDTO->total_price = $this->bookingService->calculatePrice(
             $property, 
+            $bookingDTO->room_id,
             $bookingDTO->check_in, 
             $bookingDTO->check_out, 
             $bookingDTO->guest_count
@@ -102,5 +104,36 @@ class BookingController extends Controller
             ->values();
 
         return response()->json($bookedDates);
+    }
+
+    public function getAvailableRooms(Request $request, Property $property)
+    {
+        $request->validate([
+            'check_in' => 'required|date',
+            'check_out' => 'required|date|after:check_in',
+        ]);
+
+        $availableRooms = $this->bookingService->getAvailableRooms(
+            $property, 
+            $request->check_in, 
+            $request->check_out
+        );
+
+        return response()->json($availableRooms);
+    }
+
+    public function cancel(Booking $booking)
+    {
+        if ($booking->user_id !== Auth::guard('customer')->id()) {
+            abort(403);
+        }
+
+        if ($booking->status === 'cancelled') {
+            return back()->with('error', 'Booking is already cancelled.');
+        }
+
+        $booking->cancelBooking();
+
+        return back()->with('success', 'Booking cancelled successfully. No commission charges will apply.');
     }
 }

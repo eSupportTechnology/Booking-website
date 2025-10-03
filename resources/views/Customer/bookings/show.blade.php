@@ -29,6 +29,24 @@
                         </div>
                     </div>
 
+                    <!-- Room Selection (for hotels and accommodations with rooms) -->
+                    @if($property->rooms->count() > 0)
+                    <div x-show="checkIn && checkOut">
+                        <label class="block text-sm font-medium mb-2">Select Room</label>
+                        <div x-show="availableRooms.length === 0 && roomsLoaded" class="text-red-600 text-sm mb-2">
+                            No rooms available for selected dates
+                        </div>
+                        <select name="room_id" x-model="selectedRoom" required 
+                                class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#3CC0E9]"
+                                x-bind:disabled="availableRooms.length === 0">
+                            <option value="">Select a room</option>
+                            <template x-for="room in availableRooms" :key="room.id">
+                                <option :value="room.id" x-text="`${room.name} - LKR ${room.price_per_night}/night (Max ${room.max_guests} guests)`"></option>
+                            </template>
+                        </select>
+                    </div>
+                    @endif
+
                     <!-- Guests -->
                     <div>
                         <label class="block text-sm font-medium mb-2">Number of Guests</label>
@@ -50,7 +68,8 @@
                             </div>
                             <div class="flex justify-between">
                                 <span>Price per night:</span>
-                                <span>LKR {{ number_format($property->pricing->base_price ?? 5000) }}</span>
+                                <span x-show="!selectedRoom">LKR {{ number_format($property->pricing->base_price ?? 5000) }}</span>
+                                <span x-show="selectedRoom" x-text="'LKR ' + getRoomPrice().toLocaleString()"></span>
                             </div>
                             <div class="flex justify-between" x-show="checkIn && checkOut">
                                 <span>Nights:</span>
@@ -60,16 +79,24 @@
                                 <span>Total:</span>
                                 <span x-text="'LKR ' + calculateTotal().toLocaleString()"></span>
                             </div>
+                            @if($property->rooms->count() > 0)
+                            <div class="text-xs text-gray-500 mt-2" x-show="selectedRoom">
+                                <span x-text="getSelectedRoomDetails()"></span>
+                            </div>
+                            @endif
                         </div>
                     </div>
 
                     <!-- Submit Button -->
                     <button type="submit" 
                             class="w-full bg-[#3CC0E9] hover:bg-[#2BA8D1] text-white font-semibold py-3 rounded-lg transition duration-200"
-                            x-bind:disabled="!checkIn || !checkOut"
-                            x-bind:class="{'opacity-50 cursor-not-allowed': !checkIn || !checkOut}">
-                        <span x-show="checkIn && checkOut">Confirm Booking</span>
+                            x-bind:disabled="!isFormValid()"
+                            x-bind:class="{'opacity-50 cursor-not-allowed': !isFormValid()}">
+                        <span x-show="isFormValid()">Confirm Booking</span>
                         <span x-show="!checkIn || !checkOut">Select Dates to Continue</span>
+                        @if($property->rooms->count() > 0)
+                        <span x-show="checkIn && checkOut && !selectedRoom">Select a Room to Continue</span>
+                        @endif
                     </button>
                 </form>
             </div>
@@ -83,12 +110,17 @@ function bookingForm() {
         checkIn: '',
         checkOut: '',
         guests: 1,
+        selectedRoom: '',
         basePrice: {{ $property->pricing->base_price ?? 5000 }},
         bookedDates: [],
+        availableRooms: [],
+        roomsLoaded: false,
+        hasRooms: {{ $property->rooms->count() > 0 ? 'true' : 'false' }},
         
         async init() {
             await this.loadBookedDates();
             this.setupDateRestrictions();
+            this.setupRoomLoading();
         },
         
         async loadBookedDates() {
@@ -154,7 +186,59 @@ function bookingForm() {
         },
         
         calculateTotal() {
-            return this.calculateNights() * this.basePrice;
+            const price = this.selectedRoom ? this.getRoomPrice() : this.basePrice;
+            return this.calculateNights() * price;
+        },
+        
+        getRoomPrice() {
+            if (!this.selectedRoom) return this.basePrice;
+            const room = this.availableRooms.find(r => r.id == this.selectedRoom);
+            return room ? room.price_per_night : this.basePrice;
+        },
+        
+        getSelectedRoomDetails() {
+            if (!this.selectedRoom) return '';
+            const room = this.availableRooms.find(r => r.id == this.selectedRoom);
+            return room ? `${room.name} - Max ${room.max_guests} guests` : '';
+        },
+        
+        isFormValid() {
+            if (!this.checkIn || !this.checkOut) return false;
+            if (this.hasRooms && !this.selectedRoom) return false;
+            return true;
+        },
+        
+        async loadAvailableRooms() {
+            if (!this.checkIn || !this.checkOut || !this.hasRooms) return;
+            
+            try {
+                const response = await fetch(`/customer/properties/{{ $property->id }}/available-rooms?check_in=${this.checkIn}&check_out=${this.checkOut}`);
+                this.availableRooms = await response.json();
+                this.roomsLoaded = true;
+                
+                // Reset selected room if it's no longer available
+                if (this.selectedRoom && !this.availableRooms.find(r => r.id == this.selectedRoom)) {
+                    this.selectedRoom = '';
+                }
+            } catch (error) {
+                console.error('Failed to load available rooms:', error);
+                this.availableRooms = [];
+                this.roomsLoaded = true;
+            }
+        },
+        
+        setupRoomLoading() {
+            this.$watch('checkIn', () => {
+                this.selectedRoom = '';
+                this.roomsLoaded = false;
+                this.loadAvailableRooms();
+            });
+            
+            this.$watch('checkOut', () => {
+                this.selectedRoom = '';
+                this.roomsLoaded = false;
+                this.loadAvailableRooms();
+            });
         }
     }
 }

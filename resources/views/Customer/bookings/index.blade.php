@@ -4,7 +4,7 @@
 <div class="min-h-screen bg-gray-50 py-8">
     <div class="max-w-6xl mx-auto px-4">
         <h1 class="text-3xl font-bold text-gray-900 mb-8">My Bookings</h1>
-        
+
         @if($bookings->count() > 0)
             <div class="grid gap-6">
                 @foreach($bookings as $booking)
@@ -22,7 +22,7 @@
                                 {{ ucfirst($booking->status) }}
                             </span>
                         </div>
-                        
+
                         <div class="grid md:grid-cols-3 gap-4 text-sm">
                             <div>
                                 <span class="font-medium">Check-in:</span>
@@ -37,11 +37,28 @@
                                 <p class="text-lg font-bold">LKR {{ number_format($booking->total_price) }}</p>
                             </div>
                         </div>
-                        
-                        <div class="mt-4 flex gap-2">
-                            <span class="text-sm text-gray-600">Guests: {{ $booking->guest_count }}</span>
-                            <span class="text-sm text-gray-600">•</span>
-                            <span class="text-sm text-gray-600">Booked: {{ $booking->created_at->format('M d, Y') }}</span>
+
+                        <div class="mt-4 flex justify-between items-center">
+                            <div class="flex gap-2 flex-wrap">
+                                <span class="text-sm text-gray-600">Guests: {{ $booking->guest_count }}</span>
+                                @if($booking->room)
+                                    <span class="text-sm text-gray-600">•</span>
+                                    <span class="text-sm text-gray-600">Room: {{ $booking->room->name }}</span>
+                                @endif
+                                <span class="text-sm text-gray-600">•</span>
+                                <span class="text-sm text-gray-600">Booked: {{ $booking->created_at->format('M d, Y') }}</span>
+                            </div>
+                            @if($booking->status !== 'cancelled')
+                                <form action="{{ route('customer.bookings.cancel', $booking) }}" method="POST" class="inline">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button type="submit" 
+                                            onclick="return confirm('Are you sure you want to cancel this booking?')"
+                                            class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded text-sm transition">
+                                        Cancel Booking
+                                    </button>
+                                </form>
+                            @endif
                         </div>
                     </div>
                 @endforeach

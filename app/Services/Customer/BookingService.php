@@ -38,20 +38,56 @@ class BookingService
         return $booking;
     }
 
-    public function calculatePrice(Property $property, string $checkIn, string $checkOut, int $guestCount): float
+    public function calculatePrice(Property $property, ?int $roomId, string $checkIn, string $checkOut, int $guestCount): float
     {
         $checkInDate = new \DateTime($checkIn);
         $checkOutDate = new \DateTime($checkOut);
         $nights = $checkInDate->diff($checkOutDate)->days;
         
-        $basePrice = $property->pricing->base_price ?? 100.00;
+        if ($roomId) {
+            $room = \App\Models\Room::find($roomId);
+            $basePrice = $room ? $room->price_per_night : ($property->pricing->base_price ?? 100.00);
+        } else {
+            $basePrice = $property->pricing->base_price ?? 100.00;
+        }
         
         return $basePrice * $nights;
     }
 
-    public function isPropertyAvailable(Property $property, string $checkIn, string $checkOut): bool
+    public function isRoomAvailable(Property $property, ?int $roomId, string $checkIn, string $checkOut): bool
     {
-        $conflictingBookings = Booking::where('property_id', $property->id)
+        $query = Booking::where('property_id', $property->id)
+            ->where('status', '!=', 'cancelled')
+            ->where(function ($query) use ($checkIn, $checkOut) {
+                $query->whereBetween('check_in', [$checkIn, $checkOut])
+                    ->orWhereBetween('check_out', [$checkIn, $checkOut])
+                    ->orWhere(function ($q) use ($checkIn, $checkOut) {
+                        $q->where('check_in', '<=', $checkIn)
+                          ->where('check_out', '>=', $checkOut);
+                    });
+            });
+
+        if ($roomId) {
+            $query->where('room_id', $roomId);
+        } else {
+            // For properties without specific rooms, check if any booking exists
+            $query->whereNull('room_id');
+        }
+
+        return !$query->exists();
+    }
+
+    public function getUserBookings(int $userId)
+    {
+        return Booking::where('user_id', $userId)
+            ->with(['property.photos', 'property.category', 'room'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+    }
+
+    public function getAvailableRooms(Property $property, string $checkIn, string $checkOut): \Illuminate\Database\Eloquent\Collection
+    {
+        $bookedRoomIds = Booking::where('property_id', $property->id)
             ->where('status', '!=', 'cancelled')
             ->where(function ($query) use ($checkIn, $checkOut) {
                 $query->whereBetween('check_in', [$checkIn, $checkOut])
@@ -61,16 +97,10 @@ class BookingService
                           ->where('check_out', '>=', $checkOut);
                     });
             })
-            ->exists();
+            ->whereNotNull('room_id')
+            ->pluck('room_id')
+            ->toArray();
 
-        return !$conflictingBookings;
-    }
-
-    public function getUserBookings(int $userId)
-    {
-        return Booking::where('user_id', $userId)
-            ->with(['property.photos', 'property.category'])
-            ->orderBy('created_at', 'desc')
-            ->get();
+        return $property->rooms()->whereNotIn('id', $bookedRoomIds)->with(['roomType', 'amenities'])->get();
     }
 }
