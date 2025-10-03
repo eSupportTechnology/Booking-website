@@ -52,4 +52,19 @@ class Booking extends Model
     {
         return $this->hasMany(Message::class);
     }
+
+    public function commissionInvoices()
+    {
+        return $this->hasMany(CommissionInvoice::class, 'booking_id');
+    }
+
+    public function cancelBooking()
+    {
+        $this->update(['status' => 'cancelled']);
+        
+        // Cancel any unpaid commission invoices for this booking
+        $this->commissionInvoices()
+            ->where('status', 'pending')
+            ->update(['status' => 'cancelled']);
+    }
 }
