@@ -140,9 +140,9 @@
                                 <button class="bg-indigo-500 hover:bg-indigo-600 text-white px-3 py-1 rounded text-xs transition-colors duration-200">
                                     <i class="fas fa-eye mr-1"></i>View
                                 </button>
-                                <button class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-xs transition-colors duration-200">
+                                <a href="{{ route('partner.messages') }}" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-xs transition-colors duration-200 inline-block">
                                     <i class="fas fa-envelope mr-1"></i>Message
-                                </button>
+                                </a>
                             </div>
                         </td>
                     </tr>

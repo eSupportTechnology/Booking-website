@@ -166,6 +166,11 @@
                             <span class="text-sm font-medium">Bookings</span>
                             <i class="fas fa-calendar-check text-xs"></i>
                         </a>
+                        <a href="{{ route('partner.bookings.manage') }}"
+                            class="flex items-center justify-between px-4 py-2 rounded-lg hover:bg-blue-50 text-gray-600 hover:text-[#1F8FB2] transition-colors duration-200">
+                            <span class="text-sm font-medium">Manage Bookings</span>
+                            <i class="fas fa-cogs text-xs"></i>
+                        </a>
                     </div>
                 </div>
 
