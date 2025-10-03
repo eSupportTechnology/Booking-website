@@ -4,6 +4,7 @@ namespace App\Services\Customer;
 
 use App\Models\Booking;
 use App\Models\Property;
+use App\Models\Message;
 use App\DTOs\Customer\BookingDTO;
 use Illuminate\Support\Facades\Auth;
 
@@ -21,6 +22,18 @@ class BookingService
         $booking->total_price = $bookingDTO->total_price;
         $booking->status = $bookingDTO->status;
         $booking->save();
+
+        // Create initial message
+        $property = Property::find($bookingDTO->property_id);
+        if ($property && $property->user_id) {
+            Message::create([
+                'sender_id' => Auth::guard('customer')->id(),
+                'receiver_id' => $property->user_id,
+                'booking_id' => $booking->id,
+                'content' => 'Hi! I just made a booking for your property. Looking forward to my stay!',
+                'is_read' => false
+            ]);
+        }
 
         return $booking;
     }

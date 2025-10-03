@@ -10,31 +10,33 @@ class MessageService
 {
     public function getConversations(): array
     {
-        return Booking::with(['user', 'property'])
+        return Booking::with(['user', 'property', 'messages'])
             ->whereHas('property', function($query) {
                 $query->where('user_id', Auth::id());
             })
+            ->whereHas('messages')
             ->latest()
-            ->limit(10)
             ->get()
             ->map(function($booking) {
+                $lastMessage = $booking->messages()->latest()->first();
                 return [
                     'id' => $booking->id,
                     'guest_name' => $booking->user->name ?? 'Guest',
                     'property_name' => $booking->property->title ?? 'Property',
-                    'last_message' => 'Booking confirmed',
-                    'time_ago' => $booking->created_at->diffForHumans(),
-                    'unread' => 0
+                    'last_message' => $lastMessage ? $lastMessage->content : 'No messages yet',
+                    'time_ago' => $lastMessage ? $lastMessage->created_at->diffForHumans() : $booking->created_at->diffForHumans(),
+                    'unread' => $booking->messages()->where('receiver_id', Auth::id())->where('is_read', false)->count()
                 ];
             })->toArray();
     }
 
     public function getActiveConversation(): ?array
     {
-        $booking = Booking::with(['user', 'property'])
+        $booking = Booking::with(['user', 'property', 'messages.sender'])
             ->whereHas('property', function($query) {
                 $query->where('user_id', Auth::id());
             })
+            ->whereHas('messages')
             ->first();
 
         if (!$booking) return null;
@@ -43,20 +45,16 @@ class MessageService
             'booking_id' => $booking->id,
             'guest_name' => $booking->user->name ?? 'Guest',
             'property_name' => $booking->property->title ?? 'Property',
-            'messages' => [
-                [
-                    'id' => 1,
-                    'message' => 'Hi! What time is check-in for tomorrow?',
-                    'sender' => 'guest',
-                    'time' => '2h ago'
-                ],
-                [
-                    'id' => 2,
-                    'message' => 'Check-in is from 3:00 PM onwards. I\'ll be available to meet you at the property.',
-                    'sender' => 'host',
-                    'time' => '1h ago'
-                ]
-            ]
+            'messages' => $booking->messages->map(function($message) {
+                return [
+                    'id' => $message->id,
+                    'content' => $message->content,
+                    'sender_type' => $message->sender_id == Auth::id() ? 'host' : 'guest',
+                    'sender_name' => $message->sender->name ?? 'User',
+                    'time' => $message->created_at->diffForHumans(),
+                    'is_read' => $message->is_read
+                ];
+            })->toArray()
         ];
     }
 
@@ -65,9 +63,31 @@ class MessageService
         try {
             return Message::whereHas('booking.property', function($query) {
                 $query->where('user_id', Auth::id());
-            })->where('is_read', false)->count();
+            })->where('receiver_id', Auth::id())->where('is_read', false)->count();
         } catch (\Exception $e) {
             return 0;
         }
+    }
+
+    public function sendMessage(int $bookingId, string $content): Message
+    {
+        $booking = Booking::whereHas('property', function($query) {
+            $query->where('user_id', Auth::id());
+        })->findOrFail($bookingId);
+
+        return Message::create([
+            'sender_id' => Auth::id(),
+            'receiver_id' => $booking->user_id,
+            'booking_id' => $bookingId,
+            'content' => $content,
+            'is_read' => false
+        ]);
+    }
+
+    public function markAsRead(int $bookingId): void
+    {
+        Message::where('booking_id', $bookingId)
+            ->where('receiver_id', Auth::id())
+            ->update(['is_read' => true]);
     }
 }

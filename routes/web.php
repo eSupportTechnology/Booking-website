@@ -91,6 +91,14 @@ Route::prefix('customer')->group(function () {
             ->name('customer.bookings.index');
         Route::get('/bookings/{booking}/confirmation', [\App\Http\Controllers\Customer\BookingController::class, 'confirmation'])
             ->name('customer.bookings.confirmation');
+        
+        // Messages
+        Route::get('/messages', [\App\Http\Controllers\Customer\MessageController::class, 'index'])
+            ->name('customer.messages.index');
+        Route::get('/messages/{booking}', [\App\Http\Controllers\Customer\MessageController::class, 'conversation'])
+            ->name('customer.messages.conversation');
+        Route::post('/messages', [\App\Http\Controllers\Customer\MessageController::class, 'store'])
+            ->name('customer.messages.store');
     });
     Route::get('/account/confirm-deletion/{token}', [CustomerAuthController::class, 'confirmDeletion'])
         ->name('customer.account.confirm-deletion');
@@ -605,6 +613,7 @@ Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddle
     // Properties
     Route::get('/properties', [\App\Http\Controllers\Partner\PropertyController::class, 'index'])->name('partner.properties');
     Route::get('/bookings', [\App\Http\Controllers\Partner\PropertyController::class, 'bookings'])->name('partner.bookings');
+    Route::get('/bookings/manage', [\App\Http\Controllers\Partner\BookingController::class, 'manage'])->name('partner.bookings.manage');
 
     // Property Listings
     Route::get('/properties/apartments', [\App\Http\Controllers\Partner\PropertyListingController::class, 'apartments'])->name('partner.properties.apartments');
@@ -618,6 +627,9 @@ Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddle
 
     // Messages
     Route::get('/messages', [\App\Http\Controllers\Partner\MessageController::class, 'index'])->name('partner.messages');
+    Route::get('/messages/{booking}', [\App\Http\Controllers\Partner\MessageController::class, 'conversation'])->name('partner.messages.conversation');
+    Route::post('/messages', [\App\Http\Controllers\Partner\MessageController::class, 'store'])->name('partner.messages.store');
+    Route::patch('/bookings/{booking}/status', [\App\Http\Controllers\Partner\BookingStatusController::class, 'update'])->name('partner.bookings.status');
 
     // Reviews
     Route::get('/reviews', [\App\Http\Controllers\Partner\ReviewController::class, 'index'])->name('partner.reviews');
