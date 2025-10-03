@@ -1,6 +1,7 @@
 @extends('frontend.master')
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
  <!-- Top Bar: Back + Favorite -->
@@ -10,7 +11,6 @@
    class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 hover:bg-gray-300 text-gray-700 rounded-lg shadow-sm text-sm font-medium">
    <i class="fa-solid fa-arrow-left mr-2"></i> <strong>Back to Taxis</strong>
 </a>
-
 
   <!-- Favorite Button -->
   <button class="p-2 rounded-full border border-gray-300 hover:bg-red-50 shadow-sm transition">
@@ -45,8 +45,6 @@
     </button>
   </div>
 </div>
-
-
 
   <div class="flex flex-col lg:flex-row gap-8">
 
@@ -95,20 +93,44 @@
 
 </div>
 
-
-
-  
-
-    
-
     <!-- Right Column: Vehicle & Driver Details -->
     <div class="flex-1">
        <div class="bg-white p-6 rounded-lg shadow-md border border-gray-400 mb-6">
         <h2 class="text-lg font-semibold mb-4">Pricing Details</h2>
        
            <div><strong class="text-sm text-gray-500">Price per day:</strong>{{ $taxi->taxiType->name ?? 'Taxi' }}</div>
-          <div><strong class="text-sm text-gray-500">Price per km:</strong>{{ $taxi->number_plate ?? 'N/A' }}</div>
-           <div><strong class="text-sm text-gray-500">Base fare:</strong>{{ $taxi->number_plate ?? 'N/A' }}</div>
+        
+            <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Pickup location</label>
+        <div class="flex gap-2">
+          <input type="text" id="pickupInput" required class="flex-1 rounded-lg border-gray-200 shadow-sm p-2" placeholder="Choose on map or type manually" />
+          <button type="button" onclick="openMap('pickup')" class="bg-indigo-600 text-white px-3 rounded-lg">
+            <i class="fa-solid fa-map-pin"></i>
+          </button>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Dropoff location</label>
+        <div class="flex gap-2">
+          <input type="text" id="dropoffInput" required class="flex-1 rounded-lg border-gray-200 shadow-sm p-2" placeholder="Choose on map or type manually" />
+          <button type="button" onclick="openMap('dropoff')" class="bg-indigo-600 text-white px-3 rounded-lg">
+            <i class="fa-solid fa-map-pin"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between bg-gray-50 p-3 rounded-lg border border-dashed border-gray-200">
+        <div>
+          <p class="text-sm text-gray-600">Distance</p>
+          <p id="distanceText" class="text-lg font-medium">—</p>
+        </div>
+        <div class="text-right">
+          <p class="text-sm text-gray-600">Estimated fare</p>
+          <p id="fareText" class="text-lg font-medium">—</p>
+        </div>
+      </div>
+
       </div>
       <!-- Vehicle Details -->
       <div class="bg-white p-6 rounded-lg shadow-md border border-gray-400 mb-6">
@@ -231,6 +253,14 @@
   <img id="modalImage" src="" class="max-h-[90vh] max-w-[90vw] rounded-lg shadow-lg">
 </div>
 
+<!-- Map Modal -->
+<div id="mapModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div class="bg-white rounded-xl shadow-lg w-11/12 md:w-2/3 h-3/4 relative">
+    <button onclick="closeMap()" class="absolute top-2 right-2 bg-red-500 text-white px-3 py-1 rounded">X</button>
+    <div id="map" class="w-full h-full rounded-xl"></div>
+  </div>
+</div>
+
 @endsection
 
 <script>
@@ -241,4 +271,105 @@
   function closeModal() {
     document.getElementById("imageModal").classList.add("hidden");
   }
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    let map, marker, activeField = null;
+
+    function openMap(field) {
+        activeField = field;
+        document.getElementById('mapModal').classList.remove('hidden');
+
+        if (!map) {
+            map = L.map('map');
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => {
+                        const lat = pos.coords.latitude;
+                        const lon = pos.coords.longitude;
+                        map.setView([lat, lon], 13);
+                        L.circleMarker([lat, lon], { radius: 6, color: "blue" }).addTo(map).bindPopup("You are here");
+                    },
+                    () => { map.setView([6.9271, 79.8612], 10); } // fallback Colombo
+                );
+            } else {
+                map.setView([6.9271, 79.8612], 10);
+            }
+
+            map.on('click', async function (e) {
+                if (marker) map.removeLayer(marker);
+                marker = L.marker(e.latlng).addTo(map);
+
+                const lat = e.latlng.lat;
+                const lon = e.latlng.lng;
+
+                const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
+                const data = await res.json();
+                const address = data.display_name || `${lat}, ${lon}`;
+
+                if (activeField === 'pickup') {
+                    document.getElementById('pickupInput').value = address;
+                } else if (activeField === 'dropoff') {
+                    document.getElementById('dropoffInput').value = address;
+                }
+
+                closeMap();
+                refreshDistance();
+            });
+        }
+    }
+
+    function closeMap() {
+        document.getElementById('mapModal').classList.add('hidden');
+    }
+
+    async function getCoordinates(query) {
+        try {
+            const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
+            const data = await res.json();
+            if (data.length > 0) return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
+        } catch (e) { console.error(e); }
+        return null;
+    }
+
+    async function getDrivingDistance(a, b) {
+        const url = `https://router.project-osrm.org/route/v1/driving/${a.lon},${a.lat};${b.lon},${b.lat}?overview=false`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data.routes?.length) {
+            return { distance: data.routes[0].distance / 1000, duration: data.routes[0].duration / 60 };
+        }
+        return null;
+    }
+
+    async function refreshDistance() {
+        const pickup = document.getElementById('pickupInput').value;
+        const dropoff = document.getElementById('dropoffInput').value;
+        if (!pickup || !dropoff) return;
+
+        const coordsA = await getCoordinates(pickup);
+        const coordsB = await getCoordinates(dropoff);
+        if (!coordsA || !coordsB) return;
+
+        const result = await getDrivingDistance(coordsA, coordsB);
+        if (!result) return;
+
+        const km = Math.round(result.distance * 10) / 10;
+        document.getElementById('distanceText').textContent = `${km} km (≈ ${Math.round(result.duration)} min)`;
+
+        const base = 200, perKm = 60;
+        document.getElementById('fareText').textContent = `${Math.round(base + km * perKm)} LKR`;
+    }
+
+    document.getElementById('pickupInput').addEventListener('blur', refreshDistance);
+    document.getElementById('dropoffInput').addEventListener('blur', refreshDistance);
+
+    window.openMap = openMap;
+    window.closeMap = closeMap;
+});
 </script>

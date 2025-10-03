@@ -370,7 +370,7 @@ properties worldwide
 <section class="scroll-section py-12 bg-white">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <h2 class="text-2xl font-semibold text-gray-800 mb-4">Our Latest Airport Taxis</h2>
-   <p class="mb-8 text-gray-600" style="font-family: 'Noto Sans', sans-serif;">Check out our newly added, comfortable, and reliable airport taxis ready for your next ride.</p>
+   <p class="mb-8 text-gray-600" style="font-family: 'Noto Sans', sans-serif;">Check out our newly added, comfortable, and reliable airport taxis ready for your next ride. <a href="/customer/taxis" class="text-blue-500 hover:underline">Show All Airport Taxis</a></p>
 
     <div class="relative">
       <!-- Scroll Container -->
@@ -379,9 +379,8 @@ properties worldwide
     <div class="bg-white rounded-lg shadow-md overflow-hidden relative min-w-[250px] max-w-[250px] h-[350px]">
         
         <!-- Car Image -->
-        <img src="{{ $taxi->image ? asset('storage/' . $taxi->image) : asset('images/taxi.jpg') }}" 
-             alt="{{ $taxi->name }}" 
-             class="w-full h-48 object-cover">
+          <img src="{{ $taxi->front_image ? asset('storage/' . $taxi->front_image) : asset('images/taxi-placeholder.jpg') }}" 
+                         alt="Taxi {{ $taxi->number_plate }}" class="w-full h-48 object-cover">
 
         <!-- Taxi Info -->
         <div class="p-3">
