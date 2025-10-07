@@ -1,5 +1,5 @@
 @extends('frontend.master')
-
+@section('title', 'Tour Packages')
 @section('content')
 <!--Hero Section-->
 <section class="text-white py-8 bg-[#1F8FB2] relative z-0">
