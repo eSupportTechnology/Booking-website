@@ -34,7 +34,7 @@ class BookingViewModel
                 'amenities' => $room->amenities->pluck('name')
             ]),
             'pricing' => [
-                'base_price' => $this->property->pricing->base_price ?? 5000,
+                'price_per_night' => $this->property->pricing->price_per_night   ?? 5000,
                 'currency' => 'LKR'
             ]
         ];

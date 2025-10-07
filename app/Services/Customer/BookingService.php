@@ -46,9 +46,9 @@ class BookingService
         
         if ($roomId) {
             $room = \App\Models\Room::find($roomId);
-            $basePrice = $room ? $room->price_per_night : ($property->pricing->base_price ?? 100.00);
+            $basePrice = $room ? $room->price_per_night : ($property->pricing->price_per_night ?? 100.00);
         } else {
-            $basePrice = $property->pricing->base_price ?? 100.00;
+            $basePrice = $property->pricing->price_per_night ?? 100.00;
         }
         
         return $basePrice * $nights;

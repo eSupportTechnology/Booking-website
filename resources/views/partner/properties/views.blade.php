@@ -806,7 +806,7 @@
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-xl font-bold">Room Management & Availability</h2>
                 <div class="flex items-center gap-4">
-                    <button onclick="alert('Room creation feature coming soon')" 
+                    <button onclick="alert('Room creation feature coming soon')"
                        class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm font-medium">
                         Add New Room
                     </button>
@@ -854,13 +854,13 @@
                                     <p class="text-sm text-gray-600">{{ $rooms->count() }} room(s) of this type</p>
                                 </div>
                                 <div class="flex gap-2">
-                                    <button onclick="toggleRoomType({{ $roomTypeId }})" 
+                                    <button onclick="toggleRoomType({{ $roomTypeId }})"
                                             class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm">
                                         Manage Type
                                     </button>
                                 </div>
                             </div>
-                            
+
                             <div class="overflow-x-auto">
                                 <table class="w-full text-sm">
                                     <thead>
@@ -920,7 +920,7 @@
                                                             <p class="text-xs text-gray-600 font-medium">Upcoming bookings:</p>
                                                             @foreach($bookedDates->take(2) as $booking)
                                                                 <p class="text-xs text-gray-500">
-                                                                    {{ \Carbon\Carbon::parse($booking->check_in)->format('M j') }} - 
+                                                                    {{ \Carbon\Carbon::parse($booking->check_in)->format('M j') }} -
                                                                     {{ \Carbon\Carbon::parse($booking->check_out)->format('M j') }}
                                                                 </p>
                                                             @endforeach
@@ -939,15 +939,15 @@
                                                 </td>
                                                 <td class="p-3 align-top">
                                                     <div class="flex flex-col gap-1">
-                                                        <button onclick="alert('Room editing feature coming soon')" 
+                                                        <button onclick="alert('Room editing feature coming soon')"
                                                            class="text-blue-600 hover:text-blue-800 text-xs underline">
                                                             Edit
                                                         </button>
-                                                        <button onclick="toggleAvailability({{ $room->id }})" 
+                                                        <button onclick="toggleAvailability({{ $room->id }})"
                                                                 class="text-yellow-600 hover:text-yellow-800 text-xs underline text-left">
                                                             {{ $room->is_available ? 'Mark Occupied' : 'Mark Available' }}
                                                         </button>
-                                                        <button onclick="viewBookings({{ $room->id }})" 
+                                                        <button onclick="viewBookings({{ $room->id }})"
                                                                 class="text-green-600 hover:text-green-800 text-xs underline text-left">
                                                             View Bookings
                                                         </button>
@@ -969,7 +969,7 @@
                     <h3 class="mt-2 text-sm font-medium text-gray-900">No rooms configured</h3>
                     <p class="mt-1 text-sm text-gray-500">Get started by adding your first room to this property.</p>
                     <div class="mt-6">
-                        <button onclick="alert('Room creation feature coming soon')" 
+                        <button onclick="alert('Room creation feature coming soon')"
                            class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
                             <svg class="-ml-1 mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -1454,7 +1454,7 @@
                                     <td class="p-3 align-top border border-blue-500">
                                         <div class="space-y-2 text-sm">
                                             <p class="border-b pb-2"><strong>Base Price:</strong> LKR
-                                                {{ number_format($property->pricings->base_price ?? 0) }}</p>
+                                                {{ number_format($property->pricing->price_per_night ?? ($property->pricing->base_price ?? 0)) }}</p>
                                             <p class="border-b pb-2"><strong>Original Price:</strong> LKR
                                                 {{ number_format($property->pricings->original_price ?? 0) }}</p>
                                             <p class="border-b pb-2"><strong>Discount:</strong>
