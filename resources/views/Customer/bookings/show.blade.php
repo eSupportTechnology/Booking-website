@@ -29,21 +29,26 @@
                         </div>
                     </div>
 
-                    <!-- Room Selection (for hotels and accommodations with rooms) -->
+                    <!-- Enhanced Room Selection -->
                     @if($property->rooms->count() > 0)
-                    <div x-show="checkIn && checkOut">
-                        <label class="block text-sm font-medium mb-2">Select Room</label>
-                        <div x-show="availableRooms.length === 0 && roomsLoaded" class="text-red-600 text-sm mb-2">
-                            No rooms available for selected dates
+                    <div x-show="checkIn && checkOut" class="space-y-4">
+                        <h3 class="text-lg font-semibold text-gray-800">Select Your Room</h3>
+                        
+                        <!-- Include the room selection component -->
+                        @include('Customer.components.room-selection', ['property' => $property])
+                        
+                        <!-- Room Comparison Option -->
+                        <div class="mt-6">
+                            <button type="button" @click="showComparison = !showComparison" 
+                                    class="text-[#3CC0E9] hover:underline text-sm font-medium">
+                                Compare Available Rooms
+                            </button>
                         </div>
-                        <select name="room_id" x-model="selectedRoom" required 
-                                class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#3CC0E9]"
-                                x-bind:disabled="availableRooms.length === 0">
-                            <option value="">Select a room</option>
-                            <template x-for="room in availableRooms" :key="room.id">
-                                <option :value="room.id" x-text="`${room.name} - LKR ${room.price_per_night}/night (Max ${room.max_guests} guests)`"></option>
-                            </template>
-                        </select>
+                        
+                        <!-- Room Comparison Component -->
+                        <div x-show="showComparison" x-transition class="mt-4">
+                            @include('Customer.components.room-comparison', ['property' => $property])
+                        </div>
                     </div>
                     @endif
 
@@ -116,6 +121,7 @@ function bookingForm() {
         availableRooms: [],
         roomsLoaded: false,
         hasRooms: {{ $property->rooms->count() > 0 ? 'true' : 'false' }},
+        showComparison: false,
         
         async init() {
             await this.loadBookedDates();
@@ -232,12 +238,25 @@ function bookingForm() {
                 this.selectedRoom = '';
                 this.roomsLoaded = false;
                 this.loadAvailableRooms();
+                // Update room selection component
+                if (window.roomSelectionComponent) {
+                    window.roomSelectionComponent.updateDates(this.checkIn, this.checkOut);
+                }
             });
             
             this.$watch('checkOut', () => {
                 this.selectedRoom = '';
                 this.roomsLoaded = false;
                 this.loadAvailableRooms();
+                // Update room selection component
+                if (window.roomSelectionComponent) {
+                    window.roomSelectionComponent.updateDates(this.checkIn, this.checkOut);
+                }
+            });
+            
+            // Listen for room selection events
+            this.$el.addEventListener('room-selected', (event) => {
+                this.selectedRoom = event.detail.room.id;
             });
         }
     }

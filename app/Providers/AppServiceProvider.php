@@ -15,6 +15,8 @@ use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Gate;
 use App\Models\Property;
 use App\Policies\PropertyPolicy;
+use App\Models\Booking;
+use App\Observers\BookingObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -51,5 +53,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Gate::policy(Property::class, PropertyPolicy::class);
+        Booking::observe(BookingObserver::class);
     }
 }

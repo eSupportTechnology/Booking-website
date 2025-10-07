@@ -14,13 +14,24 @@
                                 <h3 class="text-xl font-semibold">{{ $booking->property->title ?? 'Property' }}</h3>
                                 <p class="text-gray-600">{{ $booking->property->address ?? 'Address not available' }}</p>
                             </div>
-                            <span class="px-3 py-1 rounded-full text-sm font-medium
-                                @if($booking->status === 'confirmed') bg-green-100 text-green-800
-                                @elseif($booking->status === 'pending') bg-yellow-100 text-yellow-800
-                                @elseif($booking->status === 'cancelled') bg-red-100 text-red-800
-                                @else bg-gray-100 text-gray-800 @endif">
-                                {{ ucfirst($booking->status) }}
-                            </span>
+                            <div class="flex flex-col space-y-1">
+                                <span class="px-3 py-1 rounded-full text-sm font-medium
+                                    @if($booking->status === 'confirmed') bg-green-100 text-green-800
+                                    @elseif($booking->status === 'pending') bg-yellow-100 text-yellow-800
+                                    @elseif($booking->status === 'cancelled') bg-red-100 text-red-800
+                                    @else bg-gray-100 text-gray-800 @endif">
+                                    {{ ucfirst($booking->status) }}
+                                </span>
+                                @if($booking->payment_status)
+                                    <span class="px-2 py-1 rounded text-xs font-medium
+                                        @if($booking->payment_status === 'completed') bg-green-50 text-green-700
+                                        @elseif($booking->payment_status === 'pending') bg-orange-50 text-orange-700
+                                        @elseif($booking->payment_status === 'expired') bg-red-50 text-red-700
+                                        @else bg-gray-50 text-gray-700 @endif">
+                                        Payment: {{ ucfirst($booking->payment_status) }}
+                                    </span>
+                                @endif
+                            </div>
                         </div>
 
                         <div class="grid md:grid-cols-3 gap-4 text-sm">
@@ -48,17 +59,25 @@
                                 <span class="text-sm text-gray-600">•</span>
                                 <span class="text-sm text-gray-600">Booked: {{ $booking->created_at->format('M d, Y') }}</span>
                             </div>
-                            @if($booking->status !== 'cancelled')
-                                <form action="{{ route('customer.bookings.cancel', $booking) }}" method="POST" class="inline">
-                                    @csrf
-                                    @method('PATCH')
-                                    <button type="submit" 
-                                            onclick="return confirm('Are you sure you want to cancel this booking?')"
-                                            class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded text-sm transition">
-                                        Cancel Booking
-                                    </button>
-                                </form>
-                            @endif
+                            <div class="flex space-x-2">
+                                @if($booking->payment_status === 'pending' && $booking->status !== 'cancelled')
+                                    <a href="{{ route('customer.payment.show', $booking) }}" 
+                                       class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-sm transition">
+                                        Complete Payment
+                                    </a>
+                                @endif
+                                @if($booking->status !== 'cancelled')
+                                    <form action="{{ route('customer.bookings.cancel', $booking) }}" method="POST" class="inline">
+                                        @csrf
+                                        @method('PATCH')
+                                        <button type="submit" 
+                                                onclick="return confirm('Are you sure you want to cancel this booking?')"
+                                                class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded text-sm transition">
+                                            Cancel Booking
+                                        </button>
+                                    </form>
+                                @endif
+                            </div>
                         </div>
                     </div>
                 @endforeach

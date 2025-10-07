@@ -28,6 +28,8 @@
         @yield('content')
     </div>
 
+    <!-- Toast Notifications -->
+    @include('components.toast')
 
 @stack('scripts')
 @include('Customer.footer')

@@ -5,6 +5,7 @@
     <meta charset="UTF-8" />
     <title>Partner Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
@@ -799,84 +800,223 @@
         </div>
     </section>
 
+    @if($property->rooms && $property->rooms->count() > 0)
     <section id="info" class="py-8 bg-white">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 border-t">
             <div class="flex items-center justify-between mb-4">
-                <h2 class="text-xl font-bold">Availability</h2>
-                <div class="flex items-center text-blue-500 text-sm font-medium">
-                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 010 8m-4-4h4m0 0h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a4 4 0 00-4-4m0 0H8a4 4 0 000 8m0 0H6a2 2 0 00-2 2v4a2 2 0 002 2h2a4 4 0 004 4" />
-                    </svg>
-                    We Price Match
+                <h2 class="text-xl font-bold">Room Management & Availability</h2>
+                <div class="flex items-center gap-4">
+                    <button onclick="alert('Room creation feature coming soon')" 
+                       class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm font-medium">
+                        Add New Room
+                    </button>
+                    <div class="flex items-center text-blue-500 text-sm font-medium">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 010 8m-4-4h4m0 0h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a4 4 0 00-4-4m0 0H8a4 4 0 000 8m0 0H6a2 2 0 00-2 2v4a2 2 0 002 2h2a4 4 0 004 4" />
+                        </svg>
+                        Partner Dashboard
+                    </div>
                 </div>
             </div>
 
-            <h3 class="text-lg font-semibold mb-4">Available rooms</h3>
+            @if($property->rooms && $property->rooms->count() > 0)
+                <div class="space-y-6">
+                    <!-- Room Statistics -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                        <div class="bg-blue-50 p-4 rounded-lg">
+                            <h4 class="text-sm font-semibold text-blue-600">Total Rooms</h4>
+                            <p class="text-2xl font-bold text-blue-800">{{ $property->rooms->count() }}</p>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-lg">
+                            <h4 class="text-sm font-semibold text-green-600">Available</h4>
+                            <p class="text-2xl font-bold text-green-800">{{ $property->rooms->where('is_available', true)->count() }}</p>
+                        </div>
+                        <div class="bg-yellow-50 p-4 rounded-lg">
+                            <h4 class="text-sm font-semibold text-yellow-600">Occupied</h4>
+                            <p class="text-2xl font-bold text-yellow-800">{{ $property->rooms->where('is_available', false)->count() }}</p>
+                        </div>
+                        <div class="bg-purple-50 p-4 rounded-lg">
+                            <h4 class="text-sm font-semibold text-purple-600">Avg. Price</h4>
+                            <p class="text-2xl font-bold text-purple-800">LKR {{ number_format($property->rooms->avg('price_per_night') ?? 0) }}</p>
+                        </div>
+                    </div>
 
-            <div class="overflow-x-auto">
-                <table class="w-full border border-gray-300 text-sm">
-                    <thead>
-                        <tr class="bg-blue-50">
-                            <th class="text-left p-3 border-b font-semibold">Room type</th>
-                            <th class="text-left p-3 border-b font-semibold">Number of guests</th>
-                            <th class="text-left p-3 border-b font-semibold">Price</th>
-                            <th class="text-left p-3 border-b font-semibold">Your choices</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="border-b hover:bg-gray-50">
-                            <td class="p-3 align-top">
-                                <h4 class="text-blue-600 font-semibold underline cursor-pointer">{{ $property->title ?? 'Standard Room' }}</h4>
-                                <p class="text-gray-600 text-xs mt-1">{{ Str::limit($property->description ?? 'Comfortable room with modern amenities', 100) }}</p>
-                            </td>
-                            <td class="p-3 align-top">
-                                <div class="flex gap-1">
-                                    @for($i = 0; $i < 2; $i++)
-                                        <svg class="w-4 h-4 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                                        </svg>
-                                    @endfor
+                    <!-- Rooms by Type -->
+                    @foreach($property->rooms->groupBy('room_type_id') as $roomTypeId => $rooms)
+                        @php
+                            $roomType = $rooms->first()->roomType;
+                            $sampleRoom = $rooms->first();
+                        @endphp
+                        <div class="border border-gray-300 rounded-lg overflow-hidden">
+                            <div class="bg-gray-50 p-4 border-b flex justify-between items-center">
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-800">{{ $roomType->name ?? 'Standard Room' }}</h3>
+                                    <p class="text-sm text-gray-600">{{ $rooms->count() }} room(s) of this type</p>
                                 </div>
-                            </td>
-                            <td class="p-3 align-top">
-                                @if($property->pricing)
-                                    @if($property->pricing->original_price)
-                                        <div class="text-red-500 line-through text-xs">LKR {{ number_format($property->pricing->original_price * 2) }}</div>
-                                    @endif
-                                    <div class="text-lg font-bold">LKR {{ number_format(($property->pricing->price_per_night ?? $property->pricing->base_price ?? 45600) * 2) }}</div>
-                                    @if($property->pricing->discount_percent)
-                                        <span class="bg-green-600 text-white text-xs px-2 py-1 rounded">{{ $property->pricing->discount_percent }}% off</span>
-                                    @endif
-                                    <div class="text-xs text-gray-500 mt-1">+LKR {{ number_format(($property->pricing->tax_amount ?? 2374) * 2) }} taxes and fees</div>
-                                @else
-                                    <div class="text-lg font-bold">N/A</div>
-                                    <div class="text-xs text-gray-500 mt-1">+N/A</div>
-                                @endif
-                            </td>
-                            <td class="p-3 align-top text-xs">
-                                <ul class="space-y-1">
-                                    @if($property->services && $property->services->breakfast_included)
-                                        <li class="text-green-600">✓ Breakfast included</li>
-                                    @endif
-                                    @if($property->policies && $property->policies->flexible_cancellation)
-                                        <li class="text-green-600">✓ Free cancellation</li>
-                                    @else
-                                        <li class="text-red-600">✗ Non-refundable</li>
-                                    @endif
-                                    @if($property->policies && $property->policies->pay_at_property)
-                                        <li>✓ No prepayment needed</li>
-                                    @endif
-                                    @if($property->pricing && $property->pricing->discount_percent)
-                                        <li class="text-green-600">✓ {{ $property->pricing->discount_percent }}% discount applied</li>
-                                    @endif
-                                </ul>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+                                <div class="flex gap-2">
+                                    <button onclick="toggleRoomType({{ $roomTypeId }})" 
+                                            class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm">
+                                        Manage Type
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm">
+                                    <thead>
+                                        <tr class="bg-gray-100">
+                                            <th class="text-left p-3 font-semibold">Room Details</th>
+                                            <th class="text-left p-3 font-semibold">Capacity</th>
+                                            <th class="text-left p-3 font-semibold">Price/Night</th>
+                                            <th class="text-left p-3 font-semibold">Status</th>
+                                            <th class="text-left p-3 font-semibold">Commission</th>
+                                            <th class="text-left p-3 font-semibold">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($rooms as $room)
+                                            <tr class="border-b hover:bg-gray-50">
+                                                <td class="p-3 align-top">
+                                                    <div class="space-y-1">
+                                                        <h4 class="font-medium">{{ $room->name }}</h4>
+                                                        <p class="text-xs text-gray-500">{{ $room->description ?? 'No description' }}</p>
+                                                        @if($room->size_sq_m)
+                                                            <p class="text-xs text-gray-500">{{ $room->size_sq_m }} m²</p>
+                                                        @endif
+                                                    </div>
+                                                </td>
+                                                <td class="p-3 align-top">
+                                                    <div class="flex gap-1">
+                                                        @for($i = 0; $i < min($room->max_guests ?? 2, 4); $i++)
+                                                            <svg class="w-4 h-4 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
+                                                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                                            </svg>
+                                                        @endfor
+                                                    </div>
+                                                    <p class="text-xs text-gray-500 mt-1">Max {{ $room->max_guests ?? 2 }}</p>
+                                                </td>
+                                                <td class="p-3 align-top">
+                                                    <div class="text-lg font-bold">LKR {{ number_format($room->price_per_night ?? 0) }}</div>
+                                                    @if($room->discount_enabled && $room->discount_percentage)
+                                                        <span class="bg-green-600 text-white text-xs px-2 py-1 rounded">{{ $room->discount_percentage }}% off</span>
+                                                    @endif
+                                                    <div class="text-xs text-gray-500 mt-1">{{ $room->currency ?? 'LKR' }}</div>
+                                                </td>
+                                                <td class="p-3 align-top">
+                                                    @php
+                                                        $bookedDates = \App\Models\Booking::where('room_id', $room->id)
+                                                            ->where('status', '!=', 'cancelled')
+                                                            ->where('check_out', '>=', now())
+                                                            ->get(['check_in', 'check_out']);
+                                                        $isCurrentlyOccupied = $bookedDates->where('check_in', '<=', now())
+                                                            ->where('check_out', '>=', now())->count() > 0;
+                                                    @endphp
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                                        {{ $isCurrentlyOccupied ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800' }}">
+                                                        {{ $isCurrentlyOccupied ? 'Occupied' : 'Available' }}
+                                                    </span>
+                                                    @if($bookedDates->count() > 0)
+                                                        <div class="mt-1">
+                                                            <p class="text-xs text-gray-600 font-medium">Upcoming bookings:</p>
+                                                            @foreach($bookedDates->take(2) as $booking)
+                                                                <p class="text-xs text-gray-500">
+                                                                    {{ \Carbon\Carbon::parse($booking->check_in)->format('M j') }} - 
+                                                                    {{ \Carbon\Carbon::parse($booking->check_out)->format('M j') }}
+                                                                </p>
+                                                            @endforeach
+                                                            @if($bookedDates->count() > 2)
+                                                                <p class="text-xs text-gray-400">+{{ $bookedDates->count() - 2 }} more</p>
+                                                            @endif
+                                                        </div>
+                                                    @endif
+                                                    @if($room->bathroom_count)
+                                                        <p class="text-xs text-gray-500 mt-1">{{ $room->bathroom_count }} bath(s)</p>
+                                                    @endif
+                                                </td>
+                                                <td class="p-3 align-top">
+                                                    <div class="text-sm font-medium">{{ $room->commission_percentage ?? 0 }}%</div>
+                                                    <div class="text-xs text-gray-500">You earn: LKR {{ number_format($room->you_earn ?? 0) }}</div>
+                                                </td>
+                                                <td class="p-3 align-top">
+                                                    <div class="flex flex-col gap-1">
+                                                        <button onclick="alert('Room editing feature coming soon')" 
+                                                           class="text-blue-600 hover:text-blue-800 text-xs underline">
+                                                            Edit
+                                                        </button>
+                                                        <button onclick="toggleAvailability({{ $room->id }})" 
+                                                                class="text-yellow-600 hover:text-yellow-800 text-xs underline text-left">
+                                                            {{ $room->is_available ? 'Mark Occupied' : 'Mark Available' }}
+                                                        </button>
+                                                        <button onclick="viewBookings({{ $room->id }})" 
+                                                                class="text-green-600 hover:text-green-800 text-xs underline text-left">
+                                                            View Bookings
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <div class="text-center py-12 bg-gray-50 rounded-lg">
+                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                    <h3 class="mt-2 text-sm font-medium text-gray-900">No rooms configured</h3>
+                    <p class="mt-1 text-sm text-gray-500">Get started by adding your first room to this property.</p>
+                    <div class="mt-6">
+                        <button onclick="alert('Room creation feature coming soon')" 
+                           class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+                            <svg class="-ml-1 mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                            </svg>
+                            Add Room
+                        </button>
+                    </div>
+                </div>
+            @endif
         </div>
     </section>
+    @endif
+
+    <script>
+        function toggleAvailability(roomId) {
+            if (confirm('Are you sure you want to change the availability status of this room?')) {
+                fetch(`/partner/rooms/${roomId}/toggle-availability`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert('Error updating room availability');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error updating room availability');
+                });
+            }
+        }
+
+        function viewBookings(roomId) {
+            window.location.href = `/partner/rooms/${roomId}/bookings`;
+        }
+
+        function toggleRoomType(roomTypeId) {
+            // Implement room type management functionality
+            console.log('Managing room type:', roomTypeId);
+        }
+    </script>
 
 
     <section id="reviews" class="bg-white">
