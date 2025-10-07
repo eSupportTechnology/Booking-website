@@ -9,6 +9,7 @@ class CommissionInvoice extends Model
 {
     protected $fillable = [
         'partner_id',
+        'booking_id',
         'invoice_number',
         'amount',
         'due_date',
@@ -25,6 +26,11 @@ class CommissionInvoice extends Model
     public function partner(): BelongsTo
     {
         return $this->belongsTo(Partner::class);
+    }
+
+    public function booking(): BelongsTo
+    {
+        return $this->belongsTo(Booking::class);
     }
 
     public function isOverdue(): bool

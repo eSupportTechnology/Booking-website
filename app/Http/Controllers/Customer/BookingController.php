@@ -52,11 +52,21 @@ class BookingController extends Controller
             $bookingDTO->check_out, 
             $bookingDTO->guest_count
         );
+        
+        // Set default commission rate (can be customized per property/partner)
+        $bookingDTO->commission_rate = 10.00;
 
         $booking = $this->createBookingAction->execute($bookingDTO);
+        
+        // Set booking status to pending for partner approval
+        $booking->update([
+            'status' => 'pending',
+            'payment_status' => 'pending',
+            'payment_deadline' => now()->addHours(24)
+        ]);
 
-        return redirect()->route('customer.bookings.confirmation', $booking)
-            ->with('success', 'Booking created successfully!');
+        return redirect()->route('customer.payment.show', $booking)
+            ->with('success', 'Booking created! Please complete payment within 24 hours.');
     }
 
     public function index()

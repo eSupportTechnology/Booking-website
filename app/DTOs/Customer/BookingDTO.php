@@ -11,7 +11,8 @@ class BookingDTO
         public string $check_out,
         public int $guest_count,
         public float $total_price,
-        public string $status = 'pending'
+        public string $status = 'pending',
+        public float $commission_rate = 10.00
     ) {}
 
     public static function fromRequest($request): self

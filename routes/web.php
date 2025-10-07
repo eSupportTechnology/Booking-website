@@ -94,6 +94,12 @@ Route::prefix('customer')->group(function () {
         Route::patch('/bookings/{booking}/cancel', [\App\Http\Controllers\Customer\BookingController::class, 'cancel'])
             ->name('customer.bookings.cancel');
         
+        // Payment routes
+        Route::get('/payment/{booking}', [\App\Http\Controllers\Customer\PaymentController::class, 'show'])
+            ->name('customer.payment.show');
+        Route::post('/payment/{booking}', [\App\Http\Controllers\Customer\PaymentController::class, 'process'])
+            ->name('customer.payment.process');
+        
         // Messages
         Route::get('/messages', [\App\Http\Controllers\Customer\MessageController::class, 'index'])
             ->name('customer.messages.index');
@@ -130,6 +136,12 @@ Route::prefix('customer')->group(function () {
         ->name('customer.bookings.booked-dates');
     Route::get('/properties/{property}/available-rooms', [\App\Http\Controllers\Customer\BookingController::class, 'getAvailableRooms'])
         ->name('customer.bookings.available-rooms');
+    
+    // Enhanced room endpoints
+    Route::get('/properties/{property}/rooms/available', [\App\Http\Controllers\Customer\RoomController::class, 'getAvailableRoomsWithDetails'])
+        ->name('customer.properties.rooms.available');
+    Route::get('/rooms/{room}/details', [\App\Http\Controllers\Customer\RoomController::class, 'getRoomDetails'])
+        ->name('customer.rooms.details');
 
     Route::post('/customer/logout', function () {
         Auth::guard('customer')->logout();
@@ -882,6 +894,24 @@ Route::post('/partner/property/{property}/rate-plans', [PropertyController::clas
 
 
 require __DIR__ . '/auth.php';
+
+// Partner room management routes
+Route::middleware(['auth', \App\Http\Middleware\PartnerMiddleware::class])->prefix('partner')->name('partner.')->group(function () {
+    Route::get('/properties/{property}/rooms', [\App\Http\Controllers\Partner\RoomManagementController::class, 'index'])
+        ->name('properties.rooms.index');
+    Route::get('/room-types', [\App\Http\Controllers\Partner\RoomManagementController::class, 'getRoomTypes'])
+        ->name('room-types');
+    Route::post('/rooms/{room}/toggle-availability', [\App\Http\Controllers\Partner\RoomManagementController::class, 'toggleAvailability'])
+        ->name('rooms.toggle-availability');
+    Route::delete('/rooms/{room}', [\App\Http\Controllers\Partner\RoomManagementController::class, 'destroy'])
+        ->name('rooms.destroy');
+    Route::put('/rooms/{room}/pricing', [\App\Http\Controllers\Partner\RoomManagementController::class, 'updatePricing'])
+        ->name('rooms.update-pricing');
+    Route::post('/properties/{property}/rooms/bulk-pricing', [\App\Http\Controllers\Partner\RoomManagementController::class, 'bulkUpdatePricing'])
+        ->name('properties.rooms.bulk-pricing');
+    Route::get('/rooms/{room}/availability-calendar', [\App\Http\Controllers\Partner\RoomManagementController::class, 'getAvailabilityCalendar'])
+        ->name('rooms.availability-calendar');
+});
 
 
 // Admin Customer Routes

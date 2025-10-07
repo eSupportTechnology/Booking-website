@@ -10,6 +10,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         Commands\GenerateCommissionInvoices::class,
         Commands\DeactivateOverduePartners::class,
+        Commands\CancelExpiredBookings::class,
     ];
 
     protected function schedule(Schedule $schedule): void
@@ -19,6 +20,9 @@ class Kernel extends ConsoleKernel
         
         // Check for overdue payments and deactivate properties daily
         $schedule->command('commission:deactivate-overdue')->dailyAt('10:00');
+        
+        // Cancel expired bookings every hour
+        $schedule->command('bookings:cancel-expired')->hourly();
     }
 
     protected function commands(): void

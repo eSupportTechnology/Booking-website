@@ -630,10 +630,15 @@
         </div>
     </section>
 
-    <section id="info" class="py-8 bg-white">
+    <!-- Enhanced Room Display Section -->
+    @include('Customer.components.property-rooms-display', ['property' => $property])
+
+    @if($property->rooms && $property->rooms->count() > 0)
+    <!-- Available Rooms Section -->
+    <section id="rooms" class="py-8 bg-white">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 border-t">
             <div class="flex items-center justify-between mb-4">
-                <h2 class="text-xl font-bold">Availability</h2>
+                <h2 class="text-xl font-bold">Available Rooms</h2>
                 <div class="flex items-center text-blue-500 text-sm font-medium">
                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 010 8m-4-4h4m0 0h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a4 4 0 00-4-4m0 0H8a4 4 0 000 8m0 0H6a2 2 0 00-2 2v4a2 2 0 002 2h2a4 4 0 004 4" />
@@ -642,75 +647,196 @@
                 </div>
             </div>
 
-            <h3 class="text-lg font-semibold mb-4">Available rooms</h3>
-
-            <div class="overflow-x-auto">
-                <table class="w-full border border-gray-300 text-sm">
-                    <thead>
-                        <tr class="bg-blue-50">
-                            <th class="text-left p-3 border-b font-semibold">Room type</th>
-                            <th class="text-left p-3 border-b font-semibold">Number of guests</th>
-                            <th class="text-left p-3 border-b font-semibold">Price</th>
-                            <th class="text-left p-3 border-b font-semibold">Your choices</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="border-b hover:bg-gray-50">
-                            <td class="p-3 align-top">
-                                <h4 class="text-blue-600 font-semibold underline cursor-pointer">{{ $property->title ?? 'Standard Room' }}</h4>
-                                <p class="text-gray-600 text-xs mt-1">{{ Str::limit($property->description ?? 'Comfortable room with modern amenities', 100) }}</p>
-                            </td>
-                            <td class="p-3 align-top">
-                                <div class="flex gap-1">
-                                    @for($i = 0; $i < 2; $i++)
-                                        <svg class="w-4 h-4 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                                        </svg>
-                                    @endfor
-                                </div>
-                            </td>
-                            <td class="p-3 align-top">
-                                @if($property->pricing)
-                                    @if($property->pricing->original_price)
-                                        <div class="text-red-500 line-through text-xs">LKR {{ number_format($property->pricing->original_price * 2) }}</div>
-                                    @endif
-                                    <div class="text-lg font-bold">LKR {{ number_format(($property->pricing->price_per_night ?? $property->pricing->base_price ?? 45600) * 2) }}</div>
-                                    @if($property->pricing->discount_percent)
-                                        <span class="bg-green-600 text-white text-xs px-2 py-1 rounded">{{ $property->pricing->discount_percent }}% off</span>
-                                    @endif
-                                    <div class="text-xs text-gray-500 mt-1">+LKR {{ number_format(($property->pricing->tax_amount ?? 2374) * 2) }} taxes and fees</div>
-                                @else
-                                    <div class="text-lg font-bold">N/A</div>
-                                    <div class="text-xs text-gray-500 mt-1">+N/A</div>
-                                @endif
-                            </td>
-                            <td class="p-3 align-top text-xs">
-                                <ul class="space-y-1 mb-3">
-                                    @if($property->services && $property->services->breakfast_included)
-                                        <li class="text-green-600">✓ Breakfast included</li>
-                                    @endif
-                                    @if($property->policies && $property->policies->flexible_cancellation)
-                                        <li class="text-green-600">✓ Free cancellation</li>
-                                    @else
-                                        <li class="text-red-600">✗ Non-refundable</li>
-                                    @endif
-                                    @if($property->policies && $property->policies->pay_at_property)
-                                        <li>✓ No prepayment needed</li>
-                                    @endif
-                                    @if($property->pricing && $property->pricing->discount_percent)
-                                        <li class="text-green-600">✓ {{ $property->pricing->discount_percent }}% discount applied</li>
-                                    @endif
-                                </ul>
-                                <a href="{{ route('customer.bookings.show', $property) }}" class="bg-[#3CC0E9] text-white px-3 py-1 rounded text-xs hover:bg-[#2BA8D1] inline-block">
-                                    Book Now
-                                </a>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+            @if($property->rooms && $property->rooms->count() > 0)
+                <div class="space-y-4">
+                    @foreach($property->rooms->groupBy('room_type_id') as $roomTypeId => $rooms)
+                        @php
+                            $roomType = $rooms->first()->roomType;
+                            $sampleRoom = $rooms->first();
+                        @endphp
+                        <div class="border border-gray-300 rounded-lg overflow-hidden">
+                            <div class="bg-blue-50 p-4 border-b">
+                                <h3 class="text-lg font-semibold text-blue-600">{{ $roomType->name ?? 'Standard Room' }}</h3>
+                                <p class="text-sm text-gray-600 mt-1">{{ $sampleRoom->description ?? 'Comfortable room with modern amenities' }}</p>
+                            </div>
+                            
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm">
+                                    <thead>
+                                        <tr class="bg-gray-50">
+                                            <th class="text-left p-3 font-semibold">Room Details</th>
+                                            <th class="text-left p-3 font-semibold">Guests</th>
+                                            <th class="text-left p-3 font-semibold">Price per Night</th>
+                                            <th class="text-left p-3 font-semibold">Features</th>
+                                            <th class="text-left p-3 font-semibold">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($rooms as $room)
+                                            <tr class="border-b hover:bg-gray-50">
+                                                <td class="p-3 align-top">
+                                                    <div class="space-y-1">
+                                                        <h4 class="font-medium">{{ $room->name }}</h4>
+                                                        @if($room->size_sq_m)
+                                                            <p class="text-xs text-gray-500">{{ $room->size_sq_m }} m²</p>
+                                                        @endif
+                                                        @if($room->beds && $room->beds->count() > 0)
+                                                            <p class="text-xs text-gray-500">
+                                                                @foreach($room->beds as $bed)
+                                                                    {{ $bed->quantity }}x {{ $bed->bed_type }}
+                                                                    @if(!$loop->last), @endif
+                                                                @endforeach
+                                                            </p>
+                                                        @endif
+                                                    </div>
+                                                </td>
+                                                <td class="p-3 align-top">
+                                                    <div class="flex gap-1">
+                                                        @for($i = 0; $i < min($room->max_guests ?? 2, 4); $i++)
+                                                            <svg class="w-4 h-4 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
+                                                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                                            </svg>
+                                                        @endfor
+                                                        @if(($room->max_guests ?? 2) > 4)
+                                                            <span class="text-xs text-gray-500">+{{ ($room->max_guests ?? 2) - 4 }}</span>
+                                                        @endif
+                                                    </div>
+                                                    <p class="text-xs text-gray-500 mt-1">Max {{ $room->max_guests ?? 2 }} guests</p>
+                                                </td>
+                                                <td class="p-3 align-top">
+                                                    @if($room->discount_enabled && $room->original_price)
+                                                        <div class="text-red-500 line-through text-xs">LKR {{ number_format($room->original_price) }}</div>
+                                                    @endif
+                                                    <div class="text-lg font-bold">LKR {{ number_format($room->price_per_night ?? 0) }}</div>
+                                                    @if($room->discount_enabled && $room->discount_percentage)
+                                                        <span class="bg-green-600 text-white text-xs px-2 py-1 rounded">{{ $room->discount_percentage }}% off</span>
+                                                    @endif
+                                                    <div class="text-xs text-gray-500 mt-1">{{ $room->currency ?? 'LKR' }}</div>
+                                                </td>
+                                                <td class="p-3 align-top text-xs">
+                                                    <ul class="space-y-1">
+                                                        @if($room->amenities && $room->amenities->count() > 0)
+                                                            @foreach($room->amenities->take(3) as $amenity)
+                                                                <li class="text-green-600">✓ {{ $amenity->name }}</li>
+                                                            @endforeach
+                                                            @if($room->amenities->count() > 3)
+                                                                <li class="text-gray-500">+{{ $room->amenities->count() - 3 }} more</li>
+                                                            @endif
+                                                        @endif
+                                                        @if($room->bathroom_count)
+                                                            <li>✓ {{ $room->bathroom_count }} bathroom(s)</li>
+                                                        @endif
+                                                        @if(!$room->smoking_allowed)
+                                                            <li>✓ Non-smoking</li>
+                                                        @endif
+                                                    </ul>
+                                                </td>
+                                                <td class="p-3 align-top">
+                                                    <div class="space-y-2">
+                                                        <div class="grid grid-cols-2 gap-2">
+                                                            <input type="date" id="checkin_{{ $room->id }}" 
+                                                                   class="text-xs border rounded px-2 py-1" 
+                                                                   min="{{ date('Y-m-d') }}" 
+                                                                   onchange="checkAvailability({{ $room->id }})">
+                                                            <input type="date" id="checkout_{{ $room->id }}" 
+                                                                   class="text-xs border rounded px-2 py-1" 
+                                                                   min="{{ date('Y-m-d', strtotime('+1 day')) }}" 
+                                                                   onchange="checkAvailability({{ $room->id }})">
+                                                        </div>
+                                                        <button onclick="selectRoom({{ $room->id }})" 
+                                                                id="select_btn_{{ $room->id }}"
+                                                                class="w-full bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs font-medium transition-colors">
+                                                            Check & Book
+                                                        </button>
+                                                        <div id="availability_{{ $room->id }}" class="text-xs text-center"></div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <div class="text-center py-8">
+                    <p class="text-gray-500">No rooms available for this property.</p>
+                </div>
+            @endif
         </div>
     </section>
+    @endif
+
+    <script>
+        function selectRoom(roomId) {
+            const checkin = document.getElementById(`checkin_${roomId}`).value;
+            const checkout = document.getElementById(`checkout_${roomId}`).value;
+            
+            if (!checkin || !checkout) {
+                alert('Please select check-in and check-out dates');
+                return;
+            }
+            
+            if (checkin >= checkout) {
+                alert('Check-out date must be after check-in date');
+                return;
+            }
+            
+            // Redirect to booking page with selected room and dates
+            window.location.href = `{{ route('customer.bookings.store', $property) }}?room_id=${roomId}&check_in=${checkin}&check_out=${checkout}`;
+        }
+
+        function checkAvailability(roomId) {
+            const checkin = document.getElementById(`checkin_${roomId}`).value;
+            const checkout = document.getElementById(`checkout_${roomId}`).value;
+            const availabilityDiv = document.getElementById(`availability_${roomId}`);
+            const selectBtn = document.getElementById(`select_btn_${roomId}`);
+            
+            if (!checkin || !checkout) {
+                availabilityDiv.innerHTML = '';
+                return;
+            }
+            
+            if (checkin >= checkout) {
+                availabilityDiv.innerHTML = '<span class="text-red-600">Invalid dates</span>';
+                selectBtn.disabled = true;
+                selectBtn.classList.add('opacity-50');
+                return;
+            }
+            
+            // Check availability via API
+            fetch(`{{ route('customer.bookings.booked-dates', $property) }}`)
+                .then(response => response.json())
+                .then(bookedDates => {
+                    const isAvailable = !hasDateConflict(checkin, checkout, bookedDates);
+                    
+                    if (isAvailable) {
+                        availabilityDiv.innerHTML = '<span class="text-green-600">✓ Available</span>';
+                        selectBtn.disabled = false;
+                        selectBtn.classList.remove('opacity-50');
+                    } else {
+                        availabilityDiv.innerHTML = '<span class="text-red-600">✗ Not available</span>';
+                        selectBtn.disabled = true;
+                        selectBtn.classList.add('opacity-50');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    availabilityDiv.innerHTML = '<span class="text-gray-500">Check failed</span>';
+                });
+        }
+        
+        function hasDateConflict(checkin, checkout, bookedDates) {
+            const start = new Date(checkin);
+            const end = new Date(checkout);
+            
+            return bookedDates.some(date => {
+                const bookedDate = new Date(date);
+                return bookedDate >= start && bookedDate < end;
+            });
+        }
+    </script>
 
 
     <section id="reviews" class="bg-white">
