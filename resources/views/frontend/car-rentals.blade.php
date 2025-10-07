@@ -1,5 +1,5 @@
 @extends('frontend.master')
-
+@section('title', 'Car Rentals')
 @section('content')
 <section class="text-white py-8 bg-[#1F8FB2] relative z-0">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
