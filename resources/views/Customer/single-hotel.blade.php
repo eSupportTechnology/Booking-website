@@ -65,7 +65,7 @@
                 </div>
             </div>
 
-            <div class="flex flex-col lg:grid lg:grid-cols-7 lg:grid-rows-5 gap-4 mt-6 h-auto lg:h-[600px]">
+            {{-- <div class="flex flex-col lg:grid lg:grid-cols-7 lg:grid-rows-5 gap-4 mt-6 h-auto lg:h-[600px]"> --}}
 
                 <div class="w-full lg:col-span-5 lg:row-span-5 space-y-4">
                     <div class="hidden lg:grid grid-cols-10 grid-rows-8 gap-2 h-full">
@@ -146,7 +146,7 @@
                     </div>
                 </div>
 
-                <!-- side area -->
+                {{-- <!-- side area -->
                 <div class="w-full lg:col-span-2 lg:row-span-5 p-2">
                     <div class="h-full flex flex-col justify-between gap-4">
 
@@ -213,7 +213,10 @@
                                     <div>
                                         <label class="block text-xs font-medium mb-1">Guests</label>
                                         <select name="guest_count" required class="w-full border rounded px-2 py-1 text-xs">
-                                            @for($i = 1; $i <= 8; $i++)
+                                            @php
+                                                $maxGuests = $property->additionalDetails->guests ?? 8;
+                                            @endphp
+                                            @for($i = 1; $i <= $maxGuests; $i++)
                                                 <option value="{{ $i }}">{{ $i }} guest{{ $i > 1 ? 's' : '' }}</option>
                                             @endfor
                                         </select>
@@ -237,9 +240,9 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> --}}
 
-            </div>
+            {{-- </div> --}}
         </div>
 
         <!-- Modal -->

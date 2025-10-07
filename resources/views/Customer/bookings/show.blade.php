@@ -57,9 +57,9 @@
                         <label class="block text-sm font-medium mb-2">Number of Guests</label>
                         <select name="guest_count" x-model="guests" required
                                 class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#3CC0E9]">
-                            @for($i = 1; $i <= 8; $i++)
-                                <option value="{{ $i }}">{{ $i }} guest{{ $i > 1 ? 's' : '' }}</option>
-                            @endfor
+                            <template x-for="i in getMaxGuests()" :key="i">
+                                <option :value="i" x-text="i + (i > 1 ? ' guests' : ' guest')"></option>
+                            </template>
                         </select>
                     </div>
 
@@ -207,6 +207,19 @@ function bookingForm() {
             if (!this.selectedRoom) return '';
             const room = this.availableRooms.find(r => r.id == this.selectedRoom);
             return room ? `${room.name} - Max ${room.max_guests} guests` : '';
+        },
+
+        getMaxGuests() {
+            if (this.selectedRoom) {
+                const room = this.availableRooms.find(r => r.id == this.selectedRoom);
+                const maxGuests = room?.max_guests || 8;
+                return Array.from({length: maxGuests}, (_, i) => i + 1);
+            }
+            @if($property->additionalDetails && $property->additionalDetails->guests)
+                return Array.from({length: {{ $property->additionalDetails->guests }}}, (_, i) => i + 1);
+            @else
+                return Array.from({length: 8}, (_, i) => i + 1);
+            @endif
         },
 
         isFormValid() {
