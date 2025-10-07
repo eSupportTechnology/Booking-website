@@ -219,7 +219,7 @@
                                         </select>
                                     </div>
                                     <div class="text-center pt-2">
-                                        <div class="text-sm font-bold mb-2">LKR {{ number_format($property->pricing->base_price ?? 5000) }}/night</div>
+                                        <div class="text-sm font-bold mb-2">LKR {{ number_format($property->pricing->price_per_night ?? ($property->pricing->base_price ?? 0)) }}/night</div>
                                         <button type="submit" class="w-full bg-[#3CC0E9] text-white py-2 rounded font-medium text-sm hover:bg-[#2BA8D1]">
                                             Reserve Now
                                         </button>
@@ -659,7 +659,7 @@
                                 <h3 class="text-lg font-semibold text-blue-600">{{ $roomType->name ?? 'Standard Room' }}</h3>
                                 <p class="text-sm text-gray-600 mt-1">{{ $sampleRoom->description ?? 'Comfortable room with modern amenities' }}</p>
                             </div>
-                            
+
                             <div class="overflow-x-auto">
                                 <table class="w-full text-sm">
                                     <thead>
@@ -734,16 +734,16 @@
                                                 <td class="p-3 align-top">
                                                     <div class="space-y-2">
                                                         <div class="grid grid-cols-2 gap-2">
-                                                            <input type="date" id="checkin_{{ $room->id }}" 
-                                                                   class="text-xs border rounded px-2 py-1" 
-                                                                   min="{{ date('Y-m-d') }}" 
+                                                            <input type="date" id="checkin_{{ $room->id }}"
+                                                                   class="text-xs border rounded px-2 py-1"
+                                                                   min="{{ date('Y-m-d') }}"
                                                                    onchange="checkAvailability({{ $room->id }})">
-                                                            <input type="date" id="checkout_{{ $room->id }}" 
-                                                                   class="text-xs border rounded px-2 py-1" 
-                                                                   min="{{ date('Y-m-d', strtotime('+1 day')) }}" 
+                                                            <input type="date" id="checkout_{{ $room->id }}"
+                                                                   class="text-xs border rounded px-2 py-1"
+                                                                   min="{{ date('Y-m-d', strtotime('+1 day')) }}"
                                                                    onchange="checkAvailability({{ $room->id }})">
                                                         </div>
-                                                        <button onclick="selectRoom({{ $room->id }})" 
+                                                        <button onclick="selectRoom({{ $room->id }})"
                                                                 id="select_btn_{{ $room->id }}"
                                                                 class="w-full bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs font-medium transition-colors">
                                                             Check & Book
@@ -772,17 +772,17 @@
         function selectRoom(roomId) {
             const checkin = document.getElementById(`checkin_${roomId}`).value;
             const checkout = document.getElementById(`checkout_${roomId}`).value;
-            
+
             if (!checkin || !checkout) {
                 alert('Please select check-in and check-out dates');
                 return;
             }
-            
+
             if (checkin >= checkout) {
                 alert('Check-out date must be after check-in date');
                 return;
             }
-            
+
             // Redirect to booking page with selected room and dates
             window.location.href = `{{ route('customer.bookings.store', $property) }}?room_id=${roomId}&check_in=${checkin}&check_out=${checkout}`;
         }
@@ -792,25 +792,25 @@
             const checkout = document.getElementById(`checkout_${roomId}`).value;
             const availabilityDiv = document.getElementById(`availability_${roomId}`);
             const selectBtn = document.getElementById(`select_btn_${roomId}`);
-            
+
             if (!checkin || !checkout) {
                 availabilityDiv.innerHTML = '';
                 return;
             }
-            
+
             if (checkin >= checkout) {
                 availabilityDiv.innerHTML = '<span class="text-red-600">Invalid dates</span>';
                 selectBtn.disabled = true;
                 selectBtn.classList.add('opacity-50');
                 return;
             }
-            
+
             // Check availability via API
             fetch(`{{ route('customer.bookings.booked-dates', $property) }}`)
                 .then(response => response.json())
                 .then(bookedDates => {
                     const isAvailable = !hasDateConflict(checkin, checkout, bookedDates);
-                    
+
                     if (isAvailable) {
                         availabilityDiv.innerHTML = '<span class="text-green-600">✓ Available</span>';
                         selectBtn.disabled = false;
@@ -826,11 +826,11 @@
                     availabilityDiv.innerHTML = '<span class="text-gray-500">Check failed</span>';
                 });
         }
-        
+
         function hasDateConflict(checkin, checkout, bookedDates) {
             const start = new Date(checkin);
             const end = new Date(checkout);
-            
+
             return bookedDates.some(date => {
                 const bookedDate = new Date(date);
                 return bookedDate >= start && bookedDate < end;

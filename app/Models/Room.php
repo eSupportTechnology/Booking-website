@@ -22,12 +22,10 @@ class Room extends Model
         'room_type', 
         'bed_type',
         'smoking_allowed', 
-        'price_per_night', 
         'currency', 
         'discount_enabled', 
         'commission_percentage', 
         'you_earn',
-
     ];
 
     public function roomType()
