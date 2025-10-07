@@ -1,4 +1,4 @@
-@extends('frontend.master')
+@extends('customer.master')
 
 @section('title', 'Home')
 
@@ -25,9 +25,9 @@
     <!-- Search Box: Overlapping both sections -->
     <div class="relative z-10 -mt-8 px-2 sm:px-4">
     <form action="{{ route('customer.search') }}" method="GET"
-        class="bg-white rounded-xl px-2 py-1 sm:px-3 sm:py-2 shadow-lg 
-           flex flex-col md:flex-row items-stretch md:items-center 
-           gap-2 md:gap-0 border-2 sm:border-4 border-yellow-400 
+        class="bg-white rounded-xl px-2 py-1 sm:px-3 sm:py-2 shadow-lg
+           flex flex-col md:flex-row items-stretch md:items-center
+           gap-2 md:gap-0 border-2 sm:border-4 border-yellow-400
            max-w-full md:max-w-6xl mx-auto overflow-visible text-sm md:text-base">
 
         <!-- Destination Selector -->
@@ -950,7 +950,7 @@
             <div id="content-domestic"
                 class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-y-2 w-full text-sm"
                 style="font-family: 'Lato', sans-serif;">
-                
+
                 <span>Kandy hotels</span>
                 <span>Nuwara Eliya hotels</span>
                 <span>Colombo hotels</span>
