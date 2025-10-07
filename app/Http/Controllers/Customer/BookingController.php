@@ -39,6 +39,19 @@ class BookingController extends Controller
             'guest_count' => 'required|integer|min:1|max:20',
         ]);
 
+        // Validate guest count against room/property limits
+        if ($request->room_id) {
+            $room = \App\Models\Room::find($request->room_id);
+            if ($room && $room->max_guests && $request->guest_count > $room->max_guests) {
+                return back()->with('error', "Selected room allows maximum {$room->max_guests} guests.");
+            }
+        } else {
+            $property->load('additionalDetails');
+            if ($property->additionalDetails && $property->additionalDetails->guests && $request->guest_count > $property->additionalDetails->guests) {
+                return back()->with('error', "This property allows maximum {$property->additionalDetails->guests} guests.");
+            }
+        }
+
         $bookingDTO = BookingDTO::fromRequest($request);
         
         if (!$this->bookingService->isRoomAvailable($property, $bookingDTO->room_id, $bookingDTO->check_in, $bookingDTO->check_out)) {
