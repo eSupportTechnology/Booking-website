@@ -1,5 +1,5 @@
 @extends('frontend.master')
-
+@section('title', 'Airport Taxi')
 @section('content')
 <!-- resources/views/components/airport-taxi-booking.blade.php -->
 <section class="py-12 bg-white" 
