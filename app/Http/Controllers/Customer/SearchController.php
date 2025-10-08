@@ -14,10 +14,10 @@ class SearchController extends Controller
 
         // Filter by destination if provided
         if ($request->filled('destination')) {
-            $query->whereHas('address', function($q) use ($request) {
+            $query->where(function($q) use ($request) {
                 $q->where('city', 'LIKE', '%' . $request->destination . '%')
-                  ->orWhere('state', 'LIKE', '%' . $request->destination . '%')
-                  ->orWhere('country', 'LIKE', '%' . $request->destination . '%');
+                  ->orWhere('country', 'LIKE', '%' . $request->destination . '%')
+                  ->orWhere('address', 'LIKE', '%' . $request->destination . '%');
             });
         }
 
@@ -46,8 +46,10 @@ class SearchController extends Controller
             $query->has('rooms', '>=', $request->rooms);
         }
 
+
+
         // Include essential relationships and optimize review queries
-        $query->with(['amenities', 'images', 'address', 'reviews'])
+        $query->with(['amenities', 'photos', 'reviews'])
               ->withCount('reviews')
               ->withAvg('reviews', 'rating');
 
