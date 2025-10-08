@@ -66,6 +66,18 @@
                                         Complete Payment
                                     </a>
                                 @endif
+                                
+                                @if($booking->canBeReviewed())
+                                    <a href="{{ route('customer.reviews.create', $booking) }}" 
+                                       class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded text-sm transition">
+                                        Write Review
+                                    </a>
+                                @elseif($booking->hasReview())
+                                    <span class="bg-gray-100 text-gray-600 px-4 py-2 rounded text-sm">
+                                        ✓ Reviewed
+                                    </span>
+                                @endif
+                                
                                 @if($booking->status !== 'cancelled')
                                     <form action="{{ route('customer.bookings.cancel', $booking) }}" method="POST" class="inline">
                                         @csrf

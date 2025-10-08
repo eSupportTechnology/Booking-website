@@ -109,6 +109,12 @@
                             <span class="text-sm" style="font-family: 'Noto Sans', sans-serif;">Messages</span>
                         </a>
                         
+                        <!-- Reviews -->
+                        <a href="{{ route('customer.reviews.index') }}" class="flex items-center space-x-1 hover:underline">
+                            <i class="fas fa-star w-4 h-4"></i>
+                            <span class="text-sm" style="font-family: 'Noto Sans', sans-serif;">My Reviews</span>
+                        </a>
+                        
                         <!-- Profile dropdown -->
                         <div class="relative" x-data="{ open: false }">
                             <button @click="open = !open" class="flex items-center space-x-1 hover:underline">
@@ -119,6 +125,7 @@
                                  class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
                                 <a href="{{ route('customer.bookings.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Bookings</a>
                                 <a href="{{ route('customer.messages.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Messages</a>
+                                <a href="{{ route('customer.reviews.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Reviews</a>
                                 <form method="POST" action="{{ route('customer.logout') }}">
                                     @csrf
                                     <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sign Out</button>
