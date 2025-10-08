@@ -976,17 +976,30 @@
 
             <div class="grid md:grid-cols-3 gap-4 mb-6">
                 @foreach ($guestReviews as $review)
-                    <div class="border rounded-lg p-4 shadow-sm bg-gray-50">
-                        <div class="flex items-center gap-2 mb-2">
-                            <!-- Example avatar placeholder -->
+                    <div class="border rounded-lg p-4 shadow-sm bg-gray-50 relative">
+                        <!-- Booking Details Corner -->
+                        @if($review->booking)
+                            <div class="absolute top-2 right-2 bg-blue-100 rounded-lg p-2 border-l-4 border-blue-500 text-xs">
+                                <div class="font-semibold text-gray-800 mb-1">Stay Details</div>
+                                <div class="text-gray-600 space-y-1">
+                                    <p>{{ $review->booking->check_in ? $review->booking->check_in->format('M d') : 'N/A' }} - {{ $review->booking->check_out ? $review->booking->check_out->format('M d, Y') : 'N/A' }}</p>
+                                    <p>{{ $review->booking->guest_count ?? 'N/A' }} guest{{ ($review->booking->guest_count ?? 0) > 1 ? 's' : '' }}</p>
+                                    @if($review->booking->room)
+                                        <p>{{ $review->booking->room->name }}</p>
+                                    @endif
+                                </div>
+                            </div>
+                        @endif
+
+                        <div class="flex items-center gap-2 mb-2 pr-20">
                             <img src="https://i.pravatar.cc/40?u={{ $review->user_id ?? rand(1, 100) }}"
                                 alt="Avatar" class="w-10 h-10 rounded-full" />
                             <div>
                                 <p class="font-semibold text-sm">
-                                    User ID: {{ $review->user_id ?? 'N/A' }}
+                                    Guest {{ $review->user_id ?? 'N/A' }}
                                 </p>
                                 <p class="text-xs text-gray-500">
-                                    Booking ID: {{ $review->booking_id ?? 'N/A' }}
+                                    {{ $review->created_at ? $review->created_at->format('M Y') : 'N/A' }}
                                 </p>
                             </div>
                         </div>
@@ -1025,6 +1038,24 @@
 
             <!-- Read All Reviews Button -->
             <div class="text-center">
+                @auth('customer')
+                    @php
+                        $userBooking = Auth::guard('customer')->user()->bookings()
+                            ->where('property_id', $property->id)
+                            ->where('status', 'confirmed')
+                            ->where('check_out', '<=', now())
+                            ->whereDoesntHave('reviews')
+                            ->first();
+                    @endphp
+                    
+                    @if($userBooking)
+                        <a href="{{ route('customer.reviews.create', $userBooking) }}"
+                            class="inline-block bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 text-sm mr-2">
+                            Write a Review
+                        </a>
+                    @endif
+                @endauth
+                
                 <a href="#"
                     class="inline-block border border-blue-600 text-blue-600 px-4 py-2 rounded hover:bg-blue-50 text-sm">
                     Read all reviews

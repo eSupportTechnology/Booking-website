@@ -98,4 +98,16 @@ class Booking extends Model
             
         $this->update(['commission_status' => 'cancelled']);
     }
+
+    public function canBeReviewed()
+    {
+        return $this->status === 'confirmed' && 
+               $this->check_out <= now() && 
+               !$this->reviews()->exists();
+    }
+
+    public function hasReview()
+    {
+        return $this->reviews()->exists();
+    }
 }

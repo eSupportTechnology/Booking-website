@@ -107,6 +107,14 @@ Route::prefix('customer')->group(function () {
             ->name('customer.messages.conversation');
         Route::post('/messages', [\App\Http\Controllers\Customer\MessageController::class, 'store'])
             ->name('customer.messages.store');
+        
+        // Reviews
+        Route::get('/reviews', [\App\Http\Controllers\Customer\ReviewController::class, 'index'])
+            ->name('customer.reviews.index');
+        Route::get('/bookings/{booking}/review', [\App\Http\Controllers\Customer\ReviewController::class, 'create'])
+            ->name('customer.reviews.create');
+        Route::post('/bookings/{booking}/review', [\App\Http\Controllers\Customer\ReviewController::class, 'store'])
+            ->name('customer.reviews.store');
     });
     Route::get('/account/confirm-deletion/{token}', [CustomerAuthController::class, 'confirmDeletion'])
         ->name('customer.account.confirm-deletion');
