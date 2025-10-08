@@ -62,6 +62,13 @@
                         </svg>
                         We Price Match
                     </div>
+
+                    <div class="flex items-center gap-4 mt-2">
+                        <a href="{{ route('customer.bookings.show', $property) }}"
+                            class="px-4 py-2 bg-[#3CC0E9] hover:bg-blue-700 text-white text-sm font-semibold rounded-lg shadow transition duration-200">
+                            Book Now
+                        </a>
+                    </div>
                 </div>
             </div>
 
@@ -72,7 +79,7 @@
                         $files = $property->files ?? collect();
                         $showEightFormat = $files->count() >= 8;
                     @endphp
-                    
+
                     @if($showEightFormat)
                     <div class="hidden lg:grid grid-cols-10 grid-rows-8 gap-2 h-full">
                         @php
@@ -117,7 +124,7 @@
                             $visibleFiles = $files->take(3);
                             $remainingCount = max(0, $files->count() - 3);
                         @endphp
-                        
+
                         @if ($files->count() > 0)
                             @foreach ($visibleFiles as $index => $file)
                                 <div class="{{ $mobilePositions[$index] ?? '' }} relative overflow-hidden"
@@ -147,7 +154,7 @@
                             $mobileFiles = $files->take(3);
                             $mobileRemainingCount = max(0, $files->count() - 3);
                         @endphp
-                        
+
                         @if ($files->count() > 0)
                             @foreach ($mobileFiles as $index => $file)
                                 <div class="{{ $mobilePositions[$index] ?? '' }} relative overflow-hidden"
@@ -797,14 +804,14 @@
         function updateCheckout(roomId) {
             const checkinInput = document.getElementById(`checkin_${roomId}`);
             const checkoutInput = document.getElementById(`checkout_${roomId}`);
-            
+
             if (checkinInput.value) {
                 const checkinDate = new Date(checkinInput.value);
                 const nextDay = new Date(checkinDate);
                 nextDay.setDate(nextDay.getDate() + 1);
-                
+
                 checkoutInput.min = nextDay.toISOString().split('T')[0];
-                
+
                 // Clear checkout if it's now invalid
                 if (checkoutInput.value && checkoutInput.value <= checkinInput.value) {
                     checkoutInput.value = '';

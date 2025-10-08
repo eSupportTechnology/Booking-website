@@ -46,8 +46,6 @@ class SearchController extends Controller
             $query->has('rooms', '>=', $request->rooms);
         }
 
-
-
         // Include essential relationships and optimize review queries
         $query->with(['amenities', 'photos', 'reviews'])
               ->withCount('reviews')
