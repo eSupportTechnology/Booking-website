@@ -162,6 +162,12 @@
             <div class="flex flex-col lg:grid lg:grid-cols-7 lg:grid-rows-5 gap-4 mt-6 h-auto lg:h-[600px]">
 
                 <div class="w-full lg:col-span-5 lg:row-span-5 space-y-4">
+                    @php
+                        $files = $property->files ?? collect();
+                        $showEightFormat = $files->count() >= 8;
+                    @endphp
+                    
+                    @if($showEightFormat)
                     <div class="hidden lg:grid grid-cols-10 grid-rows-8 gap-2 h-full">
                         @php
                             $positions = [
@@ -174,30 +180,45 @@
                                 'col-span-2 row-span-2 col-start-7 row-start-7',
                                 'col-span-2 row-span-2 col-start-9 row-start-7',
                             ];
-                        @endphp
-                        @php
-                            $files = $property->files ?? collect();
                             $visibleFiles = $files->take(8);
                             $remainingCount = max(0, $files->count() - 8);
                         @endphp
 
+                        @foreach ($visibleFiles as $index => $file)
+                            <div class="{{ $positions[$index] ?? '' }} relative overflow-hidden"
+                                onclick="openGalleryModal({{ $index }})">
+                                <img src="{{ asset('storage/' . $file->path) }}"
+                                    class="w-full h-full object-cover rounded-lg cursor-pointer"
+                                    alt="Property Image {{ $index + 1 }}"
+                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div class="w-full h-full bg-gray-200 rounded-lg flex items-center justify-center"
+                                    style="display:none;">
+                                    <span class="text-gray-500 text-sm">Image not found</span>
+                                </div>
+                                @if ($loop->last && $remainingCount > 0)
+                                    <div
+                                        class="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center text-white text-lg font-bold cursor-pointer hover:bg-opacity-70 transition rounded-lg">
+                                        {{ $remainingCount }}+ more
+                                    </div>
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
+                    @else
+                    <div class="hidden lg:grid grid-cols-4 grid-rows-2 gap-2 h-full">
+                        @php
+                            $mobilePositions = ['col-span-3 row-span-2', 'col-start-4', 'col-start-4 row-start-2'];
+                            $visibleFiles = $files->take(3);
+                            $remainingCount = max(0, $files->count() - 3);
+                        @endphp
+                        
                         @if ($files->count() > 0)
-                            @php
-                                $visibleFiles = $files->take(8);
-                                $remainingCount = max(0, $files->count() - 8);
-                            @endphp
                             @foreach ($visibleFiles as $index => $file)
-                                <div class="{{ $positions[$index] ?? '' }} relative overflow-hidden"
+                                <div class="{{ $mobilePositions[$index] ?? '' }} relative overflow-hidden"
                                     onclick="openGalleryModal({{ $index }})">
                                     <img src="{{ asset('storage/' . $file->path) }}"
                                         class="w-full h-full object-cover rounded-lg cursor-pointer"
-                                        alt="Property Image {{ $index + 1 }}"
-                                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-                                        onload="console.log('Image loaded: {{ $file->path }}')">
-                                    <div class="w-full h-full bg-gray-200 rounded-lg flex items-center justify-center"
-                                        style="display:none;">
-                                        <span class="text-gray-500 text-sm">Image not found</span>
-                                    </div>
+                                        alt="Property Image {{ $index + 1 }}">
                                     @if ($loop->last && $remainingCount > 0)
                                         <div
                                             class="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center text-white text-lg font-bold cursor-pointer hover:bg-opacity-70 transition rounded-lg">
@@ -207,26 +228,21 @@
                                 </div>
                             @endforeach
                         @else
-                            <div class="col-span-10 row-span-8 flex items-center justify-center bg-gray-200 rounded-lg">
+                            <div class="col-span-4 row-span-2 flex items-center justify-center bg-gray-200 rounded-lg">
                                 <p class="text-gray-500 text-lg">No images uploaded for this property</p>
                             </div>
                         @endif
                     </div>
+                    @endif
 
                     <div class="grid grid-cols-4 grid-rows-2 gap-2 lg:hidden h-[300px] sm:h-[400px]">
                         @php
                             $mobilePositions = ['col-span-3 row-span-2', 'col-start-4', 'col-start-4 row-start-2'];
-                        @endphp
-
-                        @php
                             $mobileFiles = $files->take(3);
                             $mobileRemainingCount = max(0, $files->count() - 3);
                         @endphp
+                        
                         @if ($files->count() > 0)
-                            @php
-                                $mobileFiles = $files->take(3);
-                                $mobileRemainingCount = max(0, $files->count() - 3);
-                            @endphp
                             @foreach ($mobileFiles as $index => $file)
                                 <div class="{{ $mobilePositions[$index] ?? '' }} relative overflow-hidden"
                                     onclick="openGalleryModal({{ $index }})">
@@ -800,7 +816,144 @@
         </div>
     </section>
 
+
     @if($property->rooms && $property->rooms->count() > 0)
+    <!-- Available Rooms Section -->
+    <section id="rooms" class="py-8 bg-white">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 border-t">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-bold">Available Rooms</h2>
+                <div class="flex items-center text-blue-500 text-sm font-medium">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 010 8m-4-4h4m0 0h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a4 4 0 00-4-4m0 0H8a4 4 0 000 8m0 0H6a2 2 0 00-2 2v4a2 2 0 002 2h2a4 4 0 004 4" />
+                    </svg>
+                    We Price Match
+                </div>
+            </div>
+
+            @if($property->rooms && $property->rooms->count() > 0)
+                <div class="space-y-4">
+                    @foreach($property->rooms->groupBy('room_type_id') as $roomTypeId => $rooms)
+                        @php
+                            $roomType = $rooms->first()->roomType;
+                            $sampleRoom = $rooms->first();
+                        @endphp
+                        <div class="border border-gray-300 rounded-lg overflow-hidden">
+                            <div class="bg-blue-50 p-4 border-b">
+                                <h3 class="text-lg font-semibold text-blue-600">{{ $roomType->name ?? 'Standard Room' }}</h3>
+                                <p class="text-sm text-gray-600 mt-1">{{ $sampleRoom->description ?? 'Comfortable room with modern amenities' }}</p>
+                            </div>
+
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm">
+                                    <thead>
+                                        <tr class="bg-gray-50">
+                                            <th class="text-left p-3 font-semibold">Room Details</th>
+                                            <th class="text-left p-3 font-semibold">Guests</th>
+                                            <th class="text-left p-3 font-semibold">Price per Night</th>
+                                            <th class="text-left p-3 font-semibold">Features</th>
+                                            {{-- <th class="text-left p-3 font-semibold">Action</th> --}}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($rooms as $room)
+                                            <tr class="border-b hover:bg-gray-50">
+                                                <td class="p-3 align-top">
+                                                    <div class="space-y-1">
+                                                        <h4 class="font-medium">{{ $room->name }}</h4>
+                                                        @if($room->size_sq_m)
+                                                            <p class="text-xs text-gray-500">{{ $room->size_sq_m }} m²</p>
+                                                        @endif
+                                                        @if($room->beds && $room->beds->count() > 0)
+                                                            <p class="text-xs text-gray-500">
+                                                                @foreach($room->beds as $bed)
+                                                                    {{ $bed->quantity }}x {{ $bed->bed_type }}
+                                                                    @if(!$loop->last), @endif
+                                                                @endforeach
+                                                            </p>
+                                                        @endif
+                                                    </div>
+                                                </td>
+                                                <td class="p-3 align-top">
+                                                    <div class="flex gap-1">
+                                                        @for($i = 0; $i < min($room->max_guests ?? 2, 4); $i++)
+                                                            <svg class="w-4 h-4 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
+                                                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                                            </svg>
+                                                        @endfor
+                                                        @if(($room->max_guests ?? 2) > 4)
+                                                            <span class="text-xs text-gray-500">+{{ ($room->max_guests ?? 2) - 4 }}</span>
+                                                        @endif
+                                                    </div>
+                                                    <p class="text-xs text-gray-500 mt-1">Max {{ $room->max_guests ?? 2 }} guests</p>
+                                                </td>
+                                                <td class="p-3 align-top">
+                                                    @if($room->discount_enabled && $room->original_price)
+                                                        <div class="text-red-500 line-through text-xs">LKR {{ number_format($room->original_price) }}</div>
+                                                    @endif
+                                                    <div class="text-lg font-bold">LKR {{ number_format($room->price_per_night ?? 0) }}</div>
+                                                    @if($room->discount_enabled && $room->discount_percentage)
+                                                        <span class="bg-green-600 text-white text-xs px-2 py-1 rounded">{{ $room->discount_percentage }}% off</span>
+                                                    @endif
+                                                    <div class="text-xs text-gray-500 mt-1">{{ $room->currency ?? 'LKR' }}</div>
+                                                </td>
+                                                <td class="p-3 align-top text-xs">
+                                                    <ul class="space-y-1">
+                                                        @if($room->amenities && $room->amenities->count() > 0)
+                                                            @foreach($room->amenities->take(3) as $amenity)
+                                                                <li class="text-green-600">✓ {{ $amenity->name }}</li>
+                                                            @endforeach
+                                                            @if($room->amenities->count() > 3)
+                                                                <li class="text-gray-500">+{{ $room->amenities->count() - 3 }} more</li>
+                                                            @endif
+                                                        @endif
+                                                        @if($room->bathroom_count)
+                                                            <li>✓ {{ $room->bathroom_count }} bathroom(s)</li>
+                                                        @endif
+                                                        @if(!$room->smoking_allowed)
+                                                            <li>✓ Non-smoking</li>
+                                                        @endif
+                                                    </ul>
+                                                </td>
+                                                {{-- <td class="p-3 align-top">
+                                                    <div class="space-y-2">
+                                                        <div class="grid grid-cols-2 gap-2">
+                                                            <input type="date" id="checkin_{{ $room->id }}"
+                                                                   class="text-xs border rounded px-2 py-1"
+                                                                   min="{{ date('Y-m-d') }}"
+                                                                   onchange="updateCheckout({{ $room->id }}); checkAvailability({{ $room->id }})">
+                                                            <input type="date" id="checkout_{{ $room->id }}"
+                                                                   class="text-xs border rounded px-2 py-1"
+                                                                   min="{{ date('Y-m-d', strtotime('+1 day')) }}"
+                                                                   onchange="checkAvailability({{ $room->id }})">
+                                                        </div>
+                                                        <button onclick="selectRoom({{ $room->id }})"
+                                                                id="select_btn_{{ $room->id }}"
+                                                                class="w-full bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs font-medium transition-colors">
+                                                            Check & Book
+                                                        </button>
+                                                        <div id="availability_{{ $room->id }}" class="text-xs text-center"></div>
+                                                    </div>
+                                                </td> --}}
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <div class="text-center py-8">
+                    <p class="text-gray-500">No rooms available for this property.</p>
+                </div>
+            @endif
+        </div>
+    </section>
+    @endif
+
+
+    {{-- @if($property->rooms && $property->rooms->count() > 0)
     <section id="info" class="py-8 bg-white">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 border-t">
             <div class="flex items-center justify-between mb-4">
@@ -981,7 +1134,7 @@
             @endif
         </div>
     </section>
-    @endif
+    @endif --}}
 
     <script>
         function toggleAvailability(roomId) {

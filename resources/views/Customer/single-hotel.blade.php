@@ -68,6 +68,12 @@
             {{-- <div class="flex flex-col lg:grid lg:grid-cols-7 lg:grid-rows-5 gap-4 mt-6 h-auto lg:h-[600px]"> --}}
 
                 <div class="w-full lg:col-span-5 lg:row-span-5 space-y-4">
+                    @php
+                        $files = $property->files ?? collect();
+                        $showEightFormat = $files->count() >= 8;
+                    @endphp
+                    
+                    @if($showEightFormat)
                     <div class="hidden lg:grid grid-cols-10 grid-rows-8 gap-2 h-full">
                         @php
                             $positions = [
@@ -80,25 +86,45 @@
                                 'col-span-2 row-span-2 col-start-7 row-start-7',
                                 'col-span-2 row-span-2 col-start-9 row-start-7',
                             ];
-                        @endphp
-                        @php
-                            $files = $property->files ?? collect();
                             $visibleFiles = $files->take(8);
                             $remainingCount = max(0, $files->count() - 8);
                         @endphp
 
+                        @foreach ($visibleFiles as $index => $file)
+                            <div class="{{ $positions[$index] ?? '' }} relative overflow-hidden"
+                                onclick="openGalleryModal({{ $index }})">
+                                <img src="{{ asset('storage/' . $file->path) }}"
+                                    class="w-full h-full object-cover rounded-lg cursor-pointer"
+                                    alt="Property Image {{ $index + 1 }}"
+                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div class="w-full h-full bg-gray-200 rounded-lg flex items-center justify-center"
+                                    style="display:none;">
+                                    <span class="text-gray-500 text-sm">Image not found</span>
+                                </div>
+                                @if ($loop->last && $remainingCount > 0)
+                                    <div
+                                        class="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center text-white text-lg font-bold cursor-pointer hover:bg-opacity-70 transition rounded-lg">
+                                        {{ $remainingCount }}+ more
+                                    </div>
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
+                    @else
+                    <div class="hidden lg:grid grid-cols-4 grid-rows-2 gap-2 h-full">
+                        @php
+                            $mobilePositions = ['col-span-3 row-span-2', 'col-start-4', 'col-start-4 row-start-2'];
+                            $visibleFiles = $files->take(3);
+                            $remainingCount = max(0, $files->count() - 3);
+                        @endphp
+                        
                         @if ($files->count() > 0)
                             @foreach ($visibleFiles as $index => $file)
-                                <div class="{{ $positions[$index] ?? '' }} relative overflow-hidden"
+                                <div class="{{ $mobilePositions[$index] ?? '' }} relative overflow-hidden"
                                     onclick="openGalleryModal({{ $index }})">
                                     <img src="{{ asset('storage/' . $file->path) }}"
                                         class="w-full h-full object-cover rounded-lg cursor-pointer"
-                                        alt="Property Image {{ $index + 1 }}"
-                                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                    <div class="w-full h-full bg-gray-200 rounded-lg flex items-center justify-center"
-                                        style="display:none;">
-                                        <span class="text-gray-500 text-sm">Image not found</span>
-                                    </div>
+                                        alt="Property Image {{ $index + 1 }}">
                                     @if ($loop->last && $remainingCount > 0)
                                         <div
                                             class="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center text-white text-lg font-bold cursor-pointer hover:bg-opacity-70 transition rounded-lg">
@@ -108,21 +134,20 @@
                                 </div>
                             @endforeach
                         @else
-                            <div class="col-span-10 row-span-8 flex items-center justify-center bg-gray-200 rounded-lg">
+                            <div class="col-span-4 row-span-2 flex items-center justify-center bg-gray-200 rounded-lg">
                                 <p class="text-gray-500 text-lg">No images uploaded for this property</p>
                             </div>
                         @endif
                     </div>
+                    @endif
 
                     <div class="grid grid-cols-4 grid-rows-2 gap-2 lg:hidden h-[300px] sm:h-[400px]">
                         @php
                             $mobilePositions = ['col-span-3 row-span-2', 'col-start-4', 'col-start-4 row-start-2'];
-                        @endphp
-
-                        @php
                             $mobileFiles = $files->take(3);
                             $mobileRemainingCount = max(0, $files->count() - 3);
                         @endphp
+                        
                         @if ($files->count() > 0)
                             @foreach ($mobileFiles as $index => $file)
                                 <div class="{{ $mobilePositions[$index] ?? '' }} relative overflow-hidden"
@@ -633,9 +658,6 @@
         </div>
     </section>
 
-    <!-- Enhanced Room Display Section -->
-    @include('Customer.components.property-rooms-display', ['property' => $property])
-
     @if($property->rooms && $property->rooms->count() > 0)
     <!-- Available Rooms Section -->
     <section id="rooms" class="py-8 bg-white">
@@ -740,7 +762,7 @@
                                                             <input type="date" id="checkin_{{ $room->id }}"
                                                                    class="text-xs border rounded px-2 py-1"
                                                                    min="{{ date('Y-m-d') }}"
-                                                                   onchange="checkAvailability({{ $room->id }})">
+                                                                   onchange="updateCheckout({{ $room->id }}); checkAvailability({{ $room->id }})">
                                                             <input type="date" id="checkout_{{ $room->id }}"
                                                                    class="text-xs border rounded px-2 py-1"
                                                                    min="{{ date('Y-m-d', strtotime('+1 day')) }}"
@@ -772,6 +794,24 @@
     @endif
 
     <script>
+        function updateCheckout(roomId) {
+            const checkinInput = document.getElementById(`checkin_${roomId}`);
+            const checkoutInput = document.getElementById(`checkout_${roomId}`);
+            
+            if (checkinInput.value) {
+                const checkinDate = new Date(checkinInput.value);
+                const nextDay = new Date(checkinDate);
+                nextDay.setDate(nextDay.getDate() + 1);
+                
+                checkoutInput.min = nextDay.toISOString().split('T')[0];
+                
+                // Clear checkout if it's now invalid
+                if (checkoutInput.value && checkoutInput.value <= checkinInput.value) {
+                    checkoutInput.value = '';
+                }
+            }
+        }
+
         function selectRoom(roomId) {
             const checkin = document.getElementById(`checkin_${roomId}`).value;
             const checkout = document.getElementById(`checkout_${roomId}`).value;
@@ -787,7 +827,7 @@
             }
 
             // Redirect to booking page with selected room and dates
-            window.location.href = `{{ route('customer.bookings.store', $property) }}?room_id=${roomId}&check_in=${checkin}&check_out=${checkout}`;
+            window.location.href = `{{ route('customer.bookings.show', $property) }}?room_id=${roomId}&check_in=${checkin}&check_out=${checkout}`;
         }
 
         function checkAvailability(roomId) {

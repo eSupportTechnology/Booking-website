@@ -344,7 +344,7 @@ $sampleResults = [
 
             {{-- --- RESULT CONTAINER: This is the element that will switch display styles --- --}}
             <div id="results-container" class="space-y-6">
-                
+
                 {{-- Dynamic result cards loop based on $sampleResults --}}
                 @foreach ($sampleResults as $result)
                 <div class="result-item result-item-list bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow border border-gray-200 overflow-hidden">
@@ -382,7 +382,7 @@ $sampleResults = [
                     </div>
                 </div>
                 @endforeach
-                
+
                 {{-- Original Placeholder/No Results Message --}}
                 <div class="col-span-full bg-white rounded-xl p-10 shadow-lg text-center">
                     <h3 class="text-2xl font-semibold text-red-500 mb-2">Data Simulation.</h3>
@@ -556,7 +556,7 @@ $sampleResults = [
             budgetDisplay.textContent = parseInt(value) >= 500 ? 'US$500+' : 'US$' + value;
         }
         if(budgetRange) budgetRange.addEventListener('input', (event) => { updateBudgetDisplay(event.target.value); });
-        
+
         document.getElementById('review-filter')?.addEventListener('change', (e) => {
             if (e.target.type === 'radio' && e.target.name === 'min_score') {
                 console.log('[Filter Change] Selected Minimum Review Score:', e.target.value);
