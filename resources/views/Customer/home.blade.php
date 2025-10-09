@@ -300,70 +300,66 @@
     <!--End Section-->
 
     <!-- Trending Destinations Section -->
-    <section class="py-12 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <!-- Title -->
-            <h2 class="text-2xl font-semibold text-gray-800 mb-2">{{ __('messages.Trending destinations')}}</h2>
-            <p class="mb-8 text-gray-600" style="font-family: 'Noto Sans', sans-serif;">{{ __('messages.Most popular choices travelers from Sri Lanka')}}</p>
+  <section class="py-12 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-2xl font-semibold text-gray-800 mb-2">{{ __('messages.Trending destinations') }}</h2>
+        <p class="mb-8 text-gray-600 font-sans">{{ __('messages.Most popular choices travelers from Sri Lanka') }}</p>
 
-            <!-- First Row: 2 Columns -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        @php
+            $cities = collect($cities ?? []);
+
+            // Predefined fallback cities (if backend has less than 5)
+            $fallbackCities = [
+                ['city' => 'Colombo', 'image' => asset('images/colombo.jpg')],
+                ['city' => 'Nuwara Eliya', 'image' => asset('images/nuwara.jpg')],
+                ['city' => 'Sigiriya', 'image' => asset('images/sigiriya.jpg')],
+                ['city' => 'Ella', 'image' => asset('images/ella.png')],
+                ['city' => 'Dambulla', 'image' => asset('images/dambulla.jpg')],
+            ];
+
+            // Fill missing cards from fallback
+            $totalNeeded = 5;
+            $missingCount = $totalNeeded - $cities->count();
+
+            if ($missingCount > 0) {
+                $cities = $cities->merge(array_slice($fallbackCities, 0, $missingCount));
+            }
+        @endphp
+
+        <!-- First Row: Top 2 cities -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            @foreach($cities->take(2) as $city)
                 <div class="relative rounded-[10px] overflow-hidden">
-                    <img src="{{ asset('images/colombo.jpg') }}" alt="Colombo" class="w-full h-64 object-cover"
-                        style="border-radius: 10px;">
-                    <div class="absolute top-0 left-0 w-full p-4 text-white">
-                        <h3 class="text-lg font-semibold flex items-center gap-2">Colombo
+                    <img src="{{ $city['image'] }}" alt="{{ $city['city'] }}" class="w-full h-64 object-cover rounded-[10px]">
+                    <div class="absolute top-0 left-0 w-full p-4 text-white bg-black bg-opacity-25">
+                        <h3 class="text-lg font-semibold flex items-center gap-2">
+                            {{ $city['city'] }}
                             <img src="{{ asset('images/srilanka.jpg') }}" alt="Sri Lanka Flag" class="h-4 w-6" />
                         </h3>
                     </div>
                 </div>
-
-                <div class="relative rounded-[10px] overflow-hidden">
-                    <img src="{{ asset('images/nuwara.jpg') }}" alt="Nuwara Eliya" class="w-full h-64 object-cover"
-                        style="border-radius: 10px;">
-                    <div class="absolute top-0 left-0 w-full p-4 text-white ">
-                        <h3 class="text-lg font-semibold flex items-center gap-2">Nuwara Eliya
-                            <img src="{{ asset('images/srilanka.jpg') }}" alt="Sri Lanka Flag" class="h-4 w-6" />
-                        </h3>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Second Row: 3 Columns -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-
-                <div class="relative rounded-[10px] overflow-hidden">
-                    <img src="{{ asset('images/sigiriya.jpg') }}" alt="Sigiriya" class="w-full h-64 object-cover"
-                        style="border-radius: 10px;">
-                    <div class="absolute top-0 left-0 w-full p-4 text-white ">
-                        <h3 class="text-lg font-semibold flex items-center gap-2">Sigiriya
-                            <img src="{{ asset('images/srilanka.jpg') }}" alt="Sri Lanka Flag" class="h-4 w-6" />
-                        </h3>
-                    </div>
-                </div>
-
-                <div class="relative rounded-[10px] overflow-hidden">
-                    <img src="{{ asset('images/ella.png') }}" alt="Ella" class="w-full h-64 object-cover"
-                        style="border-radius: 10px;">
-                    <div class="absolute top-0 left-0 w-full p-4 text-white ">
-                        <h3 class="text-lg font-semibold flex items-center gap-2">Ella
-                            <img src="{{ asset('images/srilanka.jpg') }}" alt="Sri Lanka Flag" class="h-4 w-6" />
-                        </h3>
-                    </div>
-                </div>
-
-                <div class="relative rounded-[10px] overflow-hidden">
-                    <img src="{{ asset('images/dambulla.jpg') }}" alt="Dambulla" class="w-full h-64 object-cover"
-                        style="border-radius: 10px;">
-                    <div class="absolute top-0 left-0 w-full p-4 text-white">
-                        <h3 class="text-lg font-semibold flex items-center gap-2"> Dambulla
-                            <img src="{{ asset('images/srilanka.jpg') }}" alt="Sri Lanka Flag" class="h-4 w-6" />
-                        </h3>
-                    </div>
-                </div>
-            </div>
+            @endforeach
         </div>
-    </section>
+
+        <!-- Second Row: Remaining 3 cities -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            @foreach($cities->slice(2) as $city)
+                <div class="relative rounded-[10px] overflow-hidden">
+                    <img src="{{ $city['image'] }}" alt="{{ $city['city'] }}" class="w-full h-64 object-cover rounded-[10px]">
+                    <div class="absolute top-0 left-0 w-full p-4 text-white bg-black bg-opacity-25">
+                        <h3 class="text-lg font-semibold flex items-center gap-2">
+                            {{ $city['city'] }}
+                            <img src="{{ asset('images/srilanka.jpg') }}" alt="Sri Lanka Flag" class="h-4 w-6" />
+                        </h3>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+
+
+
     <!-- End Trending Destination Section-->
 
     <section class="py-12 bg-white">

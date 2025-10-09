@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Actions\Partner\GetPropertyDataAction;
 use App\Actions\Partner\GetBookingDataAction;
 use App\Actions\Partner\GetPropertyByTypeAction;
+use Illuminate\Support\Facades\DB;
 
 class PropertyController extends Controller
 {
@@ -142,4 +143,37 @@ class PropertyController extends Controller
             ], 500);
         }
     }
+
+public function getTrendingCities()
+{
+    $topCities = DB::table('properties')
+        ->select('city', DB::raw('COUNT(*) as total'))
+        ->groupBy('city')
+        ->orderByDesc('total')
+        ->take(5) // or any number you want
+        ->get();
+
+    $citiesWithImages = $topCities->map(function ($city) {
+        $filename = strtolower(str_replace(' ', '', $city->city));
+        $imagePathJpg = public_path("images/{$filename}.jpg");
+        $imagePathPng = public_path("images/{$filename}.png");
+
+        if (file_exists($imagePathJpg)) {
+            $imageUrl = asset("images/{$filename}.jpg");
+        } elseif (file_exists($imagePathPng)) {
+            $imageUrl = asset("images/{$filename}.png");
+        } else {
+            $imageUrl = asset("images/default.jpg");
+        }
+
+        return [
+            'city' => $city->city,
+            'count' => $city->total,
+            'image' => $imageUrl,
+        ];
+    });
+
+    return response()->json($citiesWithImages);
+}
+
 }
