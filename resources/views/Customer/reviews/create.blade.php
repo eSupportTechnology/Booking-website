@@ -1,4 +1,4 @@
-@extends('Customer.master')
+@extends('frontend.master')
 
 @section('content')
 <div class="min-h-screen bg-gray-50 py-8">
@@ -29,7 +29,7 @@
             <!-- Review Form -->
             <form action="{{ route('customer.reviews.store', $booking) }}" method="POST" class="p-6">
                 @csrf
-                
+
                 <!-- Overall Rating -->
                 <div class="mb-8">
                     <label class="block text-lg font-semibold text-gray-700 mb-4">Overall Rating *</label>
@@ -82,7 +82,7 @@
                 <!-- Comment -->
                 <div class="mb-8">
                     <label for="comment" class="block text-sm font-medium text-gray-700 mb-2">Your Review</label>
-                    <textarea name="comment" id="comment" rows="5" 
+                    <textarea name="comment" id="comment" rows="5"
                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                               placeholder="Share your experience with other travelers...">{{ old('comment') }}</textarea>
                     @error('comment')
@@ -92,11 +92,11 @@
 
                 <!-- Submit Buttons -->
                 <div class="flex justify-between">
-                    <a href="{{ route('customer.bookings.index') }}" 
+                    <a href="{{ route('customer.bookings.index') }}"
                        class="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition">
                         Cancel
                     </a>
-                    <button type="submit" 
+                    <button type="submit"
                             class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
                         Submit Review
                     </button>
@@ -110,14 +110,14 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Handle star rating interactions
     const ratingGroups = document.querySelectorAll('input[type="radio"]');
-    
+
     ratingGroups.forEach(radio => {
         radio.addEventListener('change', function() {
             // Update visual feedback for the selected rating
             const name = this.name;
             const value = parseInt(this.value);
             const group = document.querySelectorAll(`input[name="${name}"]`);
-            
+
             group.forEach((input, index) => {
                 const star = input.nextElementSibling;
                 if (index < value) {

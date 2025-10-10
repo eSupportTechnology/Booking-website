@@ -24,12 +24,12 @@
                             $currentRoute = request()->route()->getName();
                         @endphp
 
-                  
+
 
                     </div>
                 </div>
 
-              
+
 
 <!-- Right Section -->
 <div class="flex items-center flex-wrap justify-end gap-2 sm:gap-3 md:gap-5 w-full md:w-auto order-2 md:order-2 mt-2 md:mt-0 px-2 sm:px-0 md:px-0">
@@ -60,8 +60,8 @@
         </button>
 
         <!-- Dropdown -->
-        <div id="account-menu" 
-     class="absolute mt-2 w-56 bg-white border border-gray-200 rounded-md shadow-lg hidden z-50 
+        <div id="account-menu"
+     class="absolute mt-2 w-56 bg-white border border-gray-200 rounded-md shadow-lg hidden z-50
             left-0 sm:right-0">
             @auth('customer')
                 <a href="/profile" class="block px-4 py-2 text-gray-700 text-base hover:bg-gray-100 flex items-center gap-2">
@@ -77,12 +77,10 @@
                 <a href="{{ route('customer.bookings.index') }}" class="block px-4 py-2 text-gray-700 text-base hover:bg-gray-100 flex items-center gap-2">
                      <img src="{{ asset('assets/balcony.svg') }}" class="w-5 h-5" /> My Bookings
                 </a>
-                             
-                {{-- 
+
                 <a href="{{ route('customer.messages.index') }}" class="block px-4 py-2 text-gray-700 text-base hover:bg-gray-100 flex items-center gap-2">
                     <img src="{{ asset('assets/mynaui_letter-g-circle.svg') }}" class="w-5 h-5" /> Messages
                 </a>
-                --}}
 
 
 
@@ -100,7 +98,7 @@
         </div>
     </div>
 
-   
+
     <!-- Show Register / Sign in only when user is not logged in -->
     @guest('customer')
         <!-- Show Register / Sign in -->
@@ -145,7 +143,7 @@
 
                         <!-- Airport Taxis -->
                         <a href="{{ route('customer.airport-taxis') }}"
-                        class="flex items-center justify-center space-x-1 px-3 py-1 rounded-full border text-white transition 
+                        class="flex items-center justify-center space-x-1 px-3 py-1 rounded-full border text-white transition
                                 {{ $currentRoute == 'customer.airport-taxis' ? 'border-white bg-[#1F8FB2]' : 'border-transparent hover:border-white' }}">
                             <img src="{{ asset('assets/taxi.svg') }}" alt="Taxi" class="w-4 h-4" />
                             <span style="font-family: 'Noto Sans', sans-serif;">Airport taxis</span>
@@ -175,17 +173,17 @@
         const currencyCloseBtn = document.getElementById("currency-close-btn");
 
         if (currentCurrency && currencyModal && currencyCloseBtn) {
-            
+
             currentCurrency.addEventListener("click", () => {
                 currencyModal.classList.remove("hidden");
             });
 
-            
+
             currencyCloseBtn.addEventListener("click", () => {
                 currencyModal.classList.add("hidden");
             });
 
-            
+
             window.addEventListener("click", (e) => {
                 if (e.target === currencyModal) {
                     currencyModal.classList.add("hidden");
@@ -209,12 +207,12 @@
                 languageModal.classList.remove("hidden");
             });
 
-            
+
             closeBtn.addEventListener("click", () => {
                 languageModal.classList.add("hidden");
             });
 
-        
+
             window.addEventListener("click", (event) => {
                 if (event.target === languageModal) {
                     languageModal.classList.add("hidden");
@@ -230,10 +228,10 @@
     if (accountBtn && accountMenu) {
         accountBtn.addEventListener("click", (e) => {
             e.stopPropagation();
-            accountMenu.classList.remove("hidden"); 
+            accountMenu.classList.remove("hidden");
         });
 
-        
+
         window.addEventListener("click", (e) => {
             if (!accountMenu.contains(e.target) && !accountBtn.contains(e.target)) {
                 accountMenu.classList.add("hidden");
@@ -241,7 +239,7 @@
         });
     }
 
-    
+
 });
 
 document.addEventListener("DOMContentLoaded", () => {

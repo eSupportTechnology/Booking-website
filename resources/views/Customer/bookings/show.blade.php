@@ -1,4 +1,4 @@
-@extends('Customer.master')
+@extends('frontend.master')
 
 @section('content')
 <div class="min-h-screen bg-gray-50 py-8" x-data="bookingForm()" x-init="init()">
@@ -36,7 +36,7 @@
                         <div x-show="availableRooms.length === 0 && roomsLoaded" class="text-red-600 text-sm mb-2">
                             No rooms available for selected dates
                         </div>
-                        <select name="room_id" x-model="selectedRoom" required 
+                        <select name="room_id" x-model="selectedRoom" required
                                 class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#3CC0E9]"
                                 x-bind:disabled="availableRooms.length === 0">
                             <option value="">Select a room</option>

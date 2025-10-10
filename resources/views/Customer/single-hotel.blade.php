@@ -1,4 +1,4 @@
-@extends('Customer.master')
+@extends('frontend.master')
 
 @section('content')
 <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
@@ -1047,7 +1047,7 @@
                             ->whereDoesntHave('reviews')
                             ->first();
                     @endphp
-                    
+
                     @if($userBooking)
                         <a href="{{ route('customer.reviews.create', $userBooking) }}"
                             class="inline-block bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 text-sm mr-2">
@@ -1055,7 +1055,7 @@
                         </a>
                     @endif
                 @endauth
-                
+
                 <a href="#"
                     class="inline-block border border-blue-600 text-blue-600 px-4 py-2 rounded hover:bg-blue-50 text-sm">
                     Read all reviews
