@@ -9,6 +9,7 @@
     </form>
     <a href="{{ route('traveler.profile') }}" class="btn btn-sm btn-primary d-flex">
         <small class="align-middle">Profile</small>
-        <i class="ti ti-user ms-2 ti-14px"></i>
+        <i class="ti ti-user ms-2 ti-14px"></i> 
+        
     </a>
 </div>
