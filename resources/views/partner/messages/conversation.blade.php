@@ -1,6 +1,4 @@
-@extends('partner.layout')
 
-@section('content')
 <div class="container mx-auto px-4 py-6">
     <div class="bg-white rounded-lg shadow-md overflow-hidden">
         <!-- Chat Header -->
@@ -48,7 +46,7 @@
             <form id="message-form" class="flex items-center space-x-4">
                 @csrf
                 <input type="hidden" name="booking_id" value="{{ $booking->id }}">
-                <input type="text" name="content" placeholder="Type your message..." 
+                <input type="text" name="content" placeholder="Type your message..."
                        class="flex-1 border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                 <button type="submit" class="bg-blue-500 text-white p-3 rounded-xl hover:bg-blue-600">
                     Send
@@ -61,10 +59,10 @@
 <script>
 document.getElementById('message-form').addEventListener('submit', function(e) {
     e.preventDefault();
-    
+
     const formData = new FormData(this);
     const messageInput = this.querySelector('input[name="content"]');
-    
+
     fetch('/partner/messages', {
         method: 'POST',
         body: formData,
@@ -92,4 +90,3 @@ document.getElementById('message-form').addEventListener('submit', function(e) {
     });
 });
 </script>
-@endsection

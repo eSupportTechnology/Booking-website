@@ -1,7 +1,7 @@
 @extends('partner.master')
 
 @section('content')
-<div class="space-y-8">
+<div class="space-y-2">
     <!-- Header -->
     <div class="bg-gradient-to-r from-purple-500 to-purple-600 rounded-2xl p-8 text-white">
         <div class="flex justify-between items-center">
@@ -21,24 +21,24 @@
     </div>
 
     <!-- Messages Interface -->
-    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 h-[600px]">
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-1 h-[600px]">
         <!-- Conversations List -->
         <div class="lg:col-span-1 bg-white rounded-2xl shadow-lg border border-gray-100 flex flex-col">
             <div class="p-6 border-b border-gray-100">
                 <h2 class="text-xl font-bold text-gray-800">Conversations</h2>
                 <p class="text-sm text-gray-600 mt-1">Recent messages</p>
             </div>
-            <div class="flex-1 overflow-y-auto p-4 space-y-3">
+            <div class="flex-1 overflow-y-auto p-4 space-y-3 max-h-[600px]" style="scrollbar-width: none; -ms-overflow-style: none;">
                 @forelse($conversations as $conversation)
                 <div class="p-4 border {{ $loop->first ? 'border-purple-200 bg-purple-50' : 'border-gray-200' }} rounded-xl cursor-pointer hover:bg-gray-50 transition-colors duration-200 conversation-item"
-                     data-booking-id="{{ $conversation['id'] }}">
+                     data-booking-id="{{ $conversation['booking_id'] }}">
                     <div class="flex items-start space-x-3">
                         <div class="h-10 w-10 bg-{{ $loop->first ? 'purple' : 'blue' }}-500 rounded-full flex items-center justify-center">
-                            <span class="text-white font-semibold text-sm">{{ substr($conversation['guest_name'], 0, 2) }}</span>
+                            <span class="text-white font-semibold text-sm">{{ substr($conversation['customer_name'], 0, 2) }}</span>
                         </div>
                         <div class="flex-1 min-w-0">
                             <div class="flex justify-between items-start">
-                                <h3 class="font-semibold text-gray-900 truncate">{{ $conversation['guest_name'] }}</h3>
+                                <h3 class="font-semibold text-gray-900 truncate">{{ $conversation['customer_name'] }}</h3>
                                 <span class="text-xs text-gray-500">{{ $conversation['time_ago'] }}</span>
                             </div>
                             <p class="text-sm text-gray-600 truncate">{{ $conversation['property_name'] }}</p>
