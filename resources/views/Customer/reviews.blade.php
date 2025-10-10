@@ -1,4 +1,4 @@
-@extends('Customer.master')
+@extends('frontend.master')
 
 @section('content')
 <div class="min-h-screen bg-gray-50 py-8">
@@ -33,7 +33,7 @@
                             <x-review-card :review="$review" />
                         @endforeach
                     </div>
-                    
+
                     <!-- Pagination -->
                     <div class="mt-8">
                         {{ $reviews->links() }}

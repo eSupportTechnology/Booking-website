@@ -1,9 +1,8 @@
 @extends('Customer.master')
 
 @section('content')
-<section class="min-h-screen p-4 bg-white">
-    <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="space-y-2" >
+<section class="bg-gray-50 py-8">
+    <div class="max-w-7xl mx-auto px-4">
             <!-- Header -->
             <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl p-8 text-white">
                 <div class="flex justify-between items-center">
@@ -20,7 +19,7 @@
             </div>
 
             <!-- Messages Interface -->
-            <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 h-[600px]">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 h-[70vh]">
                 <!-- Conversations List -->
                 <div class="lg:col-span-1 bg-white rounded-2xl shadow-lg border border-gray-100 flex flex-col">
                     <div class="p-6 border-b border-gray-100">
@@ -67,7 +66,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
         </div>
     </div>
 </section>

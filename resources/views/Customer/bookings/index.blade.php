@@ -1,4 +1,4 @@
-@extends('Customer.master')
+@extends('frontend.master')
 
 @section('content')
 <div class="min-h-screen bg-gray-50 py-8">
@@ -61,14 +61,14 @@
                             </div>
                             <div class="flex space-x-2">
                                 @if($booking->payment_status === 'pending' && $booking->status !== 'cancelled')
-                                    <a href="{{ route('customer.payment.show', $booking) }}" 
+                                    <a href="{{ route('customer.payment.show', $booking) }}"
                                        class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-sm transition">
                                         Complete Payment
                                     </a>
                                 @endif
-                                
+
                                 @if($booking->canBeReviewed())
-                                    <a href="{{ route('customer.reviews.create', $booking) }}" 
+                                    <a href="{{ route('customer.reviews.create', $booking) }}"
                                        class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded text-sm transition">
                                         Write Review
                                     </a>
@@ -77,12 +77,12 @@
                                         ✓ Reviewed
                                     </span>
                                 @endif
-                                
+
                                 @if($booking->status !== 'cancelled')
                                     <form action="{{ route('customer.bookings.cancel', $booking) }}" method="POST" class="inline">
                                         @csrf
                                         @method('PATCH')
-                                        <button type="submit" 
+                                        <button type="submit"
                                                 onclick="return confirm('Are you sure you want to cancel this booking?')"
                                                 class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded text-sm transition">
                                             Cancel Booking

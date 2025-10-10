@@ -3,29 +3,40 @@
 namespace App\Http\Controllers\Partner;
 
 use App\Http\Controllers\Controller;
-use App\Actions\Partner\GetMessagesDataAction;
-use App\Services\Partner\MessageService;
-use App\Models\Booking;
 use App\Models\Message;
+use App\Models\Booking;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class MessageController extends Controller
 {
-    public function __construct(
-        private MessageService $messageService
-    ) {}
-
-    public function index(GetMessagesDataAction $action)
+    public function index()
     {
-        $data = $action->execute();
-        
-        return view('partner.messages.index', $data);
+        $conversations = Booking::with(['property', 'user'])
+            ->whereHas('property', function($query) {
+                $query->where('user_id', Auth::id());
+            })
+            ->whereHas('messages')
+            ->latest()
+            ->get()
+            ->map(function($booking) {
+                $lastMessage = $booking->messages()->latest()->first();
+                return [
+                    'booking_id' => $booking->id,
+                    'property_name' => $booking->property->title ?? 'Property',
+                    'customer_name' => $booking->user->name ?? 'Guest',
+                    'last_message' => $lastMessage ? $lastMessage->content : 'No messages yet',
+                    'time_ago' => $lastMessage ? $lastMessage->created_at->diffForHumans() : '',
+                    'unread' => $booking->messages()->where('receiver_id', Auth::id())->unread()->count()
+                ];
+            });
+
+        return view('partner.messages.index', compact('conversations'));
     }
 
     public function conversation($bookingId)
     {
-        $booking = Booking::with(['user', 'property'])
+        $booking = Booking::with(['property', 'user'])
             ->whereHas('property', function($query) {
                 $query->where('user_id', Auth::id());
             })
@@ -36,7 +47,9 @@ class MessageController extends Controller
             ->orderBy('created_at')
             ->get();
 
-        $this->messageService->markAsRead($bookingId);
+        Message::where('booking_id', $bookingId)
+            ->where('receiver_id', Auth::id())
+            ->update(['is_read' => true]);
 
         return view('partner.messages.conversation', compact('booking', 'messages'));
     }
@@ -48,34 +61,21 @@ class MessageController extends Controller
             'content' => 'required|string|max:1000'
         ]);
 
-        $message = $this->messageService->sendMessage(
-            $request->booking_id,
-            $request->content
-        );
+        $booking = Booking::whereHas('property', function($query) {
+            $query->where('user_id', Auth::id());
+        })->findOrFail($request->booking_id);
+
+        $message = Message::create([
+            'sender_id' => Auth::id(),
+            'receiver_id' => $booking->user_id,
+            'booking_id' => $request->booking_id,
+            'content' => $request->content,
+            'is_read' => false
+        ]);
 
         return response()->json([
             'success' => true,
             'message' => $message->load('sender')
-        ]);
-    }
-
-    public function updateBookingStatus(Request $request, $bookingId)
-    {
-        $request->validate([
-            'status' => 'required|in:confirmed,cancelled,completed,pending'
-        ]);
-
-        $booking = Booking::whereHas('property', function($query) {
-            $query->where('user_id', Auth::id());
-        })->findOrFail($bookingId);
-
-        $booking->status = $request->status;
-        $booking->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Booking status updated successfully',
-            'status' => $request->status
         ]);
     }
 }

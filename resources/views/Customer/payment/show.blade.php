@@ -1,4 +1,4 @@
-@extends('Customer.master')
+@extends('frontend.master')
 
 @section('content')
 <div class="min-h-screen bg-gray-50 py-8">
@@ -18,10 +18,10 @@
 
         <div class="bg-white rounded-lg shadow-md p-6">
             <h3 class="text-xl font-semibold mb-4">Payment Method</h3>
-            
+
             <form action="{{ route('customer.payment.process', $booking) }}" method="POST" id="payment-form">
                 @csrf
-                
+
                 <div class="space-y-4">
                     <label class="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50">
                         <input type="radio" name="payment_method" value="stripe" class="mr-3">
@@ -67,7 +67,7 @@ document.getElementById('payment-form').addEventListener('submit', function() {
     const button = this.querySelector('button[type="submit"]');
     const loadingText = button.querySelector('.loading-text');
     const loadingSpinner = button.querySelector('.loading-spinner');
-    
+
     loadingText.classList.add('hidden');
     loadingSpinner.classList.remove('hidden');
     button.disabled = true;

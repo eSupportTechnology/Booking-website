@@ -8,6 +8,7 @@ use App\Models\Booking;
 use App\DTOs\Customer\BookingDTO;
 use App\Actions\Customer\CreateBookingAction;
 use App\Services\Customer\BookingService;
+use App\Services\MessagingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,7 +16,8 @@ class BookingController extends Controller
 {
     public function __construct(
         private BookingService $bookingService,
-        private CreateBookingAction $createBookingAction
+        private CreateBookingAction $createBookingAction,
+        private MessagingService $messagingService
     ) {}
 
     public function show(Property $property)
@@ -77,6 +79,9 @@ class BookingController extends Controller
             'payment_status' => 'pending',
             'payment_deadline' => now()->addHours(24)
         ]);
+
+        // Send automatic message to partner
+        $this->messagingService->sendBookingCreatedMessage($booking);
 
         return redirect()->route('customer.payment.show', $booking)
             ->with('success', 'Booking created! Please complete payment within 24 hours.');
