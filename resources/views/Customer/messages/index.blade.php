@@ -1,7 +1,7 @@
 @extends('frontend.master')
 
 @section('content')
-<section class="bg-gray-50 py-8">
+<section class="bg-gray-50 py-4 pb-32">
     <div class="max-w-7xl mx-auto px-4">
             <!-- Header -->
             <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl p-8 text-white">
@@ -19,14 +19,14 @@
             </div>
 
             <!-- Messages Interface -->
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 h-[70vh]">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-1" style="height: calc(120vh - 200px);">
                 <!-- Conversations List -->
                 <div class="lg:col-span-1 bg-white rounded-2xl shadow-lg border border-gray-100 flex flex-col">
                     <div class="p-6 border-b border-gray-100">
                         <h2 class="text-xl font-bold text-gray-800">Conversations</h2>
                         <p class="text-sm text-gray-600 mt-1">Your bookings</p>
                     </div>
-                    <div class="flex-1 overflow-y-auto p-4 space-y-3">
+                    <div class="flex-1 overflow-y-auto p-4 space-y-3 max-h-120" style="scrollbar-width: none; -ms-overflow-style: none;">
                         @forelse($conversations as $conversation)
                         <div class="p-4 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors duration-200 conversation-item"
                             data-booking-id="{{ $conversation['booking_id'] }}">
