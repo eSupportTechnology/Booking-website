@@ -654,6 +654,7 @@ Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddle
     Route::get('/messages/{booking}', [\App\Http\Controllers\Partner\MessageController::class, 'conversation'])->name('partner.messages.conversation');
     Route::post('/messages', [\App\Http\Controllers\Partner\MessageController::class, 'store'])->name('partner.messages.store');
     Route::patch('/bookings/{booking}/status', [\App\Http\Controllers\Partner\BookingStatusController::class, 'update'])->name('partner.bookings.status');
+    Route::post('/bookings/{booking}/status', [\App\Http\Controllers\Partner\BookingStatusController::class, 'update'])->name('partner.bookings.status.post');
 
     // Reviews
     Route::get('/reviews', [\App\Http\Controllers\Partner\ReviewController::class, 'index'])->name('partner.reviews');

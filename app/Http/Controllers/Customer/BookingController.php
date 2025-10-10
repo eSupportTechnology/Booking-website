@@ -161,6 +161,9 @@ class BookingController extends Controller
         }
 
         $booking->cancelBooking();
+        
+        // Send cancellation message to partner
+        $this->messagingService->sendCustomerCancelledMessage($booking);
 
         return back()->with('success', 'Booking cancelled successfully. No commission charges will apply.');
     }

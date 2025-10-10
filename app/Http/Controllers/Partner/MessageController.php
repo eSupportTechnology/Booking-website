@@ -31,7 +31,13 @@ class MessageController extends Controller
                 ];
             });
 
-        return view('partner.messages.index', compact('conversations'));
+        $unreadCount = Message::whereHas('booking', function($query) {
+            $query->whereHas('property', function($q): void {
+                $q->where('user_id', Auth::id());
+            });
+        })->where('receiver_id', Auth::id())->unread()->count();
+
+        return view('partner.messages.index', compact('conversations', 'unreadCount'));
     }
 
     public function conversation($bookingId)
