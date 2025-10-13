@@ -22,6 +22,7 @@ class BookingStatusController extends Controller
             abort(403);
         }
 
+        $booking->load(['property', 'user', 'room']);
         $booking->update(['status' => $request->status]);
 
         if ($request->status === 'confirmed') {
