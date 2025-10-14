@@ -44,7 +44,7 @@
             <!-- Dropdown -->
             <div x-show="open" @click.away="open = false"
                 class="absolute z-20 bg-white shadow-xl rounded-xl p-3 mt-2 w-64 sm:w-72 left-0 md:left-auto md:right-0 text-gray-800 space-y-2 text-sm">
-                <template x-for="city in ['New York', 'Los Angeles', 'London', 'Paris', 'Tokyo']" :key="city">
+                <template x-for="city in ['New York', 'Los Angeles', 'London', 'Paris', 'Tokyo', 'galle']" :key="city">
                     <button type="button" @click="destination = city; open = false"
                         class="block w-full text-left px-3 py-2 hover:bg-gray-100 rounded">
                         <span x-text="city"></span>
