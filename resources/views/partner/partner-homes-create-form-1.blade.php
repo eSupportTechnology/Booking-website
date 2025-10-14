@@ -26,7 +26,7 @@
 
    <div x-data="{ step: 1, selectedBox: null }">
     <!-- Start Form -->
-    <div class="max-w-6xl p-4 ml-14" x-data="{ propertyId: null, selected: '',  propertyName: '',description: '',availableLanguages: {{ Js::from($languages) }} }">
+     <div class="max-w-6xl p-4 mx-auto sm:ml-14" x-data="{ propertyId: null, selected: '',  propertyName: '',description: '',availableLanguages: {{ Js::from($languages) }} }">
 
         <!-- Step 1: Main Form Step -->
         <form class="p-6 rounded-lg space-y-6" @submit.prevent>
