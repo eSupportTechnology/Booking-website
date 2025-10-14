@@ -33,6 +33,8 @@ use App\Http\Controllers\CarReservations\CarRenterControlPanel;
 use App\Http\Controllers\CarReservations\AirportTaxiControlPanel;
 use App\Http\Controllers\Customer\CustomerTaxiController;
 use App\Http\Controllers\Customer\CustomerCarRentalController;
+use App\Http\Controllers\Customer\SearchController;
+
 
 Route::post('/accommodation/save-verification/{propertyId}', [AccommodationController::class, 'saveVerification']);
 
@@ -54,7 +56,9 @@ Route::post('change-language', [LanguageController::class, 'change'])->name('lan
 
 Route::prefix('customer')->group(function () {
     // Search route
-    Route::get('/search', [\App\Http\Controllers\Customer\SearchController::class, 'search'])->name('customer.search');
+    Route::get('/search', [SearchController::class, 'search'])->name('customer.search');
+    
+
 
     Route::get('/login', [CustomerAuthController::class, 'showLoginForm'])->name('customer.login');
     Route::post('/customer/request-otp', [CustomerAuthController::class, 'requestOtp'])->name('customer.request.otp');
