@@ -118,14 +118,4 @@
   </section>
 </header>
 
-<script>
-  const langBtn = document.getElementById("language-button");
-  const modal = document.getElementById("language-modal");
-  const closeBtn = modal.querySelector(".close-btn");
 
-  langBtn.addEventListener("click", () => modal.classList.remove("hidden"));
-  closeBtn.addEventListener("click", () => modal.classList.add("hidden"));
-  modal.addEventListener("click", (e) => {
-    if (e.target === modal) modal.classList.add("hidden");
-  });
-</script>
