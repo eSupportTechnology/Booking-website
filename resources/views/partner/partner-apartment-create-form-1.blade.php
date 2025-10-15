@@ -127,7 +127,7 @@
 </script>
 
     <!--Start Form-->
-    <div class="max-w-6xl p-4 ml-14  " x-data="{
+    <div class="max-w-6xl p-4 mx-auto sm:ml-14" x-data="{
         step: 1,
         categoryId: null,
         addressTypeId: null,
