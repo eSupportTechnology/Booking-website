@@ -335,69 +335,94 @@
     </div>
     <!-- Step 1 -->
     <template x-if="step === 1">
-        <div class="relative w-[1200px] h-auto overflow-hidden rounded-lg shadow mx-auto my-10 ">
+        <div class="relative w-full max-w-[1200px] h-auto overflow-hidden rounded-lg shadow mx-auto my-6 sm:my-10">
             <!-- Google Maps iframe full background -->
-            <iframe class="absolute inset-0 w-full h-full" loading="lazy"
-                src="https://www.google.com/maps?q=La+Grande+Villa+Nuwara+Eliya&output=embed" allowfullscreen>
+            <iframe
+                class="absolute inset-0 w-full h-full"
+                loading="lazy"
+                src="https://www.google.com/maps?q=La+Grande+Villa+Nuwara+Eliya&output=embed"
+                allowfullscreen>
             </iframe>
 
             <!-- Optional overlay for readability -->
-            <div class="absolute inset-0 "></div>
+            <div class="absolute inset-0"></div>
 
             <!-- Form content centered on map -->
-            <div class="relative z-10 flex items-center justify-start h-auto p-4 mt-[110px]">
-                <div class="bg-white bg-opacity-95 rounded-lg shadow-lg w-full max-w-md p-6 md:p-8 h-auto mb-4">
-                    <h2 class="text-2xl font-semibold mb-4 text-gray-800">Where is your property?</h2>
+            <div class="relative z-10 flex items-center justify-center md:justify-start h-auto p-4 sm:p-6 mt-[80px] sm:mt-[110px]">
+                <div class="bg-white bg-opacity-95 rounded-lg shadow-lg w-full max-w-md p-4 sm:p-6 md:p-8 mb-4">
+                    <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-gray-800">Where is your property?</h2>
+
                     <form action="#" method="POST">
                         <div class="mb-4">
-                            <label for="address" class="block text-sm font-medium text-gray-700">Find your
-                                address</label>
-                            <input type="text" id="address" name="address" value="Sri Lanka"
-                                class="mt-1 p-2 w-full border border-gray-300 rounded">
+                            <label for="address" class="block text-sm font-medium text-gray-700">Find your address</label>
+                            <input
+                                type="text"
+                                id="address"
+                                name="address"
+                                value="Sri Lanka"
+                                class="mt-1 p-2 w-full border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-200">
                         </div>
+
                         <div class="mb-4">
-                            <label for="apartment" class="block text-sm font-medium text-gray-700">Apartment or
-                                floor number (optional)</label>
-                            <input type="text" id="apartment" name="apartment" value="aaa"
-                                class="mt-1 p-2 w-full border border-gray-300 rounded">
+                            <label for="apartment" class="block text-sm font-medium text-gray-700">Apartment or floor number (optional)</label>
+                            <input
+                                type="text"
+                                id="apartment"
+                                name="apartment"
+                                value="aaa"
+                                class="mt-1 p-2 w-full border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-200">
                         </div>
+
                         <div class="mb-4">
-                            <label for="country"
-                                class="block text-sm font-medium text-gray-700">Country/region</label>
-                            <select id="country" name="country"
-                                class="mt-1 p-2 w-full border border-gray-300 rounded">
+                            <label for="country" class="block text-sm font-medium text-gray-700">Country/region</label>
+                            <select
+                                id="country"
+                                name="country"
+                                class="mt-1 p-2 w-full border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-200">
                                 <option selected>Sri Lanka</option>
                             </select>
                         </div>
-                        <div class="flex flex-col md:flex-row gap-4">
+
+                        <div class="flex flex-col sm:flex-row gap-4">
                             <div class="flex-1">
                                 <label for="city" class="block text-sm font-medium text-gray-700">City</label>
-                                <input type="text" id="city" name="city" value="a"
-                                    class="mt-1 p-2 w-full border border-gray-300 rounded">
+                                <input
+                                    type="text"
+                                    id="city"
+                                    name="city"
+                                    value="a"
+                                    class="mt-1 p-2 w-full border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-200">
                             </div>
                             <div class="flex-1">
-                                <label for="postcode" class="block text-sm font-medium text-gray-700">Post code /
-                                    Zip code</label>
-                                <input type="text" id="postcode" name="postcode" value="80400"
-                                    class="mt-1 p-2 w-full border border-gray-300 rounded">
+                                <label for="postcode" class="block text-sm font-medium text-gray-700">Post code / Zip code</label>
+                                <input
+                                    type="text"
+                                    id="postcode"
+                                    name="postcode"
+                                    value="80400"
+                                    class="mt-1 p-2 w-full border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-200">
                             </div>
                         </div>
+
                         <div class="flex items-center mt-4">
-                            <input id="update_address" type="checkbox" name="update_address" checked
-                                class="mr-2">
-                            <label for="update_address" class="text-sm text-gray-700">Update the address when
-                                moving the pin on the map.</label>
+                            <input
+                                id="update_address"
+                                type="checkbox"
+                                name="update_address"
+                                checked
+                                class="mr-2 w-4 h-4 accent-blue-500">
+                            <label for="update_address" class="text-sm text-gray-700">Update the address when moving the pin on the map.</label>
                         </div>
+
                         <!-- Dismissible message box -->
                         <div x-data="{ showMessage: true }" x-show="showMessage"
-                            class="mt-4 bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded relative"
+                            class="mt-4 bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded relative text-sm sm:text-base"
                             role="alert">
                             <strong class="font-bold">Note:</strong>
-                            <span class="block sm:inline">Make sure the pin location is accurate before
-                                continuing.</span>
+                            <span class="block sm:inline">Make sure the pin location is accurate before continuing.</span>
                             <span @click="showMessage = false"
                                 class="absolute top-0 bottom-0 right-0 px-4 py-3 cursor-pointer">
-                                <svg class="fill-current h-6 w-6 text-yellow-800" role="button"
+                                <svg class="fill-current h-5 w-5 sm:h-6 sm:w-6 text-yellow-800" role="button"
                                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                     <title>Close</title>
                                     <path
@@ -407,35 +432,35 @@
                         </div>
 
                         <p class="text-sm text-gray-600 mt-2">
-                            Is the red pin location incorrect? Uncheck the option above and click or press on the
-                            map to move the pin.
+                            Is the red pin location incorrect? Uncheck the option above and click or press on the map to move the pin.
                         </p>
-                        <div class="flex justify-between mt-6">
-                            <!-- Back Button (Left) -->
-                            <button type="button" @click="step > 1 ? step-- : step"
+
+                        <div class="flex flex-col sm:flex-row justify-between gap-3 mt-6">
+                            <!-- Back Button -->
+                            <button
+                                type="button"
+                                @click="step > 1 ? step-- : step"
                                 :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-                                class="border border-[#3CC0E9]  text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
+                                class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded transition duration-200 text-sm sm:text-base">
                                 ←
                             </button>
 
-
-                            <!-- Continue Button (Right) -->
-                            <button type="button" @click="saveStep1()"
+                            <!-- Continue Button -->
+                            <button
+                                type="button"
+                                @click="saveStep1()"
                                 :class="step === 8 ? 'opacity-50 cursor-not-allowed' : 'bg-[#3CC0E9] hover:bg-sky-500'"
                                 :disabled="step === 8"
-                                class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300">
+                                class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300 transition duration-200 text-sm sm:text-base">
                                 Continue
                             </button>
                         </div>
-
                     </form>
                 </div>
             </div>
         </div>
-
-        <!--end basic info step 2-->
-
     </template>
+
     <template x-if="step === 2">
         <div>
             <section class="mb-12" x-data="{ channelManager: 'yes' }">
@@ -1162,13 +1187,13 @@
                 </div>
 
                 <!-- Navigation Buttons -->
-                <div class="mt-8 flex">
+               <div class="mt-8 flex justify-between">
                     <button type="button" @click="step = Math.max(step - 1, 1)"
-                        class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                         class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
                         ←
                     </button>
                     <button type="button" @click="saveStep7()"
-                        class="px-6 h-12 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ml-[395px]">
+                        class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
                         Continue
                     </button>
                 </div>
