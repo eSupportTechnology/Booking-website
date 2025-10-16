@@ -34,6 +34,8 @@ use App\Http\Controllers\CarReservations\AirportTaxiControlPanel;
 use App\Http\Controllers\Customer\CustomerTaxiController;
 use App\Http\Controllers\Customer\CustomerCarRentalController;
 use App\Http\Controllers\Customer\SearchController;
+use App\Http\Controllers\Customer\CarSearchController;
+
 
 
 Route::post('/accommodation/save-verification/{propertyId}', [AccommodationController::class, 'saveVerification']);
@@ -1381,3 +1383,5 @@ Route::get('/customer/car-rental/booking', function () {
     return view('Customer.without-driver-car-booking');
 })->name('customer.car-rental.booking');
 
+// Route for the car rental search/filtering page (Handles the form submission from the car rental page)
+Route::get('/customer/carsearch', [CarSearchController::class, 'carsearch'])->name('customer.car-rental.search');
