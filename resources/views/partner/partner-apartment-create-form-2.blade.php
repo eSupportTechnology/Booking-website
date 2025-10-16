@@ -542,11 +542,10 @@
 
       <h2 class="text-2xl font-bold text-gray-900 mt-8">What can guests use at your place?</h2>
               <!-- Where can people sleep -->
-        <div class="bg-white p-4 rounded-lg shadow space-y-4">
-          <h2 class="text-lg font-semibold">Where can people sleep?</h2>
+        <div class="bg-white p-4 md:p-6 rounded-lg shadow space-y-4 w-full max-w-[500px] md:max-w-2xl mx-auto">
+          <h2 class="text-lg md:text-xl font-semibold">Where can people sleep?</h2>
+
           <div class="flex flex-col gap-4">
-            <!-- Default rooms (bedroom1, livingRoom, otherSpaces) -->
-            <!-- Force show default rooms -->
             <!-- Bedroom 1 -->
             <div>
               <a
@@ -554,96 +553,132 @@
                 href="#"
                 class="block"
               >
-                <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer flex justify-between items-center">
+                <div
+                  class="border border-gray-300 rounded px-3 py-2 w-full cursor-pointer flex justify-between items-center"
+                >
                   <div>
-                    <p class="text-sm" x-text="rooms.bedroom1?.name || 'Bedroom 1'"></p>
-                    <p class="text-sm text-gray-600" x-text="getBedSummary('bedroom1')"></p>
+                    <p class="text-sm md:text-base" x-text="rooms.bedroom1?.name || 'Bedroom 1'"></p>
+                    <p class="text-xs md:text-sm text-gray-600" x-text="getBedSummary('bedroom1')"></p>
                   </div>
-                  <span class="text-xs text-blue-600 hover:underline">Edit</span>
+                  <span class="text-xs md:text-sm text-blue-600 hover:underline">Edit</span>
                 </div>
               </a>
             </div>
-            
+
             <!-- Living Room -->
             <div>
-              <div x-show="hasBedCounts('livingRoom')" class="border border-green-300 bg-green-50 rounded px-3 py-2 w-96 flex justify-between items-center">
+              <div
+                x-show="hasBedCounts('livingRoom')"
+                class="border border-green-300 bg-green-50 rounded px-3 py-2 w-full flex justify-between items-center"
+              >
                 <div>
-                  <p class="text-sm font-medium" x-text="rooms.livingRoom?.name || 'Living room'"></p>
-                  <p class="text-sm text-gray-600" x-text="getBedSummary('livingRoom')"></p>
+                  <p class="text-sm md:text-base font-medium" x-text="rooms.livingRoom?.name || 'Living room'"></p>
+                  <p class="text-xs md:text-sm text-gray-600" x-text="getBedSummary('livingRoom')"></p>
                   <p class="text-xs text-green-600">✓ Saved</p>
                 </div>
-                <span class="text-xs text-blue-600 hover:underline cursor-pointer" @click="navigateToBedroom('livingRoom')">Edit</span>
+                <span
+                  class="text-xs md:text-sm text-blue-600 hover:underline cursor-pointer"
+                  @click="navigateToBedroom('livingRoom')"
+                >Edit</span>
               </div>
+
               <a
                 x-show="!hasBedCounts('livingRoom')"
                 @click.prevent="navigateToBedroom('livingRoom')"
                 href="#"
                 class="block"
               >
-                <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer flex justify-between items-center">
+                <div
+                  class="border border-gray-300 rounded px-3 py-2 w-full cursor-pointer flex justify-between items-center"
+                >
                   <div>
-                    <p class="text-sm" x-text="rooms.livingRoom?.name || 'Living room'"></p>
-                    <p class="text-sm text-gray-600" x-text="getBedSummary('livingRoom')"></p>
+                    <p class="text-sm md:text-base" x-text="rooms.livingRoom?.name || 'Living room'"></p>
+                    <p class="text-xs md:text-sm text-gray-600" x-text="getBedSummary('livingRoom')"></p>
                   </div>
-                  <span class="text-xs text-blue-600 hover:underline">Edit</span>
+                  <span class="text-xs md:text-sm text-blue-600 hover:underline">Edit</span>
                 </div>
               </a>
             </div>
-            
+
             <!-- Other Spaces -->
             <div>
-              <div x-show="hasBedCounts('otherSpaces')" class="border border-green-300 bg-green-50 rounded px-3 py-2 w-96 flex justify-between items-center">
+              <div
+                x-show="hasBedCounts('otherSpaces')"
+                class="border border-green-300 bg-green-50 rounded px-3 py-2 w-full flex justify-between items-center"
+              >
                 <div>
-                  <p class="text-sm font-medium" x-text="rooms.otherSpaces?.name || 'Other spaces'"></p>
-                  <p class="text-sm text-gray-600" x-text="getBedSummary('otherSpaces')"></p>
+                  <p class="text-sm md:text-base font-medium" x-text="rooms.otherSpaces?.name || 'Other spaces'"></p>
+                  <p class="text-xs md:text-sm text-gray-600" x-text="getBedSummary('otherSpaces')"></p>
                   <p class="text-xs text-green-600">✓ Saved</p>
                 </div>
-                <span class="text-xs text-blue-600 hover:underline cursor-pointer" @click="navigateToBedroom('otherSpaces')">Edit</span>
+                <span
+                  class="text-xs md:text-sm text-blue-600 hover:underline cursor-pointer"
+                  @click="navigateToBedroom('otherSpaces')"
+                >Edit</span>
               </div>
+
               <a
                 x-show="!hasBedCounts('otherSpaces')"
                 @click.prevent="navigateToBedroom('otherSpaces')"
                 href="#"
                 class="block"
               >
-                <div class="border border-gray-300 rounded px-3 py-2 w-96 cursor-pointer flex justify-between items-center">
+                <div
+                  class="border border-gray-300 rounded px-3 py-2 w-full cursor-pointer flex justify-between items-center"
+                >
                   <div>
-                    <p class="text-sm" x-text="rooms.otherSpaces?.name || 'Other spaces'"></p>
-                    <p class="text-sm text-gray-600" x-text="getBedSummary('otherSpaces')"></p>
+                    <p class="text-sm md:text-base" x-text="rooms.otherSpaces?.name || 'Other spaces'"></p>
+                    <p class="text-xs md:text-sm text-gray-600" x-text="getBedSummary('otherSpaces')"></p>
                   </div>
-                  <span class="text-xs text-blue-600 hover:underline">Edit</span>
+                  <span class="text-xs md:text-sm text-blue-600 hover:underline">Edit</span>
                 </div>
               </a>
             </div>
-            
-            <!-- Additional bedrooms from bedroom page -->
+
+            <!-- Additional Bedrooms -->
             <template x-for="(room, key) in rooms" :key="key">
               <template x-if="key !== 'bedroom1' && key !== 'livingRoom' && key !== 'otherSpaces'">
-                <div class="border border-green-300 bg-green-50 rounded px-3 py-2 w-96 flex justify-between items-center">
+                <div
+                  class="border border-green-300 bg-green-50 rounded px-3 py-2 w-full flex justify-between items-center"
+                >
                   <div>
-                    <p class="text-sm font-medium" x-text="room.name"></p>
-                    <p class="text-sm text-gray-600" x-text="getSavedRoomBedSummary(room)"></p>
+                    <p class="text-sm md:text-base font-medium" x-text="room.name"></p>
+                    <p class="text-xs md:text-sm text-gray-600" x-text="getSavedRoomBedSummary(room)"></p>
                     <p class="text-xs text-green-600">✓ Saved</p>
                   </div>
-                  <span class="text-xs text-blue-600 hover:underline cursor-pointer" @click="editSavedRoom(key)">Edit</span>
+                  <span
+                    class="text-xs md:text-sm text-blue-600 hover:underline cursor-pointer"
+                    @click="editSavedRoom(key)"
+                  >Edit</span>
                 </div>
               </template>
             </template>
           </div>
+
           <!-- Add Bedroom Button -->
-          <button 
-            type="button" 
-            @click="navigateToBedroom()" 
-            class="text-blue-600 hover:underline text-sm flex items-center space-x-1 mt-2"
+          <button
+            type="button"
+            @click="navigateToBedroom()"
+            class="text-blue-600 hover:underline text-sm md:text-base flex items-center space-x-1 mt-2"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
-                 viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M12 4v16m8-8H4"/>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-4 w-4 md:h-5 md:w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 4v16m8-8H4"
+              />
             </svg>
             <span>Add Bedroom</span>
           </button>
         </div>
+
 
       <!-- Guests and Bathrooms -->
       <div class="bg-white p-4 rounded-lg shadow space-y-4 w-full max-w-xl">
