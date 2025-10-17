@@ -303,21 +303,27 @@
                 </div>
               </template>
               <template x-if="wizardStep === 2">
-                <div class="relative w-[1200px] h-auto overflow-hidden rounded-lg shadow mx-auto my-10">
+                <div class="relative w-full max-w-[1400px] h-auto overflow-hidden rounded-lg shadow mx-auto my-6 md:my-10">
                   <!-- Google Maps iframe full background -->
                   <iframe
-                    class="absolute inset-0 w-full h-full"
+                    class="absolute inset-0 w-full h-full min-h-[500px] md:min-h-[750px]"
                     loading="lazy"
                     src="https://www.google.com/maps?q=La+Grande+Villa+Nuwara+Eliya&output=embed"
                     allowfullscreen
                   ></iframe>
+
                   <!-- Optional overlay for readability -->
                   <div class="absolute inset-0"></div>
+
                   <!-- Form content centered on map -->
-                  <div class="relative z-10 flex items-center justify-start h-auto p-4 mt-[110px]">
-                    <div class="bg-white bg-opacity-95 rounded-lg shadow-lg w-full max-w-md p-6 md:p-8 h-auto mb-4">
-                      <h2 class="text-2xl font-semibold mb-4 text-gray-800">Where is your property?</h2>
-                      <div>
+                  <div class="relative z-10 flex items-center justify-center md:justify-start h-auto p-3 md:p-4 mt-[80px] md:mt-[110px]">
+                    <div
+                      class="bg-white bg-opacity-95 rounded-lg shadow-lg w-full max-w-[95%] sm:max-w-lg md:max-w-md lg:max-w-lg xl:max-w-xl p-5 md:p-8 h-auto mb-4"
+                    >
+                      <h2 class="text-xl md:text-2xl font-semibold mb-4 text-gray-800">Where is your property?</h2>
+
+                      <!-- Address Field -->
+                      <div class="mb-4">
                         <label for="address" class="block text-sm font-medium text-gray-700">Find your address</label>
                         <input
                           type="text"
@@ -325,13 +331,15 @@
                           name="address"
                           x-model="address"
                           @input="logInputChange('address', $event.target.value)"
-                          class="mt-1 p-2 w-full border border-gray-300 rounded"
+                          class="mt-1 p-2 w-full border border-gray-300 rounded focus:ring-[#3CC0E9] focus:border-[#3CC0E9]"
                         />
                       </div>
+
+                      <!-- Apartment Field -->
                       <div class="mb-4">
-                        <label for="apartment" class="block text-sm font-medium text-gray-700"
-                          >Apartment or floor number (optional)</label
-                        >
+                        <label for="apartment" class="block text-sm font-medium text-gray-700">
+                          Apartment or floor number (optional)
+                        </label>
                         <input
                           type="text"
                           id="apartment"
@@ -339,9 +347,11 @@
                           x-model="apartment"
                           @input="logInputChange('apartment', $event.target.value)"
                           placeholder="Apartment or floor number (optional)"
-                          class="mt-1 p-2 w-full border border-gray-300 rounded"
+                          class="mt-1 p-2 w-full border border-gray-300 rounded focus:ring-[#3CC0E9] focus:border-[#3CC0E9]"
                         />
                       </div>
+
+                      <!-- Country Dropdown -->
                       <div class="mb-4">
                         <label for="country" class="block text-sm font-medium text-gray-700">Country/region</label>
                         <select
@@ -349,11 +359,13 @@
                           name="country"
                           x-model="country"
                           @change="logInputChange('country', $event.target.value)"
-                          class="mt-1 p-2 w-full border border-gray-300 rounded"
+                          class="mt-1 p-2 w-full border border-gray-300 rounded focus:ring-[#3CC0E9] focus:border-[#3CC0E9]"
                         >
                           <option value="Sri Lanka">Sri Lanka</option>
                         </select>
                       </div>
+
+                      <!-- City & Zipcode -->
                       <div class="flex flex-col md:flex-row gap-4">
                         <div class="flex-1">
                           <label for="city" class="block text-sm font-medium text-gray-700">City</label>
@@ -363,30 +375,31 @@
                             name="city"
                             x-model="city"
                             @input="logInputChange('city', $event.target.value)"
-                            class="mt-1 p-2 w-full border border-gray-300 rounded"
+                            class="mt-1 p-2 w-full border border-gray-300 rounded focus:ring-[#3CC0E9] focus:border-[#3CC0E9]"
                           />
                         </div>
                         <div class="flex-1">
-                          <label for="postcode" class="block text-sm font-medium text-gray-700"
-                            >Post code / Zip code</label
-                          >
+                          <label for="postcode" class="block text-sm font-medium text-gray-700">Post code / Zip code</label>
                           <input
                             type="text"
                             id="postcode"
                             name="postcode"
                             x-model="zipcode"
                             @input="logInputChange('zipcode', $event.target.value)"
-                            class="mt-1 p-2 w-full border border-gray-300 rounded"
+                            class="mt-1 p-2 w-full border border-gray-300 rounded focus:ring-[#3CC0E9] focus:border-[#3CC0E9]"
                           />
                         </div>
                       </div>
-                      <div class="flex items-center mt-4">
-                        <input id="update_address" type="checkbox" name="update_address" checked class="mr-2" />
-                        <label for="update_address" class="text-sm text-gray-700"
-                          >Update the address when moving the pin on the map.</label
-                        >
+
+                      <!-- Checkbox -->
+                      <div class="flex items-start md:items-center mt-4">
+                        <input id="update_address" type="checkbox" name="update_address" checked class="mr-2 mt-1 md:mt-0" />
+                        <label for="update_address" class="text-sm text-gray-700 leading-tight">
+                          Update the address when moving the pin on the map.
+                        </label>
                       </div>
-                      <!-- Dismissible message box -->
+
+                      <!-- Dismissible Message -->
                       <div
                         x-data="{ showMessage: true }"
                         x-show="showMessage"
@@ -394,12 +407,10 @@
                         role="alert"
                       >
                         <strong class="font-bold">Note:</strong>
-                        <span class="block sm:inline"
-                          >Make sure the pin location is accurate before continuing.</span
-                        >
+                        <span class="block sm:inline">Make sure the pin location is accurate before continuing.</span>
                         <span @click="showMessage = false" class="absolute top-0 bottom-0 right-0 px-4 py-3 cursor-pointer">
                           <svg
-                            class="fill-current h-6 w-6 text-yellow-800"
+                            class="fill-current h-5 w-5 text-yellow-800"
                             role="button"
                             xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 20 20"
@@ -411,26 +422,28 @@
                           </svg>
                         </span>
                       </div>
-                      <p class="text-sm text-gray-600 mt-2">
-                        Is the red pin location incorrect? Uncheck the option above and click or press on the map to
-                        move the pin.
+
+                      <!-- Info Text -->
+                      <p class="text-xs md:text-sm text-gray-600 mt-2 leading-snug">
+                        Is the red pin location incorrect? Uncheck the option above and click or press on the map to move the pin.
                       </p>
-                      <div class="flex justify-between mt-6">
-                        <!-- Back Button (Left) -->
+
+                      <!-- Buttons -->
+                      <div class="flex flex-col sm:flex-row justify-between gap-3 mt-6">
                         <button
                           type="button"
                           @click="wizardStep--"
-                          class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded"
+                          class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded transition"
                         >
                           ←
                         </button>
-                        <!-- Continue Button (Right) -->
+
                         <button
                           type="submit"
                           @click="saveLocation"
                           :disabled="isLoading"
-                          :class="isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'"
-                          class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded focus:outline-none focus:ring focus:ring-blue-300"
+                          :class="isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#29ACD5]'"
+                          class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded focus:outline-none focus:ring focus:ring-blue-300 transition"
                         >
                           <span x-show="!isLoading">Continue</span>
                           <span x-show="isLoading">Saving...</span>
@@ -440,6 +453,7 @@
                   </div>
                 </div>
               </template>
+
               <template x-if="wizardStep === 3">
                 <section class="mb-12">
                   <div class="max-w-5xl mx-auto px-4 py-8">
@@ -991,43 +1005,39 @@
     </template>
 
     <template x-if="propertyWizardStep === 4">
-  <div class="max-w-4xl mx-auto space-y-8 lg:ml-32" x-init="loadLanguages()">
-    <div class="container ml-24 px-4 py-8 max-w-2xl">
+  <div class="w-full px-4 sm:px-6 py-8 max-w-4xl mx-auto lg:ml-32" x-init="loadLanguages()">
+    <div class="container ml-0 lg:ml-24 max-w-2xl">
       <!-- Header -->
       <h2 class="text-2xl font-bold mb-8 text-left">
         What languages do you or your staff speak?
       </h2>
+
       <!-- Language Selection Section -->
       <div class="bg-white shadow-md rounded-lg p-6 mb-8">
         <h3 class="text-lg mb-4 font-bold">Select languages</h3>
-        
-        <!-- Common Languages (hardcoded for quick selection) -->
+
+        <!-- Common Languages -->
         <div class="space-y-2 mb-4" x-show="availableLanguages.length > 0">
           <template x-for="commonLang in ['English', 'French', 'German', 'Hindi']" :key="commonLang">
-            <label class="flex items-center cursor-pointer">
+            <label class="flex items-center cursor-pointer text-sm sm:text-base">
               <input 
                 type="checkbox" 
-                class="mr-2" 
+                class="mr-2"
                 :value="getLanguageIdByName(commonLang)"
-                x-model="selectedLanguages" 
+                x-model="selectedLanguages"
                 :disabled="!getLanguageIdByName(commonLang)"
               />
               <span x-text="commonLang"></span>
             </label>
           </template>
         </div>
-        
-        <!-- Loading indicator for languages -->
+
+        <!-- Loading indicator -->
         <div x-show="availableLanguages.length === 0" class="text-sm text-gray-500 mb-4">
           Loading languages...
         </div>
-        
-        <!-- Debug: Show available languages -->
-        <!-- <div class="text-xs text-gray-500 mb-2">
-          Debug - Available languages: <span x-text="JSON.stringify(availableLanguages)"></span>
-        </div> -->
 
-        <!-- Selected Languages Display -->
+        <!-- Selected Languages -->
         <template x-if="selectedLanguages.length > 0">
           <div class="mb-4">
             <h4 class="text-sm font-semibold text-gray-700 mb-2">Selected languages:</h4>
@@ -1047,16 +1057,11 @@
             </div>
           </div>
         </template>
-        
+
         <!-- Add Additional Languages -->
         <div x-show="showAdditionalLanguages" class="mt-4 relative">
           <h3 class="text-lg font-medium mb-2">Add additional languages</h3>
-          <!-- Debug info -->
-          <div class="text-xs text-gray-500 mb-2">
-            Available languages: <span x-text="availableLanguages.length"></span> | 
-            Filtered languages: <span x-text="filteredLanguages.length"></span> | 
-            Show dropdown: <span x-text="showDropdown"></span>
-          </div>
+
           <!-- Searchable dropdown container -->
           <div class="relative w-full max-w-md">
             <input
@@ -1067,7 +1072,7 @@
               @click="showDropdown = true"
               placeholder="Search languages..."
               autocomplete="off"
-              class="w-full border rounded p-2 pr-10 cursor-pointer"
+              class="w-full border rounded p-2 pr-10 cursor-pointer text-sm sm:text-base"
             />
             <!-- Dropdown arrow -->
             <button
@@ -1084,12 +1089,11 @@
               x-transition
               class="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded max-h-40 overflow-auto shadow-lg"
               @click.away="showDropdown = false"
-              x-init="console.log('Dropdown languages count:', filteredLanguages.length)"
             >
               <template x-for="language in filteredLanguages" :key="language.id">
                 <li 
                   @click="selectLanguage(language.id, language.name)"
-                  class="p-2 hover:bg-blue-100 cursor-pointer"
+                  class="p-2 hover:bg-blue-100 cursor-pointer text-sm sm:text-base"
                   :class="{ 'bg-gray-100 text-gray-500': isLanguageSelected(language.id) }"
                   x-text="language.name"
                 ></li>
@@ -1097,27 +1101,30 @@
             </ul>
           </div>
         </div>
-        
-        <!-- Toggle Button for Additional Languages -->
+
+        <!-- Toggle Button -->
         <button
           type="button"
           @click="toggleAdditionalLanguages(); logLanguageChange('showAdditionalLanguages', !showAdditionalLanguages)"
-          class="text-blue-500 hover:underline mt-4 block"
+          class="text-blue-500 hover:underline mt-4 text-sm sm:text-base block"
         >
           <span x-text="showAdditionalLanguages ? 'Hide additional languages' : 'Add additional languages'"></span>
         </button>
       </div>
-      
-      <!-- Navigation Buttons -->
+
+      <!-- Navigation Buttons (same as before) -->
       <div class="mt-8 flex justify-between">
-        <!-- Back Button on the left -->
+        <!-- Back Button -->
         <button
-          type="button" @click="propertyWizardStep--"
+          type="button"
+          @click="propertyWizardStep--"
           :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-          class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+          class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded"
+        >
           ←
         </button>
-        <!-- Continue Button on the right -->
+
+        <!-- Continue Button -->
         <button
           type="button"
           @click="saveAdditionalDetails"
@@ -1129,6 +1136,8 @@
     </div>
   </div>
 </template>
+
+
   <template x-if="propertyWizardStep === 5">
   <div class="max-w-4xl mx-auto space-y-8 lg:ml-32">
     <div class="container w-full max-w-4xl ml-4 md:ml-24 px-4 py-8">
@@ -1705,7 +1714,7 @@
       <h2 class="text-2xl font-bold text-gray-800">Set the price per night for this room</h2>
 
       <!-- Price input and Tip 1 in two separate columns -->
-<div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
   
   <!-- Price input card (2/3 width) -->
   <div class="md:col-span-2 bg-white border rounded-lg p-6 shadow-sm space-y-4">
@@ -1713,22 +1722,28 @@
     <div class="relative">
   <label class="block text-sm text-gray-700 mb-1">Price guests pay</label>
 
-  <!-- Currency Select Dropdown -->
-  <select x-model="pricing.currency" class="absolute left-3 top-1/2 transform -translate-y-1/2 bg-transparent text-gray-700 text-sm pr-1 focus:outline-none border border-gray-300 rounded-md">
-    <option value="usd">US$</option>
-    <option value="eur">€</option>
-    <option value="gbp">£</option>
-    <option value="lkr">Rs</option>
-  </select>
+  <div class="relative w-full">
+    <!-- Currency Select Dropdown -->
+      <select
+        x-model="pricing.currency"
+        class="absolute left-3 top-1/2 -translate-y-[25%] bg-transparent text-gray-700 text-sm pr-1 focus:outline-none border border-gray-300 rounded-md h-8"
+      >
+        <option value="usd">US$</option>
+        <option value="eur">€</option>
+        <option value="gbp">£</option>
+        <option value="lkr">Rs</option>
+      </select>
 
-  <!-- Input Field -->
-  <input
-    type="text"
-    x-model="pricing.price_per_night"
-    name="price_per_night"
-    value="120.00"
-    class="w-full border border-gray-400 rounded-md p-2 pl-16 text-gray-700 font-semibold focus:ring-2 focus:ring-blue-300 focus:outline-none"
-  />
+    <!-- Input Field -->
+      <input
+        type="text"
+        x-model="pricing.price_per_night"
+        name="price_per_night"
+        value="120.00"
+        class="w-full border border-gray-400 rounded-md p-2 pl-20 text-gray-700 font-semibold focus:ring-2 focus:ring-blue-300 focus:outline-none"
+      />
+  </div>
+
 
   <p class="text-sm text-gray-500 mt-2">Including taxes, commission, and fees</p>
 </div>
@@ -1798,16 +1813,16 @@
       </div>
 
       <!-- Navigation Buttons -->
-      <div class="flex mt-1">
+      <div class="mt-12 flex justify-between">
         <button type="button"
                 @click="step > 1 ? step-- : step"
                 :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-                class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
+                class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
           ←
         </button>
         <button type="button"
                 @click="savePricing"
-                class="ml-auto px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300 ml-[402px]">
+                class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ">
           Continue
         </button>
       </div>
@@ -1978,7 +1993,7 @@
 
   <!-- Continue Button -->
   
-  <button       @click="pricingWizardStep++" class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-sky-500 transition w-full sm:w-auto">
+  <button       @click="pricingWizardStep++" class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ">
     Continue
   </button>
 
@@ -2269,7 +2284,7 @@ function calendarComponent() {
 
   <!-- Continue Button -->
   
-  <button       @click="savePricing()" class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-sky-500 transition w-full sm:w-auto">
+  <button       @click="savePricing()" class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ">
     Continue
   </button>
 

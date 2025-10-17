@@ -1251,16 +1251,24 @@ const StorageManager = {
 
                                                             <!-- Buttons Row (Outside grid, full width) -->
                                                             <!-- Buttons Row aligned with Checkbox Section -->
-                                                            <div class="flex  mt-6">
-                                                                <button type="button"  @click="step = Math.max(step - 1, 1)"
+                                                            <div class="mt-6 flex flex-wrap justify-between items-center">
+                                                                <!-- Back Button -->
+                                                                <button 
+                                                                    type="button" 
+                                                                    @click="step = Math.max(step - 1, 1)" 
                                                                     class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
                                                                     ←
                                                                 </button>
-                                                                <button type="button"     @click="saveFacilities()"
-                                                                    class="px-4 py-3 bg-[#3CC0E9] font-semibold  text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ml-[330px]">
+
+                                                                <!-- Continue Button -->
+                                                                <button 
+                                                                    type="button" 
+                                                                    @click="saveFacilities()" 
+                                                                    class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 mt-4 md:mt-0 md:ml-[330px]">
                                                                     Continue
                                                                 </button>
                                                             </div>
+
 
                                                         </section>
                                                     </div>
@@ -1460,23 +1468,24 @@ const StorageManager = {
 
 
 <template x-if="step === 6">
-  <div class="max-w-4xl mx-auto space-y-8 lg:ml-32" x-init="loadLanguages()">
-    <div class="container ml-24 px-4 py-8 max-w-2xl">
+  <div class="max-w-4xl mx-auto space-y-8 lg:ml-32 px-4 sm:px-6" x-init="loadLanguages()">
+    <div class="px-4 py-8 max-w-2xl mx-auto">
       <!-- Header -->
       <h2 class="text-2xl font-bold mb-8 text-left">
         What languages do you or your staff speak?
       </h2>
+
       <!-- Language Selection Section -->
       <div class="bg-white shadow-md rounded-lg p-6 mb-8">
         <h3 class="text-lg mb-4 font-bold">Select languages</h3>
         
-        <!-- Common Languages (hardcoded for quick selection) -->
+        <!-- Common Languages -->
         <div class="space-y-2 mb-4" x-show="availableLanguages.length > 0">
           <template x-for="commonLang in ['English', 'French', 'German', 'Hindi']" :key="commonLang">
             <label class="flex items-center cursor-pointer">
               <input 
                 type="checkbox" 
-                class="mr-2" 
+                class="mr-2 accent-[#3CC0E9]"
                 :value="getLanguageIdByName(commonLang)"
                 x-model="selectedLanguages" 
                 :disabled="!getLanguageIdByName(commonLang)"
@@ -1485,8 +1494,8 @@ const StorageManager = {
             </label>
           </template>
         </div>
-        
-        <!-- Loading indicator for languages -->
+
+        <!-- Loading indicator -->
         <div x-show="availableLanguages.length === 0" class="text-sm text-gray-500 mb-4">
           Loading languages...
         </div>
@@ -1511,12 +1520,11 @@ const StorageManager = {
             </div>
           </div>
         </template>
-        
+
         <!-- Add Additional Languages -->
         <div x-show="showAdditionalLanguages" class="mt-4 relative">
           <h3 class="text-lg font-medium mb-2">Add additional languages</h3>
-          <!-- Searchable dropdown container -->
-          <div class="relative w-full max-w-md">
+          <div class="relative w-full">
             <input
               type="text"
               x-model="searchTerm"
@@ -1525,9 +1533,8 @@ const StorageManager = {
               @click="showDropdown = true"
               placeholder="Search languages..."
               autocomplete="off"
-              class="w-full border rounded p-2 pr-10 cursor-pointer"
+              class="w-full border rounded p-2 pr-10 cursor-pointer focus:ring-2 focus:ring-blue-300 focus:border-blue-400"
             />
-            <!-- Dropdown arrow -->
             <button
               type="button"
               @click="showDropdown = !showDropdown"
@@ -1536,6 +1543,7 @@ const StorageManager = {
             >
               ▼
             </button>
+
             <!-- Dropdown list -->
             <ul
               x-show="showDropdown && filteredLanguages.length > 0"
@@ -1554,7 +1562,7 @@ const StorageManager = {
             </ul>
           </div>
         </div>
-        
+
         <!-- Toggle Button for Additional Languages -->
         <button
           type="button"
@@ -1564,27 +1572,29 @@ const StorageManager = {
           <span x-text="showAdditionalLanguages ? 'Hide additional languages' : 'Add additional languages'"></span>
         </button>
       </div>
-      
+
       <!-- Navigation Buttons -->
-      <div class="mt-8 flex justify-between">
-        <!-- Back Button on the left -->
+      <div class="mt-8 flex flex-wrap md:flex-nowrap justify-between items-center gap-6 md:gap-0">
+        <!-- Back Button -->
         <button
-          type="button" @click="step = Math.max(step - 1, 1)"
-          class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+          type="button"
+          @click="step = Math.max(step - 1, 1)"
+          class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-5 py-2.5 rounded transition">
           ←
         </button>
-        <!-- Continue Button on the right -->
+
+        <!-- Continue Button -->
         <button
           type="button"
           @click="saveLanguages()"
-          class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300"
-        >
+          class="px-6 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 md:ml-[330px] ml-0 mt-4 md:mt-0">
           Continue
         </button>
       </div>
     </div>
   </div>
 </template>
+
 
     <template x-if="step === 7">
      <div x-data="{ 
@@ -1729,11 +1739,11 @@ const StorageManager = {
             </div>
 
             <!-- Navigation Buttons -->
-            <div class="mt-8 flex">
+            <div class="mt-8 flex flex-wrap md:flex-nowrap justify-between items-center gap-6 md:gap-0">
                 <button type="button" @click="step = Math.max(step - 1, 1)" class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
                     ←
                 </button>
-                <button type="button" @click="handleContinue()" class="px-6 h-12 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ml-[285px]">
+                <button type="button" @click="handleContinue()" class="px-6 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 md:ml-[330px] ml-0 mt-4 md:mt-0">
                     Continue
                 </button>
             </div>
