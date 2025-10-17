@@ -43,7 +43,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Monthly Earnings</p>
-                    <p class="text-3xl font-bold text-gray-800 mt-2">${{ number_format($stats->monthlyEarnings) }}</p>
+                    <p class="text-3xl font-bold text-gray-800 mt-2">@currency($stats->monthlyEarnings, 'USD')</p>
                 </div>
                 <div class="bg-yellow-100 p-3 rounded-xl">
                     <i class="fas fa-dollar-sign text-yellow-600 text-2xl"></i>
@@ -106,7 +106,7 @@
                                 {{ $booking['status'] }}
                             </span>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-green-600">${{ $booking['earnings'] }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-green-600">@currency($booking['earnings'], 'USD')</td>
                     </tr>
                     @endforeach
                 </tbody>

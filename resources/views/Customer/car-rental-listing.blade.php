@@ -109,7 +109,7 @@
                                 @endif
                             </p>
                             <div class="mt-2 flex justify-between items-center">
-                                <span class="text-blue-600 font-semibold">${{ $car->price_per_day }}/day</span>
+                                <span class="text-blue-600 font-semibold">{{ \App\Helpers\CurrencyHelper::convertAndFormat($car->price_per_day, $car->currency ?? 'USD') }}/day</span>
                                 <a href="#" class="text-white bg-[#3CC0E9] px-4 py-2 rounded hover:bg-blue-700">Book Now</a>
                             </div>
                         </div>

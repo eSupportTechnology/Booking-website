@@ -41,7 +41,7 @@
                                 x-bind:disabled="availableRooms.length === 0">
                             <option value="">Select a room</option>
                             <template x-for="room in availableRooms" :key="room.id">
-                                <option :value="room.id" x-text="`${room.name} - LKR ${room.price_per_night}/night (Max ${room.max_guests} guests)`"></option>
+                                <option :value="room.id" x-text="`${room.name} - ${formatPrice(room.price_per_night, room.currency)}/night (Max ${room.max_guests} guests)`"></option>
                             </template>
                         </select>
                     </div>
@@ -68,8 +68,8 @@
                             </div>
                             <div class="flex justify-between">
                                 <span>Price per night:</span>
-                                <span x-show="!selectedRoom">LKR {{ number_format($property->pricing->price_per_night ?? ($property->pricing->base_price ?? 0)) }}</span>
-                                <span x-show="selectedRoom" x-text="'LKR ' + getRoomPrice().toLocaleString()"></span>
+                                <span x-show="!selectedRoom">@currency($property->pricing->price_per_night ?? ($property->pricing->base_price ?? 0), $property->pricing->currency ?? 'USD')</span>
+                                <span x-show="selectedRoom" x-text="formatPrice(getRoomPrice(), getSelectedRoomCurrency())"></span>
                             </div>
                             <div class="flex justify-between" x-show="checkIn && checkOut">
                                 <span>Nights:</span>
@@ -77,7 +77,7 @@
                             </div>
                             <div class="flex justify-between font-semibold border-t pt-2" x-show="checkIn && checkOut">
                                 <span>Total:</span>
-                                <span x-text="'LKR ' + calculateTotal().toLocaleString()"></span>
+                                <span x-text="formatPrice(calculateTotal(), getSelectedRoomCurrency() || '{{ app(\App\Services\CurrencyManager::class)->getUserCurrency() }}')"></span>
                             </div>
                             @if($property->rooms->count() > 0)
                             <div class="text-xs text-gray-500 mt-2" x-show="selectedRoom">
@@ -117,6 +117,19 @@ function bookingForm() {
         availableRooms: [],
         roomsLoaded: false,
         hasRooms: {{ $property->rooms->count() > 0 ? 'true' : 'false' }},
+        userCurrency: '{{ app(\App\Services\CurrencyManager::class)->getUserCurrency() }}',
+
+        formatPrice(amount, currency) {
+            const symbols = { USD: '$', EUR: '€', GBP: '£', LKR: 'Rs' };
+            const symbol = symbols[currency] || currency;
+            return symbol + amount.toLocaleString();
+        },
+
+        getSelectedRoomCurrency() {
+            if (!this.selectedRoom) return this.userCurrency;
+            const room = this.availableRooms.find(r => r.id == this.selectedRoom);
+            return room?.currency || this.userCurrency;
+        },
 
 
         async init() {

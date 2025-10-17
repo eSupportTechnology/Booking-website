@@ -375,7 +375,7 @@ $sampleResults = [
                     <div class="sm:w-1/4 p-4 bg-gray-50 flex flex-col justify-end items-center sm:items-end border-t sm:border-t-0 sm:border-l border-gray-100">
                         <div class="text-right w-full mb-3">
                             <div class="text-sm text-gray-500">Price for 2 nights</div>
-                            <div class="text-3xl font-bold text-gray-800">US${{ $result['price'] }}</div>
+                            <div class="text-3xl font-bold text-gray-800">@currency($result['price'], 'USD')</div>
                             <div class="text-xs text-gray-500 mb-4">Includes taxes and fees</div>
                         </div>
                         <a href="#" class="w-full sm:w-auto bg-primary text-white text-center px-4 py-3 rounded-lg font-bold hover:bg-primary-dark transition-colors shadow-lg">See Availability</a>

@@ -38,20 +38,31 @@ class BookingService
         return $booking;
     }
 
-    public function calculatePrice(Property $property, ?int $roomId, string $checkIn, string $checkOut, int $guestCount): float
+    public function calculatePrice(Property $property, ?int $roomId, string $checkIn, string $checkOut, int $guestCount): array
     {
         $checkInDate = new \DateTime($checkIn);
         $checkOutDate = new \DateTime($checkOut);
         $nights = $checkInDate->diff($checkOutDate)->days;
+        $userCurrency = app(\App\Services\CurrencyManager::class)->getUserCurrency();
         
         if ($roomId) {
             $room = \App\Models\Room::find($roomId);
             $basePrice = $room ? $room->price_per_night : ($property->pricing->price_per_night ?? 100.00);
+            $baseCurrency = $room ? ($room->currency ?? 'USD') : ($property->pricing->currency ?? 'USD');
         } else {
             $basePrice = $property->pricing->price_per_night ?? 100.00;
+            $baseCurrency = $property->pricing->currency ?? 'USD';
         }
         
-        return $basePrice * $nights;
+        $convertedPrice = app(\App\Services\CurrencyService::class)->convert($basePrice, $baseCurrency, $userCurrency);
+        
+        return [
+            'total_price' => $convertedPrice * $nights,
+            'currency' => $userCurrency,
+            'base_currency' => $baseCurrency,
+            'nights' => $nights,
+            'price_per_night' => $convertedPrice
+        ];
     }
 
     public function isRoomAvailable(Property $property, ?int $roomId, string $checkIn, string $checkOut): bool

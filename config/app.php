@@ -124,4 +124,16 @@ return [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Supported Currencies
+    |--------------------------------------------------------------------------
+    |
+    | List of currencies supported by the application
+    |
+    */
+
+    'currencies' => ['USD', 'EUR', 'GBP', 'LKR'],
+    'default_currency' => env('DEFAULT_CURRENCY', 'USD'),
 ];
