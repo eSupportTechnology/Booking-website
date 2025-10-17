@@ -60,7 +60,7 @@ class BookingController extends Controller
             return back()->with('error', 'Selected room is not available for the chosen dates.');
         }
 
-        $bookingDTO->total_price = $this->bookingService->calculatePrice(
+        $priceData = $this->bookingService->calculatePrice(
             $property, 
             $bookingDTO->room_id,
             $bookingDTO->check_in, 
@@ -68,10 +68,25 @@ class BookingController extends Controller
             $bookingDTO->guest_count
         );
         
+        $bookingDTO->total_price = $priceData['total_price'];
+        
         // Set default commission rate (can be customized per property/partner)
         $bookingDTO->commission_rate = 10.00;
 
-        $booking = $this->createBookingAction->execute($bookingDTO);
+        // Create booking with currency data
+        $booking = Booking::create([
+            'user_id' => Auth::guard('customer')->id(),
+            'property_id' => $bookingDTO->property_id,
+            'room_id' => $bookingDTO->room_id,
+            'check_in' => $bookingDTO->check_in,
+            'check_out' => $bookingDTO->check_out,
+            'guest_count' => $bookingDTO->guest_count,
+            'total_price' => $priceData['total_price'],
+            'currency' => $priceData['currency'],
+            'base_currency' => $priceData['base_currency'],
+            'status' => 'pending',
+            'commission_rate' => 10.00
+        ]);
         
         // Set booking status to pending for partner approval
         $booking->update([

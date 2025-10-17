@@ -50,19 +50,19 @@
                             {{ $item['partner_email'] }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-red-600">
-                            ${{ number_format($item['total_amount'], 2) }}
+                            {{ \App\Helpers\CurrencyHelper::convertAndFormat($item['total_amount'], 'USD') }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            ${{ number_format($item['buckets']['0-15'], 2) }}
+                            {{ \App\Helpers\CurrencyHelper::convertAndFormat($item['buckets']['0-15'], 'USD') }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-yellow-600">
-                            ${{ number_format($item['buckets']['16-30'], 2) }}
+                            {{ \App\Helpers\CurrencyHelper::convertAndFormat($item['buckets']['16-30'], 'USD') }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-orange-600">
-                            ${{ number_format($item['buckets']['31-45'], 2) }}
+                            {{ \App\Helpers\CurrencyHelper::convertAndFormat($item['buckets']['31-45'], 'USD') }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-red-600 font-semibold">
-                            ${{ number_format($item['buckets']['46+'], 2) }}
+                            {{ \App\Helpers\CurrencyHelper::convertAndFormat($item['buckets']['46+'], 'USD') }}
                         </td>
                     </tr>
                 @empty

@@ -603,8 +603,8 @@
                                     Deal</button>
                                 <p class="text-gray-600 mt-2 text-xs" style="font-family: 'Noto Sans', sans-serif;">
                                     2 nights
-                                    <span class="text-xs line-through" style="color:#FF0004;">LKR 72,000</span>
-                                    <span style="color:black; font-weight:bold;"> LKR 26,844</span>
+                                    <span class="text-xs line-through" style="color:#FF0004;">@price(72000, 'LKR')</span>
+                                    <span style="color:black; font-weight:bold;"> @price(26844, 'LKR')</span>
                                 </p>
                             </div>
                         </div>
@@ -720,7 +720,7 @@
                                 </div>
                                 <div class="mt-1 text-right" style="font-family: 'Noto Sans', sans-serif;">
                                     <span class="text-xs text-gray-700 font-semibold">Starting from</span>
-                                    <span class="text-sm text-black font-bold"> LKR 82,896</span>
+                                    <span class="text-sm text-black font-bold"> @price(82896, 'LKR')</span>
                                 </div>
                             </div>
                         </div>

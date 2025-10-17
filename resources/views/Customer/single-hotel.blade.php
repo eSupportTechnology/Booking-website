@@ -254,7 +254,7 @@
                                         </select>
                                     </div>
                                     <div class="text-center pt-2">
-                                        <div class="text-sm font-bold mb-2">LKR {{ number_format($property->pricing->price_per_night ?? ($property->pricing->base_price ?? 0)) }}/night</div>
+                                        <div class="text-sm font-bold mb-2">{{ \App\Helpers\CurrencyHelper::convertAndFormat($property->pricing->price_per_night ?? ($property->pricing->base_price ?? 0), $property->pricing->currency ?? 'USD') }}/night</div>
                                         <button type="submit" class="w-full bg-[#3CC0E9] text-white py-2 rounded font-medium text-sm hover:bg-[#2BA8D1]">
                                             Reserve Now
                                         </button>
@@ -611,9 +611,7 @@
                         @if ($property->pricing)
                             <div>
                                 <h3 class="font-bold text-xs">Pricing Details</h3>
-                                <p class="text-xs">Price per Night: LKR
-                                    {{ number_format($property->pricing->price_per_night ?? ($property->pricing->base_price ?? 0)) }}
-                                </p>
+                                <p class="text-xs">Price per Night: @currency($property->pricing->price_per_night ?? ($property->pricing->base_price ?? 0), $property->pricing->currency ?? 'USD')</p>
                                 @if ($property->pricing->discount_percent)
                                     <p class="text-xs text-green-600">Discount:
                                         {{ $property->pricing->discount_percent }}%</p>
@@ -637,9 +635,7 @@
                                     <p class="text-xs">✓ Parking available</p>
                                 @endif
                                 @if ($property->services->parking_cost)
-                                    <p class="text-xs">Parking: LKR
-                                        {{ number_format($property->services->parking_cost) }}/{{ $property->services->parking_cost_unit ?? 'night' }}
-                                    </p>
+                                    <p class="text-xs">Parking: @currency($property->services->parking_cost, $property->pricing->currency ?? 'USD')/{{ $property->services->parking_cost_unit ?? 'night' }}</p>
                                 @endif
                             </div>
                         @endif
@@ -737,9 +733,9 @@
                                                 </td>
                                                 <td class="p-3 align-top">
                                                     @if($room->discount_enabled && $room->original_price)
-                                                        <div class="text-red-500 line-through text-xs">LKR {{ number_format($room->original_price) }}</div>
+                                                        <div class="text-red-500 line-through text-xs">@currency($room->original_price, $room->currency ?? 'USD')</div>
                                                     @endif
-                                                    <div class="text-lg font-bold">LKR {{ number_format($room->price_per_night ?? 0) }}</div>
+                                                    <div class="text-lg font-bold">@currency($room->price_per_night ?? 0, $room->currency ?? 'USD')</div>
                                                     @if($room->discount_enabled && $room->discount_percentage)
                                                         <span class="bg-green-600 text-white text-xs px-2 py-1 rounded">{{ $room->discount_percentage }}% off</span>
                                                     @endif

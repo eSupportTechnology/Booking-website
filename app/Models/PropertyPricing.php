@@ -15,6 +15,15 @@ class PropertyPricing extends Model
         'discount_percent'
     ];
 
+    public function getPriceInCurrency(string $targetCurrency): float
+    {
+        return app(\App\Services\CurrencyService::class)->convert(
+            $this->price_per_night, 
+            $this->currency, 
+            $targetCurrency
+        );
+    }
+
     protected $casts = [
         'discount_enabled' => 'boolean',
         'discount_percent' => 'integer',

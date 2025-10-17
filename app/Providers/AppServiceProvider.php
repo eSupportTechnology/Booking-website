@@ -45,14 +45,32 @@ class AppServiceProvider extends ServiceProvider
                 $app->make(SendSmsViaGetAction::class)
             );
         });
+
+        // Register currency services
+        $this->app->singleton(\App\Services\CurrencyService::class);
+        $this->app->singleton(\App\Services\CurrencyManager::class);
+    }
+
+    public function boot(): void
+    {
+        Gate::policy(Property::class, PropertyPolicy::class);
+        Booking::observe(BookingObserver::class);
+        
+        // Register Blade directive for currency formatting
+        \Blade::directive('currency', function ($expression) {
+            return "<?php echo \App\Helpers\CurrencyHelper::convertAndFormat($expression); ?>";
+        });
+        
+        \Blade::directive('price', function ($expression) {
+            $parts = explode(',', str_replace(['(', ')', ' '], '', $expression));
+            $amount = $parts[0] ?? '0';
+            $currency = $parts[1] ?? "'USD'";
+            return "<?php echo \App\Helpers\CurrencyHelper::convertAndFormat($amount, $currency); ?>";
+        });
     }
 
     /**
      * Bootstrap any application services.
      */
-    public function boot(): void
-    {
-        Gate::policy(Property::class, PropertyPolicy::class);
-        Booking::observe(BookingObserver::class);
-    }
+
 }

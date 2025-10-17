@@ -22,7 +22,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Total Earnings</p>
-                    <p class="text-3xl font-bold text-gray-800 mt-2">${{ number_format($totalEarnings) }}</p>
+                    <p class="text-3xl font-bold text-gray-800 mt-2">@currency($totalEarnings, 'USD')</p>
                     <p class="text-sm text-green-600 mt-1">
                         <i class="fas fa-arrow-up mr-1"></i>+12.5% from last month
                     </p>
@@ -36,7 +36,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">This Month</p>
-                    <p class="text-3xl font-bold text-gray-800 mt-2">${{ number_format($monthlyEarnings) }}</p>
+                    <p class="text-3xl font-bold text-gray-800 mt-2">@currency($monthlyEarnings, 'USD')</p>
                     <p class="text-sm text-green-600 mt-1">
                         <i class="fas fa-arrow-up mr-1"></i>+8.2% from last month
                     </p>
@@ -50,7 +50,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Pending Payout</p>
-                    <p class="text-3xl font-bold text-gray-800 mt-2">${{ number_format($pendingPayout) }}</p>
+                    <p class="text-3xl font-bold text-gray-800 mt-2">@currency($pendingPayout, 'USD')</p>
                     <p class="text-sm text-yellow-600 mt-1">
                         <i class="fas fa-clock mr-1"></i>Processing
                     </p>
@@ -64,7 +64,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Average/Booking</p>
-                    <p class="text-3xl font-bold text-gray-800 mt-2">${{ number_format($averageBooking) }}</p>
+                    <p class="text-3xl font-bold text-gray-800 mt-2">@currency($averageBooking, 'USD')</p>
                     <p class="text-sm text-purple-600 mt-1">
                         <i class="fas fa-chart-line mr-1"></i>+5.3% increase
                     </p>
@@ -103,7 +103,7 @@
                                 <i class="fas fa-check text-green-600"></i>
                             </div>
                             <div>
-                                <p class="font-semibold text-gray-800">$1,250.00</p>
+                                <p class="font-semibold text-gray-800">@currency(1250, 'USD')</p>
                                 <p class="text-sm text-gray-600">Paid on Jan 15, 2025</p>
                             </div>
                         </div>
@@ -115,7 +115,7 @@
                                 <i class="fas fa-clock text-yellow-600"></i>
                             </div>
                             <div>
-                                <p class="font-semibold text-gray-800">$850.00</p>
+                                <p class="font-semibold text-gray-800">@currency(850, 'USD')</p>
                                 <p class="text-sm text-gray-600">Expected on Jan 30, 2025</p>
                             </div>
                         </div>
@@ -176,15 +176,15 @@
                     <tbody class="divide-y divide-gray-200">
                         <tr>
                             <td class="px-4 py-3 text-sm text-gray-900">Current Month Commission</td>
-                            <td class="px-4 py-3 text-right text-sm font-medium text-gray-900">${{ number_format($monthlyEarnings * 0.15, 2) }}</td>
+                            <td class="px-4 py-3 text-right text-sm font-medium text-gray-900">{{ \App\Helpers\CurrencyHelper::convertAndFormat($monthlyEarnings * 0.15, 'USD') }}</td>
                         </tr>
                         <tr>
                             <td class="px-4 py-3 text-sm text-gray-900">Previous Month Commission</td>
-                            <td class="px-4 py-3 text-right text-sm font-medium text-gray-900">${{ number_format(($monthlyEarnings * 0.92) * 0.15, 2) }}</td>
+                            <td class="px-4 py-3 text-right text-sm font-medium text-gray-900">{{ \App\Helpers\CurrencyHelper::convertAndFormat(($monthlyEarnings * 0.92) * 0.15, 'USD') }}</td>
                         </tr>
                         <tr class="bg-gray-50">
                             <td class="px-4 py-3 text-sm font-semibold text-gray-900">Total Commission Due</td>
-                            <td class="px-4 py-3 text-right text-sm font-bold text-green-600">${{ number_format(($monthlyEarnings + ($monthlyEarnings * 0.92)) * 0.15, 2) }}</td>
+                            <td class="px-4 py-3 text-right text-sm font-bold text-green-600">{{ \App\Helpers\CurrencyHelper::convertAndFormat(($monthlyEarnings + ($monthlyEarnings * 0.92)) * 0.15, 'USD') }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -247,7 +247,7 @@
                                 <i class="fas fa-check mr-1"></i>{{ $transaction['status'] }}
                             </span>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-green-600">+${{ number_format($transaction['amount']) }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-green-600">+{{ \App\Helpers\CurrencyHelper::convertAndFormat($transaction['amount'], 'USD') }}</td>
                     </tr>
                     @empty
                     <tr>

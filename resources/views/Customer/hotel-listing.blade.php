@@ -104,7 +104,7 @@
                             <div class="text-right">
                                 @if($property->pricing)
                                     <p class="text-sm text-gray-500">Starting from</p>
-                                    <p class="text-lg font-bold text-gray-800">LKR {{ number_format($property->pricing->price_per_night ?? 0) }}</p>
+                                    <p class="text-lg font-bold text-gray-800">@currency($property->pricing->price_per_night ?? 0, $property->pricing->currency ?? 'USD')</p>
                                 @endif
                             </div>
                             <div class="flex gap-2">

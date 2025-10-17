@@ -60,5 +60,22 @@ return [
     'sender_id' => env('QUICKSEND_SENDER_ID'),
 ],
 
+'exchange_rate' => [
+    'api_key' => env('EXCHANGE_RATE_API_KEY'),
+    'base_url' => 'https://api.exchangerate-api.com/v4/latest/',
+],
+
+'stripe' => [
+    'key' => env('STRIPE_KEY'),
+    'secret' => env('STRIPE_SECRET'),
+    'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
+],
+
+'paypal' => [
+    'client_id' => env('PAYPAL_CLIENT_ID'),
+    'client_secret' => env('PAYPAL_CLIENT_SECRET'),
+    'mode' => env('PAYPAL_MODE', 'sandbox'),
+],
+
 
 ];
