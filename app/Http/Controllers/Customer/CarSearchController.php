@@ -14,7 +14,7 @@ class CarSearchController extends Controller
     public function carsearch(Request $request)
     {
         // Start the base query
-        $query = Car::where('status', 'Active')
+        $query = Car::where('status', 'inactive')
             ->with('carType', 'company', 'brand', 'model');
 
         // Apply Dynamic Filtering based on Request inputs
