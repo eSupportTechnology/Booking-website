@@ -3,14 +3,14 @@
 @section('content')
     <div class="space-y-8">
         <!-- Header -->
-        <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl p-8 text-white">
-            <div class="flex justify-between items-center">
+        <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl p-6 md:p-8 text-white">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <h1 class="text-4xl font-bold mb-2">Apartments</h1>
-                    <p class="text-blue-100 text-lg">Manage your apartment listings</p>
+                    <h1 class="text-3xl md:text-4xl font-bold mb-2">Apartments</h1>
+                    <p class="text-blue-100 text-base md:text-lg">Manage your apartment listings</p>
                 </div>
                 <a href="{{ route('partner.property.category') }}"
-                    class="bg-white text-blue-600 px-6 py-3 rounded-xl font-semibold hover:bg-blue-50 transition-all duration-200 shadow-lg">
+                    class="w-full sm:w-auto text-center bg-white text-blue-600 px-6 py-3 rounded-xl font-semibold hover:bg-blue-50 transition-all duration-200 shadow-lg">
                     <i class="fas fa-plus mr-2"></i>Add Apartment
                 </a>
             </div>
@@ -24,32 +24,35 @@
                         placeholder="Search apartments by title, city, or address..."
                         class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                 </div>
-                <select name="status"
-                    class="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                    <option value="">All Status</option>
-                    <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option>
-                    <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
-                </select>
-                <button type="submit"
-                    class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold transition-colors duration-200">
-                    <i class="fas fa-search mr-2"></i>Search
-                </button>
-                @if (request('search') || request('status'))
-                    <a href="{{ route('partner.properties.apartments') }}"
-                        class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-xl font-semibold transition-colors duration-200">
-                        <i class="fas fa-times mr-2"></i>Clear
-                    </a>
-                @endif
+                <div class="flex flex-col sm:flex-row gap-4 sm:items-center w-full md:w-auto">
+                    <select name="status"
+                        class="w-full sm:w-auto px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">All Status</option>
+                        <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option>
+                        <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                    </select>
+                    <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                        <button type="submit"
+                            class="flex-1 sm:flex-none bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold transition-colors duration-200 text-center">
+                            <i class="fas fa-search mr-2"></i>Search
+                        </button>
+                        @if (request('search') || request('status'))
+                            <a href="{{ route('partner.properties.apartments') }}"
+                                class="flex-1 sm:flex-none bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-xl font-semibold transition-colors duration-200 text-center">
+                                <i class="fas fa-times mr-2"></i>Clear
+                            </a>
+                        @endif
+                    </div>
+                </div>
             </form>
         </div>
 
         <!-- Properties Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             @forelse($properties as $property)
                 <div
-                    class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 overflow-hidden hover:scale-105">
+                    class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 overflow-hidden hover:scale-[1.02]">
                     <a href="{{ route('partner.properties.views', $property['id']) }}">
-
                         <div class="h-48 bg-gray-200 relative">
                             @if ($property['image'])
                                 <img src="{{ asset('storage/' . $property['image']) }}"
@@ -69,9 +72,10 @@
                         </div>
                     </a>
                     <div class="p-6">
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">{{ $property['title'] ?? 'Untitled Property' }}
+                        <h3 class="text-lg md:text-xl font-bold text-gray-800 mb-2 truncate">
+                            {{ $property['title'] ?? 'Untitled Property' }}
                         </h3>
-                        <p class="text-gray-600 mb-4">
+                        <p class="text-gray-600 mb-4 text-sm md:text-base">
                             <i class="fas fa-map-marker-alt mr-2"></i>{{ $property['city'] ?? 'Location not specified' }}
                         </p>
                         <div class="flex items-center justify-between mb-4">
@@ -93,6 +97,7 @@
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>
+
                     </div>
                 </div>
             @empty
@@ -101,7 +106,7 @@
                     <h3 class="text-xl font-semibold text-gray-600 mb-2">No Apartments Found</h3>
                     <p class="text-gray-500 mb-6">Start by adding your first apartment listing</p>
                     <a href="{{ route('partner.list-your-property') }}"
-                        class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-200">
+                        class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-200 inline-block">
                         <i class="fas fa-plus mr-2"></i>Add Apartment
                     </a>
                 </div>
