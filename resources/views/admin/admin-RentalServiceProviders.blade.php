@@ -97,7 +97,7 @@
                             </td>
                             <td class="px-2 sm:px-4 py-3">{{ $provider->email }}</td>
                             <td class="px-2 sm:px-4 py-3">
-                                <span class="px-2 py-1 rounded-full text-xs font-semibold 
+                                <span class="px-2 py-1 rounded-full text-xs font-semibold
                                     @if($provider->isCompany()) bg-blue-100 text-blue-800 @else bg-green-100 text-green-800 @endif">
                                     {{ ucfirst($provider->account_type) }}
                                 </span>
