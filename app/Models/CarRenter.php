@@ -15,6 +15,7 @@ class CarRenter extends Authenticatable
     protected $fillable = [
         'email',
         'password',
+        'status',
         'account_type',
         'company_name',
         'business_reg_no',
