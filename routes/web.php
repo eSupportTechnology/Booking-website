@@ -1034,6 +1034,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
             // Rental status routes
             Route::patch('/taxi/{taxi}', \App\Http\Controllers\Admin\UpdateTaxiStatusController::class)->name('taxi.update');
             Route::patch('/airport-transfer/{transfer}', \App\Http\Controllers\Admin\UpdateAirportTransferStatusController::class)->name('airport-transfer.update');
+            // Rental provider (car renter) status route
+            Route::patch('/rental-provider/{provider}', \App\Http\Controllers\Admin\UpdateRentalProviderStatusController::class)->name('rental-provider.update');
         });
 
         // Approval routes
@@ -1384,6 +1386,6 @@ Route::get('/customer/car-rental/booking', function () {
 })->name('customer.car-rental.booking');
 
 // Currency routes
-Route::post('/set-currency', [App\Http\Controllers\CurrencyController::class, 'setCurrency'])->name('currency.set');
-Route::get('/api/exchange-rate/{from}/{to}', [App\Http\Controllers\CurrencyController::class, 'getRate']);
+Route::post('/set-currency', [\App\Http\Controllers\CurrencyController::class, 'setCurrency'])->name('currency.set');
+Route::get('/api/exchange-rate/{from}/{to}', [\App\Http\Controllers\CurrencyController::class, 'getRate']);
 
