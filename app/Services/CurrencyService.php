@@ -5,13 +5,17 @@ namespace App\Services;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
 use App\Models\ExchangeRate;
+use Illuminate\Support\Facades\Log;
 
 class CurrencyService
 {
     private array $supportedCurrencies = ['USD', 'EUR', 'GBP', 'LKR'];
     
-    public function convert(float $amount, string $from, string $to): float
+    public function convert($amount, string $from, string $to): float
     {
+        // Ensure amount is a float
+        $amount = (float) $amount;
+        
         if ($from === $to) return $amount;
         
         $rate = $this->getRate($from, $to);
@@ -48,7 +52,7 @@ class CurrencyService
                     return $rate;
                 }
             } catch (\Exception $e) {
-                \Log::error('Currency API error: ' . $e->getMessage());
+                Log::error('Currency API error: ' . $e->getMessage());
             }
             
             return 1.0;
