@@ -15,7 +15,7 @@ class CurrencyHelper
         $currency = $currency ?? app(CurrencyManager::class)->getUserCurrency();
         return app(CurrencyService::class)->formatPrice($amount, $currency);
     }
-    
+
     /**
      * Convert a price from one currency to another
      */
@@ -24,7 +24,7 @@ class CurrencyHelper
         $toCurrency = $toCurrency ?? app(CurrencyManager::class)->getUserCurrency();
         return app(CurrencyService::class)->convert($amount, $fromCurrency, $toCurrency);
     }
-    
+
     /**
      * Convert and format a price
      */
@@ -34,7 +34,7 @@ class CurrencyHelper
         $converted = app(CurrencyService::class)->convert($amount, $fromCurrency, $toCurrency);
         return app(CurrencyService::class)->formatPrice($converted, $toCurrency);
     }
-    
+
     /**
      * Get the symbol for a currency
      */
@@ -42,7 +42,7 @@ class CurrencyHelper
     {
         return app(CurrencyService::class)->getCurrencySymbol($currency);
     }
-    
+
     /**
      * Format a price with its currency symbol in the correct position
      */

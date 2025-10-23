@@ -19,13 +19,13 @@ class Kernel extends ConsoleKernel
     {
         // Generate commission invoices every 15 days
         $schedule->command('commission:generate-invoices')->dailyAt('09:00');
-        
+
         // Check for overdue payments and deactivate properties daily
         $schedule->command('commission:deactivate-overdue')->dailyAt('10:00');
-        
+
         // Cancel expired bookings every hour
         $schedule->command('bookings:cancel-expired')->hourly();
-        
+
         // Update currency exchange rates every hour
         $schedule->command('currency:update-rates')
             ->hourly()
