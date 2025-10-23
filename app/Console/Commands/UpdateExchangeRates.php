@@ -13,10 +13,10 @@ class UpdateExchangeRates extends Command
     public function handle(CurrencyService $currencyService)
     {
         $this->info('Starting exchange rates update...');
-        
+
         $baseCurrencies = ['USD', 'EUR', 'GBP', 'LKR'];
         $errors = [];
-        
+
         foreach ($baseCurrencies as $currency) {
             try {
                 $this->info("Fetching rates for {$currency}...");
@@ -27,7 +27,7 @@ class UpdateExchangeRates extends Command
                 $this->error("✗ Failed to update rates for {$currency}");
             }
         }
-        
+
         if (!empty($errors)) {
             $this->error("\nErrors encountered:");
             foreach ($errors as $error) {
@@ -35,7 +35,7 @@ class UpdateExchangeRates extends Command
             }
             return 1;
         }
-        
+
         $this->info("\nAll exchange rates updated successfully!");
         return 0;
     }

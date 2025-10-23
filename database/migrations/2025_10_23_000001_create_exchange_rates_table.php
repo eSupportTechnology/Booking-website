@@ -15,7 +15,7 @@ return new class extends Migration
             $table->decimal('rate', 10, 6);
             $table->timestamp('cached_at');
             $table->timestamps();
-            
+
             $table->unique(['from_currency', 'to_currency']);
             $table->index(['from_currency', 'to_currency', 'cached_at']);
         });
