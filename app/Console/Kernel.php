@@ -4,6 +4,7 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Illuminate\Support\Facades\Log;
 
 class Kernel extends ConsoleKernel
 {
@@ -11,6 +12,7 @@ class Kernel extends ConsoleKernel
         Commands\GenerateCommissionInvoices::class,
         Commands\DeactivateOverduePartners::class,
         Commands\CancelExpiredBookings::class,
+        Commands\UpdateExchangeRates::class,
     ];
 
     protected function schedule(Schedule $schedule): void
@@ -23,6 +25,14 @@ class Kernel extends ConsoleKernel
         
         // Cancel expired bookings every hour
         $schedule->command('bookings:cancel-expired')->hourly();
+        
+        // Update currency exchange rates every hour
+        $schedule->command('currency:update-rates')
+            ->hourly()
+            ->withoutOverlapping()
+            ->onFailure(function () {
+                Log::error('Failed to update exchange rates');
+            });
     }
 
     protected function commands(): void
