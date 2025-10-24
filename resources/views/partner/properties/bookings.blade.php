@@ -9,9 +9,11 @@
                 <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-1 md:mb-2">Bookings Management</h1>
                 <p class="text-indigo-100 text-sm sm:text-base md:text-lg">Track and manage all your property reservations</p>
             </div>
-            <div class="text-left md:text-right">
-                <p class="text-indigo-100 text-xs sm:text-sm">Total Revenue</p>
-                <p class="text-2xl sm:text-3xl font-bold">${{ number_format(collect($bookings)->sum('amount')) }}</p>
+            <div class="text-right">
+                <p class="text-indigo-100 text-sm">Total Revenue</p>
+                <p class="text-3xl font-bold">
+                    <x-price :amount="collect($bookings)->sum('amount')" />
+                </p>
             </div>
         </div>
     </div>
@@ -206,8 +208,10 @@
                                 {{ $booking['status'] }}
                             </span>
                         </td>
-                        <td class="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-right font-bold text-green-600">${{ number_format($booking['amount']) }}</td>
-                        <td class="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-right">
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-green-600">
+                            <x-price :amount="$booking['amount']" />
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <div class="flex justify-end space-x-2">
                                 <button class="bg-indigo-500 hover:bg-indigo-600 text-white px-3 py-1 rounded text-xs sm:text-sm transition-colors duration-200">
                                     <i class="fas fa-eye mr-1"></i>View

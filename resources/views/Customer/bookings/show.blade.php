@@ -68,7 +68,7 @@
                             </div>
                             <div class="flex justify-between">
                                 <span>Price per night:</span>
-                                <span x-show="!selectedRoom">@currency($property->pricing->price_per_night ?? ($property->pricing->base_price ?? 0), $property->pricing->currency ?? 'USD')</span>
+                                <span x-show="!selectedRoom"><x-price :amount="$property->pricing->price_per_night ?? ($property->pricing->base_price ?? 0)" :currency="$property->pricing->currency ?? 'USD'" /></span>
                                 <span x-show="selectedRoom" x-text="formatPrice(getRoomPrice(), getSelectedRoomCurrency())"></span>
                             </div>
                             <div class="flex justify-between" x-show="checkIn && checkOut">
@@ -119,10 +119,28 @@ function bookingForm() {
         hasRooms: {{ $property->rooms->count() > 0 ? 'true' : 'false' }},
         userCurrency: '{{ app(\App\Services\CurrencyManager::class)->getUserCurrency() }}',
 
-        formatPrice(amount, currency) {
-            const symbols = { USD: '$', EUR: '€', GBP: '£', LKR: 'Rs' };
-            const symbol = symbols[currency] || currency;
-            return symbol + amount.toLocaleString();
+        async formatPrice(amount, currency) {
+            try {
+                const response = await fetch('/api/convert-price', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({
+                        amount: amount,
+                        from: currency,
+                        to: this.userCurrency
+                    })
+                });
+                const data = await response.json();
+                return data.formattedPrice;
+            } catch (error) {
+                console.error('Price conversion failed:', error);
+                const symbols = { USD: '$', EUR: '€', GBP: '£', LKR: 'Rs' };
+                const symbol = symbols[currency] || currency;
+                return symbol + amount.toLocaleString();
+            }
         },
 
         getSelectedRoomCurrency() {

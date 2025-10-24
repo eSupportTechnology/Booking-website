@@ -603,8 +603,8 @@
                                     Deal</button>
                                 <p class="text-gray-600 mt-2 text-xs" style="font-family: 'Noto Sans', sans-serif;">
                                     2 nights
-                                    <span class="text-xs line-through" style="color:#FF0004;">@price(72000, 'LKR')</span>
-                                    <span style="color:black; font-weight:bold;"> @price(26844, 'LKR')</span>
+                                    <span class="text-xs line-through" style="color:#FF0004;"><x-price :amount="72000" currency="LKR" /></span>
+                                    <span style="color:black; font-weight:bold;"><x-price :amount="26844" currency="LKR" /></span>
                                 </p>
                             </div>
                         </div>
