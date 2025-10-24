@@ -7,8 +7,8 @@
     $formattedPrice = $currencyService->formatPriceWithSymbol($convertedAmount, $currentCurrency);
 @endphp
 
-<span {{ $attributes->merge(['class' => 'price']) }} 
-      data-original-amount="{{ $amount }}" 
+<span {{ $attributes->merge(['class' => 'price']) }}
+      data-original-amount="{{ $amount }}"
       data-original-currency="{{ $currency ?? config('app.default_currency') }}">
     {{ $formattedPrice }}
 </span>
