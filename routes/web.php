@@ -58,6 +58,7 @@ Route::post('change-language', [LanguageController::class, 'change'])->name('lan
 
 Route::prefix('customer')->group(function () {
     // Search route
+    Route::get('/search-form', [SearchController::class, 'showSearchForm'])->name('customer.searchForm');
     Route::get('/search', [SearchController::class, 'search'])->name('customer.search');
 
 
@@ -1387,3 +1388,5 @@ Route::get('/customer/car-rental/booking', function () {
 Route::post('/set-currency', [App\Http\Controllers\CurrencyController::class, 'setCurrency'])->name('currency.set');
 Route::get('/api/exchange-rate/{from}/{to}', [App\Http\Controllers\CurrencyController::class, 'getRate']);
 
+Route::get('/customer/car-rental/search', [CarSearchController::class, 'carsearch'])
+    ->name('customer.carsearch');

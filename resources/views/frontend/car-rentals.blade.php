@@ -18,7 +18,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 <div class="relative z-10 -mt-8 px-4">
   <!-- Booking form -->
-  <form method="GET" action="{{ route('customer.car-rental.search') }}"
+  <form method="GET" action="{{ route('customer.carsearch') }}"
     class="bg-white rounded-xl px-3 py-2 shadow-lg flex flex-col md:flex-row 
            items-stretch md:items-center gap-3 md:gap-0 
            border-2 sm:border-4 border-yellow-400 

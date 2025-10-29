@@ -79,6 +79,124 @@ if (!function_exists('simple_slug')) {
 }
 @endphp
 
+
+<!-- Booking Form -->
+<div class="relative z-10 -mt-8 px-4">
+  <form method="GET" action="{{ route('customer.carsearch') }}"
+    class="bg-white rounded-xl px-3 py-2 shadow-lg flex flex-col md:flex-row 
+           items-stretch md:items-center gap-3 md:gap-0 
+           border-2 sm:border-4 border-yellow-400 
+           w-full max-w-6xl mx-auto overflow-visible text-sm">
+
+    <div class="flex flex-col md:flex-row flex-wrap md:flex-nowrap items-stretch w-full gap-3 md:gap-x-4">
+
+      <!-- Pickup -->
+      <div x-data="{ openPickup: false, pickupLocation: '{{ request('pickup') }}' }" class="relative flex-1 min-w-[200px]">
+        <button @click="openPickup = !openPickup" type="button"
+          class="flex items-center gap-2 w-full text-left border p-2 rounded">
+          <i class="fas fa-search text-lg"></i>
+          <span x-text="pickupLocation || 'Pick-up location'" class="text-gray-800 truncate text-base font-sans"></span>
+        </button>
+        <div x-show="openPickup" @click.outside="openPickup = false"
+          class="absolute z-50 bg-white shadow-lg rounded mt-1 w-full sm:max-w-xs border">
+          <ul class="max-h-48 overflow-y-auto">
+            <li @click="pickupLocation = 'Colombo'; openPickup = false"
+              class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Colombo</li>
+            <li @click="pickupLocation = 'Negombo'; openPickup = false"
+              class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Negombo</li>
+            <li @click="pickupLocation = 'Kandy'; openPickup = false"
+              class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Kandy</li>
+          </ul>
+        </div>
+        <input type="hidden" name="pickup" :value="pickupLocation" />
+      </div>
+
+      <!-- Divider -->
+      <div class="hidden md:flex justify-center items-center">
+        <div class="border-r border-black h-8"></div>
+      </div>
+
+      <!-- Drop-off -->
+      <div x-data="{ openDestination: false, destinationLocation: '{{ request('destination') }}' }"
+        id="dropoffField"
+        class="relative flex-1 min-w-[200px]">
+        <button @click="openDestination = !openDestination" type="button"
+          class="flex items-center gap-2 w-full text-left border p-2 rounded">
+          <i class="fas fa-flag-checkered text-lg"></i>
+          <span x-text="destinationLocation || 'Drop-off location'"
+            class="text-gray-800 truncate text-base font-sans"></span>
+        </button>
+        <div x-show="openDestination" @click.outside="openDestination = false"
+          class="absolute z-50 bg-white shadow-lg rounded mt-1 w-full sm:max-w-xs border">
+          <ul class="max-h-48 overflow-y-auto">
+            <li @click="destinationLocation = 'Airport'; openDestination = false"
+              class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Airport</li>
+            <li @click="destinationLocation = 'Galle'; openDestination = false"
+              class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Galle</li>
+            <li @click="destinationLocation = 'Matara'; openDestination = false"
+              class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Matara</li>
+          </ul>
+        </div>
+        <input type="hidden" name="destination" :value="destinationLocation" />
+      </div>
+
+      <!-- Divider -->
+      <div class="hidden md:flex justify-center items-center">
+        <div class="border-r border-black h-8"></div>
+      </div>
+
+      <!-- Pickup Date -->
+      <div x-data="{ open: false, checkin: '{{ request('checkin') }}' }" class="relative flex-1 min-w-[200px]">
+        <button @click="open = !open" type="button"
+          class="flex items-center gap-2 w-full text-left border p-2 rounded">
+          <img src="{{ asset('assets/calender.svg') }}" alt="Calendar" class="w-5 h-5" />
+          <span x-text="checkin ? new Date(checkin).toLocaleString() : 'Pick-up Date & Time'"
+            class="text-gray-800 truncate text-base font-sans"></span>
+        </button>
+        <div x-show="open" @click.outside="open = false"
+          class="absolute z-50 bg-white shadow-xl rounded-xl p-4 mt-2 w-full sm:w-72 max-w-xs right-0 text-gray-800 space-y-2 text-sm">
+          <label for="checkin-date" class="block text-sm font-medium text-gray-700 mb-1">Pick Date & Time</label>
+          <input type="datetime-local" id="checkin-date" x-model="checkin"
+            class="w-full border p-2 rounded outline-none" />
+        </div>
+        <input type="hidden" name="checkin" :value="checkin" />
+      </div>
+
+      <!-- Divider -->
+      <div class="hidden md:flex justify-center items-center">
+        <div class="border-r border-black h-8"></div>
+      </div>
+
+      <!-- Drop-off Date -->
+      <div x-data="{ open: false, checkout: '{{ request('checkout') }}' }" class="relative flex-1 min-w-[200px]">
+        <button @click="open = !open" type="button"
+          class="flex items-center gap-2 w-full text-left border p-2 rounded">
+          <img src="{{ asset('assets/calender.svg') }}" alt="Calendar" class="w-5 h-5" />
+          <span x-text="checkout ? new Date(checkout).toLocaleString() : 'Drop-off Date & Time'"
+            class="text-gray-800 truncate text-base font-sans"></span>
+        </button>
+        <div x-show="open" @click.outside="open = false"
+          class="absolute z-50 bg-white shadow-xl rounded-xl p-4 mt-2 w-full sm:w-72 max-w-xs right-0 text-gray-800 space-y-2 text-sm">
+          <label for="checkout-date" class="block text-sm font-medium text-gray-700 mb-1">Drop Date & Time</label>
+          <input type="datetime-local" id="checkout-date" x-model="checkout"
+            class="w-full border p-2 rounded outline-none" />
+        </div>
+        <input type="hidden" name="checkout" :value="checkout" />
+      </div>
+
+      <!-- Submit Button -->
+      <div class="flex-shrink-0 w-full md:w-auto md:self-center">
+        <button type="submit"
+          class="w-full bg-[#3CC0E9] hover:bg-blue-700 text-white font-semibold px-4 py-[10px] rounded-lg text-sm">
+          Search
+        </button>
+      </div>
+
+    </div>
+  </form>
+</div>
+<!-- ===================== END TOP SEARCH FILTER SECTION ===================== -->
+
 <div id="mobile-backdrop" class="mobile-backdrop"></div>
 
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -99,10 +217,10 @@ if (!function_exists('simple_slug')) {
                 </div>
                 
                 {{-- Clear Filters (Uses the dedicated search route) --}}
-                <a href="{{ route('customer.car-rental.search') }}" class="text-sm text-primary hover:text-primary-dark mb-4 block text-right">Clear all filters</a>
+                <a href="{{ route('customer.carsearch') }}" class="text-sm text-primary hover:text-primary-dark mb-4 block text-right">Clear all filters</a>
 
                 {{-- --- START FILTER FORM (Submits filter changes via GET) --- --}}
-                <form method="GET" action="{{ route('customer.car-rental.search') }}" id="filter-form">
+                <form method="GET" action="{{ route('customer.carsearch') }}" id="filter-form">
                     {{-- Hidden inputs to maintain booking form context when applying sidebar filters --}}
                     @foreach (['pickup', 'destination', 'checkin', 'checkout'] as $key)
                         @if (request($key))
