@@ -84,6 +84,14 @@
 .results-grid-container .result-item .sm\:items-end {
     align-items: flex-start; /* Align price details to the start for better stack readability */
 }
+.loader-overlay {
+  transition: opacity 0.3s ease;
+}
+.loader-overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
 </style>
 @endpush
 
@@ -93,6 +101,78 @@
 
 <!-- Alpine.js for interactivity (required for x-data, x-show, etc.) -->
 <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.querySelector("form[action='{{ route('customer.search') }}']");
+  const resultsContainer = document.querySelector("#results-container");
+  const loader = document.querySelector("#loader-overlay");
+
+  // --- Debounce helper ---
+  function debounce(fn, delay = 400) {
+    let timeout;
+    return (...args) => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => fn(...args), delay);
+    };
+  }
+
+  // --- Show/hide loader ---
+  function showLoader() {
+    loader.classList.remove("hidden");
+  }
+  function hideLoader() {
+    loader.classList.add("hidden");
+  }
+
+  // --- Update Results via AJAX ---
+  const updateResults = debounce(async () => {
+    const formData = new FormData(form);
+    const query = new URLSearchParams(formData).toString();
+
+    showLoader();
+    try {
+      const res = await axios.get("{{ route('customer.search.ajax') }}?" + query);
+      resultsContainer.innerHTML = res.data.html;
+    } catch (err) {
+      console.error(err);
+      resultsContainer.innerHTML =
+        '<div class="text-center py-10 text-red-500">Error loading results</div>';
+    } finally {
+      hideLoader();
+    }
+  }, 500); // delay = 500ms for smoother UX
+
+  // --- Listen to filter changes ---
+  document.querySelectorAll("input[type=checkbox], input[type=radio], select").forEach(el => {
+    el.addEventListener("change", updateResults);
+  });
+
+  // --- Handle pagination clicks dynamically ---
+  document.addEventListener("click", function(e) {
+    const link = e.target.closest(".pagination a");
+    if (!link) return;
+
+    e.preventDefault();
+    const url = link.getAttribute("href");
+    if (!url) return;
+
+    showLoader();
+    axios.get(url)
+      .then(res => resultsContainer.innerHTML = res.data.html)
+      .catch(() => resultsContainer.innerHTML = "Error loading page")
+      .finally(hideLoader);
+  });
+
+  // --- Optional: Handle typing in destination search field (if any) ---
+  const destinationInput = form.querySelector("input[name='destination']");
+  if (destinationInput) {
+    destinationInput.addEventListener("input", updateResults);
+  }
+});
+</script>
+
 
 
 {{-- 🔹 SEARCH FILTER BAR (property search kept intact, enhanced with the same structure as first file) --}}
@@ -123,7 +203,7 @@
             </button>
             <div x-show="open" @click.away="open = false"
                 class="absolute z-20 bg-white shadow-xl rounded-xl p-3 mt-2 w-64 sm:w-72 left-0 md:left-auto md:right-0 text-gray-800 space-y-2 text-sm">
-                <template x-for="city in ['New York','Los Angeles','London','Paris','Tokyo','Galle']" :key="city">
+                <template x-for="city in ['New York','Los Angeles','London','Paris','Tokyo','Galle','Colombo']" :key="city">
                     <button type="button" @click="destination = city; open = false"
                         class="block w-full text-left px-3 py-2 hover:bg-gray-100 rounded">
                         <span x-text="city"></span>
@@ -453,39 +533,11 @@
 
             {{-- --- RESULT CONTAINER: This is the element that will switch display styles --- --}}
             <div id="results-container" class="space-y-6">
+                @include('Customer._searchResults', ['properties' => $properties])
 
                 {{-- Dynamic result cards loop based on $properties --}}
                 @forelse ($properties as $property)
-                <div class="result-item result-item-list bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow border border-gray-200 overflow-hidden">
-                    <div class="result-image">
-                        @php
-                            // Try to get the first image path
-                            $img = null;
-                            if ($property->files && $property->files->count() > 0) {
-                                $img = $property->files->first()->path;
-                            }
-                        @endphp
-
-                        @if($img)
-                            <img src="{{ asset($img) }}" alt="{{ $property->title }}" class="w-full h-full object-cover">
-                        @else
-                            <div class="w-full h-full bg-gray-300 flex items-center justify-center"><span class="text-gray-500">Property Image Placeholder</span></div>
-                        @endif
-                    </div>
-                    <div class="sm:w-1/2 p-4 flex flex-col justify-between">
-                        <div>
-                            <div class="flex items-start justify-between mb-2">
-                                <h3 class="text-xl font-bold text-primary hover:text-primary-dark transition-colors">{{ $property->title }}</h3>
-                                <div class="flex items-center space-x-2">
-                                    <div class="text-sm text-gray-500 font-medium">{{ $property->reviews_count ?? 0 }} reviews</div>
-                                    <span class="inline-flex items-center bg-primary text-white text-base font-bold px-2 py-1 rounded-t-md rounded-r-md">{{ $property->stars ?? number_format($property->reviews_avg_rating ?? 0, 1) }}</span>
-                                </div>
-                            </div>
-                            <div class="flex items-center text-sm text-gray-600 mb-3">
-                                <svg class="w-4 h-4 mr-1 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a6 6 0 00-6 6c0 4.42 4 10 6 10s6-5.58 6-10a6 6 0 00-6-6zm0 10a2 2 0 110-4 2 2 0 010 4z"/></svg>
-                                <span class="font-medium mr-1">{{ $property->city }}, {{ $property->country }}</span>
-                                <span class="text-xs underline cursor-pointer hover:text-gray-700">Show on map</span>
-                            </div>
+                
                             <ul class="list-disc list-inside text-sm text-gray-700 space-y-1">
                                 {{-- Use facilities for features if available --}}
                                 @if($property->facilities && $property->facilities->count())
@@ -507,7 +559,7 @@
                             <div class="text-3xl font-bold text-gray-800">@if($price) @currency($price, $property->rooms()->first()->currency ?? 'USD') @else N/A @endif</div>
                             <div class="text-xs text-gray-500 mb-4">Includes taxes and fees</div>
                         </div>
-                        <a href="{{ route('property.show', $property->id ?? '#') }}" class="w-full sm:w-auto bg-primary text-white text-center px-4 py-3 rounded-lg font-bold hover:bg-primary-dark transition-colors shadow-lg">See Availability</a>
+                        <a href="{{ route('customer.properties.details', $property->id ?? '#') }}" class="w-full sm:w-auto bg-primary text-white text-center px-4 py-3 rounded-lg font-bold hover:bg-primary-dark transition-colors shadow-lg">See Availability</a>
                     </div>
                 </div>
                 @empty
@@ -517,6 +569,12 @@
                     <p class="text-gray-500">We couldn't find any listings that match your search. Try changing filters or clearing some fields.</p>
                 </div>
                 @endforelse
+                
+                <!-- Loader overlay -->
+                <div id="loader-overlay"
+                    class="hidden fixed inset-0 bg-white/70 z-40 flex items-center justify-center">
+                    <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-600"></div>
+                </div>
 
                 {{-- Pagination --}}
                 @if(method_exists($properties, 'links'))
