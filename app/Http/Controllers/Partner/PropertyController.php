@@ -145,36 +145,67 @@ class PropertyController extends Controller
     }
 
     // Get trending cities based on property listings customer home  page
-public function getTrendingCities()
-{
-    $topCities = DB::table('properties')
-        ->select('city', DB::raw('COUNT(*) as total'))
-        ->groupBy('city')
-        ->orderByDesc('total')
-        ->take(5) // or any number you want
-        ->get();
+    public function getTopBookingCities()
+    {
+        
+        $topCities = \DB::table('bookings')
+            ->join('properties', 'bookings.property_id', '=', 'properties.id')
 
-    $citiesWithImages = $topCities->map(function ($city) {
-        $filename = strtolower(str_replace(' ', '', $city->city));
-        $imagePathJpg = public_path("images/{$filename}.jpg");
-        $imagePathPng = public_path("images/{$filename}.png");
+            
+            ->select('properties.city', \DB::raw('COUNT(bookings.id) as total_bookings'))
 
-        if (file_exists($imagePathJpg)) {
-            $imageUrl = asset("images/{$filename}.jpg");
-        } elseif (file_exists($imagePathPng)) {
-            $imageUrl = asset("images/{$filename}.png");
-        } else {
-            $imageUrl = asset("images/default.jpg");
-        }
+            
+            ->groupBy('properties.city')
 
-        return [
-            'city' => $city->city,
-            'count' => $city->total,
-            'image' => $imageUrl,
-        ];
-    });
+           
+            ->orderByDesc('total_bookings')
 
-    return response()->json($citiesWithImages);
-}
+            
+            ->take(5)
+            ->get();
+
+        
+        $cities = $topCities->map(function ($city) {
+            
+            $filename = strtolower(str_replace(' ', '', $city->city));
+
+            
+            $imagePathJpg = public_path("images/{$filename}.jpg");
+            $imagePathPng = public_path("images/{$filename}.png");
+
+            
+            if (file_exists($imagePathJpg)) {
+                $imageUrl = asset("images/{$filename}.jpg");
+            } elseif (file_exists($imagePathPng)) {
+                $imageUrl = asset("images/{$filename}.png");
+            } else {
+                $imageUrl = asset("images/default.jpg");
+            }
+
+           
+            return [
+                'city' => $city->city,
+                'image' => $imageUrl,
+                'bookings' => $city->total_bookings,
+            ];
+        });
+
+        
+        return $cities;
+    }
+
+    public function showCities(GetPropertyDataAction $action)
+    {
+        
+        $data = $action->execute();
+
+        
+        $cities = $this->getTopBookingCities();
+
+        
+        return view('Customer.home', array_merge($data, [
+            'cities' => $cities
+        ]));
+    }
 
 }

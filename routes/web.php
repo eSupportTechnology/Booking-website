@@ -1424,3 +1424,8 @@ Route::prefix('properties')->name('customer.properties.')->group(function () {
     Route::get('/view/{id}', [PropertyListingController::class, 'singleHotel'])
         ->name('details');
 });
+//trending destinations
+Route::get('/partner/properties', [App\Http\Controllers\Partner\PropertyController::class, 'showCities']);
+
+
+
