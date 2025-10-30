@@ -35,6 +35,7 @@ use App\Http\Controllers\Customer\CustomerTaxiController;
 use App\Http\Controllers\Customer\CustomerCarRentalController;
 use App\Http\Controllers\Customer\SearchController;
 use App\Http\Controllers\Customer\CarSearchController;
+use App\Http\Controllers\Customer\PropertyListingController;
 
 
 
@@ -60,6 +61,9 @@ Route::prefix('customer')->group(function () {
     // Search route
     Route::get('/search-form', [SearchController::class, 'showSearchForm'])->name('customer.searchForm');
     Route::get('/search', [SearchController::class, 'search'])->name('customer.search');
+    Route::get('/search/ajax', [App\Http\Controllers\Customer\SearchController::class, 'ajaxSearch'])
+     ->name('customer.search.ajax');
+
 
 
 
@@ -1392,3 +1396,31 @@ Route::get('/api/exchange-rate/{from}/{to}', [\App\Http\Controllers\CurrencyCont
 
 Route::get('/customer/car-rental/search', [CarSearchController::class, 'carsearch'])
     ->name('customer.carsearch');
+
+
+
+
+//  CUSTOMER PROPERTY ROUTES
+Route::prefix('properties')->name('customer.properties.')->group(function () {
+
+    // Hotels listing
+    Route::get('/hotels', [PropertyListingController::class, 'hotelListing'])
+        ->name('hotels');
+
+    // Apartments listing
+    Route::get('/apartments', [PropertyListingController::class, 'apartmentListing'])
+        ->name('apartments');
+
+    // Homes listing
+    Route::get('/homes', [PropertyListingController::class, 'homeListing'])
+        ->name('homes');
+
+    // Alternative stays (treehouses, lodges, etc.)
+    Route::get('/alternative-places', [PropertyListingController::class, 'alternativePlacesListing'])
+        ->name('alternative');
+
+
+    // Single property details page
+    Route::get('/view/{id}', [PropertyListingController::class, 'singleHotel'])
+        ->name('details');
+});
