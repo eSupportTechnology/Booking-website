@@ -355,12 +355,16 @@ function bookingForm() {
                 this.selectedRoom = '';
                 this.roomsLoaded = false;
                 this.loadAvailableRooms();
+                // Update formatted prices when dates change (may affect total)
+                this.updateFormattedPrices();
             });
 
             this.$watch('checkOut', () => {
                 this.selectedRoom = '';
                 this.roomsLoaded = false;
                 this.loadAvailableRooms();
+                // Update formatted prices when dates change (may affect total)
+                this.updateFormattedPrices();
             });
 
             // When the selected room changes, ensure guest count does not exceed that room's max
