@@ -260,9 +260,17 @@
            <div class="mb-6 pb-4 border-b border-gray-200">
                <h4 class="font-medium mb-2">Deposit required at pick-up</h4>
                <div class="flex flex-col gap-2">
-                   <label class="flex items-center gap-2 py-1"><input type="checkbox"> LKR 0 - LKR 100,000 <span class="ml-auto text-gray-500">1</span></label>
-                   <label class="flex items-center gap-2 py-1"><input type="checkbox"> LKR 100,000 - LKR 200,000</label>
-                   <label class="flex items-center gap-2 py-1"><input type="checkbox"> LKR 200,000 + <span class="ml-auto text-gray-500">12</span></label>
+                   <label class="flex items-center gap-2 py-1"><input type="checkbox">
+                       <x-price :amount="0" /> - <x-price :amount="100000" />
+                       <span class="ml-auto text-gray-500">1</span>
+                   </label>
+                   <label class="flex items-center gap-2 py-1"><input type="checkbox">
+                       <x-price :amount="100000" /> - <x-price :amount="200000" />
+                   </label>
+                   <label class="flex items-center gap-2 py-1"><input type="checkbox">
+                       <x-price :amount="200000" />+
+                       <span class="ml-auto text-gray-500">12</span>
+                   </label>
                </div>
            </div>
 
@@ -314,8 +322,12 @@
                 <!-- Right side -->
                 <div class="flex flex-col items-end gap-2">
                     <span class="text-green-600 text-sm bg-green-100 px-2 py-1 rounded">10% off</span>
-                    <div class="text-red-500 line-through text-sm">LKR 16,925</div>
-                    <div class="text-xl font-bold">LKR 15,233</div>
+                    <div class="text-red-500 line-through text-sm">
+                        <x-price :amount="16925" />
+                    </div>
+                    <div class="text-xl font-bold">
+                        <x-price :amount="15233" />
+                    </div>
                     <div class="text-green-600 text-sm">Free cancellation</div>
                     <button class="bg-blue-600 hover:bg-blue-500 text-white font-semibold px-6 py-2 rounded text-base mt-3">
                         View deal
@@ -343,7 +355,9 @@
                     <div class="mt-2 text-blue-600 text-sm">Bandaranaike International Airport <span class="text-gray-500 text-xs">Meet & Greet</span></div>
                 </div>
                 <div class="flex flex-col items-end gap-2">
-                    <div class="text-xl font-bold">LKR 44,232</div>
+                    <div class="text-xl font-bold">
+                        <x-price :amount="44232" />
+                    </div>
                     <div class="text-green-600 text-sm">Free cancellation</div>
                     <button class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-2 rounded">View deal</button>
                 </div>

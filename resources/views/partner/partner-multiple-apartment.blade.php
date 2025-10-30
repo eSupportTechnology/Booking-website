@@ -942,129 +942,129 @@ const StorageManager = {
 
     <!-- Step 2 -->
     <template x-if="step === 2">
-        <div>
-                                                        <div
-                                                            class="relative w-[1400px] h-auto overflow-hidden rounded-lg shadow mx-auto -mt-14 -ml-16">
+    <div>
+        <div
+            class="relative w-full md:w-[1400px] h-auto overflow-hidden rounded-lg shadow mx-auto md:-mt-14 md:-ml-16">
 
-                                                            <!-- Google Maps iframe full background -->
-                                                            <iframe class="absolute inset-0 w-full h-full"
-                                                                loading="lazy"
-                                                                src="https://www.google.com/maps?q=La+Grande+Villa+Nuwara+Eliya&output=embed"
-                                                                allowfullscreen>
-                                                            </iframe>
+            <!-- Google Maps iframe full background -->
+            <iframe
+                class="absolute inset-0 w-full h-full min-h-[500px] md:min-h-[750px]"
+                loading="lazy"
+                src="https://www.google.com/maps?q=La+Grande+Villa+Nuwara+Eliya&output=embed"
+                allowfullscreen>
+            </iframe>
 
-                                                            <!-- Optional overlay for readability -->
-                                                            <div class="absolute inset-0"></div>
+            <!-- Optional overlay -->
+            <div class="absolute inset-0"></div>
 
-                                                            <!-- Form content centered on map -->
-                                                            <div
-                                                                class="relative z-10 flex items-center justify-start h-auto p-4 mt-[110px]">
-                                                                <div
-                                                                    class="bg-white bg-opacity-95 rounded-lg shadow-lg w-full max-w-md p-6 md:p-8 h-auto mb-4">
-                                                                    <h2
-                                                                        class="text-2xl font-semibold mb-4 text-gray-800">
-                                                                        Where is your property?</h2>
-                                                                    <form @submit.prevent="saveAddress()">
-                                                                        <div class="mb-4">
-                                                                            <label for="address"
-                                                                                class="block text-sm font-medium text-gray-700">Find
-                                                                                your address</label>
-                                                                            <input type="text" id="address"
-                                                                                name="address" x-model="addressData.address"
-                                                                                class="mt-1 p-2 w-full border border-gray-300 rounded">
-                                                                        </div>
-                                                                        <div class="mb-4">
-                                                                            <label for="apartment"
-                                                                                class="block text-sm font-medium text-gray-700">Apartment
-                                                                                or floor number (optional)</label>
-                                                                            <input type="text" id="apartment"
-                                                                                name="apartment" x-model="addressData.apartment"
-                                                                                class="mt-1 p-2 w-full border border-gray-300 rounded">
-                                                                        </div>
-                                                                        <div class="mb-4">
-                                                                            <label for="country"
-                                                                                class="block text-sm font-medium text-gray-700">Country/region</label>
-                                                                            <select id="country" name="country"
-                                                                                x-model="addressData.country"
-                                                                                class="mt-1 p-2 w-full border border-gray-300 rounded">
-                                                                                <option value="Sri Lanka" selected>Sri Lanka</option>
-                                                                            </select>
-                                                                        </div>
-                                                                        <div class="flex flex-col md:flex-row gap-4">
-                                                                            <div class="flex-1">
-                                                                                <label for="city"
-                                                                                    class="block text-sm font-medium text-gray-700">City</label>
-                                                                                <input type="text" id="city"
-                                                                                    name="city" x-model="addressData.city"
-                                                                                    class="mt-1 p-2 w-full border border-gray-300 rounded">
-                                                                            </div>
-                                                                            <div class="flex-1">
-                                                                                <label for="postcode"
-                                                                                    class="block text-sm font-medium text-gray-700">Post
-                                                                                    code / Zip code</label>
-                                                                                <input type="text" id="postcode"
-                                                                                    name="postcode" x-model="addressData.postcode"
-                                                                                    class="mt-1 p-2 w-full border border-gray-300 rounded">
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="flex items-center mt-4">
-                                                                            <input id="update_address" type="checkbox"
-                                                                                name="update_address" x-model="addressData.update_address"
-                                                                                class="mr-2">
-                                                                            <label for="update_address"
-                                                                                class="text-sm text-gray-700">Update
-                                                                                the address when moving the pin on the
-                                                                                map.</label>
-                                                                        </div>
+            <!-- Form content centered on map -->
+            <div
+                class="relative z-10 flex items-center justify-center md:justify-start h-auto p-4 mt-[80px] md:mt-[110px]">
+                <div
+                    class="bg-white bg-opacity-95 rounded-lg shadow-lg w-full max-w-sm sm:max-w-md md:max-w-md lg:max-w-lg p-4 sm:p-6 md:p-8 h-auto mb-4">
+                    
+                    <h2 class="text-2xl font-semibold mb-4 text-gray-800 text-center md:text-left">
+                        Where is your property?
+                    </h2>
 
-                                                                        <!-- Dismissible message box -->
-                                                                        <div x-data="{ showMessage: true }"
-                                                                            x-show="showMessage"
-                                                                            class="mt-4 bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded relative"
-                                                                            role="alert">
-                                                                            <strong class="font-bold">Note:</strong>
-                                                                            <span class="block sm:inline">Make sure the
-                                                                                pin location is accurate before
-                                                                                continuing.</span>
-                                                                            <span @click="showMessage = false"
-                                                                                class="absolute top-0 bottom-0 right-0 px-4 py-3 cursor-pointer">
-                                                                                <svg class="fill-current h-6 w-6 text-yellow-800"
-                                                                                    role="button"
-                                                                                    xmlns="http://www.w3.org/2000/svg"
-                                                                                    viewBox="0 0 20 20">
-                                                                                    <title>Close</title>
-                                                                                    <path
-                                                                                        d="M14.348 5.652a1 1 0 00-1.414 0L10 8.586 7.066 5.652a1 1 0 10-1.414 1.414L8.586 10l-2.934 2.934a1 1 0 101.414 1.414L10 11.414l2.934 2.934a1 1 0 001.414-1.414L11.414 10l2.934-2.934a1 1 0 000-1.414z" />
-                                                                                </svg>
-                                                                            </span>
-                                                                        </div>
+                    <form @submit.prevent="saveAddress()">
+                        <!-- Address -->
+                        <div class="mb-4">
+                            <label for="address" class="block text-sm font-medium text-gray-700">
+                                Find your address
+                            </label>
+                            <input type="text" id="address" name="address" x-model="addressData.address"
+                                class="mt-1 p-2 w-full border border-gray-300 rounded">
+                        </div>
 
-                                                                        <p class="text-sm text-gray-600 mt-2">
-                                                                            Is the red pin location incorrect? Uncheck
-                                                                            the option above and click or press on the
-                                                                            map to move the pin.
-                                                                        </p>
+                        <!-- Apartment -->
+                        <div class="mb-4">
+                            <label for="apartment" class="block text-sm font-medium text-gray-700">
+                                Apartment or floor number (optional)
+                            </label>
+                            <input type="text" id="apartment" name="apartment" x-model="addressData.apartment"
+                                class="mt-1 p-2 w-full border border-gray-300 rounded">
+                        </div>
 
-                                                                        <!-- Buttons -->
-                                                                        <div
-                                                                            class="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6">
-                                                                            <button type="button"  @click="step = Math.max(step - 1, 1)"
-                                                                                class="w-full sm:w-auto border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
-                                                                                ←
-                                                                            </button>
-                                                                            <button type="submit"
-                                                                                class="w-full sm:w-auto px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
-                                                                                Continue
-                                                                            </button>
-                                                                        </div>
+                        <!-- Country -->
+                        <div class="mb-4">
+                            <label for="country" class="block text-sm font-medium text-gray-700">
+                                Country/region
+                            </label>
+                            <select id="country" name="country" x-model="addressData.country"
+                                class="mt-1 p-2 w-full border border-gray-300 rounded">
+                                <option value="Sri Lanka" selected>Sri Lanka</option>
+                            </select>
+                        </div>
 
+                        <!-- City / Postcode -->
+                        <div class="flex flex-col md:flex-row gap-4">
+                            <div class="flex-1">
+                                <label for="city" class="block text-sm font-medium text-gray-700">City</label>
+                                <input type="text" id="city" name="city" x-model="addressData.city"
+                                    class="mt-1 p-2 w-full border border-gray-300 rounded">
+                            </div>
+                            <div class="flex-1">
+                                <label for="postcode" class="block text-sm font-medium text-gray-700">
+                                    Post code / Zip code
+                                </label>
+                                <input type="text" id="postcode" name="postcode" x-model="addressData.postcode"
+                                    class="mt-1 p-2 w-full border border-gray-300 rounded">
+                            </div>
+                        </div>
 
-                                                                    </form>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-    </template>
+                        <!-- Checkbox -->
+                        <div class="flex items-center mt-4">
+                            <input id="update_address" type="checkbox" name="update_address"
+                                x-model="addressData.update_address"
+                                class="mr-2">
+                            <label for="update_address" class="text-sm text-gray-700">
+                                Update the address when moving the pin on the map.
+                            </label>
+                        </div>
+
+                        <!-- Message box -->
+                        <div x-data="{ showMessage: true }" x-show="showMessage"
+                            class="mt-4 bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded relative"
+                            role="alert">
+                            <strong class="font-bold">Note:</strong>
+                            <span class="block sm:inline">
+                                Make sure the pin location is accurate before continuing.
+                            </span>
+                            <span @click="showMessage = false"
+                                class="absolute top-0 bottom-0 right-0 px-4 py-3 cursor-pointer">
+                                <svg class="fill-current h-6 w-6 text-yellow-800" role="button"
+                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                    <title>Close</title>
+                                    <path
+                                        d="M14.348 5.652a1 1 0 00-1.414 0L10 8.586 7.066 5.652a1 1 0 10-1.414 1.414L8.586 10l-2.934 2.934a1 1 0 101.414 1.414L10 11.414l2.934 2.934a1 1 0 001.414-1.414L11.414 10l2.934-2.934a1 1 0 000-1.414z" />
+                                </svg>
+                            </span>
+                        </div>
+
+                        <p class="text-sm text-gray-600 mt-2">
+                            Is the red pin location incorrect? Uncheck the option above and click or press on the map to move the pin.
+                        </p>
+
+                        <!-- Buttons -->
+                        <div
+                            class="flex flex-col sm:flex-row justify-center sm:justify-between items-center gap-4 mt-6">
+                            <button type="button" @click="step = Math.max(step - 1, 1)"
+                                class="w-full sm:w-auto border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
+                                ←
+                            </button>
+                            <button type="submit"
+                                class="w-full sm:w-auto px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
+                                Continue
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
     <template x-if="step === 3">
      <div>
             <section class="mb-12" x-data="{ channelManager: 'yes' }">
@@ -1251,16 +1251,24 @@ const StorageManager = {
 
                                                             <!-- Buttons Row (Outside grid, full width) -->
                                                             <!-- Buttons Row aligned with Checkbox Section -->
-                                                            <div class="flex  mt-6">
-                                                                <button type="button"  @click="step = Math.max(step - 1, 1)"
+                                                            <div class="mt-6 flex flex-wrap justify-between items-center">
+                                                                <!-- Back Button -->
+                                                                <button 
+                                                                    type="button" 
+                                                                    @click="step = Math.max(step - 1, 1)" 
                                                                     class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
                                                                     ←
                                                                 </button>
-                                                                <button type="button"     @click="saveFacilities()"
-                                                                    class="px-4 py-3 bg-[#3CC0E9] font-semibold  text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ml-[330px]">
+
+                                                                <!-- Continue Button -->
+                                                                <button 
+                                                                    type="button" 
+                                                                    @click="saveFacilities()" 
+                                                                    class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 mt-4 md:mt-0 md:ml-[330px]">
                                                                     Continue
                                                                 </button>
                                                             </div>
+
 
                                                         </section>
                                                     </div>
@@ -1460,23 +1468,24 @@ const StorageManager = {
 
 
 <template x-if="step === 6">
-  <div class="max-w-4xl mx-auto space-y-8 lg:ml-32" x-init="loadLanguages()">
-    <div class="container ml-24 px-4 py-8 max-w-2xl">
+  <div class="max-w-4xl mx-auto space-y-8 lg:ml-32 px-4 sm:px-6" x-init="loadLanguages()">
+    <div class="px-4 py-8 max-w-2xl mx-auto">
       <!-- Header -->
       <h2 class="text-2xl font-bold mb-8 text-left">
         What languages do you or your staff speak?
       </h2>
+
       <!-- Language Selection Section -->
       <div class="bg-white shadow-md rounded-lg p-6 mb-8">
         <h3 class="text-lg mb-4 font-bold">Select languages</h3>
         
-        <!-- Common Languages (hardcoded for quick selection) -->
+        <!-- Common Languages -->
         <div class="space-y-2 mb-4" x-show="availableLanguages.length > 0">
           <template x-for="commonLang in ['English', 'French', 'German', 'Hindi']" :key="commonLang">
             <label class="flex items-center cursor-pointer">
               <input 
                 type="checkbox" 
-                class="mr-2" 
+                class="mr-2 accent-[#3CC0E9]"
                 :value="getLanguageIdByName(commonLang)"
                 x-model="selectedLanguages" 
                 :disabled="!getLanguageIdByName(commonLang)"
@@ -1485,8 +1494,8 @@ const StorageManager = {
             </label>
           </template>
         </div>
-        
-        <!-- Loading indicator for languages -->
+
+        <!-- Loading indicator -->
         <div x-show="availableLanguages.length === 0" class="text-sm text-gray-500 mb-4">
           Loading languages...
         </div>
@@ -1511,12 +1520,11 @@ const StorageManager = {
             </div>
           </div>
         </template>
-        
+
         <!-- Add Additional Languages -->
         <div x-show="showAdditionalLanguages" class="mt-4 relative">
           <h3 class="text-lg font-medium mb-2">Add additional languages</h3>
-          <!-- Searchable dropdown container -->
-          <div class="relative w-full max-w-md">
+          <div class="relative w-full">
             <input
               type="text"
               x-model="searchTerm"
@@ -1525,9 +1533,8 @@ const StorageManager = {
               @click="showDropdown = true"
               placeholder="Search languages..."
               autocomplete="off"
-              class="w-full border rounded p-2 pr-10 cursor-pointer"
+              class="w-full border rounded p-2 pr-10 cursor-pointer focus:ring-2 focus:ring-blue-300 focus:border-blue-400"
             />
-            <!-- Dropdown arrow -->
             <button
               type="button"
               @click="showDropdown = !showDropdown"
@@ -1536,6 +1543,7 @@ const StorageManager = {
             >
               ▼
             </button>
+
             <!-- Dropdown list -->
             <ul
               x-show="showDropdown && filteredLanguages.length > 0"
@@ -1554,7 +1562,7 @@ const StorageManager = {
             </ul>
           </div>
         </div>
-        
+
         <!-- Toggle Button for Additional Languages -->
         <button
           type="button"
@@ -1564,27 +1572,29 @@ const StorageManager = {
           <span x-text="showAdditionalLanguages ? 'Hide additional languages' : 'Add additional languages'"></span>
         </button>
       </div>
-      
+
       <!-- Navigation Buttons -->
-      <div class="mt-8 flex justify-between">
-        <!-- Back Button on the left -->
+      <div class="mt-8 flex flex-wrap md:flex-nowrap justify-between items-center gap-6 md:gap-0">
+        <!-- Back Button -->
         <button
-          type="button" @click="step = Math.max(step - 1, 1)"
-          class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+          type="button"
+          @click="step = Math.max(step - 1, 1)"
+          class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-5 py-2.5 rounded transition">
           ←
         </button>
-        <!-- Continue Button on the right -->
+
+        <!-- Continue Button -->
         <button
           type="button"
           @click="saveLanguages()"
-          class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300"
-        >
+          class="px-6 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 md:ml-[330px] ml-0 mt-4 md:mt-0">
           Continue
         </button>
       </div>
     </div>
   </div>
 </template>
+
 
     <template x-if="step === 7">
      <div x-data="{ 
@@ -1729,11 +1739,11 @@ const StorageManager = {
             </div>
 
             <!-- Navigation Buttons -->
-            <div class="mt-8 flex">
+            <div class="mt-8 flex flex-wrap md:flex-nowrap justify-between items-center gap-6 md:gap-0">
                 <button type="button" @click="step = Math.max(step - 1, 1)" class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
                     ←
                 </button>
-                <button type="button" @click="handleContinue()" class="px-6 h-12 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ml-[285px]">
+                <button type="button" @click="handleContinue()" class="px-6 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 md:ml-[330px] ml-0 mt-4 md:mt-0">
                     Continue
                 </button>
             </div>

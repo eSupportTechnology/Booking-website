@@ -3,17 +3,25 @@
 @section('content')
 <div class="space-y-8">
     <!-- Header -->
-    <div class="bg-gradient-to-r from-[#1F8FB2] to-[#3CC0E9] rounded-2xl p-8 text-white">
-        <div class="flex justify-between items-center">
-            <div>
-                <h1 class="text-4xl font-bold mb-2">Welcome back, {{ Auth::user()->name ?? 'Partner' }}! 👋</h1>
-                <p class="text-blue-100 text-lg">Manage your properties and track your success</p>
+    <div class="bg-gradient-to-r from-[#1F8FB2] to-[#3CC0E9] rounded-2xl p-6 sm:p-8 text-white">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div class="text-center sm:text-left w-full sm:w-auto">
+                <h1 class="text-2xl sm:text-4xl font-bold mb-2">
+                    Welcome back, {{ Auth::user()->name ?? 'Partner' }}! 👋
+                </h1>
+                <p class="text-blue-100 text-base sm:text-lg">
+                    Manage your properties and track your success
+                </p>
             </div>
-            <a href="{{ route('partner.property.category') }}" class="bg-white text-[#1F8FB2] px-6 py-3 rounded-xl font-semibold hover:bg-blue-50 transition-all duration-200 shadow-lg">
-                <i class="fas fa-plus mr-2"></i>Add New Property
-            </a>
+            <div class="w-full sm:w-auto flex justify-center sm:justify-end">
+                <a href="{{ route('partner.property.category') }}"
+                    class="bg-white text-[#1F8FB2] px-5 sm:px-6 py-3 rounded-xl font-semibold hover:bg-blue-50 transition-all duration-200 shadow-lg text-center w-full sm:w-auto">
+                    <i class="fas fa-plus mr-2"></i>Add New Property
+                </a>
+            </div>
         </div>
     </div>
+
 
     <!-- Statistics Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -43,7 +51,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Monthly Earnings</p>
-                    <p class="text-3xl font-bold text-gray-800 mt-2">${{ number_format($stats->monthlyEarnings) }}</p>
+                    <p class="text-3xl font-bold text-gray-800 mt-2">@currency($stats->monthlyEarnings, 'USD')</p>
                 </div>
                 <div class="bg-yellow-100 p-3 rounded-xl">
                     <i class="fas fa-dollar-sign text-yellow-600 text-2xl"></i>
@@ -106,7 +114,7 @@
                                 {{ $booking['status'] }}
                             </span>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-green-600">${{ $booking['earnings'] }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-green-600">@currency($booking['earnings'], 'USD')</td>
                     </tr>
                     @endforeach
                 </tbody>

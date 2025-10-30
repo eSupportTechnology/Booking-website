@@ -144,7 +144,7 @@ class PropertyController extends Controller
         }
     }
 
-    // Get trending cities based on property listings customer home page
+    // Get trending cities based on property listings customer home  page
 public function getTrendingCities()
 {
     $topCities = DB::table('properties')

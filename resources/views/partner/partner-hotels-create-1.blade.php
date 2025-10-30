@@ -17,7 +17,7 @@
         <div class="bg-[#3CC0E9] h-2 transition-all duration-500" :style="'width:' + (step * 100 / 8) + '%'"></div>
     </div>
 
-    <div class="max-w-6xl p-4 ml-14">
+    <div class="max-w-6xl p-4 mx-auto sm:ml-14">
         <form class="p-6 rounded-lg space-y-6" @submit.prevent>
             <!-- STEP 1 -->
             <div x-show="step === 1" x-cloak class="container mx-auto px-4 py-8 max-w-6xl">
@@ -219,108 +219,111 @@
             </template> -->
 
             <template x-if="step === 5">
-                <form @submit.prevent="submitStep5">
+    <form @submit.prevent="submitStep5">
+        <div
+            class="relative w-full md:w-[90%] lg:w-[1300px] h-auto overflow-hidden rounded-lg shadow mx-auto my-10">
+            <!-- Google Maps iframe full background -->
+            <iframe
+                class="absolute inset-0 w-full h-full min-h-[400px] md:min-h-[600px] lg:min-h-[750px]"
+                loading="lazy"
+                src="https://www.google.com/maps?q=La+Grande+Villa+Nuwara+Eliya&output=embed"
+                allowfullscreen>
+            </iframe>
 
-                    <div class="relative w-[1300px] h-auto overflow-hidden rounded-lg shadow mx-auto my-10 ">
-                        <!-- Google Maps iframe full background -->
-                        <iframe class="absolute inset-0 w-full h-full" loading="lazy"
-                            src="https://www.google.com/maps?q=La+Grande+Villa+Nuwara+Eliya&output=embed"
-                            allowfullscreen>
-                        </iframe>
+            <!-- Optional overlay -->
+            <div class="absolute inset-0"></div>
 
-                        <!-- Optional overlay for readability -->
-                        <div class="absolute inset-0 "></div>
+            <!-- Form content -->
+            <div class="relative z-10 flex items-center justify-center md:justify-start h-auto p-4 md:p-6 mt-[80px] md:mt-[110px]">
+                <div
+                    class="bg-white bg-opacity-95 rounded-lg shadow-lg w-full max-w-sm sm:max-w-md md:max-w-lg p-5 md:p-8 h-auto mb-4">
+                    <h2 class="text-xl md:text-2xl font-semibold mb-4 text-gray-800">Where is your property?</h2>
 
-                        <!-- Form content centered on map -->
-                        <div class="relative z-10 flex items-center justify-start h-auto p-4 mt-[110px]">
-                            <div
-                                class="bg-white bg-opacity-95 rounded-lg shadow-lg w-full max-w-md p-6 md:p-8 h-auto mb-4">
-                                <h2 class="text-2xl font-semibold mb-4 text-gray-800">Where is your property?</h2>
+                    <div class="mb-4">
+                        <label for="address" class="block text-sm font-medium text-gray-700">Find your
+                            address</label>
+                        <input type="text" x-model="property.address"
+                            class="mt-1 p-2 w-full border border-gray-300 rounded">
+                    </div>
 
-                                <div class="mb-4">
-                                    <label for="address" class="block text-sm font-medium text-gray-700">Find your
-                                        address</label>
-                                    <input type="text" x-model="property.address"
-                                        class="mt-1 p-2 w-full border border-gray-300 rounded">
-                                </div>
-                                <div class="mb-4">
-                                    <label for="apartment" class="block text-sm font-medium text-gray-700">Apartment
-                                        or
-                                        floor number (optional)</label>
-                                    <input type="text" x-model="property.apartment"
-                                        class="mt-1 p-2 w-full border border-gray-300 rounded">
-                                </div>
-                                <div class="mb-4">
-                                    <label for="country"
-                                        class="block text-sm font-medium text-gray-700">Country/region</label>
-                                    <select x-model="property.country"
-                                        class="mt-1 p-2 w-full border border-gray-300 rounded">
-                                        <option selected>Sri Lanka</option>
-                                    </select>
-                                </div>
-                                <div class="flex flex-col md:flex-row gap-4">
-                                    <div class="flex-1">
-                                        <label for="city"
-                                            class="block text-sm font-medium text-gray-700">City</label>
-                                        <input type="text" x-model="property.city"
-                                            class="mt-1 p-2 w-full border border-gray-300 rounded">
-                                    </div>
-                                    <div class="flex-1">
-                                        <label for="zipcode" class="block text-sm font-medium text-gray-700">Post
-                                            code /
-                                            Zip code</label>
-                                        <input type="text" x-model="property.zipcode"
-                                            class="mt-1 p-2 w-full border border-gray-300 rounded">
-                                    </div>
-                                </div>
-                                <div class="flex items-center mt-4">
-                                    <input id="update_address" type="checkbox" name="update_address" checked
-                                        class="mr-2">
-                                    <label for="update_address" class="text-sm text-gray-700">Update the address when
-                                        moving the pin on the map.</label>
-                                </div>
-                                <!-- Dismissible message box -->
-                                <div x-data="{ showMessage: true }" x-show="showMessage"
-                                    class="mt-4 bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded relative"
-                                    role="alert">
-                                    <strong class="font-bold">Note:</strong>
-                                    <span class="block sm:inline">Make sure the pin location is accurate before
-                                        continuing.</span>
-                                    <span @click="showMessage = false"
-                                        class="absolute top-0 bottom-0 right-0 px-4 py-3 cursor-pointer">
-                                        <svg class="fill-current h-6 w-6 text-yellow-800" role="button"
-                                            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                            <title>Close</title>
-                                            <path
-                                                d="M14.348 5.652a1 1 0 00-1.414 0L10 8.586 7.066 5.652a1 1 0 10-1.414 1.414L8.586 10l-2.934 2.934a1 1 0 101.414 1.414L10 11.414l2.934 2.934a1 1 0 001.414-1.414L11.414 10l2.934-2.934a1 1 0 000-1.414z" />
-                                        </svg>
-                                    </span>
-                                </div>
+                    <div class="mb-4">
+                        <label for="apartment" class="block text-sm font-medium text-gray-700">Apartment or floor
+                            number (optional)</label>
+                        <input type="text" x-model="property.apartment"
+                            class="mt-1 p-2 w-full border border-gray-300 rounded">
+                    </div>
 
-                                <p class="text-sm text-gray-600 mt-2">
-                                    Is the red pin location incorrect? Uncheck the option above and click or press on
-                                    the
-                                    map to move the pin.
-                                </p>
-                                <div class="flex justify-between mt-6">
-                                    <!-- Back Button (Left) -->
-                                    <button type="button" @click="step > 2 ? step -= 2 : step = 1"
-                                        :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-                                        class="border border-[#3CC0E9]  text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
-                                        ←
-                                    </button>
+                    <div class="mb-4">
+                        <label for="country" class="block text-sm font-medium text-gray-700">Country/region</label>
+                        <select x-model="property.country"
+                            class="mt-1 p-2 w-full border border-gray-300 rounded">
+                            <option selected>Sri Lanka</option>
+                        </select>
+                    </div>
 
-
-                                    <!-- Continue Button (Right) -->
-                                    <button type="submit" class="bg-[#3CC0E9] hover:bg-[#29ACD5] font-semibold text-white py-2 px-4 rounded">
-                                        Continue
-                                    </button>
-                                </div>
-                            </div>
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <div class="flex-1">
+                            <label for="city" class="block text-sm font-medium text-gray-700">City</label>
+                            <input type="text" x-model="property.city"
+                                class="mt-1 p-2 w-full border border-gray-300 rounded">
+                        </div>
+                        <div class="flex-1">
+                            <label for="zipcode" class="block text-sm font-medium text-gray-700">Post code /
+                                Zip code</label>
+                            <input type="text" x-model="property.zipcode"
+                                class="mt-1 p-2 w-full border border-gray-300 rounded">
                         </div>
                     </div>
-                </form>
-            </template>
+
+                    <div class="flex items-center mt-4">
+                        <input id="update_address" type="checkbox" name="update_address" checked class="mr-2">
+                        <label for="update_address" class="text-sm text-gray-700">
+                            Update the address when moving the pin on the map.
+                        </label>
+                    </div>
+
+                    <!-- Dismissible message box -->
+                    <div x-data="{ showMessage: true }" x-show="showMessage"
+                        class="mt-4 bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded relative"
+                        role="alert">
+                        <strong class="font-bold">Note:</strong>
+                        <span class="block sm:inline">Make sure the pin location is accurate before continuing.</span>
+                        <span @click="showMessage = false"
+                            class="absolute top-0 bottom-0 right-0 px-4 py-3 cursor-pointer">
+                            <svg class="fill-current h-6 w-6 text-yellow-800" role="button"
+                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                <title>Close</title>
+                                <path
+                                    d="M14.348 5.652a1 1 0 00-1.414 0L10 8.586 7.066 5.652a1 1 0 10-1.414 1.414L8.586 10l-2.934 2.934a1 1 0 101.414 1.414L10 11.414l2.934 2.934a1 1 0 001.414-1.414L11.414 10l2.934-2.934a1 1 0 000-1.414z" />
+                            </svg>
+                        </span>
+                    </div>
+
+                    <p class="text-sm text-gray-600 mt-2">
+                        Is the red pin location incorrect? Uncheck the option above and click or press on the map to
+                        move the pin.
+                    </p>
+
+                    <div class="flex justify-between mt-6">
+                        <!-- Back Button -->
+                        <button type="button" @click="step > 2 ? step -= 2 : step = 1"
+                            :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
+                            class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
+                            ←
+                        </button>
+
+                        <!-- Continue Button -->
+                        <button type="submit"
+                            class="bg-[#3CC0E9] hover:bg-[#29ACD5] font-semibold text-white py-2 px-4 rounded">
+                            Continue
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</template>
+
 
             <template x-if="step === 6">
                 <form @submit.prevent="submitStep6">
@@ -1005,188 +1008,208 @@
             </template>
 
             <template x-if="step === 11">
-                 <div class="px-4 py-4 max-w-4xl mx-auto lg:ml-16">
-                        <!-- Header -->
-                        <h2 class="text-2xl font-bold mb-4 text-left">House rules</h2>
+                <div class="px-4 py-4 w-full max-w-6xl mx-auto">
+                    <!-- Header -->
+                    <h2 class="text-2xl md:text-3xl font-bold mb-6 text-left">House rules</h2>
 
-                        <div class="flex flex-col md:flex-row gap-6">
-                            <!-- Left Section -->
-                            <div class="bg-white shadow-md rounded-lg p-6 w-full md:w-2/3">
+                    <div class="flex flex-col lg:flex-row gap-6">
+                        <!-- Left Section -->
+                        <div class="bg-white shadow-md rounded-lg p-5 sm:p-6 md:p-8 w-full lg:w-2/3">
+                            <!-- Check-in -->
+                            <div class="mt-4">
+                                <h3 class="text-base font-semibold mb-4">What are your check-in and check-out times?</h3>
 
-                                <!-- Check-in -->
-                                <div class="mt-6">
-                                    <h3 class="text-base font-semibold mb-4">What are your check-in and check-out times?</h3>
-                                    <h3 class="text-base font-semibold mb-2">Check in</h3>
-                                    <div class="flex space-x-4">
-                                        <div class="w-full">
-                                            <label class="block text-sm font-medium mb-1">From</label>
-                                            <input type="time" x-model="property.check_in_from" class="w-full border rounded p-2" />
-                                        </div>
-                                        <div class="w-full">
-                                            <label class="block text-sm font-medium mb-1">Until</label>
-                                            <input type="time" x-model="property.check_in_until" class="w-full border rounded p-2" />
-                                        </div>
+                                <h3 class="text-base font-semibold mb-2">Check in</h3>
+                                <div class="flex flex-col sm:flex-row gap-4">
+                                    <div class="w-full">
+                                        <label class="block text-sm font-medium mb-1">From</label>
+                                        <input type="time" x-model="property.check_in_from"
+                                            class="w-full border rounded p-2" />
+                                    </div>
+                                    <div class="w-full">
+                                        <label class="block text-sm font-medium mb-1">Until</label>
+                                        <input type="time" x-model="property.check_in_until"
+                                            class="w-full border rounded p-2" />
                                     </div>
                                 </div>
+                            </div>
 
-                                <!-- Check-out -->
-                                <div class="mt-6">
-                                    <h3 class="text-base font-semibold mb-2">Check out</h3>
-                                    <div class="flex space-x-4">
-                                        <div class="w-full">
-                                            <label class="block text-sm font-medium mb-1">From</label>
-                                            <input type="time" x-model="property.check_out_from" class="w-full border rounded p-2" />
-                                        </div>
-                                        <div class="w-full">
-                                            <label class="block text-sm font-medium mb-1">Until</label>
-                                            <input type="time" x-model="property.check_out_until" class="w-full border rounded p-2" />
-                                        </div>
+                            <!-- Check-out -->
+                            <div class="mt-6">
+                                <h3 class="text-base font-semibold mb-2">Check out</h3>
+                                <div class="flex flex-col sm:flex-row gap-4">
+                                    <div class="w-full">
+                                        <label class="block text-sm font-medium mb-1">From</label>
+                                        <input type="time" x-model="property.check_out_from"
+                                            class="w-full border rounded p-2" />
+                                    </div>
+                                    <div class="w-full">
+                                        <label class="block text-sm font-medium mb-1">Until</label>
+                                        <input type="time" x-model="property.check_out_until"
+                                            class="w-full border rounded p-2" />
                                     </div>
                                 </div>
+                            </div>
 
-                                <hr class="my-6 border-t border-gray-300">
+                            <hr class="my-6 border-t border-gray-300">
 
-                                <!-- Allow Children Section -->
-                                <div class="mb-6">
-                                    <label class="block font-semibold text-base text-gray-800 mb-2">Do you allow children?</label>
-                                    <div class="flex space-x-6 text-sm text-gray-700">
-                                        <label class="flex items-center gap-2">
-                                            <input type="radio" name="allowChildren" value="yes" x-model="property.children_allowed" />
-                                            Yes
-                                        </label>
-                                        <label class="flex items-center gap-2">
-                                            <input type="radio" name="allowChildren" value="no" x-model="property.children_allowed" />
-                                            No
-                                        </label>
-                                    </div>
+                            <!-- Allow Children Section -->
+                            <div class="mb-6">
+                                <label class="block font-semibold text-base text-gray-800 mb-2">Do you allow children?</label>
+                                <div class="flex flex-col sm:flex-row gap-4 text-sm text-gray-700">
+                                    <label class="flex items-center gap-2">
+                                        <input type="radio" name="allowChildren" value="yes"
+                                            x-model="property.children_allowed" />
+                                        Yes
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="radio" name="allowChildren" value="no"
+                                            x-model="property.children_allowed" />
+                                        No
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Pet Policy -->
+                            <div class="mt-6">
+                                <h3 class="text-base font-semibold mb-2">Do you allow pets?</h3>
+                                <div class="flex flex-col sm:flex-row gap-4">
+                                    <label class="flex items-center cursor-pointer">
+                                        <input type="radio" name="pets" value="yes" x-model="property.pets_allowed"
+                                            class="mr-2">
+                                        <span>Yes</span>
+                                    </label>
+                                    <label class="flex items-center cursor-pointer">
+                                        <input type="radio" name="pets" value="upon_request" x-model="property.pets_allowed"
+                                            class="mr-2">
+                                        <span>Upon request</span>
+                                    </label>
+                                    <label class="flex items-center cursor-pointer">
+                                        <input type="radio" name="pets" value="no" x-model="property.pets_allowed"
+                                            class="mr-2">
+                                        <span>No</span>
+                                    </label>
                                 </div>
 
-                                <!-- Pet Policy -->
-                                <div class="mt-6">
-                                    <h3 class="text-base font-semibold mb-2">Do you allow pets?</h3>
-                                    <div class="flex space-x-6">
+                                <!-- Conditional Field -->
+                                <div x-show="property.pets_allowed === 'yes' || property.pets_allowed === 'upon_request'"
+                                    x-transition class="mt-4">
+                                    <label class="block text-base font-semibold mb-1">Are there additional charges for
+                                        pets?</label>
+                                    <div class="flex flex-col gap-2">
                                         <label class="flex items-center cursor-pointer">
-                                            <input type="radio" name="pets" value="yes" x-model="property.pets_allowed" class="mr-2">
-                                            <span>Yes</span>
-                                        </label>
-                                        <label class="flex items-center cursor-pointer">
-                                            <input type="radio" name="pets" value="upon_request" x-model="property.pets_allowed" class="mr-2">
-                                            <span>Upon request</span>
-                                        </label>
-                                        <label class="flex items-center cursor-pointer">
-                                            <input type="radio" name="pets" value="no" x-model="property.pets_allowed" class="mr-2">
-                                            <span>No</span>
-                                        </label>
-                                    </div>
-
-                                    <!-- Conditional Field -->
-                                    <div x-show="property.pets_allowed === 'yes' || property.pets_allowed === 'upon_request'" x-transition class="mt-4 ">
-                                        <label class="block text-base font-semibold mb-1">Are there additional charges for pets?</label>
-                                        <label class="flex items-center cursor-pointer">
-                                            <input type="radio" name="pet_charges" value="free" x-model="property.pets_fees" class="mr-2">
+                                            <input type="radio" name="pet_charges" value="free"
+                                                x-model="property.pets_fees" class="mr-2">
                                             <span>Pets can stay for free</span>
                                         </label>
                                         <label class="flex items-center cursor-pointer">
-                                            <input type="radio" name="pet_charges" value="charges_apply" x-model="property.pets_fees" class="mr-2">
+                                            <input type="radio" name="pet_charges" value="charges_apply"
+                                                x-model="property.pets_fees" class="mr-2">
                                             <span>Charges may apply</span>
                                         </label>
                                     </div>
                                 </div>
-
-                                <!-- Smoking Policy -->
-                                <div class="mt-6">
-                                    <h3 class="text-base font-semibold mb-2">Do you allow smoking?</h3>
-                                    <div class="flex space-x-6">
-                                        <label class="flex items-center cursor-pointer">
-                                            <input type="radio" name="smoking" value="yes" x-model="property.smoking_allowed" class="mr-2">
-                                            <span>Yes</span>
-                                        </label>
-                                        <label class="flex items-center cursor-pointer">
-                                            <input type="radio" name="smoking" value="no" x-model="property.smoking_allowed" class="mr-2">
-                                            <span>No</span>
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <!-- Parties Policy -->
-                                <div class="mt-6">
-                                    <h3 class="text-base font-semibold mb-2">Do you allow parties?</h3>
-                                    <div class="flex space-x-6">
-                                        <label class="flex items-center cursor-pointer">
-                                            <input type="radio" name="parties" value="yes" x-model="property.parties_allowed" class="mr-2">
-                                            <span>Yes</span>
-                                        </label>
-                                        <label class="flex items-center cursor-pointer">
-                                            <input type="radio" name="parties" value="no" x-model="property.parties_allowed" class="mr-2">
-                                            <span>No</span>
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <!-- Cancellation Policy -->
-                                <div class="mt-6">
-                                    <h3 class="text-base font-semibold mb-2">What's your cancellation policy?</h3>
-                                    <div class="flex space-x-6">
-                                        <label class="flex items-center cursor-pointer">
-                                            <input type="radio" name="cancellation" value="flexible" x-model="property.cancellation_policy" class="mr-2">
-                                            <span>Flexible</span>
-                                        </label>
-                                        <label class="flex items-center cursor-pointer">
-                                            <input type="radio" name="cancellation" value="moderate" x-model="property.cancellation_policy" class="mr-2">
-                                            <span>Moderate</span>
-                                        </label>
-                                        <label class="flex items-center cursor-pointer">
-                                            <input type="radio" name="cancellation" value="strict" x-model="property.cancellation_policy" class="mr-2">
-                                            <span>Strict</span>
-                                        </label>
-                                    </div>
-                                </div>
-<!-- Navigation Buttons -->
-                        <div class="mt-8 flex justify-between">
-                            <button type="button" @click="step > 1 ? step-- : step"
-                                :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-100'"
-                                class="border border-[#3CC0E9] text-blue-600  hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
-                                ←
-                            </button>
-
-                            <button type="button" @click="submitStep11()" class="bg-[#3CC0E9] hover:bg-[#29ACD5] font-semibold text-white py-2 px-4 rounded">
-                                Continue
-                            </button>
-                        </div>
                             </div>
 
-                            <!-- Right Section: Tip Box -->
-                            <div x-data="{ show: true }" x-show="show"
-                                class="bg-white shadow-md rounded-lg p-6 w-full h-[200px] md:w-1/3 relative">
-                                <div class="flex justify-between items-start">
-                                    <div class="flex items-center space-x-2">
-                                        <img src="{{ asset('assets/system-uicons_lightbulb-on.svg') }}"
-                                            alt="Help" class="w-6 h-6 md:w-7 md:h-7 cursor-pointer" />
-                                        <h3 class="text-gray-800 font-semibold text-base">What if my house rules
-                                            change?</h3>
-                                    </div>
-                                    <button @click="show = false" class="text-gray-400 hover:text-gray-600">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"
-                                            viewBox="0 0 20 20" fill="currentColor">
-                                            <path fill-rule="evenodd"
-                                                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                                clip-rule="evenodd" />
-                                        </svg>
-                                    </button>
+                            <!-- Smoking Policy -->
+                            <div class="mt-6">
+                                <h3 class="text-base font-semibold mb-2">Do you allow smoking?</h3>
+                                <div class="flex flex-col sm:flex-row gap-4">
+                                    <label class="flex items-center cursor-pointer">
+                                        <input type="radio" name="smoking" value="yes" x-model="property.smoking_allowed"
+                                            class="mr-2">
+                                        <span>Yes</span>
+                                    </label>
+                                    <label class="flex items-center cursor-pointer">
+                                        <input type="radio" name="smoking" value="no" x-model="property.smoking_allowed"
+                                            class="mr-2">
+                                        <span>No</span>
+                                    </label>
                                 </div>
-                                <p class="text-sm text-gray-700 mt-3">
-                                    You can easily customise these house rules later and additional house rules can
-                                    be set on
-                                    the Policies page of the extranet after you complete registration.
-                                </p>
+                            </div>
+
+                            <!-- Parties Policy -->
+                            <div class="mt-6">
+                                <h3 class="text-base font-semibold mb-2">Do you allow parties?</h3>
+                                <div class="flex flex-col sm:flex-row gap-4">
+                                    <label class="flex items-center cursor-pointer">
+                                        <input type="radio" name="parties" value="yes" x-model="property.parties_allowed"
+                                            class="mr-2">
+                                        <span>Yes</span>
+                                    </label>
+                                    <label class="flex items-center cursor-pointer">
+                                        <input type="radio" name="parties" value="no" x-model="property.parties_allowed"
+                                            class="mr-2">
+                                        <span>No</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Cancellation Policy -->
+                            <div class="mt-6">
+                                <h3 class="text-base font-semibold mb-2">What's your cancellation policy?</h3>
+                                <div class="flex flex-col sm:flex-row gap-4">
+                                    <label class="flex items-center cursor-pointer">
+                                        <input type="radio" name="cancellation" value="flexible"
+                                            x-model="property.cancellation_policy" class="mr-2">
+                                        <span>Flexible</span>
+                                    </label>
+                                    <label class="flex items-center cursor-pointer">
+                                        <input type="radio" name="cancellation" value="moderate"
+                                            x-model="property.cancellation_policy" class="mr-2">
+                                        <span>Moderate</span>
+                                    </label>
+                                    <label class="flex items-center cursor-pointer">
+                                        <input type="radio" name="cancellation" value="strict"
+                                            x-model="property.cancellation_policy" class="mr-2">
+                                        <span>Strict</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Navigation Buttons -->
+                            <div class="mt-8 flex flex-col sm:flex-row justify-between gap-4">
+                                <button type="button" @click="step > 1 ? step-- : step"
+                                    :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-100'"
+                                    class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                                    ←
+                                </button>
+
+                                <button type="button" @click="submitStep11()"
+                                    class="bg-[#3CC0E9] hover:bg-[#29ACD5] font-semibold text-white py-2 px-4 rounded">
+                                    Continue
+                                </button>
                             </div>
                         </div>
 
-                        
+                        <!-- Right Section: Tip Box -->
+                        <div x-data="{ show: true }" x-show="show"
+                            class="bg-white shadow-md rounded-lg p-5 sm:p-6 w-full lg:w-1/3 h-auto lg:h-[220px] relative">
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-center space-x-2">
+                                    <img src="{{ asset('assets/system-uicons_lightbulb-on.svg') }}" alt="Help"
+                                        class="w-6 h-6 md:w-7 md:h-7 cursor-pointer" />
+                                    <h3 class="text-gray-800 font-semibold text-base md:text-lg leading-tight">What if my house
+                                        rules change?</h3>
+                                </div>
+                                <button @click="show = false" class="text-gray-400 hover:text-gray-600">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                        fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <p class="text-sm text-gray-700 mt-3 leading-relaxed">
+                                You can easily customise these house rules later and additional house rules can be set on the
+                                Policies page of the extranet after you complete registration.
+                            </p>
+                        </div>
                     </div>
-                
-
+                </div>
             </template>
+
 
             <template x-if="step === 12">
                 <form @submit.prevent="submitStep12">

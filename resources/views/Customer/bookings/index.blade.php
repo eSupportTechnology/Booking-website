@@ -45,7 +45,7 @@
                             </div>
                             <div>
                                 <span class="font-medium">Total Price:</span>
-                                <p class="text-lg font-bold">LKR {{ number_format($booking->total_price) }}</p>
+                                <p class="text-lg font-bold">@currency($booking->total_price, $booking->currency ?? 'USD')</p>
                             </div>
                         </div>
 

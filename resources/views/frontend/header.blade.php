@@ -35,7 +35,32 @@
 <div class="flex items-center flex-wrap justify-end gap-2 sm:gap-3 md:gap-5 w-full md:w-auto order-2 md:order-2 mt-2 md:mt-0 px-2 sm:px-0 md:px-0">
  <div class="flex w-full md:w-auto justify-center md:justify-end gap-2 sm:gap-3 md:gap-5 mb-2 md:mb-0">
     <!-- Currency -->
-    <span id="current-currency" class="font-semibold cursor-pointer select-none text-sm md:text-base" title="Click to change currency">LKR</span>
+    <div class="relative">
+        <span id="current-currency" class="font-semibold cursor-pointer select-none text-sm md:text-base" title="Click to change currency">
+            {{ app(\App\Services\CurrencyManager::class)->getUserCurrency() }}
+        </span>
+        
+        <!-- Currency Modal -->
+        <div id="currency-modal" class="fixed inset-0 hidden z-50 overflow-y-auto flex items-start justify-center px-4 py-8 bg-black bg-opacity-50">
+            <div class="relative w-full max-w-md p-6 bg-white rounded-lg shadow">
+                <div class="flex items-start justify-between">
+                    <h3 class="text-xl font-semibold text-gray-900">Select Currency</h3>
+                    <button type="button" id="currency-close-btn" class="text-gray-400 hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="mt-4 grid grid-cols-2 gap-4">
+                    @foreach(app(\App\Services\CurrencyService::class)->getSupportedCurrencies() as $currency)
+                        <button data-currency="{{ $currency }}" class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 text-gray-800">
+                            <span>{{ $currency }}</span>
+                        </button>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Language -->
 
@@ -192,8 +217,19 @@
             currencyModal.querySelectorAll("button[data-currency]").forEach((btn) => {
                 btn.addEventListener("click", () => {
                     const selectedCurrency = btn.getAttribute("data-currency");
-                    currentCurrency.textContent = selectedCurrency;
-                    currencyModal.classList.add("hidden");
+                    
+                    fetch('/set-currency', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: JSON.stringify({currency: selectedCurrency})
+                    }).then(() => {
+                        currentCurrency.textContent = selectedCurrency;
+                        currencyModal.classList.add("hidden");
+                        location.reload();
+                    });
                 });
             });
         }

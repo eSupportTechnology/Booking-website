@@ -42,11 +42,11 @@
                                 <div class="text-right">
                                     @if($minPrice == $maxPrice)
                                         <div class="text-xl font-bold text-gray-900">
-                                            LKR {{ number_format($minPrice) }}
+                                            {{ \App\Helpers\CurrencyHelper::convertAndFormat($minPrice, $firstRoom->currency ?? 'USD') }}
                                         </div>
                                     @else
                                         <div class="text-xl font-bold text-gray-900">
-                                            LKR {{ number_format($minPrice) }} - {{ number_format($maxPrice) }}
+                                            {{ \App\Helpers\CurrencyHelper::convertAndFormat($minPrice, $firstRoom->currency ?? 'USD') }} - {{ \App\Helpers\CurrencyHelper::convertAndFormat($maxPrice, $firstRoom->currency ?? 'USD') }}
                                         </div>
                                     @endif
                                     <div class="text-sm text-gray-500">per night</div>
@@ -162,11 +162,11 @@
                                                     <div class="text-right">
                                                         @if($plan->discount > 0)
                                                             <div class="text-sm text-red-500 line-through">
-                                                                LKR {{ number_format($firstRoom->price_per_night) }}
+                                                                {{ \App\Helpers\CurrencyHelper::convertAndFormat($firstRoom->price_per_night, $firstRoom->currency ?? 'USD') }}
                                                             </div>
                                                         @endif
                                                         <div class="text-lg font-bold text-gray-900">
-                                                            LKR {{ number_format($plan->price) }}
+                                                            {{ \App\Helpers\CurrencyHelper::convertAndFormat($plan->price, $firstRoom->currency ?? 'USD') }}
                                                         </div>
                                                         @if($plan->discount > 0)
                                                             <div class="text-xs text-green-600 font-medium">
@@ -202,7 +202,7 @@
                                         <div class="space-y-2 text-sm">
                                             <div class="flex justify-between">
                                                 <span class="text-blue-700">Base rate:</span>
-                                                <span class="font-medium text-blue-900">LKR {{ number_format($minPrice) }}</span>
+                                                <span class="font-medium text-blue-900">{{ \App\Helpers\CurrencyHelper::convertAndFormat($minPrice, $firstRoom->currency ?? 'USD') }}</span>
                                             </div>
                                             @if($property->services && $property->services->breakfast_included)
                                                 <div class="text-green-600 text-xs">✓ Breakfast included</div>

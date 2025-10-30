@@ -12,7 +12,10 @@
                 <p><span class="font-medium">Check-in:</span> {{ \Carbon\Carbon::parse($booking->check_in)->format('M d, Y') }}</p>
                 <p><span class="font-medium">Check-out:</span> {{ \Carbon\Carbon::parse($booking->check_out)->format('M d, Y') }}</p>
                 <p><span class="font-medium">Guests:</span> {{ $booking->guest_count }}</p>
-                <p class="text-xl font-bold"><span class="font-medium">Total:</span> LKR {{ number_format($booking->total_price) }}</p>
+                <p class="text-xl font-bold"><span class="font-medium">Total:</span> {{ \App\Helpers\CurrencyHelper::formatPrice($booking->total_price, $booking->currency ?? 'USD') }}</p>
+                @if($booking->base_currency && $booking->base_currency !== $booking->currency)
+                    <p class="text-sm text-gray-600">Original: {{ \App\Helpers\CurrencyHelper::formatPrice($booking->total_price, $booking->base_currency) }}</p>
+                @endif
             </div>
         </div>
 

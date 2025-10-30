@@ -5,7 +5,7 @@
 /* Tailwind/Booking.com color theme approximation */
 .bg-primary { background-color: #0071C2; }
 .text-primary { color: #0071C2; }
-.hover:bg-primary-dark:hover { background-color: #005A9C; }
+.hover\:bg-primary-dark:hover { background-color: #005A9C; }
 .filter-section-divider {
     display: block;
     height: 1px;
@@ -25,12 +25,10 @@
     transform: rotate(180deg);
 }
 
-/* Custom class for the responsive sidebar state */
-/* This class FORCES the sidebar into view on mobile. */
+/* Mobile Sidebar */
 .sidebar-open {
     transform: translateX(0) !important;
 }
-/* Custom class for the mobile overlay backdrop */
 .mobile-backdrop {
     position: fixed;
     top: 0;
@@ -86,7 +84,6 @@
 .results-grid-container .result-item .sm\:items-end {
     align-items: flex-start; /* Align price details to the start for better stack readability */
 }
-
 </style>
 @endpush
 
@@ -94,67 +91,179 @@
 
 <script src="https://cdn.tailwindcss.com"></script>
 
-@php
-// --- 1. DATA CONSOLIDATION (Simplified for brevity) ---
-$filterCounts = [
-    'popular' => ['Swimming pool' => 113, 'Beach' => 153, 'Private bathroom' => 333, 'Breakfast included' => 155, 'Restaurant' => 105],
-    'meals' => ['Breakfast included' => 155, 'All meals included' => 12],
-    'property_type' => ['Family friendly properties' => 4444, 'Hotels' => 3688, 'Guest houses' => 3335, 'Apartments' => 2013, 'Villas' => 1816, 'Homestays' => 1633, 'Bed and breakfasts' => 1208, 'Holiday homes' => 703, 'Resorts' => 546, 'Hostels' => 375, 'Lodges' => 362, 'Campsites' => 89, 'Chalets' => 83, 'Country houses' => 78, 'Luxury tents' => 56, 'Farm stays' => 24, 'Boats' => 24, 'Holiday parks' => 9, 'Capsule hotels' => 9, 'Motels' => 8, 'Love hotels' => 2, 'Economy hotels' => 1],
-];
+<!-- Alpine.js for interactivity (required for x-data, x-show, etc.) -->
+<script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
-$filterGroups = [
-    [ 'title' => 'Popular filters', 'name' => 'popular', 'id_prefix' => 'popular', 'items' => $filterCounts['popular'], 'visible_count' => 5 ],
-    [ 'title' => 'Meals', 'name' => 'meals', 'id_prefix' => 'meals', 'items' => $filterCounts['meals'], 'visible_count' => 5 ],
-    [ 'title' => 'Travel group', 'name' => 'travel_group', 'id_prefix' => 'travel-group', 'items' => ['Pets allowed' => 4566, 'Family friendly properties' => 4444, 'Travel Proud (LGBTQ+ friendly)' => 27], 'visible_count' => 5 ],
-    [ 'title' => 'Certifications', 'name' => 'certifications', 'id_prefix' => 'certifications', 'items' => ['Sustainability certification' => 29], 'visible_count' => 5 ],
-    [ 'title' => 'Entire places', 'name' => 'entire_places', 'id_prefix' => 'entire-places', 'items' => ['Entire homes & apartments' => 16121], 'visible_count' => 5 ],
-    [ 'title' => 'Room facilities', 'name' => 'room_facility', 'id_prefix' => 'room-facilities', 'visible_count' => 5, 'items' => ["Children's high chair" => 629, "Coffee/tea maker" => 10535, "Electric kettle" => 9921, "View" => 12746, "Soundproofing" => 3229, "Patio" => 3015, "Washing machine" => 4038, "Flat-screen TV" => 6593, "Balcony" => 9930, "Terrace" => 7950, "Bath" => 4080, "Desk" => 8884, "Air conditioning" => 11593, "Kitchenette" => 3856, "Private bathroom" => 14154, "Kitchen/kitchenette" => 6352] ],
-    [ 'title' => 'Facilities', 'name' => 'facility', 'id_prefix' => 'facilities', 'visible_count' => 5, 'items' => ["Parking" => 14917, "Restaurant" => 4888, "Room service" => 7761, "24-hour front desk" => 5796, "Fitness centre" => 613, "Non-smoking rooms" => 10081, "Airport shuttle" => 7766, "Spa and wellness centre" => 1204, "Hot tub/Jacuzzi" => 619, "Free WiFi" => 12363, "Electric vehicle charging station" => 435, "Wheelchair accessible" => 745] ],
-    [ 'title' => 'Top destinations in Sri Lanka', 'name' => 'destination', 'id_prefix' => 'destinations', 'visible_count' => 5, 'items' => ["Galle District" => 3466, "Matara District" => 2317, "Kandy District" => 1287, "Gampaha District" => 1168, "Badulla District" => 1130, "Colombo District" => 898, "Matale District" => 891, "Hambantota District" => 878, "Nuwara Eliya District" => 818, "Anuradhapura District" => 590, "Ratnapura District" => 388, "Trincomalee District" => 362, "Ampara District" => 349, "Kalutara District" => 346, "Puttalam District" => 220, "Jaffna District" => 200, "Monaragala District" => 144, "Polonnaruwa District" => 138, "Kegalle District" => 126, "Batticaloa District" => 90, "Kurunegala District" => 82, "Mannar District" => 23, "Kilinochchi District" => 11, "Vavuniya District" => 7, "Mullaitivu District" => 3] ],
-    [ 'title' => 'Brands', 'name' => 'brand', 'id_prefix' => 'brands', 'visible_count' => 5, 'items' => ["Jetwing Hotels Limited" => 42, "Cinnamon Hotels & Resorts" => 13, "Thema Collection" => 13, "Aitken Spence Hotels" => 9, "Your.Rentals" => 8, "Hilton Hotels & Resorts" => 3, "OYO Rooms" => 3, "Ramada" => 2, "Shangri-La Group" => 2, "Anantara Hotels & Resorts" => 2, "Radisson" => 2, "Yoho Bed" => 2, "Sheraton" => 2, "Collection by Aston" => 2, "GRANBELL HOTELS & RESORTS" => 2, "Best Western" => 1, "Marriott Hotels & Resorts" => 1, "Courtyard by Marriott" => 1, "Doubletree by Hilton" => 1, "Berjaya Hotels & Resorts" => 1] ],
-    [ 'title' => 'City', 'name' => 'city', 'id_prefix' => 'cities', 'visible_count' => 5, 'items' => ["Kandy" => 982, "Hikkaduwa" => 791, "Ella" => 780, "Weligama" => 736, "Galle" => 732, "Negombo" => 664, "Nuwara Eliya" => 626, "Mirissa" => 576, "Ahangama" => 512, "Unawatuna" => 510, "Tangalle" => 495, "Sigiriya" => 467, "Anuradhapura" => 391, "Colombo" => 379, "Matara" => 301, "Arugam Bay" => 280, "Dickwella" => 275, "Trincomalee" => 270, "Bentota" => 264, "Udawalawe" => 250, "Dambulla" => 196, "Tissamaharama" => 192, "Katunayake" => 173, "Jaffna" => 155, "Nikawatawana" => 134] ],
-    [ 'title' => 'Landmarks', 'name' => 'landmark', 'id_prefix' => 'landmarks', 'visible_count' => 5, 'items' => ["Ella Railway Station" => 432, "Negombo Beach Park" => 215, "Sri Dalada Maligawa" => 162, "Temple of Tooth Relic" => 162, "Nuwara Eliya Golf Club" => 161, "Galle International Cricket Stadium" => 138, "Galle Railway Station" => 134, "Tangalle Lagoon" => 121, "Galle Fort" => 105, "Bentota Lake" => 101, "Kandy Lake" => 97, "Gregory Lake" => 95, "Paradise Road" => 91, "Demodara Nine Arch Bridge" => 89, "Galle Light house" => 85, "Turtle Farm" => 76, "Sigiriya Museum" => 73, "Japanese Peace Pagoda" => 67, "Dambulla Cave Temple" => 42, "Yatagala Temple" => 42, "Sigiriya Rock" => 40, "Laksala" => 38, "Angurukaramulla Temple" => 36, "Habarana Lake" => 33, "Haputale Railway Station" => 29] ],
-    [ 'title' => 'Fun things to do', 'name' => 'activity', 'id_prefix' => 'fun-activities', 'visible_count' => 5, 'items' => ["Bicycle rental" => 5784, "Beach" => 4053, "Walking tours" => 4004, "Bike tours" => 3770, "Cycling" => 3553] ],
-    [ 'title' => 'Property accessibility', 'name' => 'prop_accessibility', 'id_prefix' => 'property-accessibility', 'visible_count' => 5, 'items' => ['Toilet with grab rails' => 278, 'Higher level toilet' => 222, 'Lower bathroom sink' => 242, 'Emergency cord in bathroom' => 87, 'Visual aids: Braille' => 41, 'Visual aids: Tactile signs' => 43, 'Auditory guidance' => 62] ],
-    [ 'title' => 'Room accessibility', 'name' => 'room_accessibility', 'id_prefix' => 'room-accessibility', 'visible_count' => 5, 'items' => ['Entire unit located on ground floor' => 4459, 'Upper floors accessible by elevator' => 588, 'Entire unit wheelchair accessible' => 1765, 'Toilet with grab rails' => 351, 'Adapted bath' => 214, 'Roll-in shower' => 604, 'Walk-in shower' => 2279, 'Raised toilet' => 638, 'Lowered sink' => 845, 'Emergency cord in bathroom' => 134, 'Shower chair' => 101] ],
-];
 
-// Replicate a result for grid view demonstration
-$sampleResults = [
-    [
-        'title' => 'The Grand Consolidated Hotel',
-        'location' => 'Colombo',
-        'score' => 9.1,
-        'reviews' => 102,
-        'price' => 450,
-        'features' => ['Luxury Suite with Ocean View', 'Free cancellation', '<span class="text-green-600 font-semibold">No prepayment needed</span> - pay at the property'],
-    ],
-    [
-        'title' => 'Sunset Beach Villa',
-        'location' => 'Hikkaduwa',
-        'score' => 8.7,
-        'reviews' => 234,
-        'price' => 210,
-        'features' => ['Private pool', 'Free WiFi', 'Breakfast included'],
-    ],
-    [
-        'title' => 'Kandy Mountain View Guest House',
-        'location' => 'Kandy',
-        'score' => 9.5,
-        'reviews' => 48,
-        'price' => 95,
-        'features' => ['Terrace with view', 'Family friendly', 'Self-catering option'],
-    ],
-    [
-        'title' => 'Luxury Apartment Galle Fort',
-        'location' => 'Galle',
-        'score' => 9.0,
-        'reviews' => 110,
-        'price' => 320,
-        'features' => ['Near Galle Fort', 'Fully equipped kitchen', 'Washing machine'],
-    ]
-];
-@endphp
+{{-- 🔹 SEARCH FILTER BAR (property search kept intact, enhanced with the same structure as first file) --}}
+<div class="relative z-10 -mt-8 px-2 sm:px-4 mb-6">
+    <form action="{{ route('customer.search') }}" method="GET"
+    x-data="{
+        destination: '{{ $searchData['destination'] ?? '' }}',
+        checkIn: '{{ $searchData['checkIn'] ?? '' }}',
+        checkOut: '{{ $searchData['checkOut'] ?? '' }}',
+        adults: {{ $searchData['adults'] ?? 2 }},
+        children: {{ $searchData['children'] ?? 0 }},
+        rooms: {{ $searchData['rooms'] ?? 1 }},
+        pets: {{ $searchData['pets'] ? 'true' : 'false' }}
+    }"
+        class="bg-white rounded-xl px-2 py-1 sm:px-3 sm:py-2 shadow-lg
+           flex flex-col md:flex-row items-stretch md:items-center
+           gap-2 md:gap-0 border-2 sm:border-4 border-yellow-400
+           max-w-full md:max-w-6xl mx-auto overflow-visible text-sm md:text-base">
+
+        <!-- Destination Selector -->
+        <div x-data="{ open: false, destination: '' }"
+             class="relative flex-1 border-b md:border-b-0 md:border-r border-gray-300 px-2 py-1">
+            <button @click="open = !open" type="button"
+                class="flex items-center gap-2 w-full text-left text-sm">
+                <img src="{{ asset('assets/stay.svg') }}" class="w-5 h-5 sm:w-6 sm:h-6" />
+                <span x-text="destination || '{{ __("messages.Where are you going?") }}'"
+                      class="text-gray-800 truncate text-sm sm:text-base"></span>
+            </button>
+            <div x-show="open" @click.away="open = false"
+                class="absolute z-20 bg-white shadow-xl rounded-xl p-3 mt-2 w-64 sm:w-72 left-0 md:left-auto md:right-0 text-gray-800 space-y-2 text-sm">
+                <template x-for="city in ['New York','Los Angeles','London','Paris','Tokyo','Galle']" :key="city">
+                    <button type="button" @click="destination = city; open = false"
+                        class="block w-full text-left px-3 py-2 hover:bg-gray-100 rounded">
+                        <span x-text="city"></span>
+                    </button>
+                </template>
+            </div>
+            <input type="hidden" name="destination" :value="destination">
+        </div>
+
+        <!-- Dates Selector -->
+        <div x-data="{ open: false, activeTab: 'check', checkIn: '', checkOut: '', flexibleOption: '' }"
+             class="relative flex-1 border-b md:border-b-0 md:border-r border-gray-300 px-2 py-1">
+            <button @click="open = !open" type="button"
+                class="flex items-center gap-2 w-full text-left text-sm">
+                <img src="{{ asset('assets/calender.svg') }}" class="w-5 h-5" />
+                <span class="text-gray-800 truncate text-sm sm:text-base">
+                    <template x-if="activeTab === 'check'">
+                        <span><span x-text="checkIn || '{{ __('messages.Check-in') }}'"></span> — 
+                            <span x-text="checkOut || '{{ __('messages.Check-out') }}'"></span></span>
+                    </template>
+                    <template x-if="activeTab === 'flexible'">
+                        <span x-text="flexibleOption || 'Flexible dates'"></span>
+                    </template>
+                </span>
+            </button>
+
+            <!-- Dropdown -->
+            <div x-show="open" @click.away="open = false"
+                class="absolute z-30 bg-white shadow-xl rounded-xl p-4 mt-2 w-80 sm:w-96 left-0 md:left-auto md:right-0 text-gray-800 text-sm" x-transition>
+                <nav class="flex border-b border-gray-200 mb-4 text-xs sm:text-sm">
+                    <button @click.prevent="activeTab = 'check'"
+                        :class="activeTab === 'check' ? 'border-blue-600 text-blue-600' : 'text-gray-500'"
+                        class="px-2 sm:px-4 py-1 sm:py-2 border-b-2 font-semibold">Check-in / Check-out</button>
+                    <button @click.prevent="activeTab = 'flexible'"
+                        :class="activeTab === 'flexible' ? 'border-blue-600 text-blue-600' : 'text-gray-500'"
+                        class="px-2 sm:px-4 py-1 sm:py-2 border-b-2 font-semibold">Flexible dates</button>
+                </nav>
+
+                <div x-show="activeTab === 'check'" x-transition>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs text-gray-500 mb-1">Check-in Date</label>
+                            <input type="date" name="checkIn" x-model="checkIn"
+                                class="w-full border border-gray-300 rounded px-2 py-2 text-sm" />
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-500 mb-1">Check-out Date</label>
+                            <input type="date" name="checkOut" x-model="checkOut"
+                                class="w-full border border-gray-300 rounded px-2 py-2 text-sm" />
+                        </div>
+                    </div>
+                </div>
+
+                <div x-show="activeTab === 'flexible'" x-transition>
+                    <label class="block text-xs text-gray-500 mb-1">Select Flexible Dates</label>
+                    <select x-model="flexibleOption"
+                        class="w-full border border-gray-300 rounded px-3 py-2 text-sm">
+                        <option value="" disabled>Select option</option>
+                        <option value="Weekend Getaway">Weekend Getaway</option>
+                        <option value="Next Month">Next Month</option>
+                        <option value="Anytime">Anytime</option>
+                        <option value="Custom Range">Custom Range</option>
+                    </select>
+                </div>
+
+                <div class="mt-4 text-right">
+                    <button @click="open = false"
+                        class="bg-blue-600 text-white px-3 sm:px-4 py-2 rounded hover:bg-blue-700 text-xs sm:text-sm">
+                        Done
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Guests Selector -->
+        <div x-data="{ open: false, adults: 2, children: 0, rooms: 1, pets: false }"
+             class="relative flex-1 border-b md:border-b-0 md:border-r border-gray-300 px-2 py-1">
+            <button @click="open = !open" type="button"
+                class="flex items-center gap-2 w-full text-left text-sm">
+                <img src="{{ asset('assets/user.svg') }}" class="w-5 h-5" />
+                <span x-text="`${adults} adults · ${children} children · ${rooms} room${rooms>1?'s':''}`"
+                      class="text-gray-800 text-sm sm:text-base truncate"></span>
+            </button>
+
+            <div x-show="open" @click.away="open = false"
+                class="absolute z-20 bg-white shadow-xl rounded-xl p-4 mt-2 w-64 sm:w-72 left-0 md:left-auto md:right-0 text-gray-800 space-y-4 text-sm">
+                <div class="flex justify-between"><span>Adults</span>
+                    <div class="flex gap-2">
+                        <button type="button" @click="if(adults>1) adults--" class="px-2 bg-gray-200 rounded">−</button>
+                        <span x-text="adults"></span>
+                        <button type="button" @click="adults++" class="px-2 bg-gray-200 rounded">+</button>
+                    </div>
+                </div>
+                <div class="flex justify-between"><span>Children</span>
+                    <div class="flex gap-2">
+                        <button type="button" @click="if(children>0) children--" class="px-2 bg-gray-200 rounded">−</button>
+                        <span x-text="children"></span>
+                        <button type="button" @click="children++" class="px-2 bg-gray-200 rounded">+</button>
+                    </div>
+                </div>
+                <div class="flex justify-between"><span>Rooms</span>
+                    <div class="flex gap-2">
+                        <button type="button" @click="if(rooms>1) rooms--" class="px-2 bg-gray-200 rounded">−</button>
+                        <span x-text="rooms"></span>
+                        <button type="button" @click="rooms++" class="px-2 bg-gray-200 rounded">+</button>
+                    </div>
+                </div>
+                <div class="flex justify-between"><span>Travelling with pets?</span>
+                    <label class="inline-flex items-center cursor-pointer">
+                        <input type="checkbox" x-model="pets" class="sr-only peer">
+                        <div class="w-10 h-6 bg-gray-300 rounded-full peer peer-checked:bg-blue-600 relative transition-all">
+                            <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-all peer-checked:translate-x-4"></div>
+                        </div>
+                    </label>
+                </div>
+
+                <p class="text-xs text-gray-500">
+                    Assistance animals aren’t considered pets.
+                    <a href="#" class="text-blue-600 underline">Read more</a>
+                </p>
+
+                <button type="button" @click="open = false"
+                    class="block w-full text-center bg-white border border-blue-600 text-blue-600 font-semibold py-2 rounded hover:bg-blue-50">
+                    Done
+                </button>
+            </div>
+        </div>
+
+        <!-- Search Button -->
+        <div class="w-full md:w-auto px-2 py-1">
+            <button type="submit"
+                class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-semibold px-3 sm:px-4 py-2 rounded-lg text-sm"
+                style="background-color:#3CC0E9;">
+                Search
+            </button>
+        </div>
+    </form>
+</div>
+
+{{-- 🔹 END SEARCH BAR SECTION --}}
 
 <div id="mobile-backdrop" class="mobile-backdrop"></div>
 
@@ -174,7 +283,7 @@ $sampleResults = [
                     </button>
                 </div>
 
-                {{-- --- UNIQUE MANUAL FILTERS --- --}}
+                {{-- --- UNIQUE MANUAL FILTERS (kept exactly as you had them) --- --}}
                 <div class="mb-4" id="budget-filter-section">
                     <h3 class="font-semibold text-gray-700 mb-2 flex justify-between items-center cursor-pointer filter-toggle-header" data-target="budget-content">
                         Your budget (per night)
@@ -227,7 +336,7 @@ $sampleResults = [
                 </div>
                 <div class="filter-section-divider"></div>
 
-                {{-- --- CONSOLIDATED LOOP FILTERS --- --}}
+                {{-- --- Consolidated Loop Filters: we use $filterGroups passed from controller --- --}}
                 @foreach ($filterGroups as $group)
                     @php
                         $isComplex = count($group['items']) > $group['visible_count'];
@@ -284,6 +393,7 @@ $sampleResults = [
                         <div class="filter-section-divider"></div>
                     @endif
                 @endforeach
+
                 <div class="mb-6" id="property-type-filter-section">
                     <h4 class="font-semibold text-gray-900 mb-2 flex justify-between items-center cursor-pointer filter-toggle-header" data-target="prop-type-content">
                         Property type
@@ -301,7 +411,6 @@ $sampleResults = [
                     </ul>
                 </div>
                 <div class="filter-section-divider"></div>
-
 
                 <button class="w-full py-2 mt-4 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition">
                     Apply Filters
@@ -325,7 +434,7 @@ $sampleResults = [
                     Show on map
                 </div>
                 <div class="flex justify-between items-center border-t pt-4">
-                    <h1 class="text-xl font-bold text-gray-800">Search Results: {{ count($sampleResults) }} properties found</h1>
+                    <h1 class="text-xl font-bold text-gray-800">Search Results: {{ $properties->total() }} properties found</h1>
                     <div class="flex items-center space-x-2 text-gray-600">
                         <span class="text-sm hidden sm:inline">Sort by: Top Picks</span>
                         <div class="flex border rounded-lg overflow-hidden">
@@ -345,49 +454,76 @@ $sampleResults = [
             {{-- --- RESULT CONTAINER: This is the element that will switch display styles --- --}}
             <div id="results-container" class="space-y-6">
 
-                {{-- Dynamic result cards loop based on $sampleResults --}}
-                @foreach ($sampleResults as $result)
+                {{-- Dynamic result cards loop based on $properties --}}
+                @forelse ($properties as $property)
                 <div class="result-item result-item-list bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow border border-gray-200 overflow-hidden">
                     <div class="result-image">
-                        <div class="w-full h-full bg-gray-300 flex items-center justify-center"><span class="text-gray-500">Property Image Placeholder</span></div>
+                        @php
+                            // Try to get the first image path
+                            $img = null;
+                            if ($property->files && $property->files->count() > 0) {
+                                $img = $property->files->first()->path;
+                            }
+                        @endphp
+
+                        @if($img)
+                            <img src="{{ asset($img) }}" alt="{{ $property->title }}" class="w-full h-full object-cover">
+                        @else
+                            <div class="w-full h-full bg-gray-300 flex items-center justify-center"><span class="text-gray-500">Property Image Placeholder</span></div>
+                        @endif
                     </div>
                     <div class="sm:w-1/2 p-4 flex flex-col justify-between">
                         <div>
                             <div class="flex items-start justify-between mb-2">
-                                <h3 class="text-xl font-bold text-primary hover:text-primary-dark transition-colors">{{ $result['title'] }}</h3>
+                                <h3 class="text-xl font-bold text-primary hover:text-primary-dark transition-colors">{{ $property->title }}</h3>
                                 <div class="flex items-center space-x-2">
-                                    <div class="text-sm text-gray-500 font-medium">{{ $result['reviews'] }} reviews</div>
-                                    <span class="inline-flex items-center bg-primary text-white text-base font-bold px-2 py-1 rounded-t-md rounded-r-md">{{ $result['score'] }}</span>
+                                    <div class="text-sm text-gray-500 font-medium">{{ $property->reviews_count ?? 0 }} reviews</div>
+                                    <span class="inline-flex items-center bg-primary text-white text-base font-bold px-2 py-1 rounded-t-md rounded-r-md">{{ $property->stars ?? number_format($property->reviews_avg_rating ?? 0, 1) }}</span>
                                 </div>
                             </div>
                             <div class="flex items-center text-sm text-gray-600 mb-3">
                                 <svg class="w-4 h-4 mr-1 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a6 6 0 00-6 6c0 4.42 4 10 6 10s6-5.58 6-10a6 6 0 00-6-6zm0 10a2 2 0 110-4 2 2 0 010 4z"/></svg>
-                                <span class="font-medium mr-1">{{ $result['location'] }}</span>
+                                <span class="font-medium mr-1">{{ $property->city }}, {{ $property->country }}</span>
                                 <span class="text-xs underline cursor-pointer hover:text-gray-700">Show on map</span>
                             </div>
                             <ul class="list-disc list-inside text-sm text-gray-700 space-y-1">
-                                @foreach ($result['features'] as $feature)
-                                    <li>{!! $feature !!}</li>
-                                @endforeach
+                                {{-- Use facilities for features if available --}}
+                                @if($property->facilities && $property->facilities->count())
+                                    @foreach($property->facilities->take(5) as $f)
+                                        <li>{{ $f->facility_name }}</li>
+                                    @endforeach
+                                @else
+                                    <li>{{ \Illuminate\Support\Str::limit($property->description, 120) }}</li>
+                                @endif
                             </ul>
                         </div>
                     </div>
                     <div class="sm:w-1/4 p-4 bg-gray-50 flex flex-col justify-end items-center sm:items-end border-t sm:border-t-0 sm:border-l border-gray-100">
                         <div class="text-right w-full mb-3">
-                            <div class="text-sm text-gray-500">Price for 2 nights</div>
-                            <div class="text-3xl font-bold text-gray-800">US${{ $result['price'] }}</div>
+                            <div class="text-sm text-gray-500">Price from</div>
+                            @php
+                                $price = $property->rooms_min_price_per_night ?? null;
+                            @endphp
+                            <div class="text-3xl font-bold text-gray-800">@if($price) @currency($price, $property->rooms()->first()->currency ?? 'USD') @else N/A @endif</div>
                             <div class="text-xs text-gray-500 mb-4">Includes taxes and fees</div>
                         </div>
-                        <a href="#" class="w-full sm:w-auto bg-primary text-white text-center px-4 py-3 rounded-lg font-bold hover:bg-primary-dark transition-colors shadow-lg">See Availability</a>
+                        <a href="{{ route('property.show', $property->id ?? '#') }}" class="w-full sm:w-auto bg-primary text-white text-center px-4 py-3 rounded-lg font-bold hover:bg-primary-dark transition-colors shadow-lg">See Availability</a>
                     </div>
                 </div>
-                @endforeach
-
-                {{-- Original Placeholder/No Results Message --}}
+                @empty
+                {{-- No results placeholder (keeps look & feel similar to your original card) --}}
                 <div class="col-span-full bg-white rounded-xl p-10 shadow-lg text-center">
-                    <h3 class="text-2xl font-semibold text-red-500 mb-2">Data Simulation.</h3>
-                    <p class="text-gray-500">The results are simulated using the $sampleResults array to demonstrate list/grid switching.</p>
+                    <h3 class="text-2xl font-semibold text-red-500 mb-2">No properties found.</h3>
+                    <p class="text-gray-500">We couldn't find any listings that match your search. Try changing filters or clearing some fields.</p>
                 </div>
+                @endforelse
+
+                {{-- Pagination --}}
+                @if(method_exists($properties, 'links'))
+                    <div class="bg-white rounded-xl p-4 mt-6 shadow-sm">
+                        {{ $properties->links() }}
+                    </div>
+                @endif
             </div>
             <div class="mt-8 flex justify-center"><p class="text-center text-gray-500">End of results.</p></div>
         </main>
@@ -395,23 +531,19 @@ $sampleResults = [
 </div>
 
 <script>
-    // --- CONSOLIDATED JAVASCRIPT LOGIC ---
-
-    // Global elements for mobile toggle
+    // --- CONSOLIDATED JAVASCRIPT LOGIC (combines second file behavior + extra mechanisms from first file) ---
     const sidebar = document.getElementById('filters-sidebar');
     const openBtn = document.getElementById('open-sidebar-btn');
     const closeBtn = document.getElementById('close-sidebar-btn');
     const backdrop = document.getElementById('mobile-backdrop');
-    const lgBreakpoint = 1024; // Tailwind's 'lg' breakpoint
+    const lgBreakpoint = 1024;
 
-    // Elements for View Switcher
     const resultsContainer = document.getElementById('results-container');
     const listViewBtn = document.getElementById('list-view-btn');
     const gridViewBtn = document.getElementById('grid-view-btn');
 
-    // Function to open/close the mobile sidebar
+    // Sidebar toggle behavior (from first file) — preserves existing sidebar markup and behavior
     function toggleSidebar(open) {
-        // Only run on small screens
         if (window.innerWidth < lgBreakpoint) {
             if (open) {
                 sidebar.classList.add('sidebar-open');
@@ -425,25 +557,19 @@ $sampleResults = [
         }
     }
 
-    // Handlers for mobile toggle
     if (openBtn) openBtn.addEventListener('click', () => toggleSidebar(true));
     if (closeBtn) closeBtn.addEventListener('click', () => toggleSidebar(false));
     if (backdrop) backdrop.addEventListener('click', () => toggleSidebar(false));
 
-    // Handle resize to ensure desktop mode works correctly if resized from mobile
     window.addEventListener('resize', () => {
         if (window.innerWidth >= lgBreakpoint) {
-            // Ensure classes are clean if we switch from mobile overlay to desktop static view
             sidebar.classList.remove('sidebar-open');
             backdrop.style.display = 'none';
             document.body.style.overflow = '';
         }
     });
 
-    /**
-     * Toggles the display mode between list and grid.
-     * @param {string} mode - 'list' or 'grid'
-     */
+    // list/grid view toggle (kept from your second file)
     function toggleViewMode(mode) {
         if (!resultsContainer || !listViewBtn || !gridViewBtn) return;
 
@@ -456,7 +582,7 @@ $sampleResults = [
 
             gridViewBtn.classList.add('bg-gray-200');
             gridViewBtn.classList.remove('hover:bg-gray-100');
-        } else { // 'list' mode (default)
+        } else {
             resultsContainer.classList.add('space-y-6');
             resultsContainer.classList.remove('results-grid-container');
 
@@ -468,12 +594,12 @@ $sampleResults = [
         }
     }
 
-    // Handlers for View Switcher
     if (listViewBtn) listViewBtn.addEventListener('click', () => toggleViewMode('list'));
     if (gridViewBtn) gridViewBtn.addEventListener('click', () => toggleViewMode('grid'));
 
     /**
-     * Reusable function to manage the internal "Show more/less" toggle within a filter section.
+     * Initialize show more/less for any internal filter with "toggle-<prefix>" / "hidden-<prefix>" IDs.
+     * This approach finds all toggles rendered by your Blade loop and wires them up — no need to hardcode prefixes.
      */
     function initializeShowMoreToggle(idPrefix, groupName) {
         const hiddenContainer = document.getElementById(`hidden-${idPrefix}`);
@@ -487,18 +613,21 @@ $sampleResults = [
             });
         }
 
+        // Keep original second-file behavior: don't auto-submit here.
+        // But we can optionally log selections for debugging (non-intrusive).
         if (container) {
             container.addEventListener('change', (e) => {
-                if (e.target.tagName === 'INPUT' && e.target.type === 'checkbox' && e.target.name === groupName) {
-                    const selected = Array.from(container.querySelectorAll(`input[name="${groupName}"]:checked`)).map(cb => cb.value);
-                    console.log(`[Filter Change] Selected ${groupName} Filters:`, selected);
+                if (e.target.tagName === 'INPUT' && (e.target.type === 'checkbox' || e.target.type === 'radio')) {
+                    // Non-intrusive debug; remove if undesired
+                    // console.log(`[Filter Change] ${groupName}:`, Array.from(container.querySelectorAll(`input[name="${groupName}"]:checked`)).map(cb => cb.value));
                 }
             });
         }
     }
 
     /**
-     * Reusable function to manage the primary section minimization toggle.
+     * Collapsible section toggle (for headers with class filter-toggle-header)
+     * This implements the rotating icon behavior from the first file.
      */
     function initializeSectionToggle() {
         document.querySelectorAll('.filter-toggle-header').forEach(header => {
@@ -509,47 +638,32 @@ $sampleResults = [
 
                 if (targetContent) {
                     targetContent.classList.toggle('hidden');
-                    // Add initial rotation to icons for sections that start visible (like 'Budget' and 'Review Score')
-                    // For the provided code, all sections seem to start open, so let's apply rotation to indicate a collapse state
-                    const sectionId = header.closest('[id$="-section"]').id;
-                    const isManualSection = ['budget-filter-section', 'review-score-filter-section', 'property-rating-filter-section'].includes(sectionId);
-
-                    // For the initial state, we assume the content is visible (not 'hidden') by default.
-                    // If content is not hidden, the icon should be in the default (down) position.
-                    // If the content is toggled to be hidden, the icon should rotate.
                     if (icon) {
-                        // Check if the content is NOT hidden to determine the starting icon position (down arrow)
-                        // This logic is simplified: if we click, we toggle 'hidden' and 'rotated'
                         icon.classList.toggle('rotated', targetContent.classList.contains('hidden'));
                     }
                 }
             });
-             // Set initial icon state for all headers if the content starts visible (which is the case here)
-             const targetContent = document.getElementById(header.getAttribute('data-target'));
-             const icon = header.querySelector('.filter-toggle-icon');
-             if (icon && targetContent && !targetContent.classList.contains('hidden')) {
-                 icon.classList.remove('rotated'); // Down arrow for open sections
-             }
+
+            // Set initial icon state (down arrow = open)
+            const targetContent = document.getElementById(header.getAttribute('data-target'));
+            const icon = header.querySelector('.filter-toggle-icon');
+            if (icon && targetContent && !targetContent.classList.contains('hidden')) {
+                icon.classList.remove('rotated');
+            }
         });
     }
 
-    // --- INITIALIZATION ---
     document.addEventListener('DOMContentLoaded', () => {
+        // initialize collapsible sections
         initializeSectionToggle();
 
-        const groupsToInitialize = [
-            'popular', 'meals', 'travel-group', 'certifications', 'entire-places',
-            'room-facilities', 'facilities', 'destinations', 'brands',
-            'cities', 'landmarks', 'fun-activities', 'property-accessibility', 'room-accessibility'
-        ];
-
-        groupsToInitialize.forEach(prefix => {
-            let groupName = prefix.replace(/-/g, '_');
-            if (prefix === 'fun-activities') groupName = 'activity';
-            initializeShowMoreToggle(prefix, groupName);
+        // Wire up all internal "show more" toggles by searching for toggle-* elements
+        document.querySelectorAll('[id^="toggle-"]').forEach(btn => {
+            const id = btn.id.replace(/^toggle-/, '');
+            initializeShowMoreToggle(id, id.replace(/-/g, '_'));
         });
 
-        // Unique/Manual Filter JS handlers (Budget, Review, Rating, Prop Type)
+        // Additional second-file listeners (budget range, review filters) preserved:
         const budgetRange = document.getElementById('budget-range');
         const budgetDisplay = document.getElementById('budget-display');
         function updateBudgetDisplay(value) {
@@ -573,7 +687,7 @@ $sampleResults = [
             }
         });
 
-        // Initialize view mode to 'list' on page load
+        // Default to list view on load (preserves prior behavior)
         toggleViewMode('list');
     });
 </script>

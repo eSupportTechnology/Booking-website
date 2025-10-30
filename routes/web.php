@@ -58,8 +58,9 @@ Route::post('change-language', [LanguageController::class, 'change'])->name('lan
 
 Route::prefix('customer')->group(function () {
     // Search route
+    Route::get('/search-form', [SearchController::class, 'showSearchForm'])->name('customer.searchForm');
     Route::get('/search', [SearchController::class, 'search'])->name('customer.search');
-    
+
 
 
     Route::get('/login', [CustomerAuthController::class, 'showLoginForm'])->name('customer.login');
@@ -95,13 +96,13 @@ Route::prefix('customer')->group(function () {
             ->name('customer.bookings.confirmation');
         Route::patch('/bookings/{booking}/cancel', [\App\Http\Controllers\Customer\BookingController::class, 'cancel'])
             ->name('customer.bookings.cancel');
-        
+
         // Payment routes
         Route::get('/payment/{booking}', [\App\Http\Controllers\Customer\PaymentController::class, 'show'])
             ->name('customer.payment.show');
         Route::post('/payment/{booking}', [\App\Http\Controllers\Customer\PaymentController::class, 'process'])
             ->name('customer.payment.process');
-        
+
         // Messages
         Route::get('/messages', [\App\Http\Controllers\Customer\MessageController::class, 'index'])
             ->name('customer.messages.index');
@@ -109,7 +110,7 @@ Route::prefix('customer')->group(function () {
             ->name('customer.messages.conversation');
         Route::post('/messages', [\App\Http\Controllers\Customer\MessageController::class, 'store'])
             ->name('customer.messages.store');
-        
+
         // Reviews
         Route::get('/reviews', [\App\Http\Controllers\Customer\ReviewController::class, 'index'])
             ->name('customer.reviews.index');
@@ -146,7 +147,7 @@ Route::prefix('customer')->group(function () {
         ->name('customer.bookings.booked-dates');
     Route::get('/properties/{property}/available-rooms', [\App\Http\Controllers\Customer\BookingController::class, 'getAvailableRooms'])
         ->name('customer.bookings.available-rooms');
-    
+
     // Enhanced room endpoints
     Route::get('/properties/{property}/rooms/available', [\App\Http\Controllers\Customer\RoomController::class, 'getAvailableRoomsWithDetails'])
         ->name('customer.properties.rooms.available');
@@ -700,7 +701,7 @@ Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddle
     Route::get('/hotels/{property}/rooms', [\App\Http\Controllers\Partner\HotelEditController::class, 'editRooms'])->name('partner.hotels.rooms');
     Route::get('/hotels/{property}/payment', [\App\Http\Controllers\Partner\HotelEditController::class, 'editPayment'])->name('partner.hotels.payments');
     Route::get('/hotels/{property}/policies', [\App\Http\Controllers\Partner\HotelEditController::class, 'editPolicies'])->name('partner.hotels.policies');
-    
+
     // Hotel edit step pages
     Route::get('/hotels/{property}/edit/create-1', [\App\Http\Controllers\Partner\HotelEditController::class, 'editCreate1'])->name('partner.hotels.edit.create1');
     Route::get('/hotels/{property}/edit/create-2', [\App\Http\Controllers\Partner\HotelEditController::class, 'editCreate2'])->name('partner.hotels.edit.create2');
@@ -708,7 +709,7 @@ Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddle
     Route::get('/hotels/{property}/edit/rooms', [\App\Http\Controllers\Partner\HotelEditController::class, 'editRooms'])->name('partner.hotels.edit.rooms');
     Route::get('/hotels/{property}/edit/payment', [\App\Http\Controllers\Partner\HotelEditController::class, 'editPayment'])->name('partner.hotels.edit.payment');
     Route::get('/hotels/{property}/edit/complete', [\App\Http\Controllers\Partner\HotelEditController::class, 'editComplete'])->name('partner.hotels.edit.complete');
-    
+
     // API routes for AJAX calls
     Route::get('/hotels/{property}/api/data', [\App\Http\Controllers\Partner\HotelEditController::class, 'getPropertyData'])->name('partner.hotels.api.data');
     Route::get('/hotels/{property}/api/amenities', [\App\Http\Controllers\Partner\HotelEditController::class, 'getAmenities'])->name('partner.hotels.api.amenities');
@@ -1034,6 +1035,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
             // Rental status routes
             Route::patch('/taxi/{taxi}', \App\Http\Controllers\Admin\UpdateTaxiStatusController::class)->name('taxi.update');
             Route::patch('/airport-transfer/{transfer}', \App\Http\Controllers\Admin\UpdateAirportTransferStatusController::class)->name('airport-transfer.update');
+            // Rental provider (car renter) status route
+            Route::patch('/rental-provider/{provider}', \App\Http\Controllers\Admin\UpdateRentalProviderStatusController::class)->name('rental-provider.update');
         });
 
         // Approval routes
@@ -1383,5 +1386,9 @@ Route::get('/customer/car-rental/booking', function () {
     return view('Customer.without-driver-car-booking');
 })->name('customer.car-rental.booking');
 
-// Route for the car rental search/filtering page (Handles the form submission from the car rental page)
-Route::get('/customer/carsearch', [CarSearchController::class, 'carsearch'])->name('customer.car-rental.search');
+// Currency routes
+Route::post('/set-currency', [\App\Http\Controllers\CurrencyController::class, 'setCurrency'])->name('currency.set');
+Route::get('/api/exchange-rate/{from}/{to}', [\App\Http\Controllers\CurrencyController::class, 'getRate']);
+
+Route::get('/customer/car-rental/search', [CarSearchController::class, 'carsearch'])
+    ->name('customer.carsearch');

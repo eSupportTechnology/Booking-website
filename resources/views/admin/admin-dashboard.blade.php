@@ -31,7 +31,7 @@
         </div>
         <div class="bg-white p-4 sm:p-6 rounded-lg shadow border-l-4 border-yellow-500">
             <h2 class="text-xs sm:text-sm text-gray-500">Revenue (30d)</h2>
-            <p class="text-xl sm:text-2xl font-bold text-gray-800">${{ $revenue }}</p>
+            <p class="text-xl sm:text-2xl font-bold text-gray-800">@currency($revenue, 'USD')</p>
         </div>
         <div class="bg-white p-4 sm:p-6 rounded-lg shadow border-l-4 border-red-500">
             <h2 class="text-xs sm:text-sm text-gray-500">Pending Verifications</h2>
@@ -68,7 +68,7 @@
                     </div>
                     <div class="flex justify-between items-center text-sm">
                         <span class="text-gray-600">{{ $booking['date'] }}</span>
-                        <span class="font-semibold text-green-600">${{ $booking['amount'] }}</span>
+                        <span class="font-semibold text-green-600">@currency($booking['amount'], 'USD')</span>
                     </div>
                     <div>
                         <a href="{{ route('admin.customers') }}"
@@ -111,7 +111,7 @@
                             <td class="px-4 py-2">{{ $booking['customer_name'] }}</td>
                             <td class="px-4 py-2">{{ $booking['property_name'] }}</td>
                             <td class="px-4 py-2">{{ $booking['date'] }}</td>
-                            <td class="px-4 py-2 font-semibold text-green-600">${{ $booking['amount'] }}</td>
+                            <td class="px-4 py-2 font-semibold text-green-600">@currency($booking['amount'], 'USD')</td>
                             <td class="px-4 py-2">
                                 <span class="{{ $statusColor }} text-xs font-medium px-2 py-1 rounded">
                                     {{ $booking['status'] }}
@@ -187,7 +187,7 @@
                 </div>
                 <div class="flex justify-between items-center">
                     <span class="text-gray-600">Total Revenue (30d):</span>
-                    <span class="font-semibold text-green-600">${{ $revenue }}</span>
+                    <span class="font-semibold text-green-600">@currency($revenue, 'USD')</span>
                 </div>
                 @if($pendingVerifications > 0)
                     <div class="mt-2 p-3 bg-yellow-50 border border-yellow-200 rounded">

@@ -497,70 +497,100 @@
     </div>
     <!-- Step 1 -->
     <template x-if="step === 1">
-        <div class="relative w-[1200px] h-auto overflow-hidden rounded-lg shadow mx-auto my-10 ">
+        <div class="relative w-full max-w-[1200px] h-auto overflow-hidden rounded-lg shadow mx-auto my-6 sm:my-10">
             <!-- Google Maps iframe full background -->
-            <iframe class="absolute inset-0 w-full h-full" loading="lazy"
-                src="https://www.google.com/maps?q=La+Grande+Villa+Nuwara+Eliya&output=embed" allowfullscreen>
+            <iframe
+                class="absolute inset-0 w-full h-full min-h-[400px] sm:min-h-[500px]"
+                loading="lazy"
+                src="https://www.google.com/maps?q=La+Grande+Villa+Nuwara+Eliya&output=embed"
+                allowfullscreen>
             </iframe>
 
             <!-- Optional overlay for readability -->
-            <div class="absolute inset-0 "></div>
+            <div class="absolute inset-0"></div>
 
             <!-- Form content centered on map -->
-            <div class="relative z-10 flex items-center justify-start h-auto p-4 mt-[110px]">
-                <div class="bg-white bg-opacity-95 rounded-lg shadow-lg w-full max-w-md p-6 md:p-8 h-auto mb-4">
-                    <h2 class="text-2xl font-semibold mb-4 text-gray-800">Where is your property?</h2>
+            <div class="relative z-10 flex items-center justify-center md:justify-start h-auto p-4 sm:p-6 mt-[80px] sm:mt-[110px]">
+                <div class="bg-white bg-opacity-95 rounded-lg shadow-lg w-full max-w-md p-4 sm:p-6 md:p-8 h-auto mb-4">
+                    <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-gray-800">Where is your property?</h2>
                     <form action="#" method="POST">
                         <div class="mb-4">
-                            <label for="address" class="block text-sm font-medium text-gray-700">Find your
-                                address</label>
-                            <input type="text" id="address" name="address" value="Sri Lanka"
-                                class="mt-1 p-2 w-full border border-gray-300 rounded">
+                            <label for="address" class="block text-sm font-medium text-gray-700">Find your address</label>
+                            <input
+                                type="text"
+                                id="address"
+                                name="address"
+                                value="Sri Lanka"
+                                class="mt-1 p-2 w-full border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-200">
                         </div>
+
                         <div class="mb-4">
-                            <label for="apartment" class="block text-sm font-medium text-gray-700">Apartment or
-                                floor number (optional)</label>
-                            <input type="text" id="apartment" name="apartment" value="aaa"
-                                class="mt-1 p-2 w-full border border-gray-300 rounded">
+                            <label for="apartment" class="block text-sm font-medium text-gray-700">Apartment or floor number (optional)</label>
+                            <input
+                                type="text"
+                                id="apartment"
+                                name="apartment"
+                                value="aaa"
+                                class="mt-1 p-2 w-full border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-200">
                         </div>
+
                         <div class="mb-4">
-                            <label for="country"
-                                class="block text-sm font-medium text-gray-700">Country/region</label>
-                            <select id="country" name="country"
-                                class="mt-1 p-2 w-full border border-gray-300 rounded">
+                            <label for="country" class="block text-sm font-medium text-gray-700">Country/region</label>
+                            <select
+                                id="country"
+                                name="country"
+                                class="mt-1 p-2 w-full border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-200">
                                 <option selected>Sri Lanka</option>
                             </select>
                         </div>
-                        <div class="flex flex-col md:flex-row gap-4">
+
+                        <div class="flex flex-col sm:flex-row gap-4">
                             <div class="flex-1">
                                 <label for="city" class="block text-sm font-medium text-gray-700">City</label>
-                                <input type="text" id="city" name="city" value="a"
-                                    class="mt-1 p-2 w-full border border-gray-300 rounded">
+                                <input
+                                    type="text"
+                                    id="city"
+                                    name="city"
+                                    value="a"
+                                    class="mt-1 p-2 w-full border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-200">
                             </div>
                             <div class="flex-1">
-                                <label for="postcode" class="block text-sm font-medium text-gray-700">Post code /
-                                    Zip code</label>
-                                <input type="text" id="postcode" name="postcode" value="80400"
-                                    class="mt-1 p-2 w-full border border-gray-300 rounded">
+                                <label for="postcode" class="block text-sm font-medium text-gray-700">Post code / Zip code</label>
+                                <input
+                                    type="text"
+                                    id="postcode"
+                                    name="postcode"
+                                    value="80400"
+                                    class="mt-1 p-2 w-full border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-200">
                             </div>
                         </div>
+
                         <div class="flex items-center mt-4">
-                            <input id="update_address" type="checkbox" name="update_address" checked
-                                class="mr-2">
-                            <label for="update_address" class="text-sm text-gray-700">Update the address when
-                                moving the pin on the map.</label>
+                            <input
+                                id="update_address"
+                                type="checkbox"
+                                name="update_address"
+                                checked
+                                class="mr-2 w-4 h-4 accent-blue-500">
+                            <label for="update_address" class="text-sm text-gray-700">Update the address when moving the pin on the map.</label>
                         </div>
+
                         <!-- Dismissible message box -->
-                        <div x-data="{ showMessage: true }" x-show="showMessage"
-                            class="mt-4 bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded relative"
+                        <div
+                            x-data="{ showMessage: true }"
+                            x-show="showMessage"
+                            class="mt-4 bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded relative text-sm sm:text-base"
                             role="alert">
                             <strong class="font-bold">Note:</strong>
-                            <span class="block sm:inline">Make sure the pin location is accurate before
-                                continuing.</span>
-                            <span @click="showMessage = false"
+                            <span class="block sm:inline">Make sure the pin location is accurate before continuing.</span>
+                            <span
+                                @click="showMessage = false"
                                 class="absolute top-0 bottom-0 right-0 px-4 py-3 cursor-pointer">
-                                <svg class="fill-current h-6 w-6 text-yellow-800" role="button"
-                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                <svg
+                                    class="fill-current h-5 w-5 sm:h-6 sm:w-6 text-yellow-800"
+                                    role="button"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 20 20">
                                     <title>Close</title>
                                     <path
                                         d="M14.348 5.652a1 1 0 00-1.414 0L10 8.586 7.066 5.652a1 1 0 10-1.414 1.414L8.586 10l-2.934 2.934a1 1 0 101.414 1.414L10 11.414l2.934 2.934a1 1 0 001.414-1.414L11.414 10l2.934-2.934a1 1 0 000-1.414z" />
@@ -569,36 +599,38 @@
                         </div>
 
                         <p class="text-sm text-gray-600 mt-2">
-                            Is the red pin location incorrect? Uncheck the option above and click or press on the
-                            map to move the pin.
+                            Is the red pin location incorrect? Uncheck the option above and click or press on the map to move the pin.
                         </p>
-                        <div class="flex justify-between mt-6">
+
+                        <div class="flex flex-col sm:flex-row justify-between gap-3 mt-6">
                             <!-- Back Button (Left) -->
-                            <button type="button" id="backBtn"
+                            <button
+                                type="button"
+                                id="backBtn"
                                 :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
                                 :disabled="step === 1"
                                 @click="step--"
-                                class="border border-[#3CC0E9]  text-blue-600 font-semibold py-2 px-4 rounded">
+                                class="border border-[#3CC0E9] text-blue-600 font-semibold py-2 px-4 rounded transition duration-200 text-sm sm:text-base">
                                 ←
                             </button>
 
-
-
                             <!-- Continue Button (Right) -->
-                            <button type="button" id="continueBtn"
+                            <button
+                                type="button"
+                                id="continueBtn"
                                 @click="saveStep1()"
                                 :class="step === 8 ? 'opacity-50 cursor-not-allowed' : 'bg-[#3CC0E9] hover:bg-sky-500'"
                                 :disabled="step === 8"
-                                class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300">
+                                class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500 focus:outline-none focus:ring focus:ring-blue-300 transition duration-200 text-sm sm:text-base">
                                 Continue
                             </button>
                         </div>
-
                     </form>
                 </div>
             </div>
         </div>
     </template>
+
 
 
     <template x-if="step === 2">
@@ -964,188 +996,175 @@
 
 
     <template x-if="step === 6">
-        <div>
-            <div class="container ml-32 px-4 py-8 max-w-2xl">
-                <!-- Header -->
-                <h2 class="text-2xl font-bold mb-8 text-left">
-                    What languages do you or your staff speak?
-                </h2>
+    <div>
+        <div
+            class="container px-4 py-8 max-w-2xl ml-0 sm:ml-0 md:ml-32 lg:ml-32 xl:ml-32 mx-auto flex flex-col items-center md:items-start">
+            
+            <!-- Header -->
+            <h2 class="text-2xl font-bold mb-8 text-center md:text-left w-full">
+                What languages do you or your staff speak?
+            </h2>
 
-                <!-- Language Selection Section -->
-                <div class="bg-white shadow-md rounded-lg p-6 mb-8">
-                    <h3 class="text-lg  mb-4 font-bold">Select languages
-                    </h3>
-                    <div class="space-y-2">
-                        @php
+            <!-- Language Selection Section -->
+            <div class="bg-white shadow-md rounded-lg p-6 mb-8 w-full">
+                <h3 class="text-lg mb-4 font-bold">Select languages</h3>
+
+                <div class="space-y-2">
+                    @php
                         $initialLanguages = $languages->take(6);
                         $additionalLanguages = $languages->slice(6);
-                        @endphp
-                        @foreach ($initialLanguages as $lang)
+                    @endphp
+                    @foreach ($initialLanguages as $lang)
                         <label class="flex items-center cursor-pointer">
                             <input type="checkbox"
                                 class="mr-2"
                                 :value="'{{ $lang['id'] }}'" />
                             <span>{{ $lang['name'] }}</span>
                         </label>
-                        @endforeach
+                    @endforeach
+                </div>
 
+                <!-- Add Additional Languages -->
+                <div id="additionalLanguagesSection" class="mt-4 hidden relative">
+                    <h3 class="text-lg font-medium mb-2">Add additional languages</h3>
 
-                    </div>
+                    <!-- Searchable dropdown container -->
+                    <div class="relative w-full max-w-md">
+                        <input type="text" id="languageInput"
+                            oninput="filterDropdown()"
+                            onclick="toggleDropdown()"
+                            placeholder="Search languages..."
+                            autocomplete="off"
+                            class="w-full border rounded p-2 pr-10 cursor-pointer"
+                            readonly />
+                        <!-- Dropdown arrow -->
+                        <button type="button"
+                            onclick="toggleDropdown()"
+                            class="absolute right-2 top-2.5 text-gray-600 hover:text-gray-900 focus:outline-none"
+                            tabindex="-1">
+                            ▼
+                        </button>
 
-                    <!-- Add Additional Languages -->
-                    <div id="additionalLanguagesSection"
-                        class="mt-4 hidden relative">
-                        <h3 class="text-lg font-medium mb-2 ">Add
-                            additional languages</h3>
-
-                        <!-- Searchable dropdown container -->
-                        <div class="relative w-full max-w-md">
-                            <input type="text" id="languageInput"
-                                oninput="filterDropdown()"
-                                onclick="toggleDropdown()"
-                                placeholder="Search languages..."
-                                autocomplete="off"
-                                class="w-full border rounded p-2 pr-10 cursor-pointer"
-                                readonly />
-                            <!-- Dropdown arrow -->
-                            <button type="button"
-                                onclick="toggleDropdown()"
-                                class="absolute right-2 top-2.5 text-gray-600 hover:text-gray-900 focus:outline-none"
-                                tabindex="-1">
-                                ▼
-                            </button>
-
-                            <!-- Dropdown list -->
-                            <ul id="languageDropdown"
-                                class="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded max-h-40 overflow-auto shadow-lg hidden">
-                                @foreach ($additionalLanguages as $lang)
+                        <!-- Dropdown list -->
+                        <ul id="languageDropdown"
+                            class="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded max-h-40 overflow-auto shadow-lg hidden">
+                            @foreach ($additionalLanguages as $lang)
                                 <li class="p-2 hover:bg-blue-100 cursor-pointer"
                                     onclick="selectLanguage(this)"
                                     data-id="{{ $lang['id'] }}">
                                     {{ $lang['name'] }}
                                 </li>
-                                @endforeach
-                            </ul>
-
-                        </div>
+                            @endforeach
+                        </ul>
                     </div>
-                    <!-- Container to hold dynamically selected additional languages -->
-                    <div id="selectedAdditionalLanguages" class="mt-2 space-y-2"></div>
-
-                    <!-- Toggle Button for Additional Languages -->
-                    <a href="#"
-                        onclick="event.preventDefault(); toggleAdditionalLanguages();"
-                        class="text-blue-500 hover:underline mt-4 block">
-                        Add additional languages
-                    </a>
                 </div>
 
-                <!-- Navigation Buttons -->
-                <div class="mt-8 flex">
-                    <button type="button" @click="step = Math.max(step - 1, 1)"
-                        class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
-                        ←
-                    </button>
-                    <button type="button" @click="saveStep6()"
-                        class="px-6 h-12 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ml-[395px]">
-                        Continue
-                    </button>
-                </div>
+                <!-- Container to hold dynamically selected additional languages -->
+                <div id="selectedAdditionalLanguages" class="mt-2 space-y-2"></div>
 
+                <!-- Toggle Button for Additional Languages -->
+                <a href="#"
+                    onclick="event.preventDefault(); toggleAdditionalLanguages();"
+                    class="text-blue-500 hover:underline mt-4 block">
+                    Add additional languages
+                </a>
             </div>
 
-            <script>
-                function selectLanguage(element) {
-                    const input = document.getElementById("languageInput");
-                    const selectedContainer = document.getElementById("selectedAdditionalLanguages");
-                    const langName = element.textContent.trim();
-                    const langId = element.dataset.id;
+            <!-- Navigation Buttons -->
+            <div class="mt-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-0 w-full">
+                <button type="button" @click="step = Math.max(step - 1, 1)"
+                    class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded w-full md:w-auto">
+                    ←
+                </button>
+                <button type="button" @click="saveStep6()"
+                    class="px-6 h-12 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 w-full md:w-auto md:ml-[395px]">
+                    Continue
+                </button>
+            </div>
+        </div>
 
-                    // Prevent duplicate
-                    if (document.getElementById(`lang-${langId}`)) {
-                        input.value = '';
-                        hideDropdown();
-                        return;
-                    }
+        <script>
+            function selectLanguage(element) {
+                const input = document.getElementById("languageInput");
+                const selectedContainer = document.getElementById("selectedAdditionalLanguages");
+                const langName = element.textContent.trim();
+                const langId = element.dataset.id;
 
-                    // Create checkbox dynamically
-                    const label = document.createElement('label');
-                    label.className = 'flex items-center cursor-pointer';
-                    label.id = `lang-${langId}`;
-                    label.innerHTML = `
-                                            <input type="checkbox" class="mr-2" name="languages[]" value="${langId}" checked />
-                                            <span>${langName}</span>
-                                        `;
-
-                    selectedContainer.appendChild(label);
-
-                    // Clear input and close dropdown
+                if (document.getElementById(`lang-${langId}`)) {
                     input.value = '';
                     hideDropdown();
+                    return;
                 }
 
-                function toggleAdditionalLanguages() {
-                    const section = document.getElementById("additionalLanguagesSection");
-                    section.classList.toggle("hidden");
-                    if (!section.classList.contains("hidden")) {
-                        document.getElementById("languageInput").focus();
-                        showDropdown();
+                const label = document.createElement('label');
+                label.className = 'flex items-center cursor-pointer';
+                label.id = `lang-${langId}`;
+                label.innerHTML = `
+                    <input type="checkbox" class="mr-2" name="languages[]" value="${langId}" checked />
+                    <span>${langName}</span>
+                `;
+
+                selectedContainer.appendChild(label);
+                input.value = '';
+                hideDropdown();
+            }
+
+            function toggleAdditionalLanguages() {
+                const section = document.getElementById("additionalLanguagesSection");
+                section.classList.toggle("hidden");
+                if (!section.classList.contains("hidden")) {
+                    document.getElementById("languageInput").focus();
+                    showDropdown();
+                } else {
+                    hideDropdown();
+                }
+            }
+
+            function toggleDropdown() {
+                const dropdown = document.getElementById("languageDropdown");
+                dropdown.classList.toggle("hidden");
+            }
+
+            function showDropdown() {
+                document.getElementById("languageDropdown").classList.remove("hidden");
+            }
+
+            function hideDropdown() {
+                document.getElementById("languageDropdown").classList.add("hidden");
+            }
+
+            function filterDropdown() {
+                const input = document.getElementById("languageInput");
+                const filter = input.value.toLowerCase();
+                const ul = document.getElementById("languageDropdown");
+                const items = ul.getElementsByTagName("li");
+                ul.classList.remove("hidden");
+                let visibleCount = 0;
+                for (let i = 0; i < items.length; i++) {
+                    const txtValue = items[i].textContent || items[i].innerText;
+                    if (txtValue.toLowerCase().indexOf(filter) > -1) {
+                        items[i].style.display = "";
+                        visibleCount++;
                     } else {
-                        hideDropdown();
+                        items[i].style.display = "none";
                     }
                 }
-
-                function toggleDropdown() {
-                    const dropdown = document.getElementById("languageDropdown");
-                    dropdown.classList.toggle("hidden");
+                if (visibleCount === 0) {
+                    ul.classList.add("hidden");
                 }
+            }
 
-                function showDropdown() {
-                    document.getElementById("languageDropdown").classList.remove("hidden");
+            document.addEventListener("click", function(event) {
+                const dropdown = document.getElementById("languageDropdown");
+                const container = document.getElementById("additionalLanguagesSection");
+                if (!container.contains(event.target)) {
+                    hideDropdown();
                 }
+            });
+        </script>
+    </div>
+</template>
 
-                function hideDropdown() {
-                    document.getElementById("languageDropdown").classList.add("hidden");
-                }
-
-                function filterDropdown() {
-                    const input = document.getElementById("languageInput");
-                    const filter = input.value.toLowerCase();
-                    const ul = document.getElementById("languageDropdown");
-                    const items = ul.getElementsByTagName("li");
-                    ul.classList.remove("hidden");
-                    let visibleCount = 0;
-                    for (let i = 0; i < items.length; i++) {
-                        const txtValue = items[i].textContent || items[i].innerText;
-                        if (txtValue.toLowerCase().indexOf(filter) > -1) {
-                            items[i].style.display = "";
-                            visibleCount++;
-                        } else {
-                            items[i].style.display = "none";
-                        }
-                    }
-                    // Hide dropdown if no matches
-                    if (visibleCount === 0) {
-                        ul.classList.add("hidden");
-                    }
-                }
-
-
-
-                // Close dropdown when clicking outside
-                document.addEventListener("click", function(event) {
-                    const dropdown = document.getElementById("languageDropdown");
-                    const input = document.getElementById("languageInput");
-                    const container = document.getElementById("additionalLanguagesSection");
-                    if (
-                        !container.contains(event.target)
-                    ) {
-                        hideDropdown();
-                    }
-                });
-            </script>
-        </div>
-    </template>
 
     <template x-if="step === 7">
         <div>
@@ -1282,13 +1301,13 @@
                 </div>
 
                 <!-- Navigation Buttons -->
-                <div class="mt-8 flex">
+                <div class="mt-8 flex justify-between max-w-xl ml-6">
                     <button type="button" @click="step = Math.max(step - 1, 1)"
                         class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
                         ←
                     </button>
                     <button type="button" @click="saveStep7()"
-                        class="px-6 h-12 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ml-[395px]">
+                         class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
                         Continue
                     </button>
                 </div>

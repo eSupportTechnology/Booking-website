@@ -3,18 +3,23 @@
 @section('content')
     <div class="space-y-8">
         <!-- Header -->
-        <div class="bg-gradient-to-r from-green-500 to-green-600 rounded-2xl p-8 text-white">
-            <div class="flex justify-between items-center">
+        <div class="bg-gradient-to-r from-green-500 to-green-600 rounded-2xl p-6 md:p-8 text-white">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-0">
                 <div>
-                    <h1 class="text-4xl font-bold mb-2">Homes</h1>
-                    <p class="text-green-100 text-lg">Manage your home listings</p>
+                    <h1 class="text-2xl md:text-4xl font-bold mb-1 md:mb-2">Homes</h1>
+                    <p class="text-green-100 text-sm md:text-lg">Manage your home listings</p>
                 </div>
+
                 <a href="{{ route('partner.property.category') }}"
-                    class="bg-white text-green-600 px-6 py-3 rounded-xl font-semibold hover:bg-green-50 transition-all duration-200 shadow-lg">
-                    <i class="fas fa-plus mr-2"></i>Add Home
+                    class="w-full md:w-auto flex items-center justify-center gap-2 bg-white text-green-600 font-semibold rounded-lg shadow-md
+                        px-4 py-2 text-sm md:px-6 md:py-3 md:text-base
+                        hover:bg-green-50 transition-all duration-200">
+                    <i class="fas fa-plus text-sm md:text-base"></i>
+                    <span>Add Home</span>
                 </a>
             </div>
         </div>
+
 
         <!-- Search & Filter -->
         <div class="bg-white rounded-2xl p-6 shadow-lg">
