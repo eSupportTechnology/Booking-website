@@ -150,17 +150,9 @@ class PropertyController extends Controller
         
         $topCities = \DB::table('bookings')
             ->join('properties', 'bookings.property_id', '=', 'properties.id')
-
-            
             ->select('properties.city', \DB::raw('COUNT(bookings.id) as total_bookings'))
-
-            
             ->groupBy('properties.city')
-
-           
             ->orderByDesc('total_bookings')
-
-            
             ->take(5)
             ->get();
 
@@ -168,8 +160,6 @@ class PropertyController extends Controller
         $cities = $topCities->map(function ($city) {
             
             $filename = strtolower(str_replace(' ', '', $city->city));
-
-            
             $imagePathJpg = public_path("images/{$filename}.jpg");
             $imagePathPng = public_path("images/{$filename}.png");
 
@@ -182,7 +172,6 @@ class PropertyController extends Controller
                 $imageUrl = asset("images/default.jpg");
             }
 
-           
             return [
                 'city' => $city->city,
                 'image' => $imageUrl,
@@ -198,11 +187,8 @@ class PropertyController extends Controller
     {
         
         $data = $action->execute();
-
-        
         $cities = $this->getTopBookingCities();
 
-        
         return view('Customer.home', array_merge($data, [
             'cities' => $cities
         ]));
