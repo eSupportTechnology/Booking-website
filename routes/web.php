@@ -643,7 +643,7 @@ Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddle
 
     // Properties
     Route::get('/properties', [\App\Http\Controllers\Partner\PropertyController::class, 'index'])->name('partner.properties');
-    Route::get('/bookings', [\App\Http\Controllers\Partner\PropertyController::class, 'bookings'])->name('partner.bookings');
+    Route::get('/bookings', [\App\Http\Controllers\Partner\BookingController::class, 'manage'])->name('partner.bookings');
     Route::get('/bookings/manage', [\App\Http\Controllers\Partner\BookingController::class, 'manage'])->name('partner.bookings.manage');
 
     // Property Listings
