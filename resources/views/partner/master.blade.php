@@ -15,6 +15,11 @@
 </head>
 
 <body class="bg-blue-50 text-gray-800">
+    <!-- Partner Panel - All prices displayed in USD -->
+    <?php
+        // Force USD currency for partner panel
+        session(['currency' => 'USD']);
+    ?>
 
     <!-- Top Navbar -->
     <nav class="bg-[#1F8FB2] text-white fixed w-full z-50 shadow">
@@ -249,6 +254,22 @@
         if (window.history.replaceState) {
             window.history.replaceState(null, null, window.location.href);
         }
+        
+        // Partner Panel Currency Utility - Force USD formatting
+        window.formatPartnerPrice = function(amount) {
+            return '$' + parseFloat(amount).toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        };
+        
+        // Set partner currency preference
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ensure all partner panel operations use USD
+            if (typeof window.partnerCurrency === 'undefined') {
+                window.partnerCurrency = 'USD';
+            }
+        });
     </script>
 </body>
 

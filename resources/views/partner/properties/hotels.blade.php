@@ -10,8 +10,8 @@
                     <p class="text-purple-100 text-sm md:text-lg">Manage your hotel listings</p>
                 </div>
                 <a href="{{ route('partner.property.category') }}"
-                    class="w-full md:w-auto flex items-center justify-center bg-white text-purple-600 font-semibold rounded-xl shadow-lg 
-                        px-4 py-2 text-sm md:px-6 md:py-3 md:text-base 
+                    class="w-full md:w-auto flex items-center justify-center bg-white text-purple-600 font-semibold rounded-xl shadow-lg
+                        px-4 py-2 text-sm md:px-6 md:py-3 md:text-base
                         hover:bg-purple-50 transition-all duration-200">
                     <i class="fas fa-plus mr-2 text-sm md:text-base"></i>Add Hotel
                 </a>

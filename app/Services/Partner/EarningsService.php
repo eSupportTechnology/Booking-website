@@ -10,18 +10,40 @@ class EarningsService
 {
     public function getTotalEarnings(): float
     {
-        return Booking::whereHas('property', function($query) {
+        $bookings = Booking::whereHas('property', function($query) {
             $query->where('user_id', Auth::id());
-        })->sum('total_price') ?? 0;
+        })->get(['total_price', 'currency']);
+        
+        $total = 0;
+        foreach ($bookings as $booking) {
+            $total += app(\App\Services\CurrencyService::class)->convert(
+                $booking->total_price ?? 0,
+                $booking->currency ?? 'USD',
+                'USD'
+            );
+        }
+        
+        return $total;
     }
 
     public function getMonthlyEarnings(): float
     {
-        return Booking::whereHas('property', function($query) {
+        $bookings = Booking::whereHas('property', function($query) {
             $query->where('user_id', Auth::id());
         })->whereMonth('created_at', Carbon::now()->month)
           ->whereYear('created_at', Carbon::now()->year)
-          ->sum('total_price') ?? 0;
+          ->get(['total_price', 'currency']);
+        
+        $total = 0;
+        foreach ($bookings as $booking) {
+            $total += app(\App\Services\CurrencyService::class)->convert(
+                $booking->total_price ?? 0,
+                $booking->currency ?? 'USD',
+                'USD'
+            );
+        }
+        
+        return $total;
     }
 
     public function getPendingPayout(): float
@@ -49,13 +71,21 @@ class EarningsService
             ->limit(10)
             ->get()
             ->map(function($booking) {
+                $convertedAmount = app(\App\Services\CurrencyService::class)->convert(
+                    $booking->total_price ?? 0,
+                    $booking->currency ?? 'USD',
+                    'USD'
+                );
+                
                 return [
                     'date' => $booking->created_at->format('M d, Y'),
                     'booking_id' => 'BK' . $booking->id,
                     'property' => $booking->property->title ?? 'Property',
                     'guest' => $booking->user->name ?? 'Guest',
                     'status' => ucfirst($booking->status ?? 'pending'),
-                    'amount' => $booking->total_price ?? 0
+                    'amount' => $convertedAmount,
+                    'original_amount' => $booking->total_price ?? 0,
+                    'original_currency' => $booking->currency ?? 'USD'
                 ];
             })->toArray();
     }
@@ -64,19 +94,22 @@ class EarningsService
     {
         $partnerId = Auth::id();
         
-        $monthlyData = Booking::whereHas('property', function($query) use ($partnerId) {
+        $bookings = Booking::whereHas('property', function($query) use ($partnerId) {
             $query->where('user_id', $partnerId);
-        })->selectRaw('MONTH(created_at) as month, SUM(total_price) as earnings')
+        })->selectRaw('MONTH(created_at) as month, total_price, currency')
           ->whereYear('created_at', Carbon::now()->year)
-          ->groupBy('month')
-          ->orderBy('month')
           ->get();
         
         $labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         $earnings = array_fill(0, 12, 0);
         
-        foreach ($monthlyData as $data) {
-            $earnings[$data->month - 1] = $data->earnings ?? 0;
+        foreach ($bookings as $booking) {
+            $convertedAmount = app(\App\Services\CurrencyService::class)->convert(
+                $booking->total_price ?? 0,
+                $booking->currency ?? 'USD',
+                'USD'
+            );
+            $earnings[$booking->month - 1] += $convertedAmount;
         }
         
         return [

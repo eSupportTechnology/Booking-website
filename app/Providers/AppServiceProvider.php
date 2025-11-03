@@ -61,6 +61,13 @@ class AppServiceProvider extends ServiceProvider
             return "<?php echo \App\Helpers\CurrencyHelper::convertAndFormat($expression); ?>";
         });
         
+        // Register partner-specific currency directive that forces USD
+        \Blade::directive('partnerPrice', function ($expression) {
+            $parts = explode(',', str_replace(['(', ')', ' '], '', $expression));
+            $amount = $parts[0] ?? '0';
+            return "<?php echo \App\Helpers\CurrencyHelper::convertAndFormat($amount, 'USD'); ?>";
+        });
+        
         \Blade::directive('price', function ($expression) {
             $parts = explode(',', str_replace(['(', ')', ' '], '', $expression));
             $amount = $parts[0] ?? '0';

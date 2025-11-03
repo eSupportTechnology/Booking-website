@@ -58,7 +58,8 @@ class DashboardService
                 'property_name' => $booking->property->title ?? 'Property',
                 'check_in' => $booking->check_in ? Carbon::parse($booking->check_in)->format('Y-m-d') : 'TBD',
                 'status' => ucfirst($booking->status ?? 'pending'),
-                'earnings' => $booking->total_price ?? 0
+                'earnings' => $booking->total_price ?? 0,
+                'currency' => $booking->currency ?? 'USD'
             ];
         })->toArray();
     }
