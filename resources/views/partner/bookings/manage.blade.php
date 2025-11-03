@@ -23,6 +23,7 @@
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Guest</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Property</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Dates</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount (USD)</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                     </tr>
@@ -46,8 +47,18 @@
 
                         <td class="px-6 py-4 text-sm text-gray-900 block sm:table-cell">
                             <span class="sm:hidden font-semibold text-gray-500">Dates: </span>
-                            {{ \Carbon\Carbon::parse($booking->check_in)->format('M d') }} - 
+                            {{ \Carbon\Carbon::parse($booking->check_in)->format('M d') }} -
                             {{ \Carbon\Carbon::parse($booking->check_out)->format('M d, Y') }}
+                        </td>
+
+                        <td class="px-6 py-4 text-sm text-gray-900 block sm:table-cell">
+                            <span class="sm:hidden font-semibold text-gray-500">Amount: </span>
+                            <span class="font-semibold text-green-600">
+                                {{ \App\Helpers\CurrencyHelper::convertAndFormat($booking->total_price, $booking->currency ?? 'USD', 'USD') }}
+                            </span>
+                            @if($booking->currency && $booking->currency !== 'USD')
+                                <br><span class="text-xs text-gray-500">Original: {{ \App\Helpers\CurrencyHelper::formatPrice($booking->total_price, $booking->currency) }}</span>
+                            @endif
                         </td>
 
                         <td class="px-6 py-4 block sm:table-cell">
@@ -81,7 +92,7 @@
 
                     @empty
                     <tr>
-                        <td colspan="6" class="px-6 py-8 text-center text-gray-500">
+                        <td colspan="7" class="px-6 py-8 text-center text-gray-500">
                             <i class="fas fa-calendar-times text-4xl mb-4 text-gray-300"></i>
                             <p>No bookings found</p>
                         </td>
@@ -101,9 +112,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 const bookingId = this.dataset.bookingId;
                 const select = document.querySelector(`.booking-status-select[data-booking-id="${bookingId}"]`);
                 const newStatus = select.value;
-                
+
                 console.log('Updating booking:', bookingId, 'to status:', newStatus);
-                
+
                 fetch('/partner/bookings/' + bookingId + '/status', {
                     method: 'PATCH',
                     headers: {

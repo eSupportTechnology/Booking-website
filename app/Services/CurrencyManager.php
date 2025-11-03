@@ -6,6 +6,11 @@ class CurrencyManager
 {
     public function getUserCurrency(): string
     {
+        // Force USD for partner panel
+        if (request()->is('partner/*') || request()->routeIs('partner.*')) {
+            return 'USD';
+        }
+        
         return session('currency', $this->getDefaultCurrency());
     }
 

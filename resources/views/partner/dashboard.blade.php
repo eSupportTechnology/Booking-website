@@ -114,7 +114,9 @@
                                 {{ $booking['status'] }}
                             </span>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-green-600">@currency($booking['earnings'], 'USD')</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-green-600">
+                            {{ \App\Helpers\CurrencyHelper::convertAndFormat($booking['earnings'], $booking['currency'] ?? 'USD', 'USD') }}
+                        </td>
                     </tr>
                     @endforeach
                 </tbody>

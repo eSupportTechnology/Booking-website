@@ -6,7 +6,7 @@
             <h2 class="text-2xl font-bold text-gray-900">Room Management</h2>
             <p class="text-gray-600 mt-1">Manage your property's rooms, pricing, and availability</p>
         </div>
-        <button @click="showAddRoomModal = true" 
+        <button @click="showAddRoomModal = true"
                 class="bg-[#3CC0E9] hover:bg-[#2BA8D1] text-white px-4 py-2 rounded-lg font-medium">
             Add New Room
         </button>
@@ -37,7 +37,7 @@
         <div class="flex flex-wrap gap-4 items-center">
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Room Type</label>
-                <select x-model="filters.roomType" @change="applyFilters()" 
+                <select x-model="filters.roomType" @change="applyFilters()"
                         class="border border-gray-300 rounded-md px-3 py-2 text-sm">
                     <option value="">All Types</option>
                     <template x-for="type in roomTypes" :key="type.id">
@@ -47,7 +47,7 @@
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Availability</label>
-                <select x-model="filters.availability" @change="applyFilters()" 
+                <select x-model="filters.availability" @change="applyFilters()"
                         class="border border-gray-300 rounded-md px-3 py-2 text-sm">
                     <option value="">All Rooms</option>
                     <option value="available">Available</option>
@@ -56,7 +56,7 @@
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Price Range</label>
-                <select x-model="filters.priceRange" @change="applyFilters()" 
+                <select x-model="filters.priceRange" @change="applyFilters()"
                         class="border border-gray-300 rounded-md px-3 py-2 text-sm">
                     <option value="">All Prices</option>
                     <option value="0-5000">LKR 0 - 5,000</option>
@@ -67,7 +67,7 @@
             </div>
             <div class="flex-1">
                 <label class="block text-sm font-medium text-gray-700 mb-1">Search</label>
-                <input type="text" x-model="filters.search" @input="applyFilters()" 
+                <input type="text" x-model="filters.search" @input="applyFilters()"
                        placeholder="Search rooms..."
                        class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm">
             </div>
@@ -86,13 +86,13 @@
                             <p class="text-sm text-gray-600" x-text="room.room_type?.name || 'Standard'"></p>
                         </div>
                         <div class="flex space-x-2">
-                            <button @click="editRoom(room)" 
+                            <button @click="editRoom(room)"
                                     class="text-[#3CC0E9] hover:text-[#2BA8D1] p-1">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                 </svg>
                             </button>
-                            <button @click="deleteRoom(room)" 
+                            <button @click="deleteRoom(room)"
                                     class="text-red-600 hover:text-red-700 p-1">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
@@ -113,7 +113,7 @@
                             <div class="text-sm text-gray-500">per night</div>
                         </div>
                         <div class="text-right">
-                            <div :class="room.is_available ? 'text-green-600' : 'text-red-600'" 
+                            <div :class="room.is_available ? 'text-green-600' : 'text-red-600'"
                                  class="text-sm font-medium">
                                 <span x-text="room.is_available ? 'Available' : 'Booked'"></span>
                             </div>
@@ -157,7 +157,7 @@
                                     <span x-text="amenity.name"></span>
                                 </span>
                             </template>
-                            <span x-show="room.amenities.length > 3" 
+                            <span x-show="room.amenities.length > 3"
                                   class="inline-block px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">
                                 <span x-text="'+' + (room.amenities.length - 3) + ' more'"></span>
                             </span>
@@ -166,12 +166,12 @@
 
                     <!-- Quick Actions -->
                     <div class="flex space-x-2 pt-3 border-t border-gray-100">
-                        <button @click="toggleAvailability(room)" 
+                        <button @click="toggleAvailability(room)"
                                 :class="room.is_available ? 'bg-red-100 text-red-700 hover:bg-red-200' : 'bg-green-100 text-green-700 hover:bg-green-200'"
                                 class="flex-1 px-3 py-2 text-sm font-medium rounded transition-colors">
                             <span x-text="room.is_available ? 'Mark Unavailable' : 'Mark Available'"></span>
                         </button>
-                        <button @click="manageRoomPricing(room)" 
+                        <button @click="manageRoomPricing(room)"
                                 class="flex-1 px-3 py-2 text-sm font-medium bg-[#3CC0E9] text-white rounded hover:bg-[#2BA8D1] transition-colors">
                             Manage Pricing
                         </button>
@@ -189,7 +189,7 @@
         <h3 class="mt-2 text-sm font-medium text-gray-900">No rooms found</h3>
         <p class="mt-1 text-sm text-gray-500">Get started by adding your first room.</p>
         <div class="mt-6">
-            <button @click="showAddRoomModal = true" 
+            <button @click="showAddRoomModal = true"
                     class="bg-[#3CC0E9] hover:bg-[#2BA8D1] text-white px-4 py-2 rounded-lg font-medium">
                 Add Room
             </button>
@@ -285,7 +285,7 @@ function roomManagement() {
             // Filter by search
             if (this.filters.search) {
                 const search = this.filters.search.toLowerCase();
-                filtered = filtered.filter(room => 
+                filtered = filtered.filter(room =>
                     room.name.toLowerCase().includes(search) ||
                     (room.description && room.description.toLowerCase().includes(search))
                 );

@@ -166,7 +166,7 @@
                         $files = $property->files ?? collect();
                         $showEightFormat = $files->count() >= 8;
                     @endphp
-                    
+
                     @if($showEightFormat)
                     <div class="hidden lg:grid grid-cols-10 grid-rows-8 gap-2 h-full">
                         @php
@@ -211,7 +211,7 @@
                             $visibleFiles = $files->take(3);
                             $remainingCount = max(0, $files->count() - 3);
                         @endphp
-                        
+
                         @if ($files->count() > 0)
                             @foreach ($visibleFiles as $index => $file)
                                 <div class="{{ $mobilePositions[$index] ?? '' }} relative overflow-hidden"
@@ -241,7 +241,7 @@
                             $mobileFiles = $files->take(3);
                             $mobileRemainingCount = max(0, $files->count() - 3);
                         @endphp
-                        
+
                         @if ($files->count() > 0)
                             @foreach ($mobileFiles as $index => $file)
                                 <div class="{{ $mobilePositions[$index] ?? '' }} relative overflow-hidden"

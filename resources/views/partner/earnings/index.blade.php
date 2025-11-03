@@ -272,17 +272,17 @@
     </div>
 
 
-    
-    
+
+
 </div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     const ctx = document.getElementById('earningsChart').getContext('2d');
-    
+
     const gradient = ctx.createLinearGradient(0, 0, 0, 400);
     gradient.addColorStop(0, 'rgba(234, 179, 8, 0.8)');
     gradient.addColorStop(1, 'rgba(234, 179, 8, 0.1)');
-    
+
     new Chart(ctx, {
         type: 'line',
         data: {
@@ -327,12 +327,12 @@
             },
             scales: {
                 x: {
-                    ticks: { 
-                        color: '#6b7280', 
-                        font: { weight: '600', size: 12 } 
+                    ticks: {
+                        color: '#6b7280',
+                        font: { weight: '600', size: 12 }
                     },
-                    grid: { 
-                        display: false 
+                    grid: {
+                        display: false
                     },
                     border: {
                         display: false
@@ -372,7 +372,7 @@
                     <h1 style="color: #1F8FB2; margin-bottom: 10px;">Commission Invoice</h1>
                     <p style="color: #666;">Invoice #INV-{{ str_pad(auth()->id(), 6, '0', STR_PAD_LEFT) }}</p>
                 </div>
-                
+
                 <div style="display: flex; justify-content: space-between; margin-bottom: 30px;">
                     <div>
                         <h3>Partner Information</h3>
@@ -385,7 +385,7 @@
                         <p>Commission Rate: 15%</p>
                     </div>
                 </div>
-                
+
                 <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
                     <thead>
                         <tr style="background-color: #f8f9fa;">
@@ -408,13 +408,13 @@
                         </tr>
                     </tbody>
                 </table>
-                
+
                 <div style="text-align: center; color: #666; font-size: 12px;">
                     <p>This invoice is generated automatically. Commission becomes payable 15 days after booking confirmation.</p>
                 </div>
             </div>
         `;
-        
+
         // Create and download PDF-like HTML file
         const blob = new Blob([invoiceContent], { type: 'text/html' });
         const url = window.URL.createObjectURL(blob);
