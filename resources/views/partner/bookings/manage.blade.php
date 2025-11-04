@@ -247,46 +247,47 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(function() {
-        document.querySelectorAll('.update-status-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const bookingId = this.dataset.bookingId;
-                const select = document.querySelector(`.booking-status-select[data-booking-id="${bookingId}"]`);
-                const newStatus = select.value;
-
-                console.log('Updating booking:', bookingId, 'to status:', newStatus);
-
-                fetch('/partner/bookings/' + bookingId + '/status', {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({ status: newStatus })
-                })
-                .then(response => {
-                    console.log('Response status:', response.status);
-                    if (!response.ok) {
-                        throw new Error('HTTP ' + response.status);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Response data:', data);
-                    if (data.success) {
-                        location.reload();
-                    } else {
-                        alert('Failed to update status: ' + (data.message || 'Unknown error'));
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Failed to update booking status: ' + error.message);
-                });
+    document.querySelectorAll('.update-status-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const bookingId = this.dataset.bookingId;
+            const parentContainer = this.closest('tr, .bg-white');
+            const select = parentContainer.querySelector('.booking-status-select');
+            
+            if (!select) {
+                alert('Status selector not found');
+                return;
+            }
+            
+            const newStatus = select.value;
+            
+            fetch('/partner/bookings/' + bookingId + '/status', {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ status: newStatus })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('HTTP ' + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Failed to update status: ' + (data.message || 'Unknown error'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to update booking status: ' + error.message);
             });
         });
-    }, 500);
+    });
 });
 </script>
 @endsection
