@@ -158,11 +158,11 @@
                             <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-1 rounded-full">{{ $propertyCounts->alternativePlaces }}</span>
                         </a>
 
-                        <a href="{{ route('partner.bookings') }}"
+                        {{-- <a href="{{ route('partner.bookings') }}"
                             class="flex items-center justify-between px-4 py-2 rounded-lg hover:bg-blue-50 text-gray-600 hover:text-[#1F8FB2] transition-colors duration-200">
                             <span class="text-sm font-medium">Bookings</span>
                             <i class="fas fa-calendar-check text-xs"></i>
-                        </a>
+                        </a> --}}
 
                         <a href="{{ route('partner.bookings.manage') }}"
                             class="flex items-center justify-between px-4 py-2 rounded-lg hover:bg-blue-50 text-gray-600 hover:text-[#1F8FB2] transition-colors duration-200">
@@ -254,7 +254,7 @@
         if (window.history.replaceState) {
             window.history.replaceState(null, null, window.location.href);
         }
-        
+
         // Partner Panel Currency Utility - Force USD formatting
         window.formatPartnerPrice = function(amount) {
             return '$' + parseFloat(amount).toLocaleString('en-US', {
@@ -262,7 +262,7 @@
                 maximumFractionDigits: 2
             });
         };
-        
+
         // Set partner currency preference
         document.addEventListener('DOMContentLoaded', function() {
             // Ensure all partner panel operations use USD
