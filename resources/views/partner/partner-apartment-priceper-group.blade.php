@@ -43,14 +43,14 @@
           <tr class="bg-white border-t">
             <td class="px-4 py-2">2 guests</td>
             <td class="px-4 py-2">0%</td>
-            <td class="px-4 py-2">US$ 120.00</td>
+            <td class="px-4 py-2">@currency(120, 'USD')</td>
           </tr>
           <tr class="bg-white border-t">
             <td class="px-4 py-2">1 guest</td>
             <td class="px-4 py-2">
               <input type="number" value="10" class="w-16 border rounded px-2 py-1 text-center" /> %
             </td>
-            <td class="px-4 py-2">US$ 108.00</td>
+            <td class="px-4 py-2">@currency(108, 'USD')</td>
           </tr>
         </tbody>
       </table>

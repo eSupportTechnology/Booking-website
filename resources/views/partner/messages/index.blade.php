@@ -3,23 +3,27 @@
 @section('content')
 <div class="space-y-2">
     <!-- Header -->
-    <div class="bg-gradient-to-r from-purple-500 to-purple-600 rounded-2xl p-6 sm:p-8 text-white">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
-            <div>
-                <h1 class="text-3xl sm:text-4xl font-bold mb-1 sm:mb-2">Messages</h1>
-                <p class="text-purple-100 text-base sm:text-lg">Communicate with your guests efficiently</p>
+    <div class="bg-gradient-to-r from-purple-500 to-purple-600 rounded-2xl p-6 sm:p-8 text-white w-full">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0 w-full">
+        <!-- Left Section -->
+        <div class="w-full sm:w-auto">
+            <h1 class="text-3xl sm:text-4xl font-bold mb-1 sm:mb-2">Messages</h1>
+            <p class="text-purple-100 text-base sm:text-lg">Communicate with your guests efficiently</p>
+        </div>
+
+        <!-- Right Section -->
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
+            <div class="bg-white/20 px-4 py-2 rounded-xl text-center w-full sm:w-auto">
+                <span class="text-sm sm:text-base font-medium">{{ $unreadCount }} Unread</span>
             </div>
-            <div class="flex flex-wrap items-center gap-3">
-                <div class="bg-white/20 px-4 py-2 rounded-xl">
-                    <span class="text-sm sm:text-base font-medium">{{ $unreadCount }} Unread</span>
-                </div>
-                <button
-                    class="bg-white text-purple-600 px-4 py-2 rounded-xl font-semibold hover:bg-purple-50 transition-colors duration-200 text-sm sm:text-base w-full sm:w-auto">
-                    <i class="fas fa-search mr-2"></i>Search
-                </button>
-            </div>
+            <button
+                class="bg-white text-purple-600 px-4 py-2 rounded-xl font-semibold hover:bg-purple-50 transition-colors duration-200 text-sm sm:text-base w-full sm:w-auto flex items-center justify-center">
+                <i class="fas fa-search mr-2"></i>Search
+            </button>
         </div>
     </div>
+</div>
+
 
     <!-- Messages Interface -->
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-2 h-auto lg:h-[600px]">

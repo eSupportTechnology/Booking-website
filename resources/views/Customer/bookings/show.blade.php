@@ -68,8 +68,22 @@
                             </div>
                             <div class="flex justify-between">
                                 <span>Price per night:</span>
-                                <span x-show="!selectedRoom"><x-price :amount="$property->pricing->price_per_night ?? ($property->pricing->base_price ?? 0)" :currency="$property->pricing->currency ?? 'USD'" /></span>
-                                <span x-show="selectedRoom" x-text="formatPrice(getRoomPrice(), getSelectedRoomCurrency())"></span>
+                                <span x-show="!selectedRoom">
+                                    <template x-if="formattedBasePrice">
+                                        <span x-text="formattedBasePrice"></span>
+                                    </template>
+                                    <template x-if="!formattedBasePrice">
+                                        <x-price :amount="$property->pricing->price_per_night ?? ($property->pricing->base_price ?? 0)" :currency="$property->pricing->currency ?? 'USD'" />
+                                    </template>
+                                </span>
+                                <span x-show="selectedRoom">
+                                    <template x-if="formattedRoomPrice">
+                                        <span x-text="formattedRoomPrice"></span>
+                                    </template>
+                                    <template x-if="!formattedRoomPrice">
+                                        <span>Loading...</span>
+                                    </template>
+                                </span>
                             </div>
                             <div class="flex justify-between" x-show="checkIn && checkOut">
                                 <span>Nights:</span>
@@ -77,7 +91,14 @@
                             </div>
                             <div class="flex justify-between font-semibold border-t pt-2" x-show="checkIn && checkOut">
                                 <span>Total:</span>
-                                <span x-text="formatPrice(calculateTotal(), getSelectedRoomCurrency() || '{{ app(\App\Services\CurrencyManager::class)->getUserCurrency() }}')"></span>
+                                <span>
+                                    <template x-if="formattedTotal">
+                                        <span x-text="formattedTotal"></span>
+                                    </template>
+                                    <template x-if="!formattedTotal">
+                                        <span>Calculating...</span>
+                                    </template>
+                                </span>
                             </div>
                             @if($property->rooms->count() > 0)
                             <div class="text-xs text-gray-500 mt-2" x-show="selectedRoom">
@@ -118,6 +139,13 @@ function bookingForm() {
         roomsLoaded: false,
         hasRooms: {{ $property->rooms->count() > 0 ? 'true' : 'false' }},
         userCurrency: '{{ app(\App\Services\CurrencyManager::class)->getUserCurrency() }}',
+    // The property's base currency (used when no room selected)
+    baseCurrency: '{{ $property->pricing->currency ?? 'USD' }}',
+
+    // Formatted strings shown in the booking summary (in user's currency)
+    formattedBasePrice: null,
+    formattedRoomPrice: null,
+    formattedTotal: null,
 
         async formatPrice(amount, currency) {
             try {
@@ -154,6 +182,8 @@ function bookingForm() {
             await this.loadBookedDates();
             this.setupDateRestrictions();
             this.setupRoomLoading();
+            // initial formatted prices
+            this.updateFormattedPrices();
         },
 
         async loadBookedDates() {
@@ -235,6 +265,39 @@ function bookingForm() {
             return room ? `${room.name} - Max ${room.max_guests} guests` : '';
         },
 
+        // Update formatted price strings (converts to this.userCurrency)
+        async updateFormattedPrices() {
+            // Reset while loading
+            this.formattedBasePrice = null;
+            this.formattedRoomPrice = null;
+            this.formattedTotal = null;
+
+            try {
+                // Base price (when no room selected)
+                if (!this.selectedRoom) {
+                    const amount = this.pricePerNight;
+                    this.formattedBasePrice = await this.formatPrice(amount, this.baseCurrency);
+                }
+
+                // Room price (when room selected)
+                if (this.selectedRoom) {
+                    const roomAmount = this.getRoomPrice();
+                    const roomCurrency = this.getSelectedRoomCurrency() || this.baseCurrency;
+                    this.formattedRoomPrice = await this.formatPrice(roomAmount, roomCurrency);
+                }
+
+                // Total (nights * price)
+                const nights = this.calculateNights();
+                if (nights > 0) {
+                    const totalAmount = this.calculateTotal();
+                    const totalCurrency = this.selectedRoom ? (this.getSelectedRoomCurrency() || this.baseCurrency) : this.baseCurrency;
+                    this.formattedTotal = await this.formatPrice(totalAmount, totalCurrency);
+                }
+            } catch (e) {
+                console.error('Failed to update formatted prices', e);
+            }
+        },
+
         getMaxGuests() {
             if (this.selectedRoom) {
                 const room = this.availableRooms.find(r => r.id == this.selectedRoom);
@@ -246,6 +309,14 @@ function bookingForm() {
             @else
                 return Array.from({length: 8}, (_, i) => i + 1);
             @endif
+        },
+
+        // Ensure the selected guests value never exceeds the currently allowed max
+        clampGuests() {
+            const options = this.getMaxGuests();
+            const max = (options && options.length) ? options[options.length - 1] : 8;
+            if (!this.guests || this.guests < 1) this.guests = 1;
+            if (this.guests > max) this.guests = max;
         },
 
         isFormValid() {
@@ -266,10 +337,16 @@ function bookingForm() {
                 if (this.selectedRoom && !this.availableRooms.find(r => r.id == this.selectedRoom)) {
                     this.selectedRoom = '';
                 }
+                // Clamp guests to the new maximum after rooms are loaded/updated
+                this.clampGuests();
+                // Update formatted prices since room availability/selection may change pricing
+                this.updateFormattedPrices();
             } catch (error) {
                 console.error('Failed to load available rooms:', error);
                 this.availableRooms = [];
                 this.roomsLoaded = true;
+                this.clampGuests();
+                this.updateFormattedPrices();
             }
         },
 
@@ -278,12 +355,22 @@ function bookingForm() {
                 this.selectedRoom = '';
                 this.roomsLoaded = false;
                 this.loadAvailableRooms();
+                // Update formatted prices when dates change (may affect total)
+                this.updateFormattedPrices();
             });
 
             this.$watch('checkOut', () => {
                 this.selectedRoom = '';
                 this.roomsLoaded = false;
                 this.loadAvailableRooms();
+                // Update formatted prices when dates change (may affect total)
+                this.updateFormattedPrices();
+            });
+
+            // When the selected room changes, ensure guest count does not exceed that room's max
+            this.$watch('selectedRoom', () => {
+                this.clampGuests();
+                this.updateFormattedPrices();
             });
         }
     }

@@ -307,7 +307,6 @@
         @php
             $cities = collect($cities ?? []);
 
-            // Predefined fallback cities (if backend has less than 5)
             $fallbackCities = [
                 ['city' => 'Colombo', 'image' => asset('images/colombo.jpg')],
                 ['city' => 'Nuwara Eliya', 'image' => asset('images/nuwara.jpg')],
@@ -316,7 +315,6 @@
                 ['city' => 'Dambulla', 'image' => asset('images/dambulla.jpg')],
             ];
 
-            // Fill missing cards from fallback
             $totalNeeded = 5;
             $missingCount = $totalNeeded - $cities->count();
 

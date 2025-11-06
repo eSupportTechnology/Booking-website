@@ -62,6 +62,7 @@
                             <th class="px-2 sm:px-4 py-2 sm:py-3">Name/Company</th>
                             <th class="px-2 sm:px-4 py-2 sm:py-3">Email</th>
                             <th class="px-2 sm:px-4 py-2 sm:py-3">Status</th>
+                            <th class="px-2 sm:px-4 py-2 sm:py-3">Status</th>
                             <th class="px-2 sm:px-4 py-2 sm:py-3">Type</th>
                             <th class="px-2 sm:px-4 py-2 sm:py-3">Cars</th>
                             <th class="px-2 sm:px-4 py-2 sm:py-3">Taxis</th>
@@ -72,7 +73,21 @@
                         @forelse($providers as $provider)
                         <tr class="hover:bg-gray-50 transition-colors">
                             <td class="px-2 sm:px-4 py-3 font-medium text-gray-900">#{{ $provider->id }}</td>
-
+                            <td class="px-2 sm:px-4 py-3">
+                                @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('edit_rental_providers'))
+                                <select onchange="handleRentalProviderStatusChange(this, '{{ $provider->id }}')"
+                                    class="appearance-none font-semibold text-xs rounded-full px-3 py-1 focus:outline-none focus:ring-2 focus:ring-[#1F8FB2] transition {{ $provider->status === 'active' ? 'bg-green-100 text-green-800' : ($provider->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}"
+                                    data-original-value="{{ strtolower($provider->status ?? ($provider->user && $provider->user->email_verified_at ? 'active' : 'pending')) }}">
+                                    <option value="active" {{ ($provider->status ?? ($provider->user && $provider->user->email_verified_at ? 'active' : 'pending')) === 'active' ? 'selected' : '' }}>Active</option>
+                                    <option value="pending" {{ ($provider->status ?? ($provider->user && $provider->user->email_verified_at ? 'active' : 'pending')) === 'pending' ? 'selected' : '' }}>Pending</option>
+                                    <option value="inactive" {{ ($provider->status ?? ($provider->user && $provider->user->email_verified_at ? 'active' : 'pending')) === 'inactive' ? 'selected' : '' }}>Inactive</option>
+                                </select>
+                                @else
+                                <span class="px-3 py-1 rounded-full text-xs font-semibold {{ ($provider->status ?? ($provider->user && $provider->user->email_verified_at ? 'active' : 'pending')) === 'active' ? 'bg-green-100 text-green-800' : (($provider->status ?? ($provider->user && $provider->user->email_verified_at ? 'active' : 'pending')) === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
+                                    {{ ucfirst($provider->status ?? ($provider->user && $provider->user->email_verified_at ? 'active' : 'pending')) }}
+                                </span>
+                                @endif
+                            </td>
                             <td class="px-2 sm:px-4 py-3">
                                 @if($provider->isCompany())
                                     <div class="font-medium">{{ $provider->company_name }}</div>
@@ -147,6 +162,66 @@
 </section>
 
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    window.handleRentalProviderStatusChange = function(selectEl, providerId) {
+        const value = selectEl.value;
+        const originalValue = selectEl.getAttribute('data-original-value');
+        selectEl.disabled = true;
+        selectEl.style.opacity = '0.6';
+
+        fetch(`/admin/status/rental-provider/${providerId}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({ status: value })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                updateRentalProviderStatusStyling(selectEl, value);
+                showNotification('success', data.message);
+                selectEl.setAttribute('data-original-value', value);
+            } else {
+                selectEl.value = originalValue;
+                showNotification('error', data.message || 'Failed to update status');
+            }
+        })
+        .catch(() => {
+            selectEl.value = originalValue;
+            showNotification('error', 'Failed to update rental provider status.');
+        })
+        .finally(() => {
+            selectEl.disabled = false;
+            selectEl.style.opacity = '1';
+        });
+    };
+
+    function updateRentalProviderStatusStyling(selectEl, value) {
+        selectEl.className = 'appearance-none font-semibold text-xs rounded-full px-3 py-1 focus:outline-none focus:ring-2 focus:ring-[#1F8FB2] transition';
+        if (value === 'active') selectEl.classList.add('bg-green-100', 'text-green-800');
+        else if (value === 'pending') selectEl.classList.add('bg-yellow-100', 'text-yellow-800');
+        else selectEl.classList.add('bg-red-100', 'text-red-800');
+    }
+
+    function showNotification(type, message) {
+        const notification = document.createElement('div');
+        notification.className = `fixed top-4 right-4 z-50 px-4 py-3 rounded-md shadow-lg transition-all duration-300 ${type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`;
+        notification.textContent = message;
+        document.body.appendChild(notification);
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
+    }
+});
+</script>
+@endpush
+
 
 @push('scripts')
 <script>
