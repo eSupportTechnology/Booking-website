@@ -37,8 +37,9 @@
     <!-- Commission Aging Table -->
     <div class="bg-white rounded-lg shadow overflow-hidden">
         <div class="px-6 py-4 border-b">
-            <h3 class="text-lg font-medium">Commission Aging ({{ number_format($commissionRate * 100, 1) }}% Commission Rate)</h3>
+            <h3 class="text-lg font-medium">Commission Aging ({{ number_format($commissionRate * 100, 1) }}% Commission Rate) - USD</h3>
             <p class="text-sm text-gray-600">Commissions become invoiceable 15 days after booking date</p>
+            <p class="text-xs text-gray-500">All amounts converted to USD for consistency</p>
             <p class="text-xs text-gray-500 mt-1">
                 <i class="fas fa-info-circle"></i> 
                 To change the commission rate, go to 
@@ -51,13 +52,13 @@
                     <tr>
                         <th class="px-4 py-3 text-left font-medium text-gray-700">Partner Name</th>
                         <th class="px-4 py-3 text-left font-medium text-gray-700">Invoice Number</th>
-                        <th class="px-4 py-3 text-right font-medium text-gray-700">Total Amount</th>
-                        <th class="px-4 py-3 text-right font-medium text-gray-700">0-15 Days</th>
-                        <th class="px-4 py-3 text-right font-medium text-gray-700">16-30 Days</th>
-                        <th class="px-4 py-3 text-right font-medium text-gray-700">31-45 Days</th>
-                        <th class="px-4 py-3 text-right font-medium text-gray-700">46-60 Days</th>
-                        <th class="px-4 py-3 text-right font-medium text-gray-700">61-75 Days</th>
-                        <th class="px-4 py-3 text-right font-medium text-gray-700">75+ Days</th>
+                        <th class="px-4 py-3 text-right font-medium text-gray-700">Total Amount (USD)</th>
+                        <th class="px-4 py-3 text-right font-medium text-gray-700">0-15 Days (USD)</th>
+                        <th class="px-4 py-3 text-right font-medium text-gray-700">16-30 Days (USD)</th>
+                        <th class="px-4 py-3 text-right font-medium text-gray-700">31-45 Days (USD)</th>
+                        <th class="px-4 py-3 text-right font-medium text-gray-700">46-60 Days (USD)</th>
+                        <th class="px-4 py-3 text-right font-medium text-gray-700">61-75 Days (USD)</th>
+                        <th class="px-4 py-3 text-right font-medium text-gray-700">75+ Days (USD)</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
@@ -104,27 +105,27 @@
     <!-- Summary Cards -->
     <div class="grid grid-cols-2 md:grid-cols-6 gap-4">
         <div class="bg-white p-4 rounded-lg shadow border-l-4 border-green-500">
-            <h3 class="text-xs text-gray-500">0-15 Days</h3>
+            <h3 class="text-xs text-gray-500">0-15 Days (USD)</h3>
             <p class="text-lg font-bold text-gray-800">${{ number_format($totals['buckets']['0-15'], 2) }}</p>
         </div>
         <div class="bg-white p-4 rounded-lg shadow border-l-4 border-yellow-500">
-            <h3 class="text-xs text-gray-500">16-30 Days</h3>
+            <h3 class="text-xs text-gray-500">16-30 Days (USD)</h3>
             <p class="text-lg font-bold text-gray-800">${{ number_format($totals['buckets']['16-30'], 2) }}</p>
         </div>
         <div class="bg-white p-4 rounded-lg shadow border-l-4 border-orange-500">
-            <h3 class="text-xs text-gray-500">31-45 Days</h3>
+            <h3 class="text-xs text-gray-500">31-45 Days (USD)</h3>
             <p class="text-lg font-bold text-gray-800">${{ number_format($totals['buckets']['31-45'], 2) }}</p>
         </div>
         <div class="bg-white p-4 rounded-lg shadow border-l-4 border-red-500">
-            <h3 class="text-xs text-gray-500">46-60 Days</h3>
+            <h3 class="text-xs text-gray-500">46-60 Days (USD)</h3>
             <p class="text-lg font-bold text-gray-800">${{ number_format($totals['buckets']['46-60'], 2) }}</p>
         </div>
         <div class="bg-white p-4 rounded-lg shadow border-l-4 border-purple-500">
-            <h3 class="text-xs text-gray-500">61-75 Days</h3>
+            <h3 class="text-xs text-gray-500">61-75 Days (USD)</h3>
             <p class="text-lg font-bold text-gray-800">${{ number_format($totals['buckets']['61-75'], 2) }}</p>
         </div>
         <div class="bg-white p-4 rounded-lg shadow border-l-4 border-gray-500">
-            <h3 class="text-xs text-gray-500">75+ Days</h3>
+            <h3 class="text-xs text-gray-500">75+ Days (USD)</h3>
             <p class="text-lg font-bold text-gray-800">${{ number_format($totals['buckets']['75+'], 2) }}</p>
         </div>
     </div>

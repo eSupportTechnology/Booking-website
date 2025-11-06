@@ -5,6 +5,7 @@ namespace App\Services\Admin;
 use App\DTOs\Admin\AgingReportDTO;
 use App\Models\Booking;
 use App\Models\PropertyCategory;
+use App\Helpers\CurrencyHelper;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -44,16 +45,36 @@ class AgingReportService
             $query->where('status', $status);
         }
 
-        return $query->get();
+        $bookings = $query->get();
+        
+        // Convert all amounts to USD for consistent display
+        $bookings->each(function ($booking) {
+            $booking->total_price_usd = CurrencyHelper::convertPrice(
+                $booking->total_price,
+                $booking->currency ?? 'USD',
+                'USD'
+            );
+            $booking->original_currency = $booking->currency ?? 'USD';
+            $booking->original_amount = $booking->total_price;
+        });
+        
+        return $bookings;
     }
 
     private function categorizeByAge($bookings): array
     {
-        return [
+        $categories = [
             '0-7 days' => $bookings->filter(fn($b) => $b->created_at->diffInDays() <= 7),
             '8-30 days' => $bookings->filter(fn($b) => $b->created_at->diffInDays() > 7 && $b->created_at->diffInDays() <= 30),
             '31-60 days' => $bookings->filter(fn($b) => $b->created_at->diffInDays() > 30 && $b->created_at->diffInDays() <= 60),
             '60+ days' => $bookings->filter(fn($b) => $b->created_at->diffInDays() > 60)
         ];
+        
+        // Add USD totals for each category
+        foreach ($categories as $key => $categoryBookings) {
+            $categories[$key]->usd_total = $categoryBookings->sum('total_price_usd');
+        }
+        
+        return $categories;
     }
 }

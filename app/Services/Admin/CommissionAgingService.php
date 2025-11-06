@@ -6,6 +6,7 @@ use App\DTOs\Admin\CommissionAgingDTO;
 use App\Models\Booking;
 use App\Models\Partner;
 use App\Models\AdminSettings;
+use App\Helpers\CurrencyHelper;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -68,7 +69,15 @@ class CommissionAgingService
             if (!$partner) continue;
 
             $partnerKey = $partner->id;
-            $commissionAmount = $booking->total_price * $this->getCommissionRate();
+            
+            // Convert booking amount to USD first, then calculate commission
+            $bookingAmountUsd = CurrencyHelper::convertPrice(
+                $booking->total_price, 
+                $booking->currency ?? 'USD', 
+                'USD'
+            );
+            $commissionAmount = $bookingAmountUsd * $this->getCommissionRate();
+            
             $daysOverdue = Carbon::now()->diffInDays($booking->created_at->addDays(self::INVOICEABLE_DAYS));
             $bucket = $this->getAgingBucket($daysOverdue);
 

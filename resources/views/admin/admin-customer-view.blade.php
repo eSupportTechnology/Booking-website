@@ -159,14 +159,26 @@
                 <p class="text-2xl font-bold text-[#1F8FB2]">{{ $customer->bookings->count() }}</p>
             </div>
             <div class="bg-gray-50 p-4 rounded">
-                <h4 class="text-sm text-gray-600 mb-1">Total Spent</h4>
-                <p class="text-2xl font-bold text-[#1F8FB2]">${{ number_format($customer->bookings->sum('total_amount'), 2) }}</p>
+                <h4 class="text-sm text-gray-600 mb-1">Total Spent (USD)</h4>
+                @php
+                    $totalSpentUsd = 0;
+                    foreach($customer->bookings as $booking) {
+                        $totalSpentUsd += \App\Helpers\CurrencyHelper::convertPrice(
+                            $booking->total_price, 
+                            $booking->currency ?? 'USD', 
+                            'USD'
+                        );
+                    }
+                @endphp
+                <p class="text-2xl font-bold text-[#1F8FB2]">${{ number_format($totalSpentUsd, 2) }}</p>
+                <p class="text-xs text-gray-500">Converted to USD</p>
             </div>
             <div class="bg-gray-50 p-4 rounded">
-                <h4 class="text-sm text-gray-600 mb-1">Avg. Booking Value</h4>
+                <h4 class="text-sm text-gray-600 mb-1">Avg. Booking Value (USD)</h4>
                 <p class="text-2xl font-bold text-[#1F8FB2]">
-                    ${{ $customer->bookings->count() > 0 ? number_format($customer->bookings->avg('total_amount'), 2) : '0.00' }}
+                    ${{ $customer->bookings->count() > 0 ? number_format($totalSpentUsd / $customer->bookings->count(), 2) : '0.00' }}
                 </p>
+                <p class="text-xs text-gray-500">Converted to USD</p>
             </div>
             <div class="bg-gray-50 p-4 rounded">
                 <h4 class="text-sm text-gray-600 mb-1">Cancelled Bookings</h4>
@@ -184,7 +196,7 @@
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Property</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dates</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount (USD)</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Booked On</th>
                     </tr>
@@ -210,9 +222,20 @@
                                 <div class="text-sm text-gray-500">{{ $booking->check_in->diffInDays($booking->check_out) }} nights</div>
                             </td>
                             <td class="px-6 py-4">
-                                <div class="text-sm font-medium text-gray-900">${{ number_format($booking->total_amount, 2) }}</div>
+                                @php
+                                    $bookingAmountUsd = \App\Helpers\CurrencyHelper::convertPrice(
+                                        $booking->total_price, 
+                                        $booking->currency ?? 'USD', 
+                                        'USD'
+                                    );
+                                    $nights = max(1, $booking->check_in->diffInDays($booking->check_out));
+                                @endphp
+                                <div class="text-sm font-medium text-gray-900">${{ number_format($bookingAmountUsd, 2) }} USD</div>
+                                @if(($booking->currency ?? 'USD') !== 'USD')
+                                    <div class="text-xs text-gray-400">{{ $booking->currency }} {{ number_format($booking->total_price, 2) }}</div>
+                                @endif
                                 <div class="text-xs text-gray-500">
-                                    ${{ number_format($booking->total_amount / max(1, $booking->check_in->diffInDays($booking->check_out)), 2) }}/night
+                                    ${{ number_format($bookingAmountUsd / $nights, 2) }}/night
                                 </div>
                             </td>
                             <td class="px-6 py-4">
