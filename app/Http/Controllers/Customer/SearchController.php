@@ -6,23 +6,56 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Carbon;
 use App\Models\Property;
 use App\Models\Room;
+use App\Models\Amenity;
+use App\Models\PropertyCategory;
+use App\Models\PropertySubcategory;
+use App\Models\PropertySubtype;
 use App\Models\PropertyFacility;
-use Carbon\Carbon;
+use App\Models\PropertyAdditionalDetail;
+use App\Models\PropertyPricing;
+use App\Models\PropertyService;
+use App\Models\Review;
 
+/**
+ * SearchController
+ *
+ * Responsibilities:
+ *  - Build property search queries (filtering + sorting + pagination)
+ *  - Build dynamic filter groups (counts computed from DB)
+ *  - Return search results view and AJAX endpoints for live filtering
+ *
+ * Notes:
+ *  - Counts are cached for short TTL (configurable inside class) to reduce DB load.
+ *  - This controller expects the Property model relationships and table columns
+ *    similar to the provided project schema.
+ */
 class SearchController extends Controller
 {
     /**
-     * Main search handler - returns search results view with:
-     *  - $properties (paginated)
-     *  - $filterGroups (labels + dynamic counts)
-     *  - $filterCounts (property_type counts map)
-     *  - $searchData (to prefill front-end)
+     * Cache TTL (seconds) for filter counts
+     */
+    protected $cacheTtl = 60;
+
+    /**
+     * Default per-page result size
+     */
+    protected $perPage = 12;
+
+    /**
+     * Currency to display (for front-end)
+     */
+    protected $displayCurrency = 'USD';
+
+    /**
+     * Main search handler
      */
     public function search(Request $request)
     {
-        // Basic validation (keeps it light; adapt as needed)
+        // Lightweight validation for common fields
         $request->validate([
             'checkIn' => ['nullable', 'date'],
             'checkOut' => ['nullable', 'date', 'after_or_equal:checkIn'],
@@ -31,19 +64,37 @@ class SearchController extends Controller
             'rooms' => ['nullable', 'integer', 'min:1'],
             'min_price' => ['nullable', 'numeric', 'min:0'],
             'max_price' => ['nullable', 'numeric', 'min:0'],
+            'property_rating' => ['nullable'],
         ]);
 
-        // Start building query: only active and open for bookings
-        $query = Property::query()
+        $baseQuery = Property::query()
             ->where('status', 'active')
             ->where('open_for_bookings', 1)
-            ->with(['files', 'facilities', 'rooms']) // Eager load what template uses
-            ->withCount('reviews')                    // reviews_count
-            ->withAvg('reviews', 'rating')            // reviews_avg_rating
-            ->withMin('rooms', 'price_per_night');    // rooms_min_price_per_night
+            ->with(['files', 'facilities', 'rooms', 'pricing', 'additionalDetails', 'services'])
+            ->withCount('reviews')
+            ->withAvg('reviews', 'rating');
 
-        // ---------- APPLY FILTERS FROM REQUEST ----------
-        // Destination keyword (city/country/address/title)
+        $this->applyRequestFilters($baseQuery, $request);
+        $this->applySorting($baseQuery, $request->input('sort', null));
+
+        $properties = $baseQuery->paginate($this->perPage)->appends($request->query());
+
+        $filterGroups = $this->buildFilterGroups($request);
+        $filterCounts = $this->buildCompactCounts($request);
+        $searchData = $this->buildSearchDataFromRequest($request);
+        $currency = $this->displayCurrency;
+        $stars = $this->getDistinctStars();
+
+
+        return view('Customer.search-results', compact('properties', 'filterGroups', 'filterCounts', 'searchData', 'currency','stars'));
+    }
+
+    /**
+     * Apply all request filters to given query builder instance.
+     */
+    protected function applyRequestFilters(&$query, Request $request)
+    {
+        // Destination (city, country, address, title)
         if ($request->filled('destination')) {
             $destination = trim($request->input('destination'));
             $query->where(function ($q) use ($destination) {
@@ -54,12 +105,11 @@ class SearchController extends Controller
             });
         }
 
-        // Date availability: exclude properties having overlapping bookings
+        // Date availability (room-level check)
         if ($request->filled('checkIn') && $request->filled('checkOut')) {
             $checkIn  = $request->input('checkIn');
             $checkOut = $request->input('checkOut');
 
-    // ✅ precise room-level availability filter
             $query->whereHas('rooms', function ($q) use ($checkIn, $checkOut) {
                 $q->whereDoesntHave('bookings', function ($b) use ($checkIn, $checkOut) {
                     $b->where(function ($bb) use ($checkIn, $checkOut) {
@@ -71,7 +121,7 @@ class SearchController extends Controller
             });
         }
 
-        // Guests (adults + children): require at least one room with capacity
+        // Guests (adults + children)
         if ($request->filled('adults') || $request->filled('children')) {
             $adults = (int) $request->input('adults', 0);
             $children = (int) $request->input('children', 0);
@@ -83,28 +133,31 @@ class SearchController extends Controller
             }
         }
 
-        // Rooms count required: ensure property has enough rooms (approximation)
+        // Rooms count requirement (approx)
         if ($request->filled('rooms')) {
-            $roomsNeeded = max(1, (int) $request->input('rooms'));
+            $roomsNeeded = max(1, (int)$request->input('rooms'));
             $query->whereHas('rooms', function ($q) use ($roomsNeeded) {
-                // We cannot check available room counts easily without complex booking logic;
-                // this checks property has at least N rooms defined.
                 $q->select(DB::raw('property_id'))
                   ->groupBy('property_id')
                   ->havingRaw('COUNT(id) >= ?', [$roomsNeeded]);
             });
         }
 
-        // Budget (min / max) applied to rooms.price_per_night
+        // Price range via rooms/pricing
         if ($request->filled('min_price') || $request->filled('max_price')) {
             $min = (float)$request->input('min_price', 0);
             $max = (float)$request->input('max_price', 99999999);
-            $query->whereHas('rooms', function ($q) use ($min, $max) {
-                $q->whereBetween('price_per_night', [$min, $max]);
+
+            $query->where(function ($q) use ($min, $max) {
+                $q->whereHas('pricing', function ($q2) use ($min, $max) {
+                    $q2->whereBetween('price_per_night', [$min, $max]);
+                })->orWhereHas('rooms', function ($q2) use ($min, $max) {
+                    $q2->whereBetween('price_per_night', [$min, $max]);
+                });
             });
         }
 
-        // Property type (category id or group)
+        // Property type (category/subcategory/subtype/group)
         if ($request->filled('property_type')) {
             $pt = $request->input('property_type');
             if (is_numeric($pt)) {
@@ -113,31 +166,34 @@ class SearchController extends Controller
                 $query->where(function ($q) use ($pt) {
                     $q->where('group', $pt)
                       ->orWhere('stars', $pt)
-                      ->orWhere('subtype_id', $pt);
+                      ->orWhere('subtype_id', $pt)
+                      ->orWhere('category_id', $pt);
                 });
             }
         }
 
-        // Stars / ratings selection (array expected)
+        // Stars / rating filters (array)
         if ($request->filled('property_rating')) {
             $ratings = (array) $request->input('property_rating');
             $ratings = array_map('intval', $ratings);
-            if (!empty($ratings)) $query->whereIn('stars', $ratings);
-        }
-
-        // Facilities (array of facility names)
-        if ($request->filled('facilities')) {
-            $facilities = (array)$request->input('facilities');
-            if (!empty($facilities)) {
-                $query->whereHas('facilities', function ($q) use ($facilities) {
-                    $q->whereIn('facility_name', $facilities);
-                });
+            if (!empty($ratings)) {
+                $query->whereIn('stars', $ratings);
             }
         }
 
-        // Property amenities (amenities pivot)
+        // Facilities (table property_facilities)
+        // if ($request->filled('facilities')) {
+        //     $facilities = (array) $request->input('facilities');
+        //     if (!empty($facilities)) {
+        //         $query->whereHas('facilities', function ($q) use ($facilities) {
+        //             $q->whereIn('facility_name', $facilities);
+        //         });
+        //     }
+        // }
+
+        // Amenities (many-to-many via property_amenity)
         if ($request->filled('amenities')) {
-            $amenities = (array)$request->input('amenities');
+            $amenities = (array) $request->input('amenities');
             if (!empty($amenities)) {
                 $query->whereHas('amenities', function ($q) use ($amenities) {
                     $q->whereIn('amenities.name', $amenities);
@@ -145,26 +201,30 @@ class SearchController extends Controller
             }
         }
 
-        // Review score (min_score)
+        // Review score (min)
         if ($request->filled('min_score')) {
-            $minScore = (float)$request->input('min_score', 0);
-            // we have reviews_avg_rating via withAvg('reviews', 'rating') but cannot filter by alias easily;
-            // use havingRaw on subquery (MySQL) — fallback to join on reviews aggregated table is more robust.
-            $query->whereHas('reviews', function ($q) use ($minScore) {
-                $q->select(DB::raw('property_id, AVG(rating) as avg_rating'))
-                  ->groupBy('property_id')
-                  ->havingRaw('AVG(rating) >= ?', [$minScore]);
-            });
+            $minScore = (float) $request->input('min_score', 0);
+            if ($minScore > 0) {
+                $query->whereHas('reviews', function ($q) use ($minScore) {
+                    $q->select(DB::raw('property_id, AVG(rating) as avg_rating'))
+                      ->groupBy('property_id')
+                      ->havingRaw('AVG(rating) >= ?', [$minScore]);
+                });
+            }
         }
 
-        // Pets allowed (from property_policies.pets_allowed or property_services.parking etc.)
+        // Pets allowed
         if ($request->boolean('pets')) {
-            $query->whereHas('policies', function ($q) {
-                $q->whereNotNull('pets_allowed')->where('pets_allowed', '!=', '');
+            $query->where(function ($q) {
+                $q->whereHas('policies', function ($q2) {
+                    $q2->whereNotNull('pets_allowed')->where('pets_allowed', '!=', '');
+                })->orWhereHas('facilities', function ($q2) {
+                    $q2->where('facility_name', 'like', '%pet%');
+                });
             });
         }
 
-        // Search keywords in title/description
+        // Keywords (q)
         if ($request->filled('q')) {
             $q = trim($request->input('q'));
             $query->where(function ($qq) use ($q) {
@@ -172,19 +232,26 @@ class SearchController extends Controller
                    ->orWhere('description', 'LIKE', "%{$q}%");
             });
         }
+    }
 
-        // Sort options
-        $sort = $request->input('sort', null);
+    /**
+     * Apply sorting to query
+     */
+    protected function applySorting(&$query, $sort = null)
+    {
         switch ($sort) {
             case 'price_low_high':
-                $query->orderBy('rooms_min_price_per_night', 'asc');
+                $query->leftJoin('property_pricings', 'properties.id', '=', 'property_pricings.property_id')
+                      ->orderBy(DB::raw('COALESCE(property_pricings.price_per_night, properties.rooms_min_price_per_night, 0)'), 'asc')
+                      ->select('properties.*');
                 break;
             case 'price_high_low':
-                $query->orderBy('rooms_min_price_per_night', 'desc');
+                $query->leftJoin('property_pricings', 'properties.id', '=', 'property_pricings.property_id')
+                      ->orderBy(DB::raw('COALESCE(property_pricings.price_per_night, properties.rooms_min_price_per_night, 0)'), 'desc')
+                      ->select('properties.*');
                 break;
             case 'rating_high_low':
-                // if stars stored as string, cast or use orderByRaw
-                $query->orderByRaw('CAST(stars AS UNSIGNED) DESC');
+                $query->orderByDesc(DB::raw('COALESCE((SELECT AVG(rating) FROM reviews WHERE reviews.property_id = properties.id), 0)'));
                 break;
             case 'most_reviewed':
                 $query->orderByDesc('reviews_count');
@@ -193,103 +260,14 @@ class SearchController extends Controller
                 $query->orderBy('created_at', 'desc');
                 break;
         }
+    }
 
-        // Paginate and keep query string
-        $perPage = 12;
-        $properties = $query->paginate($perPage)->appends($request->query());
-
-        // --------------------------
-        // Build dynamic filter groups
-        // --------------------------
-        // We will use cached counts for a short period to avoid slamming DB on high traffic
-        $cacheTtl = 60; // seconds; adjust as needed
-
-        // templateGroups mirrors the Blade groups and labels
-         $templateGroups = [
-            'popular' => ['Swimming pool', 'Beach', 'Private bathroom', 'Breakfast included', 'Restaurant'],
-            'meals' => ['Breakfast included', 'All meals included'],
-            'property_type' => ['Family friendly properties','Hotels','Guest houses','Apartments','Villas','Homestays','Bed and breakfasts','Holiday homes','Resorts','Hostels','Lodges','Campsites','Chalets','Country houses','Luxury tents','Farm stays','Boats','Holiday parks','Capsule hotels','Motels','Love hotels','Economy hotels'],
-            'travel_group' => ['Pets allowed','Family friendly properties','Travel Proud (LGBTQ+ friendly)'],
-            'certifications' => ['Sustainability certification'],
-            'entire_places' => ['Entire homes & apartments'],
-            'room_facility' => ["Children's high chair", "Coffee/tea maker", "Electric kettle", "View", "Soundproofing", "Patio", "Washing machine", "Flat-screen TV", "Balcony", "Terrace", "Bath", "Desk", "Air conditioning", "Kitchenette", "Private bathroom", "Kitchen/kitchenette"],
-            'facility' => ["Parking", "Restaurant", "Room service", "24-hour front desk", "Fitness centre", "Non-smoking rooms", "Airport shuttle", "Spa and wellness centre", "Hot tub/Jacuzzi", "Free WiFi", "Electric vehicle charging station", "Wheelchair accessible"],
-            'destination' => ["Galle District","Matara District","Kandy District","Gampaha District","Badulla District","Colombo District","Matale District","Hambantota District","Nuwara Eliya District","Anuradhapura District","Ratnapura District","Trincomalee District","Ampara District","Kalutara District","Puttalam District","Jaffna District","Monaragala District","Polonnaruwa District","Kegalle District","Batticaloa District","Kurunegala District","Mannar District","Kilinochchi District","Vavuniya District","Mullaitivu District"],
-            'brand' => ["Jetwing Hotels Limited","Cinnamon Hotels & Resorts","Thema Collection","Aitken Spence Hotels","Your.Rentals","Hilton Hotels & Resorts","OYO Rooms","Ramada","Shangri-La Group","Anantara Hotels & Resorts","Radisson","Yoho Bed","Sheraton","Collection by Aston","GRANBELL HOTELS & RESORTS","Best Western","Marriott Hotels & Resorts","Courtyard by Marriott","Doubletree by Hilton","Berjaya Hotels & Resorts"],
-            'city' => ["Kandy","Hikkaduwa","Ella","Weligama","Galle","Negombo","Nuwara Eliya","Mirissa","Ahangama","Unawatuna","Tangalle","Sigiriya","Anuradhapura","Colombo","Matara","Arugam Bay","Dickwella","Trincomalee","Bentota","Udawalawe","Dambulla","Tissamaharama","Katunayake","Jaffna","Nikawatawana"],
-            'landmark' => ["Ella Railway Station","Negombo Beach Park","Sri Dalada Maligawa","Temple of Tooth Relic","Nuwara Eliya Golf Club","Galle International Cricket Stadium","Galle Railway Station","Tangalle Lagoon","Galle Fort","Bentota Lake","Kandy Lake","Gregory Lake","Paradise Road","Demodara Nine Arch Bridge","Galle Light house","Turtle Farm","Sigiriya Museum","Japanese Peace Pagoda","Dambulla Cave Temple","Yatagala Temple","Sigiriya Rock","Laksala","Angurukaramulla Temple","Habarana Lake","Haputale Railway Station"],
-            'activity' => ["Bicycle rental","Beach","Walking tours","Bike tours","Cycling"],
-            'prop_accessibility' => ['Toilet with grab rails','Higher level toilet','Lower bathroom sink','Emergency cord in bathroom','Visual aids: Braille','Visual aids: Tactile signs','Auditory guidance'],
-            'room_accessibility' => ['Entire unit located on ground floor','Upper floors accessible by elevator','Entire unit wheelchair accessible','Toilet with grab rails','Adapted bath','Roll-in shower','Walk-in shower','Raised toilet','Lowered sink','Emergency cord in bathroom','Shower chair'],
-        ];
-
-        // Helper closure to count via property_facilities table
-        $countPropertiesWithFacility = function ($name) {
-            return DB::table('property_facilities')->where('facility_name', $name)->distinct('property_id')->count('property_id');
-        };
-
-        // Simple counts for cities / group / keywords
-        $countPropertiesWithCity = function ($cityName) {
-            return DB::table('properties')->where('city', 'LIKE', "%{$cityName}%")->count();
-        };
-
-        $countPropertiesWithGroup = function ($groupName) {
-            return DB::table('properties')->where('group', $groupName)->count();
-        };
-
-        // Build filterGroups array for the Blade
-        $filterGroups = [];
-        foreach ($templateGroups as $groupKey => $items) {
-            $itemsWithCounts = [];
-            foreach ($items as $label) {
-                // Use cache for each label count
-                $cacheKey = "filter_count:{$groupKey}:" . md5($label);
-                $count = Cache::remember($cacheKey, $cacheTtl, function () use ($label, $countPropertiesWithFacility, $countPropertiesWithCity, $countPropertiesWithGroup) {
-                    $c = 0;
-                    // facility table first
-                    $c = $countPropertiesWithFacility($label);
-                    if ($c === 0) {
-                        // maybe it's a city/district/landmark stored in properties table
-                        $c = $countPropertiesWithCity($label);
-                    }
-                    if ($c === 0) {
-                        // maybe it's stored in group column
-                        $c = $countPropertiesWithGroup($label);
-                    }
-                    return $c;
-                });
-
-                $itemsWithCounts[$label] = $count;
-            }
-
-            $title = ucwords(str_replace('_', ' ', $groupKey));
-            $idPrefix = str_replace('_', '-', $groupKey);
-
-            $filterGroups[] = [
-                'title' => $title,
-                'name' => $groupKey,
-                'id_prefix' => $idPrefix,
-                'items' => $itemsWithCounts,
-                'visible_count' => 5, // change to configure initial visible items
-            ];
-        }
-
-        // property_type counts: group by 'group' column (fallback) and by category_id
-        $propertyTypes = Cache::remember('filter_counts:property_type', $cacheTtl, function () {
-            return DB::table('properties')
-                ->select(DB::raw("COALESCE(`group`, 'Other') as prop_group"), DB::raw('count(*) as total'))
-                ->groupBy('prop_group')
-                ->orderByDesc('total')
-                ->pluck('total', 'prop_group')
-                ->toArray();
-        });
-
-        $filterCounts = [
-            'property_type' => $propertyTypes,
-        ];
-
-        // Collect current search input values for Alpine/Blade prefill
-        $searchData = [
+    /**
+     * Build the searchData array used to prefill frontend controls
+     */
+    protected function buildSearchDataFromRequest(Request $request): array
+    {
+        return [
             'destination' => $request->input('destination', ''),
             'checkIn' => $request->input('checkIn', ''),
             'checkOut' => $request->input('checkOut', ''),
@@ -298,27 +276,497 @@ class SearchController extends Controller
             'rooms' => (int)$request->input('rooms', 1),
             'pets' => $request->boolean('pets', false),
             'q' => $request->input('q', ''),
+            'min_price' => $request->input('min_price', null),
+            'max_price' => $request->input('max_price', null),
         ];
-
-        // Return view
-        return view('Customer.search-results', compact('properties', 'filterGroups', 'filterCounts', 'searchData'));
     }
 
     /**
-     * showSearchForm - for the landing/search form page
-     * Keeps helpful lightweight data preloaded (cities, guest ranges, pet availability)
+     * Build filter groups array dynamically from DB
      */
+    protected function buildFilterGroups(Request $request): array
+    {
+        $templateGroups = [
+            'popular' => ['Private bathroom', 'Free WiFi', 'Family rooms', 'Airport shuttle', 'Swimming Pool', 'Sauna'],
+            'facilities' => $this->getAmenityNames(),
+            'property_types' => $this->getPropertyCategoryNames(),
+            'property_subtypes' => $this->getPropertySubcategoryNames(),
+            'policies' => ['pets_allowed', 'smoking_allowed', 'children_allowed'],
+            'destination' => $this->getTopCities(),
+            'price_buckets' => $this->getPriceBuckets(),
+        ];
+
+        $filterGroups = [];
+
+        // Pre-fetch property IDs (optimized for grouped counts)
+        $filteredIds = Property::query()
+            ->where('status', 'active')
+            ->where('open_for_bookings', 1)
+            ->when($request->filled('destination'), function ($q) use ($request) {
+                $dest = $request->destination;
+                $q->where('city', 'like', "%{$dest}%")->orWhere('country', 'like', "%{$dest}%");
+            })
+            ->pluck('id')
+            ->toArray();
+
+        // Bulk count maps
+        $bulkAmenityCounts  = $this->bulkCountsForAmenities($templateGroups['facilities'], $filteredIds);
+        $bulkCategoryCounts = $this->bulkCountsForCategories($templateGroups['property_types'], $filteredIds);
+        $bulkCityCounts     = $this->bulkCountsForCities($templateGroups['destination'], $filteredIds);
+        $bulkStarCounts     = $this->bulkCountsForStars($filteredIds);
+
+        foreach ($templateGroups as $groupKey => $items) {
+            switch ($groupKey) {
+                case 'facilities':
+                    $itemsWithCounts = $bulkAmenityCounts + array_fill_keys($items, 0);
+                    break;
+                case 'property_category':
+                    $itemsWithCounts = $bulkCategoryCounts + array_fill_keys($items, 0);
+                    break;
+                case 'destination':
+                    $itemsWithCounts = $bulkCityCounts + array_fill_keys($items, 0);
+                    break;
+                case 'stars':
+                    $itemsWithCounts = [];
+                    foreach ($items as $star) {
+                        $itemsWithCounts[$star] = $bulkStarCounts[$star] ?? 0;
+                    }
+                    break;
+                case 'popular':
+                    $itemsWithCounts = [];
+                    foreach ($items as $label) {
+                        $itemsWithCounts[$label] = $bulkAmenityCounts[$label] ?? 0;
+                    }
+                    break;
+
+                default:
+                    $itemsWithCounts = [];
+                    foreach ($items as $label) {
+                        $cacheKey = "filter_count:{$groupKey}:" . md5($label) . ':' . md5(serialize($request->only(['destination', 'min_price', 'max_price', 'checkIn', 'checkOut', 'adults', 'children', 'rooms'])));
+                        $itemsWithCounts[$label] = Cache::remember($cacheKey, $this->cacheTtl, function () use ($groupKey, $label, $request) {
+                            return (int)$this->computeCountForFilter($groupKey, $label, $request);
+                        });
+                    }
+                    break;
+            }
+
+            $filterGroups[] = [
+                'title' => ucwords(str_replace('_', ' ', $groupKey)),
+                'name' => $groupKey,
+                'id_prefix' => str_replace('_', '-', $groupKey),
+                'items' => $itemsWithCounts,
+                'visible_count' => 6,
+            ];
+        }
+
+        return $filterGroups;
+    }
+
+    /**
+     * Optimized bulk count for stars (ratings)
+     */
+    protected function bulkCountsForStars($filteredIds)
+    {
+        if (empty($filteredIds)) {
+            return array_fill_keys(range(1,5), 0);
+        }
+
+        $counts = DB::table('properties')
+            ->whereIn('id', $filteredIds)
+            ->whereNotNull('stars')
+            ->select(DB::raw('CAST(stars AS UNSIGNED) as stars_numeric'), DB::raw('COUNT(*) as total'))
+            ->groupBy('stars_numeric')
+            ->pluck('total', 'stars_numeric')
+            ->toArray();
+
+        $full = [];
+        foreach (range(1, 5) as $star) {
+            $full[$star] = $counts[$star] ?? 0;
+        }
+        krsort($full);
+        return $full;
+    }
+
+    /**
+     * Build compact counts for a few common sidebar items
+     */
+    protected function buildCompactCounts(Request $request): array
+    {
+        $baseQuery = Property::query()->where('status', 'active');
+
+        if ($request->filled('destination')) {
+            $baseQuery->where(function ($q) use ($request) {
+                $q->where('city', 'like', "%{$request->destination}%")
+                  ->orWhere('country', 'like', "%{$request->destination}%");
+            });
+        }
+
+        $counts = [
+            'home' => (clone $baseQuery)->where('category_id', 1)->count(),
+            'apartment' => (clone $baseQuery)->where('category_id', 2)->count(),
+            'hotel_bnb' => (clone $baseQuery)->where('category_id', 3)->count(),
+            'alternative' => (clone $baseQuery)->where('category_id', 4)->count(),
+        ];
+
+        return $counts;
+    }
+
+    /**
+     * Compute count for a single filter label, given its group.
+     */
+    protected function computeCountForFilter(string $groupKey, string $label, Request $request): int
+    {
+        $baseQuery = Property::query()->where('status', 'active')->where('open_for_bookings', 1);
+
+        if ($request->filled('destination')) {
+            $dest = $request->input('destination');
+            $baseQuery->where(function ($q) use ($dest) {
+                $q->where('city', 'like', "%{$dest}%")->orWhere('country', 'like', "%{$dest}%");
+            });
+        }
+
+        switch ($groupKey) {
+            case 'amenities':
+                return (clone $baseQuery)
+                    ->whereHas('amenities', function ($q) use ($label) {
+                        $q->where('amenities.name', $label);
+                    })->count();
+
+            // case 'facilities':
+            //     return (clone $baseQuery)
+            //         ->whereHas('facilities', function ($q) use ($label) {
+            //             $q->where('facility_name', $label);
+            //         })->count();
+
+            case 'property_types':
+                $category = PropertyCategory::where('name', $label)->first();
+                if ($category) {
+                    return (clone $baseQuery)->where('category_id', $category->id)->count();
+                }
+                return (clone $baseQuery)->where('group', $label)->count();
+
+            case 'property_subtypes':
+                $sub = PropertySubcategory::where('name', $label)->first();
+                if ($sub) {
+                    return (clone $baseQuery)->where('subcategory_id', $sub->id)->count();
+                }
+                return 0;
+
+            case 'subtypes':
+                $subtype = PropertySubtype::where('name', $label)->first();
+                if ($subtype) {
+                    return (clone $baseQuery)->where('subtype_id', $subtype->id)->count();
+                }
+                return 0;
+
+            case 'stars':
+                $normalized = preg_replace('/[^0-9]/', '', $label);
+                if ($normalized === '') {
+                    return 0;
+                }
+                return (clone $baseQuery)->where('stars', $normalized)->count();
+
+            case 'destination':
+                return (clone $baseQuery)->where('city', 'like', "%{$label}%")->count();
+
+            case 'popular':
+                return (clone $baseQuery)
+                    ->whereHas('amenities', function ($q) use ($label) {
+                        $q->where('amenities.name', $label);
+                    })
+                    ->count();
+
+            case 'price_buckets':
+                return $this->countPropertiesForPriceBucketLabel($label, $baseQuery);
+
+            case 'policies':
+                if ($label === 'pets_allowed') {
+                    return (clone $baseQuery)->whereHas('policies', function ($q) {
+                        $q->whereNotNull('pets_allowed')->where('pets_allowed', '!=', '');
+                    })->count();
+                } elseif ($label === 'smoking_allowed') {
+                    return (clone $baseQuery)->whereHas('policies', function ($q) {
+                        $q->where('smoking_allowed', 1);
+                    })->count();
+                } elseif ($label === 'children_allowed') {
+                    return (clone $baseQuery)->whereHas('policies', function ($q) {
+                        $q->where('children_allowed', 1);
+                    })->count();
+                }
+                return 0;
+
+            default:
+                $c = (clone $baseQuery)->whereHas('facilities', function ($q) use ($label) {
+                    $q->where('facility_name', $label);
+                })->count();
+                if ($c > 0) return $c;
+
+                return (clone $baseQuery)->where('city', 'like', "%{$label}%")->count();
+        }
+    }
+
+    /**
+     * Helper to count properties in a given price-bucket label.
+     */
+    protected function countPropertiesForPriceBucketLabel(string $label, $baseQuery): int
+    {
+        $numbers = [];
+        preg_match_all('/\d+/', $label, $numbers);
+        $numbers = $numbers[0] ?? [];
+
+        if (count($numbers) === 2) {
+            $min = (float)$numbers[0];
+            $max = (float)$numbers[1];
+            return (clone $baseQuery)
+                ->whereHas('pricing', function ($q) use ($min, $max) {
+                    $q->whereBetween('price_per_night', [$min, $max]);
+                })->orWhereHas('rooms', function ($q) use ($min, $max) {
+                    $q->whereBetween('price_per_night', [$min, $max]);
+                })->count();
+        }
+
+        if (count($numbers) === 1) {
+            $min = (float)$numbers[0];
+            return (clone $baseQuery)
+                ->whereHas('pricing', function ($q) use ($min) {
+                    $q->where('price_per_night', '>=', $min);
+                })->orWhereHas('rooms', function ($q) use ($min) {
+                    $q->where('price_per_night', '>=', $min);
+                })->count();
+        }
+
+        return 0;
+    }
+
+    /**
+     * Get amenity names (limit by popularity)
+     */
+    protected function getAmenityNames(): array
+    {
+        return Amenity::query()
+            ->select('name')
+            ->orderByDesc(DB::raw('(SELECT COUNT(*) FROM property_amenity pa WHERE pa.amenity_id = amenities.id)'))
+            ->limit(30)
+            ->pluck('name')
+            ->toArray();
+    }
+
+    protected function getPropertyCategoryNames(): array
+    {
+        return PropertyCategory::query()
+            ->orderBy('name')
+            ->pluck('name')
+            ->toArray();
+    }
+
+    protected function getPropertySubcategoryNames(): array
+    {
+        return PropertySubcategory::query()
+            ->orderBy('name')
+            ->pluck('name')
+            ->toArray();
+    }
+
+    protected function getPropertySubtypeNames(): array
+    {
+        return PropertySubtype::query()
+            ->orderBy('name')
+            ->pluck('name')
+            ->toArray();
+    }
+
+    protected function getDistinctStars(): array
+{
+    $results = DB::table('properties')
+        ->select(
+            DB::raw("CAST(REGEXP_REPLACE(stars, '[^0-9]', '') AS UNSIGNED) AS star"),
+            DB::raw("COUNT(*) as count")
+        )
+        ->whereNotNull('stars')
+        ->groupBy('star')
+        ->pluck('count', 'star')
+        ->toArray();
+
+    // Always show 5 to 1 stars (Booking.com style)
+    $stars = [];
+    foreach (range(5, 1) as $star) {
+        $stars[$star] = $results[$star] ?? 0;
+    }
+
+    return $stars;
+}
+
+
+    protected function getTopCities($limit = 25): array
+    {
+        return DB::table('properties')
+            ->select('city', DB::raw('count(*) as total'))
+            ->whereNotNull('city')
+            ->where('city', '!=', '')
+            ->groupBy('city')
+            ->orderByDesc('total')
+            ->limit($limit)
+            ->pluck('city')
+            ->toArray();
+    }
+
+
+    protected function getPriceBuckets(): array
+    {
+        return [
+            'US$0 - US$50',
+            'US$51 - US$100',
+            'US$101 - US$150',
+            'US$151 - US$200',
+            'US$201 - US$300',
+            'US$301 - US$500',
+            'US$500+',
+        ];
+    }
+
+    /**
+     * AJAX endpoint to return rendered HTML for results
+     */
+  public function ajaxSearch(Request $request)
+{
+    $baseQuery = Property::query()
+        ->where('status', 'active')
+        ->where('open_for_bookings', 1)
+        ->with(['files', 'facilities', 'rooms', 'pricing', 'additionalDetails', 'services'])
+        ->withCount('reviews')
+        ->withAvg('reviews', 'rating');
+
+    $this->applyRequestFilters($baseQuery, $request);
+    $this->applySorting($baseQuery, $request->input('sort', null));
+
+    // ✅ Important fix
+    $baseQuery->select('properties.*');
+
+    $properties = $baseQuery->paginate($this->perPage)->appends($request->query());
+
+    return response()->json([
+        'html' => view('Customer._searchResults', compact('properties'))->render(),
+    ]);
+}
+
+
+    public function suggestCities(Request $request)
+    {
+        $term = trim($request->get('q', ''));
+        if (strlen($term) < 2) {
+            return response()->json([]);
+        }
+
+        $cities = Property::query()
+            ->select('city')
+            ->where('status', 'active')
+            ->whereNotNull('city')
+            ->where('city', 'LIKE', "%{$term}%")
+            ->distinct()
+            ->orderBy('city')
+            ->limit(10)
+            ->pluck('city');
+
+        $countries = Property::query()
+            ->select('country')
+            ->where('status', 'active')
+            ->whereNotNull('country')
+            ->where('country', 'LIKE', "%{$term}%")
+            ->distinct()
+            ->orderBy('country')
+            ->limit(5)
+            ->pluck('country');
+
+        $suggestions = $cities->merge($countries)->unique()->values();
+
+        return response()->json($suggestions);
+    }
+
+    public function fetchFilteredResults(Request $request)
+    {
+        $query = Property::with(['files', 'facilities', 'pricing'])
+            ->where('status', 'active')
+            ->where('open_for_bookings', 1);
+
+        if ($request->filled('destination')) {
+            $destination = $request->destination;
+            $query->where(function ($q) use ($destination) {
+                $q->where('city', 'like', "%{$destination}%")
+                  ->orWhere('country', 'like', "%{$destination}%");
+            });
+        }
+
+        if ($request->filled('budget')) {
+            $budget = (float)$request->budget;
+            $query->where(function ($q) use ($budget) {
+                $q->whereHas('pricing', function ($q2) use ($budget) {
+                    $q2->where('price_per_night', '<=', $budget);
+                })->orWhereHas('rooms', function ($q2) use ($budget) {
+                    $q2->where('price_per_night', '<=', $budget);
+                });
+            });
+        }
+
+        if ($request->filled('property_rating')) {
+            $query->whereIn('star_rating', (array) $request->property_rating);
+        }
+
+        if ($request->filled('min_score') && $request->min_score > 0) {
+            $minScore = (float)$request->min_score;
+            $query->whereHas('reviews', function ($q) use ($minScore) {
+                $q->select(DB::raw('property_id, AVG(rating) as avg_rating'))
+                  ->groupBy('property_id')
+                  ->havingRaw('AVG(rating) >= ?', [$minScore]);
+            });
+        }
+
+        if ($request->filled('property_types')) {
+            $types = explode(',', $request->property_type);
+            $query->whereIn('property_types', $types);
+        }
+
+        $props = $query->paginate(10);
+
+        $html = view('frontend.partials._searchResults', ['properties' => $props])->render();
+
+        return response()->json(['html' => $html]);
+    }
+
+    public function filterCounts(Request $request)
+    {
+        $baseQuery = Property::query()->where('status', 'active')->where('open_for_bookings', 1);
+
+        if ($request->filled('destination')) {
+            $baseQuery->where(function ($q) use ($request) {
+                $q->where('city', 'like', "%{$request->destination}%")
+                  ->orWhere('country', 'like', "%{$request->destination}%");
+            });
+        }
+
+        $counts = [
+            'hotel' => (clone $baseQuery)->where('category_id', 3)->count(),
+            'apartment' => (clone $baseQuery)->where('category_id', 2)->count(),
+            'home' => (clone $baseQuery)->where('category_id', 1)->count(),
+            'villa' => (clone $baseQuery)->whereHas('subtypes', function ($q) {
+                $q->where('name', 'like', '%villa%');
+            })->count(),
+            'top_destinations' => $this->getTopCities(6),
+        ];
+
+        return response()->json($counts);
+    }
+
     public function showSearchForm()
     {
-        // Cache short-lived for performance
-        $cacheTtl = 60;
+        $cacheTtl = $this->cacheTtl;
 
         $cities = Cache::remember('search_form:cities', $cacheTtl, function () {
             return Property::whereNotNull('city')
                 ->where('status', 'active')
                 ->distinct()
                 ->orderBy('city')
-                ->pluck('city');
+                ->pluck('city')
+                ->toArray();
         });
 
         $maxGuests = Cache::remember('search_form:max_guests', $cacheTtl, function () {
@@ -342,7 +790,6 @@ class SearchController extends Controller
                 || DB::table('property_policies')->whereNotNull('pets_allowed')->where('pets_allowed', '!=', '')->exists();
         });
 
-        // Next available check-in / check-out (optional hints)
         $nextAvailableCheckIn = Cache::remember('search_form:next_checkin', $cacheTtl, function () {
             return DB::table('bookings')->whereDate('check_in', '>', now())->min('check_in');
         });
@@ -357,13 +804,53 @@ class SearchController extends Controller
         ));
     }
 
-        public function ajaxSearch(Request $request)
+    public function debugFilterGroups(Request $request)
     {
-        $response = $this->search($request); // reuse same filtering logic
-        $properties = $response->getData()['properties'];
+        $groups = $this->buildFilterGroups($request);
+        return response()->json($groups);
+    }
 
-        return response()->json([
-            'html' => view('Customer._searchResults', compact('properties'))->render()
-        ]);
+    // Optimized bulk count fetchers
+    protected function bulkCountsForAmenities(array $amenityNames, $filteredIds)
+    {
+        if (empty($amenityNames) || empty($filteredIds)) return [];
+
+        return DB::table('property_amenity as pa')
+            ->join('amenities as a', 'a.id', '=', 'pa.amenity_id')
+            ->whereIn('pa.property_id', $filteredIds)
+            ->whereIn('a.name', $amenityNames)
+            ->select('a.name', DB::raw('COUNT(DISTINCT pa.property_id) as total'))
+            ->groupBy('a.name')
+            ->pluck('total', 'a.name')
+            ->toArray();
+    }
+
+    
+
+    protected function bulkCountsForCategories(array $catNames, $filteredIds)
+    {
+        if (empty($catNames) || empty($filteredIds)) return [];
+
+        return DB::table('properties as p')
+            ->join('property_categories as c', 'c.id', '=', 'p.category_id')
+            ->whereIn('p.id', $filteredIds)
+            ->whereIn('c.name', $catNames)
+            ->select('c.name', DB::raw('COUNT(p.id) as total'))
+            ->groupBy('c.name')
+            ->pluck('total', 'c.name')
+            ->toArray();
+    }
+
+    protected function bulkCountsForCities(array $cities, $filteredIds)
+    {
+        if (empty($cities) || empty($filteredIds)) return [];
+
+        return DB::table('properties')
+            ->whereIn('id', $filteredIds)
+            ->whereIn('city', $cities)
+            ->select('city', DB::raw('COUNT(*) as total'))
+            ->groupBy('city')
+            ->pluck('total', 'city')
+            ->toArray();
     }
 }

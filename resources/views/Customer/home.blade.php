@@ -5,54 +5,85 @@
 @push('styles')
     <link rel="stylesheet" href="{{ asset('assets/Customer/css/home.css') }}">
 @endpush
-<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-@section('content')
-    <!-- Hero Section -->
-    <section class="text-white py-8 bg-[#1F8FB2] relative z-0">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <!-- Hero Text -->
-            <div class="mb-10 mt-1">
-                <h1 class="text-[32px] md:text-[40px] lg:text-[50px] font-bold mb-2">
-                    {{ __('messages.Find your next stay') }}
-                </h1>
-                <p class="text-[18px] md:text-[20px] mt-1 font-sans">
-                    {{ __('messages.Search low prices on hotels, homes and much more...') }}
-                </p>
-            </div>
-        </div>
-    </section>
+{{--  Dependencies for Autocomplete --}}
+<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
-    <!-- Search Box: Overlapping both sections -->
-    <div class="relative z-10 -mt-8 px-2 sm:px-4">
+@section('content')
+
+<!-- Hero Section -->
+<section class="text-white py-8 bg-[#1F8FB2] relative z-0">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="mb-10 mt-1">
+            <h1 class="text-[32px] md:text-[40px] lg:text-[50px] font-bold mb-2">
+                {{ __('messages.Find your next stay') }}
+            </h1>
+            <p class="text-[18px] md:text-[20px] mt-1 font-sans">
+                {{ __('messages.Search low prices on hotels, homes and much more...') }}
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- Search Box -->
+<div class="relative z-10 -mt-8 px-2 sm:px-4">
+    @php $searchData = $searchData ?? []; @endphp
     <form action="{{ route('customer.search') }}" method="GET"
         class="bg-white rounded-xl px-2 py-1 sm:px-3 sm:py-2 shadow-lg
            flex flex-col md:flex-row items-stretch md:items-center
            gap-2 md:gap-0 border-2 sm:border-4 border-yellow-400
            max-w-full md:max-w-6xl mx-auto overflow-visible text-sm md:text-base">
 
-        <!-- Destination Selector -->
-        <div x-data="{ open: false, destination: '' }"
-             class="relative flex-1 border-b md:border-b-0 md:border-r border-gray-300 px-2 py-1">
-            <button @click="open = !open" type="button"
-                class="flex items-center gap-2 w-full text-left text-sm">
-                <img src="{{ asset('assets/stay.svg') }}" alt="Stay"
-                     class="w-5 h-5 sm:w-6 sm:h-6" />
-                <span x-text="destination || '{{ __("messages.Where are you going?") }}'"
-                      class="text-gray-800 truncate text-sm sm:text-base"></span>
-            </button>
+        <!-- Live Destination Autocomplete -->
+        <div 
+          x-data="{
+            query: '{{ $searchData['destination'] ?? '' }}',
+            results: [],
+            open: false,
+            selectCity(city) {
+              this.query = city;
+              this.open = false;
+            },
+            fetchSuggestions: _.debounce(function() {
+              if (this.query.length < 2) { this.results = []; this.open = false; return; }
+              axios.get('{{ route('customer.search.suggest') }}', { params: { q: this.query } })
+                .then(res => {
+                  this.results = res.data;
+                  this.open = this.results.length > 0;
+                })
+                .catch(() => { this.results = []; });
+            }, 300)
+          }"
+          class="relative flex-1 border-b md:border-b-0 md:border-r border-gray-300 px-2 py-1"
+        >
+          <div class="flex items-center gap-2 w-full">
+            <img src="{{ asset('assets/stay.svg') }}" alt="Stay" class="w-5 h-5 sm:w-6 sm:h-6" />
+            <input
+              type="text"
+              name="destination"
+              x-model="query"
+              @input="fetchSuggestions"
+              placeholder="Where are you going?"
+              autocomplete="off"
+              class="w-full bg-transparent focus:outline-none text-sm sm:text-base text-gray-800"
+            />
+          </div>
 
-            <!-- Dropdown -->
-            <div x-show="open" @click.away="open = false"
-                class="absolute z-20 bg-white shadow-xl rounded-xl p-3 mt-2 w-64 sm:w-72 left-0 md:left-auto md:right-0 text-gray-800 space-y-2 text-sm">
-                <template x-for="city in ['New York', 'Los Angeles', 'London', 'Paris', 'Tokyo', 'galle']" :key="city">
-                    <button type="button" @click="destination = city; open = false"
-                        class="block w-full text-left px-3 py-2 hover:bg-gray-100 rounded">
-                        <span x-text="city"></span>
-                    </button>
-                </template>
-            </div>
-
-            <input type="hidden" name="destination" :value="destination">
+          <!-- Suggestion Dropdown -->
+          <ul 
+            x-show="open" 
+            @click.away="open = false"
+            class="absolute z-30 bg-white border border-gray-200 rounded-xl shadow-xl mt-2 w-64 sm:w-72 max-h-64 overflow-y-auto"
+          >
+            <template x-for="city in results" :key="city">
+              <li 
+                @click="selectCity(city)"
+                class="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm text-gray-800"
+                x-text="city"
+              ></li>
+            </template>
+          </ul>
         </div>
 
         <!-- Dates Selector -->
@@ -63,10 +94,8 @@
                 <img src="{{ asset('assets/calender.svg') }}" class="w-5 h-5" />
                 <span class="text-gray-800 truncate text-sm sm:text-base">
                     <template x-if="activeTab === 'check'">
-                        <span>
-                            <span x-text="checkIn || '{{ __("messages.Check-in") }}'"></span> —
-                            <span x-text="checkOut || '{{ __("messages.Check-out") }}'"></span>
-                        </span>
+                        <span><span x-text="checkIn || '{{ __('messages.Check-in') }}'"></span> — 
+                            <span x-text="checkOut || '{{ __('messages.Check-out') }}'"></span></span>
                     </template>
                     <template x-if="activeTab === 'flexible'">
                         <span x-text="flexibleOption || 'Flexible dates'"></span>
@@ -74,46 +103,37 @@
                 </span>
             </button>
 
-            <!-- Dropdown -->
             <div x-show="open" @click.away="open = false"
-                class="absolute z-30 bg-white shadow-xl rounded-xl p-4 mt-2 w-80 sm:w-96 left-0 md:left-auto md:right-0 text-gray-800 text-sm"
-                x-transition>
-                <!-- Tabs -->
+                class="absolute z-30 bg-white shadow-xl rounded-xl p-4 mt-2 w-80 sm:w-96 left-0 md:left-auto md:right-0 text-gray-800 text-sm" x-transition>
                 <nav class="flex border-b border-gray-200 mb-4 text-xs sm:text-sm">
                     <button @click.prevent="activeTab = 'check'"
                         :class="activeTab === 'check' ? 'border-blue-600 text-blue-600' : 'text-gray-500'"
-                        class="px-2 sm:px-4 py-1 sm:py-2 border-b-2 font-semibold focus:outline-none">
-                        {{ __('messages.Check-in / Check-out') }}
-                    </button>
+                        class="px-2 sm:px-4 py-1 sm:py-2 border-b-2 font-semibold">Check-in / Check-out</button>
                     <button @click.prevent="activeTab = 'flexible'"
                         :class="activeTab === 'flexible' ? 'border-blue-600 text-blue-600' : 'text-gray-500'"
-                        class="px-2 sm:px-4 py-1 sm:py-2 border-b-2 font-semibold focus:outline-none">
-                        {{ __('messages.Flexible dates') }}
-                    </button>
+                        class="px-2 sm:px-4 py-1 sm:py-2 border-b-2 font-semibold">Flexible dates</button>
                 </nav>
 
-                <!-- Check-in/out -->
                 <div x-show="activeTab === 'check'" x-transition>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs text-gray-500 font-semibold mb-1">{{ __('messages.Check-in Date') }}</label>
+                            <label class="block text-xs text-gray-500 mb-1">Check-in Date</label>
                             <input type="date" name="checkIn" x-model="checkIn"
-                                class="w-full border border-gray-300 rounded px-2 py-2 text-sm outline-none" />
+                                class="w-full border border-gray-300 rounded px-2 py-2 text-sm" />
                         </div>
                         <div>
-                            <label class="block text-xs text-gray-500 font-semibold mb-1">{{ __('messages.Check-out Date') }}</label>
+                            <label class="block text-xs text-gray-500 mb-1">Check-out Date</label>
                             <input type="date" name="checkOut" x-model="checkOut"
-                                class="w-full border border-gray-300 rounded px-2 py-2 text-sm outline-none" />
+                                class="w-full border border-gray-300 rounded px-2 py-2 text-sm" />
                         </div>
                     </div>
                 </div>
 
-                <!-- Flexible -->
                 <div x-show="activeTab === 'flexible'" x-transition>
-                    <label class="block text-xs text-gray-500 font-semibold mb-1">{{ __('messages.Select Flexible Dates') }}</label>
+                    <label class="block text-xs text-gray-500 mb-1">Select Flexible Dates</label>
                     <select x-model="flexibleOption"
-                        class="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none">
-                        <option value="" disabled>{{ __('messages.Select option')}}</option>
+                        class="w-full border border-gray-300 rounded px-3 py-2 text-sm">
+                        <option value="" disabled>Select option</option>
                         <option value="Weekend Getaway">Weekend Getaway</option>
                         <option value="Next Month">Next Month</option>
                         <option value="Anytime">Anytime</option>
@@ -121,12 +141,12 @@
                     </select>
                 </div>
 
-                <!-- Done -->
                 <div class="mt-4 text-right">
-                    <button @click="open = false"
-                        class="bg-blue-600 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded hover:bg-blue-700 text-xs sm:text-sm">
-                        {{ __('messages.Done') }}
+                    <button type="button" @click="open = false"
+                        class="bg-blue-600 text-white px-3 sm:px-4 py-2 rounded hover:bg-blue-700 text-xs sm:text-sm">
+                         Done
                     </button>
+
                 </div>
             </div>
         </div>
@@ -137,49 +157,34 @@
             <button @click="open = !open" type="button"
                 class="flex items-center gap-2 w-full text-left text-sm">
                 <img src="{{ asset('assets/user.svg') }}" class="w-5 h-5" />
-                <span x-text="`${adults} {{ __('messages.adults') }} · ${children} {{ __('messages.children') }} · ${rooms} {{ __('messages.room') }}${rooms>1?'s':''}`"
+                <span x-text="`${adults} adults · ${children} children · ${rooms} room${rooms>1?'s':''}`"
                       class="text-gray-800 text-sm sm:text-base truncate"></span>
             </button>
 
-            <!-- Dropdown -->
             <div x-show="open" @click.away="open = false"
                 class="absolute z-20 bg-white shadow-xl rounded-xl p-4 mt-2 w-64 sm:w-72 left-0 md:left-auto md:right-0 text-gray-800 space-y-4 text-sm">
-                <!-- Adults -->
-                <div class="flex items-center justify-between">
-                    <span>{{ __('messages.adults') }}</span>
-                    <div class="flex items-center gap-2">
-                        <button type="button" @click="if(adults>1) adults--"
-                            class="px-2 py-1 bg-gray-200 rounded">−</button>
+                <div class="flex justify-between"><span>Adults</span>
+                    <div class="flex gap-2">
+                        <button type="button" @click="if(adults>1) adults--" class="px-2 bg-gray-200 rounded">−</button>
                         <span x-text="adults"></span>
-                        <button type="button" @click="adults++"
-                            class="px-2 py-1 bg-gray-200 rounded">+</button>
+                        <button type="button" @click="adults++" class="px-2 bg-gray-200 rounded">+</button>
                     </div>
                 </div>
-                <!-- Children -->
-                <div class="flex items-center justify-between">
-                    <span>{{ __('messages.children')}}</span>
-                    <div class="flex items-center gap-2">
-                        <button type="button" @click="if(children>0) children--"
-                            class="px-2 py-1 bg-gray-200 rounded">−</button>
+                <div class="flex justify-between"><span>Children</span>
+                    <div class="flex gap-2">
+                        <button type="button" @click="if(children>0) children--" class="px-2 bg-gray-200 rounded">−</button>
                         <span x-text="children"></span>
-                        <button type="button" @click="children++"
-                            class="px-2 py-1 bg-gray-200 rounded">+</button>
+                        <button type="button" @click="children++" class="px-2 bg-gray-200 rounded">+</button>
                     </div>
                 </div>
-                <!-- Rooms -->
-                <div class="flex items-center justify-between">
-                    <span>{{ __('messages.room')}}</span>
-                    <div class="flex items-center gap-2">
-                        <button type="button" @click="if(rooms>1) rooms--"
-                            class="px-2 py-1 bg-gray-200 rounded">−</button>
+                <div class="flex justify-between"><span>Rooms</span>
+                    <div class="flex gap-2">
+                        <button type="button" @click="if(rooms>1) rooms--" class="px-2 bg-gray-200 rounded">−</button>
                         <span x-text="rooms"></span>
-                        <button type="button" @click="rooms++"
-                            class="px-2 py-1 bg-gray-200 rounded">+</button>
+                        <button type="button" @click="rooms++" class="px-2 bg-gray-200 rounded">+</button>
                     </div>
                 </div>
-                <!-- Pets -->
-                <div class="flex items-center justify-between">
-                    <span>{{ __('messages.Travelling with pets?') }}</span>
+                <div class="flex justify-between"><span>Travelling with pets?</span>
                     <label class="inline-flex items-center cursor-pointer">
                         <input type="checkbox" x-model="pets" class="sr-only peer">
                         <div class="w-10 h-6 bg-gray-300 rounded-full peer peer-checked:bg-blue-600 relative transition-all">
@@ -188,15 +193,9 @@
                     </label>
                 </div>
 
-                <p class="text-xs text-gray-500">
-                    {{ __("messages.Assistance animals aren’t considered pets.") }}<br>
-                    <a href="#" class="text-blue-600 underline">{{ __('messages.Read more about travelling with assistance animals') }}</a>
-                </p>
-
-                <!-- Done -->
                 <button type="button" @click="open = false"
                     class="block w-full text-center bg-white border border-blue-600 text-blue-600 font-semibold py-2 rounded hover:bg-blue-50">
-                    {{ __('messages.Done')}}
+                    Done
                 </button>
             </div>
         </div>
@@ -206,7 +205,7 @@
             <button type="submit"
                 class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-semibold px-3 sm:px-4 py-2 rounded-lg text-sm"
                 style="background-color:#3CC0E9;">
-                {{ __('messages.Search') }}
+                Search
             </button>
         </div>
     </form>

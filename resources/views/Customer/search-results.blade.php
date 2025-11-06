@@ -103,114 +103,66 @@
 <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const form = document.querySelector("form[action='{{ route('customer.search') }}']");
-  const resultsContainer = document.querySelector("#results-container");
-  const loader = document.querySelector("#loader-overlay");
-
-  // --- Debounce helper ---
-  function debounce(fn, delay = 400) {
-    let timeout;
-    return (...args) => {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => fn(...args), delay);
-    };
-  }
-
-  // --- Show/hide loader ---
-  function showLoader() {
-    loader.classList.remove("hidden");
-  }
-  function hideLoader() {
-    loader.classList.add("hidden");
-  }
-
-  // --- Update Results via AJAX ---
-  const updateResults = debounce(async () => {
-    const formData = new FormData(form);
-    const query = new URLSearchParams(formData).toString();
-
-    showLoader();
-    try {
-      const res = await axios.get("{{ route('customer.search.ajax') }}?" + query);
-      resultsContainer.innerHTML = res.data.html;
-    } catch (err) {
-      console.error(err);
-      resultsContainer.innerHTML =
-        '<div class="text-center py-10 text-red-500">Error loading results</div>';
-    } finally {
-      hideLoader();
-    }
-  }, 500); // delay = 500ms for smoother UX
-
-  // --- Listen to filter changes ---
-  document.querySelectorAll("input[type=checkbox], input[type=radio], select").forEach(el => {
-    el.addEventListener("change", updateResults);
-  });
-
-  // --- Handle pagination clicks dynamically ---
-  document.addEventListener("click", function(e) {
-    const link = e.target.closest(".pagination a");
-    if (!link) return;
-
-    e.preventDefault();
-    const url = link.getAttribute("href");
-    if (!url) return;
-
-    showLoader();
-    axios.get(url)
-      .then(res => resultsContainer.innerHTML = res.data.html)
-      .catch(() => resultsContainer.innerHTML = "Error loading page")
-      .finally(hideLoader);
-  });
-
-  // --- Optional: Handle typing in destination search field (if any) ---
-  const destinationInput = form.querySelector("input[name='destination']");
-  if (destinationInput) {
-    destinationInput.addEventListener("input", updateResults);
-  }
-});
-</script>
-
+<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
 
 
 {{-- 🔹 SEARCH FILTER BAR (property search kept intact, enhanced with the same structure as first file) --}}
 <div class="relative z-10 -mt-8 px-2 sm:px-4 mb-6">
-    <form action="{{ route('customer.search') }}" method="GET"
-    x-data="{
-        destination: '{{ $searchData['destination'] ?? '' }}',
-        checkIn: '{{ $searchData['checkIn'] ?? '' }}',
-        checkOut: '{{ $searchData['checkOut'] ?? '' }}',
-        adults: {{ $searchData['adults'] ?? 2 }},
-        children: {{ $searchData['children'] ?? 0 }},
-        rooms: {{ $searchData['rooms'] ?? 1 }},
-        pets: {{ $searchData['pets'] ? 'true' : 'false' }}
-    }"
+    <form id="filtersForm" action="{{ route('customer.search') }}" method="GET"
         class="bg-white rounded-xl px-2 py-1 sm:px-3 sm:py-2 shadow-lg
            flex flex-col md:flex-row items-stretch md:items-center
            gap-2 md:gap-0 border-2 sm:border-4 border-yellow-400
            max-w-full md:max-w-6xl mx-auto overflow-visible text-sm md:text-base">
 
-        <!-- Destination Selector -->
-        <div x-data="{ open: false, destination: '' }"
-             class="relative flex-1 border-b md:border-b-0 md:border-r border-gray-300 px-2 py-1">
-            <button @click="open = !open" type="button"
-                class="flex items-center gap-2 w-full text-left text-sm">
-                <img src="{{ asset('assets/stay.svg') }}" class="w-5 h-5 sm:w-6 sm:h-6" />
-                <span x-text="destination || '{{ __("messages.Where are you going?") }}'"
-                      class="text-gray-800 truncate text-sm sm:text-base"></span>
-            </button>
-            <div x-show="open" @click.away="open = false"
-                class="absolute z-20 bg-white shadow-xl rounded-xl p-3 mt-2 w-64 sm:w-72 left-0 md:left-auto md:right-0 text-gray-800 space-y-2 text-sm">
-                <template x-for="city in ['New York','Los Angeles','London','Paris','Tokyo','Galle','Colombo']" :key="city">
-                    <button type="button" @click="destination = city; open = false"
-                        class="block w-full text-left px-3 py-2 hover:bg-gray-100 rounded">
-                        <span x-text="city"></span>
-                    </button>
-                </template>
-            </div>
-            <input type="hidden" name="destination" :value="destination">
+        <!-- Live Destination Autocomplete -->
+        <div 
+          x-data="{
+            query: '{{ $searchData['destination'] ?? '' }}',
+            results: [],
+            open: false,
+            selectCity(city) {
+              this.query = city;
+              this.open = false;
+            },
+            fetchSuggestions: _.debounce(function() {
+              if (this.query.length < 2) { this.results = []; this.open = false; return; }
+              axios.get('{{ route('customer.search.suggest') }}', { params: { q: this.query } })
+                .then(res => {
+                  this.results = res.data;
+                  this.open = this.results.length > 0;
+                })
+                .catch(() => { this.results = []; });
+            }, 300)
+          }"
+          class="relative flex-1 border-b md:border-b-0 md:border-r border-gray-300 px-2 py-1"
+        >
+          <div class="flex items-center gap-2 w-full">
+            <img src="{{ asset('assets/stay.svg') }}" alt="Stay" class="w-5 h-5 sm:w-6 sm:h-6" />
+            <input
+              type="text"
+              name="destination"
+              x-model="query"
+              @input="fetchSuggestions"
+              placeholder="Where are you going?"
+              autocomplete="off"
+              class="w-full bg-transparent focus:outline-none text-sm sm:text-base text-gray-800"
+            />
+          </div>
+
+          <!-- Suggestion Dropdown -->
+          <ul 
+            x-show="open" 
+            @click.away="open = false"
+            class="absolute z-30 bg-white border border-gray-200 rounded-xl shadow-xl mt-2 w-64 sm:w-72 max-h-64 overflow-y-auto"
+          >
+            <template x-for="city in results" :key="city">
+              <li 
+                @click="selectCity(city)"
+                class="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm text-gray-800"
+                x-text="city"
+              ></li>
+            </template>
+          </ul>
         </div>
 
         <!-- Dates Selector -->
@@ -270,7 +222,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
 
                 <div class="mt-4 text-right">
-                    <button @click="open = false"
+                    <button type ="button" @click="open = false"
                         class="bg-blue-600 text-white px-3 sm:px-4 py-2 rounded hover:bg-blue-700 text-xs sm:text-sm">
                         Done
                     </button>
@@ -394,26 +346,36 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="filter-section-divider"></div>
 
                 <div class="mb-6" id="property-rating-filter-section">
-                    <h3 class="font-bold text-lg text-gray-900 mb-1 flex justify-between items-center cursor-pointer filter-toggle-header" data-target="rating-content">
-                        Property rating
-                        <svg class="w-4 h-4 text-gray-400 filter-toggle-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </h3>
-                    <div id="rating-content">
-                        <p class="text-sm text-gray-500 mb-4">Find high-quality hotels and holiday rentals</p>
-                        <div id="property-rating-filter" class="space-y-3">
-                            @php $starRatings = [539, 2162, 2841, 333, 125]; @endphp
-                            @foreach (range(5, 1) as $star)
-                                <label for="star-{{ $star }}" class="flex justify-between items-center cursor-pointer">
-                                    <div class="flex items-center">
-                                        <input type="checkbox" id="star-{{ $star }}" name="property_rating" value="{{ $star }}" class="form-checkbox h-4 w-4 text-primary rounded accent-primary">
-                                        <span class="ml-3 text-gray-700">{{ $star }} stars</span>
-                                    </div>
-                                    <span class="text-xs text-gray-500 font-semibold property-count" data-rating="{{ $star }}">{{ $starRatings[5 - $star] }}</span>
-                                </label>
-                            @endforeach
-                        </div>
+    <h3 class="font-bold text-lg text-gray-900 mb-1 flex justify-between items-center cursor-pointer filter-toggle-header" data-target="rating-content">
+        Property rating
+        <svg class="w-4 h-4 text-gray-400 filter-toggle-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+    </h3>
+
+    <div id="rating-content">
+        <p class="text-sm text-gray-500 mb-4">Find high-quality hotels and holiday rentals</p>
+
+        <div id="property-rating-filter" class="space-y-3">
+            @foreach ($stars as $star => $count)
+                <label for="star-{{ $star }}" class="flex justify-between items-center cursor-pointer">
+                    <div class="flex items-center">
+                        <input type="checkbox"
+                               id="star-{{ $star }}"
+                               name="property_rating[]"
+                               value="{{ $star }}"
+                               class="form-checkbox h-4 w-4 text-primary rounded accent-primary"
+                               @if(in_array($star, request()->get('property_rating', []))) checked @endif>
+                        <span class="ml-3 text-gray-700">{{ $star }} stars</span>
                     </div>
-                </div>
+
+                    <span class="text-xs text-gray-500 font-semibold property-count" data-rating="{{ $star }}">
+                        {{ $count }}
+                    </span>
+                </label>
+            @endforeach
+        </div>
+    </div>
+</div>
+
                 <div class="filter-section-divider"></div>
 
                 {{-- --- Consolidated Loop Filters: we use $filterGroups passed from controller --- --}}
@@ -440,7 +402,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 @foreach($visibleItems as $value => $count)
                                     <label for="{{ $group['id_prefix'] }}-{{ \Str::slug($value) }}" class="flex justify-between items-center cursor-pointer">
                                         <div class="flex items-center">
-                                            <input type="checkbox" id="{{ $group['id_prefix'] }}-{{ \Str::slug($value) }}" name="{{ $group['name'] }}" value="{{ $value }}" class="form-checkbox h-4 w-4 text-primary rounded accent-primary">
+                                            <input type="checkbox" id="{{ $group['id_prefix'] }}-{{ \Str::slug($value) }}" name="{{ $group['name'] === 'popular' ? 'amenities[]' : $group['name'] . '[]' }}" value="{{ $value }}" class="form-checkbox h-4 w-4 text-primary rounded accent-primary">
                                             <span class="ml-3 text-gray-700">{{ $value }}</span>
                                         </div>
                                         <span class="text-xs text-gray-500 font-semibold count" data-{{ $group['name'] }}="{{ $value }}">{{ $count }}</span>
@@ -453,7 +415,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                         @foreach($hiddenItems as $value => $count)
                                             <label for="{{ $group['id_prefix'] }}-{{ \Str::slug($value) }}" class="flex justify-between items-center cursor-pointer">
                                                 <div class="flex items-center">
-                                                    <input type="checkbox" id="{{ $group['id_prefix'] }}-{{ \Str::slug($value) }}" name="{{ $group['name'] }}" value="{{ $value }}" class="form-checkbox h-4 w-4 text-primary rounded accent-primary">
+                                                    <input type="checkbox" id="{{ $group['id_prefix'] }}-{{ \Str::slug($value) }}" name="{{ $group['name'] === 'popular' ? 'amenities[]' : $group['name'] . '[]' }}" value="{{ $value }}" class="form-checkbox h-4 w-4 text-primary rounded accent-primary">
                                                     <span class="ml-3 text-gray-700">{{ $value }}</span>
                                                 </div>
                                                 <span class="text-xs text-gray-500 font-semibold count" data-{{ $group['name'] }}="{{ $value }}">{{ $count }}</span>
@@ -474,27 +436,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     @endif
                 @endforeach
 
-                <div class="mb-6" id="property-type-filter-section">
-                    <h4 class="font-semibold text-gray-900 mb-2 flex justify-between items-center cursor-pointer filter-toggle-header" data-target="prop-type-content">
-                        Property type
-                        <svg class="w-4 h-4 text-gray-400 filter-toggle-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </h4>
-                    <ul id="prop-type-content" class="space-y-2 text-sm">
-                        @foreach(($filterCounts['property_type'] ?? []) as $name => $count)
-                            <li>
-                                <input type="checkbox" id="prop_type-{{ \Str::slug($name) }}" name="property_type" value="{{ $name }}" class="rounded text-blue-600 mr-2">
-                                <label for="prop_type-{{ \Str::slug($name) }}">
-                                    {{ $name }} <span class="text-gray-500">({{ $count }})</span>
-                                </label>
-                            </li>
-                        @endforeach
-                    </ul>
-                </div>
                 <div class="filter-section-divider"></div>
 
-                <button class="w-full py-2 mt-4 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition">
-                    Apply Filters
-                </button>
             </div>
         </aside>
 
@@ -535,8 +478,8 @@ document.addEventListener("DOMContentLoaded", () => {
             <div id="results-container" class="space-y-6">
                 @include('Customer._searchResults', ['properties' => $properties])
 
-                {{-- Dynamic result cards loop based on $properties --}}
-                @forelse ($properties as $property)
+                <!-- {{-- Dynamic result cards loop based on $properties --}} -->
+                <!-- @forelse ($properties as $property)
                 
                             <ul class="list-disc list-inside text-sm text-gray-700 space-y-1">
                                 {{-- Use facilities for features if available --}}
@@ -550,17 +493,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             </ul>
                         </div>
                     </div>
-                    <div class="sm:w-1/4 p-4 bg-gray-50 flex flex-col justify-end items-center sm:items-end border-t sm:border-t-0 sm:border-l border-gray-100">
-                        <div class="text-right w-full mb-3">
-                            <div class="text-sm text-gray-500">Price from</div>
-                            @php
-                                $price = $property->rooms_min_price_per_night ?? null;
-                            @endphp
-                            <div class="text-3xl font-bold text-gray-800">@if($price) @currency($price, $property->rooms()->first()->currency ?? 'USD') @else N/A @endif</div>
-                            <div class="text-xs text-gray-500 mb-4">Includes taxes and fees</div>
-                        </div>
-                        <a href="{{ route('customer.properties.details', $property->id ?? '#') }}" class="w-full sm:w-auto bg-primary text-white text-center px-4 py-3 rounded-lg font-bold hover:bg-primary-dark transition-colors shadow-lg">See Availability</a>
-                    </div>
+                    
                 </div>
                 @empty
                 {{-- No results placeholder (keeps look & feel similar to your original card) --}}
@@ -568,8 +501,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     <h3 class="text-2xl font-semibold text-red-500 mb-2">No properties found.</h3>
                     <p class="text-gray-500">We couldn't find any listings that match your search. Try changing filters or clearing some fields.</p>
                 </div>
-                @endforelse
-                
+                @endforelse -->
+            </div>
                 <!-- Loader overlay -->
                 <div id="loader-overlay"
                     class="hidden fixed inset-0 bg-white/70 z-40 flex items-center justify-center">
@@ -585,169 +518,125 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
             <div class="mt-8 flex justify-center"><p class="text-center text-gray-500">End of results.</p></div>
         </main>
+
     </div>
 </div>
+</form>
 
 <script>
-    // --- CONSOLIDATED JAVASCRIPT LOGIC (combines second file behavior + extra mechanisms from first file) ---
-    const sidebar = document.getElementById('filters-sidebar');
-    const openBtn = document.getElementById('open-sidebar-btn');
-    const closeBtn = document.getElementById('close-sidebar-btn');
-    const backdrop = document.getElementById('mobile-backdrop');
-    const lgBreakpoint = 1024;
+document.addEventListener("DOMContentLoaded", () => {
 
-    const resultsContainer = document.getElementById('results-container');
-    const listViewBtn = document.getElementById('list-view-btn');
-    const gridViewBtn = document.getElementById('grid-view-btn');
+    /* ========= DOM ELEMENTS ========= */
+    const form = document.querySelector("#filtersForm");
+    const resultsContainer = document.querySelector("#results-container");
+    const loader = document.querySelector("#loader-overlay");
+    const listViewBtn = document.querySelector("#list-view-btn");
+    const gridViewBtn = document.querySelector("#grid-view-btn");
+    const budgetRange = document.getElementById("budget-range");
+    const budgetDisplay = document.getElementById("budget-display");
+    const minPrice = document.getElementById("minPrice");
+    const maxPrice = document.getElementById("maxPrice");
 
-    // Sidebar toggle behavior (from first file) — preserves existing sidebar markup and behavior
-    function toggleSidebar(open) {
-        if (window.innerWidth < lgBreakpoint) {
-            if (open) {
-                sidebar.classList.add('sidebar-open');
-                backdrop.style.display = 'block';
-                document.body.style.overflow = 'hidden';
-            } else {
-                sidebar.classList.remove('sidebar-open');
-                backdrop.style.display = 'none';
-                document.body.style.overflow = '';
-            }
+    /* ========= LOADER ========= */
+    function showLoader() { loader.classList.remove("hidden"); }
+    function hideLoader() { loader.classList.add("hidden"); }
+
+    /* ========= UPDATE RESULTS (AJAX) ========= */
+    async function updateResults() {
+        const formData = new FormData(form);
+        const query = new URLSearchParams(formData).toString();
+
+        resultsContainer.innerHTML = `
+            <div class='flex justify-center py-12'>
+                <svg class='animate-spin h-8 w-8 text-[#3CC0E9]' fill='none' viewBox='0 0 24 24'>
+                    <circle class='opacity-25' cx='12' cy='12' r='10'
+                        stroke='currentColor' stroke-width='4'></circle>
+                    <path class='opacity-75' fill='currentColor'
+                        d='M4 12a8 8 0 018-8v8z'>
+                    </path>
+                </svg>
+            </div>
+        `;
+
+        showLoader();
+
+        try {
+            const res = await axios.get("{{ route('customer.search.ajax') }}?" + query);
+            resultsContainer.innerHTML = res.data.html;
+        } catch {
+            resultsContainer.innerHTML = "<div class='text-center text-red-500 py-6'>Error loading results</div>";
+        } finally {
+            hideLoader();
         }
     }
 
-    if (openBtn) openBtn.addEventListener('click', () => toggleSidebar(true));
-    if (closeBtn) closeBtn.addEventListener('click', () => toggleSidebar(false));
-    if (backdrop) backdrop.addEventListener('click', () => toggleSidebar(false));
+    /* ========= FILTER EVENT LISTENERS ========= */
+    document.querySelectorAll("input[type=checkbox], input[type=radio], select")
+        .forEach(el => el.addEventListener("change", updateResults));
 
-    window.addEventListener('resize', () => {
-        if (window.innerWidth >= lgBreakpoint) {
-            sidebar.classList.remove('sidebar-open');
-            backdrop.style.display = 'none';
-            document.body.style.overflow = '';
-        }
+    const destinationInput = form.querySelector("input[name='destination']");
+    if (destinationInput) {
+        destinationInput.addEventListener("input", _.debounce(updateResults, 400));
+    }
+
+    /* ========= BUDGET SLIDER ========= */
+    if (budgetRange) {
+        budgetRange.addEventListener("input", _.debounce(function () {
+            const value = parseInt(this.value);
+            budgetDisplay.textContent = value >= 500 ? "US$500+" : "US$" + value;
+            minPrice.value = 0;
+            maxPrice.value = value >= 500 ? 999999 : value;
+            updateResults();
+        }, 300));
+    }
+
+    /* ========= PAGINATION AJAX ========= */
+    document.addEventListener("click", function (e) {
+        const link = e.target.closest(".pagination a");
+        if (!link) return;
+        e.preventDefault();
+        showLoader();
+        axios.get(link.href)
+            .then(res => resultsContainer.innerHTML = res.data.html)
+            .finally(hideLoader);
     });
 
-    // list/grid view toggle (kept from your second file)
+    /* ========= SORTING (if present) ========= */
+    const sortSelect = document.getElementById("sort-select");
+    if (sortSelect) {
+        sortSelect.addEventListener("change", updateResults);
+    }
+
+    /* ========= LIST/GRID VIEW ========= */
     function toggleViewMode(mode) {
-        if (!resultsContainer || !listViewBtn || !gridViewBtn) return;
-
-        if (mode === 'grid') {
-            resultsContainer.classList.remove('space-y-6');
-            resultsContainer.classList.add('results-grid-container');
-
-            listViewBtn.classList.remove('bg-gray-200');
-            listViewBtn.classList.add('hover:bg-gray-100');
-
-            gridViewBtn.classList.add('bg-gray-200');
-            gridViewBtn.classList.remove('hover:bg-gray-100');
+        if (mode === "grid") {
+            resultsContainer.classList.add("results-grid-container");
+            resultsContainer.classList.remove("space-y-6");
+            gridViewBtn.classList.add("bg-gray-200");
+            listViewBtn.classList.remove("bg-gray-200");
         } else {
-            resultsContainer.classList.add('space-y-6');
-            resultsContainer.classList.remove('results-grid-container');
-
-            listViewBtn.classList.add('bg-gray-200');
-            listViewBtn.classList.remove('hover:bg-gray-100');
-
-            gridViewBtn.classList.remove('bg-gray-200');
-            gridViewBtn.classList.add('hover:bg-gray-100');
+            resultsContainer.classList.remove("results-grid-container");
+            resultsContainer.classList.add("space-y-6");
+            listViewBtn.classList.add("bg-gray-200");
+            gridViewBtn.classList.remove("bg-gray-200");
         }
     }
+    if (listViewBtn) listViewBtn.addEventListener("click", () => toggleViewMode('list'));
+    if (gridViewBtn) gridViewBtn.addEventListener("click", () => toggleViewMode('grid'));
+    toggleViewMode('list');
 
-    if (listViewBtn) listViewBtn.addEventListener('click', () => toggleViewMode('list'));
-    if (gridViewBtn) gridViewBtn.addEventListener('click', () => toggleViewMode('grid'));
-
-    /**
-     * Initialize show more/less for any internal filter with "toggle-<prefix>" / "hidden-<prefix>" IDs.
-     * This approach finds all toggles rendered by your Blade loop and wires them up — no need to hardcode prefixes.
-     */
-    function initializeShowMoreToggle(idPrefix, groupName) {
-        const hiddenContainer = document.getElementById(`hidden-${idPrefix}`);
-        const toggleButton = document.getElementById(`toggle-${idPrefix}`);
-        const container = document.getElementById(`${idPrefix}-filter`);
-
-        if (toggleButton && hiddenContainer) {
-            toggleButton.addEventListener('click', () => {
-                hiddenContainer.classList.toggle('hidden');
-                toggleButton.textContent = hiddenContainer.classList.contains('hidden') ? 'Show more' : 'Show less';
-            });
-        }
-
-        // Keep original second-file behavior: don't auto-submit here.
-        // But we can optionally log selections for debugging (non-intrusive).
-        if (container) {
-            container.addEventListener('change', (e) => {
-                if (e.target.tagName === 'INPUT' && (e.target.type === 'checkbox' || e.target.type === 'radio')) {
-                    // Non-intrusive debug; remove if undesired
-                    // console.log(`[Filter Change] ${groupName}:`, Array.from(container.querySelectorAll(`input[name="${groupName}"]:checked`)).map(cb => cb.value));
-                }
-            });
-        }
-    }
-
-    /**
-     * Collapsible section toggle (for headers with class filter-toggle-header)
-     * This implements the rotating icon behavior from the first file.
-     */
-    function initializeSectionToggle() {
-        document.querySelectorAll('.filter-toggle-header').forEach(header => {
-            header.addEventListener('click', () => {
-                const targetId = header.getAttribute('data-target');
-                const targetContent = document.getElementById(targetId);
-                const icon = header.querySelector('.filter-toggle-icon');
-
-                if (targetContent) {
-                    targetContent.classList.toggle('hidden');
-                    if (icon) {
-                        icon.classList.toggle('rotated', targetContent.classList.contains('hidden'));
-                    }
-                }
-            });
-
-            // Set initial icon state (down arrow = open)
-            const targetContent = document.getElementById(header.getAttribute('data-target'));
+    /* ========= COLLAPSIBLE FILTER SECTIONS ========= */
+    document.querySelectorAll('.filter-toggle-header').forEach(header => {
+        header.addEventListener('click', () => {
+            const target = document.getElementById(header.dataset.target);
             const icon = header.querySelector('.filter-toggle-icon');
-            if (icon && targetContent && !targetContent.classList.contains('hidden')) {
-                icon.classList.remove('rotated');
-            }
+            target.classList.toggle("hidden");
+            icon.classList.toggle("rotated");
         });
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        // initialize collapsible sections
-        initializeSectionToggle();
-
-        // Wire up all internal "show more" toggles by searching for toggle-* elements
-        document.querySelectorAll('[id^="toggle-"]').forEach(btn => {
-            const id = btn.id.replace(/^toggle-/, '');
-            initializeShowMoreToggle(id, id.replace(/-/g, '_'));
-        });
-
-        // Additional second-file listeners (budget range, review filters) preserved:
-        const budgetRange = document.getElementById('budget-range');
-        const budgetDisplay = document.getElementById('budget-display');
-        function updateBudgetDisplay(value) {
-            budgetDisplay.textContent = parseInt(value) >= 500 ? 'US$500+' : 'US$' + value;
-        }
-        if(budgetRange) budgetRange.addEventListener('input', (event) => { updateBudgetDisplay(event.target.value); });
-
-        document.getElementById('review-filter')?.addEventListener('change', (e) => {
-            if (e.target.type === 'radio' && e.target.name === 'min_score') {
-                console.log('[Filter Change] Selected Minimum Review Score:', e.target.value);
-            }
-        });
-        document.getElementById('property-rating-filter')?.addEventListener('change', () => {
-            const selectedRatings = Array.from(document.querySelectorAll('#property-rating-filter input[name="property_rating"]:checked')).map(cb => cb.value);
-            console.log('[Filter Change] Currently Selected Star Ratings:', selectedRatings);
-        });
-        document.getElementById('property-type-filter-section')?.addEventListener('change', (e) => {
-            if (e.target.name === 'property_type') {
-                const selected = Array.from(document.querySelectorAll('#prop-type-content input[name="property_type"]:checked')).map(cb => cb.value);
-                console.log('[Filter Change] Selected Property Type Filters:', selected);
-            }
-        });
-
-        // Default to list view on load (preserves prior behavior)
-        toggleViewMode('list');
     });
+
+});
 </script>
+
 
 @endsection

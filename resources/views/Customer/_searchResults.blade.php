@@ -1,31 +1,80 @@
+@php
+    use Illuminate\Support\Str;
+@endphp
+
 @forelse ($properties as $property)
-<div class="bg-white rounded-xl shadow mb-5 flex flex-col md:flex-row overflow-hidden transition hover:shadow-lg">
-  <div class="md:w-1/3">
-    @php $photo = $property->files->first(); @endphp
-    <img src="{{ $photo ? asset($photo->path) : asset('images/no-image.jpg') }}"
+<div class="bg-white rounded-xl shadow mb-5 flex flex-col md:flex-row overflow-hidden transition hover:shadow-lg border border-gray-100">
+
+  {{-- IMAGE SECTION --}}
+  <div class="md:w-1/3 relative">
+    @php
+        $photo = $property->files->first();
+        $imgPath = null;
+
+        if ($photo && $photo->path) {
+            $path = $photo->path;
+
+            // Detect full URLs
+            if (Str::startsWith($path, ['http://', 'https://'])) {
+                $imgPath = $path;
+            }
+            // Detect paths starting from storage/ or uploads/
+            elseif (Str::startsWith($path, ['storage/', 'uploads/'])) {
+                $imgPath = asset($path);
+            }
+            // Detect if path starts with public/
+            elseif (Str::startsWith($path, 'public/')) {
+                $imgPath = asset(Str::replaceFirst('public/', 'storage/', $path));
+            }
+            // Otherwise assume storage path
+            else {
+                $imgPath = asset('storage/' . ltrim($path, '/'));
+            }
+        }
+    @endphp
+
+    <img src="{{ $imgPath ?? asset('assets/default-property.jpg') }}"
          alt="{{ $property->title }}"
-         class="h-48 w-full object-cover md:h-full">
+         loading="lazy"
+         class="h-48 w-full object-cover md:h-full transition-transform duration-300 hover:scale-105">
   </div>
 
+  {{-- PROPERTY DETAILS SECTION --}}
   <div class="md:w-2/3 p-4 flex flex-col justify-between">
     <div>
-      <h3 class="text-xl font-semibold text-[#0071C2] mb-1">{{ $property->title }}</h3>
-      <p class="text-sm text-gray-600 mb-2">
+      <h3 class="text-xl font-semibold text-[#3CC0E9] mb-1 hover:underline cursor-pointer">
+        {{ $property->title }}
+      </h3>
+      <p class="text-sm text-gray-600 mb-2 flex items-center gap-1">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 2a6 6 0 00-6 6c0 4.42 4 10 6 10s6-5.58 6-10a6 6 0 00-6-6zm0 10a2 2 0 110-4 2 2 0 010 4z" clip-rule="evenodd" />
+        </svg>
         {{ $property->city }}, {{ $property->country }}
       </p>
-      <p class="text-gray-500 text-sm">{{ Str::limit($property->description, 100) }}</p>
+      <p class="text-gray-500 text-sm leading-relaxed">
+        {{ Str::limit($property->description, 100) }}
+      </p>
+
+      {{-- Optional Facilities List --}}
+      @if($property->facilities && $property->facilities->count())
+      <ul class="mt-2 text-sm text-gray-700 list-disc list-inside">
+        @foreach($property->facilities->take(4) as $f)
+          <li>{{ $f->facility_name }}</li>
+        @endforeach
+      </ul>
+      @endif
     </div>
 
-    <div class="mt-3 flex items-center justify-between">
+    <div class="mt-4 flex items-center justify-between">
       <div>
         <div class="text-gray-500 text-xs">From</div>
-        <div class="text-lg font-bold text-green-600">
+        <div class="text-lg font-bold text-[#0071C2]">
           LKR {{ number_format($property->rooms_min_price_per_night ?? 0, 2) }}
         </div>
       </div>
       <a href="{{ route('customer.properties.details', ['id' => $property->id]) }}"
-         class="bg-[#0071C2] text-white text-sm px-4 py-2 rounded-md hover:bg-[#005A9C]">
-        View
+         class="bg-[#3CC0E9] text-white text-sm px-5 py-2 rounded-lg hover:bg-[#2AA9CD] transition">
+        View Details
       </a>
     </div>
   </div>
