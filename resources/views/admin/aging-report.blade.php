@@ -55,7 +55,8 @@
             <div class="bg-white p-5 rounded-lg shadow border-l-4 border-[#1F8FB2] text-center sm:text-left">
                 <h3 class="text-sm font-medium text-gray-500">{{ $period }}</h3>
                 <p class="text-2xl font-bold text-gray-800 mt-1">{{ $bookings->count() }}</p>
-                <p class="text-sm text-green-600">${{ number_format($bookings->sum('total_price'), 2) }}</p>
+                <p class="text-sm text-green-600">${{ number_format($bookings->usd_total ?? 0, 2) }} USD</p>
+                <p class="text-xs text-gray-400">Converted to USD</p>
             </div>
         @endforeach
     </div>
@@ -74,7 +75,7 @@
                         <th class="px-4 py-2 text-left">ID</th>
                         <th class="px-4 py-2 text-left">Customer</th>
                         <th class="px-4 py-2 text-left">Property</th>
-                        <th class="px-4 py-2 text-left">Amount</th>
+                        <th class="px-4 py-2 text-left">Amount (USD)</th>
                         <th class="px-4 py-2 text-left">Status</th>
                         <th class="px-4 py-2 text-left">Age</th>
                         <th class="px-4 py-2 text-left">Created</th>
@@ -89,7 +90,12 @@
                                 <td class="px-4 py-2 max-w-xs truncate" title="{{ $booking->property->title ?? '' }}">
                                     {{ $booking->property->title ?? 'N/A' }}
                                 </td>
-                                <td class="px-4 py-2 font-semibold text-green-600">${{ number_format($booking->total_price, 2) }}</td>
+                                <td class="px-4 py-2 font-semibold text-green-600">
+                                    ${{ number_format($booking->total_price_usd, 2) }} USD
+                                    @if($booking->original_currency !== 'USD')
+                                        <div class="text-xs text-gray-500">{{ $booking->original_currency }} {{ number_format($booking->original_amount, 2) }}</div>
+                                    @endif
+                                </td>
                                 <td class="px-4 py-2">
                                     <span class="px-2 py-1 text-xs font-medium rounded
                                         {{ $booking->status === 'confirmed' ? 'bg-green-100 text-green-700' :
@@ -114,7 +120,12 @@
                     <div class="p-4 space-y-2">
                         <div class="flex justify-between">
                             <span class="font-medium">#{{ $booking->id }}</span>
-                            <span class="text-green-600 font-semibold">${{ number_format($booking->total_price, 2) }}</span>
+                            <div class="text-right">
+                                <span class="text-green-600 font-semibold">${{ number_format($booking->total_price_usd, 2) }} USD</span>
+                                @if($booking->original_currency !== 'USD')
+                                    <div class="text-xs text-gray-500">{{ $booking->original_currency }} {{ number_format($booking->original_amount, 2) }}</div>
+                                @endif
+                            </div>
                         </div>
                         <div><span class="text-gray-500">Customer:</span> {{ $booking->user->name ?? 'N/A' }}</div>
                         <div><span class="text-gray-500">Property:</span> {{ Str::limit($booking->property->title ?? 'N/A', 30) }}</div>
