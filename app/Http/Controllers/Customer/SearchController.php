@@ -121,7 +121,7 @@ class SearchController extends Controller
             });
         }
 
-        // Guests (adults + children)
+        // Guests (adults + children): require at least one room with capacity
         if ($request->filled('adults') || $request->filled('children')) {
             $adults = (int) $request->input('adults', 0);
             $children = (int) $request->input('children', 0);
