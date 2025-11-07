@@ -3,20 +3,28 @@
 @section('content')
 <div class="space-y-8">
     <!-- Header -->
-    <div class="bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-2xl p-6 sm:p-8 text-white">
-        <div class="flex flex-col md:flex-row justify-between md:items-center gap-4">
-            <div>
-                <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-1 md:mb-2">Bookings Management</h1>
-                <p class="text-indigo-100 text-sm sm:text-base md:text-lg">Track and manage all your property reservations</p>
+    <div class="bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-2xl p-6 sm:p-8 text-white w-full">
+        <div class="flex flex-col md:flex-row justify-between md:items-center gap-4 md:gap-6">
+            <!-- Left Section -->
+            <div class="flex-1">
+                <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-1 md:mb-2 leading-tight text-center md:text-left">
+                    Bookings Management
+                </h1>
+                <p class="text-indigo-100 text-sm sm:text-base md:text-lg text-center md:text-left">
+                    Track and manage all your property reservations
+                </p>
             </div>
-            <div class="text-right">
-                <p class="text-indigo-100 text-sm">Total Revenue</p>
-                <p class="text-3xl font-bold">
+
+            <!-- Right Section -->
+            <div class="flex-1 text-center md:text-right">
+                <p class="text-indigo-100 text-sm mb-1 md:mb-2">Total Revenue</p>
+                <p class="text-2xl sm:text-3xl md:text-4xl font-bold break-words">
                     {{ \App\Helpers\CurrencyHelper::convertAndFormat($bookings->sum('total_price'), 'USD', 'USD') }}
                 </p>
             </div>
         </div>
     </div>
+
 
     <!-- Statistics Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
