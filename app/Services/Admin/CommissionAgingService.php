@@ -72,11 +72,11 @@ class CommissionAgingService
             
             // Convert booking amount to USD first, then calculate commission
             $bookingAmountUsd = CurrencyHelper::convertPrice(
-                $booking->total_price, 
+                (float) $booking->total_price, 
                 $booking->currency ?? 'USD', 
                 'USD'
             );
-            $commissionAmount = $bookingAmountUsd * $this->getCommissionRate();
+            $commissionAmount = (float) ($bookingAmountUsd * $this->getCommissionRate());
             
             $daysOverdue = Carbon::now()->diffInDays($booking->created_at->addDays(self::INVOICEABLE_DAYS));
             $bucket = $this->getAgingBucket($daysOverdue);
@@ -98,8 +98,8 @@ class CommissionAgingService
                 ];
             }
 
-            $commissionData[$partnerKey]['total_amount'] += $commissionAmount;
-            $commissionData[$partnerKey]['buckets'][$bucket] += $commissionAmount;
+            $commissionData[$partnerKey]['total_amount'] += (float) $commissionAmount;
+            $commissionData[$partnerKey]['buckets'][$bucket] += (float) $commissionAmount;
         }
 
         return array_values($commissionData);

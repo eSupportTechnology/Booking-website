@@ -31,7 +31,7 @@
         </div>
         <div class="bg-white p-4 sm:p-6 rounded-lg shadow border-l-4 border-yellow-500">
             <h2 class="text-xs sm:text-sm text-gray-500">Revenue (30d) - USD</h2>
-            <p class="text-xl sm:text-2xl font-bold text-gray-800">${{ number_format($revenue, 2) }}</p>
+            <p class="text-xl sm:text-2xl font-bold text-gray-800">${{ number_format((float)$revenue, 2) }}</p>
             <p class="text-xs text-gray-500 mt-1">Converted to USD</p>
         </div>
         <div class="bg-white p-4 sm:p-6 rounded-lg shadow border-l-4 border-red-500">
@@ -69,9 +69,9 @@
                     </div>
                     <div class="flex justify-between items-center text-sm">
                         <span class="text-gray-600">{{ $booking['date'] }}</span>
-                        <span class="font-semibold text-green-600">${{ number_format($booking['amount'], 2) }} USD</span>
+                        <span class="font-semibold text-green-600">${{ number_format((float)$booking['amount'], 2) }} USD</span>
                         @if($booking['original_currency'] !== 'USD')
-                            <span class="text-xs text-gray-500 block">{{ $booking['original_currency'] }} {{ number_format($booking['original_amount'], 2) }}</span>
+                            <span class="text-xs text-gray-500 block">{{ $booking['original_currency'] }} {{ number_format((float)$booking['original_amount'], 2) }}</span>
                         @endif
                     </div>
                     <div>
@@ -116,9 +116,9 @@
                             <td class="px-4 py-2">{{ $booking['property_name'] }}</td>
                             <td class="px-4 py-2">{{ $booking['date'] }}</td>
                             <td class="px-4 py-2 font-semibold text-green-600">
-                                ${{ number_format($booking['amount'], 2) }} USD
+                                ${{ number_format((float)$booking['amount'], 2) }} USD
                                 @if($booking['original_currency'] !== 'USD')
-                                    <div class="text-xs text-gray-500">{{ $booking['original_currency'] }} {{ number_format($booking['original_amount'], 2) }}</div>
+                                    <div class="text-xs text-gray-500">{{ $booking['original_currency'] }} {{ number_format((float)$booking['original_amount'], 2) }}</div>
                                 @endif
                             </td>
                             <td class="px-4 py-2">
@@ -196,7 +196,7 @@
                 </div>
                 <div class="flex justify-between items-center">
                     <span class="text-gray-600">Total Revenue (30d):</span>
-                    <span class="font-semibold text-green-600">${{ number_format($revenue, 2) }} USD</span>
+                    <span class="font-semibold text-green-600">${{ number_format((float)$revenue, 2) }} USD</span>
                 </div>
                 @if($pendingVerifications > 0)
                     <div class="mt-2 p-3 bg-yellow-50 border border-yellow-200 rounded">

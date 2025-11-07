@@ -53,17 +53,17 @@ class DashboardService
             ->select('total_price', 'currency')
             ->get();
         
-        $totalUsd = 0;
+        $totalUsd = 0.0;
         foreach ($bookings as $booking) {
             $usdAmount = CurrencyHelper::convertPrice(
-                $booking->total_price, 
+                (float) $booking->total_price, 
                 $booking->currency ?? 'USD', 
                 'USD'
             );
-            $totalUsd += $usdAmount;
+            $totalUsd += (float) $usdAmount;
         }
         
-        return $totalUsd;
+        return (float) $totalUsd;
     }
 
     private function getPendingVerifications(): int
@@ -85,12 +85,12 @@ class DashboardService
                 'property_name' => $booking->property?->title ?? 'N/A',
                 'date' => $booking->created_at->format('Y-m-d'),
                 'status' => ucfirst($booking->status),
-                'amount' => CurrencyHelper::convertPrice(
-                    $booking->total_price, 
+                'amount' => (float) CurrencyHelper::convertPrice(
+                    (float) $booking->total_price, 
                     $booking->currency ?? 'USD', 
                     'USD'
                 ),
-                'original_amount' => $booking->total_price,
+                'original_amount' => (float) $booking->total_price,
                 'original_currency' => $booking->currency ?? 'USD',
             ])->toArray();
     }
