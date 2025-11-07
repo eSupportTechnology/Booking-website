@@ -45,10 +45,10 @@ class CurrencyService
         // Ensure amount is a float
         $amount = (float) $amount;
 
-        if ($from === $to) return $amount;
+        if ($from === $to) return (float) $amount;
 
         $rate = $this->getRate($from, $to);
-        return round($amount * $rate, 2);
+        return (float) round($amount * $rate, 2);
     }
 
     public function getRate(string $from, string $to): float

@@ -49,13 +49,13 @@ class AgingReportService
         
         // Convert all amounts to USD for consistent display
         $bookings->each(function ($booking) {
-            $booking->total_price_usd = CurrencyHelper::convertPrice(
-                $booking->total_price,
+            $booking->total_price_usd = (float) CurrencyHelper::convertPrice(
+                (float) $booking->total_price,
                 $booking->currency ?? 'USD',
                 'USD'
             );
             $booking->original_currency = $booking->currency ?? 'USD';
-            $booking->original_amount = $booking->total_price;
+            $booking->original_amount = (float) $booking->total_price;
         });
         
         return $bookings;

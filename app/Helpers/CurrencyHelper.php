@@ -22,7 +22,7 @@ class CurrencyHelper
     public static function convertPrice($amount, $fromCurrency, $toCurrency = null): float
     {
         $toCurrency = $toCurrency ?? app(CurrencyManager::class)->getUserCurrency();
-        return app(CurrencyService::class)->convert($amount, $fromCurrency, $toCurrency);
+        return (float) app(CurrencyService::class)->convert((float) $amount, $fromCurrency, $toCurrency);
     }
 
     /**
