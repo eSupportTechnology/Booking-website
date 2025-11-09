@@ -66,7 +66,7 @@ Route::prefix('customer')->group(function () {
      ->name('customer.search.ajax');
     Route::get('/search/suggest', [SearchController::class, 'suggestCities'])
     ->name('customer.search.suggest');
-    
+
     Route::get('/search/filter-counts', [SearchController::class, 'filterCounts'])
     ->name('customer.search.filter-counts');
 
