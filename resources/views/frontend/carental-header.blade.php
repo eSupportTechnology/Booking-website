@@ -53,12 +53,7 @@
                         </a>
 
                         <!-- Language Button -->
-                        <button id="language-button" type="button"
-                            class="flex items-center justify-center w-8 h-8 bg-white rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-hidden"
-                            title="Change Language">
-                            <img src="{{ asset('images/uk.png') }}" alt="UK Flag"
-                                class="w-full h-full object-cover rounded-full" />
-                        </button>
+                        
 
                         <!-- Language Modal -->
                         <div id="language-modal"
