@@ -1435,4 +1435,10 @@ Route::prefix('properties')->name('customer.properties.')->group(function () {
 Route::get('/partner/properties', [App\Http\Controllers\Partner\PropertyController::class, 'showCities']);
 
 
+// car_rentals routes
+Route::get('car_rentals/carrenters_control_panel', function () {
+    return view('car_rentals.carrenters_control_panel');
+})->name('car_rentals.carrenters_control_panel');
+
+
 
