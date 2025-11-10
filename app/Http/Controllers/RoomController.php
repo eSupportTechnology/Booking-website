@@ -205,7 +205,7 @@ class RoomController extends Controller
             'max_guests' => $validated['max_guests'],
             'bed_count' => $validated['bed_count'],
             'bathroom_type' => $validated['bathroom_type'],
-            'currency' => $validated['currency'],
+            'currency' => strtoupper($validated['currency']),
             'price_per_night' => $validated['price_per_night'],
         ];
 
