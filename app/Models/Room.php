@@ -28,6 +28,17 @@ class Room extends Model
         'you_earn',
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+        
+        static::saving(function ($model) {
+            if ($model->currency) {
+                $model->currency = strtoupper($model->currency);
+            }
+        });
+    }
+
     public function roomType()
     {
         return $this->belongsTo(RoomType::class);

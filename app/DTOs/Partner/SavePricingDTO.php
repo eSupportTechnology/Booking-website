@@ -19,7 +19,7 @@ class SavePricingDTO extends ValidatedDTO
             'property_id' => ['required', 'exists:properties,id'],
             'booking_type' => ['required', 'in:instant,request'],
             'price_per_night' => ['nullable', 'numeric', 'min:0'],
-            'currency' => ['nullable', 'in:usd,eur,gbp'],
+            'currency' => ['nullable', 'in:USD,EUR,GBP,LKR'],
             'discount_enabled' => ['nullable', 'boolean'],
             'discount_percent' => ['nullable', 'integer', 'min:0', 'max:100'],
         ];
@@ -29,7 +29,7 @@ class SavePricingDTO extends ValidatedDTO
     {
         return [
             'price_per_night' => null,
-            'currency' => 'usd',
+            'currency' => 'USD',
             'discount_enabled' => false,
             'discount_percent' => 0,
         ];

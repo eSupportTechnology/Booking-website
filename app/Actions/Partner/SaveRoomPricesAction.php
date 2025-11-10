@@ -16,6 +16,9 @@ class SaveRoomPricesAction
             foreach ($dto->rooms as $roomData) {
                 $room = Room::findOrFail($roomData['id']);
                 $room->price_per_night = $roomData['price_per_night'];
+                if (isset($roomData['currency'])) {
+                    $room->currency = strtoupper($roomData['currency']);
+                }
                 $room->save();
             }
 

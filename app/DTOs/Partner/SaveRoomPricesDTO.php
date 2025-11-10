@@ -19,6 +19,7 @@ class SaveRoomPricesDTO
             'rooms' => 'required|array',
             'rooms.*.id' => 'required|exists:rooms,id',
             'rooms.*.price_per_night' => 'required|numeric',
+            'rooms.*.currency' => 'nullable|string|size:3',
         ]);
 
         return new self($validated);
