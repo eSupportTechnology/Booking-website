@@ -96,6 +96,6 @@ class Partner extends Model
      */
     public function deactivateProperties(): void
     {
-        $this->properties()->update(['status' => 'inactive']);
+        $this->properties()->update(['status' => 'suspended']);
     }
 }
