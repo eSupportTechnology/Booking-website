@@ -2,7 +2,7 @@
 
 
 @section('content')
-  <div class="space-y-8 p-8">
+  <div class="space-y-8">
     <!-- Header -->
   <div class="bg-gradient-to-r from-[#1F8FB2] to-[#3CC0E9] rounded-2xl p-8 text-white">
     <div class="flex justify-between items-center">
