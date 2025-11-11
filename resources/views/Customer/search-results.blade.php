@@ -231,58 +231,93 @@
         </div>
 
         <!-- Guests Selector -->
-        <div x-data="{ open: false, adults: 2, children: 0, rooms: 1, pets: false }"
-             class="relative flex-1 border-b md:border-b-0 md:border-r border-gray-300 px-2 py-1">
-            <button @click="open = !open" type="button"
-                class="flex items-center gap-2 w-full text-left text-sm">
-                <img src="{{ asset('assets/user.svg') }}" class="w-5 h-5" />
-                <span x-text="`${adults} adults · ${children} children · ${rooms} room${rooms>1?'s':''}`"
-                      class="text-gray-800 text-sm sm:text-base truncate"></span>
-            </button>
+<div x-data="{
+    open: false,
+    adults: {{ $searchData['adults'] !== null ? $searchData['adults'] : 'null' }},
+    children: {{ $searchData['children'] !== null ? $searchData['children'] : 'null' }},
+    rooms: {{ $searchData['rooms'] !== null ? $searchData['rooms'] : 'null' }},
+    pets: {{ $searchData['pets'] ? 'true' : 'false' }},
 
-            <div x-show="open" @click.away="open = false"
-                class="absolute z-20 bg-white shadow-xl rounded-xl p-4 mt-2 w-64 sm:w-72 left-0 md:left-auto md:right-0 text-gray-800 space-y-4 text-sm">
-                <div class="flex justify-between"><span>Adults</span>
-                    <div class="flex gap-2">
-                        <button type="button" @click="if(adults>1) adults--" class="px-2 bg-gray-200 rounded">−</button>
-                        <span x-text="adults"></span>
-                        <button type="button" @click="adults++" class="px-2 bg-gray-200 rounded">+</button>
-                    </div>
-                </div>
-                <div class="flex justify-between"><span>Children</span>
-                    <div class="flex gap-2">
-                        <button type="button" @click="if(children>0) children--" class="px-2 bg-gray-200 rounded">−</button>
-                        <span x-text="children"></span>
-                        <button type="button" @click="children++" class="px-2 bg-gray-200 rounded">+</button>
-                    </div>
-                </div>
-                <div class="flex justify-between"><span>Rooms</span>
-                    <div class="flex gap-2">
-                        <button type="button" @click="if(rooms>1) rooms--" class="px-2 bg-gray-200 rounded">−</button>
-                        <span x-text="rooms"></span>
-                        <button type="button" @click="rooms++" class="px-2 bg-gray-200 rounded">+</button>
-                    </div>
-                </div>
-                <div class="flex justify-between"><span>Travelling with pets?</span>
-                    <label class="inline-flex items-center cursor-pointer">
-                        <input type="checkbox" x-model="pets" class="sr-only peer">
-                        <div class="w-10 h-6 bg-gray-300 rounded-full peer peer-checked:bg-blue-600 relative transition-all">
-                            <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-all peer-checked:translate-x-4"></div>
-                        </div>
-                    </label>
-                </div>
+    resetGuests() {
+        this.adults = null;
+        this.children = null;
+        this.rooms = null;
+        this.pets = false;
+    }
+}"
+class="relative flex-1 border-b md:border-b-0 md:border-r border-gray-300 px-2 py-1">
 
-                <p class="text-xs text-gray-500">
-                    Assistance animals aren’t considered pets.
-                    <a href="#" class="text-blue-600 underline">Read more</a>
-                </p>
+    <input type="hidden" name="adults" :value="adults !== null ? adults : ''">
+    <input type="hidden" name="children" :value="children !== null ? children : ''">
+    <input type="hidden" name="rooms" :value="rooms !== null ? rooms : ''">
+    <input type="hidden" name="pets" :value="pets ? 1 : ''">
 
-                <button type="button" @click="open = false"
-                    class="block w-full text-center bg-white border border-blue-600 text-blue-600 font-semibold py-2 rounded hover:bg-blue-50">
-                    Done
-                </button>
+    <button @click="open = !open" type="button"
+        class="flex items-center gap-2 w-full text-left text-sm">
+        <img src="{{ asset('assets/user.svg') }}" class="w-5 h-5" />
+
+        <span class="text-gray-800 text-sm sm:text-base truncate"
+              x-text="adults === null && children === null && rooms === null
+                      ? 'Guests'
+                      : `${adults ?? 0} adults · ${children ?? 0} children · ${rooms ?? 1} room${rooms>1?'s':''}`">
+        </span>
+    </button>
+
+    <div x-show="open" @click.away="open = false"
+        class="absolute z-20 bg-white shadow-xl rounded-xl p-4 mt-2 w-64 sm:w-72 left-0 md:left-auto md:right-0 text-gray-800 space-y-4 text-sm">
+
+        <div class="flex justify-between"><span>Adults</span>
+            <div class="flex gap-2">
+                <button type="button" @click="if(adults>1) adults--" class="px-2 bg-gray-200 rounded">−</button>
+                <span x-text="adults ?? 0"></span>
+                <button type="button" @click="adults = (adults ?? 0) + 1; updateResults()" class="px-2 bg-gray-200 rounded">+</button>
             </div>
         </div>
+
+        <div class="flex justify-between"><span>Children</span>
+            <div class="flex gap-2">
+                <button type="button" @click="if(children>0) children--" class="px-2 bg-gray-200 rounded">−</button>
+                <span x-text="children ?? 0"></span>
+                <button type="button" @click="children = (children ?? 0) + 1; updateResults()" class="px-2 bg-gray-200 rounded">+</button>
+            </div>
+        </div>
+
+        <div class="flex justify-between"><span>Rooms</span>
+            <div class="flex gap-2">
+                <button type="button" @click="if(rooms>1) rooms--" class="px-2 bg-gray-200 rounded">−</button>
+                <span x-text="rooms ?? 1"></span>
+                <button type="button" @click="rooms = (rooms ?? 1) + 1; updateResults()" class="px-2 bg-gray-200 rounded">+</button>
+            </div>
+        </div>
+
+        <div class="flex justify-between"><span>Travelling with pets?</span>
+            <label class="inline-flex items-center cursor-pointer">
+                <input type="checkbox" x-model="pets" class="sr-only peer">
+                <div class="w-10 h-6 bg-gray-300 rounded-full peer peer-checked:bg-blue-600 relative transition-all">
+                    <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-all peer-checked:translate-x-4"></div>
+                </div>
+            </label>
+        </div>
+
+        <p class="text-xs text-gray-500">
+            Assistance animals aren’t considered pets.
+            <a href="#" class="text-blue-600 underline">Read more</a>
+        </p>
+
+        <!-- Clear guests button -->
+        <button type="button"
+            @click="resetGuests(); updateResults(); open = false;"
+            class="block w-full text-center bg-red-50 border border-red-400 text-red-600 font-semibold py-2 rounded hover:bg-red-100">
+            Clear Guests
+        </button>
+
+        <button type="button" @click="open = false"
+            class="block w-full text-center bg-white border border-blue-600 text-blue-600 font-semibold py-2 rounded hover:bg-blue-50">
+            Done
+        </button>
+    </div>
+</div>
+
 
         <!-- Search Button -->
         <div class="w-full md:w-auto px-2 py-1">
@@ -324,6 +359,8 @@
                     <div id="budget-content">
                         <div id="budget-display" class="text-lg font-bold text-primary mb-2">US$50</div>
                         <input type="range" id="budget-range" class="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer range-sm accent-primary" value="50" min="0" max="500">
+                        <input type="hidden" name="min_price" id="minPrice" value="0">
+                        <input type="hidden" name="max_price" id="maxPrice" value="50">
                         <div class="flex justify-between text-xs text-gray-500 mt-1"><span>US$0</span><span>US$500+</span></div>
                     </div>
                 </div>
@@ -571,24 +608,54 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /* ========= FILTER EVENT LISTENERS ========= */
-    document.querySelectorAll("input[type=checkbox], input[type=radio], select")
-        .forEach(el => el.addEventListener("change", updateResults));
+    document.addEventListener("change", function(e) {
 
-    const destinationInput = form.querySelector("input[name='destination']");
-    if (destinationInput) {
-        destinationInput.addEventListener("input", _.debounce(updateResults, 400));
+    // If user clicks a Price Bucket checkbox
+    if (e.target.name === 'price_buckets[]') {
+        const budgetRange = document.getElementById("budget-range");
+        const minPrice = document.getElementById("minPrice");
+        const maxPrice = document.getElementById("maxPrice");
+
+        // Reset slider values to avoid filter conflict
+        if (budgetRange) budgetRange.value = 0;
+        if (minPrice) minPrice.value = "";
+        if (maxPrice) maxPrice.value = "";
     }
+
+    // Run AJAX update on any filter input
+    if (e.target.matches("input[type=checkbox], input[type=radio], select")) {
+        updateResults();
+    }
+});
+
+
+document.addEventListener("input", function(e) {
+    if (e.target.matches("input[name='destination']")) {
+        _.debounce(() => updateResults(), 400)();
+    }
+});
+
 
     /* ========= BUDGET SLIDER ========= */
     if (budgetRange) {
-        budgetRange.addEventListener("input", _.debounce(function () {
-            const value = parseInt(this.value);
-            budgetDisplay.textContent = value >= 500 ? "US$500+" : "US$" + value;
+    budgetRange.addEventListener("input", _.debounce(function () {
+        const value = parseInt(this.value);
+
+        // Display text
+        if (value >= 500) {
+            budgetDisplay.textContent = "US$500+";
             minPrice.value = 0;
-            maxPrice.value = value >= 500 ? 999999 : value;
-            updateResults();
-        }, 300));
-    }
+            maxPrice.value = 999999;
+        } else {
+            budgetDisplay.textContent = "US$" + value;
+            minPrice.value = 0;
+            maxPrice.value = value;
+        }
+
+        updateResults();
+    }, 300));
+}
+
 
     /* ========= PAGINATION AJAX ========= */
     document.addEventListener("click", function (e) {
@@ -634,6 +701,27 @@ document.addEventListener("DOMContentLoaded", () => {
             icon.classList.toggle("rotated");
         });
     });
+
+    /* ========= SHOW MORE / SHOW LESS HANDLERS ========= */
+document.querySelectorAll("button[id^='toggle-']").forEach(toggleBtn => {
+    toggleBtn.addEventListener("click", function () {
+        const prefix = this.id.replace("toggle-", "");
+        const hiddenContainer = document.getElementById("hidden-" + prefix);
+
+        if (!hiddenContainer) return;
+
+        const isHidden = hiddenContainer.classList.contains("hidden");
+
+        if (isHidden) {
+            hiddenContainer.classList.remove("hidden");
+            this.textContent = "Show less";
+        } else {
+            hiddenContainer.classList.add("hidden");
+            this.textContent = "Show more";
+        }
+    });
+});
+
 
 });
 </script>
