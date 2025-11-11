@@ -979,6 +979,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Customer and Partner detail routes
         Route::get('/customer/{customer}', [\App\Http\Controllers\Admin\CustomerViewController::class, 'show'])->name('customer.view');
         Route::get('/partners/{partner_id}', [\App\Http\Controllers\Admin\PartnerViewController::class, 'show'])->name('partner.view');
+        Route::post('/partners/{partner}/commission', [\App\Http\Controllers\Admin\PartnerViewController::class, 'updateCommission'])->name('partner.commission.update');
 
         // Property management
         Route::get('/Property/Apartment', \App\Http\Controllers\Admin\ApartmentsController::class)->name('apartments');
@@ -993,6 +994,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Partner management
         Route::get('/partners', [\App\Http\Controllers\Admin\PartnersController::class, '__invoke'])->name('partners');
         Route::post('/partners/partner-details', [\App\Http\Controllers\Admin\PartnerViewController::class, 'show'])->name('admin.partner.view');
+        Route::post('/partners/{partner}/commission', [\App\Http\Controllers\Admin\PartnerViewController::class, 'updateCommission'])->name('partner.commission.update');
 
         // Rental Service Providers management
         Route::get('/rental-providers', [\App\Http\Controllers\Admin\UsersController::class, '__invoke'])->name('rental-providers');

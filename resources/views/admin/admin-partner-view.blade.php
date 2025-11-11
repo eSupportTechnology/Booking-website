@@ -260,6 +260,41 @@
         @endif
     </div>
 
+    <!-- Commission Settings Section -->
+    <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <h3 class="text-xl font-semibold text-[#1F8FB2] mb-4">💰 Commission Settings</h3>
+        
+        <form action="{{ route('admin.partner.commission.update', $partner->partner->id) }}" method="POST">
+            @csrf
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium mb-1">Individual Commission Rate</label>
+                    <input type="number" 
+                           name="commission_rate" 
+                           value="{{ $partner->partner->settings->commission_rate ?? '' }}" 
+                           step="0.0001" 
+                           min="0" 
+                           max="1" 
+                           placeholder="Leave empty to use global rate"
+                           class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1F8FB2]">
+                    <p class="text-xs text-gray-500 mt-1">Enter as decimal (e.g., 0.12 for 12%)</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Current Effective Rate</label>
+                    <div class="text-2xl font-bold text-gray-700">
+                        {{ number_format($partner->partner->getEffectiveCommissionRate() * 100, 1) }}%
+                    </div>
+                    <p class="text-xs text-gray-500">
+                        {{ $partner->partner->settings->commission_rate ? 'Individual rate' : 'Using global rate' }}
+                    </p>
+                </div>
+            </div>
+            <button type="submit" class="mt-4 bg-[#1F8FB2] text-white px-6 py-2 rounded hover:bg-[#157799] transition">
+                Update Commission Rate
+            </button>
+        </form>
+    </div>
+
     <!-- Properties Section -->
     <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
         <h3 class="text-xl font-semibold text-[#1F8FB2] mb-4">🏠 Listed Properties</h3>
