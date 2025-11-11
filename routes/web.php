@@ -15,6 +15,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Customer\CustomerPersonalDetailsController;
 use App\Http\Controllers\Customer\EmailVerifyController;
 use App\Http\Controllers\PropertyController;
+use App\Http\Controllers\Partner\PropertyController as PartnerPropertyController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\PropertyDataController;
 use Illuminate\Http\Request;
@@ -289,6 +290,11 @@ Route::get('/open-booking/{propertyId}', [PropertyController::class, 'openBookin
 Route::get('/customer-profile-create', function () {
     return view('frontend.customer-profile-create');
 })->name('customer.profile.create');
+
+// Customer profile route
+Route::get('/profile', [CustomerPersonalDetailsController::class, 'edit'])
+    ->middleware('auth:customer')
+    ->name('customer.profile');
 
 Route::get('/partner-apartment-create-2/{propertyId?}', [PropertyController::class, 'showSingleApartmentForm2'])->name('partner.apartment.create.2');
 Route::get('/partner/property/apartment/step2/{propertyId}', [PropertyController::class, 'showSingleApartmentForm2'])->name('partner.property.apartment.step2');
@@ -1432,7 +1438,13 @@ Route::prefix('properties')->name('customer.properties.')->group(function () {
         ->name('details');
 });
 //trending destinations
-Route::get('/partner/properties', [App\Http\Controllers\Partner\PropertyController::class, 'showCities']);
+Route::get('/partner/properties', [PartnerPropertyController::class, 'showCities']);
+
+
+// car_rentals routes
+Route::get('car_rentals/carrenters_control_panel', function () {
+    return view('car_rentals.carrenters_control_panel');
+})->name('car_rentals.carrenters_control_panel');
 
 
 

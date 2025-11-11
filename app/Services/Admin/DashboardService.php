@@ -8,6 +8,7 @@ use App\Models\Partner;
 use App\Models\Property;
 use App\Models\PropertyCategory;
 use App\Models\Booking;
+use App\Helpers\CurrencyHelper;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -48,7 +49,21 @@ class DashboardService
 
     private function getRevenue(Carbon $since): float
     {
-        return (float) Booking::where('created_at', '>=', $since)->sum('total_price');
+        $bookings = Booking::where('created_at', '>=', $since)
+            ->select('total_price', 'currency')
+            ->get();
+        
+        $totalUsd = 0.0;
+        foreach ($bookings as $booking) {
+            $usdAmount = CurrencyHelper::convertPrice(
+                (float) $booking->total_price, 
+                $booking->currency ?? 'USD', 
+                'USD'
+            );
+            $totalUsd += (float) $usdAmount;
+        }
+        
+        return (float) $totalUsd;
     }
 
     private function getPendingVerifications(): int
@@ -70,7 +85,13 @@ class DashboardService
                 'property_name' => $booking->property?->title ?? 'N/A',
                 'date' => $booking->created_at->format('Y-m-d'),
                 'status' => ucfirst($booking->status),
-                'amount' => number_format($booking->total_price, 2),
+                'amount' => (float) CurrencyHelper::convertPrice(
+                    (float) $booking->total_price, 
+                    $booking->currency ?? 'USD', 
+                    'USD'
+                ),
+                'original_amount' => (float) $booking->total_price,
+                'original_currency' => $booking->currency ?? 'USD',
             ])->toArray();
     }
 

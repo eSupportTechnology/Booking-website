@@ -62,7 +62,7 @@
 
             <nav class="p-4 space-y-2">
                 <!-- DASHBOARD -->
-                <a href="#"
+                <a href="{{ route('car_rentals.carrenters_control_panel') }}"
                     class="flex items-center px-4 py-3 rounded-xl hover:bg-gradient-to-r hover:from-[#1F8FB2] hover:to-[#3CC0E9] hover:text-white transition-all duration-200 group {{ request()->routeIs('partner.dashboard') ? 'bg-gradient-to-r from-[#1F8FB2] to-[#3CC0E9] text-white shadow-lg' : 'text-gray-700' }}">
                     <div class="bg-blue-100 group-hover:bg-white/20 p-2 rounded-lg mr-3 {{ request()->routeIs('partner.dashboard') ? 'bg-white/20' : '' }}">
                         <i class="fas fa-tachometer-alt text-[#1F8FB2] group-hover:text-white {{ request()->routeIs('partner.dashboard') ? 'text-white' : '' }}"></i>
