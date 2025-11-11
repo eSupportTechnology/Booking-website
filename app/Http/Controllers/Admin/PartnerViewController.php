@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Booking;
+use App\Models\Partner;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -128,5 +129,21 @@ class PartnerViewController extends Controller
         ->get()
         ->pluck('total', 'month')
         ->toArray();
+    }
+
+    public function updateCommission(Request $request, $partnerId)
+    {
+        $request->validate([
+            'commission_rate' => 'nullable|numeric|min:0|max:1'
+        ]);
+
+        $partner = Partner::findOrFail($partnerId);
+        
+        $partner->settings()->updateOrCreate(
+            ['user_id' => $partner->user_id],
+            ['commission_rate' => $request->commission_rate ?: null]
+        );
+
+        return back()->with('success', 'Commission rate updated successfully.');
     }
 }
