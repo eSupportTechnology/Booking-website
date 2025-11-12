@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Customer;
 use App\Http\Controllers\Controller;
 use App\Models\Property;
 use App\Models\Booking;
+use App\Models\Deal;
 use App\DTOs\Customer\BookingDTO;
 use App\Actions\Customer\CreateBookingAction;
 use App\Services\Customer\BookingService;
+use App\Services\DealBookingService;
 use App\Services\MessagingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,15 +18,21 @@ class BookingController extends Controller
 {
     public function __construct(
         private BookingService $bookingService,
+        private DealBookingService $dealBookingService,
         private CreateBookingAction $createBookingAction,
         private MessagingService $messagingService
     ) {}
 
-    public function show(Property $property)
+    public function show(Property $property, Request $request)
     {
         $property->load(['photos', 'amenities', 'category', 'pricing', 'rooms.amenities', 'rooms.roomType']);
         
-        return view('Customer.bookings.show', compact('property'));
+        $selectedDeal = null;
+        if ($request->has('deal_id')) {
+            $selectedDeal = Deal::with(['room', 'dealDates'])->find($request->deal_id);
+        }
+        
+        return view('Customer.bookings.show', compact('property', 'selectedDeal'));
     }
 
     public function store(Request $request, Property $property)
@@ -36,6 +44,7 @@ class BookingController extends Controller
         $request->validate([
             'property_id' => 'required|exists:properties,id',
             'room_id' => 'nullable|exists:rooms,id',
+            'deal_id' => 'nullable|exists:deals,id',
             'check_in' => 'required|date|after:today',
             'check_out' => 'required|date|after:check_in',
             'guest_count' => 'required|integer|min:1|max:20',
@@ -68,20 +77,51 @@ class BookingController extends Controller
             $bookingDTO->guest_count
         );
         
-        $bookingDTO->total_price = $priceData['total_price'];
+        $originalPrice = $priceData['total_price'];
+        $finalPrice = $originalPrice;
+        $discountAmount = 0;
+        $dealId = null;
+        
+        // Apply deal discount if deal is selected
+        if ($request->deal_id) {
+            $dealValidation = $this->dealBookingService->validateDealBooking(
+                $request->deal_id, 
+                $bookingDTO->check_in, 
+                $bookingDTO->check_out, 
+                $bookingDTO->room_id
+            );
+            
+            if (!$dealValidation['valid']) {
+                return back()->with('error', $dealValidation['message']);
+            }
+            
+            $dealPricing = $this->dealBookingService->applyDealDiscount(
+                $dealValidation['deal'], 
+                $originalPrice
+            );
+            
+            $finalPrice = $dealPricing['final_price'];
+            $discountAmount = $dealPricing['discount_amount'];
+            $dealId = $request->deal_id;
+        }
+        
+        $bookingDTO->total_price = $finalPrice;
         
         // Set default commission rate (can be customized per property/partner)
         $bookingDTO->commission_rate = 10.00;
 
-        // Create booking with currency data
+        // Create booking with currency and deal data
         $booking = Booking::create([
             'user_id' => Auth::guard('customer')->id(),
             'property_id' => $bookingDTO->property_id,
             'room_id' => $bookingDTO->room_id,
+            'deal_id' => $dealId,
             'check_in' => $bookingDTO->check_in,
             'check_out' => $bookingDTO->check_out,
             'guest_count' => $bookingDTO->guest_count,
-            'total_price' => $priceData['total_price'],
+            'total_price' => $finalPrice,
+            'original_price' => $originalPrice,
+            'discount_amount' => $discountAmount,
             'currency' => $priceData['currency'],
             'base_currency' => $priceData['base_currency'],
             'status' => 'pending',
@@ -98,8 +138,13 @@ class BookingController extends Controller
         // Send automatic message to partner
         $this->messagingService->sendBookingCreatedMessage($booking);
 
+        $successMessage = 'Booking created! Please complete payment within 24 hours.';
+        if ($dealId) {
+            $successMessage .= " You saved $" . number_format($discountAmount, 2) . " with this deal!";
+        }
+        
         return redirect()->route('customer.payment.show', $booking)
-            ->with('success', 'Booking created! Please complete payment within 24 hours.');
+            ->with('success', $successMessage);
     }
 
     public function index()
@@ -181,5 +226,36 @@ class BookingController extends Controller
         $this->messagingService->sendCustomerCancelledMessage($booking);
 
         return back()->with('success', 'Booking cancelled successfully. No commission charges will apply.');
+    }
+
+    public function getAvailableDeals(Request $request, Property $property)
+    {
+        $request->validate([
+            'check_in' => 'required|date',
+            'check_out' => 'required|date|after:check_in',
+            'room_id' => 'nullable|exists:rooms,id'
+        ]);
+
+        $deals = $this->dealBookingService->getAvailableDealsForProperty(
+            $property->id,
+            $request->check_in,
+            $request->check_out,
+            $request->room_id
+        );
+
+        return response()->json([
+            'deals' => $deals->map(function($deal) {
+                return [
+                    'id' => $deal->id,
+                    'title' => $deal->title,
+                    'description' => $deal->description,
+                    'deal_type' => $deal->deal_type,
+                    'discount_display' => $deal->discount_display,
+                    'applicable_to' => $deal->applicable_to,
+                    'room_name' => $deal->room ? $deal->room->name : null,
+                    'available_dates' => $deal->dealDates->pluck('available_date')->map(fn($d) => $d->format('M d'))->join(', ')
+                ];
+            })
+        ]);
     }
 }

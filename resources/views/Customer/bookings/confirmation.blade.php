@@ -215,7 +215,7 @@
 
                     <div class="flex justify-between py-3 text-lg font-semibold">
                         <span>Total Amount</span>
-                        <span class="text-[#1F8FB2]">LKR {{ number_format($booking->total_price) }}</span>
+                        <span class="text-[#1F8FB2]">{{ $booking->currency ?? 'USD' }} {{ number_format($booking->total_price) }}</span>
                     </div>
                 </div>
             </div>

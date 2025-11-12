@@ -69,15 +69,18 @@ class Room extends Model
         return $this->hasMany(Booking::class);
     }
     public function scopeAvailableBetween($query, $checkIn, $checkOut)
-{
-    return $query->whereDoesntHave('bookings', function ($q) use ($checkIn, $checkOut) {
-        $q->where(function ($qq) use ($checkIn, $checkOut) {
-            $qq->where('check_in', '<', $checkOut)
-               ->where('check_out', '>', $checkIn)
-               ->whereIn('status', ['pending', 'confirmed']);
+    {
+        return $query->whereDoesntHave('bookings', function ($q) use ($checkIn, $checkOut) {
+            $q->where(function ($qq) use ($checkIn, $checkOut) {
+                $qq->where('check_in', '<', $checkOut)
+                   ->where('check_out', '>', $checkIn)
+                   ->whereIn('status', ['pending', 'confirmed']);
+            });
         });
-    });
-}
+    }
 
-
+    public function deals()
+    {
+        return $this->hasMany(Deal::class);
+    }
 }

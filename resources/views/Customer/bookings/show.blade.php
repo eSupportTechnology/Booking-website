@@ -14,6 +14,9 @@
                 <form action="{{ route('customer.bookings.store', $property) }}" method="POST" class="space-y-6">
                     @csrf
                     <input type="hidden" name="property_id" value="{{ $property->id }}">
+                    @if($selectedDeal)
+                        <input type="hidden" name="deal_id" value="{{ $selectedDeal->id }}">
+                    @endif
 
                     <!-- Dates Selection -->
                     <div class="grid md:grid-cols-2 gap-4">
@@ -58,6 +61,24 @@
                         </select>
                     </div>
 
+                    @if($selectedDeal)
+                    <!-- Deal Information -->
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                        <h3 class="font-semibold text-green-800 mb-2">🎉 Special Deal Applied</h3>
+                        <div class="space-y-1 text-sm text-green-700">
+                            <div><strong>{{ $selectedDeal->title }}</strong></div>
+                            <div>{{ $selectedDeal->description }}</div>
+                            <div class="font-semibold">{{ $selectedDeal->discount_display }}</div>
+                            @if($selectedDeal->applicable_to === 'room' && $selectedDeal->room)
+                                <div class="text-xs">Valid for: {{ $selectedDeal->room->name }}</div>
+                            @endif
+                            @if($selectedDeal->dealDates->count() > 0)
+                                <div class="text-xs">Available dates: {{ $selectedDeal->dealDates->pluck('available_date')->map(fn($d) => $d->format('M d'))->join(', ') }}</div>
+                            @endif
+                        </div>
+                    </div>
+                    @endif
+
                     <!-- Booking Summary -->
                     <div class="bg-gray-50 rounded-lg p-4">
                         <h3 class="font-semibold mb-3">Booking Summary</h3>
@@ -89,6 +110,16 @@
                                 <span>Nights:</span>
                                 <span x-text="calculateNights()"></span>
                             </div>
+                            @if($selectedDeal)
+                            <div class="flex justify-between text-green-600" x-show="checkIn && checkOut">
+                                <span>Original Price:</span>
+                                <span x-text="formattedOriginalTotal || 'Calculating...'"></span>
+                            </div>
+                            <div class="flex justify-between text-green-600" x-show="checkIn && checkOut">
+                                <span>Discount:</span>
+                                <span x-text="formattedDiscount || 'Calculating...'"></span>
+                            </div>
+                            @endif
                             <div class="flex justify-between font-semibold border-t pt-2" x-show="checkIn && checkOut">
                                 <span>Total:</span>
                                 <span>
@@ -134,6 +165,9 @@ function bookingForm() {
         selectedRoom: '',
         basePrice: {{ $property->pricing->base_price ?? 5000 }},
         pricePerNight: {{ $property->pricing->price_per_night ?? 5000 }},
+        selectedDeal: @json($selectedDeal),
+        formattedOriginalTotal: null,
+        formattedDiscount: null,
         bookedDates: [],
         availableRooms: [],
         roomsLoaded: false,
@@ -289,8 +323,24 @@ function bookingForm() {
                 // Total (nights * price)
                 const nights = this.calculateNights();
                 if (nights > 0) {
-                    const totalAmount = this.calculateTotal();
+                    let totalAmount = this.calculateTotal();
                     const totalCurrency = this.selectedRoom ? (this.getSelectedRoomCurrency() || this.baseCurrency) : this.baseCurrency;
+                    
+                    // Apply deal discount if selected
+                    if (this.selectedDeal) {
+                        this.formattedOriginalTotal = await this.formatPrice(totalAmount, totalCurrency);
+                        
+                        let discountAmount = 0;
+                        if (this.selectedDeal.deal_type === 'percentage') {
+                            discountAmount = totalAmount * (this.selectedDeal.discount_percentage / 100);
+                        } else if (this.selectedDeal.deal_type === 'fixed') {
+                            discountAmount = this.selectedDeal.fixed_discount_amount * nights;
+                        }
+                        
+                        this.formattedDiscount = await this.formatPrice(discountAmount, totalCurrency);
+                        totalAmount = Math.max(0, totalAmount - discountAmount);
+                    }
+                    
                     this.formattedTotal = await this.formatPrice(totalAmount, totalCurrency);
                 }
             } catch (e) {
@@ -322,6 +372,14 @@ function bookingForm() {
         isFormValid() {
             if (!this.checkIn || !this.checkOut) return false;
             if (this.hasRooms && !this.selectedRoom) return false;
+            
+            // If deal is room-specific, ensure correct room is selected
+            if (this.selectedDeal && this.selectedDeal.applicable_to === 'room') {
+                if (!this.selectedRoom || this.selectedRoom != this.selectedDeal.room_id) {
+                    return false;
+                }
+            }
+            
             return true;
         },
 

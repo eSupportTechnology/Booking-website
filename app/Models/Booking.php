@@ -13,10 +13,13 @@ class Booking extends Model
         'user_id',
         'property_id',
         'room_id',
+        'deal_id',
         'check_in',
         'check_out',
         'guest_count',
         'total_price',
+        'original_price',
+        'discount_amount',
         'currency',
         'base_currency',
         'status',
@@ -33,6 +36,8 @@ class Booking extends Model
         'check_in' => 'date',
         'check_out' => 'date',
         'total_price' => 'decimal:2',
+        'original_price' => 'decimal:2',
+        'discount_amount' => 'decimal:2',
         'payment_deadline' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime'
@@ -51,6 +56,11 @@ class Booking extends Model
     public function room()
     {
         return $this->belongsTo(Room::class);
+    }
+
+    public function deal()
+    {
+        return $this->belongsTo(Deal::class);
     }
 
     public function reviews()

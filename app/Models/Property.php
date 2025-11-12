@@ -158,4 +158,9 @@ class Property extends Model
     {
         return $this->hasMany(Booking::class);
     }
+
+    public function deals()
+    {
+        return $this->hasMany(Deal::class);
+    }
 }

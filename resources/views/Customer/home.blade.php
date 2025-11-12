@@ -36,7 +36,7 @@
            max-w-full md:max-w-6xl mx-auto overflow-visible text-sm md:text-base">
 
         <!-- Live Destination Autocomplete -->
-        <div 
+        <div
           x-data="{
             query: '{{ $searchData['destination'] ?? '' }}',
             results: [],
@@ -71,13 +71,13 @@
           </div>
 
           <!-- Suggestion Dropdown -->
-          <ul 
-            x-show="open" 
+          <ul
+            x-show="open"
             @click.away="open = false"
             class="absolute z-30 bg-white border border-gray-200 rounded-xl shadow-xl mt-2 w-64 sm:w-72 max-h-64 overflow-y-auto"
           >
             <template x-for="city in results" :key="city">
-              <li 
+              <li
                 @click="selectCity(city)"
                 class="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm text-gray-800"
                 x-text="city"
@@ -94,7 +94,7 @@
                 <img src="{{ asset('assets/calender.svg') }}" class="w-5 h-5" />
                 <span class="text-gray-800 truncate text-sm sm:text-base">
                     <template x-if="activeTab === 'check'">
-                        <span><span x-text="checkIn || '{{ __('messages.Check-in') }}'"></span> — 
+                        <span><span x-text="checkIn || '{{ __('messages.Check-in') }}'"></span> —
                             <span x-text="checkOut || '{{ __('messages.Check-out') }}'"></span></span>
                     </template>
                     <template x-if="activeTab === 'flexible'">
@@ -559,76 +559,139 @@
         </div>
     </section>
 
-    <!--  Deals for the weekend Section -->
-    <section class="scroll-section py-12 bg-white">
+    <!--  Special Deals Section -->
+    <section class="scroll-section py-12 bg-white" id="deals-section">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 class="text-2xl font-semibold text-gray-800 mb-2">
-                {{ __('messages.Deals for the weekend')}}
+                {{-- {{ __('messages.Special Deals')}} --}}
+                {{ __('Special Deals')}}
             </h2>
-            <p class="mb-8 text-gray-600" style="font-family: 'Noto Sans', sans-serif;">Save on stays for 16 May - 18 May
+            <p class="mb-8 text-gray-600" style="font-family: 'Noto Sans', sans-serif;">Save big with our exclusive offers
             </p>
         </div>
 
         <div class="relative">
-            <!-- Scroll wrapper with arrows -->
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-                <!-- Scrollable container -->
-                <div class="scroll-container flex gap-4 overflow-x-auto scroll-smooth no-scrollbar">
-                    <!-- Hotel Card Template Start -->
-                    @for ($i = 0; $i < 5; $i++)
-                        <div
-                            class="min-w-[300px] max-w-[300px] bg-white rounded-lg shadow-md overflow-hidden flex-shrink-0 lg:min-w-0">
-                            <img src="{{ asset('images/property.png') }}" alt="Hotel Image"
-                                class="w-full h-[230px] object-cover">
-                            <div class="p-4">
-                                <span class="text-white px-2 py-1 rounded text-xs"
-                                    style="background-color: rgb(31, 143, 178); font-family: 'Noto Sans', sans-serif;">Genius</span>
-                                <h3 class="text-sm font-bold mt-2" style="font-family: 'Noto Sans', sans-serif;">Eagle
-                                    Regency Hotel</h3>
-                                <p class="text-xs text-gray-600" style="font-family: 'Noto Sans', sans-serif;">Kandy, Sri
-                                    Lanka</p>
-                                <div class="flex items-center mt-2">
-                                    <span class="text-white px-2 py-1 rounded text-xs"
-                                        style="background-color: rgb(31, 143, 178);">8</span>
-                                    <div class="ml-2" style="font-family: 'Noto Sans', sans-serif;">
-                                        <span class="text-xs block">Very Good</span>
-                                        <span class="text-xs block">337 Reviews</span>
-                                    </div>
-                                </div>
-                                <button class="text-xs text-white px-2 py-1 rounded mt-2"
-                                    style="background-color:#1D9D39; font-family: 'Noto Sans', sans-serif;">Getaway
-                                    Deal</button>
-                                <p class="text-gray-600 mt-2 text-xs" style="font-family: 'Noto Sans', sans-serif;">
-                                    2 nights
-                                    <span class="text-xs line-through" style="color:#FF0004;"><x-price :amount="72000" currency="LKR" /></span>
-                                    <span style="color:black; font-weight:bold;"><x-price :amount="26844" currency="LKR" /></span>
-                                </p>
-                            </div>
-                        </div>
-                    @endfor
-                    <!-- Hotel Card Template End -->
+                <div class="scroll-container flex gap-4 overflow-x-auto scroll-smooth no-scrollbar" id="deals-container">
+                    <!-- Deals will be loaded here -->
                 </div>
 
-                <!-- Left Arrow -->
-                <button
-                    class="scroll-left hidden absolute top-[42%] left-0 -translate-y-1/2 bg-white border shadow p-2 rounded-full z-10 hover:bg-gray-100 ml-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-800" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor">
+                <button class="scroll-left hidden absolute top-[42%] left-0 -translate-y-1/2 bg-white border shadow p-2 rounded-full z-10 hover:bg-gray-100 ml-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                     </svg>
                 </button>
 
-                <!-- Right Arrow -->
-                <button
-                    class="scroll-right absolute top-[42%] right-0 -translate-y-1/2 bg-white border shadow p-2 rounded-full z-10 hover:bg-gray-100 mr-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-800" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor">
+                <button class="scroll-right absolute top-[42%] right-0 -translate-y-1/2 bg-white border shadow p-2 rounded-full z-10 hover:bg-gray-100 mr-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                     </svg>
                 </button>
             </div>
         </div>
     </section>
+
+    <script>
+    // Load deals on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        fetch('/api/deals/active')
+            .then(response => response.json())
+            .then(deals => {
+                const container = document.getElementById('deals-container');
+                if (deals.length === 0) {
+                    container.innerHTML = '<div class="text-center text-gray-500 w-full py-8">No deals available at the moment</div>';
+                    return;
+                }
+
+                container.innerHTML = deals.map(deal => {
+                    let discountBadge = '';
+                    let priceDisplay = '';
+                    let availableDates = '';
+                    let roomInfo = '';
+
+                    // Discount badge based on deal type
+                    switch(deal.deal_type) {
+                        case 'percentage':
+                            discountBadge = `${deal.discount_percentage}% OFF`;
+                            break;
+                        case 'fixed':
+                            discountBadge = `$${deal.fixed_discount_amount} OFF`;
+                            break;
+                        case 'special':
+                            discountBadge = 'Special Offer';
+                            break;
+                    }
+
+                    // Price display based on deal type
+                    if (deal.deal_type === 'special') {
+                        priceDisplay = `<span class="text-black font-bold text-sm">${deal.special_offer_text}</span>`;
+                    } else {
+                        priceDisplay = `
+                            <span class="text-xs line-through text-red-500">$${deal.original_price}</span>
+                            <span class="text-black font-bold"> $${deal.discounted_price}</span>
+                        `;
+                    }
+
+                    // Available dates for weekend deals
+                    if (deal.available_dates && deal.available_dates.length > 0) {
+                        const dates = deal.available_dates.slice(0, 3).map(date => {
+                            const d = new Date(date);
+                            return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                        }).join(', ');
+                        const moreCount = deal.available_dates.length > 3 ? ` +${deal.available_dates.length - 3} more` : '';
+                        availableDates = `
+                            <div class="text-xs text-blue-600 mt-1" style="font-family: 'Noto Sans', sans-serif;">
+                                📅 Available: ${dates}${moreCount}
+                            </div>
+                        `;
+                    }
+
+                    // Room information
+                    if (deal.applicable_to === 'room' && deal.room) {
+                        roomInfo = `
+                            <div class="text-xs text-gray-500 mt-1" style="font-family: 'Noto Sans', sans-serif;">
+                                🏠 Room: ${deal.room.name}
+                            </div>
+                        `;
+                    }
+
+                    return `
+                        <div class="min-w-[300px] max-w-[300px] bg-white rounded-lg shadow-md overflow-hidden flex-shrink-0">
+                            <img src="${deal.property.image}" alt="${deal.property.title}" class="w-full h-[230px] object-cover" onerror="this.src='/images/property.png'">
+                            <div class="p-4">
+                                <span class="text-white px-2 py-1 rounded text-xs" style="background-color:#1D9D39;">${discountBadge}</span>
+                                <h3 class="text-sm font-bold mt-2" style="font-family: 'Noto Sans', sans-serif;">${deal.property.title}</h3>
+                                <p class="text-xs text-gray-600" style="font-family: 'Noto Sans', sans-serif;">${deal.property.city}</p>
+                                ${roomInfo}
+                                <div class="flex items-center mt-2">
+                                    <span class="text-white px-2 py-1 rounded text-xs" style="background-color: rgb(31, 143, 178);">${Math.round(deal.property.rating)}</span>
+                                    <div class="ml-2" style="font-family: 'Noto Sans', sans-serif;">
+                                        <span class="text-xs block">Rating</span>
+                                        <span class="text-xs block">${deal.property.reviews_count} Reviews</span>
+                                    </div>
+                                </div>
+                                <p class="text-gray-600 mt-2 text-xs" style="font-family: 'Noto Sans', sans-serif;">
+                                    ${priceDisplay}
+                                </p>
+                                ${availableDates}
+                                <div class="mt-3">
+                                    <a href="/customer/properties/${deal.property.id}/book?deal_id=${deal.id}"
+                                       class="block w-full bg-blue-600 text-white text-center py-2 px-4 rounded text-sm font-semibold hover:bg-blue-700 transition"
+                                       style="background-color: #1F8FB2;">
+                                        Book This Deal
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            })
+            .catch(error => {
+                console.error('Error loading deals:', error);
+                document.getElementById('deals-container').innerHTML = '<div class="text-center text-gray-500 w-full py-8">Unable to load deals</div>';
+            });
+    });
+    </script>
 
     <!--End Section-->
 
@@ -993,6 +1056,18 @@
         </div>
     </section>
 
+
+    <!-- Tailwind scroll styling -->
+    <style>
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
 
     @push('scripts')
         <script src="{{ asset('assets/Customer/js/home.js') }}"></script>

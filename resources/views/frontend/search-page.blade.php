@@ -110,13 +110,16 @@
 </div>
 </div>
 <div class="bg-white p-4 rounded-lg shadow">
-<h3 class="font-bold mb-2">Deals</h3>
-<div class="flex items-center justify-between text-sm">
+<h3 class="font-bold mb-2">Special Deals</h3>
+<div id="search-deals-container" class="space-y-3">
+<!-- Deals will be loaded here -->
+</div>
+<div class="flex items-center justify-between text-sm mt-3">
 <label class="flex items-center space-x-2" for="all-deals">
 <input class="rounded" id="all-deals" type="checkbox"/>
-<span>All deals</span>
+<span>Show all deals</span>
 </label>
-<span>2</span>
+<span id="deals-count">0</span>
 </div>
 </div>
 <div class="bg-white p-4 rounded-lg shadow">
@@ -292,9 +295,109 @@
 </div>
 </main>
 
-
+<!-- Deals Section for Search Results -->
+<section class="bg-gray-50 py-8">
+    <div class="max-w-6xl mx-auto px-4">
+        <h2 class="text-2xl font-bold mb-6">Don't Miss These Deals</h2>
+        <div id="search-page-deals" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Deals will be loaded here -->
+        </div>
+    </div>
+</section>
 
 </body>
+<script>
+// Load deals for search page
+document.addEventListener('DOMContentLoaded', function() {
+    loadSearchPageDeals();
+    loadSidebarDeals();
+});
+
+function loadSearchPageDeals() {
+    fetch('/api/deals/active?limit=6')
+        .then(response => response.json())
+        .then(data => {
+            const container = document.getElementById('search-page-deals');
+            if (data.success && data.deals && data.deals.length > 0) {
+                container.innerHTML = data.deals.map(deal => createSearchDealCard(deal)).join('');
+            } else {
+                container.innerHTML = '<div class="col-span-full text-center py-4"><p class="text-gray-500">No deals available</p></div>';
+            }
+        })
+        .catch(err => console.error('Error loading deals:', err));
+}
+
+function loadSidebarDeals() {
+    fetch('/api/deals/active?limit=3')
+        .then(response => response.json())
+        .then(data => {
+            const container = document.getElementById('search-deals-container');
+            const countElement = document.getElementById('deals-count');
+            
+            if (data.success && data.deals && data.deals.length > 0) {
+                container.innerHTML = data.deals.map(deal => createSidebarDealItem(deal)).join('');
+                countElement.textContent = data.deals.length;
+            } else {
+                container.innerHTML = '<p class="text-sm text-gray-500">No deals available</p>';
+                countElement.textContent = '0';
+            }
+        })
+        .catch(err => console.error('Error loading sidebar deals:', err));
+}
+
+function createSearchDealCard(deal) {
+    return `
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <div class="bg-gradient-to-r from-orange-500 to-red-500 text-white p-3">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-xs font-semibold">🔥 SPECIAL DEAL</span>
+                    <span class="text-xs">${deal.discount_percentage}% OFF</span>
+                </div>
+                <h3 class="font-bold text-sm">${deal.title}</h3>
+            </div>
+            <div class="p-3">
+                <p class="text-xs text-gray-600 mb-2">${deal.description}</p>
+                <div class="flex justify-between items-center">
+                    <div class="text-xs">
+                        <span class="line-through text-gray-500">${formatCurrency(deal.original_price, deal.currency)}</span>
+                        <span class="font-bold text-green-600 ml-1">${formatCurrency(deal.discounted_price, deal.currency)}</span>
+                    </div>
+                    <button class="bg-blue-600 text-white text-xs px-2 py-1 rounded hover:bg-blue-700">
+                        View Deal
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function createSidebarDealItem(deal) {
+    return `
+        <div class="border-l-4 border-orange-500 pl-3 py-2">
+            <h4 class="font-semibold text-sm text-orange-600">${deal.title}</h4>
+            <p class="text-xs text-gray-600">${deal.discount_percentage}% off • Valid until ${formatDate(deal.end_date)}</p>
+            <div class="flex justify-between items-center mt-1">
+                <span class="text-xs font-bold text-green-600">${formatCurrency(deal.discounted_price, deal.currency)}</span>
+                <button class="text-xs text-blue-600 hover:underline">View</button>
+            </div>
+        </div>
+    `;
+}
+
+function formatCurrency(amount, currency) {
+    return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: currency || 'USD'
+    }).format(amount);
+}
+
+function formatDate(dateString) {
+    return new Date(dateString).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric'
+    });
+}
+
 <script>
 const listBtn = document.getElementById('list-btn');
 const gridBtn = document.getElementById('grid-btn');

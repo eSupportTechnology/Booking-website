@@ -76,8 +76,11 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             @forelse($properties as $property)
                 <div class="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden flex flex-col w-full max-w-sm">
-                    <img src="{{ $property->files->where('file_type', 'image')->first() ? asset('storage/' . $property->files->where('file_type', 'image')->first()->path) : asset('images/AA.png') }}"
-                         alt="{{ $property->title }}" class="w-full h-48 object-cover">
+                    <div class="relative">
+                        <img src="{{ $property->files->where('file_type', 'image')->first() ? asset('storage/' . $property->files->where('file_type', 'image')->first()->path) : asset('images/AA.png') }}"
+                             alt="{{ $property->title }}" class="w-full h-48 object-cover">
+                        @include('components.deal-banner', ['property' => $property])
+                    </div>
                     <div class="p-4 flex flex-col justify-between flex-1">
                         <div class="flex justify-between items-center mb-2">
                             <a href="{{ route('single-hotel', $property->id) }}" class="text-lg font-semibold hover:text-blue-600 transition">{{ $property->title }}</a>
@@ -125,6 +128,10 @@
 
 
 </section>
+
+<!-- Deals Section -->
+@include('components.deals-section', ['title' => 'Holiday Home Deals & Offers', 'limit' => 6])
+
 <section class="py-12 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 class="text-2xl font-semibold text-gray-800 mb-6">Browse by property type</h2>
