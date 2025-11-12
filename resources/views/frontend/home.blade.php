@@ -708,75 +708,76 @@
 
 
     <!--  Deals for the weekend Section -->
-    <section class="scroll-section py-12 bg-white">
+    <section class="scroll-section py-12 bg-white" id="deals-section">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 class="text-2xl font-semibold text-gray-800 mb-2">
-                Deals for the weekend
+                Special Deals
             </h2>
-            <p class="mb-8 text-gray-600" style="font-family: 'Noto Sans', sans-serif;">Save on stays for 16 May - 18 May
+            <p class="mb-8 text-gray-600" style="font-family: 'Noto Sans', sans-serif;">Save big with our exclusive offers
             </p>
         </div>
 
         <div class="relative">
-            <!-- Scroll wrapper with arrows -->
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-                <!-- Scrollable container -->
-                <div class="scroll-container flex gap-4 overflow-x-auto scroll-smooth no-scrollbar">
-                    <!-- Hotel Card Template Start -->
-                    @for ($i = 0; $i < 5; $i++)
-                        <div
-                            class="min-w-[300px] max-w-[300px] bg-white rounded-lg shadow-md overflow-hidden flex-shrink-0 lg:min-w-0">
-                            <img src="{{ asset('images/property.png') }}" alt="Hotel Image"
-                                class="w-full h-[230px] object-cover">
-                            <div class="p-4">
-                                <span class="text-white px-2 py-1 rounded text-xs"
-                                    style="background-color: rgb(31, 143, 178); font-family: 'Noto Sans', sans-serif;">Genius</span>
-                                <h3 class="text-sm font-bold mt-2" style="font-family: 'Noto Sans', sans-serif;">Eagle
-                                    Regency Hotel</h3>
-                                <p class="text-xs text-gray-600" style="font-family: 'Noto Sans', sans-serif;">Kandy, Sri
-                                    Lanka</p>
-                                <div class="flex items-center mt-2">
-                                    <span class="text-white px-2 py-1 rounded text-xs"
-                                        style="background-color: rgb(31, 143, 178);">8</span>
-                                    <div class="ml-2" style="font-family: 'Noto Sans', sans-serif;">
-                                        <span class="text-xs block">Very Good</span>
-                                        <span class="text-xs block">337 Reviews</span>
-                                    </div>
-                                </div>
-                                <button class="text-xs text-white px-2 py-1 rounded mt-2"
-                                    style="background-color:#1D9D39; font-family: 'Noto Sans', sans-serif;">Getaway
-                                    Deal</button>
-                                <p class="text-gray-600 mt-2 text-xs" style="font-family: 'Noto Sans', sans-serif;">
-                                    2 nights
-                                    <span class="text-xs line-through" style="color:#FF0004;">LKR 72,000</span>
-                                    <span style="color:black; font-weight:bold;"> LKR 26,844</span>
-                                </p>
-                            </div>
-                        </div>
-                    @endfor
-                    <!-- Hotel Card Template End -->
+                <div class="scroll-container flex gap-4 overflow-x-auto scroll-smooth no-scrollbar" id="deals-container">
+                    <!-- Deals will be loaded here -->
                 </div>
 
-                <!-- Left Arrow -->
-                <button
-                    class="scroll-left hidden absolute top-[42%] left-0 -translate-y-1/2 bg-white border shadow p-2 rounded-full z-10 hover:bg-gray-100 ml-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-800" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor">
+                <button class="scroll-left hidden absolute top-[42%] left-0 -translate-y-1/2 bg-white border shadow p-2 rounded-full z-10 hover:bg-gray-100 ml-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                     </svg>
                 </button>
 
-                <!-- Right Arrow -->
-                <button
-                    class="scroll-right absolute top-[42%] right-0 -translate-y-1/2 bg-white border shadow p-2 rounded-full z-10 hover:bg-gray-100 mr-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-800" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor">
+                <button class="scroll-right absolute top-[42%] right-0 -translate-y-1/2 bg-white border shadow p-2 rounded-full z-10 hover:bg-gray-100 mr-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                     </svg>
                 </button>
             </div>
         </div>
     </section>
+
+    <script>
+    // Load deals on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        fetch('/api/deals/active')
+            .then(response => response.json())
+            .then(deals => {
+                const container = document.getElementById('deals-container');
+                if (deals.length === 0) {
+                    container.innerHTML = '<div class="text-center text-gray-500 w-full py-8">No deals available at the moment</div>';
+                    return;
+                }
+                
+                container.innerHTML = deals.map(deal => `
+                    <div class="min-w-[300px] max-w-[300px] bg-white rounded-lg shadow-md overflow-hidden flex-shrink-0">
+                        <img src="${deal.property.image}" alt="${deal.property.title}" class="w-full h-[230px] object-cover">
+                        <div class="p-4">
+                            <span class="text-white px-2 py-1 rounded text-xs" style="background-color:#1D9D39;">${deal.discount_percentage}% OFF</span>
+                            <h3 class="text-sm font-bold mt-2">${deal.property.title}</h3>
+                            <p class="text-xs text-gray-600">${deal.property.city}</p>
+                            <div class="flex items-center mt-2">
+                                <span class="text-white px-2 py-1 rounded text-xs" style="background-color: rgb(31, 143, 178);">${Math.round(deal.property.rating)}</span>
+                                <div class="ml-2">
+                                    <span class="text-xs block">Rating</span>
+                                    <span class="text-xs block">${deal.property.reviews_count} Reviews</span>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 mt-2 text-xs">
+                                <span class="text-xs line-through text-red-500">$${deal.original_price}</span>
+                                <span class="text-black font-bold"> $${deal.discounted_price}</span>
+                            </p>
+                        </div>
+                    </div>
+                `).join('');
+            })
+            .catch(error => {
+                console.error('Error loading deals:', error);
+                document.getElementById('deals-container').innerHTML = '<div class="text-center text-gray-500 w-full py-8">Unable to load deals</div>';
+            });
+    });
+    </script>
 
     <!--End Section-->
 

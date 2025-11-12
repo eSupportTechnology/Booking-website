@@ -200,6 +200,15 @@
                     <span class="font-semibold">Reviews</span>
                 </a>
 
+                <!-- Deals -->
+                <a href="{{ route('partner.deals.index') }}"
+                    class="flex items-center px-4 py-3 rounded-xl hover:bg-gradient-to-r hover:from-red-500 hover:to-red-600 hover:text-white transition-all duration-200 group {{ request()->routeIs('partner.deals.*') ? 'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg' : 'text-gray-700' }}">
+                    <div class="bg-red-100 group-hover:bg-white/20 p-2 rounded-lg mr-3 {{ request()->routeIs('partner.deals.*') ? 'bg-white/20' : '' }}">
+                        <i class="fas fa-tags text-red-600 group-hover:text-white {{ request()->routeIs('partner.deals.*') ? 'text-white' : '' }}"></i>
+                    </div>
+                    <span class="font-semibold">Deals</span>
+                </a>
+
                 <!-- Settings -->
                 <a href="{{ route('partner.settings') }}"
                     class="flex items-center px-4 py-3 rounded-xl hover:bg-gradient-to-r hover:from-gray-500 hover:to-gray-600 hover:text-white transition-all duration-200 group {{ request()->routeIs('partner.settings') ? 'bg-gradient-to-r from-gray-500 to-gray-600 text-white shadow-lg' : 'text-gray-700' }}">

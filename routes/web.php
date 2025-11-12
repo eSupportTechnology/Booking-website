@@ -159,6 +159,8 @@ Route::prefix('customer')->group(function () {
         ->name('customer.bookings.booked-dates');
     Route::get('/properties/{property}/available-rooms', [\App\Http\Controllers\Customer\BookingController::class, 'getAvailableRooms'])
         ->name('customer.bookings.available-rooms');
+    Route::get('/properties/{property}/deals', [\App\Http\Controllers\Customer\BookingController::class, 'getAvailableDeals'])
+        ->name('customer.bookings.available-deals');
 
     // Enhanced room endpoints
     Route::get('/properties/{property}/rooms/available', [\App\Http\Controllers\Customer\RoomController::class, 'getAvailableRoomsWithDetails'])
@@ -681,6 +683,15 @@ Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddle
 
     // Settings
     Route::get('/settings', [\App\Http\Controllers\Partner\SettingsController::class, 'index'])->name('partner.settings');
+
+    // Deals
+    Route::get('/deals', [\App\Http\Controllers\Partner\DealsController::class, 'index'])->name('partner.deals.index');
+    Route::get('/deals/create', [\App\Http\Controllers\Partner\DealsController::class, 'create'])->name('partner.deals.create');
+    Route::post('/deals', [\App\Http\Controllers\Partner\DealsController::class, 'store'])->name('partner.deals.store');
+    Route::get('/deals/{deal}/edit', [\App\Http\Controllers\Partner\DealsController::class, 'edit'])->name('partner.deals.edit');
+    Route::put('/deals/{deal}', [\App\Http\Controllers\Partner\DealsController::class, 'update'])->name('partner.deals.update');
+    Route::delete('/deals/{deal}', [\App\Http\Controllers\Partner\DealsController::class, 'destroy'])->name('partner.deals.destroy');
+    Route::patch('/deals/{deal}/toggle-status', [\App\Http\Controllers\Partner\DealsController::class, 'toggleStatus'])->name('partner.deals.toggle-status');
     Route::get('/account-settings', [\App\Http\Controllers\Partner\AccountSettingsController::class, 'index'])->name('partner.account.settings');
     Route::post('/settings/profile', [\App\Http\Controllers\Partner\AccountSettingsController::class, 'updateProfile'])->name('partner.settings.profile.update');
     Route::post('/settings/password', [\App\Http\Controllers\Partner\AccountSettingsController::class, 'updatePassword'])->name('partner.settings.password.update');
@@ -1371,6 +1382,9 @@ Route::middleware('auth:car_renter')->group(function () {
         ->name('taxi.listing');
 });
 Route::get('/car-rental-listing', [\App\Http\Controllers\Customer\PropertyListingController::class, 'carRentalListing'])->name('car-rental-listing');
+
+// API Routes
+Route::get('/api/deals/active', [\App\Http\Controllers\Api\DealsController::class, 'getActiveDeals']);
 Route::get('/customer/taxis', [\App\Http\Controllers\Customer\CustomerTaxiController::class, 'index'])->name('customer.taxis');
 Route::get('/airport-taxis', [\App\Http\Controllers\Customer\CustomerTaxiController::class, 'showLatestTaxis'])->name('customer.airport-taxis');
 

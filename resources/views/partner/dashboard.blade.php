@@ -165,6 +165,13 @@
                             <div class="text-sm opacity-90">Track your revenue</div>
                         </div>
                     </a>
+                    <a href="{{ route('partner.deals.index') }}" class="flex items-center p-4 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:shadow-lg transition-all duration-200">
+                        <i class="fas fa-tags text-2xl mr-4"></i>
+                        <div>
+                            <div class="font-semibold">Manage Deals</div>
+                            <div class="text-sm opacity-90">Create special offers</div>
+                        </div>
+                    </a>
                 </div>
             </div>
         </div>

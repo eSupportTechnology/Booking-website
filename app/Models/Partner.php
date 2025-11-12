@@ -98,4 +98,9 @@ class Partner extends Model
     {
         $this->properties()->update(['status' => 'suspended']);
     }
+
+    public function deals()
+    {
+        return $this->hasMany(Deal::class);
+    }
 }
