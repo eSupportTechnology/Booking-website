@@ -3,18 +3,23 @@
 @section('content')
 <div class="space-y-8">
     <!-- Header -->
-    <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl p-8 text-white">
-        <div class="flex justify-between items-center">
-            <div>
-                <h1 class="text-4xl font-bold mb-2">Car Rentals</h1>
-                <p class="text-blue-100 text-lg">Manage your car rental listings</p>
+    <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl p-6 sm:p-8 text-white">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div class="text-center sm:text-left w-full sm:w-auto">
+            <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-1 sm:mb-2">Car Rentals</h1>
+            <p class="text-blue-100 text-base sm:text-lg">Manage your car rental listings</p>
             </div>
+
+            <div class="w-full sm:w-auto flex justify-center sm:justify-end">
             <a href="{{ route('renter.types') }}"
-                class="bg-white text-blue-600 px-6 py-3 rounded-xl font-semibold hover:bg-blue-50 transition-all duration-200 shadow-lg">
-                <i class="fas fa-plus mr-2"></i>Add Car Rental
+                class="bg-white text-blue-600 px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl font-semibold hover:bg-blue-50 transition-all duration-200 shadow-lg flex items-center justify-center">
+                <i class="fas fa-plus mr-2"></i>
+                <span>Add Car Rental</span>
             </a>
+            </div>
         </div>
     </div>
+
 
     <!-- Search & Filter -->
     <div class="bg-white rounded-2xl p-6 shadow-lg">
