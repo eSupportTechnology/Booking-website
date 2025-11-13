@@ -110,24 +110,28 @@
         </div>
 
         <!-- Right Column: Driver License Images in a row -->
-        <div class="flex-1 flex gap-2 items-center">
-            @if($car->driver_license_front)
-            <div class="flex flex-col items-center">
-                <p class="text-sm font-medium mb-1">Driver License (Front)</p>
-                <img src="{{ asset('storage/' . $car->driver_license_front) }}" 
-                     alt="Driver License Front" 
-                     class="w-60 h-40 object-cover rounded-lg border">
+        <div class="flex-1">
+            <div class="flex flex-wrap justify-center sm:justify-start gap-4 items-start">
+                @if($car->driver_license_front)
+                    <div class="flex flex-col items-center w-full sm:w-auto">
+                        <p class="text-sm font-medium mb-1 text-center sm:text-left">Driver License (Front)</p>
+                        <img src="{{ asset('storage/' . $car->driver_license_front) }}" 
+                            alt="Driver License Front" 
+                            class="w-full sm:w-60 h-40 object-cover rounded-lg border shadow-sm">
+                    </div>
+                @endif
+
+                @if($car->driver_license_back)
+                    <div class="flex flex-col items-center w-full sm:w-auto">
+                        <p class="text-sm font-medium mb-1 text-center sm:text-left">Driver License (Back)</p>
+                        <img src="{{ asset('storage/' . $car->driver_license_back) }}" 
+                            alt="Driver License Back" 
+                            class="w-full sm:w-60 h-40 object-cover rounded-lg border shadow-sm">
+                    </div>
+                @endif
             </div>
-            @endif
-            @if($car->driver_license_back)
-            <div class="flex flex-col items-center">
-                <p class="text-sm font-medium mb-1">Driver License (Back)</p>
-                <img src="{{ asset('storage/' . $car->driver_license_back) }}" 
-                     alt="Driver License Back" 
-                     class="w-60 h-40 object-cover rounded-lg border">
-            </div>
-            @endif
         </div>
+
     </div>
 </div>
 @endif
