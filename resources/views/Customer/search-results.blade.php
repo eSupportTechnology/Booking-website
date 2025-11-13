@@ -182,7 +182,6 @@
                 </span>
             </button>
 
-            <!-- Dropdown -->
             <div x-show="open" @click.away="open = false"
                 class="absolute z-30 bg-white shadow-xl rounded-xl p-4 mt-2 w-80 sm:w-96 left-0 md:left-auto md:right-0 text-gray-800 text-sm" x-transition>
                 <nav class="flex border-b border-gray-200 mb-4 text-xs sm:text-sm">
@@ -222,75 +221,76 @@
                 </div>
 
                 <div class="mt-4 text-right">
-                    <button type ="button" @click="open = false"
+                    <button type="button" @click="open = false"
                         class="bg-blue-600 text-white px-3 sm:px-4 py-2 rounded hover:bg-blue-700 text-xs sm:text-sm">
-                        Done
+                         Done
                     </button>
+
                 </div>
             </div>
         </div>
 
-        <!-- Guests Selector -->
+        <!-- Guests Selector (updated) -->
 <div x-data="{
-    open: false,
-    adults: {{ $searchData['adults'] !== null ? $searchData['adults'] : 'null' }},
-    children: {{ $searchData['children'] !== null ? $searchData['children'] : 'null' }},
-    rooms: {{ $searchData['rooms'] !== null ? $searchData['rooms'] : 'null' }},
-    pets: {{ $searchData['pets'] ? 'true' : 'false' }},
+        open: false,
+        adults: 2,
+        children: 0,
+        rooms: 1,
+        pets: false,
+        // Call when the user clicks Done: copy values to hidden inputs and update results
+        applyGuests() {
+            const adultsInput = document.getElementById('guests-adults');
+            const childrenInput = document.getElementById('guests-children');
+            const roomsInput = document.getElementById('guests-rooms');
+            const petsInput = document.getElementById('guests-pets');
 
-    resetGuests() {
-        this.adults = null;
-        this.children = null;
-        this.rooms = null;
-        this.pets = false;
-    }
-}"
-class="relative flex-1 border-b md:border-b-0 md:border-r border-gray-300 px-2 py-1">
+            if (adultsInput) adultsInput.value = this.adults;
+            if (childrenInput) childrenInput.value = this.children;
+            if (roomsInput) roomsInput.value = this.rooms;
+            if (petsInput) petsInput.value = this.pets ? 1 : 0;
 
-    <input type="hidden" name="adults" :value="adults !== null ? adults : ''">
-    <input type="hidden" name="children" :value="children !== null ? children : ''">
-    <input type="hidden" name="rooms" :value="rooms !== null ? rooms : ''">
-    <input type="hidden" name="pets" :value="pets ? 1 : ''">
+            this.open = false;
+            // Call global function that runs the AJAX update
+            if (typeof window.updateResults === 'function') window.updateResults();
+        }
+    }"
+    class="relative flex-1 border-b md:border-b-0 md:border-r border-gray-300 px-2 py-1">
 
     <button @click="open = !open" type="button"
         class="flex items-center gap-2 w-full text-left text-sm">
         <img src="{{ asset('assets/user.svg') }}" class="w-5 h-5" />
-
-        <span class="text-gray-800 text-sm sm:text-base truncate"
-              x-text="adults === null && children === null && rooms === null
-                      ? 'Guests'
-                      : `${adults ?? 0} adults · ${children ?? 0} children · ${rooms ?? 1} room${rooms>1?'s':''}`">
-        </span>
+        <span x-text="`${adults} adults · ${children} children · ${rooms} room${rooms>1?'s':''}`"
+              class="text-gray-800 text-sm sm:text-base truncate"></span>
     </button>
 
     <div x-show="open" @click.away="open = false"
         class="absolute z-20 bg-white shadow-xl rounded-xl p-4 mt-2 w-64 sm:w-72 left-0 md:left-auto md:right-0 text-gray-800 space-y-4 text-sm">
 
         <div class="flex justify-between"><span>Adults</span>
-            <div class="flex gap-2">
+            <div class="flex gap-2 items-center">
                 <button type="button" @click="if(adults>1) adults--" class="px-2 bg-gray-200 rounded">−</button>
-                <span x-text="adults ?? 0"></span>
-                <button type="button" @click="adults = (adults ?? 0) + 1; updateResults()" class="px-2 bg-gray-200 rounded">+</button>
+                <span x-text="adults"></span>
+                <button type="button" @click="adults++" class="px-2 bg-gray-200 rounded">+</button>
             </div>
         </div>
 
         <div class="flex justify-between"><span>Children</span>
-            <div class="flex gap-2">
+            <div class="flex gap-2 items-center">
                 <button type="button" @click="if(children>0) children--" class="px-2 bg-gray-200 rounded">−</button>
-                <span x-text="children ?? 0"></span>
-                <button type="button" @click="children = (children ?? 0) + 1; updateResults()" class="px-2 bg-gray-200 rounded">+</button>
+                <span x-text="children"></span>
+                <button type="button" @click="children++" class="px-2 bg-gray-200 rounded">+</button>
             </div>
         </div>
 
         <div class="flex justify-between"><span>Rooms</span>
-            <div class="flex gap-2">
+            <div class="flex gap-2 items-center">
                 <button type="button" @click="if(rooms>1) rooms--" class="px-2 bg-gray-200 rounded">−</button>
-                <span x-text="rooms ?? 1"></span>
-                <button type="button" @click="rooms = (rooms ?? 1) + 1; updateResults()" class="px-2 bg-gray-200 rounded">+</button>
+                <span x-text="rooms"></span>
+                <button type="button" @click="rooms++" class="px-2 bg-gray-200 rounded">+</button>
             </div>
         </div>
 
-        <div class="flex justify-between"><span>Travelling with pets?</span>
+        <div class="flex justify-between items-center"><span>Travelling with pets?</span>
             <label class="inline-flex items-center cursor-pointer">
                 <input type="checkbox" x-model="pets" class="sr-only peer">
                 <div class="w-10 h-6 bg-gray-300 rounded-full peer peer-checked:bg-blue-600 relative transition-all">
@@ -299,25 +299,18 @@ class="relative flex-1 border-b md:border-b-0 md:border-r border-gray-300 px-2 p
             </label>
         </div>
 
-        <p class="text-xs text-gray-500">
-            Assistance animals aren’t considered pets.
-            <a href="#" class="text-blue-600 underline">Read more</a>
-        </p>
-
-        <!-- Clear guests button -->
-        <button type="button"
-            @click="resetGuests(); updateResults(); open = false;"
-            class="block w-full text-center bg-red-50 border border-red-400 text-red-600 font-semibold py-2 rounded hover:bg-red-100">
-            Clear Guests
-        </button>
-
-        <button type="button" @click="open = false"
+        <button type="button" @click="applyGuests()"
             class="block w-full text-center bg-white border border-blue-600 text-blue-600 font-semibold py-2 rounded hover:bg-blue-50">
             Done
         </button>
+
+        <!-- Hidden inputs that will actually be submitted / read by updateResults() -->
+        <input type="hidden" name="adults" id="guests-adults" value="2">
+        <input type="hidden" name="children" id="guests-children" value="0">
+        <input type="hidden" name="rooms" id="guests-rooms" value="1">
+        <input type="hidden" name="pets" id="guests-pets" value="0">
     </div>
 </div>
-
 
         <!-- Search Button -->
         <div class="w-full md:w-auto px-2 py-1">
@@ -413,69 +406,74 @@ class="relative flex-1 border-b md:border-b-0 md:border-r border-gray-300 px-2 p
     </div>
 </div>
 
-                <div class="filter-section-divider"></div>
+               @foreach ($filterGroups as $group)
+    @php
+        $isComplex = count($group['items']) > $group['visible_count'];
+        $items = collect($group['items']);
+        $visibleItems = $items->take($group['visible_count']);
+        $hiddenItems = $isComplex ? $items->skip($group['visible_count']) : collect();
+        $containerId = "{$group['id_prefix']}-filter";
+        $contentId = "{$group['id_prefix']}-content";
+        $hiddenId = "hidden-{$group['id_prefix']}";
+        $toggleId = "toggle-{$group['id_prefix']}";
+    @endphp
 
-                {{-- --- Consolidated Loop Filters: we use $filterGroups passed from controller --- --}}
-                @foreach ($filterGroups as $group)
-                    @php
-                        $isComplex = count($group['items']) > $group['visible_count'];
-                        $items = collect($group['items']);
-                        $visibleItems = $items->take($group['visible_count']);
-                        $hiddenItems = $isComplex ? $items->skip($group['visible_count']) : collect();
-                        $containerId = "{$group['id_prefix']}-filter";
-                        $contentId = "{$group['id_prefix']}-content";
-                        $hiddenId = "hidden-{$group['id_prefix']}";
-                        $toggleId = "toggle-{$group['id_prefix']}";
-                    @endphp
+    <div class="mb-6" id="{{ $group['id_prefix'] }}-section">
+        <h3 class="font-bold text-lg text-gray-900 mb-2 flex justify-between items-center cursor-pointer filter-toggle-header" data-target="{{ $contentId }}">
+            {{ $group['title'] }}
+            <svg class="w-4 h-4 text-gray-400 filter-toggle-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+        </h3>
 
-                    <div class="mb-6" id="{{ $group['id_prefix'] }}-section">
-                        <h3 class="font-bold text-lg text-gray-900 mb-2 flex justify-between items-center cursor-pointer filter-toggle-header" data-target="{{ $contentId }}">
-                            {{ $group['title'] }}
-                            <svg class="w-4 h-4 text-gray-400 filter-toggle-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </h3>
-                        <div id="{{ $contentId }}">
-                            <div id="{{ $containerId }}" class="space-y-3">
-                                {{-- Visible Items --}}
-                                @foreach($visibleItems as $value => $count)
-                                    <label for="{{ $group['id_prefix'] }}-{{ \Str::slug($value) }}" class="flex justify-between items-center cursor-pointer">
-                                        <div class="flex items-center">
-                                            <input type="checkbox" id="{{ $group['id_prefix'] }}-{{ \Str::slug($value) }}" name="{{ $group['name'] === 'popular' ? 'amenities[]' : $group['name'] . '[]' }}" value="{{ $value }}" class="form-checkbox h-4 w-4 text-primary rounded accent-primary">
-                                            <span class="ml-3 text-gray-700">{{ $value }}</span>
-                                        </div>
-                                        <span class="text-xs text-gray-500 font-semibold count" data-{{ $group['name'] }}="{{ $value }}">{{ $count }}</span>
-                                    </label>
-                                @endforeach
+        <div id="{{ $contentId }}">
+            <div id="{{ $containerId }}" class="space-y-3">
 
-                                {{-- Hidden Items Container (Only rendered if complex) --}}
-                                @if ($hiddenItems->isNotEmpty())
-                                    <div id="{{ $hiddenId }}" class="space-y-3 hidden">
-                                        @foreach($hiddenItems as $value => $count)
-                                            <label for="{{ $group['id_prefix'] }}-{{ \Str::slug($value) }}" class="flex justify-between items-center cursor-pointer">
-                                                <div class="flex items-center">
-                                                    <input type="checkbox" id="{{ $group['id_prefix'] }}-{{ \Str::slug($value) }}" name="{{ $group['name'] === 'popular' ? 'amenities[]' : $group['name'] . '[]' }}" value="{{ $value }}" class="form-checkbox h-4 w-4 text-primary rounded accent-primary">
-                                                    <span class="ml-3 text-gray-700">{{ $value }}</span>
-                                                </div>
-                                                <span class="text-xs text-gray-500 font-semibold count" data-{{ $group['name'] }}="{{ $value }}">{{ $count }}</span>
-                                            </label>
-                                        @endforeach
-                                    </div>
-
-                                    {{-- Internal Show More/Less Toggle Button --}}
-                                    <button id="{{ $toggleId }}" class="mt-3 text-sm font-medium text-primary hover:text-primary-dark">
-                                        Show more
-                                    </button>
-                                @endif
-                            </div>
+                {{-- Visible Items --}}
+                @foreach($visibleItems as $value => $count)
+                    <label for="{{ $group['id_prefix'] }}-{{ \Str::slug($value) }}" class="flex justify-between items-center cursor-pointer">
+                        <div class="flex items-center">
+                            <input type="checkbox"
+                                   id="{{ $group['id_prefix'] }}-{{ \Str::slug($value) }}"
+                                   name="{{ $group['name'] }}[]"
+                                   value="{{ $value }}"
+                                   class="form-checkbox h-4 w-4 text-primary rounded accent-primary">
+                            <span class="ml-3 text-gray-700">{{ $value }}</span>
                         </div>
-                    </div>
-                    @if (!$loop->last)
-                        <div class="filter-section-divider"></div>
-                    @endif
+                        <span class="text-xs text-gray-500 font-semibold">{{ $count }}</span>
+                    </label>
                 @endforeach
 
-                <div class="filter-section-divider"></div>
+                {{-- Hidden Items (for "Show More") --}}
+                @if ($hiddenItems->isNotEmpty())
+                    <div id="{{ $hiddenId }}" class="space-y-3 hidden">
+                        @foreach($hiddenItems as $value => $count)
+                            <label for="{{ $group['id_prefix'] }}-{{ \Str::slug($value) }}" class="flex justify-between items-center cursor-pointer">
+                                <div class="flex items-center">
+                                    <input type="checkbox"
+                                           id="{{ $group['id_prefix'] }}-{{ \Str::slug($value) }}"
+                                           name="{{ $group['name'] }}[]"
+                                           value="{{ $value }}"
+                                           class="form-checkbox h-4 w-4 text-primary rounded accent-primary">
+                                    <span class="ml-3 text-gray-700">{{ $value }}</span>
+                                </div>
+                                <span class="text-xs text-gray-500 font-semibold">{{ $count }}</span>
+                            </label>
+                        @endforeach
+                    </div>
 
+                    {{-- Toggle Button --}}
+                    <button id="{{ $toggleId }}" class="mt-3 text-sm font-medium text-primary hover:text-primary-dark">
+                        Show more
+                    </button>
+                @endif
             </div>
+        </div>
+    </div>
+
+    @if (!$loop->last)
+        <div class="filter-section-divider"></div>
+    @endif
+@endforeach
+
         </aside>
 
         {{-- --- RIGHT COLUMN: Search Results and Listings --- --}}
@@ -558,7 +556,7 @@ class="relative flex-1 border-b md:border-b-0 md:border-r border-gray-300 px-2 p
 
     </div>
 </div>
-</form>
+
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
@@ -579,33 +577,48 @@ document.addEventListener("DOMContentLoaded", () => {
     function hideLoader() { loader.classList.add("hidden"); }
 
     /* ========= UPDATE RESULTS (AJAX) ========= */
-    async function updateResults() {
+    window.updateResults = function () {
+    const form = document.querySelector("#search-form");
+    const params = new URLSearchParams();
+
+    // --- 1. Main top search bar ---
+    if (form) {
         const formData = new FormData(form);
-        const query = new URLSearchParams(formData).toString();
-
-        resultsContainer.innerHTML = `
-            <div class='flex justify-center py-12'>
-                <svg class='animate-spin h-8 w-8 text-[#3CC0E9]' fill='none' viewBox='0 0 24 24'>
-                    <circle class='opacity-25' cx='12' cy='12' r='10'
-                        stroke='currentColor' stroke-width='4'></circle>
-                    <path class='opacity-75' fill='currentColor'
-                        d='M4 12a8 8 0 018-8v8z'>
-                    </path>
-                </svg>
-            </div>
-        `;
-
-        showLoader();
-
-        try {
-            const res = await axios.get("{{ route('customer.search.ajax') }}?" + query);
-            resultsContainer.innerHTML = res.data.html;
-        } catch {
-            resultsContainer.innerHTML = "<div class='text-center text-red-500 py-6'>Error loading results</div>";
-        } finally {
-            hideLoader();
+        for (const [key, value] of formData.entries()) {
+            if (value !== "" && value !== null) params.append(key, value);
         }
     }
+
+    // --- 2. Sidebar filters ---
+    document.querySelectorAll(".filter-sidebar input, .filter-sidebar select").forEach(el => {
+        if ((el.type === "checkbox" || el.type === "radio") && el.checked) {
+            params.append(el.name, el.value);
+        } else if (el.type !== "checkbox" && el.type !== "radio" && el.value) {
+            params.append(el.name, el.value);
+        }
+    });
+
+    // --- 3. Price slider ---
+    const minPrice = document.querySelector("input[name='min_price']");
+    const maxPrice = document.querySelector("input[name='max_price']");
+    if (minPrice && maxPrice) {
+        params.append("min_price", minPrice.value || 0);
+        params.append("max_price", maxPrice.value || 999999);
+    }
+
+    // --- 4. Debug log (optional) ---
+    console.log("🔍 Applied Filters:", Object.fromEntries(params));
+
+    // --- 5. Perform AJAX request ---
+    axios.get("/customer/search/ajax?" + params.toString())
+        .then(response => {
+            document.querySelector("#results-container").innerHTML = response.data.html;
+        })
+        .catch(err => console.error("Search update failed:", err));
+};
+
+    window.updateResults = updateResults;
+
 
     /* ========= FILTER EVENT LISTENERS ========= */
     document.addEventListener("change", function(e) {
@@ -629,11 +642,15 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
+// build the debounced function once (don't recreate it on every event)
+const destDebounced = _.debounce(() => updateResults(), 400);
+
 document.addEventListener("input", function(e) {
     if (e.target.matches("input[name='destination']")) {
-        _.debounce(() => updateResults(), 400)();
+        destDebounced();
     }
 });
+
 
 
     /* ========= BUDGET SLIDER ========= */

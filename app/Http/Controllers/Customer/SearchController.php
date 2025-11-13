@@ -93,173 +93,196 @@ class SearchController extends Controller
      * Apply all request filters to given query builder instance.
      */
     protected function applyRequestFilters(&$query, Request $request)
-    {
-        // Destination
-        if ($request->filled('destination')) {
-            $destination = trim($request->input('destination'));
-
-            $query->where(function($q) use ($destination) {
-                $q->where(function($c) use ($destination) {
-                    $c->where('city', 'LIKE', "%{$destination}%")
-                    ->orWhere('country', 'LIKE', "%{$destination}%")
-                    ->orWhere('address', 'LIKE', "%{$destination}%")
-                    ->orWhere('title', 'LIKE', "%{$destination}%");
-                });
-            });
-        }
-
-        // Sidebar destination filter (checkboxes)
-        if (is_array($request->destination)) {
-            $cities = array_filter($request->destination);
-            if (!empty($cities)) {
-                $query->whereIn('city', $cities);
-            }
-        }
-
-
-        // Date Availability
-        if ($request->filled('checkIn') && $request->filled('checkOut')) {
-            $checkIn  = $request->checkIn;
-            $checkOut = $request->checkOut;
-
-            $query->whereHas('rooms', function ($q) use ($checkIn, $checkOut) {
-                $q->whereDoesntHave('bookings', function ($b) use ($checkIn, $checkOut) {
-                    $b->where('check_in', '<', $checkOut)
-                      ->where('check_out', '>', $checkIn)
-                      ->whereIn('status', ['pending', 'confirmed']);
-                });
-            });
-        }
-
-        // Guests Filter
-        $adults = $request->input('adults');
-        $children = $request->input('children');
-        if (($adults !== null && $adults !== '') || ($children !== null && $children !== '')) {
-            $total = (int)($adults ?: 0) + (int)($children ?: 0);
-            if ($total > 0) {
-                $query->whereHas('rooms', fn($q) => $q->where('max_guests', '>=', $total));
-            }
-        }
-
-        // Room Count Filter
-        if ($request->has('rooms') && $request->rooms !== null && $request->rooms !== '') {
-            $roomsNeeded = max(1, (int)$request->rooms);
-            $query->whereHas('rooms', function ($q) use ($roomsNeeded) {
-                $q->select('property_id')->groupBy('property_id')->havingRaw('COUNT(id) >= ?', [$roomsNeeded]);
-            });
-        }
-
-        // Price Range
-        if ($request->filled('min_price') || $request->filled('max_price')) {
-            $min = (float)$request->min_price ?: 0;
-            $max = (float)$request->max_price ?: 999999;
-
-            $query->where(function ($q) use ($min, $max) {
-                $q->whereHas('pricing', fn($r) => $r->whereBetween('price_per_night', [$min, $max]))
-                  ->orWhereHas('rooms', fn($r) => $r->whereBetween('price_per_night', [$min, $max]));
-            });
-        }
-
-        //  Property Rating (Stars)
-        if ($request->filled('property_rating')) {
-            $query->whereIn('stars', (array)$request->property_rating);
-        }
-
-        //  Popular + Facilities (Amenity names)
-        foreach (['amenities', 'facilities'] as $filterName) {
-            if ($request->filled($filterName)) {
-                $values = (array)$request->input($filterName);
-                $query->whereHas('amenities', fn($a) => $a->whereIn('amenities.name', $values));
-            }
-        }
-
-        //  Property Types → category names
-        if ($request->filled('property_types')) {
-            $values = (array)$request->property_types;
-            $query->whereHas('category', fn($c) => $c->whereIn('name', $values));
-        }
-
-        //  Property Subtypes → subcategory names
-        if ($request->filled('property_subtypes')) {
-            $values = (array)$request->property_subtypes;
-            $query->whereHas('subcategory', fn($s) => $s->whereIn('name', $values));
-        }
-
-        // Policies
-        if ($request->filled('policies')) {
-            foreach ($request->policies as $policy) {
-                if ($policy === 'pets_allowed') $query->whereHas('policies', fn($p) => $p->where('pets_allowed', '!=', ''));
-                if ($policy === 'smoking_allowed') $query->whereHas('policies', fn($p) => $p->where('smoking_allowed', 1));
-                if ($policy === 'children_allowed') $query->whereHas('policies', fn($p) => $p->where('children_allowed', 1));
-            }
-        }
-
-        // Review Score
-        if ($request->filled('min_score')) {
-            $query->whereHas('reviews', fn($r) => $r->havingRaw('AVG(rating) >= ?', [(float)$request->min_score]));
-        }
-
-        // Keywords
-        if ($request->filled('q')) {
-            $q = trim($request->q);
-            $query->where(fn($x) => $x->where('title', 'LIKE', "%$q%")->orWhere('description', 'LIKE', "%$q%"));
-        }
-        if ($request->filled('price_buckets')) {
-    $buckets = (array) $request->input('price_buckets');
-
-    $query->where(function($q) use ($buckets) {
-        foreach ($buckets as $bucket) {
-
-            // Extract numbers from label
-            preg_match_all('/\d+/', $bucket, $matches);
-            $numbers = $matches[0] ?? [];
-
-            if (count($numbers) == 2) {
-                $min = (float)$numbers[0];
-                $max = (float)$numbers[1];
-                $q->orWhere(function($qq) use ($min, $max) {
-                    $qq->whereHas('pricing', fn($p) => $p->whereBetween('price_per_night', [$min, $max]))
-                       ->orWhereHas('rooms', fn($r) => $r->whereBetween('price_per_night', [$min, $max]));
-                });
-            } elseif (count($numbers) == 1) {
-                $min = (float)$numbers[0];
-                $q->orWhere(function($qq) use ($min) {
-                    $qq->whereHas('pricing', fn($p) => $p->where('price_per_night', '>=', $min))
-                       ->orWhereHas('rooms', fn($r) => $r->where('price_per_night', '>=', $min));
-                });
-            }
-        }
-    });
-}
+{
+    // 1. Destination (Top Search Bar)
+    if ($request->filled('destination') && !is_array($request->destination)) {
+        $destination = trim($request->input('destination'));
+        $query->where(function ($q) use ($destination) {
+            $q->where('city', 'LIKE', "%{$destination}%")
+              ->orWhere('country', 'LIKE', "%{$destination}%")
+              ->orWhere('address', 'LIKE', "%{$destination}%")
+              ->orWhere('title', 'LIKE', "%{$destination}%");
+        });
     }
+
+    // 2. Destination (Sidebar Checkboxes)
+    if (is_array($request->input('destination'))) {
+        $cities = array_filter($request->input('destination'));
+        if (!empty($cities)) {
+            $query->whereIn('city', $cities);
+        }
+    }
+
+    // 3. Availability Dates
+    if ($request->filled('checkIn') && $request->filled('checkOut')) {
+        $checkIn  = $request->checkIn;
+        $checkOut = $request->checkOut;
+
+        $query->whereHas('rooms', function ($q) use ($checkIn, $checkOut) {
+            $q->whereDoesntHave('bookings', function ($b) use ($checkIn, $checkOut) {
+                $b->where('check_in', '<', $checkOut)
+                  ->where('check_out', '>', $checkIn)
+                  ->whereIn('status', ['pending', 'confirmed']);
+            });
+        });
+    }
+
+    // 4. Guests
+    $adults = $request->input('adults');
+    $children = $request->input('children');
+    $totalGuests = (int)($adults ?: 0) + (int)($children ?: 0);
+    if ($totalGuests > 0) {
+        $query->whereHas('rooms', fn($r) => $r->where('max_guests', '>=', $totalGuests));
+    }
+
+    // 5. Room Count
+    if ($request->filled('rooms')) {
+        $roomsNeeded = max(1, (int)$request->rooms);
+        $query->whereHas('rooms', function ($q) use ($roomsNeeded) {
+            $q->select('property_id')->groupBy('property_id')->havingRaw('COUNT(id) >= ?', [$roomsNeeded]);
+        });
+    }
+
+    // 6. Price Range Slider
+    if ($request->filled('min_price') || $request->filled('max_price')) {
+        $min = (float)($request->min_price ?: 0);
+        $max = (float)($request->max_price ?: 999999);
+        $query->where(function ($q) use ($min, $max) {
+            $q->whereHas('pricing', fn($p) => $p->whereBetween('price_per_night', [$min, $max]))
+              ->orWhereHas('rooms', fn($r) => $r->whereBetween('price_per_night', [$min, $max]));
+        });
+    }
+
+    // 7. Property Rating (Stars)
+    if ($request->filled('property_rating')) {
+        $ratings = array_map('intval', (array)$request->property_rating);
+
+        $query->whereIn(DB::raw('CAST(stars AS UNSIGNED)'), $ratings);
+    }
+
+
+    // 8. Amenities + Facilities
+    foreach (['amenities', 'facilities'] as $filter) {
+        if ($request->filled($filter)) {
+            $values = (array)$request->input($filter);
+            $query->whereHas('amenities', function ($a) use ($values) {
+                $a->whereIn('amenities.name', $values);
+            });
+        }
+    }
+
+    // 9. Property Types (Category)
+    if ($request->filled('property_types')) {
+        $values = (array)$request->property_types;
+        $query->whereHas('category', fn($c) => $c->whereIn('name', $values));
+    }
+
+    // 10. Property Subtypes (Subcategory)
+    if ($request->filled('property_subtypes')) {
+        $values = (array)$request->property_subtypes;
+        $query->whereHas('subcategory', fn($s) => $s->whereIn('name', $values));
+    }
+
+    // 11. Policies (pets_allowed, etc.)
+    if ($request->filled('policies')) {
+        foreach ((array)$request->policies as $policy) {
+            if ($policy === 'pets_allowed') {
+                $query->whereHas('policies', fn($p) => $p->where('pets_allowed', 1));
+            }
+            if ($policy === 'smoking_allowed') {
+                $query->whereHas('policies', fn($p) => $p->where('smoking_allowed', 1));
+            }
+            if ($policy === 'children_allowed') {
+                $query->whereHas('policies', fn($p) => $p->where('children_allowed', 1));
+            }
+        }
+    }
+
+    // 12. Review Score
+    if ($request->filled('min_score') && $request->min_score > 0) {
+        $score = (float)$request->min_score;
+        $query->whereHas('reviews', function ($r) use ($score) {
+            $r->select('property_id')
+              ->groupBy('property_id')
+              ->havingRaw('AVG(rating) >= ?', [$score]);
+        });
+    }
+
+    // 13. Price Buckets
+    if ($request->filled('price_buckets')) {
+        $buckets = (array)$request->input('price_buckets');
+        $query->where(function ($q) use ($buckets) {
+            foreach ($buckets as $bucket) {
+                preg_match_all('/\d+/', $bucket, $matches);
+                $nums = $matches[0] ?? [];
+                if (count($nums) === 2) {
+                    [$min, $max] = $nums;
+                    $q->orWhere(function ($qq) use ($min, $max) {
+                        $qq->whereHas('pricing', fn($p) => $p->whereBetween('price_per_night', [$min, $max]))
+                           ->orWhereHas('rooms', fn($r) => $r->whereBetween('price_per_night', [$min, $max]));
+                    });
+                } elseif (count($nums) === 1) {
+                    $min = $nums[0];
+                    $q->orWhere(function ($qq) use ($min) {
+                        $qq->whereHas('pricing', fn($p) => $p->where('price_per_night', '>=', $min))
+                           ->orWhereHas('rooms', fn($r) => $r->where('price_per_night', '>=', $min));
+                    });
+                }
+            }
+        });
+    }
+
+    // 14. Keyword Search
+    if ($request->filled('q')) {
+        $q = trim($request->q);
+        $query->where(function ($x) use ($q) {
+            $x->where('title', 'LIKE', "%$q%")
+              ->orWhere('description', 'LIKE', "%$q%");
+        });
+    }
+}
+
 
     /**
      * Apply sorting to query
      */
-    protected function applySorting(&$query, $sort = null)
-    {
-        switch ($sort) {
-            case 'price_low_high':
-                $query->leftJoin('property_pricings', 'properties.id', '=', 'property_pricings.property_id')
-                      ->orderBy(DB::raw('COALESCE(property_pricings.price_per_night, properties.rooms_min_price_per_night, 0)'), 'asc')
-                      ->select('properties.*');
-                break;
-            case 'price_high_low':
-                $query->leftJoin('property_pricings', 'properties.id', '=', 'property_pricings.property_id')
-                      ->orderBy(DB::raw('COALESCE(property_pricings.price_per_night, properties.rooms_min_price_per_night, 0)'), 'desc')
-                      ->select('properties.*');
-                break;
-            case 'rating_high_low':
-                $query->orderByDesc(DB::raw('COALESCE((SELECT AVG(rating) FROM reviews WHERE reviews.property_id = properties.id), 0)'));
-                break;
-            case 'most_reviewed':
-                $query->orderByDesc('reviews_count');
-                break;
-            default:
-                $query->orderBy('created_at', 'desc');
-                break;
-        }
+   protected function applySorting(&$query, $sort = null)
+{
+    switch ($sort) {
+        case 'price_low_high':
+            $query->orderBy(
+                DB::raw('(SELECT MIN(price_per_night)
+                          FROM property_pricings
+                          WHERE property_pricings.property_id = properties.id)'), 'asc'
+            );
+            break;
+
+        case 'price_high_low':
+            $query->orderBy(
+                DB::raw('(SELECT MIN(price_per_night)
+                          FROM property_pricings
+                          WHERE property_pricings.property_id = properties.id)'), 'desc'
+            );
+            break;
+
+        case 'rating_high_low':
+            $query->orderByDesc(
+                DB::raw('(SELECT AVG(rating)
+                          FROM reviews
+                          WHERE reviews.property_id = properties.id)')
+            );
+            break;
+
+        case 'most_reviewed':
+            $query->orderByDesc('reviews_count');
+            break;
+
+        default:
+            $query->orderByDesc('created_at');
+            break;
     }
+}
+
 
     /**
      * Build the searchData array used to prefill frontend controls
@@ -628,18 +651,41 @@ class SearchController extends Controller
      */
   public function ajaxSearch(Request $request)
     {
+        \Log::info('FILTER DEBUG', $request->all());
+        \Log::info('Active filters', $request->all());
+        \Log::info('AJAX FILTER INPUT', $request->all());
+
+
+        // Build the base query
         $baseQuery = Property::query()
             ->where('status', 'active')
             ->where('open_for_bookings', 1)
-            ->with(['files', 'facilities', 'amenities', 'rooms', 'pricing']);
+            ->with([
+                'files',
+                'facilities',
+                'amenities',
+                'rooms',
+                'pricing',
+                'additionalDetails',
+                'services',
+            ])
+            ->withCount('reviews')
+            ->withAvg('reviews', 'rating');
 
+        // Apply all filters and sorting safely
         $this->applyRequestFilters($baseQuery, $request);
-        $this->applySorting($baseQuery, $request->sort);
-        $baseQuery->select('properties.*');
+        $this->applySorting($baseQuery, $request->input('sort'));
 
+        // Don’t use select('properties.*') — that resets the query builder
+        // Just paginate directly
         $properties = $baseQuery->paginate($this->perPage)->appends($request->query());
-        return response()->json(['html' => view('Customer._searchResults', compact('properties'))->render()]);
-    }
+
+        // Return rendered partial view
+        return response()->json([
+            'html' => view('Customer._searchResults', compact('properties'))->render(),
+        ]);
+}
+
 
 
     public function suggestCities(Request $request)
