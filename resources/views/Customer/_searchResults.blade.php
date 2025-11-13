@@ -114,3 +114,5 @@
         {{ $properties->links('pagination::tailwind') }}
     </div>
 @endif
+
+
