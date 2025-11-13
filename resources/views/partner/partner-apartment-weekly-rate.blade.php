@@ -4,12 +4,12 @@
 
 @section('content')
   <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-  
-  
+
+
 
 <div x-data="{ enabled: true }" class="max-w-xl mx-auto space-y-8 lg:ml-32 px-4 py-6">
   <!-- Header -->
-  
+
     <h1 class="text-2xl font-bold text-gray-800 mb-4 mt-6">Set up a weekly rate</h1>
 <div class="bg-white p-6 rounded-lg shadow-md">
     <p class="text-sm text-gray-700 mb-4">
@@ -28,23 +28,23 @@
       <span class="text-sm text-gray-700 font-medium">Set up a weekly rate plan</span>
     </div>
 
-   
 
-    
+
+
     <!-- Table -->
     <div x-show="enabled" x-transition class="overflow-x-auto">
         <hr class="border-t border-gray-200 mt-4">
       <p class="text-sm font-semibold text-gray-700 mt-4 mb-4">
-  How much cheaper than the standard rate would you like to make this rate 
+  How much cheaper than the standard rate would you like to make this rate
 plan?
     </p>
               <input type="number" value="10" class="w-[90%] border rounded px-2 py-2 text-left" /> %
-            
-      
+
+
     </div>
 
     <!-- Buttons -->
-   
+
   </div>
    <div class="flex justify-between mt-6 ">
     <!-- Back Button -->

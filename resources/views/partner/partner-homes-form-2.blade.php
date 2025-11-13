@@ -56,7 +56,7 @@
             console.log('Continuing from step 2 with apartment type:', this.apartmentType);
             console.log('Property ID:', this.propertyId);
             console.log('Subtype ID:', this.subtypeId);
-            
+
             this.$refs.form.action = this.apartmentType === 'one'
                 ? '{{ route('partner.homes.single') }}'
                 : '{{ route('partner.homes.multiple') }}';

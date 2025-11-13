@@ -5,7 +5,7 @@
 @section('content')
 <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 <script>
-    
+
     const urlParams = new URLSearchParams(window.location.search);
 
     function stepForm() {
@@ -965,8 +965,8 @@
                             <!-- Like (Thumbs Up) -->
                             <button @click="feedback = 'like'" class="ml-2 focus:outline-none">
                                 <img
-                                    :src="feedback === 'like' 
-              ? '{{ asset('assets/iconamoon_like-thin (1).svg') }}' 
+                                    :src="feedback === 'like'
+              ? '{{ asset('assets/iconamoon_like-thin (1).svg') }}'
               : '{{ asset('assets/iconamoon_like-thin.svg') }}'"
                                     alt="Like" class="w-5 h-5" />
                             </button>
@@ -975,8 +975,8 @@
                             <!-- Dislike -->
                             <button @click="feedback = 'dislike'" class="ml-1 focus:outline-none">
                                 <img
-                                    :src="feedback === 'dislike' 
-              ? '{{ asset('assets/iconamoon_dislike-thin (1).svg') }}' 
+                                    :src="feedback === 'dislike'
+              ? '{{ asset('assets/iconamoon_dislike-thin (1).svg') }}'
               : '{{ asset('assets/iconamoon_dislike-thin.svg') }}'"
                                     alt="Dislike" class="w-5 h-5" />
                             </button>
@@ -1327,12 +1327,12 @@
                 </button>
 
                 <!-- Continue Button -->
-               
+
                     <button type="button" @click="saveStep6()"
                         class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-sky-500 transition w-full sm:w-auto">
                         Continue
                     </button>
-            
+
             </div>
 
 

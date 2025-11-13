@@ -4,8 +4,8 @@
 
 @section('content')
   <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-  
-  
+
+
 <div class="max-w-7xl mx-auto px-4">
     <div class="lg:flex lg:space-x-8">
         <!-- Heading aligned with left column -->
@@ -20,7 +20,7 @@
             <div class="bg-white p-6 rounded-lg shadow-md space-y-6">
                 <!-- Question -->
                 <p class="text-base">
-                    How many days before their arrival can your guests 
+                    How many days before their arrival can your guests
                     <span class="font-semibold text-black">cancel their booking for free?</span>
                 </p>
 
@@ -39,8 +39,8 @@
 
                             <button
                                 @click="selectedDay = option"
-                                :class="selectedDay === option 
-                                    ? 'border-blue-500 bg-blue-50 text-blue-800' 
+                                :class="selectedDay === option
+                                    ? 'border-blue-500 bg-blue-50 text-blue-800'
                                     : 'bg-white border border-gray-300 text-gray-800'"
                                 class="px-3 py-1 rounded-full text-sm font-medium mt-3 focus:outline-none transition"
                             >
@@ -55,7 +55,7 @@
                     <template x-if="selectedDay === '1'">
                         <div class="text-sm text-gray-700 border-l-4 border-blue-500 bg-blue-50 p-4">
                             <p>
-                                Guests love flexibility – free cancellation rates are generally the most booked rates on our site. 
+                                Guests love flexibility – free cancellation rates are generally the most booked rates on our site.
                                 Get your first booking sooner by allowing guests to cancel up to five days before check-in.
                             </p>
                         </div>
@@ -65,14 +65,14 @@
                         <div class="space-y-4">
                             <div class="bg-orange-50 border-l-4 border-orange-400 text-orange-800 text-sm p-4">
                                 <p>
-                                    Allow guests to cancel up to 
+                                    Allow guests to cancel up to
                                  1 day before arrival to increase your chances of getting bookings.
                                 </p>
                             </div>
 
                             <div class="text-sm text-gray-700 border-l-4 border-blue-500 bg-blue-50 p-4">
                                 <p>
-                                    Guests love flexibility – free cancellation rates are generally the most booked rates on our site. 
+                                    Guests love flexibility – free cancellation rates are generally the most booked rates on our site.
                                     Get your first booking sooner by allowing guests to cancel up to five days before check-in.
                                 </p>
                             </div>
@@ -85,15 +85,15 @@
                     <p class="font-semibold text-base text-gray-800 mb-2">Protection against accidental bookings</p>
 
                     <div class="flex items-center gap-2">
-                        <button 
+                        <button
                             @click="isOn = !isOn"
                             :class="isOn ? 'bg-blue-600' : 'bg-gray-300'"
                             class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none"
                             role="switch"
                             :aria-checked="isOn"
                         >
-                            <span 
-                                :class="isOn ? 'translate-x-6' : 'translate-x-1'" 
+                            <span
+                                :class="isOn ? 'translate-x-6' : 'translate-x-1'"
                                 class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
                             ></span>
                         </button>
@@ -101,7 +101,7 @@
                     </div>
 
                     <p class="text-sm text-gray-500 mt-2">
-                        To avoid you having to spend time handling accidental bookings, we automatically waive cancellation fees 
+                        To avoid you having to spend time handling accidental bookings, we automatically waive cancellation fees
                         for guests that cancel within the first 24 hours of making a booking.
                     </p>
                 </div>
@@ -113,7 +113,7 @@
                     ←
                 </button>
                 <button type="button" @click="step = step + 1"
-                        class=" font-semibold py-3 px-8 rounded  bg-[#3CC0E9] hover:bg-[#29ACD5] text-white"> 
+                        class=" font-semibold py-3 px-8 rounded  bg-[#3CC0E9] hover:bg-[#29ACD5] text-white">
                     Save
                 </button>
             </div>
@@ -143,7 +143,7 @@
             </div>
         </template>
     </div>
-    
+
 </div>
 
 @endsection

@@ -152,7 +152,7 @@
                     breakfast_price: document.getElementById('breakfast_price')?.value || null,
                     parking_available: document.querySelector('input[name="parking"]:checked')?.value || null, // 'free', 'paid', 'no'
                     parking_cost: document.querySelector('input[name="parking"]:checked')?.value === 'paid'
-                        ? document.getElementById('parking_cost')?.value : '0',                        
+                        ? document.getElementById('parking_cost')?.value : '0',
                     parking_reservation: document.querySelector('input[name="reservation_needed"]:checked')?.value || null, // 'yes' / 'no'
                     parking_location: document.querySelector('input[name="location"]:checked')?.value || null, // 'on_site' / 'off_site'
                     parking_type: document.querySelector('input[name="type"]:checked')?.value || null // 'private' / 'public'
@@ -218,7 +218,7 @@
             async saveStep7() {
                 const propertyId = document.getElementById('propertyId').value;
 
-                
+
                 const smokingAllowed = document.getElementById('smokingAllowed').checked;
                 const childrenAllowed = document.getElementById('childrenAllowed').checked;
                 const partiesAllowed = document.getElementById('partiesAllowed').checked;
@@ -307,7 +307,7 @@
                     if (result.success) {
                         console.log('✅ Host profile saved:', result.message);
                         // Optionally move to next step
-                        window.location.href = "{{ url('/partner-homes-edit/' . $propertyId) }}?details=true&propertyType=multiple";                    
+                        window.location.href = "{{ url('/partner-homes-edit/' . $propertyId) }}?details=true&propertyType=multiple";
                     } else {
                         console.error('❌ Save failed:', result.message);
                     }
@@ -556,7 +556,7 @@
                         Property name
                     </label>
                     <input
-                        
+
                         type="text"
                         id="property_name"
                         name="property_name"
@@ -698,7 +698,7 @@
     </template>
 
     <template x-if="step === 5">
-        <div 
+        <div
             class="container mx-auto px-4 py-4 max-w-6xl mb-8">
 
             <!-- Header -->
@@ -1057,7 +1057,7 @@
                 <!-- Header -->
                 <h2 class="text-2xl font-bold mb-8 text-left">House rules</h2>
 
-                
+
                 <div class="flex flex-col md:flex-row gap-6">
                     <!-- Left Section -->
                     <div class="bg-white shadow-md rounded-lg p-6 w-full md:w-2/3">
@@ -1203,7 +1203,7 @@
     </template>
 
     <template x-if="step === 8">
-        <div 
+        <div
             class="max-w-2xl mx-auto space-y-8 px-4 sm:px-6 lg:px-8 lg:ml-32 py-6">
 
             <h2 class="text-2xl font-bold mb-8 text-left">Host Profile</h2>
@@ -1238,7 +1238,7 @@
                     <div x-show="showHost" x-transition class="mt-2 space-y-2">
                         <div>
                             <label class="block text-sm font-semibold text-gray-700">Host name</label>
-                            <input type="text" maxlength="80"  x-model="hostName" 
+                            <input type="text" maxlength="80"  x-model="hostName"
                                 class="mt-1 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
                             <p class="text-right text-xs text-gray-500">0/80</p>
                         </div>
