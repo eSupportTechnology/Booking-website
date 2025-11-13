@@ -11,17 +11,17 @@
     document.addEventListener('alpine:init', () => {
       console.log('Alpine.js initialized');
     });
-    
+
     // Error handling
     window.addEventListener('error', function(e) {
       console.error('JavaScript error:', e.error);
     });
   </script>
-  
+
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet" />
-  
+
   <style>
     body {
       font-family: 'Noto Sans', sans-serif;
@@ -109,9 +109,9 @@
 
   <!-- Main Content -->
   <div x-data="bedroomApp()" class="max-w-3xl mx-auto space-y-8 lg:ml-32 px-4 py-6">
-    
+
     <h2 class="text-3xl font-bold text-gray-900 mt-8" x-text="pageTitle">Add Bedroom</h2>
-    
+
 
 
     <!-- Bed Types Container -->
@@ -129,21 +129,21 @@
                  <rect x="4" y="6" width="20" height="2" rx="1" fill="currentColor"/>
                </svg>
              </div>
-            
+
             <div>
               <p class="font-medium text-gray-900" x-text="bed.name + ' bed(s)'"></p>
               <p class="text-sm text-gray-500" x-text="bed.description"></p>
             </div>
           </div>
-          
+
           <div class="flex items-center gap-3">
-            <button type="button" 
+            <button type="button"
                     @click="decrement(bed.id)"
                     class="w-10 h-10 flex items-center justify-center text-xl text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full border border-gray-200 focus:outline-none transition-colors">
               −
             </button>
             <span class="mx-2 text-lg font-semibold min-w-[24px] text-center" x-text="bed.count"></span>
-            <button type="button" 
+            <button type="button"
                     @click="increment(bed.id)"
                     class="w-10 h-10 flex items-center justify-center text-xl text-blue-500 hover:text-blue-600 hover:bg-blue-50 rounded-full border border-gray-200 focus:outline-none transition-colors">
               +
@@ -182,21 +182,21 @@
                    <rect x="4" y="6" width="20" height="2" rx="1" fill="currentColor"/>
                  </svg>
                </div>
-              
+
               <div>
                 <p class="font-medium text-gray-900" x-text="bed.name + ' bed(s)'"></p>
                 <p class="text-sm text-gray-500" x-text="bed.description"></p>
               </div>
             </div>
-            
+
             <div class="flex items-center gap-3">
-              <button type="button" 
+              <button type="button"
                       @click="decrement(bed.id)"
                       class="w-10 h-10 flex items-center justify-center text-xl text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full border border-gray-200 focus:outline-none transition-colors">
                 −
               </button>
               <span class="mx-2 text-lg font-semibold min-w-[24px] text-center" x-text="bed.count"></span>
-              <button type="button" 
+              <button type="button"
                       @click="increment(bed.id)"
                       class="w-10 h-10 flex items-center justify-center text-xl text-blue-500 hover:text-blue-600 hover:bg-blue-50 rounded-full border border-gray-200 focus:outline-none transition-colors">
                 +
@@ -209,7 +209,7 @@
 
     <!-- Navigation Buttons -->
     <div class="mt-8 flex justify-between items-center">
-      <button type="button" 
+      <button type="button"
               @click="goBack()"
               class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-6 py-3 flex items-center justify-center rounded transition-colors">
         ← Back
@@ -255,38 +255,38 @@
         isLoading: false,
         testValue: 'Alpine.js is working!',
         pageTitle: 'Add Bedroom',
-        
+
         get selectedBedsCount() {
           return this.beds.filter(b => b.count > 0).length;
         },
-        
+
         get totalBeds() {
           return this.beds.reduce((sum, bed) => sum + bed.count, 0);
         },
-        
+
         get mainBeds() {
           return this.beds.slice(0, 4); // First 4 beds (Twin, Full, Queen, King)
         },
-        
+
         get extraBeds() {
           return this.beds.slice(4); // Remaining beds (Sofa Bed, Bunk Bed, Murphy Bed)
         },
-        
+
         goBack() {
           const source = '{{ request('source') }}';
           const step = '{{ request('step') }}';
           const propertyId = '{{ $property->id ?? 'new' }}';
           const wizardState = '{{ request('wizardState') }}';
-          
+
           // Get wizard state from URL parameters
           const urlParams = new URLSearchParams(window.location.search);
           const wizardStateParam = urlParams.get('wizardState');
-          
+
           if (wizardStateParam) {
             try {
               const wizardState = JSON.parse(decodeURIComponent(wizardStateParam));
               console.log('Wizard state found:', wizardState);
-              
+
               // Navigate back to the original form with the wizard state
               const returnUrl = `/partner-apartment-create-2?wizardState=${encodeURIComponent(wizardStateParam)}&step=${wizardState.step || 2}`;
               console.log('Redirecting to:', returnUrl);
@@ -315,25 +315,25 @@
             }
           }
         },
-        
+
         init() {
           // Parse wizard state to see what rooms are available
           const urlParams = new URLSearchParams(window.location.search);
           const wizardStateParam = urlParams.get('wizardState');
-          
+
           if (wizardStateParam) {
             try {
               const wizardState = JSON.parse(decodeURIComponent(wizardStateParam));
-              
+
               // Count bedrooms specifically
               const bedroomKeys = Object.keys(wizardState.rooms || {}).filter(key => key.startsWith('bedroom'));
-              
+
               // Extract bedroom numbers
               const bedroomNumbers = bedroomKeys.map(key => {
                 const match = key.match(/bedroom(\d+)/);
                 return match ? parseInt(match[1]) : 0;
               }).filter(num => num > 0);
-              
+
               if (bedroomNumbers.length > 0) {
                 const nextNumber = Math.max(...bedroomNumbers) + 1;
                 // Next bedroom number calculated
@@ -346,15 +346,15 @@
           } else {
             // Use backend rooms data if no wizard state
             const backendRooms = @json($rooms ?? []);
-            
+
             if (backendRooms && Object.keys(backendRooms).length > 0) {
               const bedroomKeys = Object.keys(backendRooms).filter(key => key.startsWith('bedroom'));
-              
+
               const bedroomNumbers = bedroomKeys.map(key => {
                 const match = key.match(/bedroom(\d+)/);
                 return match ? parseInt(match[1]) : 0;
               }).filter(num => num > 0);
-              
+
               if (bedroomNumbers.length > 0) {
                 const nextNumber = Math.max(...bedroomNumbers) + 1;
                 this.pageTitle = `Add Bedroom ${nextNumber}`;
@@ -363,10 +363,10 @@
               }
             }
           }
-          
+
                       // Check for incoming room data for editing
             const roomDataParam = urlParams.get('roomData');
-            
+
             if (roomDataParam) {
               try {
                 const roomData = JSON.parse(decodeURIComponent(roomDataParam));
@@ -393,16 +393,16 @@
               }
             }
         },
-        
+
             loadRoomData(roomData) {
       // Set room type
       this.roomType = roomData.type || 'bedroom';
-      
+
       // Set page title based on room name
       if (roomData.room_name) {
         this.pageTitle = `Edit ${roomData.room_name}`;
       }
-      
+
       // Load bed counts - handle both new format (beds array) and old format (individual properties)
       if (roomData.beds && Array.isArray(roomData.beds)) {
         // New format: beds array
@@ -416,14 +416,14 @@
         // Old format: individual bed properties
         const bedMappings = {
           'twin': 'Twin',
-          'full': 'Full', 
+          'full': 'Full',
           'queen': 'Queen',
           'king': 'King',
           'bunk': 'Bunk Bed',
           'sofa': 'Sofa Bed',
           'futon': 'Murphy Bed'
         };
-        
+
         Object.keys(bedMappings).forEach(key => {
           if (roomData[key] && roomData[key] > 0) {
             const bedIndex = this.beds.findIndex(b => b.name === bedMappings[key]);
@@ -434,14 +434,14 @@
         });
       }
             },
-        
+
         calculateNextBedroomNumber(wizardState = null) {
           let nextBedroomNumber = 1;
-          
+
           if (wizardState && wizardState.rooms) {
             // Count existing bedrooms from rooms object
             const bedroomKeys = Object.keys(wizardState.rooms).filter(key => key.startsWith('bedroom'));
-            
+
             if (bedroomKeys.length > 0) {
               const bedroomNumbers = bedroomKeys
                 .map(key => {
@@ -449,7 +449,7 @@
                   return match ? parseInt(match[1]) : 0;
                 })
                 .filter(num => num > 0);
-              
+
               if (bedroomNumbers.length > 0) {
                 nextBedroomNumber = Math.max(...bedroomNumbers) + 1;
               }
@@ -457,15 +457,15 @@
           } else {
             // Fallback to URL parameter
             const wizardStateParam = '{{ request('wizardState') }}';
-            
+
             if (wizardStateParam) {
               try {
                 const wizardState = JSON.parse(decodeURIComponent(wizardStateParam));
-                
+
                 // Count existing bedrooms from rooms object
                 if (wizardState.rooms) {
                   const bedroomKeys = Object.keys(wizardState.rooms).filter(key => key.startsWith('bedroom'));
-                  
+
                   if (bedroomKeys.length > 0) {
                     const bedroomNumbers = bedroomKeys
                       .map(key => {
@@ -473,57 +473,57 @@
                         return match ? parseInt(match[1]) : 0;
                       })
                       .filter(num => num > 0);
-                    
+
                     if (bedroomNumbers.length > 0) {
                       nextBedroomNumber = Math.max(...bedroomNumbers) + 1;
                     }
                   }
                 }
-                
+
               } catch (error) {
                 console.error('Error parsing wizard state:', error);
               }
             }
           }
-          
+
           // Only set page title if it hasn't been set by backend data
           if (!this.pageTitle || this.pageTitle === 'Add Bedroom') {
             this.pageTitle = `Add Bedroom ${nextBedroomNumber}`;
           }
         },
-        
+
         increment(bedId) {
           const bed = this.beds.find(b => b.id === bedId);
           if (bed) {
             bed.count++;
           }
         },
-        
+
         decrement(bedId) {
           const bed = this.beds.find(b => b.id === bedId);
           if (bed && bed.count > 0) {
             bed.count--;
           }
         },
-        
+
         async save() {
           this.isLoading = true;
-          
+
           try {
             const selectedBeds = this.beds.filter(b => b.count > 0);
-            
+
             if (selectedBeds.length === 0) {
               alert('Please select at least one bed type.');
               return;
             }
-            
+
             // Generate bedroom name
             let roomName = '';
-            
+
             // Check if we're editing an existing room or creating a new one
             const urlParams = new URLSearchParams(window.location.search);
             const roomDataParam = urlParams.get('roomData');
-            
+
             if (roomDataParam) {
               // Editing existing room - use the existing name
               try {
@@ -538,16 +538,16 @@
               const backendRooms = @json($rooms ?? []);
               console.log('Backend rooms data:', backendRooms);
               let nextBedroomNumber = 1;
-              
+
               // Check if this is explicitly a create action
               const urlParams = new URLSearchParams(window.location.search);
               const action = urlParams.get('action');
               const isCreateAction = action === 'create';
-              
+
               if (backendRooms && Object.keys(backendRooms).length > 0) {
                 const bedroomKeys = Object.keys(backendRooms).filter(key => key.startsWith('bedroom'));
                 console.log('Bedroom keys found:', bedroomKeys);
-                
+
                 if (bedroomKeys.length > 0) {
                   const bedroomNumbers = bedroomKeys
                     .map(key => {
@@ -555,14 +555,14 @@
                       return match ? parseInt(match[1]) : 0;
                     })
                     .filter(num => num > 0);
-                  
+
                   console.log('Bedroom numbers found:', bedroomNumbers);
-                  
+
                   if (bedroomNumbers.length > 0) {
                     // Check if we have a gap in the sequence (e.g., missing Bedroom 1)
                     const sortedNumbers = bedroomNumbers.sort((a, b) => a - b);
                     let nextNumber = 1;
-                    
+
                     // Find the first missing number in the sequence
                     for (let i = 0; i < sortedNumbers.length; i++) {
                       if (sortedNumbers[i] !== nextNumber) {
@@ -571,7 +571,7 @@
                       }
                       nextNumber++;
                     }
-                    
+
                     // If no gaps found, use the next number after the highest
                     if (nextBedroomNumber === 1) {
                       nextBedroomNumber = Math.max(...bedroomNumbers) + 1;
@@ -579,19 +579,19 @@
                   }
                 }
               }
-              
+
               console.log('Calculated next bedroom number:', nextBedroomNumber);
               console.log('Is create action:', isCreateAction);
               roomName = 'Bedroom ' + nextBedroomNumber;
             }
-                
+
             const payload = {
               room_name: roomName,
               beds: selectedBeds,
               source: '{{ request('source') }}',
               step: '{{ request('step') }}'
             };
-             
+
             // Make real API call
             let res = await fetch(`/partner/property/bedroom/{{ $property->id ?? 'new' }}`, {
               method: 'POST',
@@ -601,15 +601,15 @@
               },
               body: JSON.stringify(payload)
             });
-            
+
             let data = await res.json();
-            
+
             if (res.ok && data.success) {
               // Redirect based on source and step from the response
               const source = data.source || '{{ request('source') }}';
               const step = data.step || '{{ request('step') }}';
               const propertyId = '{{ $property->id }}';
-              
+
               if (source === 'multiple') {
                 window.location.href = `/partner/multiple-apartment-2/${propertyId}`;
               } else if (source === 'single') {
@@ -629,7 +629,7 @@
             } else {
               alert('Error: ' + (data.message || 'Could not save bedroom.'));
             }
-           
+
           } catch (err) {
             console.error('Save error:', err);
             alert('Error saving bedroom configuration: ' + err.message);
@@ -639,7 +639,7 @@
         }
       };
     }
-    
+
     function toggleLanguageModal() {
       const modal = document.getElementById('language-modal');
       modal.classList.toggle('hidden');

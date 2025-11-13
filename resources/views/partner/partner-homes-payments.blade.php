@@ -15,7 +15,7 @@
     </style>
 </head>
 <script>
-   
+
     function stepForm() {
         return {
             step: 1,
@@ -755,7 +755,7 @@
 
                     ←
                 </button>
-                <a id="finalLink" href="#"                    
+                <a id="finalLink" href="#"
                         class="bg-[#3CC0E9] text-white font-semibold px-6 py-3 rounded hover:bg-blue-600 transition ">
                         Continue
                 </a>

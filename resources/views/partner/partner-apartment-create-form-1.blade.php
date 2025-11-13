@@ -7,18 +7,18 @@
 <body class="bg-gray-100 text-gray-800">
     <!-- Toast Notification System -->
     <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
-    
+
     <script>
     // Toast notification system
     function showToast(message, type = 'info') {
         const container = document.getElementById('toast-container');
         const toast = document.createElement('div');
-        
+
         // Base classes
         let bgColor = 'bg-blue-500';
         let textColor = 'text-white';
         let icon = 'ℹ️';
-        
+
         // Type-specific styling
         switch(type) {
             case 'success':
@@ -35,21 +35,21 @@
                 icon = '⚠️';
                 break;
         }
-        
+
         toast.className = `${bgColor} ${textColor} px-6 py-3 rounded-lg shadow-lg flex items-center space-x-2 transform transition-all duration-300 translate-x-full`;
         toast.innerHTML = `
             <span class="text-lg">${icon}</span>
             <span class="flex-1">${message}</span>
             <button onclick="this.parentElement.remove()" class="text-white hover:text-gray-200 text-xl font-bold">&times;</button>
         `;
-        
+
         container.appendChild(toast);
-        
+
         // Animate in
         setTimeout(() => {
             toast.classList.remove('translate-x-full');
         }, 100);
-        
+
         // Auto remove after 5 seconds
         setTimeout(() => {
             if (toast.parentElement) {
@@ -166,16 +166,16 @@
                     addressTypeId: addressTypeId,
                     selectedChannels: selectedChannels
                 });
-                
+
                 // For multiple apartments with same address, we need to handle the redirect after form submission
                 console.log('Checking condition - selected:', selected, 'sameAddress:', sameAddress);
                 console.log('Condition result:', selected === 'Multiple' && sameAddress === 'yes');
-                
+
                 if (selected === 'Multiple' && sameAddress === 'yes') {
                     console.log('AJAX submission triggered');
                     // Prevent default form submission and handle it manually
                     event.preventDefault();
-                    
+
                     // Submit form via AJAX
                     const formData = new FormData(event.target);
                     fetch(event.target.action, {

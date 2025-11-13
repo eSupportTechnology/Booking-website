@@ -22,7 +22,7 @@
 
 <body class="bg-gray-100 text-gray-800" x-data="{ step: 1, selectedBox: null,subtypes: [] }">
 
-    
+
 
    <div x-data="{ step: 1, selectedBox: null }">
     <!-- Start Form -->
@@ -41,7 +41,7 @@
 
             <!-- Main Step 1 Content -->
             <div x-show="step === 1" x-cloak x-data="{
-                
+
                 subcategories: {{ Js::from($subcategories) }},
                 async submitStep1() {
                     if (this.selected === '') return;
@@ -168,8 +168,8 @@
                         if (!this.selectedBox || !this.propertyId) return;
                         if (this.selectedBox > 6) {
                             window.location.href = `/partner-homes-form2/${propertyId}/${this.selectedBox}`
-                                        
-                                  
+
+
                         }
                         const response = await fetch(`/partner/property/${this.selectedBox}/step2/${this.propertyId}`, {
                             method: 'POST',
@@ -188,7 +188,7 @@
                             const data = await response.json();
                             this.step = 3;
                             console.log('Step 2 selectedBox:', this.selectedBox);
-                         
+
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Property subcategory saved successfully',
@@ -1687,7 +1687,7 @@
                                                                                 <p class="text-sm text-gray-600" x-text="getBedSummary(key)"></p>
                                                                             </div>
                                                                             <span class="text-xs text-blue-600 hover:underline">Edit</span>
-                                                                            <span class="text-xs text-red-600 hover:underline cursor-pointer" @click="deleteRoom(key)">Delete</span>    
+                                                                            <span class="text-xs text-red-600 hover:underline cursor-pointer" @click="deleteRoom(key)">Delete</span>
                                                                         </div>
                                                                     </a>
                                                                 </template>
@@ -1979,7 +1979,7 @@
 
                                         <!-- Steps for 'multiple' -->
                                         <template x-if="selected === 'multiple'"
-                                            x-data="{ 
+                                            x-data="{
                                                         currentUnit: 1, unitFacilities: Array.from({ length: propertyCount }, () => []),unitServices: Array.from({ length: 3 }, () => ({ breakfast: '', parking: '',hostprofile: '' ,languages: [], houseRules: {
                                                         smokingAllowed: false,
                                                         childrenAllowed: true,
@@ -2057,8 +2057,8 @@
                                                         </div>
 
                                                         <!-- Heading -->
-                                                        <h2 class="text-lg md:text-xl font-bold text-gray-800 mb-8" x-text="sameAddress === 'yes' 
-                                                            ? 'Multiple holiday homes in the same location where guests can book an entire home' 
+                                                        <h2 class="text-lg md:text-xl font-bold text-gray-800 mb-8" x-text="sameAddress === 'yes'
+                                                            ? 'Multiple holiday homes in the same location where guests can book an entire home'
                                                             : 'Multiple holiday homes in different locations that guests can book separately'">
                                                         </h2>
 

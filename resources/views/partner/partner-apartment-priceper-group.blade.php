@@ -4,14 +4,14 @@
 
 @section('content')
   <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-  
-  
+
+
 
 <div x-data="{ enabled: true }" class="max-w-xl mx-auto space-y-8 lg:ml-32 px-4 py-6">
        <h1 class="text-2xl font-bold text-gray-800 mb-4">Price per group size</h1>
   <!-- Header -->
   <div class="bg-white p-6 rounded-lg shadow-md">
-  
+
 
     <p class="text-sm text-gray-700 mb-1">
       Offering lower rates for groups of less than 2 makes your property more attractive to potential guests.
@@ -56,7 +56,7 @@
       </table>
     </div>
 
-   
+
   </div>
     <div class="flex justify-between mt-6 ">
     <!-- Back Button -->

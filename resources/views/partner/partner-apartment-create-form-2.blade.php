@@ -6,18 +6,18 @@
 <body class="bg-gray-50 text-gray-800">
     <!-- Toast Notification System -->
     <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
-    
+
     <script>
     // Toast notification system
     function showToast(message, type = 'info') {
         const container = document.getElementById('toast-container');
         const toast = document.createElement('div');
-        
+
         // Base classes
         let bgColor = 'bg-blue-500';
         let textColor = 'text-white';
         let icon = 'ℹ️';
-        
+
         // Type-specific styling
         switch(type) {
             case 'success':
@@ -34,21 +34,21 @@
                 icon = '⚠️';
                 break;
         }
-        
+
         toast.className = `${bgColor} ${textColor} px-6 py-3 rounded-lg shadow-lg flex items-center space-x-2 transform transition-all duration-300 translate-x-full`;
         toast.innerHTML = `
             <span class="text-lg">${icon}</span>
             <span class="flex-1">${message}</span>
             <button onclick="this.parentElement.remove()" class="text-white hover:text-gray-200 text-xl font-bold">&times;</button>
         `;
-        
+
         container.appendChild(toast);
-        
+
         // Animate in
         setTimeout(() => {
             toast.classList.remove('translate-x-full');
         }, 100);
-        
+
         // Auto remove after 5 seconds
         setTimeout(() => {
             if (toast.parentElement) {
@@ -62,7 +62,7 @@
         }, 5000);
     }
     </script>
-    
+
     <script>
       // Ensure CSRF token is always sent with fetch/AJAX requests
       document.addEventListener('DOMContentLoaded', function () {
@@ -80,7 +80,7 @@
         }
       });
     </script>
-    
+
     <!-- Property Data from Backend -->
     @if(isset($propertyData) && $propertyData)
     <script id="property-data" type="application/json">
@@ -103,10 +103,10 @@
     </script>
     @endif
     @endif
-    
+
     <!-- Header -->
-    
-    
+
+
     <!-- Main Alpine.js Application -->
     <div
       x-data="wizardApp()"
@@ -792,9 +792,9 @@
       <div class="max-w-2xl mx-auto space-y-8 lg:ml-32">
         <!-- Heading -->
         <h2 class="text-2xl font-bold text-gray-900 mt-8">What can guests use at your place?</h2>
-        
-        
-        
+
+
+
         <!-- Amenities Section Container -->
         <div class="bg-white rounded-lg shadow-sm p-6 space-y-6">
           @foreach ($groupedAmenities as $category => $items)
@@ -1020,8 +1020,8 @@
         <div class="space-y-2 mb-4" x-show="availableLanguages.length > 0">
           <template x-for="commonLang in ['English', 'French', 'German', 'Hindi']" :key="commonLang">
             <label class="flex items-center cursor-pointer text-sm sm:text-base">
-              <input 
-                type="checkbox" 
+              <input
+                type="checkbox"
                 class="mr-2"
                 :value="getLanguageIdByName(commonLang)"
                 x-model="selectedLanguages"
@@ -1045,7 +1045,7 @@
               <template x-for="langId in selectedLanguages" :key="langId">
                 <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800">
                   <span x-text="getLanguageName(langId)"></span>
-                  <button 
+                  <button
                     @click="removeLanguage(langId)"
                     class="ml-2 text-blue-600 hover:text-blue-800"
                     type="button"
@@ -1091,7 +1091,7 @@
               @click.away="showDropdown = false"
             >
               <template x-for="language in filteredLanguages" :key="language.id">
-                <li 
+                <li
                   @click="selectLanguage(language.id, language.name)"
                   class="p-2 hover:bg-blue-100 cursor-pointer text-sm sm:text-base"
                   :class="{ 'bg-gray-100 text-gray-500': isLanguageSelected(language.id) }"
@@ -1240,7 +1240,7 @@
   <button
    type="button" @click="propertyWizardStep--"
         :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-  
+
       class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
       ←
   </button>
@@ -1272,7 +1272,7 @@
             You can easily customise these house rules later and additional house rules can be set on the Policies page of the extranet after you complete registration.
           </p>
 
-          
+
         </div>
       </div>
 
@@ -1354,7 +1354,7 @@
   <button
    type="button" @click="propertyWizardStep--"
         :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-  
+
       class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
       ←
   </button>
@@ -1445,10 +1445,10 @@
           <p class="text-sm text-gray-600 mb-4">
             The more you upload, the more likely you are to get bookings. You can add more later.
           </p>
-          
+
           <!-- Toast notification for photo requirement -->
-          <div 
-            x-show="uploadedPhotos.length === 0" 
+          <div
+            x-show="uploadedPhotos.length === 0"
             x-transition:enter="transition ease-out duration-300"
             x-transition:enter-start="opacity-0 transform translate-y-2"
             x-transition:enter-end="opacity-100 transform translate-y-0"
@@ -1470,9 +1470,9 @@
               </div>
             </div>
           </div>
-          
-          <div 
-            x-show="uploadedPhotos.length === 1" 
+
+          <div
+            x-show="uploadedPhotos.length === 1"
             x-transition:enter="transition ease-out duration-300"
             x-transition:enter-start="opacity-0 transform translate-y-2"
             x-transition:enter-end="opacity-100 transform translate-y-0"
@@ -1494,9 +1494,9 @@
               </div>
             </div>
           </div>
-          
-          <div 
-            x-show="uploadedPhotos.length >= 1" 
+
+          <div
+            x-show="uploadedPhotos.length >= 1"
             x-transition:enter="transition ease-out duration-300"
             x-transition:enter-start="opacity-0 transform translate-y-2"
             x-transition:enter-end="opacity-100 transform translate-y-0"
@@ -1518,7 +1518,7 @@
               </div>
             </div>
           </div>
-          
+
           <!-- Upload box with drag and drop -->
           <div
             class="border border-dashed border-gray-400 rounded-lg p-6 text-center bg-gray-50 mb-6"
@@ -1715,7 +1715,7 @@
 
       <!-- Price input and Tip 1 in two separate columns -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
-  
+
   <!-- Price input card (2/3 width) -->
   <div class="md:col-span-2 bg-white border rounded-lg p-6 shadow-sm space-y-4">
     <label class="block font-semibold text-base text-gray-700">How much do you want to charge per night?</label>
@@ -1767,7 +1767,7 @@
   <!-- Tip Box 1 (1/3 width, independent height) -->
   <div x-show="showTip1" class="relative bg-white border rounded-lg p-4 shadow-sm text-sm text-gray-700">
     <button @click="showTip1 = false" class="absolute top-2 right-2 text-gray-500 font-semibold">✕</button>
-    
+
     <div class="flex items-center mb-2">
       <img src="{{ asset('assets/system-uicons_lightbulb-on.svg') }}" alt="Tip Icon" class="w-6 h-6 mr-2">
       <strong>What if I'm not sure about my price?</strong>
@@ -1780,7 +1780,7 @@
 
       <!-- Discount and Tip 2 -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        
+
         <!-- Discount card -->
         <div class="md:col-span-2 bg-white border rounded-lg p-6 shadow-sm space-y-3">
           <label class="inline-flex items-center">
@@ -1788,12 +1788,12 @@
             <span class="ml-2 font-medium text-gray-700 font-semibold">Get guests' attention with a 20% discount</span>
           </label>
           <p class="text-sm text-gray-600">
-            Give 20% off your first 3 bookings or for 90 days, whichever comes first. 
+            Give 20% off your first 3 bookings or for 90 days, whichever comes first.
             <a href="#" class="text-blue-600 underline">Learn more</a>
           </p>
           <hr class="my-4">
           <p class="text-sm text-gray-800">
-            <del class="text-gray-500">US$ 30.00</del> 
+            <del class="text-gray-500">US$ 30.00</del>
             <span class="text-green-600 font-semibold">US$ 24.00 per night</span>
           </p>
         </div>
@@ -1806,7 +1806,7 @@
             <strong>Rules for setting up a promotion</strong>
           </div>
           <p>
-            Make sure you're giving a genuine discount. It must represent a real discount in line with consumer protection rules. 
+            Make sure you're giving a genuine discount. It must represent a real discount in line with consumer protection rules.
             <a href="#" class="text-blue-600 underline">Learn More</a>
           </p>
         </div>
@@ -1833,7 +1833,7 @@
 
 
 <template x-if="pricingWizardStep === 3">
-    
+
     <div class="px-4 py-8 mt-6 w-full max-w-2xl mx-auto lg:ml-24 space-y-6">
 
     <!-- Main Title -->
@@ -1928,7 +1928,7 @@
 
       </div>
 
-   
+
     </div>
 
     <h2 class="text-xl font-semibold text-gray-800">Non-refundable rate plan</h2>
@@ -1992,7 +1992,7 @@
   </button>
 
   <!-- Continue Button -->
-  
+
   <button       @click="pricingWizardStep++" class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ">
     Continue
   </button>
@@ -2001,7 +2001,7 @@
   </div>
   </template>
 
- 
+
 
   <template x-if="pricingWizardStep === 4">
   <div x-data="{
@@ -2168,7 +2168,7 @@ function calendarComponent() {
                 <input type="radio" value="365" x-model="availabilityOption" class="form-radio text-blue-600">
                 <span class="text-sm">Continuously extend my availability to:</span>
             </label>
-            
+
         </div>
 
         <div x-show="availabilityOption === '365'" class="pl-6">
@@ -2206,13 +2206,13 @@ function calendarComponent() {
 
         <div x-show="syncOption === 'yes'" class="space-y-2 border border-gray-300 rounded p-4">
           <p class="text-sm">Paste your iCal link here</p>
-          <input 
-              type="text" 
-              placeholder="Paste your iCal link here" 
+          <input
+              type="text"
+              placeholder="Paste your iCal link here"
               x-model="icalUrl"
               class="border border-gray-300 p-2 rounded w-full"
           >
-          <button 
+          <button
               class="bg-blue-700 text-white px-4 py-1 rounded mt-2"
               :disabled="!icalUrl.trim()"
               :class="{ 'opacity-50 cursor-not-allowed': !icalUrl.trim() }"
@@ -2230,7 +2230,7 @@ function calendarComponent() {
     </div>
   </div>
 
-  
+
 </div>
 
 <!-- LONG STAY SECTION -->
@@ -2245,7 +2245,7 @@ function calendarComponent() {
 
       <p class="text-sm font-semibold">Will you accept reservations for stays over 30 nights?</p>
       <div class="flex flex-col sm:flex-row gap-4">
-         
+
         <label class="flex items-center space-x-2">
           <input type="radio" value="yes" x-model="allowLongStay" class="form-radio text-blue-600">
           <span>Yes</span>
@@ -2268,7 +2268,7 @@ function calendarComponent() {
     </div>
   </div>
 
-  
+
 </div>
 
 
@@ -2283,7 +2283,7 @@ function calendarComponent() {
   </button>
 
   <!-- Continue Button -->
-  
+
   <button       @click="savePricing()" class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ">
     Continue
   </button>
@@ -2478,18 +2478,18 @@ function wizardApp() {
         wizardStep: 1,
         pricingWizardStep: 1,
         bedroomStep: 1,
-        
-        
+
+
         // Initialize watchers
         async init() {
             this.log('Alpine.js initialized');
-            
+
             // Check if in edit mode
             this.isEdit = typeof window.isEditMode !== 'undefined' ? window.isEditMode : (typeof isEdit !== 'undefined' ? isEdit : false);
             if (this.isEdit) {
                 console.log('Edit mode detected');
             }
-            
+
             this.loadLanguages();
             console.log('Before restoreWizardState - step:', this.step);
             this.restoreWizardState();
@@ -2498,12 +2498,12 @@ function wizardApp() {
             console.log('After handleBedroomReturn - step:', this.step);
             await this.loadPropertyData();
             console.log('After loadPropertyData - step:', this.step);
-            
+
             // Check completion status for existing properties
             if (this.propertyId !== 'new') {
                 await this.checkBasicInfoCompletion();
             }
-            
+
             this.logCurrentState();
             console.log('Initial rooms state:', this.rooms);
             console.log('Final wizard state after initialization:', {
@@ -2513,41 +2513,41 @@ function wizardApp() {
                 pricingWizardStep: this.pricingWizardStep,
                 bedroomStep: this.bedroomStep
             });
-            
+
             // Re-enabled basic watchers without saveWizardState calls
             this.$watch('step', (newVal, oldVal) => {
                 if (oldVal !== undefined) {
                     this.logStepChange(oldVal, newVal, 'main step');
                 }
             });
-            
+
             this.$watch('wizardStep', (newVal, oldVal) => {
                 if (oldVal !== undefined) {
                     this.logStepChange(oldVal, newVal, 'wizard step');
                 }
                 this.currentSubStep = newVal;
             });
-            
+
             this.$watch('propertyWizardStep', (newVal, oldVal) => {
                 if (oldVal !== undefined) {
                     this.logStepChange(oldVal, newVal, 'property wizard step');
                 }
                 this.currentSubStep = newVal;
             });
-            
+
             this.$watch('pricingWizardStep', (newVal, oldVal) => {
                 if (oldVal !== undefined) {
                     this.logStepChange(oldVal, newVal, 'pricing wizard step');
                 }
                 this.currentSubStep = newVal;
             });
-            
+
             this.$watch('bedroomStep', (newVal, oldVal) => {
                 if (oldVal !== undefined) {
                     this.logStepChange(oldVal, newVal, 'bedroom step');
                 }
             });
-            
+
             // Watch for step changes to check completion status
             this.$watch('step', async (newStep, oldStep) => {
                 if (oldStep !== undefined && newStep === 1 && this.propertyId !== 'new') {
@@ -2555,7 +2555,7 @@ function wizardApp() {
                     await this.checkBasicInfoCompletion();
                 }
             });
-            
+
             // Ensure default rooms are always present
             this.$watch('rooms', (newRooms) => {
                 if (newRooms) {
@@ -2564,7 +2564,7 @@ function wizardApp() {
                         'livingRoom': { name: 'Living room', twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 },
                         'otherSpaces': { name: 'Other spaces', twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 }
                     };
-                    
+
                     // Ensure default rooms are always present
                     this.rooms = { ...defaultRooms, ...newRooms };
                     console.log('Rooms watcher triggered. Current rooms:', this.rooms);
@@ -2576,12 +2576,12 @@ function wizardApp() {
         async goToStep(stepNumber, context = '') {
             this.log('Navigating to step ' + stepNumber + ' ' + context);
             this.step = stepNumber;
-            
+
             // Check completion status when navigating to basic info step
             if (stepNumber === 1 && this.propertyId !== 'new') {
                 await this.checkBasicInfoCompletion();
             }
-            
+
             this.saveWizardState();
         },
 
@@ -2637,7 +2637,7 @@ function wizardApp() {
             if (this.propertyId === 'new') {
                 return false;
             }
-            
+
             try {
                 const response = await fetch(`/partner/property/${this.propertyId}/check-basic-info`, {
                     method: 'GET',
@@ -2646,7 +2646,7 @@ function wizardApp() {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                     }
                 });
-                
+
                 if (response.ok) {
                     const data = await response.json();
                     this.stepCompletionStatus.basicInfo = data.completed;
@@ -2671,7 +2671,7 @@ function wizardApp() {
         channelManager: 'yes',
         isLoading: false,
         isEdit: false,
-        
+
         // Guest and amenity data
         guests: 4,
         bathrooms: 2,
@@ -2680,7 +2680,7 @@ function wizardApp() {
         apartmentSize: 100,
         apartmentUnit: 'square_meters',
         selectedAmenities: [],
-        
+
         // Rooms data - using single rooms object for all bedrooms
         rooms: {
             'bedroom1': { name: 'Bedroom 1', twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 },
@@ -2692,7 +2692,7 @@ function wizardApp() {
         nextRoomIndex: 2,
         showBedTypeSelector: false,
         showAllBedTypesInModal: false,
-        
+
         // Parking data
         parkingAvailable: '',
         parkingCurrency: 'USD',
@@ -2701,12 +2701,12 @@ function wizardApp() {
         parkingReservation: '',
         parkingLocation: '',
         parkingType: '',
-        
+
         // Breakfast data
         breakfastServed: '',
         breakfastIncluded: '',
         breakfastTypes: [],
-        
+
         // Language data
         showAdditionalLanguages: false,
         showLanguageModal: false,
@@ -2726,7 +2726,7 @@ function wizardApp() {
             { id: 9, name: 'Chinese' },
             { id: 10, name: 'Japanese' }
         ],
-        
+
         // Business/Individual data
         ownershipType: '',
         individual: {
@@ -2834,7 +2834,7 @@ function wizardApp() {
         hasBedCounts(roomId) {
             const beds = this.rooms[roomId];
             if (!beds) return false;
-            return (beds.twin > 0 || beds.full > 0 || beds.queen > 0 || beds.king > 0 || 
+            return (beds.twin > 0 || beds.full > 0 || beds.queen > 0 || beds.king > 0 ||
                     beds.bunk > 0 || beds.sofa > 0 || beds.futon > 0);
         },
 
@@ -2849,9 +2849,9 @@ function wizardApp() {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                     }
                 });
-                
+
                 console.log('Languages API response status:', response.status);
-                
+
                 if (response.ok) {
                     const data = await response.json();
                     console.log('Languages API response data:', data);
@@ -2859,7 +2859,7 @@ function wizardApp() {
                     this.filteredLanguages = this.availableLanguages;
                     this.log('Languages loaded from database: ' + this.availableLanguages.length);
                     console.log('Available languages after loading:', this.availableLanguages);
-                    
+
                     // Clear selected languages to prevent ID mismatches
                     this.selectedLanguages = [];
                     console.log('Cleared selected languages to prevent ID mismatches');
@@ -2915,7 +2915,7 @@ function wizardApp() {
                     ];
                     this.filteredLanguages = this.availableLanguages;
                     this.log('Using fallback languages: ' + this.availableLanguages.length);
-                    
+
                     // Clear selected languages to prevent ID mismatches
                     this.selectedLanguages = [];
                     console.log('Cleared selected languages to prevent ID mismatches');
@@ -2972,7 +2972,7 @@ function wizardApp() {
                 ];
                 this.filteredLanguages = this.availableLanguages;
                 this.log('Using fallback languages: ' + this.availableLanguages.length);
-                
+
                 // Clear selected languages to prevent ID mismatches
                 this.selectedLanguages = [];
                 console.log('Cleared selected languages to prevent ID mismatches');
@@ -2992,14 +2992,14 @@ function wizardApp() {
 
         selectLanguage(languageId, languageName) {
             this.log('Selecting language: ' + languageId + ', ' + languageName);
-            
+
             // Ensure languageId is a number
             const numericId = parseInt(languageId);
             if (isNaN(numericId)) {
                 console.error('Invalid language ID:', languageId);
                 return;
             }
-            
+
             if (!this.selectedLanguages.includes(numericId)) {
                 this.selectedLanguages.push(numericId);
                 this.log('Language added with ID: ' + numericId);
@@ -3009,14 +3009,14 @@ function wizardApp() {
 
         removeLanguage(languageId) {
             this.log('Removing language: ' + languageId);
-            
+
             // Ensure languageId is a number
             const numericId = parseInt(languageId);
             if (isNaN(numericId)) {
                 console.error('Invalid language ID for removal:', languageId);
                 return;
             }
-            
+
             const index = this.selectedLanguages.indexOf(numericId);
             if (index > -1) {
                 this.selectedLanguages.splice(index, 1);
@@ -3027,17 +3027,17 @@ function wizardApp() {
         getLanguageName(languageId) {
             console.log('Getting language name for ID:', languageId);
             console.log('Available languages:', this.availableLanguages);
-            
+
             // Ensure languageId is a number
             const numericId = parseInt(languageId);
             if (isNaN(numericId)) {
                 console.error('Invalid language ID for name lookup:', languageId);
                 return 'Unknown';
             }
-            
+
             const language = this.availableLanguages.find(l => l.id === numericId);
             console.log('Found language:', language);
-            
+
             if (language) {
                 return language.name;
             } else {
@@ -3049,10 +3049,10 @@ function wizardApp() {
         getLanguageIdByName(languageName) {
             console.log('Getting language ID for name:', languageName);
             console.log('Available languages:', this.availableLanguages);
-            
+
             const language = this.availableLanguages.find(l => l.name === languageName);
             console.log('Found language for name:', language);
-            
+
             return language ? language.id : null;
         },
 
@@ -3138,7 +3138,7 @@ function wizardApp() {
             if (!(await this.ensurePropertyId())) {
                 return;
             }
-            
+
             try {
                 const response = await fetch(`/partner/property/${this.propertyId}`, {
                     method: 'PATCH',
@@ -3150,13 +3150,13 @@ function wizardApp() {
                         title: this.title
                     })
                 });
-                
+
                 if (response.ok) {
                     this.wizardStep++;
                     this.saveWizardState();
                     console.log('Property name saved successfully');
                     showToast('Property name saved successfully!', 'success');
-                    
+
                     // Mark basic info as completed if all required fields are saved
                     if (this.wizardStep >= 3) {
                         this.stepCompletionStatus.basicInfo = true;
@@ -3179,7 +3179,7 @@ function wizardApp() {
             if (!(await this.ensurePropertyId())) {
                 return;
             }
-            
+
             try {
                 const response = await fetch(`/partner/property/${this.propertyId}`, {
                     method: 'PATCH',
@@ -3195,7 +3195,7 @@ function wizardApp() {
                         zipcode: this.zipcode
                     })
                 });
-                
+
                 if (response.ok) {
                     this.wizardStep++;
                     this.saveWizardState();
@@ -3211,11 +3211,11 @@ function wizardApp() {
 
         async saveChannelManager() {
             this.log('Saving channel manager preference');
-            
+
             if (!(await this.ensurePropertyId())) {
                 return;
             }
-            
+
             try {
                 const response = await fetch(`/partner/property/${this.propertyId}`, {
                     method: 'PATCH',
@@ -3227,7 +3227,7 @@ function wizardApp() {
                         channel_manager: this.channelManager
                     })
                 });
-                
+
                 if (response.ok) {
                     this.step++;
                     this.saveWizardState();
@@ -3242,32 +3242,32 @@ function wizardApp() {
 
         async savePropertyDetails() {
             this.log('Saving property details');
-            
+
             // Validate required fields
             if (!this.guests || this.guests < 1) {
                 showToast('Please set the number of guests (minimum 1)', 'warning');
                 return;
             }
-            
+
             if (!this.bathrooms || this.bathrooms < 0) {
                 showToast('Please set the number of bathrooms', 'warning');
                 return;
             }
-            
+
             if (!this.allowChildren) {
                 showToast('Please select whether children are allowed', 'warning');
                 return;
             }
-            
+
             if (!this.offerCribs) {
                 showToast('Please select whether infants are allowed', 'warning');
                 return;
             }
-            
+
             if (!(await this.ensurePropertyId())) {
                 return;
             }
-            
+
             try {
                 console.log('Saving property details with data:', {
                     guests: this.guests,
@@ -3277,7 +3277,7 @@ function wizardApp() {
                     apartment_size: this.apartmentSize,
                     apartment_unit: this.apartmentUnit
                 });
-                
+
                 const response = await fetch(`/partner/property/${this.propertyId}`, {
                     method: 'PATCH',
                     headers: {
@@ -3293,7 +3293,7 @@ function wizardApp() {
                         apartment_unit: this.apartmentUnit
                     })
                 });
-                
+
                 if (response.ok) {
                     const result = await response.json();
                     console.log('Property details saved successfully:', result);
@@ -3313,11 +3313,11 @@ function wizardApp() {
 
         async saveHostProfile() {
             this.log('Saving host profile');
-            
+
             if (!(await this.ensurePropertyId())) {
                 return;
             }
-            
+
             try {
                 const response = await fetch(`/partner/property/${this.propertyId}/host-profile`, {
                     method: 'POST',
@@ -3337,7 +3337,7 @@ function wizardApp() {
                         host_name: this.hostProfile.host_name
                     })
                 });
-                
+
                 if (response.ok) {
                     // Move to pricing section after completing property wizard
                     this.step = 3; // Move to pricing section
@@ -3367,18 +3367,18 @@ function wizardApp() {
 
         logParkingChange(fieldName, value) {
             this.log('Parking field changed: ' + fieldName + ' = ' + value);
-            
+
             // Clear parking details when "No" is selected
             if (fieldName === 'parkingAvailable' && value === 'no') {
                 this.clearParkingDetails();
             }
-            
+
             // Clear parking cost when switching to "free"
             if (fieldName === 'parkingAvailable' && value === 'free') {
                 this.clearParkingCost();
             }
         },
-        
+
         clearParkingDetails() {
             this.parkingCost = '';
             this.parkingReservation = '';
@@ -3386,7 +3386,7 @@ function wizardApp() {
             this.parkingType = '';
             this.log('Parking details cleared');
         },
-        
+
         clearParkingCost() {
             this.parkingCost = '';
             this.log('Parking cost cleared');
@@ -3400,7 +3400,7 @@ function wizardApp() {
             console.log('Saving propertyWizardStep:', this.propertyWizardStep);
             console.log('Saving pricingWizardStep:', this.pricingWizardStep);
             console.log('Saving propertyId:', this.propertyId);
-            
+
             const state = {
                 propertyId: this.propertyId, // Add property ID to saved state
                 currentSubStep: this.currentSubStep,
@@ -3461,21 +3461,21 @@ function wizardApp() {
 
         restoreWizardState() {
             console.log('=== SIMPLE WIZARD STATE RESTORATION ===');
-            
+
             try {
                 const savedState = sessionStorage.getItem('wizardState');
                 console.log('Saved state from sessionStorage:', savedState);
-                
+
                 if (savedState) {
                     const state = JSON.parse(savedState);
                     console.log('Parsed state:', state);
-                    
+
                     // Simple property ID check
                     if (state.propertyId && this.propertyId === 'new' && state.propertyId !== 'new') {
                         this.propertyId = state.propertyId;
                         console.log('Updated propertyId to:', this.propertyId);
                     }
-                    
+
                     // Restore basic wizard state
                     if (state.step) this.step = state.step;
                     if (state.wizardStep) this.wizardStep = state.wizardStep;
@@ -3483,13 +3483,13 @@ function wizardApp() {
                     if (state.pricingWizardStep) this.pricingWizardStep = state.pricingWizardStep;
                     if (state.bedroomStep) this.bedroomStep = state.bedroomStep;
                     if (state.currentSubStep) this.currentSubStep = state.currentSubStep;
-                    
+
                     // Restore completion status
                     if (state.stepCompletionStatus) {
                         this.stepCompletionStatus = { ...this.stepCompletionStatus, ...state.stepCompletionStatus };
                         console.log('Restored completion status:', this.stepCompletionStatus);
                     }
-                    
+
                     console.log('Restored state - step:', this.step, 'wizardStep:', this.wizardStep);
                 } else {
                     console.log('No saved state found');
@@ -3497,7 +3497,7 @@ function wizardApp() {
             } catch (error) {
                 console.error('Error in restoreWizardState:', error);
             }
-            
+
             console.log('=== END SIMPLE RESTORATION ===');
         },
 
@@ -3523,7 +3523,7 @@ function wizardApp() {
 
         handleBedroomReturn() {
             this.log('Handling bedroom return');
-            
+
             // Check for bedroom data in sessionStorage (old method)
             const bedroomData = sessionStorage.getItem('bedroomData');
             if (bedroomData) {
@@ -3531,28 +3531,28 @@ function wizardApp() {
                 sessionStorage.removeItem('bedroomData');
                 return;
             }
-            
+
             // Check for bedroom data in URL parameters (new method)
             const urlParams = new URLSearchParams(window.location.search);
             const returnFromBedroom = urlParams.get('returnFromBedroom');
             const bedroomDataParam = urlParams.get('bedroomData');
-            
+
             console.log('Checking URL parameters for bedroom return');
             console.log('returnFromBedroom:', returnFromBedroom);
             console.log('bedroomData param:', bedroomDataParam);
-            
+
             if (returnFromBedroom === 'true' && bedroomDataParam) {
                 try {
                     const bedroomData = JSON.parse(decodeURIComponent(bedroomDataParam));
                     console.log('Parsed bedroom data from URL:', bedroomData);
                     this.handleBedroomData(JSON.stringify(bedroomData));
-                    
+
                     // Clean up URL parameters
                     const newUrl = new URL(window.location);
                     newUrl.searchParams.delete('returnFromBedroom');
                     newUrl.searchParams.delete('bedroomData');
                     window.history.replaceState({}, '', newUrl);
-                    
+
                     console.log('Cleaned up URL parameters');
                 } catch (error) {
                     console.error('Error parsing bedroom data from URL:', error);
@@ -3564,7 +3564,7 @@ function wizardApp() {
             try {
                 const bedroomData = JSON.parse(bedroomDataString);
                 console.log('Received bedroom data:', bedroomData);
-                
+
                 // Convert bed data from the new format to the old format
                 const bedCounts = {};
                 if (bedroomData.beds && Array.isArray(bedroomData.beds)) {
@@ -3572,10 +3572,10 @@ function wizardApp() {
                         bedCounts[bed.name.toLowerCase().replace(' ', '_')] = bed.count;
                     });
                 }
-                
+
                 const roomName = bedroomData.room_name || bedroomData.name || 'Bedroom 1';
                 const roomKey = roomName.toLowerCase().replace(' ', '');
-                
+
                 // Add or update the room in the rooms object
                 this.rooms[roomKey] = {
                     name: roomName,
@@ -3587,7 +3587,7 @@ function wizardApp() {
                     sofa: bedCounts.sofa || 0,
                     futon: bedCounts.futon || 0
                 };
-                
+
                 this.log('Bedroom data saved: ' + roomName);
                 console.log('Updated rooms:', this.rooms);
             } catch (error) {
@@ -3644,14 +3644,14 @@ function wizardApp() {
                     this.apartmentUnit = propertyData.apartment_unit || 'square_meters';
                     this.selectedAmenities = propertyData.selected_amenities || [];
                     console.log('Full propertyData from backend:', propertyData);
-                    
+
                     // Ensure default rooms are always present
                     const defaultRooms = {
                         'bedroom1': { name: 'Bedroom 1', twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 },
                         'livingRoom': { name: 'Living room', twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 },
                         'otherSpaces': { name: 'Other spaces', twin: 0, full: 0, queen: 0, king: 0, bunk: 0, sofa: 0, futon: 0 }
                     };
-                    
+
                     // Merge backend rooms with default rooms
                     this.rooms = { ...defaultRooms, ...(propertyData.rooms || {}) };
                     console.log('Loaded rooms from backend:', this.rooms);
@@ -3682,7 +3682,7 @@ function wizardApp() {
                     this.pricing = propertyData.pricing || this.pricing;
                     this.hostProfile = propertyData.host_profile || this.hostProfile;
                     this.uploadedPhotos = propertyData.uploaded_photos || [];
-                    
+
                     this.log('Updated form fields:', {
                         propertyId: this.propertyId,
                         title: this.title,
@@ -3700,14 +3700,14 @@ function wizardApp() {
         // Form submission methods
         async saveAdditionalDetails() {
             this.log('Saving additional details');
-            
+
             // Check if propertyId is valid
             if (!this.propertyId || this.propertyId === 'new') {
                 this.log('Validation failed: Property ID is missing');
                 showToast('Property ID is missing. Please refresh the page.', 'error');
                 return;
             }
-            
+
             // For step 4 (languages), use dedicated language route
             if (this.propertyWizardStep === 4) {
                 this.log('Saving languages for step 4: ' + this.selectedLanguages);
@@ -3715,7 +3715,7 @@ function wizardApp() {
                     languages: this.selectedLanguages
                 };
                 this.isLoading = true;
-                
+
                 try {
                     const res = await fetch('/partner/property/' + this.propertyId + '/languages', {
                         method: 'POST',
@@ -3726,7 +3726,7 @@ function wizardApp() {
                         },
                         body: JSON.stringify(payload)
                     });
-                    
+
                     const data = await res.json();
                     if (res.ok && data.success) {
                         this.log('Languages saved successfully: ' + data);
@@ -3746,7 +3746,7 @@ function wizardApp() {
                 }
                 return; // Exit early for language step
             }
-            
+
             // For other steps, use the existing logic
             const payload = {
                 guests: this.guests,
@@ -3764,14 +3764,14 @@ function wizardApp() {
                 parking_location: this.parkingLocation,
                 parking_type: this.parkingType,
             };
-            
+
             this.log('Additional details payload: ' + JSON.stringify(payload, null, 2));
             this.isLoading = true;
-            
+
             // If on the services step, POST to /services, otherwise PATCH additional-details
             if (this.propertyWizardStep === 3) {
                 this.log('Saving services for step 3');
-                
+
                 try {
                     const res = await fetch('/partner/property/' + this.propertyId + '/services', {
                         method: 'POST',
@@ -3781,7 +3781,7 @@ function wizardApp() {
                         },
                         body: JSON.stringify(payload)
                     });
-                    
+
                     let text = await res.text();
                     let data;
                     try {
@@ -3791,7 +3791,7 @@ function wizardApp() {
                         showToast('Server error (services save):\n' + text.substring(0, 500), 'error');
                         throw new Error('Non-JSON response from services POST');
                     }
-                    
+
                     if (data && data.success) {
                         this.log('Moving from propertyWizardStep ' + this.propertyWizardStep + ' to ' + (this.propertyWizardStep + 1));
                         this.propertyWizardStep++;
@@ -3817,7 +3817,7 @@ function wizardApp() {
                         },
                         body: JSON.stringify(payload)
                     });
-                    
+
                     const data = await res.json();
                     if (res.ok && data.success) {
                         this.log('Moving from propertyWizardStep ' + this.propertyWizardStep + ' to ' + (this.propertyWizardStep + 1));
@@ -3839,12 +3839,12 @@ function wizardApp() {
         async saveHouseRules() {
             this.log('Saving house rules');
             this.isLoading = true;
-            
+
             if (!(await this.ensurePropertyId())) {
                 this.isLoading = false;
                 return;
             }
-            
+
             try {
                 console.log('Saving house rules with data:', {
                     smoking_allowed: this.smokingAllowed,
@@ -3855,7 +3855,7 @@ function wizardApp() {
                     check_out_from: this.checkOutFrom,
                     check_out_until: this.checkOutUntil
                 });
-                
+
                 const response = await fetch(`/partner/property/${this.propertyId}/house-rules`, {
                     method: 'POST',
                     headers: {
@@ -3872,7 +3872,7 @@ function wizardApp() {
                         check_out_until: this.checkOutUntil
                     })
                 });
-                
+
                 if (response.ok) {
                     const result = await response.json();
                     console.log('House rules saved successfully:', result);
@@ -3896,12 +3896,12 @@ function wizardApp() {
             this.log('Saving pricing');
             console.log('Current pricingWizardStep before saving:', this.pricingWizardStep);
             this.isLoading = true;
-            
+
             if (!(await this.ensurePropertyId())) {
                 this.isUploading = false;
                 return;
             }
-            
+
             try {
                 console.log('Saving pricing with data:', {
                     property_id: this.propertyId,
@@ -3911,7 +3911,7 @@ function wizardApp() {
                     discount_enabled: this.pricing.discount_enabled,
                     discount_percent: this.pricing.discount_percent
                 });
-                
+
                 const response = await fetch(`/partner/property/${this.propertyId}/pricing`, {
                     method: 'POST',
                     headers: {
@@ -3927,12 +3927,12 @@ function wizardApp() {
                         discount_percent: this.pricing.discount_percent
                     })
                 });
-                
+
                 if (response.ok) {
                     const result = await response.json();
                     console.log('Pricing saved successfully:', result);
                     showToast('Pricing saved successfully!', 'success');
-                    
+
                     console.log('Pricing saved successfully, current pricingWizardStep:', this.pricingWizardStep);
                     if (this.pricingWizardStep < 4) {
                         this.pricingWizardStep++;
@@ -3969,7 +3969,7 @@ function wizardApp() {
                     property_id: this.propertyId,
                     ownership_type: this.ownershipType // should be 'individual' or 'business_entity'
                 };
-        
+
                 if (this.ownershipType === 'individual') {
                     // Basic client-side validation to avoid server 500
                     if (!this.individual?.firstName || !this.individual?.lastName || !this.individual?.dob) {
@@ -4007,9 +4007,9 @@ function wizardApp() {
                         alt_names: owner.altNames || []
                     }));
                 }
-        
+
                 console.log('Final request data being sent:', requestData);
-        
+
                 const response = await fetch(`/accommodation/save-verification/${this.propertyId}`, {
                     method: 'POST',
                     headers: {
@@ -4018,10 +4018,10 @@ function wizardApp() {
                     },
                     body: JSON.stringify(requestData)
                 });
-        
+
                 console.log('Response status:', response.status);
                 console.log('Response ok:', response.ok);
-        
+
                 if (response.ok) {
                     const result = await response.json();
                     showToast('🎉 Congratulations! Your property has been successfully listed and is now live on our platform!', 'success');
@@ -4053,15 +4053,15 @@ function wizardApp() {
 
         navigateToBedroom(roomId = null) {
             this.log('Navigating to room page for: ' + roomId);
-            
+
             // Save current wizard state
             this.saveWizardState();
-            
+
             // Debug: Log current rooms
             console.log('Current rooms before navigation:', this.rooms);
             console.log('Rooms count:', Object.keys(this.rooms).length);
             console.log('Bedroom keys:', Object.keys(this.rooms).filter(key => key.startsWith('bedroom')));
-            
+
             // Prepare room data if editing
             let roomData = null;
             if (roomId) {
@@ -4079,18 +4079,18 @@ function wizardApp() {
                     };
                 }
             }
-            
+
             // Calculate next bedroom number
             const bedroomKeys = Object.keys(this.rooms).filter(key => key.startsWith('bedroom'));
             const bedroomCount = bedroomKeys.length;
             const nextBedroomNumber = bedroomCount + 1;
-            
+
             console.log('Bedroom calculation debug:');
             console.log('  - All room keys:', Object.keys(this.rooms));
             console.log('  - Bedroom keys:', bedroomKeys);
             console.log('  - Bedroom count:', bedroomCount);
             console.log('  - Next bedroom number:', nextBedroomNumber);
-            
+
             // Prepare wizard state for room page
             const wizardState = {
                 step: this.step,
@@ -4102,14 +4102,14 @@ function wizardApp() {
                 rooms: this.rooms, // Pass existing rooms to calculate next bedroom number
                 nextBedroomNumber: nextBedroomNumber
             };
-            
+
             console.log('Wizard state being passed:', wizardState);
             console.log('Next bedroom number:', nextBedroomNumber);
-            
+
             // Build URL with parameters
             const propertyId = this.propertyId || 'new';
             let url = '';
-            
+
             // Route to different pages based on room type
             if (roomId === 'livingRoom') {
                 url = `/partner/apartment/livingroom/${propertyId}?source=single`;
@@ -4119,14 +4119,14 @@ function wizardApp() {
                 // Default to bedrooms page for bedroom1 and other bedrooms
                 url = `/partner/apartment/bedrooms/${propertyId}?source=single`;
             }
-            
+
             url += '&step=' + this.step;
             url += '&wizardState=' + encodeURIComponent(JSON.stringify(wizardState));
-            
+
             if (roomData) {
                 url += '&roomData=' + encodeURIComponent(JSON.stringify(roomData));
             }
-            
+
             console.log('=== URL DEBUG ===');
             console.log('Room ID:', roomId);
             console.log('Property ID:', propertyId);
@@ -4135,17 +4135,17 @@ function wizardApp() {
             console.log('Encoded Wizard State:', encodeURIComponent(JSON.stringify(wizardState)));
             console.log('Final URL:', url);
             console.log('=== END URL DEBUG ===');
-            
+
             this.log('Navigating to: ' + url);
             window.location.href = url;
         },
 
         async navigateToStep(stepNumber) {
             this.log('Navigating to step: ' + stepNumber);
-            
+
             // Set the main step
             this.step = stepNumber;
-            
+
             // Reset the appropriate wizard step based on which section we're going to
             switch (stepNumber) {
                 case 1: // Basic information
@@ -4164,15 +4164,15 @@ function wizardApp() {
                     // Legal info doesn't have sub-steps, so no reset needed
                     break;
             }
-            
+
             // Check completion status when navigating to basic info step
             if (stepNumber === 1 && this.propertyId !== 'new') {
                 await this.checkBasicInfoCompletion();
             }
-            
+
             // Save wizard state after setting the new step
             this.saveWizardState();
-            
+
             this.log('Navigation complete - Step: ' + this.step + ', PropertyWizardStep: ' + this.propertyWizardStep);
         }
     }

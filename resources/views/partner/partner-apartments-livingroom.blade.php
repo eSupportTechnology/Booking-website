@@ -12,17 +12,17 @@
     document.addEventListener('alpine:init', () => {
       console.log('Alpine.js initialized on living room page');
     });
-    
+
     // Error handling
     window.addEventListener('error', function(e) {
       console.error('JavaScript error on living room page:', e.error);
     });
   </script>
-  
+
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet" />
-  
+
   <style>
     body {
       font-family: 'Noto Sans', sans-serif;
@@ -106,40 +106,40 @@
       </div>
     </section>
   </header>
-   
+
   <!-- Main Content -->
   <div class="max-w-xl mt-16 px-4 sm:px-6 lg:ml-32" x-data="{
     sofaCount: 1,
     isLoading: false,
     saveAttempted: false,
     lastError: null,
-    
+
     init() {
       console.log('Living room Alpine.js data initialized');
       console.log('Initial sofa count:', this.sofaCount);
     },
-    
+
     async save() {
       console.log('=== LIVING ROOM SAVE FUNCTION START ===');
       this.isLoading = true;
       this.saveAttempted = true;
       this.lastError = null;
-      
+
       try {
         console.log('Current sofa count:', this.sofaCount);
-        
+
         if (this.sofaCount === 0) {
           const errorMsg = 'Please select at least one sofa bed.';
           console.log('Validation failed:', errorMsg);
           alert(errorMsg);
           return;
         }
-        
+
         // Get wizard state from URL parameters
         const urlParams = new URLSearchParams(window.location.search);
         const wizardStateParam = urlParams.get('wizardState');
         let wizardState = null;
-        
+
         if (wizardStateParam) {
           try {
             wizardState = JSON.parse(decodeURIComponent(wizardStateParam));
@@ -148,7 +148,7 @@
             console.error('Error parsing wizard state:', error);
           }
         }
-        
+
         const payload = {
           room_name: 'livingRoom',
           beds: [
@@ -157,7 +157,7 @@
           source: 'multiple',
           step: '2'
         };
-        
+
         // Update wizard state with sofa bed count
         if (wizardState && wizardState.rooms) {
           if (!wizardState.rooms.livingRoom) {
@@ -166,16 +166,16 @@
           wizardState.rooms.livingRoom.sofa = this.sofaCount;
           console.log('Updated wizard state with sofa count:', this.sofaCount);
         }
-        
+
         console.log('Prepared payload:', JSON.stringify(payload, null, 2));
-        
+
         // Check if CSRF token exists
         const csrfToken = document.querySelector('meta[name=csrf-token]');
         if (!csrfToken) {
           throw new Error('CSRF token not found');
         }
         console.log('CSRF Token found:', csrfToken.content);
-        
+
                  // Make real API call
          let res = await fetch('http://127.0.0.1:8000/partner/property/bedroom/{{ $property->id }}', {
            method: 'POST',
@@ -185,35 +185,35 @@
            },
            body: JSON.stringify(payload)
          });
-         
+
          console.log('Fetch request completed');
          console.log('Response status:', res.status);
-         
+
          let data = await res.json();
          console.log('Response data:', data);
-         
+
          if (res.ok && data.success) {
            console.log('Save successful, redirecting...');
            const source = '{{ request('source') }}';
            const step = '{{ request('step') }}';
-           
+
            console.log('Source:', source, 'Step:', step);
-           
+
            // Get wizard state from URL parameters
            const urlParams = new URLSearchParams(window.location.search);
            const wizardStateParam = urlParams.get('wizardState');
-           
+
            if (wizardStateParam) {
              try {
                const wizardState = JSON.parse(decodeURIComponent(wizardStateParam));
                console.log('Wizard state found:', wizardState);
-               
+
                // Update the wizard state with the sofa bed count
                if (wizardState.rooms && wizardState.rooms.livingRoom) {
                  wizardState.rooms.livingRoom.sofa = this.sofaCount;
                  console.log('Updated wizard state with sofa count:', this.sofaCount);
                }
-               
+
                // Navigate back to the original form with the updated wizard state
                const updatedWizardState = encodeURIComponent(JSON.stringify(wizardState));
                const returnUrl = `/partner-apartment-create-2?wizardState=${updatedWizardState}&step=${wizardState.step || 2}`;
@@ -246,11 +246,11 @@
                window.location.href = 'http://127.0.0.1:8000/partner/property/apartment/step2/{{ $property->id }}';
              }
            }
-          
+
                  } else {
            throw new Error(data.message || 'Could not save living room.');
          }
-        
+
       } catch (err) {
         console.error('Save error:', err);
         this.lastError = err.message;
@@ -260,12 +260,12 @@
         this.isLoading = false;
       }
     },
-    
+
     incrementSofa() {
       this.sofaCount++;
       console.log('Incremented sofa count to:', this.sofaCount);
     },
-    
+
     decrementSofa() {
       if (this.sofaCount > 0) {
         this.sofaCount--;
@@ -273,15 +273,15 @@
       }
     }
   }">
-    
+
     <h2 class="text-3xl font-bold text-gray-900 mt-8 mb-8">Living room</h2>
-    
+
     <!-- Alpine.js Test Button
-    <button @click="console.log('Test button clicked'); alert('Alpine.js is working!')" 
+    <button @click="console.log('Test button clicked'); alert('Alpine.js is working!')"
             class="bg-green-500 text-white px-3 py-1 rounded text-xs mb-4 hover:bg-green-600">
         Test Alpine.js
     </button> -->
-    
+
     <!-- Debug Info -->
     <!-- <div class="text-xs text-gray-500 mb-4 p-3 bg-gray-100 rounded border">
       <div class="mb-1"><strong>Debug Info:</strong></div>
@@ -292,7 +292,7 @@
         Last error: <span x-text="lastError"></span>
       </div>
     </div> -->
-    
+
     <!-- Sofa Bed Selection -->
     <div class="bg-white border border-gray-300 rounded-lg p-6 flex justify-between items-center shadow-sm hover:shadow-md transition-shadow">
       <!-- Icon and Label -->
@@ -362,15 +362,15 @@
     <!-- <div class="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
       <h4 class="text-sm font-semibold text-yellow-800 mb-2">Testing Controls:</h4>
       <div class="flex gap-2 flex-wrap">
-        <button @click="sofaCount = 0; console.log('Reset sofa count to 0')" 
+        <button @click="sofaCount = 0; console.log('Reset sofa count to 0')"
                 class="px-3 py-1 bg-red-500 text-white rounded text-xs hover:bg-red-600">
           Reset to 0
         </button>
-        <button @click="sofaCount = 5; console.log('Set sofa count to 5')" 
+        <button @click="sofaCount = 5; console.log('Set sofa count to 5')"
                 class="px-3 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600">
           Set to 5
         </button>
-        <button @click="console.log('Current state:', { sofaCount, isLoading, saveAttempted, lastError })" 
+        <button @click="console.log('Current state:', { sofaCount, isLoading, saveAttempted, lastError })"
                 class="px-3 py-1 bg-gray-500 text-white rounded text-xs hover:bg-gray-600">
           Log State
         </button>
