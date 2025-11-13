@@ -13,29 +13,29 @@
     <div class="bg-white p-6 rounded-2xl shadow-lg flex flex-col md:flex-row gap-6">
       
        <!-- Left Column: Car Images with Swiper -->
-      <div class="md:w-1/2 flex justify-center items-center border border-gray-200 p-2">
-          <div class="relative h-56 w-full">
+      <div class="md:w-1/4 flex justify-center items-center border border-gray-200 p-2">
+          <div class="relative h-56 w-56 w-full">
               <div class="swiper car-swiper h-full">
                   <div class="swiper-wrapper">
                       @if($car->car_front)
                           <div class="swiper-slide">
                               <img src="{{ asset('storage/' . $car->car_front) }}" 
                                    alt="Car Front" 
-                                   class="w-full h-56 object-cover rounded-xl">
+                                   class="w-full h-56  object-cover rounded-xl">
                           </div>
                       @endif
                       @if($car->car_back)
                           <div class="swiper-slide">
                               <img src="{{ asset('storage/' . $car->car_back) }}" 
                                    alt="Car Back" 
-                                   class="w-full h-56 object-cover rounded-xl">
+                                   class="w-full h-56  object-cover rounded-xl">
                           </div>
                       @endif
                       @if($car->car_inside)
                           <div class="swiper-slide">
                               <img src="{{ asset('storage/' . $car->car_inside) }}" 
                                    alt="Car Inside" 
-                                   class="w-full h-56 object-cover rounded-xl">
+                                   class="w-full h-56  object-cover rounded-xl">
                           </div>
                       @endif
                   </div>
