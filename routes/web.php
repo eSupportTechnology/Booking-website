@@ -234,11 +234,11 @@ Route::get('/partner-enter-password', function () {
 
 Route::get('/partner-hotels-payments', function () {
     return view('frontend.partner-hotels-payments');
-})->name('partner.hotels.payments');
+})->name('partner.hotels.payments.static');
 
 Route::get('/partner-hotels-photos', function () {
     return view('partner.partner-hotels-photos');
-})->name('partner.hotels.photos');
+})->name('partner.hotels.photos.static');
 
 
 
@@ -307,7 +307,7 @@ Route::get('/partner-homes-create-1', function () {
 
 Route::get('/partner-hotels-rooms', function () {
     return view('frontend.partner-hotels-rooms');
-})->name('partner.hotels.rooms');
+})->name('partner.hotels.rooms.static');
 
 
 
@@ -725,7 +725,7 @@ Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddle
     Route::get('/hotels/{property}/overview', [\App\Http\Controllers\Partner\HotelEditController::class, 'overview'])->name('partner.hotels.edit.overview');
     Route::get('/hotels/{property}/edit', [\App\Http\Controllers\Partner\HotelEditController::class, 'edit'])->name('partner.hotels.edit');
     Route::get('/hotels/{property}/amenities', [\App\Http\Controllers\Partner\HotelEditController::class, 'editAmenities'])->name('partner.hotels.amenities');
-    Route::get('/hotels/{property}/photos', [\App\Http\Controllers\Partner\HotelEditController::class, 'editPhotos'])->name('partner.hotels.photos');
+    Route::get('/hotels/{property}/photos', [\App\Http\Controllers\Partner\HotelEditController::class, 'editPhotos'])->name('partner.hotels.photos.edit');
     Route::get('/hotels/{property}/rooms', [\App\Http\Controllers\Partner\HotelEditController::class, 'editRooms'])->name('partner.hotels.rooms');
     Route::get('/hotels/{property}/payment', [\App\Http\Controllers\Partner\HotelEditController::class, 'editPayment'])->name('partner.hotels.payments');
     Route::get('/hotels/{property}/policies', [\App\Http\Controllers\Partner\HotelEditController::class, 'editPolicies'])->name('partner.hotels.policies');
@@ -802,7 +802,7 @@ Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddle
     Route::post('/property/{category}/step2/{property}', [PropertyController::class, 'storeStep2'])->name('partner.property.store.step2');
     Route::post('/property/step3/{property}', [PropertyController::class, 'storeStep2'])->name('partner.property.store.step3');
     Route::post('/property/upload-photos', [PropertyController::class, 'uploadPhotos'])->name('partner.property.upload.photos');
-    Route::post('/partner/property/upload-photos', [PropertyController::class, 'uploadPhotos'])->name('partner.property.upload.photos');
+    Route::post('/partner/property/upload-photos', [PropertyController::class, 'uploadPhotos'])->name('partner.property.upload.photos.alt');
 
     // Temporary debug route for file upload limits
     Route::get('/debug/upload-limits', function() {
@@ -1123,7 +1123,7 @@ Route::get('/my-reviews', function () {
 
 Route::get('/single-hotel', function () {
     return view('frontend.single-hotel');
-})->name('single-hotel');
+})->name('single-hotel.static');
 
 Route::get('/single-hotels', function () {
     return view('frontend.single-hotels');
