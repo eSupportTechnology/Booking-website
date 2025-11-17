@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8" />
-    <title>Partner Dashboard</title>
+    <title>Car & Taxi Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
@@ -17,15 +17,46 @@
     <nav class="bg-[#1F8FB2] text-white fixed w-full z-50 shadow">
         <div class="max-w-full mx-auto px-4">
             <div class="flex justify-between h-16 items-center">
-                <!-- Mobile Menu Button -->
-                <button id="menuToggle" class="md:hidden text-white text-2xl focus:outline-none">
-                    <i class="fas fa-bars"></i>
-                </button>
 
-                <h1 class="text-xl font-bold">Partner Dashboard</h1>
+                <!-- Left: Logo + Hamburger -->
+                <div class="flex items-center space-x-4">
+                    <button id="menuToggle" class="text-white focus:outline-none block md:hidden">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <a href="{{ route('car_rentals.carrenters_control_panel') }}" class="text-xl font-bold whitespace-nowrap">Car & Taxi Panel</a>
+                </div>
 
-                <!-- Optional Right Placeholder -->
-                <div class="hidden md:block"></div>
+                <!-- Center: Search (hidden on small) -->
+                <div class="hidden md:flex flex-1 justify-center px-4">
+                    <input type="text" placeholder="Search..."
+                        class="w-full max-w-sm px-3 py-1 rounded bg-[#3CC0E9] placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-yellow-300 text-sm" />
+                </div>
+
+                <!-- Right: Notifications + Profile -->
+                <div class="flex items-center space-x-3">
+                    <div class="relative">
+                        <button class="text-white"><i class="fas fa-bell"></i></button>
+                        <span class="absolute -top-1 -right-2 bg-red-500 text-xs px-1.5 rounded-full">3</span>
+                    </div>
+                    <div class="relative group">
+                        <button class="text-white flex items-center space-x-1">
+                            <i class="fas fa-user-circle text-lg"></i>
+                            <span class="text-sm truncate max-w-[100px]">{{ Auth::guard('car_renter')->user()->full_name ?? Auth::guard('car_renter')->user()->company_name }}</span>
+                        </button>
+                        <div
+                            class="absolute right-0 bg-white text-black shadow-lg rounded hidden group-hover:block min-w-[150px] z-50">
+                            <a href="{{ route('partner.earnings') }}" class="block px-4 py-2 hover:bg-gray-100 rounded">Profile</a>
+                            <a href="{{ route('partner.settings') }}" class="block px-4 py-2 hover:bg-gray-100 rounded">Settings</a>
+                            <div class="border-t"></div>
+                            <form method="POST" action="{{ route('carrentals.logout') }}">
+                                @csrf
+                                <button type="submit"
+                                    class="block w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100 rounded">Logout</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </nav>
@@ -68,7 +99,7 @@
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <p class="text-sm text-gray-500 mt-2 px-6">Partner Dashboard</p>
+            <p class="text-sm text-gray-500 mt-2 px-6">Car & Taxi Dashboard</p>
 
             <nav class="p-4 space-y-2 overflow-y-auto h-[calc(100vh-150px)]">
                 <!-- DASHBOARD -->
