@@ -55,6 +55,9 @@ class SearchController extends Controller
      */
     public function search(Request $request)
     {
+        if ($request->ajax()) {
+        return $this->ajaxSearch($request);
+    }
         // Lightweight validation for common fields
         $request->validate([
             'checkIn' => ['nullable', 'date'],
@@ -649,42 +652,43 @@ class SearchController extends Controller
     /**
      * AJAX endpoint to return rendered HTML for results
      */
-  public function ajaxSearch(Request $request)
-    {
-        \Log::info('FILTER DEBUG', $request->all());
-        \Log::info('Active filters', $request->all());
-        \Log::info('AJAX FILTER INPUT', $request->all());
+ public function ajaxSearch(Request $request)
+{
+    \Log::info('AJAX FILTER INPUT', $request->all());
 
+    // Build the base query
+    $baseQuery = Property::query()
+        ->with([
+            'images',
+            'pricing',
+            'reviews',
+            'rooms',
+            'facilities',
+            'policies',
+        ])
+        ->where('status', 'active');
 
-        // Build the base query
-        $baseQuery = Property::query()
-            ->where('status', 'active')
-            ->where('open_for_bookings', 1)
-            ->with([
-                'files',
-                'facilities',
-                'amenities',
-                'rooms',
-                'pricing',
-                'additionalDetails',
-                'services',
-            ])
-            ->withCount('reviews')
-            ->withAvg('reviews', 'rating');
+    // Apply filters
+    $this->applyRequestFilters($baseQuery, $request);
 
-        // Apply all filters and sorting safely
-        $this->applyRequestFilters($baseQuery, $request);
-        $this->applySorting($baseQuery, $request->input('sort'));
+    // Debug SQL safely **AFTER baseQuery exists**
+    \Log::info('FILTERED SQL', [
+        'sql' => $baseQuery->toSql(),
+        'bindings' => $baseQuery->getBindings()
+    ]);
 
-        // Don’t use select('properties.*') — that resets the query builder
-        // Just paginate directly
-        $properties = $baseQuery->paginate($this->perPage)->appends($request->query());
+    // Fetch results
+    $properties = $baseQuery->paginate(10);
 
-        // Return rendered partial view
-        return response()->json([
-            'html' => view('Customer._searchResults', compact('properties'))->render(),
-        ]);
+    // Render results HTML partial
+    $html = view('Customer._searchResults', compact('properties'))->render();
+
+    return response()->json([
+        'html' => $html,
+        'count' => $properties->total(),
+    ]);
 }
+
 
 
 

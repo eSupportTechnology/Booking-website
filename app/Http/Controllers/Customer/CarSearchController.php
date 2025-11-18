@@ -2,117 +2,291 @@
 
 namespace App\Http\Controllers\Customer;
 
-use App\Models\Car;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Collection;
+use App\Models\Car;
+use App\Models\CarType;
+use App\Models\Company;
 
 class CarSearchController extends Controller
 {
-    
     public function carsearch(Request $request)
     {
-        // Start the base query
-        $query = Car::where('status', 'Active')
-            ->with('carType', 'company', 'brand', 'model');
+        // BASE QUERY (only Active cars)
+        $baseQuery = Car::query()
+            ->where('status', 'Active')
+            ->with(['carType', 'company', 'brand', 'model']);
 
-        // Apply Dynamic Filtering based on Request inputs
-        
-        // --- START BOOKING FORM FILTERS (Captures data from the top search bar) ---
-              if ($request->filled('pickup')) { 
-            $pickup = $request->input('pickup');
-            
-        }
-        if ($request->filled('destination')) { 
-            $destination = $request->input('destination');
-            
-        }
-        if ($request->filled('checkin')) { 
-            $checkin = $request->input('checkin');
-             
-        }
-        if ($request->filled('checkout')) { 
-            $checkout = $request->input('checkout');
-            
-        }
-        
-        // --- START SIDEBAR FILTERS (Robust Implementation) ---
-        
-        // Filter by Car Category
-        if ($request->filled('car_category')) {
-            $categories = array_filter((array) $request->input('car_category')); // Filter out empty strings/nulls
-            
-            if (!empty($categories)) {
-                // This assumes Car has a relationship 'carType' which has a 'name' field
-                $query->whereHas('carType', function ($q) use ($categories) {
-                    $q->whereIn('name', $categories);
-                });
-            }
-        }
-        
-        // Filter by Transmission (assuming single select: radio button or single checkbox)
-        if ($request->filled('transmission')) { 
-            
-            $query->where('transmission', $request->input('transmission')); 
-        }
-        
-        // Filter by Supplier (Robust Example implementation)
-        if ($request->filled('supplier')) {
-            $suppliers = array_filter((array) $request->input('supplier')); // Filter out empty strings/nulls
-            
-            if (!empty($suppliers)) {
-                $query->whereHas('company', function ($q) use ($suppliers) {
-                    $q->whereIn('name', $suppliers);
-                });
-            }
-        }
-        
-        // TODO: Implement remaining filters using request()->filled() for safety:
-        
-        // Get Filtered Cars and Paginate
-        
-        try {
-             $filteredCars = $query->paginate(8)->appends($request->query());
-        } catch (\Exception $e) {
-             
-             // log it and return an empty collection to prevent the 500 error from crashing the frontend.
-             \Log::error("CarSearchController Query Error: " . $e->getMessage(), ['request' => $request->all()]);
-             
-             // Create an empty Paginator instance to prevent Blade errors
-             $filteredCars = new \Illuminate\Pagination\LengthAwarePaginator(
-                new \Illuminate\Support\Collection(), 0, 8, 1, ['path' => $request->url(), 'query' => $request->query()]
-            );
-        }
+        // Apply filters for the main results
+        $resultsQuery = $this->applyFilters(clone $baseQuery, $request);
 
-        
-        // Prepare Filter Facets (Counts) - SIMULATED DATA
-       
+        // Paginate results
+        $filteredCars = $resultsQuery
+            ->paginate(8)
+            ->appends($request->query());
+
+        // ===== DYNAMIC FACETS =====
         $filterGroups = [
-            'transmission' => ['Automatic' => 13, 'Manual' => 5],
-            'supplier' => ['Europcar' => 13, 'Goodcar' => 10, 'Rent-A-Car' => 2],
-            'mileage' => ['Unlimited' => 18, '1000 km' => 5],
-            'extras' => ['GPS' => 10, 'Child seat' => 8, 'Additional driver' => 12],
-            'seats' => ['4 seats' => 10, '5 seats' => 6, '6+ seats' => 5],
-            'car_category' => ['Small car' => 7, 'Medium car' => 5, 'Large car' => 7, 'People carriers' => 4, 'SUVs' => 7],
-            'price_range' => ['US$50 - US$100' => 6, 'US$100 - US$150' => 5, 'US$150 - US$200' => 3, 'US$200+' => 2],
-            'payment'=> ['Pay Now' => 7, 'Pay at Pickup' => 0 ],
-            'car-specs'=> ['Air Conditioning' => 10, '4+ Doors' => 5],
-            'fuel-type'=> ['Petrol' => 10, 'Diesel' => 8, 'Electric' => 6, 'Hybrid' => 5],
-            'deposit'=> ['US$0 - US$300' => 6, 'US$300 - US$600' => 5, 'US$600+' => 12],
-            'fuel-policy'=> ['Like for like'=> 2],
-            'review_score' => ['7+' => 13]
+            'transmission' => $this->facetCounts($baseQuery, $request, 'transmission'),
+            'supplier'     => $this->facetSupplierCounts($baseQuery, $request),
+            'mileage'      => $this->facetCounts($baseQuery, $request, 'mileage_type'),
+            'extras'       => [], // no extras table
+            'seats'        => $this->facetSeatsCounts($baseQuery, $request),
+            'car_category' => $this->facetCarCategoryCounts($baseQuery, $request),
+            'price_range'  => $this->facetPriceRanges($baseQuery, $request),
+            'payment'      => $this->facetCounts($baseQuery, $request, 'pay_timing'),
+            'car-specs'    => [], // not available
+            'fuel-type'    => $this->facetCounts($baseQuery, $request, 'fuel_type'),
+            'deposit'      => $this->facetDepositRanges($baseQuery, $request),
+            'fuel-policy'  => [],
+            'review_score' => $this->facetReviewScores($baseQuery, $request),
         ];
 
-        // Prepare Category Tabs 
-        $carCategoryTabs = ['Small car', 'Medium car', 'Large car', 'SUVs', 'People carrier'];
-        
-        // Pass data to the new view
+        // Car category tabs (dynamic)
+        $carCategoryTabs = CarType::pluck('name')->toArray();
+
         return view('Customer.car-rentals-filter', [
-            'filteredCars' => $filteredCars,
-            'filterGroups' => $filterGroups, 
-            'currentFilters' => $request->query(), 
+            'filteredCars'   => $filteredCars,
+            'filterGroups'   => $filterGroups,
+            'currentFilters' => $request->query(),
             'carCategoryTabs' => $carCategoryTabs,
         ]);
     }
+
+    // ================================================================
+    // APPLY FILTERS (ALL DYNAMIC)
+    // ================================================================
+    protected function applyFilters($query, Request $request, $exclude = null)
+    {
+        // nearest_city = pickup
+        if ($exclude !== 'pickup' && $request->filled('pickup')) {
+            $query->where('nearest_city', $request->pickup);
+        }
+
+        // Transmission
+        if ($exclude !== 'transmission' && $request->filled('transmission')) {
+            $query->where('transmission', strtolower($request->transmission));
+        }
+
+        // Supplier (company name)
+        if ($exclude !== 'supplier' && $request->filled('supplier')) {
+            $companyIds = Company::whereIn('name', (array)$request->supplier)->pluck('id');
+            $query->whereIn('company_id', $companyIds);
+        }
+
+        // Car Category (car type)
+        if ($exclude !== 'car_category' && $request->filled('car_category')) {
+            $typeIds = CarType::whereIn('name', (array)$request->car_category)->pluck('id');
+            $query->whereIn('car_type_id', $typeIds);
+        }
+
+        // Fuel type
+        if ($exclude !== 'fuel_type' && $request->filled('fuel_type')) {
+            $query->whereIn('fuel_type', (array)$request->fuel_type);
+        }
+
+        // Mileage type
+        if ($exclude !== 'mileage_type' && $request->filled('mileage_type')) {
+            $query->whereIn('mileage_type', (array)$request->mileage_type);
+        }
+
+        // Seats
+        if ($exclude !== 'seats' && $request->filled('seats')) {
+            $seatValues = array_map(function ($s) {
+                return (int)filter_var($s, FILTER_SANITIZE_NUMBER_INT);
+            }, (array)$request->seats);
+
+            $query->whereIn('seats', $seatValues);
+        }
+
+        // Pay timing
+        if ($exclude !== 'pay_timing' && $request->filled('pay_timing')) {
+            $query->whereIn('pay_timing', (array)$request->pay_timing);
+        }
+
+        // Price
+        if ($exclude !== 'price_range') {
+            if ($request->filled('price_min'))
+                $query->where('price_per_day', '>=', $request->price_min);
+
+            if ($request->filled('price_max'))
+                $query->where('price_per_day', '<=', $request->price_max);
+        }
+
+        // Deposit
+        if ($exclude !== 'deposit') {
+            if ($request->filled('deposit_min'))
+                $query->where('deposit', '>=', $request->deposit_min);
+
+            if ($request->filled('deposit_max'))
+                $query->where('deposit', '<=', $request->deposit_max);
+        }
+
+        return $query;
+    }
+
+    // ================================================================
+    // GENERIC FACET COUNTS
+    // ================================================================
+    protected function facetCounts($query, Request $request, $column)
+    {
+        $q = $this->applyFilters(clone $query, $request, $column);
+
+        return $q->select($column, DB::raw('COUNT(*) as cnt'))
+            ->groupBy($column)
+            ->pluck('cnt', $column)
+            ->toArray();
+    }
+
+    // ================================================================
+    // SUPPLIER COUNTS
+    // ================================================================
+    protected function facetSupplierCounts($query, Request $request)
+    {
+        $q = $this->applyFilters(clone $query, $request, 'supplier');
+
+        $rows = $q->select('company_id', DB::raw('COUNT(*) as cnt'))
+            ->groupBy('company_id')
+            ->get();
+
+        $companyNames = Company::whereIn('id', $rows->pluck('company_id'))
+            ->pluck('name', 'id');
+
+        $output = [];
+        foreach ($rows as $row) {
+            $output[$companyNames[$row->company_id] ?? 'Unknown'] = $row->cnt;
+        }
+
+        return $output;
+    }
+
+    // ================================================================
+    // CAR CATEGORY COUNTS
+    // ================================================================
+    protected function facetCarCategoryCounts($query, Request $request)
+    {
+        $q = $this->applyFilters(clone $query, $request, 'car_category');
+
+        $rows = $q->select('car_type_id', DB::raw('COUNT(*) as cnt'))
+            ->groupBy('car_type_id')
+            ->get();
+
+        $names = CarType::whereIn('id', $rows->pluck('car_type_id'))
+            ->pluck('name', 'id');
+
+        $output = [];
+        foreach ($rows as $row) {
+            $output[$names[$row->car_type_id]] = $row->cnt;
+        }
+
+        return $output;
+    }
+
+    // ================================================================
+    // SEAT COUNTS
+    // ================================================================
+    protected function facetSeatsCounts($query, Request $request)
+    {
+        $q = $this->applyFilters(clone $query, $request, 'seats');
+
+        $rows = $q->select('seats', DB::raw('COUNT(*) AS cnt'))
+            ->groupBy('seats')
+            ->pluck('cnt', 'seats')
+            ->toArray();
+
+        return [
+            '4 seats' => $rows[4] ?? 0,
+            '5 seats' => $rows[5] ?? 0,
+            '6 seats' => $rows[6] ?? 0,
+            '7+ seats' => array_sum(array_filter($rows, fn($v, $k) => $k >= 7, ARRAY_FILTER_USE_BOTH)),
+        ];
+    }
+
+    // ================================================================
+    // PRICE RANGE COUNTS
+    // ================================================================
+    protected function facetPriceRanges($query, Request $request)
+    {
+        $ranges = [
+            'US$0 - US$100'   => [0, 100],
+            'US$100 - US$200' => [100.01, 200],
+            'US$200+'         => [200.01, 999999],
+        ];
+
+        $output = [];
+        foreach ($ranges as $label => [$min, $max]) {
+            $count = $this->applyFilters(clone $query, $request, 'price_range')
+                ->whereBetween('price_per_day', [$min, $max])
+                ->count();
+            $output[$label] = $count;
+        }
+
+        return $output;
+    }
+
+    // ================================================================
+    // DEPOSIT RANGE COUNTS
+    // ================================================================
+    protected function facetDepositRanges($query, Request $request)
+    {
+        $ranges = [
+            'US$0 - US$300' => [0, 300],
+            'US$300 - US$600' => [300.01, 600],
+            'US$600+' => [600.01, 999999],
+        ];
+
+        $output = [];
+        foreach ($ranges as $label => [$min, $max]) {
+            $count = $this->applyFilters(clone $query, $request, 'deposit')
+                ->whereBetween('deposit', [$min, $max])
+                ->count();
+            $output[$label] = $count;
+        }
+
+        return $output;
+    }
+
+    // ================================================================
+    // COMPANY RATING / REVIEW SCORE COUNTS
+    // ================================================================
+    protected function facetReviewScores($query, Request $request)
+    {
+        $q = $this->applyFilters(clone $query, $request, 'review_score')
+            ->join('companies', 'cars.company_id', '=', 'companies.id');
+
+        $rows = $q->select(
+            DB::raw('
+                CASE 
+                    WHEN rating >= 4.5 THEN "4.5+"
+                    WHEN rating >= 4.0 THEN "4.0 - 4.49"
+                    ELSE "<4.0"
+                END AS bucket
+            '),
+            DB::raw('COUNT(*) AS cnt')
+        )
+        ->groupBy('bucket')
+        ->pluck('cnt', 'bucket')
+        ->toArray();
+
+        return [
+            '4.5+' => $rows['4.5+'] ?? 0,
+            '4.0 - 4.49' => $rows['4.0 - 4.49'] ?? 0,
+            '<4.0' => $rows['<4.0'] ?? 0,
+        ];
+    }
+    public function show($id)
+{
+    $car = Car::where('id', $id)
+        ->where('status', 'Active')
+        ->with(['carType', 'company', 'model', 'brand'])
+        ->firstOrFail();
+
+    return view('car_rentals.car-details', [
+    'car' => $car,
+    // add other variables if needed
+]);
+
+}
+
 }

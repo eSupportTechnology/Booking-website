@@ -37,6 +37,7 @@ use App\Http\Controllers\Customer\CustomerCarRentalController;
 use App\Http\Controllers\Customer\SearchController;
 use App\Http\Controllers\Customer\CarSearchController;
 use App\Http\Controllers\Customer\PropertyListingController;
+use App\Http\Controllers\Customer\CarBookingController;
 
 
 
@@ -62,8 +63,8 @@ Route::prefix('customer')->group(function () {
     // Search route
     Route::get('/search-form', [SearchController::class, 'showSearchForm'])->name('customer.searchForm');
     Route::get('/search', [SearchController::class, 'search'])->name('customer.search');
-    Route::get('/search/ajax', [SearchController::class, 'ajaxSearch'])
-     ->name('customer.search.ajax');
+    // Route::get('/search/ajax', [SearchController::class, 'ajaxSearch'])
+    //  ->name('customer.search.ajax');
     Route::get('/search/suggest', [SearchController::class, 'suggestCities'])
     ->name('customer.search.suggest');
 
@@ -1395,12 +1396,12 @@ Route::get('/single-taxi', function () {
 Route::get('/customer/taxis/{id}', [CustomerTaxiController::class, 'show'])
     ->name('customer.taxis.show');
 
-Route::get('/customer/car-rentals', [\App\Http\Controllers\Customer\CustomerCarRentalController::class, 'showLatestCars'])->name('customer.car-rentals');
+Route::get('/customer/car-rentals', [CustomerCarRentalController::class, 'showLatestCars'])->name('customer.car-rentals');
 
-Route::get('/customer/car-rentals/listing', [\App\Http\Controllers\Customer\CustomerCarRentalController::class, 'index'])
+Route::get('/customer/car-rentals/listing', [CustomerCarRentalController::class, 'index'])
     ->name('customer.car-rentals.listing');
 
-Route::get('/customer/car-rentals/{id}', [\App\Http\Controllers\Customer\CustomerCarRentalController::class, 'show'])
+Route::get('/customer/car-rentals/{id}', [CustomerCarRentalController::class, 'show'])
     ->name('customer.car-rentals.show');
 
 
@@ -1422,10 +1423,6 @@ Route::get('/customer/car-rental/booking', function () {
 // Currency routes
 Route::post('/set-currency', [\App\Http\Controllers\CurrencyController::class, 'setCurrency'])->name('currency.set');
 Route::get('/api/exchange-rate/{from}/{to}', [\App\Http\Controllers\CurrencyController::class, 'getRate']);
-
-Route::get('/customer/car-rental/search', [CarSearchController::class, 'carsearch'])
-    ->name('customer.carsearch');
-
 
 
 
@@ -1463,4 +1460,17 @@ Route::get('car_rentals/carrenters_control_panel', function () {
 })->name('car_rentals.carrenters_control_panel');
 
 
+//car search and booking routes
 
+Route::get('/customer/car-rental/search', [CarSearchController::class, 'carsearch'])
+    ->name('customer.carsearch');
+
+Route::get('/customer/car/{id}', [CarSearchController::class, 'show'])
+     ->name('customer.car.show');
+
+Route::post('/car/{id}/book', [CarBookingController::class, 'store'])
+    ->name('customer.car.book');
+
+// confirmation route (you already had something; ensure name matches)
+Route::get('/booking/confirmation/{id}', [CarBookingController::class, 'confirmation'])
+    ->name('customer.booking.confirmation');

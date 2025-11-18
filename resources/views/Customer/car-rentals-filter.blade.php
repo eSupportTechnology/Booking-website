@@ -352,22 +352,32 @@ if (!function_exists('simple_slug')) {
                         
                         {{-- Car Image (1/3 width) --}}
                         <div class="result-image flex items-center justify-center bg-gray-100 p-4">
-                            <img src="{{ $car->main_image_url ?? 'https://placehold.co/300x200/cccccc/333333?text=Car+Image' }}" onerror="this.src='https://placehold.co/300x200/cccccc/333333?text=Car+Image'" alt="{{ $car->model->name ?? 'Car' }}" class="object-cover w-full h-full">
+                            @php
+                                $img = $car->car_front
+                                    ? asset('storage/' . $car->car_front)
+                                    : 'https://placehold.co/300x200/cccccc/333333?text=Car+Image';
+                            @endphp
+
+                            <img src="{{ $img }}"
+                                onerror="this.src='https://placehold.co/300x200/cccccc/333333?text=Car+Image'"
+                                alt="{{ $car->model->model_name ?? 'Car' }}"
+                                class="object-cover w-full h-full">
                         </div>
+
 
                         <div class="sm:w-1/2 p-4 flex flex-col justify-between">
                             <div>
                                 <div class="flex items-start justify-between mb-2">
-                                    <h3 class="text-xl font-bold text-gray-800">{{ $car->model->name ?? 'Unknown Model' }}</h3>
+                                    <h3 class="text-xl font-bold text-gray-800">{{ $car->model->model_name ?? 'Unknown Model' }}</h3>
                                 </div>
-                                <p class="text-sm text-gray-500 mb-2">or similar {{ $car->carType->name ?? 'medium' }} car</p>
+                                <p class="text-sm text-gray-500 mb-2">or similar {{ $car->carType->name ?? 'medium' }}</p>
                                 
                                 {{-- Specs list --}}
                                 <div class="flex flex-col space-y-1 text-sm text-gray-700 mt-4">
                                     <p class="flex items-center"><svg class="w-4 h-4 mr-2 text-gray-500" fill="currentColor" viewBox="0 0 20 20"><path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zm3 5a1 1 0 100 2h6a1 1 0 100-2H7z"/></svg>{{ $car->seats ?? 4 }} Seats</p>
                                     <p class="flex items-center"><svg class="w-4 h-4 mr-2 text-gray-500" fill="currentColor" viewBox="0 0 20 20"><path d="M7 4a1 1 0 011-1h4a1 1 0 011 1v1h-6V4zM4 6h12v10a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm2 2a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1z"/></svg>{{ $car->large_bags ?? 1 }} Large bag</p>
                                     <p class="flex items-center"><svg class="w-4 h-4 mr-2 text-gray-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v4a1 1 0 00.293.707l2.5 2.5a1 1 0 001.414-1.414L11 9.586V5z"/></svg>{{ $car->transmission ?? 'Automatic' }}</p>
-                                    <p class="flex items-center"><svg class="w-4 h-4 mr-2 text-gray-500" fill="currentColor" viewBox="0 0 20 20"><path d="M12 12a2 2 0 100-4 2 2 0 000 4z"/></svg>{{ $car->mileage ?? 'Unlimited mileage' }}</p>
+                                    <p class="flex items-center"><svg class="w-4 h-4 mr-2 text-gray-500" fill="currentColor" viewBox="0 0 20 20"><path d="M12 12a2 2 0 100-4 2 2 0 000 4z"/></svg>{{ $car->mileage_type === 'unlimited' ? 'Unlimited mileage' : 'Limited mileage' }}</p>
                                 </div>
                             </div>
                         </div>
@@ -383,7 +393,7 @@ if (!function_exists('simple_slug')) {
                                 <div class="text-3xl font-bold text-gray-800">US${{ number_format($car->price_per_day ?? 150, 0) }}</div>
                                 <div class="text-xs text-green-600 mb-4 font-semibold">Free cancellation</div>
                             </div>
-                            <a href="{{ route('customer.car-rental.show', $car->id) }}" class="w-full bg-primary text-white text-center px-4 py-3 rounded-lg font-bold hover:bg-primary-dark transition-colors shadow-lg">View deal</a>
+                            <a href="{{ route('customer.car.show', $car->id) }}" class="w-full bg-primary text-white text-center px-4 py-3 rounded-lg font-bold hover:bg-primary-dark transition-colors shadow-lg">View deal</a>
                         </div>
                     </div>
                     @endforeach

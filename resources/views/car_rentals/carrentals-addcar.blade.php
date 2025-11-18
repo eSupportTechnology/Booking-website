@@ -70,6 +70,15 @@
                     <input type="number" x-model.number="car.seats" placeholder="e.g., 4" class="w-full p-2 border rounded-md" min="2" max="20">
                 </div>
 
+                <!-- Nearest City -->
+                <div>
+                    <label class="block text-sm font-semibold mb-1">Nearest City <span class="text-red-500">*</span></label>
+                    <input type="text" 
+                        x-model="car.nearest_city"
+                        placeholder="e.g., Colombo, Galle, Kandy" 
+                        class="w-full p-2 border rounded-md">
+                </div>
+
                 <!-- With Driver -->
                 <div>
                     <label class="block text-sm font-semibold mb-1">With Driver? <span class="text-red-500">*</span></label>
@@ -298,6 +307,7 @@ function carForm() {
             brand: '',
             model_id: '',
             seats: '',
+            nearest_city: '',
             with_driver: '',
             driver_name: '',
             driver_phone: '',
@@ -472,6 +482,7 @@ function carForm() {
                 brand: '',
                 model_id: '',
                 seats: '',
+                nearest_city: '',
                 with_driver: '',
                 driver_name: '',
                 driver_phone: '',

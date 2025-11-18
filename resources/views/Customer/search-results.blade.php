@@ -108,7 +108,7 @@
 
 {{-- 🔹 SEARCH FILTER BAR (property search kept intact, enhanced with the same structure as first file) --}}
 <div class="relative z-10 -mt-8 px-2 sm:px-4 mb-6">
-    <form id="filtersForm" action="{{ route('customer.search') }}" method="GET"
+    <form id="search-form" action="{{ route('customer.search') }}" method="GET"
         class="bg-white rounded-xl px-2 py-1 sm:px-3 sm:py-2 shadow-lg
            flex flex-col md:flex-row items-stretch md:items-center
            gap-2 md:gap-0 border-2 sm:border-4 border-yellow-400
@@ -230,87 +230,55 @@
             </div>
         </div>
 
-        <!-- Guests Selector (updated) -->
-<div x-data="{
-        open: false,
-        adults: 2,
-        children: 0,
-        rooms: 1,
-        pets: false,
-        // Call when the user clicks Done: copy values to hidden inputs and update results
-        applyGuests() {
-            const adultsInput = document.getElementById('guests-adults');
-            const childrenInput = document.getElementById('guests-children');
-            const roomsInput = document.getElementById('guests-rooms');
-            const petsInput = document.getElementById('guests-pets');
+        <!-- Guests Selector -->
+        <div x-data="{ open: false, adults: 2, children: 0, rooms: 1, pets: false }"
+             class="relative flex-1 border-b md:border-b-0 md:border-r border-gray-300 px-2 py-1">
+            <button @click="open = !open" type="button"
+                class="flex items-center gap-2 w-full text-left text-sm">
+                <img src="{{ asset('assets/user.svg') }}" class="w-5 h-5" />
+                <span x-text="`${adults} adults · ${children} children · ${rooms} room${rooms>1?'s':''}`"
+                      class="text-gray-800 text-sm sm:text-base truncate"></span>
+            </button>
 
-            if (adultsInput) adultsInput.value = this.adults;
-            if (childrenInput) childrenInput.value = this.children;
-            if (roomsInput) roomsInput.value = this.rooms;
-            if (petsInput) petsInput.value = this.pets ? 1 : 0;
-
-            this.open = false;
-            // Call global function that runs the AJAX update
-            if (typeof window.updateResults === 'function') window.updateResults();
-        }
-    }"
-    class="relative flex-1 border-b md:border-b-0 md:border-r border-gray-300 px-2 py-1">
-
-    <button @click="open = !open" type="button"
-        class="flex items-center gap-2 w-full text-left text-sm">
-        <img src="{{ asset('assets/user.svg') }}" class="w-5 h-5" />
-        <span x-text="`${adults} adults · ${children} children · ${rooms} room${rooms>1?'s':''}`"
-              class="text-gray-800 text-sm sm:text-base truncate"></span>
-    </button>
-
-    <div x-show="open" @click.away="open = false"
-        class="absolute z-20 bg-white shadow-xl rounded-xl p-4 mt-2 w-64 sm:w-72 left-0 md:left-auto md:right-0 text-gray-800 space-y-4 text-sm">
-
-        <div class="flex justify-between"><span>Adults</span>
-            <div class="flex gap-2 items-center">
-                <button type="button" @click="if(adults>1) adults--" class="px-2 bg-gray-200 rounded">−</button>
-                <span x-text="adults"></span>
-                <button type="button" @click="adults++" class="px-2 bg-gray-200 rounded">+</button>
-            </div>
-        </div>
-
-        <div class="flex justify-between"><span>Children</span>
-            <div class="flex gap-2 items-center">
-                <button type="button" @click="if(children>0) children--" class="px-2 bg-gray-200 rounded">−</button>
-                <span x-text="children"></span>
-                <button type="button" @click="children++" class="px-2 bg-gray-200 rounded">+</button>
-            </div>
-        </div>
-
-        <div class="flex justify-between"><span>Rooms</span>
-            <div class="flex gap-2 items-center">
-                <button type="button" @click="if(rooms>1) rooms--" class="px-2 bg-gray-200 rounded">−</button>
-                <span x-text="rooms"></span>
-                <button type="button" @click="rooms++" class="px-2 bg-gray-200 rounded">+</button>
-            </div>
-        </div>
-
-        <div class="flex justify-between items-center"><span>Travelling with pets?</span>
-            <label class="inline-flex items-center cursor-pointer">
-                <input type="checkbox" x-model="pets" class="sr-only peer">
-                <div class="w-10 h-6 bg-gray-300 rounded-full peer peer-checked:bg-blue-600 relative transition-all">
-                    <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-all peer-checked:translate-x-4"></div>
+            <div x-show="open" @click.away="open = false"
+                class="absolute z-20 bg-white shadow-xl rounded-xl p-4 mt-2 w-64 sm:w-72 left-0 md:left-auto md:right-0 text-gray-800 space-y-4 text-sm">
+                <div class="flex justify-between"><span>Adults</span>
+                    <div class="flex gap-2">
+                        <button type="button" @click="if(adults>1) adults--" class="px-2 bg-gray-200 rounded">−</button>
+                        <span x-text="adults"></span>
+                        <button type="button" @click="adults++" class="px-2 bg-gray-200 rounded">+</button>
+                    </div>
                 </div>
-            </label>
+                <div class="flex justify-between"><span>Children</span>
+                    <div class="flex gap-2">
+                        <button type="button" @click="if(children>0) children--" class="px-2 bg-gray-200 rounded">−</button>
+                        <span x-text="children"></span>
+                        <button type="button" @click="children++" class="px-2 bg-gray-200 rounded">+</button>
+                    </div>
+                </div>
+                <div class="flex justify-between"><span>Rooms</span>
+                    <div class="flex gap-2">
+                        <button type="button" @click="if(rooms>1) rooms--" class="px-2 bg-gray-200 rounded">−</button>
+                        <span x-text="rooms"></span>
+                        <button type="button" @click="rooms++" class="px-2 bg-gray-200 rounded">+</button>
+                    </div>
+                </div>
+                <div class="flex justify-between"><span>Travelling with pets?</span>
+                    <label class="inline-flex items-center cursor-pointer">
+                        <input type="checkbox" x-model="pets" class="sr-only peer">
+                        <div class="w-10 h-6 bg-gray-300 rounded-full peer peer-checked:bg-blue-600 relative transition-all">
+                            <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-all peer-checked:translate-x-4"></div>
+                        </div>
+                    </label>
+                </div>
+
+                <button type="button" @click="open = false"
+                    class="block w-full text-center bg-white border border-blue-600 text-blue-600 font-semibold py-2 rounded hover:bg-blue-50">
+                    Done
+                </button>
+            </div>
         </div>
 
-        <button type="button" @click="applyGuests()"
-            class="block w-full text-center bg-white border border-blue-600 text-blue-600 font-semibold py-2 rounded hover:bg-blue-50">
-            Done
-        </button>
-
-        <!-- Hidden inputs that will actually be submitted / read by updateResults() -->
-        <input type="hidden" name="adults" id="guests-adults" value="2">
-        <input type="hidden" name="children" id="guests-children" value="0">
-        <input type="hidden" name="rooms" id="guests-rooms" value="1">
-        <input type="hidden" name="pets" id="guests-pets" value="0">
-    </div>
-</div>
 
         <!-- Search Button -->
         <div class="w-full md:w-auto px-2 py-1">
@@ -330,7 +298,7 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
     <div class="flex flex-col lg:flex-row gap-6">
 
-        <aside id="filters-sidebar" class="
+        <aside id="filters-sidebar" class="filter-sidebar
             fixed inset-0 z-40 bg-white shadow-xl max-w-xs
             transform -translate-x-full transition-transform duration-300
             lg:w-72 lg:static lg:block lg:translate-x-0 lg:sticky lg:top-6 lg:h-fit
@@ -367,7 +335,7 @@
                     <div id="review-content">
                         <div id="review-filter" class="flex flex-col space-y-2">
                             <label for="score-9" class="flex items-center text-gray-700 cursor-pointer"><input type="radio" id="score-9" name="min_score" value="9" class="form-radio h-4 w-4 text-primary accent-primary"><span class="ml-2">Superb (9+)</span></label>
-                            <label for="score-8" class="flex items-center text-gray-700 cursor-pointer"><input type="radio" id="score-8" name="min_score" value="8" checked class="form-radio h-4 w-4 text-primary accent-primary"><span class="ml-2">Very Good (8+)</span></label>
+                            <label for="score-8" class="flex items-center text-gray-700 cursor-pointer"><input type="radio" id="score-8" name="min_score" value="8" class="form-radio h-4 w-4 text-primary accent-primary"><span class="ml-2">Very Good (8+)</span></label>
                             <label for="score-7" class="flex items-center text-gray-700 cursor-pointer"><input type="radio" id="score-7" name="min_score" value="7" class="form-radio h-4 w-4 text-primary accent-primary"><span class="ml-2">Good (7+)</span></label>
                             <label for="score-0" class="flex items-center text-gray-700 cursor-pointer"><input type="radio" id="score-0" name="min_score" value="0" class="form-radio h-4 w-4 text-primary accent-primary"><span class="ml-2">Any Score</span></label>
                         </div>
@@ -562,7 +530,7 @@
 document.addEventListener("DOMContentLoaded", () => {
 
     /* ========= DOM ELEMENTS ========= */
-    const form = document.querySelector("#filtersForm");
+    const form = document.querySelector("#search-form");
     const resultsContainer = document.querySelector("#results-container");
     const loader = document.querySelector("#loader-overlay");
     const listViewBtn = document.querySelector("#list-view-btn");
@@ -578,46 +546,65 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* ========= UPDATE RESULTS (AJAX) ========= */
     window.updateResults = function () {
-    const form = document.querySelector("#search-form");
+
     const params = new URLSearchParams();
 
-    // --- 1. Main top search bar ---
-    if (form) {
-        const formData = new FormData(form);
-        for (const [key, value] of formData.entries()) {
-            if (value !== "" && value !== null) params.append(key, value);
-        }
-    }
+    // -----------------------------
+    // 1. ALWAYS READ TOP SEARCH BAR
+    // -----------------------------
+    params.set("destination", document.querySelector("input[name='destination']").value || "");
+    params.set("checkIn", document.querySelector("input[name='checkIn']").value || "");
+    params.set("checkOut", document.querySelector("input[name='checkOut']").value || "");
+    params.set("adults", document.getElementById("guests-adults").value || 0);
+    params.set("children", document.getElementById("guests-children").value || 0);
+    params.set("rooms", document.getElementById("guests-rooms").value || 1);
+    params.set("pets", document.getElementById("guests-pets").value || 0);
 
-    // --- 2. Sidebar filters ---
-    document.querySelectorAll(".filter-sidebar input, .filter-sidebar select").forEach(el => {
-        if ((el.type === "checkbox" || el.type === "radio") && el.checked) {
-            params.append(el.name, el.value);
-        } else if (el.type !== "checkbox" && el.type !== "radio" && el.value) {
-            params.append(el.name, el.value);
+    // -----------------------------
+    // 2. READ SIDEBAR FILTERS CLEAN
+    // -----------------------------
+    document.querySelectorAll(".filter-sidebar input, .filter-sidebar select")
+    .forEach(el => {
+
+        // For checkboxes & radio buttons
+        if (el.type === "checkbox" || el.type === "radio") {
+            el.addEventListener("change", () => {
+                updateResults();
+            });
+        }
+
+        // For selects
+        if (el.tagName.toLowerCase() === "select") {
+            el.addEventListener("change", () => {
+                updateResults();
+            });
         }
     });
 
-    // --- 3. Price slider ---
-    const minPrice = document.querySelector("input[name='min_price']");
-    const maxPrice = document.querySelector("input[name='max_price']");
-    if (minPrice && maxPrice) {
-        params.append("min_price", minPrice.value || 0);
-        params.append("max_price", maxPrice.value || 999999);
-    }
+    // -----------------------------
+    // 3. SEND AJAX REQUEST (main)
+    // -----------------------------
+    axios.get("/customer/search?" + params.toString())
+        .then(res => {
+            document.querySelector("#results-container").innerHTML = res.data.html;
 
-    // --- 4. Debug log (optional) ---
-    console.log("🔍 Applied Filters:", Object.fromEntries(params));
-
-    // --- 5. Perform AJAX request ---
-    axios.get("/customer/search/ajax?" + params.toString())
-        .then(response => {
-            document.querySelector("#results-container").innerHTML = response.data.html;
+            // Update browser URL WITHOUT reload
+            history.replaceState(null, "", "/customer/search?" + params.toString());
         })
-        .catch(err => console.error("Search update failed:", err));
+        .catch(err => console.error(err));
+    // -----------------------------
+    // 4. SEND REQUEST
+    // -----------------------------
+    axios.get("/customer/search?" + params.toString())
+        .then(res => {
+            document.querySelector("#results-container").innerHTML = res.data.html;
+
+            // Update browser URL WITHOUT reloading
+            history.replaceState(null, "", "/customer/search?" + params.toString());
+        })
+        .catch(err => console.error(err));
 };
 
-    window.updateResults = updateResults;
 
 
     /* ========= FILTER EVENT LISTENERS ========= */
@@ -738,6 +725,7 @@ document.querySelectorAll("button[id^='toggle-']").forEach(toggleBtn => {
         }
     });
 });
+console.log("Filter changed:", el.name, el.value);
 
 
 });
