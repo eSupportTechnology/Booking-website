@@ -17,14 +17,18 @@
 
         <div class="bg-white rounded-lg shadow-md p-8">
             <h2 class="text-2xl font-bold mb-6">Room Configuration</h2>
-            <p class="text-gray-600 mb-6">Configure room details, bed types, bathroom settings, and amenities for your property</p>
+            <p class="text-gray-600 mb-6">Configure room details, bed types, bathroom settings, prices, and amenities for your property</p>
 
             <!-- Existing Rooms Display -->
             <div x-show="existingRooms && existingRooms.length > 0" class="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
                 <h3 class="font-semibold text-green-900 mb-2">Existing Rooms ({{ count($existingRooms ?? []) }})</h3>
                 <div class="flex flex-wrap gap-2">
                     <template x-for="room in existingRooms" :key="room.id">
-                        <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm" x-text="room.name || 'Room ' + room.id"></span>
+                        <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">
+                            <span x-text="room.name || 'Room ' + room.id"></span>
+                            <span x-show="room.price" class="ml-2">—</span>
+                            <span x-show="room.price" class="font-semibold" x-text="formatPrice(room.price, room.currency || priceCurrency)"></span>
+                        </span>
                     </template>
                 </div>
             </div>
@@ -49,7 +53,7 @@
                         <!-- Room Count -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">How many rooms of this type? *</label>
-                            <input type="number" x-model="roomCount" min="1"
+                            <input type="number" x-model.number="roomCount" min="1" @input="calculateMaxGuests()"
                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                                    placeholder="1">
                         </div>
@@ -58,7 +62,7 @@
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Room Size *</label>
-                                <input type="number" x-model="roomSize" min="1" step="0.01"
+                                <input type="number" x-model.number="roomSize" min="1" step="0.01"
                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                                        placeholder="0">
                             </div>
@@ -67,6 +71,24 @@
                                 <select x-model="sizeUnit" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
                                     <option value="square meters">Square Meters</option>
                                     <option value="square feet">Square Feet</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Price per Room -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Price per Night *</label>
+                                <input type="number" x-model.number="roomPrice" min="0" step="0.01"
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                       placeholder="0.00">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Currency</label>
+                                <select x-model="priceCurrency" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                    <option value="USD">USD</option>
+                                    <option value="LKR">LKR</option>
+                                    <option value="EUR">EUR</option>
                                 </select>
                             </div>
                         </div>
@@ -91,11 +113,33 @@
                                     </div>
                                 </template>
                             </div>
+
+                            <!-- Max Guests UI with Auto toggle -->
                             <div class="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                                <p class="text-sm text-gray-700">
-                                    <strong>Max Guests:</strong> <span class="font-semibold text-blue-600 text-lg" x-text="maxGuests"></span>
-                                </p>
-                                <p class="text-xs text-gray-600 mt-1" x-show="maxGuests === 0">Add at least one bed to calculate guest capacity</p>
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm text-gray-700">
+                                            <strong>Max Guests per Room:</strong>
+                                            <span class="font-semibold text-blue-600 text-lg" x-show="autoCalculateGuests" x-text="maxGuestsPerRoom"></span>
+                                        </p>
+                                    </div>
+
+                                    <div class="text-right">
+                                        <label class="flex items-center space-x-2 text-sm">
+                                            <input type="checkbox" x-model="autoCalculateGuests" @change="onAutoToggle()" class="form-checkbox h-4 w-4 text-blue-600">
+                                            <span>Auto-calculate from beds</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="mt-3" x-show="!autoCalculateGuests">
+                                    <label class="block text-xs text-gray-600 mb-1">Edit Max Guests per Room</label>
+                                    <input type="number" x-model.number="maxGuestsPerRoom" min="0" @input="calculateMaxGuests()"
+                                           class="w-40 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                    <p class="text-xs text-gray-500 mt-2" x-show="maxGuestsPerRoom === 0">Set a value greater than 0 or enable auto-calc.</p>
+                                </div>
+
+                                <p class="text-xs text-gray-600 mt-2" x-show="autoCalculateGuests && maxGuestsPerRoom === 0">Add at least one bed to calculate guest capacity</p>
                             </div>
                         </div>
 
@@ -218,10 +262,12 @@ document.addEventListener('alpine:init', () => {
         step: 1,
         propertyId: {{ $property->id ?? 'null' }},
         roomType: '',
-        roomCount: '',
-        maxGuests: 0,
+        roomCount: 1,
+        maxGuestsPerRoom: 0,
         roomSize: '',
         sizeUnit: 'square meters',
+        roomPrice: 0,
+        priceCurrency: 'USD',
         smokingAllowed: false,
         bedCounts: {},
         bathroomType: 'private',
@@ -233,6 +279,9 @@ document.addEventListener('alpine:init', () => {
         existingRooms: @json($existingRooms ?? []),
         baseUrl: baseUrl,
         nextStepUrl: nextStepUrl,
+
+        // New: toggle for auto-calculation
+        autoCalculateGuests: true,
 
         get bathroomAmenitiesList() {
             const bathroomKeywords = ['bathroom', 'bath', 'toilet', 'shower', 'sink', 'tub', 'toiletries', 'washroom'];
@@ -264,25 +313,69 @@ document.addEventListener('alpine:init', () => {
         },
 
         init() {
+            // Normalize bedCounts values to numbers if prefilled
+            Object.keys(this.bedCounts).forEach(k => {
+                this.bedCounts[k] = Number(this.bedCounts[k]) || 0;
+                if (this.bedCounts[k] === 0) delete this.bedCounts[k];
+            });
+
+            this.roomCount = Number(this.roomCount) || 1;
+            this.roomPrice = Number(this.roomPrice) || 0;
+            this.priceCurrency = this.priceCurrency || 'USD';
+
+            // If existingRooms have price/currency, keep them; otherwise use defaults
+            // If server provided a prefilled maxGuestsPerRoom, keep it; otherwise auto-calc
+            if (!this.maxGuestsPerRoom) this.autoCalculateGuests = true;
+
             this.calculateMaxGuests();
         },
 
+        formatPrice(amount, currency) {
+            if (amount === null || amount === undefined || amount === '') return '';
+            return (currency ? currency + ' ' : '') + Number(amount).toFixed(2);
+        },
+
+        // Called when user toggles auto-calc checkbox
+        onAutoToggle() {
+            if (this.autoCalculateGuests) {
+                // switch to auto: recalc from beds
+                this.calculateMaxGuests();
+            } else {
+                // switch to manual: ensure there's a sensible default
+                if (!this.maxGuestsPerRoom || this.maxGuestsPerRoom === 0) {
+                    this.maxGuestsPerRoom = Math.max(1, Math.floor(this.maxGuestsPerRoom) || 1);
+                }
+                this.calculateMaxGuests();
+            }
+        },
+
         calculateMaxGuests() {
-            let total = 0;
-            Object.values(this.bedCounts).forEach(count => {
-                total += parseInt(count) || 0;
-            });
-            this.maxGuests = total;
+            // If autoCalculateGuests is true, compute per-room from bedCounts
+            if (this.autoCalculateGuests) {
+                let perRoom = 0;
+                Object.values(this.bedCounts).forEach(count => {
+                    perRoom += Number(count) || 0;
+                });
+                this.maxGuestsPerRoom = perRoom;
+            } else {
+                // manual: ensure numeric
+                this.maxGuestsPerRoom = Number(this.maxGuestsPerRoom) || 0;
+            }
+            // Note: we no longer maintain or send a total_max_guests field.
         },
 
         updateBedCount(bedType, count) {
-            const newCount = Math.max(0, count);
+            const newCount = Math.max(0, Number(count) || 0);
             if (newCount > 0) {
                 this.bedCounts[bedType] = newCount;
             } else {
                 delete this.bedCounts[bedType];
             }
-            this.calculateMaxGuests();
+
+            // Only recalc if auto-calc is enabled
+            if (this.autoCalculateGuests) {
+                this.calculateMaxGuests();
+            }
         },
 
         async saveStep1() {
@@ -296,11 +389,18 @@ document.addEventListener('alpine:init', () => {
                 return;
             }
 
-            if (!this.roomType || !this.roomCount || this.maxGuests <= 0 || !this.roomSize) {
+            // Validate numeric roomCount, roomSize and price
+            this.roomCount = Math.max(1, parseInt(this.roomCount) || 1);
+            this.roomSize = Number(this.roomSize) || 0;
+            this.roomPrice = Number(this.roomPrice) || 0;
+            this.maxGuestsPerRoom = Math.max(0, parseInt(this.maxGuestsPerRoom) || 0);
+            this.calculateMaxGuests();
+
+            if (!this.roomType || !this.roomCount || this.maxGuestsPerRoom <= 0 || !this.roomSize || this.roomPrice <= 0) {
                 Swal.fire({
                     icon: 'warning',
                     title: 'Required Fields',
-                    text: 'Please fill in all required fields.',
+                    text: 'Please fill in all required fields and ensure price and guest capacity are greater than 0.',
                     confirmButtonText: 'OK'
                 });
                 return;
@@ -312,12 +412,16 @@ document.addEventListener('alpine:init', () => {
                 count: this.bedCounts[bedType]
             }));
 
+            // Send only the fields your server needs: include max_guests (per-room) but omit total_max_guests
             const payload = {
                 property_id: this.propertyId,
                 room_type_id: this.roomType,
                 room_count: this.roomCount,
-                max_guests: this.maxGuests,
+                max_guests_per_room: this.maxGuestsPerRoom,
+                max_guests: this.maxGuestsPerRoom, // server expects this field name
                 size_sq_m: sizeInSqM,
+                price_per_night: this.roomPrice,
+                currency: this.priceCurrency,
                 smoking_allowed: this.smokingAllowed === 'true' || this.smokingAllowed === true,
                 beds: beds
             };
@@ -342,7 +446,10 @@ document.addEventListener('alpine:init', () => {
                         showConfirmButton: false,
                         timer: 1500
                     });
+                    // Update existing rooms with server response (which may include price/currency)
                     this.existingRooms = data.rooms || [];
+                    // Recalculate in case server returned rooms with bed info
+                    this.calculateMaxGuests();
                     this.step++;
                 } else {
                     Swal.fire({
@@ -481,4 +588,3 @@ document.addEventListener('alpine:init', () => {
 </script>
 
 @endsection
-
