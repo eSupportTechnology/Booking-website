@@ -9,7 +9,7 @@
                     <h1 class="text-2xl md:text-4xl font-bold mb-1 md:mb-2">Hotels</h1>
                     <p class="text-purple-100 text-sm md:text-lg">Manage your hotel listings</p>
                 </div>
-                <a href="{{ route('partner.property.category') }}"
+                <a href="{{ route('property.create') }}"
                     class="w-full md:w-auto flex items-center justify-center bg-white text-purple-600 font-semibold rounded-xl shadow-lg
                         px-4 py-2 text-sm md:px-6 md:py-3 md:text-base
                         hover:bg-purple-50 transition-all duration-200">
@@ -71,22 +71,25 @@
                         </div>
                     </a>
                     <div class="p-6">
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">{{ $property['title'] ?? 'Untitled Property' }}
-                        </h3>
-                        <p class="text-gray-600 mb-4">
-                            <i class="fas fa-map-marker-alt mr-2"></i>{{ $property['city'] ?? 'Location not specified' }}
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">{{ $property['name'] }}</h3>
+                        <p class="text-gray-600 mb-2">
+                            <i class="fas fa-map-marker-alt mr-2"></i>{{ $property['location'] }}
                         </p>
+                        <div class="text-sm text-gray-600 mb-4">
+                            <div>Adult: ${{ number_format($property['adult_price'], 2) }}/night</div>
+                            <div>Child: ${{ number_format($property['children_price'], 2) }}/night</div>
+                            <div class="text-red-600 font-medium">Commission: {{ $property['commission_rate'] }}%</div>
+                        </div>
                         <div class="flex items-center justify-between mb-4">
-                            <span class="text-sm text-gray-500">0 bookings</span>
-                            <span
-                                class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-xs font-semibold">Hotel</span>
+                            <span class="text-sm text-gray-500">{{ $property['bookings'] }} bookings</span>
+                            <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-xs font-semibold">Hotel</span>
                         </div>
                         <div class="flex space-x-2">
                             <a href="{{ route('partner.properties.views', $property['id']) }}"
                                 class="flex-1 bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg text-center text-sm transition-colors duration-200">
                                 <i class="fas fa-eye mr-1"></i>View
                             </a>
-                            <a href="{{ route('partner.hotels.edit.main', $property['id']) }}"
+                            <a href="{{ route('property.edit', $property['id']) }}"
                                 class="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-center text-sm transition-colors duration-200">
                                 <i class="fas fa-edit mr-1"></i>Edit
                             </a>
@@ -102,7 +105,7 @@
                     <i class="fas fa-hotel text-gray-300 text-6xl mb-4"></i>
                     <h3 class="text-xl font-semibold text-gray-600 mb-2">No Hotels Found</h3>
                     <p class="text-gray-500 mb-6">Start by adding your first hotel listing</p>
-                    <a href="{{ route('partner.list-your-property') }}"
+                    <a href="{{ route('property.create') }}"
                         class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-200">
                         <i class="fas fa-plus mr-2"></i>Add Hotel
                     </a>

@@ -128,7 +128,7 @@
                         <i :class="openProperty ? 'fa-chevron-up' : 'fa-chevron-down'" class="fas text-sm text-gray-400"></i>
                     </button>
                     <div x-show="!openProperty" x-collapse class="ml-12 space-y-1">
-                        <a href="{{ route('partner.list-your-property') }}"
+                        <a href="{{ route('property.create') }}"
                             class="flex items-center justify-between px-4 py-2 rounded-lg hover:bg-blue-50 text-gray-600 hover:text-[#1F8FB2] transition-colors duration-200">
                             <span class="text-sm font-medium">Add Property</span>
                             <i class="fas fa-plus text-xs"></i>

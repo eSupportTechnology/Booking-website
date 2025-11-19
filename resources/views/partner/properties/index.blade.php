@@ -9,7 +9,7 @@
                 <h1 class="text-4xl font-bold mb-2">My Properties</h1>
                 <p class="text-green-100 text-lg">Manage and monitor all your listed properties</p>
             </div>
-            <a href="{{ route('partner.property.category') }}" class="bg-white text-green-600 px-6 py-3 rounded-xl font-semibold hover:bg-green-50 transition-all duration-200 shadow-lg">
+            <a href="{{ route('property.create') }}" class="bg-white text-green-600 px-6 py-3 rounded-xl font-semibold hover:bg-green-50 transition-all duration-200 shadow-lg">
                 <i class="fas fa-plus mr-2"></i>Add New Property
             </a>
         </div>
@@ -72,6 +72,9 @@
                     <p class="text-gray-600 mt-1">Manage all your properties in one place</p>
                 </div>
                 <div class="flex space-x-3">
+                    <a href="{{ route('property.create') }}" class="bg-[#1F8FB2] hover:bg-[#3CC0E9] text-white px-4 py-2 rounded-lg transition-colors duration-200">
+                        <i class="fas fa-plus mr-2"></i>Quick Add
+                    </a>
                     <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg transition-colors duration-200">
                         <i class="fas fa-filter mr-2"></i>Filter
                     </button>
@@ -89,6 +92,7 @@
                         <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Type</th>
                         <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Location</th>
                         <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Pricing</th>
                         <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Bookings</th>
                         <th class="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
                     </tr>
@@ -122,6 +126,13 @@
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            <div class="text-xs">
+                                <div>Adult: ${{ number_format($property['adult_price'], 2) }}</div>
+                                <div>Child: ${{ number_format($property['children_price'], 2) }}</div>
+                                <div class="text-red-600 font-medium">Commission: {{ $property['commission_rate'] }}%</div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                             <div class="flex items-center">
                                 <i class="fas fa-calendar-check text-gray-400 mr-2"></i>
                                 {{ $property['bookings'] }} bookings
@@ -132,7 +143,7 @@
                                 <a href="{{ route('partner.properties.views', $property['id']) }}" class="bg-[#1F8FB2] hover:bg-[#3CC0E9] text-white px-3 py-2 rounded-lg text-xs transition-colors duration-200">
                                     <i class="fas fa-eye mr-1"></i>View
                                 </a>
-                                <a href="{{ route('partner.properties.edit', $property['id']) }}" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg text-xs transition-colors duration-200">
+                                <a href="{{ route('property.edit', $property['id']) }}" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg text-xs transition-colors duration-200">
                                     <i class="fas fa-edit mr-1"></i>Edit
                                 </a>
                                 <button onclick="deleteProperty({{ $property['id'] }})" class="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg text-xs transition-colors duration-200">

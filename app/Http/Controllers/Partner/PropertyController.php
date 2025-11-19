@@ -17,32 +17,55 @@ class PropertyController extends Controller
         return view('partner.properties.index', $data);
     }
 
-    public function apartments(GetPropertyByTypeAction $action)
+    public function apartments()
     {
-        $data = $action->execute('apartments');
-
-        return view('partner.properties.apartments', $data);
+        return $this->getPropertiesByType('Apartment', 'partner.properties.apartments');
     }
 
-    public function homes(GetPropertyByTypeAction $action)
+    public function homes()
     {
-        $data = $action->execute('homes');
-
-        return view('partner.properties.homes', $data);
+        return $this->getPropertiesByType('Homes', 'partner.properties.homes');
     }
 
-    public function hotels(GetPropertyByTypeAction $action)
+    public function hotels()
     {
-        $data = $action->execute('hotels');
-
-        return view('partner.properties.hotels', $data);
+        return $this->getPropertiesByType('Hotel, B&Bs, and more', 'partner.properties.hotels');
     }
 
-    public function alternativePlaces(GetPropertyByTypeAction $action)
+    public function alternativePlaces()
     {
-        $data = $action->execute('alternative-places');
+        return $this->getPropertiesByType('Alternative places', 'partner.properties.alternative-places');
+    }
 
-        return view('partner.properties.alternative-places', $data);
+    private function getPropertiesByType($categoryName, $viewName)
+    {
+        $properties = Property::where('user_id', Auth::id())
+            ->whereHas('category', function($query) use ($categoryName) {
+                $query->where('name', $categoryName);
+            })
+            ->with(['category', 'additionalDetails', 'files'])
+            ->get()
+            ->map(function ($property) {
+                return [
+                    'id' => $property->id,
+                    'name' => $property->title,
+                    'location' => $property->city . ', ' . $property->country,
+                    'status' => ucfirst($property->status ?? 'draft'),
+                    'bookings' => $property->bookings()->count(),
+                    'adult_price' => $property->adult_price ?? 0,
+                    'children_price' => $property->children_price ?? 0,
+                    'commission_rate' => $property->commission_rate ?? 15
+                ];
+            });
+
+        $stats = (object) [
+            'totalProperties' => $properties->count(),
+            'activeProperties' => $properties->where('status', 'Active')->count(),
+            'pendingApproval' => $properties->where('status', 'Draft')->count(),
+            'inactiveProperties' => $properties->where('status', 'Inactive')->count()
+        ];
+
+        return view($viewName, compact('properties', 'stats'));
     }
 
     public function bookings(GetBookingDataAction $action)
@@ -58,19 +81,8 @@ class PropertyController extends Controller
             ->where('user_id', auth()->id())
             ->firstOrFail();
 
-        $categoryName = strtolower($property->category->name ?? 'home');
-
-        // Redirect to specific property type edit controllers
-        switch ($categoryName) {
-            case 'homes':
-                return redirect()->route('partner.homes.edit', $property->id);
-            case 'apartment':
-                return redirect()->route('partner.apartments.edit', $property->id);
-            case 'hotel, b&bs, and more':
-                return redirect()->route('partner.hotels.edit.new', $property->id);
-            default:
-                return redirect()->route('partner.homes.edit', $property->id);
-        }
+        // Redirect to new unified property edit system
+        return redirect()->route('property.edit', $property->id);
     }
 
     public function destroy($propertyId)

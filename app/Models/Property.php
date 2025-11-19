@@ -35,6 +35,10 @@ class Property extends Model
         'wizard_step',
         'property_wizard_step',
         'pricing_wizard_step',
+        'adult_price',
+        'children_price', 
+        'commission_rate',
+        'current_step',
     ];
     public function photos()
     {
@@ -76,25 +80,26 @@ class Property extends Model
         return $this->hasOne(PartnerVerification::class);
     }
 
-    public function services()
-    {
-        return $this->hasOne(PropertyService::class);
-    }
-
     public function languages()
     {
-        return $this->belongsToMany(Language::class, 'property_language', 'property_id', 'language_id');
-    }
-
-    public function hostProfile()
-    {
-        return $this->hasOne(\App\Models\PropertyHostProfile::class);
+        return $this->belongsToMany(Languages::class, 'property_language', 'property_id', 'language_id');
     }
 
     public function pricing()
     {
         return $this->hasOne(\App\Models\PropertyPricing::class);
     }
+
+    public function pricingOptions()
+    {
+        return $this->hasMany(PropertyPricing::class);
+    }
+
+    protected $casts = [
+        'adult_price' => 'decimal:2',
+        'children_price' => 'decimal:2',
+        'commission_rate' => 'decimal:2'
+    ];
 
     public function addressType()
     {
@@ -131,9 +136,14 @@ class Property extends Model
         return $this->belongsTo(PropertyCategory::class, 'category_id');
     }
 
-    public function propertySubcategory()
+    public function subcategory()
     {
         return $this->belongsTo(PropertySubcategory::class, 'subcategory_id');
+    }
+
+    public function subtype()
+    {
+        return $this->belongsTo(PropertySubtype::class, 'subtype_id');
     }
 
     public function user()
@@ -162,5 +172,15 @@ class Property extends Model
     public function deals()
     {
         return $this->hasMany(Deal::class);
+    }
+
+    public function services()
+    {
+        return $this->hasOne(PropertyService::class);
+    }
+
+    public function hostProfile()
+    {
+        return $this->hasOne(PropertyHostProfile::class);
     }
 }

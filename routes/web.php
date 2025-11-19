@@ -37,11 +37,38 @@ use App\Http\Controllers\Customer\CustomerCarRentalController;
 use App\Http\Controllers\Customer\SearchController;
 use App\Http\Controllers\Customer\CarSearchController;
 use App\Http\Controllers\Customer\PropertyListingController;
-use App\Http\Controllers\Customer\CarBookingController;
+use App\Http\Controllers\PropertyCreationController;
+use App\Http\Controllers\PropertyEditController;
 
 
 
 Route::post('/accommodation/save-verification/{propertyId}', [AccommodationController::class, 'saveVerification']);
+
+// New Property Creation Routes
+Route::middleware(['auth'])->group(function () {
+    // Property Creation Flow (7 steps + optional room step)
+    Route::get('/property/create', [PropertyCreationController::class, 'start'])->name('property.create');
+    Route::get('/property/create/step/{step}', [PropertyCreationController::class, 'showStep'])->name('property.create.step')->where('step', '[1-7]|3\.5|3_5');
+    Route::post('/property/create/step/{step}', [PropertyCreationController::class, 'saveStep'])->name('property.create.save')->where('step', '[1-7]|3\.5|3_5');
+
+    // Property Edit Flow (reuse creation pages)
+    Route::get('/property/{id}/edit', function($id) { return app(PropertyCreationController::class)->start($id); })->name('property.edit');
+    Route::get('/property/{id}/edit/step/{step}', function($id, $step) { return app(PropertyCreationController::class)->showStep($step, $id); })->name('property.edit.step')->where('step', '[1-7]|3\.5|3_5');
+    Route::post('/property/{id}/edit/step/{step}', function($id, $step, Request $request) { return app(PropertyCreationController::class)->saveStep($request, $step, $id); })->name('property.edit.save')->where('step', '[1-7]|3\.5|3_5');
+
+    Route::delete('/property/photos/{id}', [PropertyCreationController::class, 'deletePhoto'])->name('property.photos.delete');
+
+    // API routes for dynamic loading
+    Route::get('/property/subcategories/{categoryId}', [PropertyCreationController::class, 'getSubcategories']);
+    Route::get('/property/subtypes/{subcategoryId}', [PropertyCreationController::class, 'getSubtypes']);
+
+    // Property Edit Routes (redirect to unified creation/edit flow)
+    Route::get('/property/{id}/edit', function($id) { return app(PropertyCreationController::class)->start($id); })->name('property.edit');
+    Route::post('/property/{id}/basic', function($id) { return redirect("/property/{$id}/edit/step/2"); });
+    Route::post('/property/{id}/details', function($id) { return redirect("/property/{$id}/edit/step/3"); });
+    Route::post('/property/{id}/pricing', function($id) { return redirect("/property/{$id}/edit/step/6"); });
+    Route::post('/property/{id}/photos', function($id) { return redirect("/property/{$id}/edit/step/5"); });
+});
 
 
 Route::get('/login/email', [LoginController::class, 'showEmailForm'])->name('login.email');
@@ -700,17 +727,17 @@ Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddle
     Route::post('/settings/payout', [\App\Http\Controllers\Partner\AccountSettingsController::class, 'updatePayout'])->name('partner.settings.payout.update');
     Route::post('/settings/two-factor', [\App\Http\Controllers\Partner\AccountSettingsController::class, 'toggleTwoFactor'])->name('partner.settings.two-factor.toggle');
 
-    // Property Edit/Delete
-    Route::get('/properties/{property}/edit', [\App\Http\Controllers\Partner\PropertyController::class, 'edit'])->name('partner.properties.edit');
+    // Property Edit/Delete (redirect to unified flow)
+    Route::get('/properties/{property}/edit', function($property) { return redirect("/property/{$property}/edit"); })->name('partner.properties.edit');
     Route::delete('/properties/{property}', [\App\Http\Controllers\Partner\PropertyController::class, 'destroy'])->name('partner.properties.destroy');
 
-    // Specific Property Type Edit Routes - Redirect apartment edit to step2
+    // Specific Property Type Edit Routes - Redirect to unified flow
     Route::get('/apartments/{property}/edit', function($property) {
-        return redirect()->route('partner.property.apartment.step2', ['propertyId' => $property]);
+        return redirect("/property/{$property}/edit");
     })->name('partner.apartments.edit');
     Route::put('/apartments/{property}', [\App\Http\Controllers\Partner\ApartmentEditController::class, 'update'])->name('partner.apartments.update');
 
-    Route::get('/homes/{property}/edit', [\App\Http\Controllers\Partner\HomeEditController::class, 'edit'])->name('partner.homes.edit');
+    Route::get('/homes/{property}/edit', function($property) { return redirect("/property/{$property}/edit"); })->name('partner.homes.edit');
     Route::post('/homes/{property}/basic-details', [\App\Http\Controllers\Partner\HomeEditController::class, 'updateBasicDetails'])->name('partner.homes.update.basic');
     Route::post('/homes/{property}/amenities', [\App\Http\Controllers\Partner\HomeEditController::class, 'updateAmenities'])->name('partner.homes.update.amenities');
     Route::post('/homes/{property}/photos', [\App\Http\Controllers\Partner\HomeEditController::class, 'updatePhotos'])->name('partner.homes.update.photos');
@@ -724,7 +751,7 @@ Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddle
     Route::post('/homes/{property}/verification', [\App\Http\Controllers\Partner\HomeEditController::class, 'updateVerification'])->name('partner.homes.update.verification');
 
     Route::get('/hotels/{property}/overview', [\App\Http\Controllers\Partner\HotelEditController::class, 'overview'])->name('partner.hotels.edit.overview');
-    Route::get('/hotels/{property}/edit', [\App\Http\Controllers\Partner\HotelEditController::class, 'edit'])->name('partner.hotels.edit');
+    Route::get('/hotels/{property}/edit', function($property) { return redirect("/property/{$property}/edit"); })->name('partner.hotels.edit');
     Route::get('/hotels/{property}/amenities', [\App\Http\Controllers\Partner\HotelEditController::class, 'editAmenities'])->name('partner.hotels.amenities');
     Route::get('/hotels/{property}/photos', [\App\Http\Controllers\Partner\HotelEditController::class, 'editPhotos'])->name('partner.hotels.photos.edit');
     Route::get('/hotels/{property}/rooms', [\App\Http\Controllers\Partner\HotelEditController::class, 'editRooms'])->name('partner.hotels.rooms');

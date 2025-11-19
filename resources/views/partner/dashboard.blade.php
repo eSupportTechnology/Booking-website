@@ -14,7 +14,7 @@
                 </p>
             </div>
             <div class="w-full sm:w-auto flex justify-center sm:justify-end">
-                <a href="{{ route('partner.property.category') }}"
+                <a href="{{ route('property.create') }}"
                     class="bg-white text-[#1F8FB2] px-5 sm:px-6 py-3 rounded-xl font-semibold hover:bg-blue-50 transition-all duration-200 shadow-lg text-center w-full sm:w-auto">
                     <i class="fas fa-plus mr-2"></i>Add New Property
                 </a>
@@ -144,7 +144,7 @@
             </div>
             <div class="p-6">
                 <div class="grid grid-cols-1 gap-4">
-                    <a href="{{ route('partner.list-your-property') }}" class="flex items-center p-4 bg-gradient-to-r from-[#1F8FB2] to-[#3CC0E9] text-white rounded-xl hover:shadow-lg transition-all duration-200">
+                    <a href="{{ route('property.create') }}" class="flex items-center p-4 bg-gradient-to-r from-[#1F8FB2] to-[#3CC0E9] text-white rounded-xl hover:shadow-lg transition-all duration-200">
                         <i class="fas fa-plus-circle text-2xl mr-4"></i>
                         <div>
                             <div class="font-semibold">Add New Property</div>

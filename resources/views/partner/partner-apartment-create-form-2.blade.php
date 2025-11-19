@@ -9,6 +9,7 @@
 
     <script>
     // Toast notification system
+    
     function showToast(message, type = 'info') {
         const container = document.getElementById('toast-container');
         const toast = document.createElement('div');

@@ -8,8 +8,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class PropertySubtype extends Model
 {
     use HasFactory;
+
     protected $fillable = ['subcategory_id', 'name'];
-    public function subcategory() {
+
+    public function subcategory()
+    {
         return $this->belongsTo(PropertySubcategory::class);
+    }
+
+    public function properties()
+    {
+        return $this->hasMany(Property::class, 'subtype_id');
     }
 }

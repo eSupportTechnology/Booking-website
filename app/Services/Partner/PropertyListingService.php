@@ -54,11 +54,17 @@ class PropertyListingService
             $query->where('status', $status);
         }
         
-        $properties = $query->with('files')->get();
+        $properties = $query->with(['files', 'bookings'])->get();
         
         return $properties->map(function($property) {
             $propertyArray = $property->toArray();
             $propertyArray['image'] = $property->files->first()?->path ?? null;
+            $propertyArray['name'] = $property->title;
+            $propertyArray['location'] = $property->city . ($property->address ? ', ' . $property->address : '');
+            $propertyArray['bookings'] = $property->bookings()->count();
+            $propertyArray['adult_price'] = $property->adult_price ?? 0;
+            $propertyArray['children_price'] = $property->children_price ?? 0;
+            $propertyArray['commission_rate'] = $property->commission_rate ?? 15;
             return $propertyArray;
         })->toArray();
     }
@@ -83,11 +89,17 @@ class PropertyListingService
             $query->where('status', $status);
         }
         
-        $properties = $query->with('files')->get();
+        $properties = $query->with(['files', 'bookings'])->get();
         
         return $properties->map(function($property) {
             $propertyArray = $property->toArray();
             $propertyArray['image'] = $property->files->first()?->path ?? null;
+            $propertyArray['name'] = $property->title;
+            $propertyArray['location'] = $property->city . ($property->address ? ', ' . $property->address : '');
+            $propertyArray['bookings'] = $property->bookings()->count();
+            $propertyArray['adult_price'] = $property->adult_price ?? 0;
+            $propertyArray['children_price'] = $property->children_price ?? 0;
+            $propertyArray['commission_rate'] = $property->commission_rate ?? 15;
             return $propertyArray;
         })->toArray();
     }
@@ -112,11 +124,17 @@ class PropertyListingService
             $query->where('status', $status);
         }
         
-        $properties = $query->with('files')->get();
+        $properties = $query->with(['files', 'bookings'])->get();
         
         return $properties->map(function($property) {
             $propertyArray = $property->toArray();
             $propertyArray['image'] = $property->files->first()?->path ?? null;
+            $propertyArray['name'] = $property->title;
+            $propertyArray['location'] = $property->city . ($property->address ? ', ' . $property->address : '');
+            $propertyArray['bookings'] = $property->bookings()->count();
+            $propertyArray['adult_price'] = $property->adult_price ?? 0;
+            $propertyArray['children_price'] = $property->children_price ?? 0;
+            $propertyArray['commission_rate'] = $property->commission_rate ?? 15;
             return $propertyArray;
         })->toArray();
     }
@@ -141,11 +159,17 @@ class PropertyListingService
             $query->where('status', $status);
         }
         
-        $properties = $query->with('files')->get();
+        $properties = $query->with(['files', 'bookings'])->get();
         
         return $properties->map(function($property) {
             $propertyArray = $property->toArray();
             $propertyArray['image'] = $property->files->first()?->path ?? null;
+            $propertyArray['name'] = $property->title;
+            $propertyArray['location'] = $property->city . ($property->address ? ', ' . $property->address : '');
+            $propertyArray['bookings'] = $property->bookings()->count();
+            $propertyArray['adult_price'] = $property->adult_price ?? 0;
+            $propertyArray['children_price'] = $property->children_price ?? 0;
+            $propertyArray['commission_rate'] = $property->commission_rate ?? 15;
             return $propertyArray;
         })->toArray();
     }

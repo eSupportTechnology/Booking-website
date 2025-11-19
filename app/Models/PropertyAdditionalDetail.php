@@ -10,6 +10,7 @@ class PropertyAdditionalDetail extends Model
     protected $fillable = [
         'property_id',
         'guests',
+        'bedrooms',
         'bathrooms',
         'allow_children',
         'offer_cribs',
