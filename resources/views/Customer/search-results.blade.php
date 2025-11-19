@@ -106,6 +106,7 @@
 <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
 
 
+
 {{-- 🔹 SEARCH FILTER BAR (property search kept intact, enhanced with the same structure as first file) --}}
 <div class="relative z-10 -mt-8 px-2 sm:px-4 mb-6">
     <form id="search-form" action="{{ route('customer.search') }}" method="GET"
