@@ -54,6 +54,8 @@ use App\DTOs\SaveFacilitiesDTO;
 use App\Models\Amenity;
 use App\Models\CancellationPolicy;
 use Faker\Provider\ar_EG\Address;
+use App\Actions\Partner\SaveEnhancedPricingAction;
+use App\DTOs\Partner\EnhancedPricingDTO;
 
 class PropertyController extends Controller
 {
@@ -1517,41 +1519,53 @@ class PropertyController extends Controller
         }
     }
 
-    public function savePricing(Request $request, Property $property, SavePricingAction $action)
+    public function savePricing(Request $request, Property $property)
     {
-        // Log::info('savePricing called', [
-        //     'property_id' => $property->id,
-        //     'request_data' => $request->all()
-        // ]);
         try {
-            // Merge property_id into request data since it comes from route parameter
-            $requestData = $request->all();
-            $requestData['property_id'] = $property->id;
+            $request->validate([
+                'adult_price' => 'required|numeric|min:0',
+                'child_price' => 'nullable|numeric|min:0',
+                'currency' => 'required|string|in:USD,EUR,GBP,LKR'
+            ]);
 
-            // Convert string values to proper types before creating DTO
-            if (isset($requestData['price_per_night']) && $requestData['price_per_night'] !== null) {
-                $requestData['price_per_night'] = (float) $requestData['price_per_night'];
-            }
-            if (isset($requestData['discount_percent'])) {
-                $requestData['discount_percent'] = (int) $requestData['discount_percent'];
-            }
-            if (isset($requestData['discount_enabled'])) {
-                $requestData['discount_enabled'] = (bool) $requestData['discount_enabled'];
-            }
-            if (isset($requestData['property_id'])) {
-                $requestData['property_id'] = (int) $requestData['property_id'];
-            }
+            $adultPrice = (float) $request->adult_price;
+            $childPrice = (float) ($request->child_price ?? 0);
+            
+            // Always use admin's global commission rate
+            $commissionRate = \App\Models\AdminSettings::getGlobalCommissionRate();
+            
+            // Calculate prices with commission
+            $adultCommission = $adultPrice * ($commissionRate / 100);
+            $childCommission = $childPrice * ($commissionRate / 100);
+            $adultPriceWithCommission = $adultPrice + $adultCommission;
+            $childPriceWithCommission = $childPrice + $childCommission;
+            $totalPriceWithCommission = $adultPriceWithCommission + $childPriceWithCommission;
 
-            $dto = SavePricingDTO::fromArray($requestData);
-            $action->execute($dto, $property);
-
-            return response()->json(['success' => true, 'message' => 'Pricing saved successfully']);
+            // Update property with new pricing
+            $property->update([
+                'adult_price' => $adultPrice,
+                'child_price' => $childPrice,
+                'commission_rate' => $commissionRate, // Use admin's global commission rate
+                'total_price_with_commission' => $totalPriceWithCommission,
+                'currency' => $request->currency
+            ]);
+            
+            return response()->json([
+                'success' => true, 
+                'message' => 'Pricing saved successfully',
+                'data' => [
+                    'adult_price' => $adultPrice,
+                    'child_price' => $childPrice,
+                    'commission_rate' => $commissionRate,
+                    'adult_commission' => $adultCommission,
+                    'child_commission' => $childCommission,
+                    'adult_price_with_commission' => $adultPriceWithCommission,
+                    'child_price_with_commission' => $childPriceWithCommission,
+                    'total_price_with_commission' => $totalPriceWithCommission,
+                    'using_admin_default' => true
+                ]
+            ]);
         } catch (\Exception $e) {
-            // Log::error('Error saving pricing', [
-            //     'error' => $e->getMessage(),
-            //     'property_id' => $property->id,
-            //     'trace' => $e->getTraceAsString()
-            // ]);
             return response()->json(['success' => false, 'message' => 'Error saving pricing: ' . $e->getMessage()], 500);
         }
     }
@@ -1800,10 +1814,14 @@ class PropertyController extends Controller
     public function showPrivateHomesEdit($propertyId)
     {
         $property = Property::findOrFail($propertyId);
-        $rooms = Room::where('property_id', $propertyId)->get()->groupBy('room_type_id');
+        
+        // Redirect to the new homes edit controller for homes
         if ($property->category_id == 1) {
-            return view('partner.partner-homes-edit', compact('property', 'rooms'));
+            return redirect()->route('partner.homes.edit', ['property' => $propertyId]);
         }
+        
+        // For hotels, keep the old behavior
+        $rooms = Room::where('property_id', $propertyId)->get()->groupBy('room_type_id');
         return view('partner.partner-hotels-edit', compact('property', 'rooms'));
     }
 
@@ -2156,5 +2174,69 @@ class PropertyController extends Controller
             $data
         );
         return redirect()->back()->with('success', 'Cancellation policy saved!');
+    }
+
+    public function saveEnhancedPricing(Request $request, $propertyId, SaveEnhancedPricingAction $action)
+    {
+        try {
+            $property = Property::findOrFail($propertyId);
+            
+            $dto = EnhancedPricingDTO::fromRequest($request);
+            $action->execute($dto, $property);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Enhanced pricing saved successfully',
+                'total_price' => $dto->calculateTotalPrice()
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to save pricing: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function autoSave(Request $request, $propertyId)
+    {
+        try {
+            $property = Property::findOrFail($propertyId);
+            
+            // Only update fields that are present in the request
+            $allowedFields = [
+                'title', 'description', 'address', 'apartment', 'city', 'country', 'zipcode',
+                'adult_price', 'child_price', 'commission_rate', 'channel_manager'
+            ];
+            
+            $updateData = array_intersect_key(
+                $request->only($allowedFields),
+                array_flip($allowedFields)
+            );
+            
+            // Calculate total price if pricing fields are present
+            if (isset($updateData['adult_price']) || isset($updateData['child_price']) || isset($updateData['commission_rate'])) {
+                $adultPrice = $updateData['adult_price'] ?? $property->adult_price ?? 0;
+                $childPrice = $updateData['child_price'] ?? $property->child_price ?? 0;
+                $commissionRate = $updateData['commission_rate'] ?? $property->commission_rate ?? 0;
+                
+                $basePrice = $adultPrice + $childPrice;
+                $updateData['total_price_with_commission'] = $basePrice + ($basePrice * $commissionRate / 100);
+            }
+            
+            if (!empty($updateData)) {
+                $property->update($updateData);
+            }
+            
+            return response()->json([
+                'success' => true,
+                'saved_at' => now()->format('H:i:s'),
+                'message' => 'Auto-saved successfully'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Auto-save failed: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

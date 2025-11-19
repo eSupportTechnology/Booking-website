@@ -74,11 +74,17 @@
                     <div class="p-6">
                         <h3 class="text-xl font-bold text-gray-800 mb-2">{{ $property['title'] ?? 'Untitled Property' }}
                         </h3>
-                        <p class="text-gray-600 mb-4">
+                        <p class="text-gray-600 mb-2">
                             <i class="fas fa-map-marker-alt mr-2"></i>{{ $property['city'] ?? 'Location not specified' }}
                         </p>
+                        <div class="text-sm text-gray-500 mb-4">
+                            <i class="fas fa-calendar-alt mr-2"></i>0 bookings this month
+                        </div>
                         <div class="flex items-center justify-between mb-4">
-                            <span class="text-sm text-gray-500">0 bookings</span>
+                            <div class="text-sm font-bold text-green-600">
+                                Adult: USD {{ number_format($property['adult_price_usd'] ?? 0, 2) }}<br>
+                                Child: USD {{ number_format($property['child_price_usd'] ?? 0, 2) }}
+                            </div>
                             <span
                                 class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">Home</span>
                         </div>

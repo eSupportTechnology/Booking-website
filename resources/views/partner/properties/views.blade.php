@@ -774,6 +774,14 @@
                                 @endif
                             </div>
                         @endif
+                        
+                        @if($property->category && in_array($property->category->name, ['Apartment', 'Homes', 'Alternative places']))
+                            <div>
+                                <h3 class="font-bold text-xs">Guest Pricing</h3>
+                                <p class="text-xs">Adult: USD {{ number_format(app(\App\Services\CurrencyService::class)->convert($property->adult_price ?? 0, $property->currency ?? 'LKR', 'USD'), 2) }}</p>
+                                <p class="text-xs">Child: USD {{ number_format(app(\App\Services\CurrencyService::class)->convert($property->child_price ?? 0, $property->currency ?? 'LKR', 'USD'), 2) }}</p>
+                            </div>
+                        @endif
 
                         @if ($property->services)
                             <div>
@@ -889,13 +897,13 @@
                                                 </td>
                                                 <td class="p-3 align-top">
                                                     @if($room->discount_enabled && $room->original_price)
-                                                        <div class="text-red-500 line-through text-xs">LKR {{ number_format($room->original_price) }}</div>
+                                                        <div class="text-red-500 line-through text-xs">USD {{ number_format($room->original_price / 300, 2) }}</div>
                                                     @endif
-                                                    <div class="text-lg font-bold">LKR {{ number_format($room->price_per_night ?? 0) }}</div>
+                                                    <div class="text-lg font-bold">USD {{ number_format(($room->price_per_night ?? 0) / 300, 2) }}</div>
                                                     @if($room->discount_enabled && $room->discount_percentage)
                                                         <span class="bg-green-600 text-white text-xs px-2 py-1 rounded">{{ $room->discount_percentage }}% off</span>
                                                     @endif
-                                                    <div class="text-xs text-gray-500 mt-1">{{ $room->currency ?? 'LKR' }}</div>
+                                                    <div class="text-xs text-gray-500 mt-1">USD</div>
                                                 </td>
                                                 <td class="p-3 align-top text-xs">
                                                     <ul class="space-y-1">

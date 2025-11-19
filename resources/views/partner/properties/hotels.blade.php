@@ -73,11 +73,20 @@
                     <div class="p-6">
                         <h3 class="text-xl font-bold text-gray-800 mb-2">{{ $property['title'] ?? 'Untitled Property' }}
                         </h3>
-                        <p class="text-gray-600 mb-4">
+                        <p class="text-gray-600 mb-2">
                             <i class="fas fa-map-marker-alt mr-2"></i>{{ $property['city'] ?? 'Location not specified' }}
                         </p>
+                        <div class="text-sm text-gray-500 mb-4">
+                            <i class="fas fa-calendar-alt mr-2"></i>0 bookings this month
+                        </div>
                         <div class="flex items-center justify-between mb-4">
-                            <span class="text-sm text-gray-500">0 bookings</span>
+                            <div class="text-sm font-bold text-green-600">
+                                @if($property['min_price_usd'] == $property['max_price_usd'])
+                                    USD {{ number_format($property['min_price_usd'], 2) }}/night
+                                @else
+                                    USD {{ number_format($property['min_price_usd'], 2) }} - {{ number_format($property['max_price_usd'], 2) }}/night
+                                @endif
+                            </div>
                             <span
                                 class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-xs font-semibold">Hotel</span>
                         </div>

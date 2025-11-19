@@ -728,11 +728,13 @@ Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddle
     Route::post('/homes/{property}/payments', [\App\Http\Controllers\Partner\HomeEditController::class, 'updatePayments'])->name('partner.homes.update.payments');
     Route::post('/homes/{property}/rooms', [\App\Http\Controllers\Partner\HomeEditController::class, 'updateRooms'])->name('partner.homes.update.rooms');
     Route::post('/homes/{property}/verification', [\App\Http\Controllers\Partner\HomeEditController::class, 'updateVerification'])->name('partner.homes.update.verification');
+    Route::post('/homes/{property}/pricing', [\App\Http\Controllers\Partner\HomeEditController::class, 'updatePricing'])->name('partner.homes.update.pricing');
 
     Route::get('/hotels/{property}/overview', [\App\Http\Controllers\Partner\HotelEditController::class, 'overview'])->name('partner.hotels.edit.overview');
     Route::get('/hotels/{property}/edit', [\App\Http\Controllers\Partner\HotelEditController::class, 'edit'])->name('partner.hotels.edit');
     Route::get('/hotels/{property}/amenities', [\App\Http\Controllers\Partner\HotelEditController::class, 'editAmenities'])->name('partner.hotels.amenities');
     Route::get('/hotels/{property}/photos', [\App\Http\Controllers\Partner\HotelEditController::class, 'editPhotos'])->name('partner.hotels.photos.edit');
+    Route::get('/hotels/{property}/photos', [\App\Http\Controllers\Partner\HotelEditController::class, 'editPhotos'])->name('partner.hotels.photos');
     Route::get('/hotels/{property}/rooms', [\App\Http\Controllers\Partner\HotelEditController::class, 'editRooms'])->name('partner.hotels.rooms');
     Route::get('/hotels/{property}/payment', [\App\Http\Controllers\Partner\HotelEditController::class, 'editPayment'])->name('partner.hotels.payments');
     Route::get('/hotels/{property}/policies', [\App\Http\Controllers\Partner\HotelEditController::class, 'editPolicies'])->name('partner.hotels.policies');
@@ -881,6 +883,47 @@ Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddle
     Route::post('/property/save-payment-step/{property}', [PropertyController::class, 'savePaymentStep'])->name('partner.property.savePaymentStep');
     Route::post('/property/save-verification/{property}', [PropertyController::class, 'saveVerification'])->name('partner.property.saveVerification');
     Route::patch('/property/complete-payment/{property}', [PropertyController::class, 'completePaymentProcess'])->name('partner.property.completePayment');
+
+    // Enhanced Features Routes
+    // Form Validation
+    Route::post('/validate-field', [\App\Http\Controllers\Partner\FormValidationController::class, 'validateField'])->name('partner.validate.field');
+    Route::post('/validate-form', [\App\Http\Controllers\Partner\FormValidationController::class, 'validateForm'])->name('partner.validate.form');
+    
+    // Auto-save
+    Route::post('/properties/{property}/auto-save', [PropertyController::class, 'autoSave'])->name('partner.properties.auto-save');
+    
+    // Property Dashboard
+    Route::get('/dashboard/properties', [\App\Http\Controllers\Partner\PropertyDashboardController::class, 'dashboard'])->name('partner.dashboard.properties');
+    Route::post('/properties/{property}/status', [\App\Http\Controllers\Partner\PropertyDashboardController::class, 'updateStatus'])->name('partner.properties.status.update');
+    Route::get('/properties/{property}/stats', [\App\Http\Controllers\Partner\PropertyDashboardController::class, 'getPropertyStats'])->name('partner.properties.stats');
+    
+    // Photo Management
+    Route::post('/properties/{property}/photos/upload', [\App\Http\Controllers\Partner\PhotoManagementController::class, 'uploadPhotos'])->name('partner.photos.upload');
+    Route::post('/properties/{property}/photos/reorder', [\App\Http\Controllers\Partner\PhotoManagementController::class, 'reorderPhotos'])->name('partner.photos.reorder');
+    Route::post('/properties/{property}/photos/{photo}/caption', [\App\Http\Controllers\Partner\PhotoManagementController::class, 'updateCaption'])->name('partner.photos.caption');
+    Route::post('/properties/{property}/photos/{photo}/primary', [\App\Http\Controllers\Partner\PhotoManagementController::class, 'setPrimary'])->name('partner.photos.primary');
+    Route::delete('/properties/{property}/photos/{photo}', [\App\Http\Controllers\Partner\PhotoManagementController::class, 'deletePhoto'])->name('partner.photos.delete');
+    
+    // Seasonal Pricing
+    Route::get('/properties/{property}/seasonal-pricing', [\App\Http\Controllers\Partner\SeasonalPricingController::class, 'index'])->name('partner.seasonal.pricing.index');
+    Route::post('/properties/{property}/seasonal-pricing', [\App\Http\Controllers\Partner\SeasonalPricingController::class, 'store'])->name('partner.seasonal.pricing.store');
+    Route::put('/properties/{property}/seasonal-pricing/{seasonalPricing}', [\App\Http\Controllers\Partner\SeasonalPricingController::class, 'update'])->name('partner.seasonal.pricing.update');
+    Route::delete('/properties/{property}/seasonal-pricing/{seasonalPricing}', [\App\Http\Controllers\Partner\SeasonalPricingController::class, 'destroy'])->name('partner.seasonal.pricing.destroy');
+    Route::get('/properties/{property}/price-for-date', [\App\Http\Controllers\Partner\SeasonalPricingController::class, 'getPriceForDate'])->name('partner.seasonal.pricing.date');
+    
+    // Property Templates
+    Route::get('/templates', [\App\Http\Controllers\Partner\PropertyTemplateController::class, 'index'])->name('partner.templates.index');
+    Route::post('/templates/{template}/create', [\App\Http\Controllers\Partner\PropertyTemplateController::class, 'createFromTemplate'])->name('partner.templates.create');
+    Route::post('/properties/{property}/save-template', [\App\Http\Controllers\Partner\PropertyTemplateController::class, 'saveAsTemplate'])->name('partner.templates.save');
+    Route::delete('/templates/{template}', [\App\Http\Controllers\Partner\PropertyTemplateController::class, 'destroy'])->name('partner.templates.destroy');
+    
+    // Bulk Operations
+    Route::post('/properties/bulk-update', [\App\Http\Controllers\Partner\BulkOperationsController::class, 'bulkUpdate'])->name('partner.properties.bulk.update');
+    Route::post('/properties/bulk-export', [\App\Http\Controllers\Partner\BulkOperationsController::class, 'bulkExport'])->name('partner.properties.bulk.export');
+    
+    // Property Analytics
+    Route::get('/properties/{property}/analytics', [\App\Http\Controllers\Partner\PropertyAnalyticsController::class, 'analytics'])->name('partner.properties.analytics');
+    Route::get('/analytics/dashboard', [\App\Http\Controllers\Partner\PropertyAnalyticsController::class, 'dashboard'])->name('partner.analytics.dashboard');
 });
 
 Route::post('/save-amenities/{propertyId}', [PropertyController::class, 'saveAmenities']);
@@ -933,6 +976,8 @@ Route::patch('/partner/property/{property}/additional-details', [PropertyControl
 
 Route::post('/partner/property/{property}/pricing', [PropertyController::class, 'savePricing'])
     ->name('partner.property.save.pricing');
+Route::post('/partner/properties/{property}/pricing', [PropertyController::class, 'savePricing'])
+    ->name('partner.properties.save.pricing');
 
 Route::post('/partner/property/{property}/rate-plans', [PropertyController::class, 'saveRatePlans'])
     ->name('partner.property.save.rate-plans');

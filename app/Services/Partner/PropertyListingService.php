@@ -59,6 +59,8 @@ class PropertyListingService
         return $properties->map(function($property) {
             $propertyArray = $property->toArray();
             $propertyArray['image'] = $property->files->first()?->path ?? null;
+            $propertyArray['adult_price_usd'] = app(\App\Services\CurrencyService::class)->convert($property->adult_price ?? 0, $property->currency ?? 'LKR', 'USD');
+            $propertyArray['child_price_usd'] = app(\App\Services\CurrencyService::class)->convert($property->child_price ?? 0, $property->currency ?? 'LKR', 'USD');
             return $propertyArray;
         })->toArray();
     }
@@ -88,6 +90,8 @@ class PropertyListingService
         return $properties->map(function($property) {
             $propertyArray = $property->toArray();
             $propertyArray['image'] = $property->files->first()?->path ?? null;
+            $propertyArray['adult_price_usd'] = app(\App\Services\CurrencyService::class)->convert($property->adult_price ?? 0, $property->currency ?? 'LKR', 'USD');
+            $propertyArray['child_price_usd'] = app(\App\Services\CurrencyService::class)->convert($property->child_price ?? 0, $property->currency ?? 'LKR', 'USD');
             return $propertyArray;
         })->toArray();
     }
@@ -112,11 +116,15 @@ class PropertyListingService
             $query->where('status', $status);
         }
         
-        $properties = $query->with('files')->get();
+        $properties = $query->with(['files', 'rooms'])->get();
         
         return $properties->map(function($property) {
             $propertyArray = $property->toArray();
             $propertyArray['image'] = $property->files->first()?->path ?? null;
+            $currencyService = app(\App\Services\CurrencyService::class);
+            $roomCurrency = $property->rooms->first()?->currency ?? $property->currency ?? 'LKR';
+            $propertyArray['min_price_usd'] = $currencyService->convert($property->rooms->min('price_per_night') ?? 0, $roomCurrency, 'USD');
+            $propertyArray['max_price_usd'] = $currencyService->convert($property->rooms->max('price_per_night') ?? 0, $roomCurrency, 'USD');
             return $propertyArray;
         })->toArray();
     }
@@ -146,6 +154,8 @@ class PropertyListingService
         return $properties->map(function($property) {
             $propertyArray = $property->toArray();
             $propertyArray['image'] = $property->files->first()?->path ?? null;
+            $propertyArray['adult_price_usd'] = app(\App\Services\CurrencyService::class)->convert($property->adult_price ?? 0, $property->currency ?? 'LKR', 'USD');
+            $propertyArray['child_price_usd'] = app(\App\Services\CurrencyService::class)->convert($property->child_price ?? 0, $property->currency ?? 'LKR', 'USD');
             return $propertyArray;
         })->toArray();
     }

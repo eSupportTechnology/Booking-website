@@ -1708,120 +1708,134 @@
 
   <template x-if="pricingWizardStep === 2">
     <div class="max-w-4xl mx-auto space-y-8 lg:ml-32 px-4 py-6">
-        <div class="max-w-4xl mx-auto px-4 py-8 space-y-6" x-data="{ showTip1: true, showTip2: true }">
+        <div class="max-w-4xl mx-auto px-4 py-8 space-y-6" x-data="pricingCalculator()">
 
       <!-- Title -->
       <h2 class="text-2xl font-bold text-gray-800">Set the price per night for this room</h2>
 
-      <!-- Price input and Tip 1 in two separate columns -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
-
-  <!-- Price input card (2/3 width) -->
-  <div class="md:col-span-2 bg-white border rounded-lg p-6 shadow-sm space-y-4">
-    <label class="block font-semibold text-base text-gray-700">How much do you want to charge per night?</label>
-    <div class="relative">
-  <label class="block text-sm text-gray-700 mb-1">Price guests pay</label>
-
-  <div class="relative w-full">
-    <!-- Currency Select Dropdown -->
-      <select
-        x-model="pricing.currency"
-        class="absolute left-3 top-1/2 -translate-y-[25%] bg-transparent text-gray-700 text-sm pr-1 focus:outline-none border border-gray-300 rounded-md h-8"
-      >
-        <option value="usd">US$</option>
-        <option value="eur">€</option>
-        <option value="gbp">£</option>
-        <option value="lkr">Rs</option>
-      </select>
-
-    <!-- Input Field -->
-      <input
-        type="text"
-        x-model="pricing.price_per_night"
-        name="price_per_night"
-        value="120.00"
-        class="w-full border border-gray-400 rounded-md p-2 pl-20 text-gray-700 font-semibold focus:ring-2 focus:ring-blue-300 focus:outline-none"
-      />
-  </div>
-
-
-  <p class="text-sm text-gray-500 mt-2">Including taxes, commission, and fees</p>
-</div>
-
-
-    <!-- Topic paragraph -->
-    <p class="text-sm text-gray-600 pl-4">
-      <span class="text-gray-500">15.00%</span> Bookintour.com commission
-    </p>
-
-    <!-- Sub-items under topic -->
-    <ul class="text-sm text-gray-600 space-y-1 pl-8">
-      <li><span class="text-green-600 font-semibold">✓</span> 24/7 help in your language</li>
-      <li><span class="text-green-600 font-semibold">✓</span> Save time with automatically confirmed bookings</li>
-      <li><span class="text-green-600 font-semibold">✓</span> We promote your place on Google</li>
-    </ul>
-
-    <p class="text-sm text-gray-800 font-medium border-t pt-3">US$ 30.00 Your earnings (including taxes)</p>
-  </div>
-
-  <!-- Tip Box 1 (1/3 width, independent height) -->
-  <div x-show="showTip1" class="relative bg-white border rounded-lg p-4 shadow-sm text-sm text-gray-700">
-    <button @click="showTip1 = false" class="absolute top-2 right-2 text-gray-500 font-semibold">✕</button>
-
-    <div class="flex items-center mb-2">
-      <img src="{{ asset('assets/system-uicons_lightbulb-on.svg') }}" alt="Tip Icon" class="w-6 h-6 mr-2">
-      <strong>What if I'm not sure about my price?</strong>
-    </div>
-
-    <p>Don't worry, you can always change it later. You can even set weekend, midweek, and seasonal prices, giving you more control over what you earn.</p>
-  </div>
-
-</div>
-
-      <!-- Discount and Tip 2 -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-
-        <!-- Discount card -->
-        <div class="md:col-span-2 bg-white border rounded-lg p-6 shadow-sm space-y-3">
-          <label class="inline-flex items-center">
-            <input type="checkbox" x-model="pricing.discount_enabled" class="form-checkbox text-blue-600 rounded-md" />
-            <span class="ml-2 font-medium text-gray-700 font-semibold">Get guests' attention with a 20% discount</span>
-          </label>
-          <p class="text-sm text-gray-600">
-            Give 20% off your first 3 bookings or for 90 days, whichever comes first.
-            <a href="#" class="text-blue-600 underline">Learn more</a>
-          </p>
-          <hr class="my-4">
-          <p class="text-sm text-gray-800">
-            <del class="text-gray-500">US$ 30.00</del>
-            <span class="text-green-600 font-semibold">US$ 24.00 per night</span>
-          </p>
-        </div>
-
-        <!-- Tip Box 2 (separate column) -->
-        <div x-show="showTip2" class="relative bg-white border rounded-lg p-4 shadow-sm text-sm text-gray-700">
-          <button @click="showTip2 = false" class="absolute top-2 right-3 text-gray-500 font-semibold mb-2">✕</button>
-          <div class="flex items-center mb-2">
-            <img src="{{ asset('assets/material-symbols-light_info-outline.svg') }}" alt="Tip Icon" class="w-6 h-6 mr-2">
-            <strong>Rules for setting up a promotion</strong>
+      <!-- Enhanced Pricing Component -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 md:p-6">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">Enhanced Pricing</h3>
+        
+        <div class="form-grid grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <div class="form-field">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Adult Price (per night)</label>
+            <div class="relative">
+              <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+              <input type="number" 
+                     x-model="adultPrice" 
+                     @input="calculateTotal" 
+                     name="adult_price"
+                     step="0.01"
+                     min="0"
+                     class="w-full pl-8 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg">
+            </div>
           </div>
-          <p>
-            Make sure you're giving a genuine discount. It must represent a real discount in line with consumer protection rules.
-            <a href="#" class="text-blue-600 underline">Learn More</a>
-          </p>
+          
+          <div class="form-field">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Child Price (per night)</label>
+            <div class="relative">
+              <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+              <input type="number" 
+                     x-model="childPrice" 
+                     @input="calculateTotal" 
+                     name="child_price"
+                     step="0.01"
+                     min="0"
+                     class="w-full pl-8 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg">
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-field mb-6">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Currency</label>
+          <select x-model="currency" @change="calculateTotal" name="currency" class="w-full pr-3 pl-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg">
+            <option value="USD">USD ($)</option>
+            <option value="EUR">EUR (€)</option>
+            <option value="GBP">GBP (£)</option>
+            <option value="LKR">LKR (Rs)</option>
+          </select>
+        </div>
+        
+        <div class="form-field mb-6">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Commission Rate (%)</label>
+          <div class="relative">
+            <input type="number" 
+                   x-model="commissionRate" 
+                   readonly
+                   class="w-full pr-8 pl-3 py-3 border border-gray-300 rounded-lg bg-gray-100 text-lg cursor-not-allowed">
+            <span class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">%</span>
+          </div>
+          <p class="text-xs text-gray-500 mt-1">Commission rate is set by admin and cannot be modified</p>
+        </div>
+        
+        <!-- Pricing Summary -->
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <h4 class="font-medium text-gray-900 mb-3">Pricing Summary</h4>
+          
+          <div class="space-y-2 text-sm">
+            <div class="flex justify-between items-center">
+              <span class="text-gray-600">Adult Price:</span>
+              <span class="font-medium" x-text="currency + ' ' + parseFloat(adultPrice || 0).toFixed(2)"></span>
+            </div>
+            
+            <div class="flex justify-between items-center" x-show="childPrice > 0">
+              <span class="text-gray-600">Child Price:</span>
+              <span class="font-medium" x-text="currency + ' ' + parseFloat(childPrice || 0).toFixed(2)"></span>
+            </div>
+            
+            <div class="flex justify-between items-center">
+              <span class="text-gray-600">Adult Commission (<span x-text="commissionRate"></span>%):</span>
+              <span class="font-medium text-orange-600" x-text="currency + ' ' + adultCommission.toFixed(2)"></span>
+            </div>
+            
+            <div class="flex justify-between items-center" x-show="childPrice > 0">
+              <span class="text-gray-600">Child Commission (<span x-text="commissionRate"></span>%):</span>
+              <span class="font-medium text-orange-600" x-text="currency + ' ' + childCommission.toFixed(2)"></span>
+            </div>
+            
+            <div class="border-t border-gray-300 pt-2 mt-2">
+              <div class="flex justify-between items-center">
+                <span class="font-semibold text-gray-900">Adult Final Price:</span>
+                <span class="font-bold text-lg text-green-600" x-text="currency + ' ' + adultPriceWithCommission.toFixed(2)"></span>
+              </div>
+              <div class="flex justify-between items-center" x-show="childPrice > 0">
+                <span class="font-semibold text-gray-900">Child Final Price:</span>
+                <span class="font-bold text-lg text-green-600" x-text="currency + ' ' + childPriceWithCommission.toFixed(2)"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Save Button -->
+        <div class="form-buttons flex flex-col md:flex-row gap-2 mt-6">
+          <button type="button" 
+                  @click="savePricingData()"
+                  :disabled="!adultPrice || adultPrice <= 0"
+                  :class="(!adultPrice || adultPrice <= 0) ? 
+                      'bg-gray-300 text-gray-500 cursor-not-allowed' : 
+                      'bg-blue-500 hover:bg-blue-600 text-white cursor-pointer'"
+                  class="w-full md:w-auto px-6 py-3 rounded-lg font-medium transition-colors">
+            Save Pricing
+          </button>
+          
+          <button type="button" 
+                  @click="resetPricing()"
+                  class="w-full md:w-auto px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors">
+            Reset
+          </button>
         </div>
       </div>
 
       <!-- Navigation Buttons -->
       <div class="mt-12 flex justify-between">
         <button type="button"
-                @click="step > 1 ? step-- : step"
-                :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
+                @click="pricingWizardStep--"
                 class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
           ←
         </button>
         <button type="button"
-                @click="savePricing"
+                @click="pricingWizardStep++"
                 class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ">
           Continue
         </button>
@@ -2445,6 +2459,91 @@ function calendarComponent() {
 </section>
 
 <script>
+function pricingCalculator() {
+    return {
+        adultPrice: 0,
+        childPrice: 0,
+        commissionRate: 15, // Default admin rate
+        currency: 'USD',
+        adultCommission: 0,
+        childCommission: 0,
+        adultPriceWithCommission: 0,
+        childPriceWithCommission: 0,
+        
+        init() {
+            this.calculateTotal();
+            this.loadCommissionRate();
+            // Make this instance globally accessible
+            window.pricingCalculatorInstance = this;
+        },
+        
+        async loadCommissionRate() {
+            try {
+                // You can add an API call here to get the actual admin commission rate
+                // For now, using default 15%
+                this.commissionRate = 15;
+                this.calculateTotal();
+            } catch (error) {
+                console.error('Error loading commission rate:', error);
+            }
+        },
+        
+        calculateTotal() {
+            const adultPrice = parseFloat(this.adultPrice || 0);
+            const childPrice = parseFloat(this.childPrice || 0);
+            const rate = parseFloat(this.commissionRate || 0) / 100;
+            
+            this.adultCommission = adultPrice * rate;
+            this.childCommission = childPrice * rate;
+            this.adultPriceWithCommission = adultPrice + this.adultCommission;
+            this.childPriceWithCommission = childPrice + this.childCommission;
+        },
+        
+        async savePricingData() {
+            if (!this.adultPrice || this.adultPrice <= 0) {
+                showToast('Adult price is required', 'error');
+                return;
+            }
+            
+            try {
+                const propertyId = window.wizardApp?.propertyId || 'new';
+                if (propertyId === 'new') {
+                    showToast('Property ID not found', 'error');
+                    return;
+                }
+                
+                const response = await fetch(`/partner/properties/${propertyId}/pricing`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({
+                        adult_price: parseFloat(this.adultPrice),
+                        child_price: parseFloat(this.childPrice || 0),
+                        currency: this.currency
+                    })
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    showToast('Pricing saved successfully', 'success');
+                } else {
+                    showToast(result.message || 'Failed to save pricing', 'error');
+                }
+            } catch (error) {
+                showToast('Failed to save pricing: ' + error.message, 'error');
+            }
+        },
+        
+        resetPricing() {
+            this.adultPrice = 0;
+            this.childPrice = 0;
+            this.calculateTotal();
+        }
+    }
+}
+
 function wizardApp() {
     return {
         // Debug and logging utilities
@@ -2483,6 +2582,9 @@ function wizardApp() {
         // Initialize watchers
         async init() {
             this.log('Alpine.js initialized');
+
+            // Make wizard app globally accessible for pricing calculator
+            window.wizardApp = this;
 
             // Check if in edit mode
             this.isEdit = typeof window.isEditMode !== 'undefined' ? window.isEditMode : (typeof isEdit !== 'undefined' ? isEdit : false);
@@ -2765,10 +2867,12 @@ function wizardApp() {
         // Pricing data
         pricing: {
             booking_type: 'instant',
-            price_per_night: '',
-            currency: 'usd',
+            adult_price: 0,
+            child_price: 0,
+            currency: 'USD',
             discount_enabled: false,
-            discount_percent: 0
+            discount_percent: 0,
+            commission_rate: 15
         },
 
         // Host profile data
@@ -3898,7 +4002,20 @@ function wizardApp() {
             this.isLoading = true;
 
             if (!(await this.ensurePropertyId())) {
-                this.isUploading = false;
+                this.isLoading = false;
+                return;
+            }
+
+            // Get pricing values from the pricing calculator component
+            const pricingCalc = window.pricingCalculatorInstance;
+            const adultPrice = pricingCalc?.adultPrice || 0;
+            const childPrice = pricingCalc?.childPrice || 0;
+            const currency = pricingCalc?.currency || 'USD';
+
+            // Validate adult price
+            if (!adultPrice || adultPrice <= 0) {
+                showToast('Please enter a valid adult price greater than 0', 'error');
+                this.isLoading = false;
                 return;
             }
 
@@ -3906,8 +4023,9 @@ function wizardApp() {
                 console.log('Saving pricing with data:', {
                     property_id: this.propertyId,
                     booking_type: this.pricing.booking_type,
-                    price_per_night: this.pricing.price_per_night,
-                    currency: this.pricing.currency,
+                    adult_price: adultPrice,
+                    child_price: childPrice,
+                    currency: currency,
                     discount_enabled: this.pricing.discount_enabled,
                     discount_percent: this.pricing.discount_percent
                 });
@@ -3921,8 +4039,9 @@ function wizardApp() {
                     body: JSON.stringify({
                         property_id: this.propertyId,
                         booking_type: this.pricing.booking_type,
-                        price_per_night: this.pricing.price_per_night,
-                        currency: this.pricing.currency,
+                        adult_price: adultPrice,
+                        child_price: childPrice,
+                        currency: currency,
                         discount_enabled: this.pricing.discount_enabled,
                         discount_percent: this.pricing.discount_percent
                     })

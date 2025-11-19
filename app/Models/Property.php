@@ -35,6 +35,11 @@ class Property extends Model
         'wizard_step',
         'property_wizard_step',
         'pricing_wizard_step',
+        'adult_price',
+        'child_price',
+        'commission_rate',
+        'total_price_with_commission',
+        'currency',
     ];
     public function photos()
     {
@@ -166,4 +171,62 @@ class Property extends Model
     return $this->belongsTo(PropertySubtype::class, 'subtype_id');
 }
 
+
+    public function seasonalPricings()
+    {
+        return $this->hasMany(SeasonalPricing::class);
+    }
+
+    /**
+     * Get the effective commission rate for this property.
+     * Always uses admin's global commission rate.
+     */
+    public function getEffectiveCommissionRate(): float
+    {
+        return \App\Models\AdminSettings::getGlobalCommissionRate();
+    }
+
+    /**
+     * Calculate total price with commission: base + (base * commission_rate)
+     */
+    public function calculateTotalPriceWithCommission(): float
+    {
+        $basePrice = ($this->adult_price ?? 0) + ($this->child_price ?? 0);
+        $commissionRate = $this->getEffectiveCommissionRate() / 100;
+        $commission = $basePrice * $commissionRate;
+
+        return $basePrice + $commission;
+    }
+
+    /**
+     * Get pricing breakdown with commission details: base + (base * commission_rate)
+     */
+    public function getPricingBreakdown(): array
+    {
+        $adultPrice = $this->adult_price ?? 0;
+        $childPrice = $this->child_price ?? 0;
+        $basePrice = $adultPrice + $childPrice;
+        $commissionRate = $this->getEffectiveCommissionRate() / 100;
+        $totalCommission = $basePrice * $commissionRate;
+
+        return [
+            'adult_price' => $adultPrice,
+            'child_price' => $childPrice,
+            'commission_rate' => $commissionRate,
+            'total_base_price' => $basePrice,
+            'total_commission' => $totalCommission,
+            'total_price_with_commission' => $basePrice + $totalCommission,
+            'using_admin_default' => true,
+            'admin_default_rate' => $commissionRate
+        ];
+    }
+
+    /**
+     * Check if using admin's default commission rate.
+     * Always returns true since partners cannot set custom rates.
+     */
+    public function isUsingAdminDefaultRate(): bool
+    {
+        return true;
+    }
 }
