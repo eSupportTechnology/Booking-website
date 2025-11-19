@@ -105,7 +105,12 @@
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
 
-
+<!-- Hero Section -->
+<section class="text-white py-8 bg-[#1F8FB2] relative z-0">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+    </div>
+</section>
 
 {{-- 🔹 SEARCH FILTER BAR (property search kept intact, enhanced with the same structure as first file) --}}
 <div class="relative z-10 -mt-8 px-2 sm:px-4 mb-6">
