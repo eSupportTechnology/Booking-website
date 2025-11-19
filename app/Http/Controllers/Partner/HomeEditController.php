@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Partner;
 
 use App\Http\Controllers\Controller;
 use App\Models\Property;
+use App\Models\AdminSettings;
 use App\Actions\Partner\GetHomeEditDataAction;
 use App\Services\Partner\HomeEditService;
 use App\DTOs\Partner\HomeEditDTO;
@@ -114,5 +115,48 @@ class HomeEditController extends Controller
         $this->homeEditService->updateVerification($property, $request->all());
         
         return response()->json(['success' => true, 'message' => 'Verification details updated successfully']);
+    }
+
+    public function updatePricing(Request $request, Property $property)
+    {
+        $request->validate([
+            'adult_price' => 'required|numeric|min:0',
+            'child_price' => 'nullable|numeric|min:0',
+            'currency' => 'required|string|in:USD,EUR,GBP,LKR'
+        ]);
+
+        $adultPrice = (float) $request->adult_price;
+        $childPrice = (float) ($request->child_price ?? 0);
+        
+        // Always use admin's global commission rate
+        $commissionRate = AdminSettings::getGlobalCommissionRate();
+        
+        // Calculate prices with commission: base + (base * commission_rate)
+        $basePrice = $adultPrice + $childPrice;
+        $commission = $basePrice * $commissionRate;
+        $totalPriceWithCommission = $basePrice + $commission;
+
+        // Update property with new pricing
+        $property->update([
+            'adult_price' => $adultPrice,
+            'child_price' => $childPrice,
+            'total_price_with_commission' => $totalPriceWithCommission,
+            'currency' => $request->currency
+        ]);
+        
+        return response()->json([
+            'success' => true, 
+            'message' => 'Pricing settings updated successfully',
+            'data' => [
+                'adult_price' => $adultPrice,
+                'child_price' => $childPrice,
+                'commission_rate' => $commissionRate,
+                'adult_commission' => $adultCommission,
+                'child_commission' => $childCommission,
+                'total_commission' => $commission,
+                'total_price_with_commission' => $totalPriceWithCommission,
+                'using_admin_default' => true
+            ]
+        ]);
     }
 }
