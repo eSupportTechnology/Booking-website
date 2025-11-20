@@ -114,6 +114,15 @@
 @endphp
 
 
+
+<!-- Hero Section -->
+<section class="text-white py-8 bg-[#1F8FB2] relative z-0">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+    </div>
+</section>
+
+
 <!-- ================= TOP SEARCH BAR (your code) ================= -->
 <div class="relative z-10 -mt-8 px-4">
   <form method="GET" action="{{ route('customer.carsearch') }}" ?pickup={{ request('pickup') }}&destination={{ request('destination') }}&checkin={{ request('checkin') }}&checkout={{ request('checkout') }}"
