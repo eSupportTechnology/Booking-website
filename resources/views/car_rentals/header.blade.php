@@ -29,18 +29,7 @@
                 <!-- Right Section -->
                 <div class="flex items-center space-x-4 flex-wrap">
                     
-                    {{-- Language Button --}}
-                    @php
-                        $locale = app()->getLocale();
-                        $language = config('languages.' . $locale);
-                        $flag = isset($language['flag']) ? asset($language['flag']) : asset('images/flags/uk.png');
-                    @endphp
-
-                    <button id="language-button" type="button"
-                        class="flex items-center justify-center w-7 h-7 bg-white rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-hidden">
-                        <img src="{{ $flag }}" alt="{{ $language['name'] ?? 'Language' }}"
-                            class="w-full h-full object-cover rounded-full" />
-                    </button>
+                   
 
                     {{-- Auth / Guest Section --}}
                     @if(Auth::guard('car_renter')->check())
