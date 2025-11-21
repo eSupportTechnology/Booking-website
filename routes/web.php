@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Partner\HomeEditController;
+
 use App\Http\Controllers\Auth\TravelerLoginController;
 use App\Http\Controllers\Customer\Auth\CustomerAuthController;
 use App\Http\Controllers\LanguageController;
@@ -58,27 +60,24 @@ Route::get('/login', [LoginController::class, 'show'])->name('login');
 // Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 
 // Route::get('/login', function () {
-//     return view('frontend.login');
+// return view('frontend.login');
 // });
 
 Route::post('change-language', [LanguageController::class, 'change'])->name('lang.change');
 
 Route::prefix('customer')->group(function () {
-
-    // Main search page (with results)
-    Route::get('/search', [SearchController::class, 'search'])
-        ->name('customer.search');
-
-    // Search form landing page (optional)
-    Route::get('/search-form', [SearchController::class, 'showSearchForm'])
-        ->name('customer.searchForm');
-
-    // Suggest cities for autocomplete
+    // Search route
+    Route::get('/search-form', [SearchController::class, 'showSearchForm'])->name('customer.searchForm');
+    Route::get('/search', [SearchController::class, 'search'])->name('customer.search');
+    // Route::get('/search/ajax', [SearchController::class, 'ajaxSearch'])
+    // ->name('customer.search.ajax');
     Route::get('/search/suggest', [SearchController::class, 'suggestCities'])
+        ->name('customer.search.suggest');
         ->name('customer.search.suggest');
 
     // Filter counts (optional – can keep)
     Route::get('/search/filter-counts', [SearchController::class, 'filterCounts'])
+        ->name('customer.search.filter-counts');
         ->name('customer.search.filter-counts');
 
 
@@ -108,7 +107,8 @@ Route::prefix('customer')->group(function () {
         Route::delete('/account/request-deletion', [CustomerAuthController::class, 'requestDeletion'])
             ->name('customer.account.request-deletion');
 
-        // Booking routes
+        // Pricing update route for partner homes
+        Route::post('/partner/homes/{property}/pricing', [HomeEditController::class, 'updatePricing'])->name('partner.homes.update.pricing');
         Route::get('/bookings', [\App\Http\Controllers\Customer\BookingController::class, 'index'])
             ->name('customer.bookings.index');
         Route::get('/bookings/{booking}/confirmation', [\App\Http\Controllers\Customer\BookingController::class, 'confirmation'])
@@ -255,7 +255,7 @@ Route::get('/partner-forgot-password', function () {
 })->name('partner.forgot.password');
 
 // Route::get('/partner-password-recover', function () {
-//     return view('frontend.partner-forgotpassword-success');
+// return view('frontend.partner-forgotpassword-success');
 // })->name('partner.forgot.password');
 
 Route::get('/partner-property-types', function () {
@@ -283,7 +283,7 @@ Route::get('/partner-homes-complete', function () {
 })->name('partner.homes.complete');
 
 // Route::get('/partner-apartment-weekly-rate', function () {
-//     return view('frontend.partner-apartment-weekly-rate');
+// return view('frontend.partner-apartment-weekly-rate');
 // })->name('partner.apartment.weekly.rate');
 
 Route::get('/partner-apartment-refundable-rate', function () {
@@ -293,7 +293,7 @@ Route::get('/partner-apartment-refundable-rate', function () {
 Route::get('/open-booking/{propertyId}', [PropertyController::class, 'openBooking'])->name('open.booking');
 
 // Route::get('/partner-apartment-pricing-policies', function () {
-//     return view('frontend.partner-apartment-pricing-cancel-policies');
+// return view('frontend.partner-apartment-pricing-cancel-policies');
 // })->name('partner.apartment.pricing.policies');
 
 Route::get('/customer-profile-create', function () {
@@ -478,7 +478,7 @@ Route::get('/partner-apartment-multiple', function () {
 Route::get('/partner-homes-form2/{id}/{subtype}', [PropertyController::class, 'showHomesForm2'])->name('partner.homes.form.2');
 
 // Route::get('/partner-apartment-multiple-2', function () {
-//     return view('frontend.partner-apartments-multiple-2');
+// return view('frontend.partner-apartments-multiple-2');
 // })->name('partner.apartment.multiple.2');
 
 Route::get('/partner-homes-form2', function () {
@@ -556,7 +556,7 @@ Route::post('/cars/register-step', [CarRentalController::class, 'registerStep'])
 
 
 // Route::get('/partner-hotels-complete-registration', function () {
-//     return view('frontend.partner-hotels-complete-registration');
+// return view('frontend.partner-hotels-complete-registration');
 // })->name('partner.hotels.complete.registration');
 
 Route::get('/partner-hotels-multiple', function () {
@@ -564,34 +564,34 @@ Route::get('/partner-hotels-multiple', function () {
 })->name('partner.hotels.multiple');
 
 // Route::get('/email-verify', function () {
-//     return view('frontend.verify-email');
+// return view('frontend.verify-email');
 // })->name('email.verify');
 
 
 //Route::get('/airport-taxis', function () {
-//    return view('frontend.airport-taxi');
+// return view('frontend.airport-taxi');
 //})->name('airport.taxis');
 
 // routes/web.php
 // Route::prefix('traveler')->group(function () {
-//     Route::get('/login', [TravelerLoginController::class, 'showLoginForm'])->name('traveler.login');
-//     Route::post('/send-code', [TravelerLoginController::class, 'sendCode'])->name('send.code');
-//     Route::get('/verify-code', [TravelerLoginController::class, 'showCodeForm'])->name('verify.code.form');
-//     Route::post('/verify-code', [TravelerLoginController::class, 'verifyCode'])->name('verify.code');
-//     Route::post('/logout', [TravelerLoginController::class, 'logout'])->name('traveler.logout');
-//     Route::get('/auth/google', [TravelerLoginController::class, 'redirectToGoogle'])->name('traveler.google.login');
-//     Route::get('/auth/google/callback', [TravelerLoginController::class, 'handleGoogleCallback']);
-//     Route::get('auth/facebook', [TravelerLoginController::class, 'redirectToFacebook'])->name('traveler.facebook.login');
-//     Route::get('auth/facebook/callback', [TravelerLoginController::class, 'handleFacebookCallback']);
+// Route::get('/login', [TravelerLoginController::class, 'showLoginForm'])->name('traveler.login');
+// Route::post('/send-code', [TravelerLoginController::class, 'sendCode'])->name('send.code');
+// Route::get('/verify-code', [TravelerLoginController::class, 'showCodeForm'])->name('verify.code.form');
+// Route::post('/verify-code', [TravelerLoginController::class, 'verifyCode'])->name('verify.code');
+// Route::post('/logout', [TravelerLoginController::class, 'logout'])->name('traveler.logout');
+// Route::get('/auth/google', [TravelerLoginController::class, 'redirectToGoogle'])->name('traveler.google.login');
+// Route::get('/auth/google/callback', [TravelerLoginController::class, 'handleGoogleCallback']);
+// Route::get('auth/facebook', [TravelerLoginController::class, 'redirectToFacebook'])->name('traveler.facebook.login');
+// Route::get('auth/facebook/callback', [TravelerLoginController::class, 'handleFacebookCallback']);
 
-//     Route::middleware(['auth:traveler'])->group(function () {
-//         Route::get('/dashboard', function () {
-//             return view('dashboard');
-//         })->name('traveler.dashboard');
+// Route::middleware(['auth:traveler'])->group(function () {
+// Route::get('/dashboard', function () {
+// return view('dashboard');
+// })->name('traveler.dashboard');
 
-//         Route::get('/profile', [TravelerDetailsController::class, 'showTravelerDetails'])->name('traveler.profile');
-//         Route::put('/profile/update', [TravelerDetailsController::class, 'updateTravelerDetails'])->name('traveler.profile.update');
-//     });
+// Route::get('/profile', [TravelerDetailsController::class, 'showTravelerDetails'])->name('traveler.profile');
+// Route::put('/profile/update', [TravelerDetailsController::class, 'updateTravelerDetails'])->name('traveler.profile.update');
+// });
 // });
 
 // Partner Registration Routes (Public - No Auth Required)
@@ -711,7 +711,7 @@ Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddle
     Route::delete('/properties/{property}', [\App\Http\Controllers\Partner\PropertyController::class, 'destroy'])->name('partner.properties.destroy');
 
     // Specific Property Type Edit Routes - Redirect apartment edit to step2
-    Route::get('/apartments/{property}/edit', function($property) {
+    Route::get('/apartments/{property}/edit', function ($property) {
         return redirect()->route('partner.property.apartment.step2', ['propertyId' => $property]);
     })->name('partner.apartments.edit');
     Route::put('/apartments/{property}', [\App\Http\Controllers\Partner\ApartmentEditController::class, 'update'])->name('partner.apartments.update');
@@ -755,7 +755,7 @@ Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddle
 
     // // New comprehensive hotel edit routes - redirect to overview
     // Route::get('/hotels/{property}/edit-comprehensive', function($property) {
-    //     return redirect()->route('partner.hotels.edit.overview', $property);
+    // return redirect()->route('partner.hotels.edit.overview', $property);
     // })->name('partner.hotels.edit.comprehensive');
     Route::post('/hotels/{property}/basic-details', [\App\Http\Controllers\Partner\HotelPropertyEditController::class, 'updateBasicDetails'])->name('partner.hotels.update.basic-details');
     Route::post('/hotels/{property}/amenities', [\App\Http\Controllers\Partner\HotelPropertyEditController::class, 'updateAmenities'])->name('partner.hotels.update.amenities');
@@ -814,7 +814,7 @@ Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddle
     Route::post('/partner/property/upload-photos', [PropertyController::class, 'uploadPhotos'])->name('partner.property.upload.photos.alt');
 
     // Temporary debug route for file upload limits
-    Route::get('/debug/upload-limits', function() {
+    Route::get('/debug/upload-limits', function () {
         return response()->json([
             'upload_max_filesize' => ini_get('upload_max_filesize'),
             'post_max_size' => ini_get('post_max_size'),
@@ -827,6 +827,7 @@ Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddle
     Route::post('/property/save-policy/{property}', [PropertyController::class, 'savePolicy']);
     Route::post('/property/save-languages/{property}', [PropertyController::class, 'saveLanguages']);
     Route::post('/save-rooms/{property}', [PropertyController::class, 'saveRooms']);
+    Route::post('/save-pricing/{property}', [PropertyController::class, 'savePricing']);
     Route::post('/store-verification', [PropertyController::class, 'storePartnerVerification']);
     Route::post('/partner-verification', [PropertyController::class, 'storePartnerVerification']);
     Route::post('/partner/property/{property}/partner-verification', [PropertyController::class, 'storePartnerVerification']);
@@ -888,39 +889,39 @@ Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddle
     // Form Validation
     Route::post('/validate-field', [\App\Http\Controllers\Partner\FormValidationController::class, 'validateField'])->name('partner.validate.field');
     Route::post('/validate-form', [\App\Http\Controllers\Partner\FormValidationController::class, 'validateForm'])->name('partner.validate.form');
-    
+
     // Auto-save
     Route::post('/properties/{property}/auto-save', [PropertyController::class, 'autoSave'])->name('partner.properties.auto-save');
-    
+
     // Property Dashboard
     Route::get('/dashboard/properties', [\App\Http\Controllers\Partner\PropertyDashboardController::class, 'dashboard'])->name('partner.dashboard.properties');
     Route::post('/properties/{property}/status', [\App\Http\Controllers\Partner\PropertyDashboardController::class, 'updateStatus'])->name('partner.properties.status.update');
     Route::get('/properties/{property}/stats', [\App\Http\Controllers\Partner\PropertyDashboardController::class, 'getPropertyStats'])->name('partner.properties.stats');
-    
+
     // Photo Management
     Route::post('/properties/{property}/photos/upload', [\App\Http\Controllers\Partner\PhotoManagementController::class, 'uploadPhotos'])->name('partner.photos.upload');
     Route::post('/properties/{property}/photos/reorder', [\App\Http\Controllers\Partner\PhotoManagementController::class, 'reorderPhotos'])->name('partner.photos.reorder');
     Route::post('/properties/{property}/photos/{photo}/caption', [\App\Http\Controllers\Partner\PhotoManagementController::class, 'updateCaption'])->name('partner.photos.caption');
     Route::post('/properties/{property}/photos/{photo}/primary', [\App\Http\Controllers\Partner\PhotoManagementController::class, 'setPrimary'])->name('partner.photos.primary');
     Route::delete('/properties/{property}/photos/{photo}', [\App\Http\Controllers\Partner\PhotoManagementController::class, 'deletePhoto'])->name('partner.photos.delete');
-    
+
     // Seasonal Pricing
     Route::get('/properties/{property}/seasonal-pricing', [\App\Http\Controllers\Partner\SeasonalPricingController::class, 'index'])->name('partner.seasonal.pricing.index');
     Route::post('/properties/{property}/seasonal-pricing', [\App\Http\Controllers\Partner\SeasonalPricingController::class, 'store'])->name('partner.seasonal.pricing.store');
     Route::put('/properties/{property}/seasonal-pricing/{seasonalPricing}', [\App\Http\Controllers\Partner\SeasonalPricingController::class, 'update'])->name('partner.seasonal.pricing.update');
     Route::delete('/properties/{property}/seasonal-pricing/{seasonalPricing}', [\App\Http\Controllers\Partner\SeasonalPricingController::class, 'destroy'])->name('partner.seasonal.pricing.destroy');
     Route::get('/properties/{property}/price-for-date', [\App\Http\Controllers\Partner\SeasonalPricingController::class, 'getPriceForDate'])->name('partner.seasonal.pricing.date');
-    
+
     // Property Templates
     Route::get('/templates', [\App\Http\Controllers\Partner\PropertyTemplateController::class, 'index'])->name('partner.templates.index');
     Route::post('/templates/{template}/create', [\App\Http\Controllers\Partner\PropertyTemplateController::class, 'createFromTemplate'])->name('partner.templates.create');
     Route::post('/properties/{property}/save-template', [\App\Http\Controllers\Partner\PropertyTemplateController::class, 'saveAsTemplate'])->name('partner.templates.save');
     Route::delete('/templates/{template}', [\App\Http\Controllers\Partner\PropertyTemplateController::class, 'destroy'])->name('partner.templates.destroy');
-    
+
     // Bulk Operations
     Route::post('/properties/bulk-update', [\App\Http\Controllers\Partner\BulkOperationsController::class, 'bulkUpdate'])->name('partner.properties.bulk.update');
     Route::post('/properties/bulk-export', [\App\Http\Controllers\Partner\BulkOperationsController::class, 'bulkExport'])->name('partner.properties.bulk.export');
-    
+
     // Property Analytics
     Route::get('/properties/{property}/analytics', [\App\Http\Controllers\Partner\PropertyAnalyticsController::class, 'analytics'])->name('partner.properties.analytics');
     Route::get('/analytics/dashboard', [\App\Http\Controllers\Partner\PropertyAnalyticsController::class, 'dashboard'])->name('partner.analytics.dashboard');
@@ -1230,7 +1231,7 @@ Route::get('/property/vedio', function () {
 // Airport Details Page
 // Route::view('/admin/airport-details', 'frontend.admin.airport-details')->name('admin.airport.details');
 // Route::get('/admin', function () {
-//     return view('frontend.admin.admin');
+// return view('frontend.admin.admin');
 // })->name('admin.dashboard');
 
 Route::view('/search', 'frontend.search-page')->name('search-page');
@@ -1348,10 +1349,10 @@ Route::get('/carrentals/register/details', [CarRenterAuthController::class, 'car
     ->name('car_renter.register.details');
 
 Route::post('/car-renter/register/company', [CarRenterAuthController::class, 'storeCompanyDetails'])
-     ->name('car_renter.register.company.store');
+    ->name('car_renter.register.company.store');
 
 Route::post('/car-renter/register/individual', [CarRenterAuthController::class, 'storeIndividualDetails'])
-     ->name('car_renter.register.individual.store');
+    ->name('car_renter.register.individual.store');
 
 Route::get('/carrentals/register/password', [CarRenterAuthController::class, 'createPassword'])
     ->name('carrentals.register.password');
@@ -1386,13 +1387,13 @@ Route::prefix('car-renter')->name('carrentals.')->group(function () {
 
 
 
-Route::middleware(['auth:car_renter'])->prefix('cars')->name('cars.')->group(function () {
-    // Show add car form
-    Route::get('/add', [CarRentalController::class, 'index'])->name('add');
+    Route::middleware(['auth:car_renter'])->prefix('cars')->name('cars.')->group(function () {
+        // Show add car form
+        Route::get('/add', [CarRentalController::class, 'index'])->name('add');
 
-    // Save each step (Step 1, 2, 3, 4)
-    Route::post('/save-step/{step}', [CarRentalController::class, 'saveStep'])->name('saveStep');
-});
+        // Save each step (Step 1, 2, 3, 4)
+        Route::post('/save-step/{step}', [CarRentalController::class, 'saveStep'])->name('saveStep');
+    });
 
 
 
@@ -1430,7 +1431,7 @@ Route::middleware('auth:car_renter')->group(function () {
 Route::middleware('auth:car_renter')->group(function () {
     Route::get('/my/car-rentals', [CarRenterControlPanel::class, 'myCars'])
         ->name('car_rentals-listing');
-        Route::get('/cars/{id}/edit', [CarRenterControlPanel::class, 'edit'])->name('cars.edit');
+    Route::get('/cars/{id}/edit', [CarRenterControlPanel::class, 'edit'])->name('cars.edit');
     Route::put('/cars/{id}', [CarRenterControlPanel::class, 'update'])->name('cars.update');
 });
 
@@ -1441,13 +1442,10 @@ Route::middleware(['auth:car_renter'])->group(function () {
     Route::delete('/renter/cars/{id}', [CarRenterControlPanel::class, 'destroy'])->name('renter.cars.destroy');
     Route::delete('/renter/taxis/{id}', [AirportTaxiControlPanel::class, 'destroy'])->name('renter.taxis.destroy');
     Route::get('/renter/taxis/{id}', [AirportTaxiControlPanel::class, 'show'])->name('renter.taxis.show');
-
-
-
 });
 
 Route::middleware('auth:car_renter')->group(function () {
-    Route::get('/my/taxi', [AirportTaxiControlPanel ::class, 'myTaxi'])
+    Route::get('/my/taxi', [AirportTaxiControlPanel::class, 'myTaxi'])
         ->name('taxi.listing');
 });
 Route::get('/car-rental-listing', [\App\Http\Controllers\Customer\PropertyListingController::class, 'carRentalListing'])->name('car-rental-listing');
@@ -1494,7 +1492,7 @@ Route::get('/api/exchange-rate/{from}/{to}', [\App\Http\Controllers\CurrencyCont
 
 
 
-//  CUSTOMER PROPERTY ROUTES
+// CUSTOMER PROPERTY ROUTES
 Route::prefix('properties')->name('customer.properties.')->group(function () {
 
     // Hotels listing
@@ -1535,7 +1533,7 @@ Route::get('/customer/car-rental/search', [CarSearchController::class, 'carsearc
 
 
 Route::get('/customer/car/{id}', [CarSearchController::class, 'show'])
-     ->name('customer.car.show');
+    ->name('customer.car.show');
 
 Route::post('/car/{id}/book', [CarBookingController::class, 'store'])
     ->name('customer.car.book');
