@@ -65,77 +65,106 @@
 
         <!-- Table -->
         <div class="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-100">
-            <div class="overflow-x-auto">
+
+            <!-- =======================
+                DESKTOP/TABLE VIEW (sm+)
+                ======================= -->
+            <div class="hidden sm:block overflow-x-auto">
                 <table class="min-w-full text-sm text-left text-gray-700" id="transfersTable">
-                    <thead class="bg-gray-50 text-[10px] sm:text-xs uppercase font-semibold text-gray-500">
+                    <thead class="bg-gray-50 text-xs uppercase font-semibold text-gray-500">
                         <tr>
-                            <th class="px-2 sm:px-4 py-3 sm:py-4">ID</th>
-                            <th class="px-2 sm:px-4 py-3 sm:py-4">Passenger</th>
-                            <th class="px-2 sm:px-4 py-3 sm:py-4">Flight</th>
-                            <th class="px-2 sm:px-4 py-3 sm:py-4">Status</th>
-                            <th class="px-2 sm:px-4 py-3 sm:py-4">Approval</th>
-                            <th class="px-2 sm:px-4 py-3 sm:py-4">Actions</th>
+                            <th class="px-4 py-3">ID</th>
+                            <th class="px-4 py-3">Passenger</th>
+                            <th class="px-4 py-3">Flight</th>
+                            <th class="px-4 py-3">Status</th>
+                            <th class="px-4 py-3">Approval</th>
+                            <th class="px-4 py-3">Actions</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-100 text-xs sm:text-sm">
+
+                    <tbody class="divide-y divide-gray-100">
                         @forelse($transfers as $transfer)
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-2 sm:px-4 py-3 sm:py-4 font-medium text-gray-900">#AT{{ $transfer->id }}</td>
-                            <td class="px-2 sm:px-4 py-3 sm:py-4">{{ $transfer->drivers->first()?->name ?? 'No Driver' }}</td>
-                            <td class="px-2 sm:px-4 py-3 sm:py-4">{{ $transfer->number_plate ?? 'N/A' }}</td>
-                            <td class="px-2 sm:px-4 py-3 sm:py-4">
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-4 py-4 font-semibold text-gray-900">#AT{{ $transfer->id }}</td>
+                            <td class="px-4 py-4">
+                                {{ $transfer->drivers->first()?->name ?? 'No Driver' }}
+                            </td>
+                            <td class="px-4 py-4">
+                                {{ $transfer->number_plate ?? 'N/A' }}
+                            </td>
+
+                            <!-- Status -->
+                            <td class="px-4 py-4">
                                 <div class="relative">
                                     @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('change_airport_status'))
                                     <select onchange="handleTransferStatusChange(this, 'AT{{ $transfer->id }}')"
-                                        class="appearance-none @if($transfer->status === 'Scheduled') bg-green-100 text-green-800 @elseif($transfer->status === 'Completed') bg-yellow-100 text-yellow-800 @else bg-red-100 text-red-800 @endif font-medium text-[10px] sm:text-xs rounded-full pl-6 pr-4 py-1 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#1F8FB2] transition"
+                                        class="appearance-none 
+                                            @if($transfer->status === 'Scheduled') bg-green-100 text-green-800 
+                                            @elseif($transfer->status === 'Completed') bg-yellow-100 text-yellow-800 
+                                            @else bg-red-100 text-red-800 @endif
+                                            text-xs font-medium rounded-full pl-6 pr-4 py-1 focus:outline-none focus:ring-2 focus:ring-[#1F8FB2]"
                                         data-original-value="{{ $transfer->status }}">
+
                                         <option value="Scheduled" @selected($transfer->status === 'Scheduled')>Scheduled</option>
                                         <option value="Completed" @selected($transfer->status === 'Completed')>Completed</option>
                                         <option value="Cancelled" @selected($transfer->status === 'Cancelled')>Cancelled</option>
                                     </select>
-                                    <span class="absolute top-1/2 left-2 -translate-y-1/2 w-2 h-2 rounded-full @if($transfer->status === 'Scheduled') bg-green-800 @elseif($transfer->status === 'Completed') bg-yellow-800 @else bg-red-800 @endif status-dot"></span>
+
+                                    <span class="absolute top-1/2 left-2 -translate-y-1/2 w-2 h-2 rounded-full
+                                        @if($transfer->status === 'Scheduled') bg-green-800
+                                        @elseif($transfer->status === 'Completed') bg-yellow-800
+                                        @else bg-red-800 @endif"></span>
+
                                     @else
-                                    <span class="px-3 py-1 rounded-full text-xs font-semibold @if($transfer->status === 'Scheduled') bg-green-100 text-green-800 @elseif($transfer->status === 'Completed') bg-yellow-100 text-yellow-800 @else bg-red-100 text-red-800 @endif">
+                                    <span class="px-3 py-1 rounded-full text-xs font-semibold
+                                        @if($transfer->status === 'Scheduled') bg-green-100 text-green-800
+                                        @elseif($transfer->status === 'Completed') bg-yellow-100 text-yellow-800
+                                        @else bg-red-100 text-red-800 @endif">
                                         {{ $transfer->status }}
                                     </span>
                                     @endif
                                 </div>
                             </td>
-                            <td class="px-2 sm:px-4 py-3 sm:py-4">
+
+                            <!-- Approval -->
+                            <td class="px-4 py-4">
                                 @if($transfer->approval_status === 'pending' && (Auth::guard('admin')->user()->can('approve_taxis') || Auth::guard('admin')->user()->can('reject_taxis')))
-                                    <div class="flex gap-2">
-                                        @can('approve_taxis')
-                                        <button onclick="approveTransfer({{ $transfer->id }})"
-                                            class="px-2 py-1 bg-green-500 text-white text-xs rounded hover:bg-green-600">
-                                            <i class="fas fa-check mr-1"></i> Approve
-                                        </button>
-                                        @endcan
-                                        @can('reject_taxis')
-                                        <button onclick="rejectTransfer({{ $transfer->id }})"
-                                            class="px-2 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600">
-                                            <i class="fas fa-times mr-1"></i> Reject
-                                        </button>
-                                        @endcan
-                                    </div>
+                                <div class="flex gap-2">
+                                    @can('approve_taxis')
+                                    <button onclick="approveTransfer({{ $transfer->id }})"
+                                        class="px-2 py-1 bg-green-500 text-white text-xs rounded hover:bg-green-600">
+                                        <i class="fas fa-check mr-1"></i> Approve
+                                    </button>
+                                    @endcan
+
+                                    @can('reject_taxis')
+                                    <button onclick="rejectTransfer({{ $transfer->id }})"
+                                        class="px-2 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600">
+                                        <i class="fas fa-times mr-1"></i> Reject
+                                    </button>
+                                    @endcan
+                                </div>
                                 @else
-                                    <span class="px-2 py-1 rounded-full text-xs font-semibold 
-                                        @if($transfer->approval_status === 'approved') bg-green-100 text-green-800 
-                                        @else bg-red-100 text-red-800 @endif">
-                                        {{ ucfirst($transfer->approval_status) }}
-                                    </span>
+                                <span class="px-2 py-1 rounded-full text-xs font-semibold
+                                    @if($transfer->approval_status === 'approved') bg-green-100 text-green-800
+                                    @else bg-red-100 text-red-800 @endif">
+                                    {{ ucfirst($transfer->approval_status) }}
+                                </span>
                                 @endif
                             </td>
-                            <td class="px-2 sm:px-4 py-3 sm:py-4">
-                                <div class="flex flex-col sm:flex-row sm:items-center gap-2">
+
+                            <!-- Actions -->
+                            <td class="px-4 py-4">
+                                <div class="flex items-center gap-3">
                                     @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('view_airport'))
                                     <a href="{{ route('admin.airport.details', $transfer->id) }}"
-                                        class="text-[#1F8FB2] hover:text-[#157799] text-[10px] sm:text-xs font-medium inline-flex items-center">
+                                        class="text-[#1F8FB2] hover:text-[#157799] text-xs inline-flex items-center">
                                         <i class="fas fa-eye mr-1"></i> View
                                     </a>
                                     @endif
+
                                     @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('edit_airport'))
-                                    <button
-                                        class="text-red-600 hover:text-red-800 text-[10px] sm:text-xs font-medium inline-flex items-center">
+                                    <button class="text-red-600 hover:text-red-800 text-xs inline-flex items-center">
                                         <i class="fas fa-trash mr-1"></i> Delete
                                     </button>
                                     @endif
@@ -144,25 +173,118 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="6" class="px-4 py-8 text-center text-gray-500">
-                                No airport transfers found.
-                            </td>
+                            <td colspan="6" class="px-4 py-8 text-center text-gray-500">No airport transfers found.</td>
                         </tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
 
+            <!-- =======================
+                MOBILE CARD VIEW (xs)
+                ======================= -->
+            <div class="block sm:hidden divide-y divide-gray-100">
+
+                @forelse($transfers as $transfer)
+                <div class="p-4">
+
+                    <!-- Header -->
+                    <div class="flex justify-between items-center">
+                        <div class="font-semibold text-sm text-gray-900">#AT{{ $transfer->id }}</div>
+                        <div class="text-xs text-gray-500">{{ $transfer->number_plate ?? 'N/A' }}</div>
+                    </div>
+
+                    <!-- Passenger -->
+                    <div class="mt-1 text-xs text-gray-600">
+                        {{ $transfer->drivers->first()?->name ?? 'No Driver' }}
+                    </div>
+
+                    <!-- Status -->
+                    <div class="mt-3">
+                        @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('change_airport_status'))
+                        <select onchange="handleTransferStatusChange(this, 'AT{{ $transfer->id }}')"
+                            class="appearance-none 
+                                @if($transfer->status === 'Scheduled') bg-green-100 text-green-800
+                                @elseif($transfer->status === 'Completed') bg-yellow-100 text-yellow-800
+                                @else bg-red-100 text-red-800 @endif
+                                text-[11px] font-medium rounded-full px-3 py-1 focus:outline-none focus:ring-2 focus:ring-[#1F8FB2]">
+
+                            <option value="Scheduled" @selected($transfer->status === 'Scheduled')>Scheduled</option>
+                            <option value="Completed" @selected($transfer->status === 'Completed')>Completed</option>
+                            <option value="Cancelled" @selected($transfer->status === 'Cancelled')>Cancelled</option>
+                        </select>
+                        @else
+                        <span class="px-3 py-1 rounded-full text-[11px] font-semibold
+                            @if($transfer->status === 'Scheduled') bg-green-100 text-green-800
+                            @elseif($transfer->status === 'Completed') bg-yellow-100 text-yellow-800
+                            @else bg-red-100 text-red-800 @endif">
+                            {{ $transfer->status }}
+                        </span>
+                        @endif
+                    </div>
+
+                    <!-- Approval -->
+                    <div class="mt-3">
+                        @if($transfer->approval_status === 'pending' && (Auth::guard('admin')->user()->can('approve_taxis') || Auth::guard('admin')->user()->can('reject_taxis')))
+                        <div class="flex gap-2">
+                            @can('approve_taxis')
+                            <button onclick="approveTransfer({{ $transfer->id }})"
+                                class="px-3 py-1 bg-green-500 text-white text-[11px] rounded hover:bg-green-600">
+                                Approve
+                            </button>
+                            @endcan
+
+                            @can('reject_taxis')
+                            <button onclick="rejectTransfer({{ $transfer->id }})"
+                                class="px-3 py-1 bg-red-500 text-white text-[11px] rounded hover:bg-red-600">
+                                Reject
+                            </button>
+                            @endcan
+                        </div>
+                        @else
+                        <span class="px-3 py-1 rounded-full text-[11px] font-semibold
+                            @if($transfer->approval_status === 'approved') bg-green-100 text-green-800
+                            @else bg-red-100 text-red-800 @endif">
+                            {{ ucfirst($transfer->approval_status) }}
+                        </span>
+                        @endif
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="mt-3 flex gap-3">
+                        @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('view_airport'))
+                        <a href="{{ route('admin.airport.details', $transfer->id) }}"
+                            class="text-[#1F8FB2] hover:text-[#157799] text-xs inline-flex items-center">
+                            <i class="fas fa-eye mr-1"></i> View
+                        </a>
+                        @endif
+
+                        @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('edit_airport'))
+                        <button class="text-red-600 hover:text-red-800 text-xs inline-flex items-center">
+                            <i class="fas fa-trash mr-1"></i> Delete
+                        </button>
+                        @endif
+                    </div>
+
+                </div>
+                @empty
+                <div class="p-4 text-center text-gray-500">No airport transfers found.</div>
+                @endforelse
+            </div>
+
             <!-- Pagination -->
-            <div class="px-4 py-3 flex flex-col sm:flex-row items-center justify-between border-t border-gray-200 gap-3 sm:gap-0">
+            <div class="px-4 py-3 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-3">
                 <p class="text-xs text-gray-700">
                     Showing {{ $transfers->firstItem() ?? 0 }} to {{ $transfers->lastItem() ?? 0 }} of {{ $transfers->total() }} results
                 </p>
+
                 <div class="space-x-1">
                     {{ $transfers->links('pagination::simple-bootstrap-4') }}
                 </div>
             </div>
+
         </div>
+
     </div>
 </section>
 
