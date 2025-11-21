@@ -24,6 +24,19 @@
             showHost: false,
             showNeighborhood: false,
             showNone: false,
+            adultPrice: 0,
+            childPrice: 0,
+            currency: 'USD',
+            commissionRate: 10,
+            basePrice: 0,
+            commissionAmount: 0,
+            totalPrice: 0,
+
+            calculateTotal() {
+                this.basePrice = parseFloat(this.adultPrice || 0) + parseFloat(this.childPrice || 0);
+                this.commissionAmount = this.basePrice * (parseFloat(this.commissionRate || 0) / 100);
+                this.totalPrice = this.basePrice + this.commissionAmount;
+            },
 
             toggleBreakfastOption(option) {
                 if (this.selectedBreakfasts.includes(option)) {
@@ -443,9 +456,7 @@
                             position: 'top-end',
                             timer: 3000
                         });
-                        setTimeout(() => {
-                            window.location.href = `/partner-homes-edit/${propertyId}?details=true&propertyType=single`;
-                        }, 2000);
+                        this.step++;
                     } else {
                         console.error('❌ Save failed:', result.message);
                         Swal.fire({
@@ -467,6 +478,76 @@
                         showConfirmButton: false,
                         toast: true,
                         position: 'top-end',
+                    });
+                }
+            },
+
+            async saveStep9() {
+                if (!this.adultPrice || this.adultPrice <= 0) {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Adult price is required',
+                        icon: 'error',
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                    return;
+                }
+                
+                const propertyId = document.getElementById('propertyId').value;
+                
+                try {
+                    const response = await fetch(`/partner/properties/${propertyId}/pricing`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: JSON.stringify({
+                            adult_price: parseFloat(this.adultPrice),
+                            child_price: parseFloat(this.childPrice || 0),
+                            commission_rate: parseFloat(this.commissionRate),
+                            currency: this.currency,
+                            property_id: propertyId
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    if (result.success) {
+                        Swal.fire({
+                            title: 'Success!',
+                            text: 'Pricing saved successfully',
+                            icon: 'success',
+                            toast: true,
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
+                        setTimeout(() => {
+                            window.location.href = `/partner-homes-edit/${propertyId}?details=true&propertyType=single`;
+                        }, 2000);
+                    } else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: result.message || 'Failed to save pricing',
+                            icon: 'error',
+                            toast: true,
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
+                    }
+                } catch (error) {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Failed to save pricing',
+                        icon: 'error',
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000
                     });
                 }
             }

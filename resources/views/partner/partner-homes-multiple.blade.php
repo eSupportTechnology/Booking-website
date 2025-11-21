@@ -30,7 +30,21 @@
             hostName: '',
             aboutProperty: '',
             aboutHost: '',
+            aboutHost: '',
             aboutNeighborhood: '',
+            adultPrice: 0,
+            childPrice: 0,
+            currency: 'USD',
+            commissionRate: 10,
+            basePrice: 0,
+            commissionAmount: 0,
+            totalPrice: 0,
+
+            calculateTotal() {
+                this.basePrice = parseFloat(this.adultPrice || 0) + parseFloat(this.childPrice || 0);
+                this.commissionAmount = this.basePrice * (parseFloat(this.commissionRate || 0) / 100);
+                this.totalPrice = this.basePrice + this.commissionAmount;
+            },
 
             toggleBreakfastOption(option) {
                 if (this.selectedBreakfasts.includes(option)) {
@@ -307,12 +321,49 @@
                     if (result.success) {
                         console.log('✅ Host profile saved:', result.message);
                         // Optionally move to next step
-                        window.location.href = "{{ url('/partner-homes-edit/' . $propertyId) }}?details=true&propertyType=multiple";
+                        this.step++;
                     } else {
                         console.error('❌ Save failed:', result.message);
                     }
                 } catch (error) {
                     console.error('❌ Error submitting host profile:', error);
+                }
+            },
+
+            async saveStep9() {
+                if (!this.adultPrice || this.adultPrice <= 0) {
+                    alert("Adult price is required");
+                    return;
+                }
+                
+                const propertyId = document.getElementById('propertyId').value;
+                
+                try {
+                    const response = await fetch(`/partner/properties/${propertyId}/pricing`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: JSON.stringify({
+                            adult_price: parseFloat(this.adultPrice),
+                            child_price: parseFloat(this.childPrice || 0),
+                            commission_rate: parseFloat(this.commissionRate),
+                            currency: this.currency,
+                            property_id: propertyId
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    if (result.success) {
+                        console.log('Pricing saved successfully');
+                        window.location.href = "{{ url('/partner-homes-edit/' . $propertyId) }}?details=true&propertyType=multiple";
+                    } else {
+                        alert(result.message || 'Failed to save pricing');
+                    }
+                } catch (error) {
+                    console.error('Error saving pricing:', error);
+                    alert('Failed to save pricing');
                 }
             }
 
@@ -1371,11 +1422,95 @@
             </div>
         </div>
     </template>
+        <div class="max-w-4xl mx-auto lg:ml-24 px-4 py-10">
+            <h1 class="text-3xl font-bold text-gray-900 mb-6">
+                How much do you want to charge per night?
+            </h1>
 
+            <div class="bg-white p-8 rounded shadow-md w-full max-w-2xl">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Adult Price (per night)</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                            <input type="number" 
+                                   x-model="adultPrice" 
+                                   @input="calculateTotal" 
+                                   step="0.01"
+                                   min="0"
+                                   class="w-full pl-8 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Child Price (per night)</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                            <input type="number" 
+                                   x-model="childPrice" 
+                                   @input="calculateTotal" 
+                                   step="0.01"
+                                   min="0"
+                                   class="w-full pl-8 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Currency</label>
+                    <select x-model="currency" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="USD">USD</option>
+                        <option value="EUR">EUR</option>
+                        <option value="GBP">GBP</option>
+                        <option value="LKR">LKR</option>
+                    </select>
+                </div>
 
+                <!-- Pricing Summary -->
+                <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 mb-6">
+                    <h4 class="font-medium text-gray-900 mb-3">Pricing Summary</h4>
+                    
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Base Price:</span>
+                            <span class="font-medium" x-text="'$' + basePrice.toFixed(2)"></span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Commission (<span x-text="commissionRate"></span>%):</span>
+                            <span class="font-medium text-orange-600" x-text="'$' + commissionAmount.toFixed(2)"></span>
+                        </div>
+                        
+                        <div class="border-t border-gray-300 pt-2 mt-2">
+                            <div class="flex justify-between items-center">
+                                <span class="font-semibold text-gray-900">Total Price (Guest pays):</span>
+                                <span class="font-bold text-lg text-green-600" x-text="'$' + totalPrice.toFixed(2)"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
+                <div class="flex justify-between items-center">
+                    <button
+                        type="button"
+                        @click="step = Math.max(step - 1, 1)"
+                        class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-6 h-12 flex items-center justify-center rounded">
+                        ←
+                    </button>
 
+                    <button
+                        type="button"
+                        @click="saveStep9()"
+                        :disabled="!adultPrice || adultPrice <= 0"
+                        :class="(!adultPrice || adultPrice <= 0) ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'"
+                        class="bg-[#3CC0E9] text-white font-semibold px-6 h-12 rounded focus:outline-none focus:ring focus:ring-blue-300">
+                        Complete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
 
 </div>
-
 @endsection
+```

@@ -32,10 +32,13 @@ class AdminSettings extends Model
     }
 
     /**
-     * Get the global commission rate.
+     * Get the global commission rate as a percentage.
+     * Returns the rate as a percentage (e.g., 15 for 15%)
      */
     public static function getGlobalCommissionRate(): float
     {
-        return static::first()?->commission_rate ?? 0.15;
+        $rate = static::first()?->commission_rate ?? 0.15;
+        // Convert decimal to percentage (0.15 -> 15)
+        return $rate * 100;
     }
 }
