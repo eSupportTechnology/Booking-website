@@ -68,105 +68,219 @@
 
         <!-- Table Wrapper -->
         <div class="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-100">
-            <div class="overflow-x-auto">
-                <table class="min-w-full text-xs sm:text-sm text-left text-gray-700" id="taxisTable">
-                    <thead class="bg-gray-50 font-bold uppercase text-gray-500">
-                        <tr>
-                            <th class="px-2 sm:px-4 py-2 sm:py-3">ID</th>
-                            <th class="px-2 sm:px-4 py-2 sm:py-3">Driver</th>
-                            <th class="px-2 sm:px-4 py-2 sm:py-3">Vehicle</th>
-                            <th class="px-2 sm:px-4 py-2 sm:py-3">Status</th>
-                            <th class="px-2 sm:px-4 py-2 sm:py-3">Approval</th>
-                            <th class="px-2 sm:px-4 py-2 sm:py-3">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100">
 
-                        @forelse($taxis as $taxi)
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-2 sm:px-4 py-3 font-medium text-gray-900">#T{{ $taxi->id }}</td>
-                            <td class="px-2 sm:px-4 py-3">{{ $taxi->drivers->first()?->name ?? 'No Driver' }}</td>
-                            <td class="px-2 sm:px-4 py-3">{{ $taxi->type?->name ?? 'Unknown' }} - {{ $taxi->number_plate }}</td>
-                            <td class="px-2 sm:px-4 py-3">
-                                <div class="relative">
-                                    @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('change_taxi_status'))
-                                    <select onchange="handleTaxiStatusChange(this, 'T{{ $taxi->id }}')"
-                                        class="appearance-none @if($taxi->status === 'Active') bg-green-100 text-green-800 @elseif($taxi->status === 'Inactive') bg-yellow-100 text-yellow-800 @else bg-red-100 text-red-800 @endif font-medium text-xs sm:text-sm rounded-full pl-6 pr-4 py-1 focus:outline-none focus:ring-2 focus:ring-[#1F8FB2] transition">
-                                        <option value="Active" @selected($taxi->status === 'Active')>Active</option>
-                                        <option value="Inactive" @selected($taxi->status === 'Inactive')>Inactive</option>
-                                        <option value="On Trip" @selected($taxi->status === 'On Trip')>On Trip</option>
-                                    </select>
-                                    <span class="absolute top-1/2 left-2 -translate-y-1/2 w-2 h-2 rounded-full @if($taxi->status === 'Active') bg-green-800 @elseif($taxi->status === 'Inactive') bg-yellow-800 @else bg-red-800 @endif pointer-events-none status-dot"></span>
-                                    @else
-                                    <span class="px-3 py-1 rounded-full text-xs font-semibold @if($taxi->status === 'Active') bg-green-100 text-green-800 @elseif($taxi->status === 'Inactive') bg-yellow-100 text-yellow-800 @else bg-red-100 text-red-800 @endif">
-                                        {{ $taxi->status }}
-                                    </span>
-                                    @endif
-                                </div>
-                            </td>
-                            <td class="px-2 sm:px-4 py-3">
-                                @if($taxi->approval_status === 'pending' && (Auth::guard('admin')->user()->can('approve_taxis') || Auth::guard('admin')->user()->can('reject_taxis')))
-                                    <div class="flex gap-2">
-                                        @can('approve_taxis')
-                                        <button onclick="approveTaxi({{ $taxi->id }})"
-                                            class="px-2 py-1 bg-green-500 text-white text-xs rounded hover:bg-green-600">
-                                            <i class="fas fa-check mr-1"></i> Approve
-                                        </button>
-                                        @endcan
-                                        @can('reject_taxis')
-                                        <button onclick="rejectTaxi({{ $taxi->id }})"
-                                            class="px-2 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600">
-                                            <i class="fas fa-times mr-1"></i> Reject
-                                        </button>
-                                        @endcan
-                                    </div>
-                                @else
-                                    <span class="px-2 py-1 rounded-full text-xs font-semibold 
-                                        @if($taxi->approval_status === 'approved') bg-green-100 text-green-800 
-                                        @else bg-red-100 text-red-800 @endif">
-                                        {{ ucfirst($taxi->approval_status) }}
-                                    </span>
-                                @endif
-                            </td>
-                            <td class="px-2 sm:px-4 py-3">
-                                <div class="flex flex-wrap gap-2 sm:gap-3">
-                                    @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('view_taxi'))
-                                    <a href="{{ route('admin.taxi.details', $taxi->id) }}"
-                                        class="text-[#1F8FB2] hover:text-[#157799] text-xs sm:text-sm font-medium inline-flex items-center">
-                                        <i class="fas fa-eye mr-1"></i> View
-                                    </a>
-                                    @endif
-                                    @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('edit_taxi'))
-                                    <button
-                                        class="text-red-600 hover:text-red-800 text-xs sm:text-sm font-medium inline-flex items-center">
-                                        <i class="fas fa-trash mr-1"></i> Delete
-                                    </button>
-                                    @endif
-                                </div>
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="6" class="px-4 py-8 text-center text-gray-500">
-                                No taxis found.
-                            </td>
-                        </tr>
-                        @endforelse
+  <!-- ============================
+       DESKTOP / TABLE VIEW (sm and up)
+       ============================ -->
+  <div class="hidden sm:block w-full overflow-x-auto">
+    <table class="min-w-full w-full text-xs sm:text-sm text-left text-gray-700" id="taxisTable">
+      <thead class="bg-gray-50 font-bold uppercase text-gray-500">
+        <tr>
+          <th class="px-2 sm:px-4 py-2 sm:py-3">ID</th>
+          <th class="px-2 sm:px-4 py-2 sm:py-3">Driver</th>
+          <th class="px-2 sm:px-4 py-2 sm:py-3">Vehicle</th>
+          <th class="px-2 sm:px-4 py-2 sm:py-3">Status</th>
+          <th class="px-2 sm:px-4 py-2 sm:py-3">Approval</th>
+          <th class="px-2 sm:px-4 py-2 sm:py-3">Actions</th>
+        </tr>
+      </thead>
 
-                    </tbody>
-                </table>
+      <tbody class="divide-y divide-gray-100">
+        @forelse($taxis as $taxi)
+        <tr class="hover:bg-gray-50 transition-colors">
+          <td class="px-2 sm:px-4 py-3 font-medium text-gray-900">#T{{ $taxi->id }}</td>
+          <td class="px-2 sm:px-4 py-3">{{ $taxi->drivers->first()?->name ?? 'No Driver' }}</td>
+          <td class="px-2 sm:px-4 py-3">{{ $taxi->type?->name ?? 'Unknown' }} - {{ $taxi->number_plate }}</td>
+          <td class="px-2 sm:px-4 py-3">
+            <div class="relative">
+              @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('change_taxi_status'))
+              <select onchange="handleTaxiStatusChange(this, 'T{{ $taxi->id }}')"
+                class="appearance-none 
+                @if($taxi->status === 'Active') bg-green-100 text-green-800 
+                @elseif($taxi->status === 'Inactive') bg-yellow-100 text-yellow-800 
+                @else bg-red-100 text-red-800 @endif
+                font-medium text-xs sm:text-sm rounded-full pl-6 pr-4 py-1 focus:outline-none focus:ring-2 focus:ring-[#1F8FB2] transition">
+                <option value="Active" @selected($taxi->status === 'Active')>Active</option>
+                <option value="Inactive" @selected($taxi->status === 'Inactive')>Inactive</option>
+                <option value="On Trip" @selected($taxi->status === 'On Trip')>On Trip</option>
+              </select>
+              <span class="absolute top-1/2 left-2 -translate-y-1/2 w-2 h-2 rounded-full 
+                @if($taxi->status === 'Active') bg-green-800 
+                @elseif($taxi->status === 'Inactive') bg-yellow-800 
+                @else bg-red-800 @endif pointer-events-none status-dot"></span>
+              @else
+              <span class="px-3 py-1 rounded-full text-xs font-semibold 
+                @if($taxi->status === 'Active') bg-green-100 text-green-800 
+                @elseif($taxi->status === 'Inactive') bg-yellow-100 text-yellow-800 
+                @else bg-red-100 text-red-800 @endif">
+                {{ $taxi->status }}
+              </span>
+              @endif
+            </div>
+          </td>
+
+          <td class="px-2 sm:px-4 py-3">
+            @if($taxi->approval_status === 'pending' && (Auth::guard('admin')->user()->can('approve_taxis') || Auth::guard('admin')->user()->can('reject_taxis')))
+            <div class="flex gap-2">
+              @can('approve_taxis')
+              <button onclick="approveTaxi({{ $taxi->id }})"
+                class="px-2 py-1 bg-green-500 text-white text-xs rounded hover:bg-green-600">
+                <i class="fas fa-check mr-1"></i> Approve
+              </button>
+              @endcan
+              @can('reject_taxis')
+              <button onclick="rejectTaxi({{ $taxi->id }})"
+                class="px-2 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600">
+                <i class="fas fa-times mr-1"></i> Reject
+              </button>
+              @endcan
+            </div>
+            @else
+            <span class="px-2 py-1 rounded-full text-xs font-semibold 
+              @if($taxi->approval_status === 'approved') bg-green-100 text-green-800 
+              @else bg-red-100 text-red-800 @endif">
+              {{ ucfirst($taxi->approval_status) }}
+            </span>
+            @endif
+          </td>
+
+          <td class="px-2 sm:px-4 py-3">
+            <div class="flex flex-wrap gap-2 sm:gap-3">
+              @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('view_taxi'))
+              <a href="{{ route('admin.taxi.details', $taxi->id) }}"
+                class="text-[#1F8FB2] hover:text-[#157799] text-xs sm:text-sm font-medium inline-flex items-center">
+                <i class="fas fa-eye mr-1"></i> View
+              </a>
+              @endif
+              @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('edit_taxi'))
+              <button class="text-red-600 hover:text-red-800 text-xs sm:text-sm font-medium inline-flex items-center">
+                <i class="fas fa-trash mr-1"></i> Delete
+              </button>
+              @endif
+            </div>
+          </td>
+        </tr>
+        @empty
+        <tr>
+          <td colspan="6" class="px-4 py-8 text-center text-gray-500">No taxis found.</td>
+        </tr>
+        @endforelse
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ============================
+       MOBILE CARD VIEW (xs only)
+       ============================ -->
+  <div class="block sm:hidden">
+    <div class="divide-y divide-gray-100">
+      @forelse($taxis as $taxi)
+      <div class="p-3">
+        <div class="flex items-start justify-between gap-3">
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between">
+              <div class="text-sm font-medium text-gray-900 truncate">#T{{ $taxi->id }}</div>
+              <div class="text-xs text-gray-500 whitespace-nowrap">{{ $taxi->type?->name ?? 'Unknown' }} - {{ $taxi->number_plate }}</div>
             </div>
 
-            <!-- Pagination -->
-            <div class="px-3 sm:px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-gray-200">
-                <p class="text-xs text-gray-700">
-                    Showing {{ $taxis->firstItem() ?? 0 }} to {{ $taxis->lastItem() ?? 0 }} of {{ $taxis->total() }} results
-                </p>
-                <div class="space-x-1">
-                    {{ $taxis->links('pagination::simple-bootstrap-4') }}
-                </div>
+            <div class="mt-1 text-sm text-gray-600 truncate">
+              {{ $taxi->drivers->first()?->name ?? 'No Driver' }}
             </div>
+
+            <!-- status -->
+            <div class="mt-2">
+              @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('change_taxi_status'))
+              <div class="flex items-center gap-2">
+                <select onchange="handleTaxiStatusChange(this, 'T{{ $taxi->id }}')"
+                  class="appearance-none 
+                  @if($taxi->status === 'Active') bg-green-100 text-green-800 
+                  @elseif($taxi->status === 'Inactive') bg-yellow-100 text-yellow-800 
+                  @else bg-red-100 text-red-800 @endif
+                  font-medium text-xs rounded-full pl-3 pr-3 py-1 focus:outline-none focus:ring-2 focus:ring-[#1F8FB2]">
+                  <option value="Active" @selected($taxi->status === 'Active')>Active</option>
+                  <option value="Inactive" @selected($taxi->status === 'Inactive')>Inactive</option>
+                  <option value="On Trip" @selected($taxi->status === 'On Trip')>On Trip</option>
+                </select>
+                <span class="w-2 h-2 rounded-full 
+                  @if($taxi->status === 'Active') bg-green-800 
+                  @elseif($taxi->status === 'Inactive') bg-yellow-800 
+                  @else bg-red-800 @endif"></span>
+              </div>
+              @else
+              <div>
+                <span class="inline-block px-2 py-1 rounded-full text-xs font-semibold 
+                  @if($taxi->status === 'Active') bg-green-100 text-green-800 
+                  @elseif($taxi->status === 'Inactive') bg-yellow-100 text-yellow-800 
+                  @else bg-red-100 text-red-800 @endif">
+                  {{ $taxi->status }}
+                </span>
+              </div>
+              @endif
+            </div>
+
+            <!-- approval -->
+            <div class="mt-2">
+              @if($taxi->approval_status === 'pending' && (Auth::guard('admin')->user()->can('approve_taxis') || Auth::guard('admin')->user()->can('reject_taxis')))
+              <div class="flex flex-wrap gap-2 mt-1">
+                @can('approve_taxis')
+                <button onclick="approveTaxi({{ $taxi->id }})"
+                  class="px-3 py-1 bg-green-500 text-white text-xs rounded hover:bg-green-600">
+                  <i class="fas fa-check mr-1"></i> Approve
+                </button>
+                @endcan
+                @can('reject_taxis')
+                <button onclick="rejectTaxi({{ $taxi->id }})"
+                  class="px-3 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600">
+                  <i class="fas fa-times mr-1"></i> Reject
+                </button>
+                @endcan
+              </div>
+              @else
+              <div class="mt-1">
+                <span class="px-2 py-1 rounded-full text-xs font-semibold 
+                  @if($taxi->approval_status === 'approved') bg-green-100 text-green-800 
+                  @else bg-red-100 text-red-800 @endif">
+                  {{ ucfirst($taxi->approval_status) }}
+                </span>
+              </div>
+              @endif
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex-shrink-0 flex flex-col items-end gap-2">
+            @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('view_taxi'))
+            <a href="{{ route('admin.taxi.details', $taxi->id) }}"
+              class="text-[#1F8FB2] hover:text-[#157799] text-xs font-medium inline-flex items-center whitespace-nowrap">
+              <i class="fas fa-eye mr-1"></i> View
+            </a>
+            @endif
+
+            @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('edit_taxi'))
+            <button class="text-red-600 hover:text-red-800 text-xs font-medium inline-flex items-center whitespace-nowrap">
+              <i class="fas fa-trash mr-1"></i> Delete
+            </button>
+            @endif
+          </div>
         </div>
+      </div>
+      @empty
+      <div class="p-4 text-center text-gray-500">No taxis found.</div>
+      @endforelse
+    </div>
+  </div>
+
+  <!-- Pagination (kept visible for all sizes) -->
+  <div class="px-3 sm:px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-gray-200">
+    <p class="text-xs text-gray-700">
+      Showing {{ $taxis->firstItem() ?? 0 }} to {{ $taxis->lastItem() ?? 0 }} of {{ $taxis->total() }} results
+    </p>
+    <div class="space-x-1">
+      {{ $taxis->links('pagination::simple-bootstrap-4') }}
+    </div>
+  </div>
+</div>
+
     </div>
 </section>
 
