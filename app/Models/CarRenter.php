@@ -28,6 +28,7 @@ class CarRenter extends Authenticatable
         'country_code',
         'address',
         'remember_token',
+        'discount_percentage',
     ];
 
     protected $hidden = [

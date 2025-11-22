@@ -92,7 +92,7 @@
                 <a href="/profile" class="block px-4 py-2 text-gray-700 text-base hover:bg-gray-100 flex items-center gap-2">
                     <img src="{{ asset('assets/mynaui_user.svg') }}" class="w-5 h-5" /> My Account
                 </a>
-                <a href="/profile" class="block px-4 py-2 text-gray-700 text-base hover:bg-gray-100 flex items-center gap-2">
+                <a href="{{ route('customer.reservations.index') }}" class="block px-4 py-2 text-gray-700 text-base hover:bg-gray-100 flex items-center gap-2">
                     <img src="{{ asset('assets/streamline_baggage.svg') }}" class="w-4 h-4" /> Bookings & Trips
                 </a>
                 <a href="/profile" class="block px-4 py-2 text-gray-700 text-base hover:bg-gray-100 flex items-center gap-2">

@@ -37,7 +37,10 @@ use App\Http\Controllers\Customer\CustomerCarRentalController;
 use App\Http\Controllers\Customer\SearchController;
 use App\Http\Controllers\Customer\CarSearchController;
 use App\Http\Controllers\Customer\PropertyListingController;
-use App\Http\Controllers\Customer\CarBookingController;
+use App\Http\Controllers\CarReservations\CarBookingController;
+use app\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\CarReservations\ReservationController;
+
 
 
 
@@ -60,20 +63,22 @@ Route::get('/login', [LoginController::class, 'show'])->name('login');
 Route::post('change-language', [LanguageController::class, 'change'])->name('lang.change');
 
 Route::prefix('customer')->group(function () {
-    // Search route
-    Route::get('/search-form', [SearchController::class, 'showSearchForm'])->name('customer.searchForm');
-    Route::get('/search', [SearchController::class, 'search'])->name('customer.search');
-    // Route::get('/search/ajax', [SearchController::class, 'ajaxSearch'])
-    //  ->name('customer.search.ajax');
+
+    // Main search page (with results)
+    Route::get('/search', [SearchController::class, 'search'])
+        ->name('customer.search');
+
+    // Search form landing page (optional)
+    Route::get('/search-form', [SearchController::class, 'showSearchForm'])
+        ->name('customer.searchForm');
+
+    // Suggest cities for autocomplete
     Route::get('/search/suggest', [SearchController::class, 'suggestCities'])
-    ->name('customer.search.suggest');
+        ->name('customer.search.suggest');
 
+    // Filter counts (optional – can keep)
     Route::get('/search/filter-counts', [SearchController::class, 'filterCounts'])
-    ->name('customer.search.filter-counts');
-
-
-
-
+        ->name('customer.search.filter-counts');
 
 
     Route::get('/login', [CustomerAuthController::class, 'showLoginForm'])->name('customer.login');
@@ -1465,12 +1470,46 @@ Route::get('car_rentals/carrenters_control_panel', function () {
 Route::get('/customer/car-rental/search', [CarSearchController::class, 'carsearch'])
     ->name('customer.carsearch');
 
+Route::get('/location-suggest', [CustomerSearchController::class, 'locationSuggest'])
+    ->name('customer.search.suggest');
+
+
 Route::get('/customer/car/{id}', [CarSearchController::class, 'show'])
      ->name('customer.car.show');
 
 Route::post('/car/{id}/book', [CarBookingController::class, 'store'])
     ->name('customer.car.book');
 
-// confirmation route (you already had something; ensure name matches)
-Route::get('/booking/confirmation/{id}', [CarBookingController::class, 'confirmation'])
+    // booking flow
+Route::get('/customer/car/{id}/book', [CarBookingController::class, 'create'])
+    ->middleware('auth:customer')
+    ->name('customer.car.book.create');
+
+Route::post('/customer/car/{id}/book', [CarBookingController::class, 'store'])
+    ->middleware('auth:customer')
+    ->name('customer.car.book.store');
+
+
+Route::get('/customer/booking/{id}/confirmation', [CarBookingController::class, 'confirmation'])
     ->name('customer.booking.confirmation');
+
+// Reservations routes
+
+
+
+Route::prefix('customer')->middleware(['auth:customer'])->group(function () {
+
+
+    // List all bookings by user
+    Route::get('/reservations', [ReservationController::class, 'index'])
+        ->name('customer.reservations.index');
+
+    // View a single reservation
+    Route::get('/reservations/{id}', [ReservationController::class, 'show'])
+        ->name('customer.reservations.show');
+
+    // Cancel booking
+    Route::post('/reservations/{id}/cancel', [ReservationController::class, 'cancel'])
+        ->name('customer.reservations.cancel');
+});
+

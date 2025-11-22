@@ -33,11 +33,12 @@ class CarSearchController extends Controller
             'mileage'      => $this->facetCounts($baseQuery, $request, 'mileage_type'),
             'extras'       => [], // no extras table
             'seats'        => $this->facetSeatsCounts($baseQuery, $request),
+            'nearest_city' => $this->facetNearestCityCounts($baseQuery, $request),
             'car_category' => $this->facetCarCategoryCounts($baseQuery, $request),
             'price_range'  => $this->facetPriceRanges($baseQuery, $request),
             'payment'      => $this->facetCounts($baseQuery, $request, 'pay_timing'),
             'car-specs'    => [], // not available
-            'fuel-type'    => $this->facetCounts($baseQuery, $request, 'fuel_type'),
+            'fuel_type' => $this->facetCounts($baseQuery, $request, 'fuel_type'),
             'deposit'      => $this->facetDepositRanges($baseQuery, $request),
             'fuel-policy'  => [],
             'review_score' => $this->facetReviewScores($baseQuery, $request),
@@ -122,6 +123,11 @@ class CarSearchController extends Controller
             if ($request->filled('deposit_max'))
                 $query->where('deposit', '<=', $request->deposit_max);
         }
+
+        if ($exclude !== 'nearest_city' && $request->filled('nearest_city')) {
+            $query->whereIn('nearest_city', (array)$request->nearest_city);
+        }
+
 
         return $query;
     }
@@ -248,6 +254,20 @@ class CarSearchController extends Controller
     }
 
     // ================================================================
+    // Nearest City COUNTS
+    // ================================================================
+    protected function facetNearestCityCounts($query, Request $request)
+{
+    $q = $this->applyFilters(clone $query, $request, 'nearest_city');
+
+    return $q->select('nearest_city', DB::raw('COUNT(*) as cnt'))
+            ->whereNotNull('nearest_city')
+            ->groupBy('nearest_city')
+            ->pluck('cnt', 'nearest_city')
+            ->toArray();
+}
+
+    // ================================================================
     // COMPANY RATING / REVIEW SCORE COUNTS
     // ================================================================
     protected function facetReviewScores($query, Request $request)
@@ -275,6 +295,23 @@ class CarSearchController extends Controller
             '<4.0' => $rows['<4.0'] ?? 0,
         ];
     }
+
+    public function locationSuggest(Request $request)
+{
+    $q = $request->q;
+
+    if (!$q || strlen($q) < 1) {
+        return [];
+    }
+
+    return Car::whereNotNull('nearest_city')
+        ->where('nearest_city', 'like', "%{$q}%")
+        ->distinct()
+        ->limit(10)
+        ->pluck('nearest_city');
+}
+
+
     public function show($id)
 {
     $car = Car::where('id', $id)

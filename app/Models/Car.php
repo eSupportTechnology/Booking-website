@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Car extends Model
 {
     protected $fillable = [
-        'car_renter_id','car_type_id','company_id','model_id','brand','seats','nearest_city','with_driver',
+        'car_renter_id','car_type_id','company_id','model_id','brand_id','seats','nearest_city','with_driver',
         'driver_name','driver_phone','driver_age','driver_experience','driver_nic',
         'driver_license_front','driver_license_back',
         'transmission','mileage_type','fuel_type','car_front', 'car_back', 'car_inside','price_per_day','price_per_km','currency','deposit','status','approval_status','rejection_reason'
@@ -32,12 +32,14 @@ class Car extends Model
     }
     public function brand()
     {
-        return $this->belongsTo(CarBrand::class); // ✅ FIXED
+        return $this->belongsTo(CarBrand::class, 'brand_id');
     }
+
     public function reservations()
     {
-        return $this->hasMany(CarReservation::class);
+        return $this->hasMany(Reservation::class, 'car_id');
     }
+
 
     public function renter()
     {
@@ -53,4 +55,11 @@ class Car extends Model
     {
         return $this->hasOne(File::class, 'car_id')->where('file_type', 'image');
     }
+    public function mainPhoto()
+    {
+        return $this->car_front
+            ? asset('storage/' . $this->car_front)
+            : asset('assets/default-property.jpg');
+    }
+
 }

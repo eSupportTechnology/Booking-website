@@ -1,6 +1,5 @@
-@extends('Customer.master')
+@extends('frontend.master')
 
-@push('styles')
 <style>
 /* Tailwind/Booking.com color theme approximation */
 .bg-primary { background-color: #0071C2; }
@@ -45,13 +44,24 @@
     color: white;
     border-color: #0071C2;
 }
+
+.results-wrapper {
+    margin-top: 0 !important; 
+    padding-top: 30px; /* Adjust to match the look */
+}
+
+@media (min-width: 1024px) {
+    .results-wrapper {
+        padding-top: 50px; /* Desktop spacing */
+    }
+}
+
 </style>
-@endpush
+
 
 @section('content')
 
-{{-- Load Tailwind CSS CDN for styling --}}
-<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
 @php
 // Define the filter groups structure using the data passed from the controller ($filterGroups)
@@ -59,16 +69,13 @@ $groupedFacets = [
     [ 'title' => 'Transmission', 'name' => 'transmission', 'id_prefix' => 'transmission', 'items' => $filterGroups['transmission'] ?? [], 'visible_count' => 5, 'type' => 'radio' ],
     [ 'title' => 'Supplier', 'name' => 'supplier', 'id_prefix' => 'supplier', 'items' => $filterGroups['supplier'] ?? [], 'visible_count' => 5, 'type' => 'checkbox' ],
     [ 'title' => 'Mileage/Kilometres', 'name' => 'mileage', 'id_prefix' => 'mileage', 'items' => $filterGroups['mileage'] ?? [], 'visible_count' => 5, 'type' => 'checkbox' ],
-    [ 'title' => 'Extras', 'name' => 'extras', 'id_prefix' => 'extras', 'items' => $filterGroups['extras'] ?? [], 'visible_count' => 5, 'type' => 'checkbox' ],
     [ 'title' => 'Number of seats', 'name' => 'seats', 'id_prefix' => 'seats', 'items' => $filterGroups['seats'] ?? [], 'visible_count' => 5, 'type' => 'radio' ],
     [ 'title' => 'Car category', 'name' => 'car_category', 'id_prefix' => 'car-category', 'items' => $filterGroups['car_category'] ?? [], 'visible_count' => 5, 'type' => 'checkbox' ],
     [ 'title' => 'Price per day', 'name' => 'price_range', 'id_prefix' => 'price', 'items' => $filterGroups['price_range'] ?? [], 'visible_count' => 5, 'type' => 'checkbox' ],
     [ 'title' => 'Review Score', 'name' => 'review_score', 'id_prefix' => 'review-score', 'items' => $filterGroups['review_score'] ?? [], 'visible_count' => 5, 'type' => 'checkbox' ],
-    [ 'title' => 'When to pay', 'name' => 'payment_policy', 'id_prefix' => 'payment', 'items' => $filterGroups['payment_policy'] ?? [], 'visible_count' => 5, 'type' => 'checkbox' ],
-    [ 'title' => 'Car specs', 'name' => 'car_specs', 'id_prefix' => 'car-specs', 'items' => $filterGroups['car_specs'] ?? [], 'visible_count' => 5, 'type' => 'checkbox' ],
-    [ 'title' => 'Fuel Type', 'name' => 'fuel_type', 'id_prefix' => 'fuel-type', 'items' => $filterGroups['fuel_type'] ?? [], 'visible_count' => 5, 'type' => 'checkbox' ],
-    [ 'title' => 'Deposit required', 'name' => 'deposit_range', 'id_prefix' => 'deposit', 'items' => $filterGroups['deposit_range'] ?? [], 'visible_count' => 5, 'type' => 'checkbox' ],
-    [ 'title' => 'Fuel policy', 'name' => 'fuel_policy', 'id_prefix' => 'fuel-policy', 'items' => $filterGroups['fuel_policy'] ?? [], 'visible_count' => 5, 'type' => 'checkbox' ],
+    [ 'title' => 'Fuel Type', 'name' => 'fuel_type', 'id_prefix' => 'fuel_type', 'items' => $filterGroups['fuel_type'] ?? [], 'visible_count' => 5, 'type' => 'checkbox' ],
+    [ 'title' => 'Cities', 'name' => 'nearest_city',  'id_prefix' => 'nearest_city', 'items' => $filterGroups['nearest_city'] ?? [], 'visible_count' => 5, 'type' => 'checkbox'],
+
 ];
 
 // Helper function definition
@@ -199,7 +206,7 @@ if (!function_exists('simple_slug')) {
 
 <div id="mobile-backdrop" class="mobile-backdrop"></div>
 
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+<div class="results-wrapper max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
     <div class="flex flex-col lg:flex-row gap-6">
 
         {{-- --- LEFT COLUMN: Filter Sidebar --- --}}
@@ -368,8 +375,12 @@ if (!function_exists('simple_slug')) {
                         <div class="sm:w-1/2 p-4 flex flex-col justify-between">
                             <div>
                                 <div class="flex items-start justify-between mb-2">
-                                    <h3 class="text-xl font-bold text-gray-800">{{ $car->model->model_name ?? 'Unknown Model' }}</h3>
+                                    <h3 class="text-xl font-bold text-gray-800">
+                                        {{ $car->brand->brand_name ?? 'Unknown Brand' }}
+                                        {{ $car->model->model_name ?? 'Unknown Model' }}
+                                    </h3>
                                 </div>
+
                                 <p class="text-sm text-gray-500 mb-2">or similar {{ $car->carType->name ?? 'medium' }}</p>
                                 
                                 {{-- Specs list --}}
@@ -393,7 +404,17 @@ if (!function_exists('simple_slug')) {
                                 <div class="text-3xl font-bold text-gray-800">US${{ number_format($car->price_per_day ?? 150, 0) }}</div>
                                 <div class="text-xs text-green-600 mb-4 font-semibold">Free cancellation</div>
                             </div>
-                            <a href="{{ route('customer.car.show', $car->id) }}" class="w-full bg-primary text-white text-center px-4 py-3 rounded-lg font-bold hover:bg-primary-dark transition-colors shadow-lg">View deal</a>
+                            <a href="{{ route('customer.car.show', [
+                                    'id' => $car->id,
+                                    'pickup' => request('pickup'),
+                                    'destination' => request('destination'),
+                                    'checkin' => request('checkin'),
+                                    'checkout' => request('checkout')
+                                ]) }}" 
+                            class="w-full bg-primary text-white text-center px-4 py-3 rounded-lg font-bold hover:bg-primary-dark transition-colors shadow-lg">
+                                View deal
+                            </a>
+
                         </div>
                     </div>
                     @endforeach
@@ -491,7 +512,7 @@ if (!function_exists('simple_slug')) {
         initializeSectionToggle();
 
         const groupsToInitialize = [
-            'transmission', 'supplier', 'mileage', 'extras', 'car-category', 'seats', 'price','payment', 'car-specs', 'fuel-type', 'deposit', 'fuel-policy', 'review-score' 
+            'transmission', 'supplier', 'mileage', 'extras', 'car-category', 'seats','nearest_city', 'price','payment', 'car-specs', 'fuel_type', 'deposit', 'fuel-policy', 'review-score' 
         ];
 
         groupsToInitialize.forEach(prefix => {

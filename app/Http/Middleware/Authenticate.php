@@ -20,7 +20,12 @@ class Authenticate extends Middleware
         if ($request->is('partner') || $request->is('partner/*')) {
             return route('partner.login');
         }
-        return route('login');
+
+        // Customer redirect
+        if ($request->is('customer') || $request->is('customer/*')) {
+            return url('/customer/login');
+        }
+        return route('choose-option');
     }
 }
 
