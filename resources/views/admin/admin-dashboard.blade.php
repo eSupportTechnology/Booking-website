@@ -141,26 +141,36 @@
     </div>
 
     <!-- Chart Section -->
-    <div class="bg-white p-4 sm:p-6 rounded-lg shadow">
-        <div class="flex justify-between items-center mb-4">
+    <div class="bg-white p-4 sm:p-6 rounded-lg shadow w-full overflow-hidden">
+        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4">
             <h2 class="text-lg font-semibold text-gray-700">Monthly Bookings Overview</h2>
-            <form method="GET" class="flex gap-2">
-                <select name="chart_period" class="text-sm rounded border-gray-300" onchange="this.form.submit()">
+
+            <form method="GET" class="flex gap-2 w-full sm:w-auto">
+                <select name="chart_period"
+                        class="text-sm rounded border-gray-300 w-full sm:w-auto"
+                        onchange="this.form.submit()">
                     <option value="6" {{ request('chart_period', 6) == 6 ? 'selected' : '' }}>Last 6 Months</option>
                     <option value="12" {{ request('chart_period') == 12 ? 'selected' : '' }}>Last 12 Months</option>
                 </select>
-                <select name="chart_type" class="text-sm rounded border-gray-300" onchange="this.form.submit()">
+
+                <select name="chart_type"
+                        class="text-sm rounded border-gray-300 w-full sm:w-auto"
+                        onchange="this.form.submit()">
                     <option value="" {{ !request('chart_type') ? 'selected' : '' }}>All Properties</option>
                     @foreach($propertyTypes as $type)
-                        <option value="{{ $type['id'] }}" {{ request('chart_type') == $type['id'] ? 'selected' : '' }}>{{ $type['name'] }}</option>
+                        <option value="{{ $type['id'] }}" {{ request('chart_type') == $type['id'] ? 'selected' : '' }}>
+                            {{ $type['name'] }}
+                        </option>
                     @endforeach
                 </select>
             </form>
         </div>
-        <div class="relative w-full h-56 sm:h-64 md:h-72 lg:h-64 xl:h-60">
+
+        <div class="relative w-full min-h-[250px] sm:h-64 md:h-72 lg:h-64 xl:h-60">
             <canvas id="bookingChart" class="absolute inset-0 w-full h-full"></canvas>
         </div>
     </div>
+
 
 
     <!-- Quick Actions & System Overview -->
