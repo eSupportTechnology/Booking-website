@@ -1,4 +1,5 @@
 @extends('admin.master')
+@section('title', 'Admin Accounts')
 @section('content')
     <section class="min-h-screen p-4 sm:p-6 bg-gray-50">
     <div class="space-y-6 sm:space-y-8">
