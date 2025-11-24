@@ -1,6 +1,7 @@
 @extends('admin.master')
-
+@section('title', 'Customers')
 @section('content')
+
 <div class="p-4 sm:p-6 bg-white rounded shadow space-y-6">
     <!-- Breadcrumb -->
     <nav class="flex mb-3 sm:mb-4" aria-label="Breadcrumb">

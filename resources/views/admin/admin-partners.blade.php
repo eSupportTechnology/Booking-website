@@ -1,5 +1,5 @@
 @extends('admin.master')
-
+@section('title', 'Partners')
 @section('content')
 <div class="p-6 bg-white rounded shadow space-y-6">
 
