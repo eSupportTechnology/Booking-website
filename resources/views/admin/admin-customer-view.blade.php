@@ -189,9 +189,95 @@
 
     <!-- Booking History -->
     <div class="bg-white border rounded-lg shadow p-6 relative">
+
         <h3 class="text-xl font-semibold text-[#1F8FB2] mb-4">📅 Booking History</h3>
-        <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
+
+        {{-- 📱 Mobile View — Card Layout --}}
+        <div class="md:hidden space-y-4">
+            @forelse($customer->bookings()->orderBy('created_at', 'desc')->get() as $booking)
+                <div class="border rounded-lg p-4 shadow-sm">
+                    
+                    {{-- Title + Image --}}
+                    <div class="flex items-center gap-3 mb-3">
+                        @if($booking->property && $booking->property->primaryImage)
+                            <img src="{{ asset('storage/' . $booking->property->primaryImage) }}"
+                                alt="{{ $booking->property->title }}"
+                                class="w-12 h-12 rounded-md object-cover">
+                        @endif
+
+                        <div>
+                            <div class="font-semibold text-gray-900 text-sm">
+                                {{ $booking->property->title ?? 'Unknown Property' }}
+                            </div>
+                            <div class="text-xs text-gray-500">
+                                {{ $booking->property->location ?? '' }}
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Dates --}}
+                    <div class="text-sm mb-2">
+                        <div class="text-gray-900">
+                            {{ $booking->check_in->format('M d, Y') }} - 
+                            {{ $booking->check_out->format('M d, Y') }}
+                        </div>
+                        <div class="text-xs text-gray-500">
+                            {{ $booking->check_in->diffInDays($booking->check_out) }} nights
+                        </div>
+                    </div>
+
+                    {{-- Amount --}}
+                    @php
+                        $bookingAmountUsd = \App\Helpers\CurrencyHelper::convertPrice(
+                            $booking->total_price, 
+                            $booking->currency ?? 'USD', 
+                            'USD'
+                        );
+                        $nights = max(1, $booking->check_in->diffInDays($booking->check_out));
+                    @endphp
+                    
+                    <div class="text-sm mb-2">
+                        <div class="font-semibold text-gray-900">
+                            ${{ number_format($bookingAmountUsd, 2) }} USD
+                        </div>
+
+                        @if(($booking->currency ?? 'USD') !== 'USD')
+                            <div class="text-xs text-gray-400">
+                                {{ $booking->currency }} {{ number_format($booking->total_price, 2) }}
+                            </div>
+                        @endif
+
+                        <div class="text-xs text-gray-500">
+                            ${{ number_format($bookingAmountUsd / $nights, 2) }}/night
+                        </div>
+                    </div>
+
+                    {{-- Status --}}
+                    <div class="mb-3">
+                        <span class="px-2 py-1 inline-flex text-xs font-semibold rounded-full
+                            {{ $booking->status === 'completed' ? 'bg-green-100 text-green-800' :
+                            ($booking->status === 'cancelled' ? 'bg-red-100 text-red-800' :
+                            'bg-yellow-100 text-yellow-800') }}">
+                            {{ ucfirst($booking->status) }}
+                        </span>
+                    </div>
+
+                    {{-- Booking Created --}}
+                    <div class="text-xs text-gray-500">
+                        <div>{{ $booking->created_at->format('M d, Y') }}</div>
+                        <div>{{ $booking->created_at->format('h:i A') }}</div>
+                    </div>
+                </div>
+
+            @empty
+                <p class="text-center text-gray-500 py-4">No bookings found for this customer.</p>
+            @endforelse
+        </div>
+
+
+        {{-- 💻 Desktop + Tablet Table --}}
+        <div class="hidden md:block overflow-x-auto">
+            <table class="min-w-[900px] w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Property</th>
@@ -201,6 +287,7 @@
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Booked On</th>
                     </tr>
                 </thead>
+
                 <tbody class="bg-white divide-y divide-gray-200">
                     @forelse($customer->bookings()->orderBy('created_at', 'desc')->get() as $booking)
                         <tr>
@@ -208,8 +295,8 @@
                                 <div class="flex items-center">
                                     @if($booking->property && $booking->property->primaryImage)
                                         <img src="{{ asset('storage/' . $booking->property->primaryImage) }}"
-                                             alt="{{ $booking->property->title }}"
-                                             class="w-10 h-10 rounded-md object-cover mr-3">
+                                            alt="{{ $booking->property->title }}"
+                                            class="w-10 h-10 rounded-md object-cover mr-3">
                                     @endif
                                     <div>
                                         <div class="font-medium text-gray-900">{{ $booking->property->title ?? 'Unknown Property' }}</div>
@@ -217,10 +304,17 @@
                                     </div>
                                 </div>
                             </td>
+
                             <td class="px-6 py-4">
-                                <div class="text-sm text-gray-900">{{ $booking->check_in->format('M d, Y') }} - {{ $booking->check_out->format('M d, Y') }}</div>
-                                <div class="text-sm text-gray-500">{{ $booking->check_in->diffInDays($booking->check_out) }} nights</div>
+                                <div class="text-sm text-gray-900">
+                                    {{ $booking->check_in->format('M d, Y') }} - 
+                                    {{ $booking->check_out->format('M d, Y') }}
+                                </div>
+                                <div class="text-sm text-gray-500">
+                                    {{ $booking->check_in->diffInDays($booking->check_out) }} nights
+                                </div>
                             </td>
+
                             <td class="px-6 py-4">
                                 @php
                                     $bookingAmountUsd = \App\Helpers\CurrencyHelper::convertPrice(
@@ -234,23 +328,24 @@
                                 @if(($booking->currency ?? 'USD') !== 'USD')
                                     <div class="text-xs text-gray-400">{{ $booking->currency }} {{ number_format($booking->total_price, 2) }}</div>
                                 @endif
-                                <div class="text-xs text-gray-500">
-                                    ${{ number_format($bookingAmountUsd / $nights, 2) }}/night
-                                </div>
+                                <div class="text-xs text-gray-500">${{ number_format($bookingAmountUsd / $nights, 2) }}/night</div>
                             </td>
+
                             <td class="px-6 py-4">
                                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
                                     {{ $booking->status === 'completed' ? 'bg-green-100 text-green-800' :
-                                       ($booking->status === 'cancelled' ? 'bg-red-100 text-red-800' :
-                                       'bg-yellow-100 text-yellow-800') }}">
+                                    ($booking->status === 'cancelled' ? 'bg-red-100 text-red-800' :
+                                    'bg-yellow-100 text-yellow-800') }}">
                                     {{ ucfirst($booking->status) }}
                                 </span>
                             </td>
+
                             <td class="px-6 py-4 text-sm text-gray-500">
                                 <div>{{ $booking->created_at->format('M d, Y') }}</div>
                                 <div class="text-xs">{{ $booking->created_at->format('h:i A') }}</div>
                             </td>
                         </tr>
+
                     @empty
                         <tr>
                             <td colspan="5" class="px-6 py-4 text-center text-gray-500">
@@ -261,7 +356,9 @@
                 </tbody>
             </table>
         </div>
+
     </div>
+
 
     <!-- Frequently Booked Properties -->
     <div class="bg-white border rounded-lg shadow p-6 relative">
