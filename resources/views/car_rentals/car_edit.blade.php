@@ -1,5 +1,5 @@
 @extends('car_rentals.master')
-
+@section('title', 'Car Rentals - Edit Car')
 @section('content')
 <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
 

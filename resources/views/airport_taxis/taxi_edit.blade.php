@@ -1,5 +1,5 @@
 @extends('car_rentals.master')
-
+@section('title', 'Edit Taxi')
 @section('content')
 <div class="max-w-6xl mx-auto mt-6 space-y-6">
     @if(session('success'))
