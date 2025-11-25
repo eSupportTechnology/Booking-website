@@ -1,5 +1,5 @@
 @extends('partner.master')
-
+@section('title', 'Apartments')
 @section('content')
     <div class="space-y-8">
         <!-- Header -->
