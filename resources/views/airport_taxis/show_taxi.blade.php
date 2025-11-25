@@ -1,5 +1,5 @@
 @extends('car_rentals.master')
-
+@section('title', 'Taxi Details')
 @section('content')
 <!-- Swiper CSS -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />

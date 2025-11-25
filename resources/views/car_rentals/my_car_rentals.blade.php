@@ -1,5 +1,5 @@
 @extends('car_rentals.master')
-
+@section('title', 'Car Rentals')
 @section('content')
 <div class="space-y-8">
     <!-- Header -->
