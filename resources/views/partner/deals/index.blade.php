@@ -1,5 +1,5 @@
 @extends('partner.master')
-
+@section('title', 'Deals')
 @section('content')
 <div class="space-y-6">
     <div class="flex justify-between items-center">

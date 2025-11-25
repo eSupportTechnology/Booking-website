@@ -1,5 +1,5 @@
 @extends('partner.master')
-
+@section('title', 'Booking Management')
 @section('content')
 <div class="space-y-8">
     <!-- Header -->
