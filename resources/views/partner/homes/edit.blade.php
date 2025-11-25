@@ -1,5 +1,5 @@
 @extends('partner.master')
-
+@section('title', 'Homes - Edit')
 @section('content')
 <div class="min-h-screen bg-gray-50 py-6">
     <div class="max-w-5xl mx-auto px-4">
