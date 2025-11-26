@@ -1,5 +1,5 @@
 @extends('frontend.master')
-
+@section('title','search Result')
 <style>
 /* Tailwind/Booking.com color theme approximation */
 .bg-primary { background-color: #0071C2; }
