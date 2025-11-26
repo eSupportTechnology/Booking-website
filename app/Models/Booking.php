@@ -17,6 +17,8 @@ class Booking extends Model
         'check_in',
         'check_out',
         'guest_count',
+        'adults',
+        'children',
         'total_price',
         'original_price',
         'discount_amount',
@@ -82,7 +84,7 @@ class Booking extends Model
     {
         if ($this->status === 'confirmed' && $this->commission_status === 'pending') {
             $commissionAmount = ($this->total_price * $this->commission_rate) / 100;
-            
+
             CommissionInvoice::create([
                 'partner_id' => $this->property->partner_id,
                 'booking_id' => $this->id,
@@ -91,7 +93,7 @@ class Booking extends Model
                 'due_date' => now()->addDays(30),
                 'status' => 'pending'
             ]);
-            
+
             $this->update([
                 'commission_amount' => $commissionAmount,
                 'commission_status' => 'invoiced'
@@ -102,20 +104,20 @@ class Booking extends Model
     public function cancelBooking()
     {
         $this->update(['status' => 'cancelled']);
-        
+
         // Cancel unpaid commissions
         $this->commissionInvoices()
             ->where('status', 'pending')
             ->update(['status' => 'cancelled']);
-            
+
         $this->update(['commission_status' => 'cancelled']);
     }
 
     public function canBeReviewed()
     {
-        return $this->status === 'confirmed' && 
-               $this->check_out <= now() && 
-               !$this->reviews()->exists();
+        return $this->status === 'confirmed' &&
+            $this->check_out <= now() &&
+            !$this->reviews()->exists();
     }
 
     public function hasReview()
