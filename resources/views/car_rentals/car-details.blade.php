@@ -1,5 +1,5 @@
 @extends('frontend.master')
-
+@section('title','Car Details')
 @section('content')
 <!-- Tailwind, Alpine and SwiperCDN -->
 <link rel="stylesheet" href="https://unpkg.com/swiper@9/swiper-bundle.min.css" />
