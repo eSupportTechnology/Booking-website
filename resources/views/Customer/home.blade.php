@@ -20,7 +20,7 @@
                 {{ __('messages.Find your next stay') }}
             </h1>
             <p class="text-[18px] md:text-[20px] mt-1 font-sans">
-                {{ __('messages.Search low prices on hotels, homes and much more...') }}
+                {{ __('messages.Search low prices on hotels, homes and much more... ') }}
             </p>
         </div>
     </div>
