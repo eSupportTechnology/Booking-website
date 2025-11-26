@@ -1,7 +1,10 @@
 @extends('frontend.master')
 
 @section('content')
-<div class="min-h-screen bg-gray-50 py-8" x-data="bookingForm()" x-init="init()">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.js"></script>
+
+<div class="min-h-screen bg-gray-50 py-8">
     <div class="max-w-4xl mx-auto px-4">
         <div class="bg-white rounded-lg shadow-lg overflow-hidden">
             <!-- Header -->
@@ -11,54 +14,73 @@
             </div>
 
             <div class="p-6">
-                <form action="{{ route('customer.bookings.store', $property) }}" method="POST" class="space-y-6">
+                {{--
+                    Pass all PHP variables to JavaScript via data attributes on the form.
+                    This prevents syntax errors when mixing Blade and JavaScript.
+                --}}
+                <form action="{{ route('customer.bookings.store', $property) }}" method="POST" class="space-y-6" id="bookingForm"
+                    data-property-id="{{ $property->id }}"
+                    data-base-price="{{ $property->pricing->base_price ?? 5000 }}"
+                    data-price-per-night="{{ $property->pricing->price_per_night ?? 5000 }}"
+                    data-adult-price="{{ $property->adult_price ?? 0 }}"
+                    data-child-price="{{ $property->child_price ?? 0 }}"
+                    data-commission-rate="{{ $property->commission_rate ?? 10 }}"
+                    data-base-currency="{{ $property->pricing->currency ?? 'USD' }}"
+                    data-user-currency="{{ app(\App\Services\CurrencyManager::class)->getUserCurrency() }}"
+                    data-has-rooms="{{ $property->rooms->count() > 0 ? 'true' : 'false' }}"
+                    data-selected-deal="{{ json_encode($selectedDeal) }}"
+                    data-additional-guests="{{ $property->additionalDetails->guests ?? 8 }}">
                     @csrf
                     <input type="hidden" name="property_id" value="{{ $property->id }}">
                     @if($selectedDeal)
-                        <input type="hidden" name="deal_id" value="{{ $selectedDeal->id }}">
+                    <input type="hidden" name="deal_id" value="{{ $selectedDeal->id }}">
                     @endif
 
                     <!-- Dates Selection -->
                     <div class="grid md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium mb-2">Check-in Date</label>
-                            <input type="date" name="check_in" x-model="checkIn" required
-                                   class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#3CC0E9]">
+                            <input type="text" name="check_in" id="checkInInput" required placeholder="Select Check-in Date"
+                                class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#3CC0E9] bg-white">
                         </div>
                         <div>
                             <label class="block text-sm font-medium mb-2">Check-out Date</label>
-                            <input type="date" name="check_out" x-model="checkOut" required
-                                   class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#3CC0E9]">
+                            <input type="text" name="check_out" id="checkOutInput" required placeholder="Select Check-out Date"
+                                class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#3CC0E9] bg-white">
                         </div>
                     </div>
 
-                    <!-- Room Selection (for hotels and accommodations with rooms) -->
+                    <!-- Room Selection -->
                     @if($property->rooms->count() > 0)
-                    <div x-show="checkIn && checkOut">
+                    <div id="roomSelectionSection" style="display: none;">
                         <label class="block text-sm font-medium mb-2">Select Room</label>
-                        <div x-show="availableRooms.length === 0 && roomsLoaded" class="text-red-600 text-sm mb-2">
+                        <div id="noRoomsMessage" class="text-red-600 text-sm mb-2" style="display: none;">
                             No rooms available for selected dates
                         </div>
-                        <select name="room_id" x-model="selectedRoom" required
-                                class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#3CC0E9]"
-                                x-bind:disabled="availableRooms.length === 0">
+                        <select name="room_id" id="roomSelect" required
+                            class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#3CC0E9]">
                             <option value="">Select a room</option>
-                            <template x-for="room in availableRooms" :key="room.id">
-                                <option :value="room.id" x-text="`${room.name} - ${formatPrice(room.price_per_night, room.currency)}/night (Max ${room.max_guests} guests)`"></option>
-                            </template>
                         </select>
                     </div>
                     @endif
 
                     <!-- Guests -->
-                    <div>
-                        <label class="block text-sm font-medium mb-2">Number of Guests</label>
-                        <select name="guest_count" x-model="guests" required
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Adults</label>
+                            <input type="number" name="adults" id="adultsInput" value="1" min="1" required
                                 class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#3CC0E9]">
-                            <template x-for="i in getMaxGuests()" :key="i">
-                                <option :value="i" x-text="i + (i > 1 ? ' guests' : ' guest')"></option>
-                            </template>
-                        </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Children</label>
+                            <input type="number" name="children" id="childrenInput" value="0" min="0" required
+                                class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#3CC0E9]">
+                        </div>
+                    </div>
+
+                    <!-- Total Guests Display -->
+                    <div class="mt-2 text-sm text-gray-600 font-medium" id="guestLimitMessage">
+                        Total Guests: <span id="totalGuestsDisplay">1</span> / <span id="maxGuestsDisplay">8</span>
                     </div>
 
                     @if($selectedDeal)
@@ -70,10 +92,10 @@
                             <div>{{ $selectedDeal->description }}</div>
                             <div class="font-semibold">{{ $selectedDeal->discount_display }}</div>
                             @if($selectedDeal->applicable_to === 'room' && $selectedDeal->room)
-                                <div class="text-xs">Valid for: {{ $selectedDeal->room->name }}</div>
+                            <div class="text-xs">Valid for: {{ $selectedDeal->room->name }}</div>
                             @endif
                             @if($selectedDeal->dealDates->count() > 0)
-                                <div class="text-xs">Available dates: {{ $selectedDeal->dealDates->pluck('available_date')->map(fn($d) => $d->format('M d'))->join(', ') }}</div>
+                            <div class="text-xs">Available dates: {{ $selectedDeal->dealDates->pluck('available_date')->map(fn($d) => $d->format('M d'))->join(', ') }}</div>
                             @endif
                         </div>
                     </div>
@@ -89,66 +111,36 @@
                             </div>
                             <div class="flex justify-between">
                                 <span>Price per night:</span>
-                                <span x-show="!selectedRoom">
-                                    <template x-if="formattedBasePrice">
-                                        <span x-text="formattedBasePrice"></span>
-                                    </template>
-                                    <template x-if="!formattedBasePrice">
-                                        <x-price :amount="$property->pricing->price_per_night ?? ($property->pricing->base_price ?? 0)" :currency="$property->pricing->currency ?? 'USD'" />
-                                    </template>
-                                </span>
-                                <span x-show="selectedRoom">
-                                    <template x-if="formattedRoomPrice">
-                                        <span x-text="formattedRoomPrice"></span>
-                                    </template>
-                                    <template x-if="!formattedRoomPrice">
-                                        <span>Loading...</span>
-                                    </template>
+                                <span id="pricePerNightDisplay">
+                                    <x-price :amount="$property->pricing->price_per_night ?? ($property->pricing->base_price ?? 0)" :currency="$property->pricing->currency ?? 'USD'" />
                                 </span>
                             </div>
-                            <div class="flex justify-between" x-show="checkIn && checkOut">
+                            <div class="flex justify-between" id="nightsRow" style="display: none;">
                                 <span>Nights:</span>
-                                <span x-text="calculateNights()"></span>
+                                <span id="nightsDisplay">0</span>
                             </div>
                             @if($selectedDeal)
-                            <div class="flex justify-between text-green-600" x-show="checkIn && checkOut">
+                            <div class="flex justify-between text-green-600" id="originalPriceRow" style="display: none;">
                                 <span>Original Price:</span>
-                                <span x-text="formattedOriginalTotal || 'Calculating...'"></span>
+                                <span id="originalPriceDisplay"></span>
                             </div>
-                            <div class="flex justify-between text-green-600" x-show="checkIn && checkOut">
+                            <div class="flex justify-between text-green-600" id="discountRow" style="display: none;">
                                 <span>Discount:</span>
-                                <span x-text="formattedDiscount || 'Calculating...'"></span>
+                                <span id="discountDisplay"></span>
                             </div>
                             @endif
-                            <div class="flex justify-between font-semibold border-t pt-2" x-show="checkIn && checkOut">
+                            <div class="flex justify-between font-semibold border-t pt-2" id="totalRow" style="display: none;">
                                 <span>Total:</span>
-                                <span>
-                                    <template x-if="formattedTotal">
-                                        <span x-text="formattedTotal"></span>
-                                    </template>
-                                    <template x-if="!formattedTotal">
-                                        <span>Calculating...</span>
-                                    </template>
-                                </span>
+                                <span id="totalDisplay">Calculating...</span>
                             </div>
-                            @if($property->rooms->count() > 0)
-                            <div class="text-xs text-gray-500 mt-2" x-show="selectedRoom">
-                                <span x-text="getSelectedRoomDetails()"></span>
-                            </div>
-                            @endif
+                            <div class="text-xs text-gray-500 mt-2" id="selectedRoomDetails" style="display: none;"></div>
                         </div>
                     </div>
 
                     <!-- Submit Button -->
-                    <button type="submit"
-                            class="w-full bg-[#3CC0E9] hover:bg-[#2BA8D1] text-white font-semibold py-3 rounded-lg transition duration-200"
-                            x-bind:disabled="!isFormValid()"
-                            x-bind:class="{'opacity-50 cursor-not-allowed': !isFormValid()}">
-                        <span x-show="isFormValid()">Confirm Booking</span>
-                        <span x-show="!checkIn || !checkOut">Select Dates to Continue</span>
-                        @if($property->rooms->count() > 0)
-                        <span x-show="checkIn && checkOut && !selectedRoom">Select a Room to Continue</span>
-                        @endif
+                    <button type="submit" id="submitBtn" disabled
+                        class="w-full bg-[#3CC0E9] hover:bg-[#2BA8D1] text-white font-semibold py-3 rounded-lg transition duration-200 opacity-50 cursor-not-allowed">
+                        <span id="submitBtnText">Select Dates to Continue</span>
                     </button>
                 </form>
             </div>
@@ -157,281 +149,323 @@
 </div>
 
 <script>
-function bookingForm() {
-    return {
-        checkIn: '',
-        checkOut: '',
-        guests: 1,
-        selectedRoom: '',
-        basePrice: {{ $property->pricing->base_price ?? 5000 }},
-        pricePerNight: {{ $property->pricing->price_per_night ?? 5000 }},
-        selectedDeal: @json($selectedDeal),
-        formattedOriginalTotal: null,
-        formattedDiscount: null,
-        bookedDates: [],
-        availableRooms: [],
-        roomsLoaded: false,
-        hasRooms: {{ $property->rooms->count() > 0 ? 'true' : 'false' }},
-        userCurrency: '{{ app(\App\Services\CurrencyManager::class)->getUserCurrency() }}',
-    // The property's base currency (used when no room selected)
-    baseCurrency: '{{ $property->pricing->currency ?? 'USD' }}',
+    document.addEventListener('DOMContentLoaded', function() {
+        class BookingManager {
+            constructor() {
+                // Elements
+                this.form = document.getElementById('bookingForm');
+                this.checkInInput = document.getElementById('checkInInput');
+                this.checkOutInput = document.getElementById('checkOutInput');
+                this.adultsInput = document.getElementById('adultsInput');
+                this.childrenInput = document.getElementById('childrenInput');
+                this.roomSelect = document.getElementById('roomSelect');
+                this.submitBtn = document.getElementById('submitBtn');
+                this.submitBtnText = document.getElementById('submitBtnText');
 
-    // Formatted strings shown in the booking summary (in user's currency)
-    formattedBasePrice: null,
-    formattedRoomPrice: null,
-    formattedTotal: null,
+                // Sections
+                this.roomSelectionSection = document.getElementById('roomSelectionSection');
+                this.noRoomsMessage = document.getElementById('noRoomsMessage');
 
-        async formatPrice(amount, currency) {
-            try {
-                const response = await fetch('/api/convert-price', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                    },
-                    body: JSON.stringify({
-                        amount: amount,
-                        from: currency,
-                        to: this.userCurrency
-                    })
-                });
-                const data = await response.json();
-                return data.formattedPrice;
-            } catch (error) {
-                console.error('Price conversion failed:', error);
-                const symbols = { USD: '$', EUR: '€', GBP: '£', LKR: 'Rs' };
-                const symbol = symbols[currency] || currency;
-                return symbol + amount.toLocaleString();
-            }
-        },
+                // Display Elements
+                this.pricePerNightDisplay = document.getElementById('pricePerNightDisplay');
+                this.nightsRow = document.getElementById('nightsRow');
+                this.nightsDisplay = document.getElementById('nightsDisplay');
+                this.totalRow = document.getElementById('totalRow');
+                this.totalDisplay = document.getElementById('totalDisplay');
+                this.originalPriceRow = document.getElementById('originalPriceRow');
+                this.originalPriceDisplay = document.getElementById('originalPriceDisplay');
+                this.discountRow = document.getElementById('discountRow');
+                this.discountDisplay = document.getElementById('discountDisplay');
+                this.selectedRoomDetails = document.getElementById('selectedRoomDetails');
 
-        getSelectedRoomCurrency() {
-            if (!this.selectedRoom) return this.userCurrency;
-            const room = this.availableRooms.find(r => r.id == this.selectedRoom);
-            return room?.currency || this.userCurrency;
-        },
+                // Guest Display Elements
+                this.totalGuestsDisplay = document.getElementById('totalGuestsDisplay');
+                this.maxGuestsDisplay = document.getElementById('maxGuestsDisplay');
 
+                // Data from Data Attributes
+                const dataset = this.form.dataset;
+                this.propertyId = dataset.propertyId;
+                this.basePrice = parseFloat(dataset.basePrice);
+                this.pricePerNight = parseFloat(dataset.pricePerNight);
+                this.adultPrice = parseFloat(dataset.adultPrice);
+                this.childPrice = parseFloat(dataset.childPrice);
+                this.commissionRate = parseFloat(dataset.commissionRate);
+                this.baseCurrency = dataset.baseCurrency;
+                this.userCurrency = dataset.userCurrency;
+                this.hasRooms = dataset.hasRooms === 'true';
+                this.selectedDeal = dataset.selectedDeal ? JSON.parse(dataset.selectedDeal) : null;
+                this.additionalGuests = parseInt(dataset.additionalGuests) || 8;
 
-        async init() {
-            await this.loadBookedDates();
-            this.setupDateRestrictions();
-            this.setupRoomLoading();
-            // initial formatted prices
-            this.updateFormattedPrices();
-        },
-
-        async loadBookedDates() {
-            try {
-                const response = await fetch(`/customer/properties/{{ $property->id }}/booked-dates`);
-                this.bookedDates = await response.json();
-            } catch (error) {
-                console.error('Failed to load booked dates:', error);
-            }
-        },
-
-        setupDateRestrictions() {
-            const checkInInput = document.querySelector('input[name="check_in"]');
-            const checkOutInput = document.querySelector('input[name="check_out"]');
-
-            if (checkInInput && checkOutInput) {
-                // Set minimum date to today
-                const today = new Date().toISOString().split('T')[0];
-                checkInInput.min = today;
-                checkOutInput.min = today;
-
-                // Add event listeners to validate dates
-                checkInInput.addEventListener('change', () => {
-                    if (this.bookedDates.includes(checkInInput.value)) {
-                        alert('This date is already booked. Please select another date.');
-                        checkInInput.value = '';
-                        return;
-                    }
-                    checkOutInput.min = checkInInput.value;
-                });
-
-                checkOutInput.addEventListener('change', () => {
-                    if (this.bookedDates.includes(checkOutInput.value)) {
-                        alert('This date is already booked. Please select another date.');
-                        checkOutInput.value = '';
-                        return;
-                    }
-
-                    // Check if any dates in between are booked
-                    if (this.checkIn && this.checkOut) {
-                        const start = new Date(this.checkIn);
-                        const end = new Date(this.checkOut);
-
-                        for (let d = new Date(start); d < end; d.setDate(d.getDate() + 1)) {
-                            const dateStr = d.toISOString().split('T')[0];
-                            if (this.bookedDates.includes(dateStr)) {
-                                alert('Some dates in your selected range are already booked. Please choose different dates.');
-                                checkOutInput.value = '';
-                                return;
-                            }
-                        }
-                    }
-                });
-            }
-        },
-
-        calculateNights() {
-            if (!this.checkIn || !this.checkOut) return 0;
-            const start = new Date(this.checkIn);
-            const end = new Date(this.checkOut);
-            const diffTime = Math.abs(end - start);
-            return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        },
-
-        calculateTotal() {
-            const price = this.selectedRoom ? this.getRoomPrice() : this.pricePerNight;
-            return this.calculateNights() * price;
-        },
-
-        getRoomPrice() {
-            if (!this.selectedRoom) return this.pricePerNight;
-            const room = this.availableRooms.find(r => r.id == this.selectedRoom);
-            return room ? room.price_per_night : this.pricePerNight;
-        },
-
-        getSelectedRoomDetails() {
-            if (!this.selectedRoom) return '';
-            const room = this.availableRooms.find(r => r.id == this.selectedRoom);
-            return room ? `${room.name} - Max ${room.max_guests} guests` : '';
-        },
-
-        // Update formatted price strings (converts to this.userCurrency)
-        async updateFormattedPrices() {
-            // Reset while loading
-            this.formattedBasePrice = null;
-            this.formattedRoomPrice = null;
-            this.formattedTotal = null;
-
-            try {
-                // Base price (when no room selected)
-                if (!this.selectedRoom) {
-                    const amount = this.pricePerNight;
-                    this.formattedBasePrice = await this.formatPrice(amount, this.baseCurrency);
-                }
-
-                // Room price (when room selected)
-                if (this.selectedRoom) {
-                    const roomAmount = this.getRoomPrice();
-                    const roomCurrency = this.getSelectedRoomCurrency() || this.baseCurrency;
-                    this.formattedRoomPrice = await this.formatPrice(roomAmount, roomCurrency);
-                }
-
-                // Total (nights * price)
-                const nights = this.calculateNights();
-                if (nights > 0) {
-                    let totalAmount = this.calculateTotal();
-                    const totalCurrency = this.selectedRoom ? (this.getSelectedRoomCurrency() || this.baseCurrency) : this.baseCurrency;
-                    
-                    // Apply deal discount if selected
-                    if (this.selectedDeal) {
-                        this.formattedOriginalTotal = await this.formatPrice(totalAmount, totalCurrency);
-                        
-                        let discountAmount = 0;
-                        if (this.selectedDeal.deal_type === 'percentage') {
-                            discountAmount = totalAmount * (this.selectedDeal.discount_percentage / 100);
-                        } else if (this.selectedDeal.deal_type === 'fixed') {
-                            discountAmount = this.selectedDeal.fixed_discount_amount * nights;
-                        }
-                        
-                        this.formattedDiscount = await this.formatPrice(discountAmount, totalCurrency);
-                        totalAmount = Math.max(0, totalAmount - discountAmount);
-                    }
-                    
-                    this.formattedTotal = await this.formatPrice(totalAmount, totalCurrency);
-                }
-            } catch (e) {
-                console.error('Failed to update formatted prices', e);
-            }
-        },
-
-        getMaxGuests() {
-            if (this.selectedRoom) {
-                const room = this.availableRooms.find(r => r.id == this.selectedRoom);
-                const maxGuests = room?.max_guests || 8;
-                return Array.from({length: maxGuests}, (_, i) => i + 1);
-            }
-            @if($property->additionalDetails && $property->additionalDetails->guests)
-                return Array.from({length: {{ $property->additionalDetails->guests }}}, (_, i) => i + 1);
-            @else
-                return Array.from({length: 8}, (_, i) => i + 1);
-            @endif
-        },
-
-        // Ensure the selected guests value never exceeds the currently allowed max
-        clampGuests() {
-            const options = this.getMaxGuests();
-            const max = (options && options.length) ? options[options.length - 1] : 8;
-            if (!this.guests || this.guests < 1) this.guests = 1;
-            if (this.guests > max) this.guests = max;
-        },
-
-        isFormValid() {
-            if (!this.checkIn || !this.checkOut) return false;
-            if (this.hasRooms && !this.selectedRoom) return false;
-            
-            // If deal is room-specific, ensure correct room is selected
-            if (this.selectedDeal && this.selectedDeal.applicable_to === 'room') {
-                if (!this.selectedRoom || this.selectedRoom != this.selectedDeal.room_id) {
-                    return false;
-                }
-            }
-            
-            return true;
-        },
-
-        async loadAvailableRooms() {
-            if (!this.checkIn || !this.checkOut || !this.hasRooms) return;
-
-            try {
-                const response = await fetch(`/customer/properties/{{ $property->id }}/available-rooms?check_in=${this.checkIn}&check_out=${this.checkOut}`);
-                this.availableRooms = await response.json();
-                this.roomsLoaded = true;
-
-                // Reset selected room if it's no longer available
-                if (this.selectedRoom && !this.availableRooms.find(r => r.id == this.selectedRoom)) {
-                    this.selectedRoom = '';
-                }
-                // Clamp guests to the new maximum after rooms are loaded/updated
-                this.clampGuests();
-                // Update formatted prices since room availability/selection may change pricing
-                this.updateFormattedPrices();
-            } catch (error) {
-                console.error('Failed to load available rooms:', error);
                 this.availableRooms = [];
-                this.roomsLoaded = true;
-                this.clampGuests();
-                this.updateFormattedPrices();
+                this.bookedDates = [];
+
+                this.init();
             }
-        },
 
-        setupRoomLoading() {
-            this.$watch('checkIn', () => {
-                this.selectedRoom = '';
-                this.roomsLoaded = false;
-                this.loadAvailableRooms();
-                // Update formatted prices when dates change (may affect total)
-                this.updateFormattedPrices();
-            });
+            async init() {
+                await this.loadBookedDates();
+                this.setupFlatpickr();
+                this.attachEventListeners();
+                this.updateUI(); // Initial UI update to set max guests
+            }
 
-            this.$watch('checkOut', () => {
-                this.selectedRoom = '';
-                this.roomsLoaded = false;
-                this.loadAvailableRooms();
-                // Update formatted prices when dates change (may affect total)
-                this.updateFormattedPrices();
-            });
+            async loadBookedDates() {
+                try {
+                    const response = await fetch(`/customer/properties/${this.propertyId}/booked-dates`);
+                    if (response.ok) {
+                        this.bookedDates = await response.json();
+                    }
+                } catch (error) {
+                    console.error('Failed to load booked dates', error);
+                }
+            }
 
-            // When the selected room changes, ensure guest count does not exceed that room's max
-            this.$watch('selectedRoom', () => {
-                this.clampGuests();
-                this.updateFormattedPrices();
-            });
+            setupFlatpickr() {
+                const today = new Date();
+                const config = {
+                    minDate: "today",
+                    dateFormat: "Y-m-d",
+                    disable: this.bookedDates,
+                    onChange: (selectedDates, dateStr, instance) => {
+                        if (instance.element === this.checkInInput) {
+                            this.checkOutPicker.set('minDate', dateStr);
+                            this.checkOutInput.value = '';
+                            this.updateUI();
+                        } else {
+                            // Validate date range availability
+                            if (this.checkInInput.value && dateStr) {
+                                if (!this.isDateRangeAvailable(this.checkInInput.value, dateStr)) {
+                                    alert("Selected range includes already booked dates. Please choose a different range.");
+                                    this.checkOutInput.value = '';
+                                    instance.clear();
+                                    return;
+                                }
+                            }
+                            this.updateUI();
+                            this.loadAvailableRooms();
+                        }
+                    }
+                };
+
+                this.checkInPicker = flatpickr(this.checkInInput, config);
+                this.checkOutPicker = flatpickr(this.checkOutInput, {
+                    ...config,
+                    minDate: "today"
+                });
+            }
+
+            attachEventListeners() {
+                this.adultsInput.addEventListener('input', () => this.updateUI());
+                this.childrenInput.addEventListener('input', () => this.updateUI());
+                if (this.roomSelect) {
+                    this.roomSelect.addEventListener('change', () => this.updateUI());
+                }
+            }
+
+            async loadAvailableRooms() {
+                if (!this.hasRooms || !this.checkInInput.value || !this.checkOutInput.value) return;
+
+                try {
+                    const response = await fetch(`/customer/properties/${this.propertyId}/available-rooms?check_in=${this.checkInInput.value}&check_out=${this.checkOutInput.value}`);
+                    if (response.ok) {
+                        this.availableRooms = await response.json();
+                        this.renderRoomOptions();
+                    }
+                } catch (error) {
+                    console.error('Failed to load rooms', error);
+                }
+            }
+
+            renderRoomOptions() {
+                this.roomSelect.innerHTML = '<option value="">Select a room</option>';
+
+                if (this.availableRooms.length === 0) {
+                    this.noRoomsMessage.style.display = 'block';
+                    this.roomSelect.disabled = true;
+                } else {
+                    this.noRoomsMessage.style.display = 'none';
+                    this.roomSelect.disabled = false;
+                    this.availableRooms.forEach(room => {
+                        const option = document.createElement('option');
+                        option.value = room.id;
+                        option.textContent = `${room.name} - ${room.price_per_night} ${room.currency}/night (Max ${room.max_guests})`;
+                        this.roomSelect.appendChild(option);
+                    });
+                }
+                this.roomSelectionSection.style.display = 'block';
+            }
+
+            async updateUI() {
+                const checkIn = this.checkInInput.value;
+                const checkOut = this.checkOutInput.value;
+                let adults = parseInt(this.adultsInput.value) || 0;
+                let children = parseInt(this.childrenInput.value) || 0;
+                const roomId = this.roomSelect ? this.roomSelect.value : null;
+
+                // Validate Guests and Update Limits
+                this.updateGuestLimits(adults, children, roomId);
+
+                // Re-read values in case they were clamped
+                adults = parseInt(this.adultsInput.value) || 0;
+                children = parseInt(this.childrenInput.value) || 0;
+
+                // Calculate Nights
+                let nights = 0;
+                if (checkIn && checkOut) {
+                    const start = new Date(checkIn);
+                    const end = new Date(checkOut);
+                    nights = Math.ceil(Math.abs(end - start) / (1000 * 60 * 60 * 24));
+                    this.nightsDisplay.textContent = nights;
+                    this.nightsRow.style.display = 'flex';
+                } else {
+                    this.nightsRow.style.display = 'none';
+                }
+
+                // Calculate Total
+                if (nights > 0) {
+                    this.totalRow.style.display = 'flex';
+                    await this.calculateAndDisplayTotal(nights, roomId, adults, children);
+                } else {
+                    this.totalRow.style.display = 'none';
+                    if (this.originalPriceRow) this.originalPriceRow.style.display = 'none';
+                    if (this.discountRow) this.discountRow.style.display = 'none';
+                }
+
+                // Update Submit Button
+                this.updateSubmitButton(checkIn, checkOut, roomId);
+            }
+
+            updateGuestLimits(adults, children, roomId) {
+                let maxGuests = 20;
+                if (roomId) {
+                    const room = this.availableRooms.find(r => r.id == roomId);
+                    if (room) maxGuests = room.max_guests;
+                } else {
+                    maxGuests = this.additionalGuests;
+                }
+
+                // Update Display
+                if (this.totalGuestsDisplay) this.totalGuestsDisplay.textContent = adults + children;
+                if (this.maxGuestsDisplay) this.maxGuestsDisplay.textContent = maxGuests;
+
+                // Enforce Limits
+                if (adults + children > maxGuests) {
+                    if (children > 0) {
+                        children = Math.max(0, maxGuests - adults);
+                        this.childrenInput.value = children;
+                    }
+                    if (adults + children > maxGuests) {
+                        adults = maxGuests;
+                        children = 0;
+                        this.adultsInput.value = adults;
+                        this.childrenInput.value = children;
+                    }
+                    if (this.totalGuestsDisplay) this.totalGuestsDisplay.textContent = adults + children;
+                }
+
+                // Set dynamic max attributes
+                this.adultsInput.max = maxGuests - children;
+                this.childrenInput.max = maxGuests - adults;
+            }
+
+            isDateRangeAvailable(start, end) {
+                if (!start || !end || this.bookedDates.length === 0) return true;
+
+                const startDate = new Date(start);
+                const endDate = new Date(end);
+
+                for (const bookedDateStr of this.bookedDates) {
+                    const bookedDate = new Date(bookedDateStr);
+                    // Check if bookedDate is between start (inclusive) and end (exclusive)
+                    if (bookedDate >= startDate && bookedDate < endDate) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            async calculateAndDisplayTotal(nights, roomId, adults, children) {
+                let total = 0;
+                let currency = this.baseCurrency;
+
+                if (roomId) {
+                    const room = this.availableRooms.find(r => r.id == roomId);
+                    if (room) {
+                        total = room.price_per_night * nights;
+                        currency = room.currency;
+                        this.selectedRoomDetails.textContent = `${room.name} - Max ${room.max_guests} guests`;
+                        this.selectedRoomDetails.style.display = 'block';
+                    }
+                } else {
+                    const adultPriceWithComm = this.adultPrice * (1 + this.commissionRate / 100);
+                    const childPriceWithComm = this.childPrice * (1 + this.commissionRate / 100);
+                    let dailyTotal = (adults * adultPriceWithComm) + (children * childPriceWithComm);
+                    if (dailyTotal <= 0) dailyTotal = this.pricePerNight;
+                    total = dailyTotal * nights;
+                    this.selectedRoomDetails.style.display = 'none';
+                }
+
+                // Apply Deal
+                let discount = 0;
+                if (this.selectedDeal) {
+                    if (this.selectedDeal.deal_type === 'percentage') {
+                        discount = total * (this.selectedDeal.discount_percentage / 100);
+                    } else if (this.selectedDeal.deal_type === 'fixed') {
+                        discount = this.selectedDeal.fixed_discount_amount * nights;
+                    }
+
+                    this.originalPriceDisplay.textContent = await this.formatPrice(total, currency);
+                    this.discountDisplay.textContent = await this.formatPrice(discount, currency);
+                    this.originalPriceRow.style.display = 'flex';
+                    this.discountRow.style.display = 'flex';
+
+                    total = Math.max(0, total - discount);
+                }
+
+                this.totalDisplay.textContent = await this.formatPrice(total, currency);
+            }
+
+            async formatPrice(amount, currency) {
+                try {
+                    const response = await fetch('/api/convert-price', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: JSON.stringify({
+                            amount,
+                            from: currency,
+                            to: this.userCurrency
+                        })
+                    });
+                    const data = await response.json();
+                    return data.formattedPrice;
+                } catch (e) {
+                    return `${currency} ${amount.toFixed(2)}`;
+                }
+            }
+
+            updateSubmitButton(checkIn, checkOut, roomId) {
+                let isValid = checkIn && checkOut;
+                if (this.hasRooms && !roomId) isValid = false;
+
+                this.submitBtn.disabled = !isValid;
+                if (isValid) {
+                    this.submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    this.submitBtnText.textContent = 'Confirm Booking';
+                } else {
+                    this.submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                    if (!checkIn || !checkOut) {
+                        this.submitBtnText.textContent = 'Select Dates to Continue';
+                    } else if (this.hasRooms && !roomId) {
+                        this.submitBtnText.textContent = 'Select a Room to Continue';
+                    }
+                }
+            }
         }
-    }
-}
+
+        new BookingManager();
+    });
 </script>
 @endsection

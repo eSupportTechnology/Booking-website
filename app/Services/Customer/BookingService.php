@@ -19,6 +19,8 @@ class BookingService
         $booking->check_in = $bookingDTO->check_in;
         $booking->check_out = $bookingDTO->check_out;
         $booking->guest_count = $bookingDTO->guest_count;
+        $booking->adults = $bookingDTO->adults;
+        $booking->children = $bookingDTO->children;
         $booking->total_price = $bookingDTO->total_price;
         $booking->status = $bookingDTO->status;
         $booking->save();
@@ -38,24 +40,39 @@ class BookingService
         return $booking;
     }
 
-    public function calculatePrice(Property $property, ?int $roomId, string $checkIn, string $checkOut, int $guestCount): array
+    public function calculatePrice(Property $property, ?int $roomId, string $checkIn, string $checkOut, int $adults = 1, int $children = 0): array
     {
         $checkInDate = new \DateTime($checkIn);
         $checkOutDate = new \DateTime($checkOut);
         $nights = $checkInDate->diff($checkOutDate)->days;
         $userCurrency = app(\App\Services\CurrencyManager::class)->getUserCurrency();
-        
+
         if ($roomId) {
             $room = \App\Models\Room::find($roomId);
             $basePrice = $room ? $room->price_per_night : ($property->pricing->price_per_night ?? 100.00);
             $baseCurrency = $room ? ($room->currency ?? 'USD') : ($property->pricing->currency ?? 'USD');
         } else {
-            $basePrice = $property->pricing->price_per_night ?? 100.00;
-            $baseCurrency = $property->pricing->currency ?? 'USD';
+            // Property booking (Home/Apartment) - Per person pricing
+            $commissionRate = $property->commission_rate ?? 0;
+
+            $adultPriceBase = $property->adult_price ?? 0;
+            $childPriceBase = $property->child_price ?? 0;
+
+            $adultPriceWithComm = $adultPriceBase + ($adultPriceBase * $commissionRate / 100);
+            $childPriceWithComm = $childPriceBase + ($childPriceBase * $commissionRate / 100);
+
+            $basePrice = ($adults * $adultPriceWithComm) + ($children * $childPriceWithComm);
+
+            // Fallback to price per night if per-person prices are not set
+            if ($basePrice <= 0) {
+                $basePrice = $property->pricing->price_per_night ?? 100.00;
+            }
+
+            $baseCurrency = $property->currency ?? ($property->pricing->currency ?? 'USD');
         }
-        
+
         $convertedPrice = app(\App\Services\CurrencyService::class)->convert($basePrice, $baseCurrency, $userCurrency);
-        
+
         return [
             'total_price' => $convertedPrice * $nights,
             'currency' => $userCurrency,
@@ -74,7 +91,7 @@ class BookingService
                     ->orWhereBetween('check_out', [$checkIn, $checkOut])
                     ->orWhere(function ($q) use ($checkIn, $checkOut) {
                         $q->where('check_in', '<=', $checkIn)
-                          ->where('check_out', '>=', $checkOut);
+                            ->where('check_out', '>=', $checkOut);
                     });
             });
 
@@ -105,7 +122,7 @@ class BookingService
                     ->orWhereBetween('check_out', [$checkIn, $checkOut])
                     ->orWhere(function ($q) use ($checkIn, $checkOut) {
                         $q->where('check_in', '<=', $checkIn)
-                          ->where('check_out', '>=', $checkOut);
+                            ->where('check_out', '>=', $checkOut);
                     });
             })
             ->whereNotNull('room_id')

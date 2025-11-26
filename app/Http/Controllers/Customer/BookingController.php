@@ -26,12 +26,12 @@ class BookingController extends Controller
     public function show(Property $property, Request $request)
     {
         $property->load(['photos', 'amenities', 'category', 'pricing', 'rooms.amenities', 'rooms.roomType']);
-        
+
         $selectedDeal = null;
         if ($request->has('deal_id')) {
             $selectedDeal = Deal::with(['room', 'dealDates'])->find($request->deal_id);
         }
-        
+
         return view('Customer.bookings.show', compact('property', 'selectedDeal'));
     }
 
@@ -45,68 +45,74 @@ class BookingController extends Controller
             'property_id' => 'required|exists:properties,id',
             'room_id' => 'nullable|exists:rooms,id',
             'deal_id' => 'nullable|exists:deals,id',
-            'check_in' => 'required|date|after:today',
+            'check_in' => 'required|date|after_or_equal:today',
             'check_out' => 'required|date|after:check_in',
-            'guest_count' => 'required|integer|min:1|max:20',
+            'adults' => 'required|integer|min:1',
+            'children' => 'required|integer|min:0',
         ]);
+
+        $guestCount = $request->adults + $request->children;
 
         // Validate guest count against room/property limits
         if ($request->room_id) {
             $room = \App\Models\Room::find($request->room_id);
-            if ($room && $room->max_guests && $request->guest_count > $room->max_guests) {
+            if ($room && $room->max_guests && $guestCount > $room->max_guests) {
                 return back()->with('error', "Selected room allows maximum {$room->max_guests} guests.");
             }
         } else {
             $property->load('additionalDetails');
-            if ($property->additionalDetails && $property->additionalDetails->guests && $request->guest_count > $property->additionalDetails->guests) {
+            if ($property->additionalDetails && $property->additionalDetails->guests && $guestCount > $property->additionalDetails->guests) {
                 return back()->with('error', "This property allows maximum {$property->additionalDetails->guests} guests.");
             }
         }
 
         $bookingDTO = BookingDTO::fromRequest($request);
-        
+
         if (!$this->bookingService->isRoomAvailable($property, $bookingDTO->room_id, $bookingDTO->check_in, $bookingDTO->check_out)) {
             return back()->with('error', 'Selected room is not available for the chosen dates.');
         }
 
         $priceData = $this->bookingService->calculatePrice(
-            $property, 
+            $property,
             $bookingDTO->room_id,
-            $bookingDTO->check_in, 
-            $bookingDTO->check_out, 
-            $bookingDTO->guest_count
+            $bookingDTO->check_in,
+            $bookingDTO->check_out,
+            $bookingDTO->adults,
+            $bookingDTO->children
         );
-        
+
         $originalPrice = $priceData['total_price'];
         $finalPrice = $originalPrice;
         $discountAmount = 0;
         $dealId = null;
-        
+
         // Apply deal discount if deal is selected
         if ($request->deal_id) {
             $dealValidation = $this->dealBookingService->validateDealBooking(
-                $request->deal_id, 
-                $bookingDTO->check_in, 
-                $bookingDTO->check_out, 
+                $request->deal_id,
+                $bookingDTO->check_in,
+                $bookingDTO->check_out,
                 $bookingDTO->room_id
             );
-            
+
             if (!$dealValidation['valid']) {
                 return back()->with('error', $dealValidation['message']);
             }
-            
+
             $dealPricing = $this->dealBookingService->applyDealDiscount(
-                $dealValidation['deal'], 
-                $originalPrice
+                $dealValidation['deal'],
+                $originalPrice,
+                $bookingDTO->check_in,
+                $bookingDTO->check_out
             );
-            
+
             $finalPrice = $dealPricing['final_price'];
             $discountAmount = $dealPricing['discount_amount'];
             $dealId = $request->deal_id;
         }
-        
+
         $bookingDTO->total_price = $finalPrice;
-        
+
         // Set default commission rate (can be customized per property/partner)
         $bookingDTO->commission_rate = 10.00;
 
@@ -119,6 +125,8 @@ class BookingController extends Controller
             'check_in' => $bookingDTO->check_in,
             'check_out' => $bookingDTO->check_out,
             'guest_count' => $bookingDTO->guest_count,
+            'adults' => $bookingDTO->adults,
+            'children' => $bookingDTO->children,
             'total_price' => $finalPrice,
             'original_price' => $originalPrice,
             'discount_amount' => $discountAmount,
@@ -127,7 +135,7 @@ class BookingController extends Controller
             'status' => 'pending',
             'commission_rate' => 10.00
         ]);
-        
+
         // Set booking status to pending for partner approval
         $booking->update([
             'status' => 'pending',
@@ -142,7 +150,7 @@ class BookingController extends Controller
         if ($dealId) {
             $successMessage .= " You saved $" . number_format($discountAmount, 2) . " with this deal!";
         }
-        
+
         return redirect()->route('customer.payment.show', $booking)
             ->with('success', $successMessage);
     }
@@ -154,7 +162,7 @@ class BookingController extends Controller
         }
 
         $bookings = $this->bookingService->getUserBookings(Auth::guard('customer')->id());
-        
+
         return view('Customer.bookings.index', compact('bookings'));
     }
 
@@ -165,7 +173,7 @@ class BookingController extends Controller
         }
 
         $booking->load(['property.photos', 'property.category']);
-        
+
         return view('Customer.bookings.confirmation', compact('booking'));
     }
 
@@ -179,12 +187,12 @@ class BookingController extends Controller
                 $dates = [];
                 $start = new \DateTime($booking->check_in);
                 $end = new \DateTime($booking->check_out);
-                
+
                 while ($start < $end) {
                     $dates[] = $start->format('Y-m-d');
                     $start->add(new \DateInterval('P1D'));
                 }
-                
+
                 return $dates;
             })
             ->flatten()
@@ -202,8 +210,8 @@ class BookingController extends Controller
         ]);
 
         $availableRooms = $this->bookingService->getAvailableRooms(
-            $property, 
-            $request->check_in, 
+            $property,
+            $request->check_in,
             $request->check_out
         );
 
@@ -221,7 +229,7 @@ class BookingController extends Controller
         }
 
         $booking->cancelBooking();
-        
+
         // Send cancellation message to partner
         $this->messagingService->sendCustomerCancelledMessage($booking);
 
@@ -244,7 +252,7 @@ class BookingController extends Controller
         );
 
         return response()->json([
-            'deals' => $deals->map(function($deal) {
+            'deals' => $deals->map(function ($deal) {
                 return [
                     'id' => $deal->id,
                     'title' => $deal->title,
