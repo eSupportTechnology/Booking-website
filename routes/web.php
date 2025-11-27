@@ -1548,4 +1548,13 @@ Route::get('/taxi/booking/cancel/{id}', [AirportTaxiBookingController::class, 'c
 // Invoice
 Route::get('/taxi/booking/invoice/{id}', [AirportTaxiBookingController::class, 'invoice'])
     ->name('frontend.taxi.booking.invoice');
+use App\Http\Controllers\Customer\HomeController;
+Route::get('/customer/home', [HomeController::class, 'popularCities'])->name('customer.home');
+
+
+Route::get('/help-center', function () {
+    return view('frontend.help-center');
+})->name('help.center');
+
+
 
