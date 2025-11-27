@@ -1007,37 +1007,18 @@
             <!-- Content Panels -->
             <div id="tab-content" class="mt-4">
             <!-- Domestic -->
+            <!-- Domestic -->
             <div id="content-domestic"
-                class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-y-2 w-full text-sm"
-                style="font-family: 'Lato', sans-serif;">
+                    class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-y-2 w-full text-sm"
+                    style="font-family: 'Lato', sans-serif;">
 
-                <span>Kandy hotels</span>
-                <span>Nuwara Eliya hotels</span>
-                <span>Colombo hotels</span>
-                <span>Ella hotels</span>
-                <span>Anuradhapura hotels</span>
+                @foreach ($cities as $city)
+                    <span>{{ $city['city'] }} hotels</span>
+                @endforeach
 
-                <span>Kandy hotels</span>
-                <span>Nuwara Eliya hotels</span>
-                <span>Colombo hotels</span>
-                <span>Ella hotels</span>
-                <span>Anuradhapura hotels</span>
 
-                <span>Kandy hotels</span>
-                <span>Nuwara Eliya hotels</span>
-                <span>Colombo hotels</span>
-                <span>Ella hotels</span>
-                <span>Anuradhapura hotels</span>
-
-                <span>Kandy hotels</span>
-                <span>Nuwara Eliya hotels</span>
-                <span>Colombo hotels</span>
-                <span>Ella hotels</span>
-                <span>Anuradhapura hotels</span>
-
-                <!-- Show more button -->
                 <div class="col-span-full w-full text-left mt-2 mb-16">
-                <button class="text-blue-600 hover:underline" style="color:rgb(31, 143, 178);">+ Show more</button>
+                    <button class="text-blue-600 hover:underline" style="color:rgb(31, 143, 178);">+ Show more</button>
                 </div>
             </div>
 
