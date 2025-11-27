@@ -194,8 +194,10 @@
             @forelse($properties as $property)
             <div class="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden flex flex-col w-full max-w-sm">
                 <div class="relative">
-                    <img src="{{ $property->files->where('file_type', 'image')->first() ? asset('storage/' . $property->files->where('file_type', 'image')->first()->path) : asset('images/AA.png') }}"
-                        alt="{{ $property->title }}" class="w-full h-48 object-cover">
+                    <a href="{{ route('single-hotel', $property->id) }}">
+                        <img src="{{ $property->files->where('file_type', 'image')->first() ? asset('storage/' . $property->files->where('file_type', 'image')->first()->path) : asset('images/AA.png') }}"
+                            alt="{{ $property->title }}" class="w-full h-48 object-cover hover:opacity-90 transition cursor-pointer">
+                    </a>
                     @include('components.deal-banner', ['property' => $property])
                 </div>
                 <div class="p-4 flex flex-col justify-between flex-1">
@@ -210,17 +212,14 @@
                     <p class="text-sm text-gray-500 mb-2">{{ $property->city }} • {{ $property->address }}</p>
                     <div class="flex justify-between items-center">
                         <div class="text-right">
-                            @if($property->pricing)
-                            <p class="text-sm text-gray-500">Starting from</p>
-                            <p class="text-lg font-bold text-gray-800">@currency($property->pricing->price_per_night ?? 0, $property->pricing->currency ?? 'USD')</p>
-                            {{-- <p class="text-lg font-bold text-gray-800">LKR {{ number_format($property->pricing->price_per_night ?? ($property->pricing->base_price ?? 0)) }}</p> --}}
+                            <p class="text-xs text-gray-500">Per Night</p>
+                            <p class="text-sm font-semibold text-gray-800">Adult: USD {{ number_format(app(\App\Services\CurrencyService::class)->convert($property->adult_price ?? 0, $property->currency ?? 'LKR', 'USD'), 2) }}</p>
+                            @if($property->child_price > 0)
+                            <p class="text-xs text-gray-600">Child: USD {{ number_format(app(\App\Services\CurrencyService::class)->convert($property->child_price ?? 0, $property->currency ?? 'LKR', 'USD'), 2) }}</p>
                             @endif
                         </div>
                         <div class="flex gap-2">
-                            <a href="{{ route('single-hotel', $property->id) }}" class="bg-gray-500 hover:bg-gray-600 text-white text-sm px-3 py-2 rounded-lg transition">
-                                View Details
-                            </a>
-                            <a href="{{ route('customer.bookings.show', $property->id) }}" class="bg-[#3CC0E9] hover:bg-blue-600 text-white text-sm px-3 py-2 rounded-lg transition">
+                            <a href="{{ route('customer.bookings.show', $property->id) }}" class="bg-[#3CC0E9] hover:bg-blue-600 text-white text-sm px-3 py-2 rounded-lg transition w-full text-center">
                                 Book Now
                             </a>
                         </div>
