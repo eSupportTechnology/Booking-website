@@ -115,6 +115,15 @@
                                     <x-price :amount="$property->pricing->price_per_night ?? ($property->pricing->base_price ?? 0)" :currency="$property->pricing->currency ?? 'USD'" />
                                 </span>
                             </div>
+                            <!-- Per Person Price Breakdown -->
+                            <div class="flex justify-between text-gray-600 text-xs" id="adultPriceRow" style="display: none;">
+                                <span>Adult Price (incl. comm.):</span>
+                                <span id="adultPriceDisplay"></span>
+                            </div>
+                            <div class="flex justify-between text-gray-600 text-xs" id="childPriceRow" style="display: none;">
+                                <span>Child Price (incl. comm.):</span>
+                                <span id="childPriceDisplay"></span>
+                            </div>
                             <div class="flex justify-between" id="nightsRow" style="display: none;">
                                 <span>Nights:</span>
                                 <span id="nightsDisplay">0</span>
@@ -168,6 +177,10 @@
 
                 // Display Elements
                 this.pricePerNightDisplay = document.getElementById('pricePerNightDisplay');
+                this.adultPriceRow = document.getElementById('adultPriceRow');
+                this.adultPriceDisplay = document.getElementById('adultPriceDisplay');
+                this.childPriceRow = document.getElementById('childPriceRow');
+                this.childPriceDisplay = document.getElementById('childPriceDisplay');
                 this.nightsRow = document.getElementById('nightsRow');
                 this.nightsDisplay = document.getElementById('nightsDisplay');
                 this.totalRow = document.getElementById('totalRow');
@@ -395,10 +408,20 @@
                         currency = room.currency;
                         this.selectedRoomDetails.textContent = `${room.name} - Max ${room.max_guests} guests`;
                         this.selectedRoomDetails.style.display = 'block';
+                        // Hide per-person breakdown for rooms
+                        this.adultPriceRow.style.display = 'none';
+                        this.childPriceRow.style.display = 'none';
                     }
                 } else {
                     const adultPriceWithComm = this.adultPrice * (1 + this.commissionRate / 100);
                     const childPriceWithComm = this.childPrice * (1 + this.commissionRate / 100);
+
+                    // Display per-person prices
+                    this.adultPriceDisplay.textContent = await this.formatPrice(adultPriceWithComm, currency);
+                    this.childPriceDisplay.textContent = await this.formatPrice(childPriceWithComm, currency);
+                    this.adultPriceRow.style.display = 'flex';
+                    this.childPriceRow.style.display = 'flex';
+
                     let dailyTotal = (adults * adultPriceWithComm) + (children * childPriceWithComm);
                     if (dailyTotal <= 0) dailyTotal = this.pricePerNight;
                     total = dailyTotal * nights;
