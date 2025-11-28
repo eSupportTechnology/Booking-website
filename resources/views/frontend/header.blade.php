@@ -104,7 +104,15 @@
                 </a>
 
                 <a href="{{ route('customer.messages.index') }}" class="block px-4 py-2 text-gray-700 text-base hover:bg-gray-100 flex items-center gap-2">
-                    <img src="{{ asset('assets/mynaui_letter-g-circle.svg') }}" class="w-5 h-5" /> Messages
+                    <img src="{{ asset('assets/icons8-message-50.png') }}" class="w-5 h-5" /> Messages
+                </a>
+
+                <a href="{{ route('rewards.wallet') }}" class="block px-4 py-2 text-gray-700 text-base hover:bg-gray-100 flex items-center gap-2">
+                    <img src="{{ asset('assets/icons8-wallet-64.png') }}" class="w-5 h-5" /> Rewards & Wallet
+                </a>
+
+                <a href="{{ route('reviews') }}" class="block px-4 py-2 text-gray-700 text-base hover:bg-gray-100 flex items-center gap-2">
+                    <img src="{{ asset('assets/icons8-reviews-50.png') }}" class="w-5 h-5" /> Reviews
                 </a>
 
 
