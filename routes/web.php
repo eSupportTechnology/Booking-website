@@ -737,6 +737,10 @@ Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddle
     Route::post('/settings/payout', [\App\Http\Controllers\Partner\AccountSettingsController::class, 'updatePayout'])->name('partner.settings.payout.update');
     Route::post('/settings/two-factor', [\App\Http\Controllers\Partner\AccountSettingsController::class, 'toggleTwoFactor'])->name('partner.settings.two-factor.toggle');
 
+    // Payouts
+    Route::get('/payouts', [\App\Http\Controllers\Partner\PayoutController::class, 'index'])->name('partner.payouts.index');
+    Route::get('/payouts/{payout}', [\App\Http\Controllers\Partner\PayoutController::class, 'show'])->name('partner.payouts.show');
+
     // Property Edit/Delete
     Route::get('/properties/{property}/edit', [\App\Http\Controllers\Partner\PropertyController::class, 'edit'])->name('partner.properties.edit');
     Route::delete('/properties/{property}', [\App\Http\Controllers\Partner\PropertyController::class, 'destroy'])->name('partner.properties.destroy');
@@ -1194,6 +1198,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/taxis/{taxi}/reject', [\App\Http\Controllers\Admin\TaxiApprovalController::class, 'reject']);
         Route::post('/transfers/{transfer}/approve', [\App\Http\Controllers\Admin\TaxiApprovalController::class, 'approve']);
         Route::post('/transfers/{transfer}/reject', [\App\Http\Controllers\Admin\TaxiApprovalController::class, 'reject']);
+
+        // Payout Management Routes
+        Route::get('/payouts', [\App\Http\Controllers\Admin\PayoutController::class, 'index'])->name('payouts.index');
+        Route::get('/payouts/{payout}', [\App\Http\Controllers\Admin\PayoutController::class, 'show'])->name('payouts.show');
+        Route::post('/payouts/{payout}/process', [\App\Http\Controllers\Admin\PayoutController::class, 'process'])->name('payouts.process');
+        Route::post('/payouts/{payout}/complete', [\App\Http\Controllers\Admin\PayoutController::class, 'complete'])->name('payouts.complete');
+        Route::post('/payouts/{payout}/fail', [\App\Http\Controllers\Admin\PayoutController::class, 'fail'])->name('payouts.fail');
+        Route::post('/payouts/bulk-process', [\App\Http\Controllers\Admin\PayoutController::class, 'bulkProcess'])->name('payouts.bulk-process');
     });
 });
 
@@ -1622,11 +1634,9 @@ Route::prefix('customer')->middleware(['auth:customer'])->group(function () {
     Route::get('/reservations/{id}', [ReservationController::class, 'show'])
         ->name('customer.reservations.show');
 
-    // Cancel booking
     Route::post('/reservations/{id}/cancel', [ReservationController::class, 'cancel'])
         ->name('customer.reservations.cancel');
 });
-
 
 // Airport taxi searching (UI + filtering)
 Route::prefix('customer')->group(function () {
@@ -1666,16 +1676,9 @@ Route::get('/taxi/booking/invoice/{id}', [AirportTaxiBookingController::class, '
 use App\Http\Controllers\Customer\HomeController;
 Route::get('/customer/home', [HomeController::class, 'popularCities'])->name('customer.home');
 
-
-
-
-// routes/web.php
-
 Route::get('/help-center', function () {
     return view('frontend.help-center');
 })->name('help.center');
-
-
 
 Route::get('/about-booking', function () {
     return view('frontend.about-booking');
@@ -1684,7 +1687,6 @@ Route::get('/about-booking', function () {
 Route::get('/safety-resource-center', function () {
     return view('frontend.safety-resource-center');
 })->name('safety.resource.center');
-
 
 Route::middleware('auth:car_renter')->get(
     'car_rentals/carrenters_control_panel',
@@ -1707,7 +1709,6 @@ Route::get('/sustainability', function () {
     return view('frontend.sustainability');
 })->name('sustainability');
 
-
-
-
-
+// Explicit Admin Login Route to fix RouteNotFoundException
+Route::get('/admin/login', [\App\Http\Controllers\Admin\AuthController::class, 'showLogin'])->name('admin.auth.login');
+Route::post('/admin/login', [\App\Http\Controllers\Admin\AuthController::class, 'login'])->name('admin.auth.login.submit');

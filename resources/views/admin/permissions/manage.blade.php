@@ -3,10 +3,10 @@
 @section('content')
 <div class="max-w-6xl mx-auto p-6">
     @if(session('success'))
-        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6 flex items-center">
-            <i class="fas fa-check-circle mr-2"></i>
-            {{ session('success') }}
-        </div>
+    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6 flex items-center">
+        <i class="fas fa-check-circle mr-2"></i>
+        {{ session('success') }}
+    </div>
     @endif
 
     <div class="bg-white rounded-lg shadow-lg overflow-hidden">
@@ -51,24 +51,26 @@
         <form method="POST" action="{{ route('admin.permissions.update', $admin) }}" class="p-6">
             @csrf
             @method('PUT')
-            
+
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 @foreach($permissions as $category => $categoryPermissions)
                 <div class="permission-category bg-gray-50 rounded-lg p-4 border">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-lg font-semibold text-gray-800 flex items-center">
                             @if($category === 'Dashboard')
-                                <i class="fas fa-tachometer-alt mr-2 text-blue-500"></i>
+                            <i class="fas fa-tachometer-alt mr-2 text-blue-500"></i>
                             @elseif($category === 'Users')
-                                <i class="fas fa-users mr-2 text-green-500"></i>
+                            <i class="fas fa-users mr-2 text-green-500"></i>
                             @elseif($category === 'Property')
-                                <i class="fas fa-building mr-2 text-purple-500"></i>
+                            <i class="fas fa-building mr-2 text-purple-500"></i>
                             @elseif($category === 'Rental')
-                                <i class="fas fa-car mr-2 text-orange-500"></i>
+                            <i class="fas fa-car mr-2 text-orange-500"></i>
+                            @elseif($category === 'Finance')
+                            <i class="fas fa-money-bill-wave mr-2 text-teal-500"></i>
                             @elseif($category === 'Admin Management')
-                                <i class="fas fa-user-shield mr-2 text-red-500"></i>
+                            <i class="fas fa-user-shield mr-2 text-red-500"></i>
                             @else
-                                <i class="fas fa-cog mr-2 text-gray-500"></i>
+                            <i class="fas fa-cog mr-2 text-gray-500"></i>
                             @endif
                             {{ $category }}
                         </h3>
@@ -78,16 +80,16 @@
                             <span class="ml-2 text-xs text-gray-600">Toggle All</span>
                         </label>
                     </div>
-                    
+
                     <div class="space-y-2">
                         @foreach($categoryPermissions as $permission)
                         <label class="flex items-center p-2 rounded hover:bg-white transition-colors cursor-pointer group">
                             <div class="relative">
-                                <input type="checkbox" 
-                                       name="permissions[]" 
-                                       value="{{ $permission->name }}"
-                                       class="permission-checkbox sr-only peer"
-                                       {{ in_array($permission->name, $adminPermissions) ? 'checked' : '' }}>
+                                <input type="checkbox"
+                                    name="permissions[]"
+                                    value="{{ $permission->name }}"
+                                    class="permission-checkbox sr-only peer"
+                                    {{ in_array($permission->name, $adminPermissions) ? 'checked' : '' }}>
                                 <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
                             </div>
                             <div class="ml-3 flex-1">
@@ -99,9 +101,9 @@
                                 </div>
                             </div>
                             @if(in_array($permission->name, $adminPermissions))
-                                <span class="text-green-500 text-xs">
-                                    <i class="fas fa-check-circle"></i>
-                                </span>
+                            <span class="text-green-500 text-xs">
+                                <i class="fas fa-check-circle"></i>
+                            </span>
                             @endif
                         </label>
                         @endforeach
@@ -109,7 +111,7 @@
                 </div>
                 @endforeach
             </div>
-            
+
             <!-- Action Buttons -->
             <div class="flex items-center justify-between mt-8 pt-6 border-t">
                 <a href="{{ route('admin.accounts.index') }}" class="flex items-center px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors">
@@ -124,68 +126,68 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const checkboxes = document.querySelectorAll('.permission-checkbox');
-    const permissionCount = document.getElementById('permission-count');
-    const selectAllBtn = document.getElementById('select-all-btn');
-    const clearAllBtn = document.getElementById('clear-all-btn');
-    
-    function updateCount() {
-        const checkedCount = document.querySelectorAll('.permission-checkbox:checked').length;
-        permissionCount.textContent = `${checkedCount} permissions currently assigned`;
-    }
-    
-    // Initialize category toggle states
-    function initializeCategoryToggles() {
-        document.querySelectorAll('.permission-category').forEach(category => {
-            const categoryToggle = category.querySelector('.category-toggle');
-            const categoryCheckboxes = category.querySelectorAll('.permission-checkbox');
-            const allChecked = Array.from(categoryCheckboxes).every(checkbox => checkbox.checked);
-            categoryToggle.checked = allChecked;
-        });
-    }
-    
-    initializeCategoryToggles();
-    
-    // Select/Clear all functionality
-    selectAllBtn.addEventListener('click', function() {
-        checkboxes.forEach(cb => cb.checked = true);
-        document.querySelectorAll('.category-toggle').forEach(toggle => toggle.checked = true);
-        updateCount();
-    });
-    
-    clearAllBtn.addEventListener('click', function() {
-        checkboxes.forEach(cb => cb.checked = false);
-        document.querySelectorAll('.category-toggle').forEach(toggle => toggle.checked = false);
-        updateCount();
-    });
-    
-    // Category toggle functionality
-    document.querySelectorAll('.category-toggle').forEach(toggle => {
-        toggle.addEventListener('change', function() {
-            const category = this.closest('.permission-category');
-            const categoryCheckboxes = category.querySelectorAll('.permission-checkbox');
-            
-            categoryCheckboxes.forEach(cb => cb.checked = this.checked);
+    document.addEventListener('DOMContentLoaded', function() {
+        const checkboxes = document.querySelectorAll('.permission-checkbox');
+        const permissionCount = document.getElementById('permission-count');
+        const selectAllBtn = document.getElementById('select-all-btn');
+        const clearAllBtn = document.getElementById('clear-all-btn');
+
+        function updateCount() {
+            const checkedCount = document.querySelectorAll('.permission-checkbox:checked').length;
+            permissionCount.textContent = `${checkedCount} permissions currently assigned`;
+        }
+
+        // Initialize category toggle states
+        function initializeCategoryToggles() {
+            document.querySelectorAll('.permission-category').forEach(category => {
+                const categoryToggle = category.querySelector('.category-toggle');
+                const categoryCheckboxes = category.querySelectorAll('.permission-checkbox');
+                const allChecked = Array.from(categoryCheckboxes).every(checkbox => checkbox.checked);
+                categoryToggle.checked = allChecked;
+            });
+        }
+
+        initializeCategoryToggles();
+
+        // Select/Clear all functionality
+        selectAllBtn.addEventListener('click', function() {
+            checkboxes.forEach(cb => cb.checked = true);
+            document.querySelectorAll('.category-toggle').forEach(toggle => toggle.checked = true);
             updateCount();
         });
-    });
-    
-    // Update count on individual checkbox change and sync category toggles
-    checkboxes.forEach(cb => {
-        cb.addEventListener('change', function() {
+
+        clearAllBtn.addEventListener('click', function() {
+            checkboxes.forEach(cb => cb.checked = false);
+            document.querySelectorAll('.category-toggle').forEach(toggle => toggle.checked = false);
             updateCount();
-            
-            // Update category toggle state
-            const category = this.closest('.permission-category');
-            const categoryToggle = category.querySelector('.category-toggle');
-            const categoryCheckboxes = category.querySelectorAll('.permission-checkbox');
-            const allChecked = Array.from(categoryCheckboxes).every(checkbox => checkbox.checked);
-            const anyChecked = Array.from(categoryCheckboxes).some(checkbox => checkbox.checked);
-            
-            categoryToggle.checked = allChecked;
+        });
+
+        // Category toggle functionality
+        document.querySelectorAll('.category-toggle').forEach(toggle => {
+            toggle.addEventListener('change', function() {
+                const category = this.closest('.permission-category');
+                const categoryCheckboxes = category.querySelectorAll('.permission-checkbox');
+
+                categoryCheckboxes.forEach(cb => cb.checked = this.checked);
+                updateCount();
+            });
+        });
+
+        // Update count on individual checkbox change and sync category toggles
+        checkboxes.forEach(cb => {
+            cb.addEventListener('change', function() {
+                updateCount();
+
+                // Update category toggle state
+                const category = this.closest('.permission-category');
+                const categoryToggle = category.querySelector('.category-toggle');
+                const categoryCheckboxes = category.querySelectorAll('.permission-checkbox');
+                const allChecked = Array.from(categoryCheckboxes).every(checkbox => checkbox.checked);
+                const anyChecked = Array.from(categoryCheckboxes).some(checkbox => checkbox.checked);
+
+                categoryToggle.checked = allChecked;
+            });
         });
     });
-});
 </script>
 @endsection

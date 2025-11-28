@@ -195,88 +195,88 @@
     <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
         <h3 class="text-xl font-semibold text-[#1F8FB2] mb-4">🏢 Business Details</h3>
         @php
-            $businessProperties = $partner->properties->filter(function($property) {
-                return $property->accommodation &&
-                       $property->accommodation->ownership_type === 'business_entity' &&
-                       $property->accommodation->businessEntities->isNotEmpty();
-            });
+        $businessProperties = $partner->properties->filter(function($property) {
+        return $property->accommodation &&
+        $property->accommodation->ownership_type === 'business_entity' &&
+        $property->accommodation->businessEntities->isNotEmpty();
+        });
         @endphp
 
         @if($businessProperties->isNotEmpty())
-            @foreach($businessProperties as $property)
-                @foreach($property->accommodation->businessEntities as $entity)
-                <div class="mb-8 last:mb-0">
-                    <div class="border-b pb-2 mb-4">
-                        <h4 class="text-lg font-medium text-gray-800">{{ $entity->business_name }}</h4>
-                        @if($entity->trading_name)
-                            <p class="text-sm text-gray-600">Trading as: {{ $entity->trading_name }}</p>
-                        @endif
-                        <p class="text-sm text-gray-500">Associated with property: {{ $property->title }}</p>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <h4 class="text-gray-800 font-medium">Business Address:</h4>
-                            <p class="text-gray-700">{{ $entity->address }}</p>
-                        </div>
-                        <div>
-                            <h4 class="text-gray-800 font-medium">Location:</h4>
-                            <p class="text-gray-700">{{ $entity->city }}, {{ $entity->country }} ({{ $entity->zip_code }})</p>
-                        </div>
-                    </div>
+        @foreach($businessProperties as $property)
+        @foreach($property->accommodation->businessEntities as $entity)
+        <div class="mb-8 last:mb-0">
+            <div class="border-b pb-2 mb-4">
+                <h4 class="text-lg font-medium text-gray-800">{{ $entity->business_name }}</h4>
+                @if($entity->trading_name)
+                <p class="text-sm text-gray-600">Trading as: {{ $entity->trading_name }}</p>
+                @endif
+                <p class="text-sm text-gray-500">Associated with property: {{ $property->title }}</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h4 class="text-gray-800 font-medium">Business Address:</h4>
+                    <p class="text-gray-700">{{ $entity->address }}</p>
                 </div>
-                @endforeach
-            @endforeach
+                <div>
+                    <h4 class="text-gray-800 font-medium">Location:</h4>
+                    <p class="text-gray-700">{{ $entity->city }}, {{ $entity->country }} ({{ $entity->zip_code }})</p>
+                </div>
+            </div>
+        </div>
+        @endforeach
+        @endforeach
         @endif
 
         @php
-            $individualProperties = $partner->properties->filter(function($property) {
-                return $property->accommodation &&
-                       $property->accommodation->ownership_type === 'individual' &&
-                       $property->accommodation->individuals->isNotEmpty();
-            });
+        $individualProperties = $partner->properties->filter(function($property) {
+        return $property->accommodation &&
+        $property->accommodation->ownership_type === 'individual' &&
+        $property->accommodation->individuals->isNotEmpty();
+        });
         @endphp
 
         @if($individualProperties->isNotEmpty())
-            <div class="mt-6">
-                <h3 class="text-lg font-semibold text-gray-800 mb-4">Individual Property Owners</h3>
-                @foreach($individualProperties as $property)
-                    @foreach($property->accommodation->individuals as $individual)
-                    <div class="mb-4 last:mb-0">
-                        <div class="border-b pb-2 mb-2">
-                            <h4 class="font-medium text-gray-800">{{ $individual->first_name }} {{ $individual->last_name }}</h4>
-                            <p class="text-sm text-gray-500">Associated with property: {{ $property->title }}</p>
-                        </div>
-                        @if($individual->date_of_birth)
-                        <p class="text-sm text-gray-600">Date of Birth: {{ \Carbon\Carbon::parse($individual->date_of_birth)->format('Y-m-d') }}</p>
-                        @endif
-                    </div>
-                    @endforeach
-                @endforeach
+        <div class="mt-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Individual Property Owners</h3>
+            @foreach($individualProperties as $property)
+            @foreach($property->accommodation->individuals as $individual)
+            <div class="mb-4 last:mb-0">
+                <div class="border-b pb-2 mb-2">
+                    <h4 class="font-medium text-gray-800">{{ $individual->first_name }} {{ $individual->last_name }}</h4>
+                    <p class="text-sm text-gray-500">Associated with property: {{ $property->title }}</p>
+                </div>
+                @if($individual->date_of_birth)
+                <p class="text-sm text-gray-600">Date of Birth: {{ \Carbon\Carbon::parse($individual->date_of_birth)->format('Y-m-d') }}</p>
+                @endif
             </div>
+            @endforeach
+            @endforeach
+        </div>
         @endif
 
         @if($businessProperties->isEmpty() && $individualProperties->isEmpty())
-            <p class="text-gray-500 italic">No business entities or individual owners registered</p>
+        <p class="text-gray-500 italic">No business entities or individual owners registered</p>
         @endif
     </div>
 
     <!-- Commission Settings Section -->
     <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
         <h3 class="text-xl font-semibold text-[#1F8FB2] mb-4">💰 Commission Settings</h3>
-        
+
         <form action="{{ route('admin.partner.commission.update', $partner->partner->id) }}" method="POST">
             @csrf
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-medium mb-1">Individual Commission Rate</label>
-                    <input type="number" 
-                           name="commission_rate" 
-                           value="{{ $partner->partner->settings->commission_rate ?? '' }}" 
-                           step="0.0001" 
-                           min="0" 
-                           max="1" 
-                           placeholder="Leave empty to use global rate"
-                           class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1F8FB2]">
+                    <input type="number"
+                        name="commission_rate"
+                        value="{{ $partner->partner->settings?->commission_rate ?? '' }}"
+                        step="0.0001"
+                        min="0"
+                        max="1"
+                        placeholder="Leave empty to use global rate"
+                        class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1F8FB2]">
                     <p class="text-xs text-gray-500 mt-1">Enter as decimal (e.g., 0.12 for 12%)</p>
                 </div>
                 <div>
@@ -285,7 +285,7 @@
                         {{ number_format($partner->partner->getEffectiveCommissionRate() * 100, 1) }}%
                     </div>
                     <p class="text-xs text-gray-500">
-                        {{ $partner->partner->settings->commission_rate ? 'Individual rate' : 'Using global rate' }}
+                        {{ $partner->partner->settings?->commission_rate ? 'Individual rate' : 'Using global rate' }}
                     </p>
                 </div>
             </div>
@@ -299,76 +299,76 @@
     <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
         <h3 class="text-xl font-semibold text-[#1F8FB2] mb-4">🏠 Listed Properties</h3>
         @if($partner->properties && $partner->properties->count() > 0)
-            <div class="overflow-x-auto">
-                <table class="min-w-full table-auto">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Property Name</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Location</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Listed On</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-200">
-                        @foreach($partner->properties as $property)
-                        <tr class="hover:bg-gray-50">
-                            <td class="px-6 py-4">
-                                <div class="flex items-center">
-                                    @if($property->photos->first())
-                                        <img src="{{ asset('storage/' . $property->photos->first()->image_path) }}"
-                                             alt="{{ $property->title }}"
-                                             class="w-10 h-10 rounded-lg object-cover mr-3">
-                                    @endif
-                                    <div>
-                                        <div>{{ $property->title }}</div>
-                                        @if($property->accommodation)
-                                            <div class="text-xs text-gray-500">
-                                                @if($property->accommodation->businessEntities->isNotEmpty())
-                                                    {{ $property->accommodation->businessEntities->first()->business_name }}
-                                                @else
-                                                    Individual Property
-                                                @endif
-                                            </div>
+        <div class="overflow-x-auto">
+            <table class="min-w-full table-auto">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Property Name</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Location</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Listed On</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    @foreach($partner->properties as $property)
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center">
+                                @if($property->photos->first())
+                                <img src="{{ asset('storage/' . $property->photos->first()->image_path) }}"
+                                    alt="{{ $property->title }}"
+                                    class="w-10 h-10 rounded-lg object-cover mr-3">
+                                @endif
+                                <div>
+                                    <div>{{ $property->title }}</div>
+                                    @if($property->accommodation)
+                                    <div class="text-xs text-gray-500">
+                                        @if($property->accommodation->businessEntities->isNotEmpty())
+                                        {{ $property->accommodation->businessEntities->first()->business_name }}
+                                        @else
+                                        Individual Property
                                         @endif
                                     </div>
+                                    @endif
                                 </div>
-                            </td>
-                            <td class="px-6 py-4">
-                                <div>{{ $property->category->name ?? 'Not Set' }}</div>
-                                @if($property->propertySubcategory)
-                                    <div class="text-xs text-gray-500">{{ $property->propertySubcategory->name }}</div>
-                                @endif
-                            </td>
-                            <td class="px-6 py-4">
-                                <div>{{ $property->city }}, {{ $property->country }}</div>
-                                @if($property->zipcode)
-                                    <div class="text-xs text-gray-500">{{ $property->zipcode }}</div>
-                                @endif
-                            </td>
-                            <td class="px-6 py-4">
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                            </div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div>{{ $property->category->name ?? 'Not Set' }}</div>
+                            @if($property->propertySubcategory)
+                            <div class="text-xs text-gray-500">{{ $property->propertySubcategory->name }}</div>
+                            @endif
+                        </td>
+                        <td class="px-6 py-4">
+                            <div>{{ $property->city }}, {{ $property->country }}</div>
+                            @if($property->zipcode)
+                            <div class="text-xs text-gray-500">{{ $property->zipcode }}</div>
+                            @endif
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
                                     {{ $property->status === 'active' ? 'bg-green-100 text-green-800' :
                                        ($property->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
-                                    {{ ucfirst($property->status) }}
-                                </span>
-                                <div class="text-xs text-gray-500 mt-1">
-                                    {{ $property->reviews->count() }} Reviews
-                                </div>
-                            </td>
-                            <td class="px-6 py-4">
-                                <div>{{ $property->created_at->format('Y-m-d') }}</div>
-                                <div class="text-xs text-gray-500">
-                                    {{ $property->created_at->diffForHumans() }}
-                                </div>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+                                {{ ucfirst($property->status) }}
+                            </span>
+                            <div class="text-xs text-gray-500 mt-1">
+                                {{ $property->reviews->count() }} Reviews
+                            </div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div>{{ $property->created_at->format('Y-m-d') }}</div>
+                            <div class="text-xs text-gray-500">
+                                {{ $property->created_at->diffForHumans() }}
+                            </div>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
         @else
-            <p class="text-gray-500 italic">No properties listed yet</p>
+        <p class="text-gray-500 italic">No properties listed yet</p>
         @endif
     </div>
 </div>
@@ -376,91 +376,93 @@
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-// Monthly Earnings Chart
-const ctx = document.getElementById('monthlyEarningsChart');
-const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const earningsByMonth = @json($stats['earnings_by_month']);
-const monthlyData = Array(12).fill(0);
+    // Monthly Earnings Chart
+    const ctx = document.getElementById('monthlyEarningsChart');
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const earningsByMonth = @json($stats['earnings_by_month']);
+    const monthlyData = Array(12).fill(0);
 
-Object.entries(earningsByMonth).forEach(([month, amount]) => {
-    monthlyData[parseInt(month) - 1] = amount;
-});
+    Object.entries(earningsByMonth).forEach(([month, amount]) => {
+        monthlyData[parseInt(month) - 1] = amount;
+    });
 
-new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: monthNames,
-        datasets: [{
-            label: 'Earnings',
-            data: monthlyData,
-            borderColor: '#3CC0E9',
-            backgroundColor: 'rgba(60, 192, 233, 0.1)',
-            tension: 0.3,
-            fill: true
-        }]
-    },
-    options: {
-        responsive: true,
-        plugins: {
-            legend: {
-                display: false
-            }
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: monthNames,
+            datasets: [{
+                label: 'Earnings',
+                data: monthlyData,
+                borderColor: '#3CC0E9',
+                backgroundColor: 'rgba(60, 192, 233, 0.1)',
+                tension: 0.3,
+                fill: true
+            }]
         },
-        scales: {
-            y: {
-                beginAtZero: true,
-                ticks: {
-                    callback: value => '$' + value.toLocaleString()
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: value => '$' + value.toLocaleString()
+                    }
                 }
             }
         }
-    }
-});
-
-// Handle Partner Status Change
-function handleStatusChange(status) {
-    fetch(`/admin/status/partner/{{ $partner->partner->id }}`, {
-        method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-        },
-        body: JSON.stringify({ status })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Update the status button class based on new status
-            const statusSelect = document.getElementById('partnerStatus');
-            const statusClass = data.data.new_status === 'active' ? 'bg-green-100 text-green-800' :
-                            data.data.new_status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                            'bg-red-100 text-red-800';
-
-            // Remove old classes and add new ones
-            statusSelect.className = `px-4 py-2 rounded-full text-sm font-semibold ${statusClass}`;
-
-            // Show success message
-            const successMessage = data.message || 'Status updated successfully';
-            Swal.fire({
-                title: 'Success!',
-                text: successMessage,
-                icon: 'success',
-                confirmButtonText: 'OK'
-            });
-        } else {
-            throw new Error(data.message || 'Failed to update status');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        Swal.fire({
-            title: 'Error!',
-            text: error.message || 'Failed to update status',
-            icon: 'error',
-            confirmButtonText: 'OK'
-        });
     });
-}
+
+    // Handle Partner Status Change
+    function handleStatusChange(status) {
+        fetch(`/admin/status/partner/{{ $partner->partner->id }}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({
+                    status
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update the status button class based on new status
+                    const statusSelect = document.getElementById('partnerStatus');
+                    const statusClass = data.data.new_status === 'active' ? 'bg-green-100 text-green-800' :
+                        data.data.new_status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-red-100 text-red-800';
+
+                    // Remove old classes and add new ones
+                    statusSelect.className = `px-4 py-2 rounded-full text-sm font-semibold ${statusClass}`;
+
+                    // Show success message
+                    const successMessage = data.message || 'Status updated successfully';
+                    Swal.fire({
+                        title: 'Success!',
+                        text: successMessage,
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    });
+                } else {
+                    throw new Error(data.message || 'Failed to update status');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    title: 'Error!',
+                    text: error.message || 'Failed to update status',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            });
+    }
 </script>
 @endpush
 @endsection

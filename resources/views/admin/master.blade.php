@@ -77,18 +77,18 @@
             x-data="{ openUsers: true, openProperty: true, openRental: true, openAdminManagement: true }">
 
             @php
-                $appName = config('domains.app_name');
-                $domain = config('domains.domain');
-                $subdomain = config('domains.subdomain');
+            $appName = config('domains.app_name');
+            $domain = config('domains.domain');
+            $subdomain = config('domains.subdomain');
             @endphp
             <!-- Branding -->
             <div class="mb-6 flex items-center space-x-3 px-4 py-3">
                 @if ($appName === 'BookinTour')
-                    <h1 class="text-xl font-bold text-bg-[#1F8FB2]">{{ $domain }}</h1>
+                <h1 class="text-xl font-bold text-bg-[#1F8FB2]">{{ $domain }}</h1>
                 @elseif ($appName === 'Inselor')
-                    <img src="{{ asset('images/inselor-logo.png') }}" alt="Inselor" class="h-12 w-auto align-middle" />
+                <img src="{{ asset('images/inselor-logo.png') }}" alt="Inselor" class="h-12 w-auto align-middle" />
                 @else
-                    <h1 class="text-xl font-bold text-gray-700">{{ $subdomain }}</h1>
+                <h1 class="text-xl font-bold text-gray-700">{{ $subdomain }}</h1>
                 @endif
             </div>
 
@@ -187,6 +187,22 @@
                 </div>
                 @endif
 
+                <!-- FINANCE SECTION -->
+                <div x-data="{ openFinance: false }">
+                    <button @click="openFinance = !openFinance"
+                        class="w-full flex justify-between items-center px-4 py-2 rounded hover:bg-blue-200 transition focus:outline-none font-bold text-blue-900">
+                        <div class="flex items-center">
+                            <i class="fas fa-money-bill-wave mr-3 text-bg-[#1F8FB2] text-lg"></i> <span>Finance</span>
+                        </div>
+                        <i :class="openFinance ? 'fa-chevron-up' : 'fa-chevron-down'" class="fas text-xs"></i>
+                    </button>
+                    <div x-show="openFinance" x-collapse class="ml-8 mt-2 space-y-1 border-l border-blue-300 pl-4">
+                        <a href="{{ route('admin.payouts.index') }}" class="block py-1 hover:text-blue-700 font-semibold">Partner Payouts</a>
+                        <a href="{{ route('admin.commission.aging') }}" class="block py-1 hover:text-blue-700 font-semibold">Commission Aging</a>
+                        <a href="{{ route('admin.aging-report') }}" class="block py-1 hover:text-blue-700 font-semibold">Aging Report</a>
+                    </div>
+                </div>
+
                 <!-- ADMIN MANAGEMENT -->
                 @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('view_pending_admins') || Auth::guard('admin')->user()->can('view_admin_accounts') || Auth::guard('admin')->user()->can('manage_admin_permissions'))
                 <div>
@@ -251,13 +267,13 @@
         // Prevent back navigation after logout
         window.addEventListener('pageshow', function(event) {
             if (event.persisted) {
-                window.location.href = '{{ route('admin.login') }}';
+                window.location.href = '{{ url(' / admin / login ') }}';
             }
         });
 
         // Redirect to login on back button
         window.addEventListener('popstate', function(event) {
-            window.location.href = '{{ route('admin.login') }}';
+            window.location.href = '{{ url(' / admin / login ') }}';
         });
 
         // Clear history on load

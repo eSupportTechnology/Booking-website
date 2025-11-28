@@ -38,7 +38,7 @@ class AuthController extends Controller
         $dto = RegisterDTO::fromRequest($request);
         $admin = $action->execute($dto);
 
-        return redirect()->route('admin.login')->with('status', 'Registration submitted! Please wait for super admin approval.');
+        return redirect('/admin/login')->with('status', 'Registration submitted! Please wait for super admin approval.');
     }
 
     public function showForgotPassword()
@@ -54,6 +54,6 @@ class AuthController extends Controller
     public function logout()
     {
         Auth::guard('admin')->logout();
-        return redirect()->route('admin.login');
+        return redirect('/admin/login');
     }
 }

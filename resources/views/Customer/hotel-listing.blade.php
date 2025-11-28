@@ -227,9 +227,9 @@
                     <div class="text-right">
                         @if($property->category && in_array($property->category->name, ['Apartment', 'Homes', 'Alternative places']))
                         <p class="text-xs text-gray-500">Per Night</p>
-                        <p class="text-sm font-semibold text-gray-800">Adult: USD {{ number_format(app(\App\Services\CurrencyService::class)->convert($property->adult_price ?? 0, $property->currency ?? 'LKR', 'USD'), 2) }}</p>
+                        <p class="text-sm font-semibold text-gray-800">Adult: {{ \App\Helpers\CurrencyHelper::convertAndFormat($property->adult_price ?? 0, $property->currency ?? 'LKR') }}</p>
                         @if($property->child_price > 0)
-                        <p class="text-xs text-gray-600">Child: USD {{ number_format(app(\App\Services\CurrencyService::class)->convert($property->child_price ?? 0, $property->currency ?? 'LKR', 'USD'), 2) }}</p>
+                        <p class="text-xs text-gray-600">Child: {{ \App\Helpers\CurrencyHelper::convertAndFormat($property->child_price ?? 0, $property->currency ?? 'LKR') }}</p>
                         @endif
                         @elseif($property->pricing)
                         <p class="text-sm text-gray-500">Starting from</p>

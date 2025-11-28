@@ -13,18 +13,26 @@ class AdminPermissionController extends Controller
     public function show(Admin $admin)
     {
         $currentAdmin = Auth::guard('admin')->user();
-        
+
         if (!$currentAdmin->isSuperAdmin() && !$currentAdmin->can('manage_admin_permissions')) {
             abort(403, 'You do not have permission to manage admin permissions.');
         }
-        
-        $permissions = Permission::where('guard_name', 'admin')->get()->groupBy(function($permission) {
+
+        $permissions = Permission::where('guard_name', 'admin')->get()->groupBy(function ($permission) {
             if (str_contains($permission->name, 'dashboard')) return 'Dashboard';
             if (str_contains($permission->name, 'customer') || str_contains($permission->name, 'partner')) return 'Users';
-            if (str_contains($permission->name, 'apartment') || str_contains($permission->name, 'home') || 
-                str_contains($permission->name, 'hotel') || str_contains($permission->name, 'alternative')) return 'Property';
-            if (str_contains($permission->name, 'taxi') || str_contains($permission->name, 'airport') || 
-                str_contains($permission->name, 'car') || str_contains($permission->name, 'rental_provider')) return 'Rental';
+            if (
+                str_contains($permission->name, 'apartment') || str_contains($permission->name, 'home') ||
+                str_contains($permission->name, 'hotel') || str_contains($permission->name, 'alternative')
+            ) return 'Property';
+            if (
+                str_contains($permission->name, 'taxi') || str_contains($permission->name, 'airport') ||
+                str_contains($permission->name, 'car') || str_contains($permission->name, 'rental_provider')
+            ) return 'Rental';
+            if (
+                str_contains($permission->name, 'payouts') || str_contains($permission->name, 'commission') ||
+                str_contains($permission->name, 'aging')
+            ) return 'Finance';
             if (str_contains($permission->name, 'admin')) return 'Admin Management';
             return 'Other';
         });
@@ -37,11 +45,11 @@ class AdminPermissionController extends Controller
     public function update(Request $request, Admin $admin)
     {
         $currentAdmin = Auth::guard('admin')->user();
-        
+
         if (!$currentAdmin->isSuperAdmin() && !$currentAdmin->can('manage_admin_permissions')) {
             abort(403, 'You do not have permission to manage admin permissions.');
         }
-        
+
         $request->validate([
             'permissions' => 'array',
             'permissions.*' => 'string|exists:permissions,name'

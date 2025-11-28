@@ -75,23 +75,26 @@ class Booking extends Model
         return $this->hasMany(Message::class);
     }
 
-    public function commissionInvoices()
+    public function payouts()
     {
-        return $this->hasMany(CommissionInvoice::class, 'booking_id');
+        return $this->hasMany(Payout::class, 'booking_id');
     }
 
     public function generateCommission()
     {
         if ($this->status === 'confirmed' && $this->commission_status === 'pending') {
             $commissionAmount = ($this->total_price * $this->commission_rate) / 100;
+            $partnerEarnings = $this->total_price - $commissionAmount;
 
-            CommissionInvoice::create([
-                'partner_id' => $this->property->partner_id,
+            // Create payout record for admin to pay partner
+            Payout::create([
+                'host_id' => $this->property->user_id,  // Partner ID
                 'booking_id' => $this->id,
-                'invoice_number' => 'INV-' . $this->id . '-' . now()->format('Ymd'),
-                'amount' => $commissionAmount,
-                'due_date' => now()->addDays(30),
-                'status' => 'pending'
+                'amount' => $partnerEarnings,  // Net amount partner receives
+                'payout_status' => 'pending',
+                'payout_method' => null,  // To be set when processing
+                'transaction_reference' => null,
+                'payout_date' => null
             ]);
 
             $this->update([
@@ -105,10 +108,10 @@ class Booking extends Model
     {
         $this->update(['status' => 'cancelled']);
 
-        // Cancel unpaid commissions
-        $this->commissionInvoices()
-            ->where('status', 'pending')
-            ->update(['status' => 'cancelled']);
+        // Cancel pending payouts
+        Payout::where('booking_id', $this->id)
+            ->where('payout_status', 'pending')
+            ->update(['payout_status' => 'failed']);
 
         $this->update(['commission_status' => 'cancelled']);
     }

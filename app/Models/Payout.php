@@ -39,4 +39,51 @@ class Payout extends Model
     {
         return $this->belongsTo(Booking::class);
     }
+
+    /**
+     * Get the partner/host that will receive this payout
+     */
+    public function partner()
+    {
+        return $this->belongsTo(User::class, 'host_id');
+    }
+
+    /**
+     * Mark payout as processing
+     */
+    public function markAsProcessing(): void
+    {
+        $this->update(['payout_status' => 'processing']);
+    }
+
+    /**
+     * Mark payout as completed
+     */
+    public function markAsCompleted(string $transactionRef): void
+    {
+        $this->update([
+            'payout_status' => 'completed',
+            'payout_date' => now(),
+            'transaction_reference' => $transactionRef
+        ]);
+    }
+
+    /**
+     * Mark payout as failed
+     */
+    public function markAsFailed(string $reason = null): void
+    {
+        $this->update([
+            'payout_status' => 'failed',
+            'transaction_reference' => $reason
+        ]);
+    }
+
+    /**
+     * Check if payout can be processed
+     */
+    public function canBeProcessed(): bool
+    {
+        return $this->payout_status === 'pending' && $this->booking && $this->booking->payment_status === 'completed';
+    }
 }

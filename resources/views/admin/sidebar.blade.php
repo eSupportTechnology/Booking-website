@@ -60,6 +60,15 @@
                 </li>
                 @endcanany
 
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Finance</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{{ route('admin.payouts.index') }}">Partner Payouts</a></li>
+                        <li><a class="dropdown-item" href="{{ route('admin.commission.aging') }}">Commission Aging</a></li>
+                        <li><a class="dropdown-item" href="{{ route('admin.aging-report') }}">Aging Report</a></li>
+                    </ul>
+                </li>
+
                 @canany(['view_pending_admins', 'view_admin_accounts', 'manage_admin_permissions'])
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Admin Management</a>
