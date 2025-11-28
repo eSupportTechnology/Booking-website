@@ -21,22 +21,22 @@ class CurrencyService
         'USD' => [
             'EUR' => 0.94,
             'GBP' => 0.82,
-            'LKR' => 324.85
+            'LKR' => 295.00
         ],
         'EUR' => [
             'USD' => 1.06,
             'GBP' => 0.87,
-            'LKR' => 344.93
+            'LKR' => 310.00
         ],
         'GBP' => [
             'USD' => 1.22,
             'EUR' => 1.15,
-            'LKR' => 396.16
+            'LKR' => 370.00
         ],
         'LKR' => [
-            'USD' => 0.0031,
-            'EUR' => 0.0029,
-            'GBP' => 0.0025
+            'USD' => 0.0034,
+            'EUR' => 0.0032,
+            'GBP' => 0.0027
         ]
     ];
 
@@ -128,7 +128,6 @@ class CurrencyService
 
             // Clear related caches
             $this->clearRateCache($baseCurrency);
-
         } catch (Exception $e) {
             Log::error('Currency API error: ' . $e->getMessage());
             throw $e;

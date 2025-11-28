@@ -16,7 +16,7 @@ class HttpClientServiceProvider extends ServiceProvider
     {
         Http::macro('exchangeApi', function () {
             return Http::withOptions([
-                'verify' => env('CURL_CA_BUNDLE', true),
+                'verify' => false,
                 'timeout' => 10,
             ]);
         });

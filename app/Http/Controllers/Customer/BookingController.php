@@ -140,7 +140,22 @@ class BookingController extends Controller
         $booking->update([
             'status' => 'pending',
             'payment_status' => 'pending',
-            'payment_deadline' => now()->addHours(24)
+            'payment_deadline' => now()->addHours(24),
+            'commission_status' => 'pending'
+        ]);
+
+        // Auto-generate payout record for partner (admin will pay partner after deducting commission)
+        $commissionAmount = ($finalPrice * 10.00) / 100;
+        $partnerEarnings = $finalPrice - $commissionAmount;
+
+        \App\Models\Payout::create([
+            'host_id' => $property->user_id,  // Partner ID
+            'booking_id' => $booking->id,
+            'amount' => $partnerEarnings,  // Net amount partner will receive
+            'payout_status' => 'pending',
+            'payout_method' => 'paypal',  // Default method
+            'transaction_reference' => null,
+            'payout_date' => null
         ]);
 
         // Send automatic message to partner

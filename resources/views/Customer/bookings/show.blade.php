@@ -25,7 +25,7 @@
                     data-adult-price="{{ $property->adult_price ?? 0 }}"
                     data-child-price="{{ $property->child_price ?? 0 }}"
                     data-commission-rate="{{ $property->commission_rate ?? 10 }}"
-                    data-base-currency="{{ $property->pricing->currency ?? 'USD' }}"
+                    data-base-currency="{{ $property->currency ?? 'LKR' }}"
                     data-user-currency="{{ app(\App\Services\CurrencyManager::class)->getUserCurrency() }}"
                     data-has-rooms="{{ $property->rooms->count() > 0 ? 'true' : 'false' }}"
                     data-selected-deal="{{ json_encode($selectedDeal) }}"
@@ -413,8 +413,8 @@
                         this.childPriceRow.style.display = 'none';
                     }
                 } else {
-                    const adultPriceWithComm = this.adultPrice * (1 + this.commissionRate / 100);
-                    const childPriceWithComm = this.childPrice * (1 + this.commissionRate / 100);
+                    const adultPriceWithComm = this.adultPrice;
+                    const childPriceWithComm = this.childPrice;
 
                     // Display per-person prices
                     this.adultPriceDisplay.textContent = await this.formatPrice(adultPriceWithComm, currency);

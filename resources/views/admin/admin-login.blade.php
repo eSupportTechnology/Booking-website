@@ -5,7 +5,7 @@
 @section('content')
 <div class="bg-white/70 backdrop-blur-md p-8 rounded-xl shadow-xl w-full max-w-md">
     <h2 class="text-3xl font-bold text-center text-darkText mb-6">Log In</h2>
-    <form method="POST" action="{{ route('admin.login') }}">
+    <form method="POST" action="{{ url('/admin/login') }}">
         @csrf
         <div class="relative w-full mb-4">
             <input type="text" id="username" name="username" value="{{ old('username') }}"
@@ -24,7 +24,7 @@
                 class="absolute left-3 top-2.5 text-gray-500 text-xs transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-2.5 peer-focus:text-xs peer-focus:text-darkBlueStart">
                 Password
             </label>
-            <button type="button" id="togglePassword" 
+            <button type="button" id="togglePassword"
                 class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none">
                 <svg id="eyeIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -44,17 +44,17 @@
             <label for="remember" class="text-sm text-gray-600">Remember me</label>
         </div>
         @if ($errors->any())
-            <div class="text-sm text-red-600 mb-2">
-                @foreach ($errors->all() as $error)
-                    <p>{{ $error }}</p>
-                @endforeach
-            </div>
+        <div class="text-sm text-red-600 mb-2">
+            @foreach ($errors->all() as $error)
+            <p>{{ $error }}</p>
+            @endforeach
+        </div>
         @endif
-        
+
         @if (session('status'))
-            <div class="text-sm text-green-600 mb-2">
-                {{ session('status') }}
-            </div>
+        <div class="text-sm text-green-600 mb-2">
+            {{ session('status') }}
+        </div>
         @endif
         <button type="submit"
             class="w-full bg-primary hover:bg-hoverPrimary text-white py-3 rounded-lg font-semibold transition duration-200">
@@ -80,7 +80,7 @@
         togglePassword.addEventListener('click', function() {
             const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordInput.setAttribute('type', type);
-            
+
             if (type === 'text') {
                 eyeIcon.classList.add('hidden');
                 eyeSlashIcon.classList.remove('hidden');
