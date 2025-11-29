@@ -3,90 +3,111 @@
 @section('title', 'Booking Confirmation')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('assets/Customer/css/home.css') }}">
-    <style>
-        .noto-sans-font {
-            font-family: 'Noto Sans', sans-serif;
+<link rel="stylesheet" href="{{ asset('assets/Customer/css/home.css') }}">
+<style>
+    .noto-sans-font {
+        font-family: 'Noto Sans', sans-serif;
+    }
+
+    @media print {
+        body * {
+            visibility: hidden;
         }
 
-        @media print {
-            body * {
-                visibility: hidden;
-            }
-            #printableArea, #printableArea * {
-                visibility: visible;
-            }
-            #printableArea {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                padding: 4px;
-                font-size: 11px;
-            }
-            #printableArea .grid {
-                grid-template-columns: 1fr 1fr !important;
-                gap: 0.25rem !important;
-            }
-            #printableArea .gap-8 {
-                gap: 0.25rem !important;
-            }
-            #printableArea img {
-                height: 80px !important;
-            }
-            #printableArea .h-48 {
-                height: 80px !important;
-            }
-            #printableArea .text-xl {
-                font-size: 0.85rem !important;
-                margin-bottom: 0.15rem !important;
-                line-height: 1.2 !important;
-            }
-            #printableArea .text-lg {
-                font-size: 0.8rem !important;
-                line-height: 1.2 !important;
-            }
-            #printableArea .p-6 {
-                padding: 0.35rem !important;
-            }
-            #printableArea .space-y-4 > * + * {
-                margin-top: 0.25rem !important;
-            }
-            #printableArea .space-y-3 > * + * {
-                margin-top: 0.2rem !important;
-            }
-            #printableArea .py-3 {
-                padding-top: 0.2rem !important;
-                padding-bottom: 0.2rem !important;
-            }
-            #printableArea .py-2 {
-                padding-top: 0.15rem !important;
-                padding-bottom: 0.15rem !important;
-            }
-            #printableArea .mb-6 {
-                margin-bottom: 0.35rem !important;
-            }
-            #printableArea .mb-4 {
-                margin-bottom: 0.25rem !important;
-            }
-            #printableArea .mb-2 {
-                margin-bottom: 0.15rem !important;
-            }
-            #printableArea * {
-                line-height: 1.3 !important;
-            }
-            .no-print {
-                display: none !important;
-            }
-            .shadow-md {
-                box-shadow: none !important;
-            }
-            @page {
-                margin: 0.3cm;
-                size: auto;
-            }
+        #printableArea,
+        #printableArea * {
+            visibility: visible;
         }
-    </style>
+
+        #printableArea {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            padding: 4px;
+            font-size: 11px;
+        }
+
+        #printableArea .grid {
+            grid-template-columns: 1fr 1fr !important;
+            gap: 0.25rem !important;
+        }
+
+        #printableArea .gap-8 {
+            gap: 0.25rem !important;
+        }
+
+        #printableArea img {
+            height: 80px !important;
+        }
+
+        #printableArea .h-48 {
+            height: 80px !important;
+        }
+
+        #printableArea .text-xl {
+            font-size: 0.85rem !important;
+            margin-bottom: 0.15rem !important;
+            line-height: 1.2 !important;
+        }
+
+        #printableArea .text-lg {
+            font-size: 0.8rem !important;
+            line-height: 1.2 !important;
+        }
+
+        #printableArea .p-6 {
+            padding: 0.35rem !important;
+        }
+
+        #printableArea .space-y-4>*+* {
+            margin-top: 0.25rem !important;
+        }
+
+        #printableArea .space-y-3>*+* {
+            margin-top: 0.2rem !important;
+        }
+
+        #printableArea .py-3 {
+            padding-top: 0.2rem !important;
+            padding-bottom: 0.2rem !important;
+        }
+
+        #printableArea .py-2 {
+            padding-top: 0.15rem !important;
+            padding-bottom: 0.15rem !important;
+        }
+
+        #printableArea .mb-6 {
+            margin-bottom: 0.35rem !important;
+        }
+
+        #printableArea .mb-4 {
+            margin-bottom: 0.25rem !important;
+        }
+
+        #printableArea .mb-2 {
+            margin-bottom: 0.15rem !important;
+        }
+
+        #printableArea * {
+            line-height: 1.3 !important;
+        }
+
+        .no-print {
+            display: none !important;
+        }
+
+        .shadow-md {
+            box-shadow: none !important;
+        }
+
+        @page {
+            margin: 0.3cm;
+            size: auto;
+        }
+    }
+</style>
 @endpush
 
 @section('content')
@@ -128,13 +149,13 @@
             <!-- Property Details -->
             <div class="bg-white rounded-lg shadow-md overflow-hidden">
                 @if($booking->property->files && $booking->property->files->count() > 0)
-                    <img src="{{ $booking->property->files->where('file_type', 'image')->first() ? asset('storage/' . $booking->property->files->where('file_type', 'image')->first()->path) : asset('images/AA.png') }}"
-                         alt="{{ $booking->property->title }}"
-                         class="w-full h-48 object-cover">
+                <img src="{{ $booking->property->files->where('file_type', 'image')->first() ? asset('storage/' . $booking->property->files->where('file_type', 'image')->first()->path) : asset('images/AA.png') }}"
+                    alt="{{ $booking->property->title }}"
+                    class="w-full h-48 object-cover">
                 @else
-                    <div class="h-48 bg-gray-200 flex items-center justify-center">
-                        <span class="text-gray-500">No image available</span>
-                    </div>
+                <div class="h-48 bg-gray-200 flex items-center justify-center">
+                    <span class="text-gray-500">No image available</span>
+                </div>
                 @endif
 
                 <div class="p-6">
@@ -207,16 +228,27 @@
                     </div>
 
                     @if($booking->room_id)
-                        <div class="flex justify-between py-3 border-b border-gray-200">
-                            <span class="text-gray-600">Room</span>
-                            <span class="font-medium">{{ $booking->room->name ?? 'N/A' }}</span>
-                        </div>
+                    <div class="flex justify-between py-3 border-b border-gray-200">
+                        <span class="text-gray-600">Room</span>
+                        <span class="font-medium">{{ $booking->room->name ?? 'N/A' }}</span>
+                    </div>
                     @endif
 
                     <div class="flex justify-between py-3 text-lg font-semibold">
                         <span>Total Amount</span>
-                        <span class="text-[#1F8FB2]">{{ $booking->currency ?? 'USD' }} {{ number_format($booking->total_price) }}</span>
+                        <span class="text-[#1F8FB2]">{{ $booking->currency ?? 'USD' }} {{ number_format($booking->total_price, 2) }}</span>
                     </div>
+
+                    @if($booking->deal_id)
+                    <div class="flex justify-between py-2 text-sm text-green-600 border-t border-gray-100">
+                        <span>Deal Applied</span>
+                        <span class="font-medium">{{ $booking->deal->title }}</span>
+                    </div>
+                    <div class="flex justify-between py-2 text-sm text-green-600">
+                        <span>You Saved</span>
+                        <span class="font-medium">{{ $booking->currency ?? 'USD' }} {{ number_format($booking->discount_amount, 2) }}</span>
+                    </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -224,15 +256,15 @@
         <!-- Action Buttons -->
         <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
             <a href="{{ route('customer.bookings.index') }}"
-               class="bg-[#3CC0E9] hover:bg-[#2BA8D1] text-white px-6 py-3 rounded-lg font-medium text-center transition duration-200">
+                class="bg-[#3CC0E9] hover:bg-[#2BA8D1] text-white px-6 py-3 rounded-lg font-medium text-center transition duration-200">
                 View All Bookings
             </a>
             <a href="{{ route('customer.dashboard') }}"
-               class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-medium text-center transition duration-200">
+                class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-medium text-center transition duration-200">
                 Back to Home
             </a>
             <button onclick="printBookingDetails()"
-                    class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-medium transition duration-200">
+                class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-medium transition duration-200">
                 Print Confirmation
             </button>
         </div>
@@ -252,11 +284,11 @@
 </div>
 @push('scripts')
 <script>
-function printBookingDetails() {
-    const printWindow = window.open('', '_blank');
-    const printContent = document.getElementById('printableArea').innerHTML;
+    function printBookingDetails() {
+        const printWindow = window.open('', '_blank');
+        const printContent = document.getElementById('printableArea').innerHTML;
 
-    printWindow.document.write(`
+        printWindow.document.write(`
         <!DOCTYPE html>
         <html>
         <head>
@@ -389,11 +421,11 @@ function printBookingDetails() {
         </html>
     `);
 
-    printWindow.document.close();
-    printWindow.onload = function() {
-        printWindow.print();
-    };
-}
+        printWindow.document.close();
+        printWindow.onload = function() {
+            printWindow.print();
+        };
+    }
 </script>
 @endpush
 

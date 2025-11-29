@@ -87,12 +87,8 @@ class BookingService
         $query = Booking::where('property_id', $property->id)
             ->where('status', '!=', 'cancelled')
             ->where(function ($query) use ($checkIn, $checkOut) {
-                $query->whereBetween('check_in', [$checkIn, $checkOut])
-                    ->orWhereBetween('check_out', [$checkIn, $checkOut])
-                    ->orWhere(function ($q) use ($checkIn, $checkOut) {
-                        $q->where('check_in', '<=', $checkIn)
-                            ->where('check_out', '>=', $checkOut);
-                    });
+                $query->where('check_in', '<', $checkOut)
+                    ->where('check_out', '>', $checkIn);
             });
 
         if ($roomId) {
@@ -118,12 +114,8 @@ class BookingService
         $bookedRoomIds = Booking::where('property_id', $property->id)
             ->where('status', '!=', 'cancelled')
             ->where(function ($query) use ($checkIn, $checkOut) {
-                $query->whereBetween('check_in', [$checkIn, $checkOut])
-                    ->orWhereBetween('check_out', [$checkIn, $checkOut])
-                    ->orWhere(function ($q) use ($checkIn, $checkOut) {
-                        $q->where('check_in', '<=', $checkIn)
-                            ->where('check_out', '>=', $checkOut);
-                    });
+                $query->where('check_in', '<', $checkOut)
+                    ->where('check_out', '>', $checkIn);
             })
             ->whereNotNull('room_id')
             ->pluck('room_id')

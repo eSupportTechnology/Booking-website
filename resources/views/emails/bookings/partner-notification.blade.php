@@ -6,13 +6,17 @@ Dear {{ $partner->name }},
 You have received a new booking for your property!
 
 @component('mail::panel')
-**Property:** {{ $property->title }}  
-**Guest:** {{ $guest->name }}  
-**Email:** {{ $guest->email }}  
-**Check-in:** {{ $booking->check_in->format('M d, Y') }}  
-**Check-out:** {{ $booking->check_out->format('M d, Y') }}  
-**Guests:** {{ $booking->guest_count }}  
-**Total Amount:** {{ $booking->currency }} {{ number_format($booking->total_price, 2) }}  
+**Property:** {{ $property->title }}
+**Guest:** {{ $guest->name }}
+**Email:** {{ $guest->email }}
+**Check-in:** {{ $booking->check_in->format('M d, Y') }}
+**Check-out:** {{ $booking->check_out->format('M d, Y') }}
+**Guests:** {{ $booking->guest_count }}
+**Total Amount:** {{ $booking->currency }} {{ number_format($booking->total_price, 2) }}
+@if($booking->deal_id)
+**Deal Applied:** {{ $booking->deal->title }}
+**Discount:** {{ $booking->currency }} {{ number_format($booking->discount_amount, 2) }}
+@endif
 **Booking ID:** #{{ $booking->id }}
 @endcomponent
 

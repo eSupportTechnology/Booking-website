@@ -430,11 +430,26 @@
 
                 // Apply Deal
                 let discount = 0;
-                if (this.selectedDeal) {
-                    if (this.selectedDeal.deal_type === 'percentage') {
-                        discount = total * (this.selectedDeal.discount_percentage / 100);
-                    } else if (this.selectedDeal.deal_type === 'fixed') {
-                        discount = this.selectedDeal.fixed_discount_amount * nights;
+                if (this.selectedDeal && this.selectedDeal.deal_type === 'percentage') {
+                    const dealStart = new Date(this.selectedDeal.start_date);
+                    const dealEnd = new Date(this.selectedDeal.end_date);
+                    const checkInDate = new Date(this.checkInInput.value);
+
+                    // Iterate through each night to check if it falls within deal range
+                    let current = new Date(checkInDate);
+                    for (let i = 0; i < nights; i++) {
+                        // Check if current night is within deal start (inclusive) and deal end (exclusive)
+                        // Note: dealEnd is usually the last day the deal is valid, so check-in on that day is valid?
+                        // Actually, deal end_date usually means the deal expires on that day.
+                        // Let's assume standard inclusive range: start <= date <= end
+                        // But for a "night", we check if the date of the night is within range.
+
+                        if (current >= dealStart && current <= dealEnd) {
+                            // Calculate nightly price (approximate if total is used)
+                            const nightlyPrice = total / nights;
+                            discount += nightlyPrice * (this.selectedDeal.discount_percentage / 100);
+                        }
+                        current.setDate(current.getDate() + 1);
                     }
 
                     this.originalPriceDisplay.textContent = await this.formatPrice(total, currency);

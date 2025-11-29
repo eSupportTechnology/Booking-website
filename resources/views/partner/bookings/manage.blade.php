@@ -108,6 +108,9 @@
                     <div class="text-right">
                         <div class="text-sm text-gray-500">Amount</div>
                         <div class="font-bold text-green-600">{{ \App\Helpers\CurrencyHelper::convertAndFormat($booking->total_price, $booking->currency ?? 'USD', 'USD') }}</div>
+                        @if($booking->deal_id)
+                        <div class="text-xs text-blue-600 mt-1"><i class="fas fa-tag mr-1"></i>Deal Applied</div>
+                        @endif
                     </div>
                 </div>
 
@@ -218,7 +221,12 @@
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-green-600">
                             {{ \App\Helpers\CurrencyHelper::convertAndFormat($booking->total_price, $booking->currency ?? 'USD', 'USD') }}
                             @if($booking->currency && $booking->currency !== 'USD')
-                                <br><span class="text-xs text-gray-500">{{ \App\Helpers\CurrencyHelper::formatPrice($booking->total_price, $booking->currency) }}</span>
+                            <br><span class="text-xs text-gray-500">{{ \App\Helpers\CurrencyHelper::formatPrice($booking->total_price, $booking->currency) }}</span>
+                            @endif
+                            @if($booking->deal_id)
+                            <div class="text-xs text-blue-600 mt-1" title="{{ $booking->deal->title }}">
+                                <i class="fas fa-tag mr-1"></i>Deal Applied
+                            </div>
                             @endif
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -254,48 +262,50 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.update-status-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const bookingId = this.dataset.bookingId;
-            const parentContainer = this.closest('tr, .bg-white');
-            const select = parentContainer.querySelector('.booking-status-select');
-            
-            if (!select) {
-                alert('Status selector not found');
-                return;
-            }
-            
-            const newStatus = select.value;
-            
-            fetch('/partner/bookings/' + bookingId + '/status', {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({ status: newStatus })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('HTTP ' + response.status);
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.update-status-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const bookingId = this.dataset.bookingId;
+                const parentContainer = this.closest('tr, .bg-white');
+                const select = parentContainer.querySelector('.booking-status-select');
+
+                if (!select) {
+                    alert('Status selector not found');
+                    return;
                 }
-                return response.json();
-            })
-            .then(data => {
-                if (data.success) {
-                    location.reload();
-                } else {
-                    alert('Failed to update status: ' + (data.message || 'Unknown error'));
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Failed to update booking status: ' + error.message);
+
+                const newStatus = select.value;
+
+                fetch('/partner/bookings/' + bookingId + '/status', {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            status: newStatus
+                        })
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('HTTP ' + response.status);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            location.reload();
+                        } else {
+                            alert('Failed to update status: ' + (data.message || 'Unknown error'));
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Failed to update booking status: ' + error.message);
+                    });
             });
         });
     });
-});
 </script>
 @endsection

@@ -130,7 +130,14 @@
                         <td class="px-4 py-3">{{ $booking['guest_name'] }}</td>
                         <td class="px-4 py-3">{{ $booking['check_in']->format('M d, Y') }}</td>
                         <td class="px-4 py-3">{{ $booking['check_out']->format('M d, Y') }}</td>
-                        <td class="px-4 py-3">${{ number_format($booking['total_amount'], 2) }}</td>
+                        <td class="px-4 py-3">
+                            ${{ number_format($booking['total_amount'], 2) }}
+                            @if(isset($booking['deal_title']))
+                            <div class="text-xs text-blue-600 mt-1" title="{{ $booking['deal_title'] }}">
+                                <i class="fas fa-tag mr-1"></i>Deal
+                            </div>
+                            @endif
+                        </td>
                         <td class="px-4 py-3">
                             <span class="px-2 py-1 text-xs rounded-full
                                 {{ $booking['status'] === 'completed' ? 'bg-green-100 text-green-800' :
