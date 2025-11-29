@@ -101,7 +101,7 @@
 </div>
 
 <script>
-    let selectedDatesEdit = @json($deal - > dealDates - > pluck('available_date') - > map(fn($date) => $date - > format('Y-m-d')) - > toArray());
+    let selectedDatesEdit = @json($deal -> dealDates -> pluck('available_date') -> map(fn($date) => $date -> format('Y-m-d')) -> toArray());
 
     function addDateEdit() {
         const datePicker = document.getElementById('date_picker_edit');
