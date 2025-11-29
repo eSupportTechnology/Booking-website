@@ -24,7 +24,8 @@ class Deal extends Model
         'room_id',
         'partner_id',
         'status',
-        'deal_type'
+        'deal_type',
+        'currency'
     ];
 
     protected $casts = [
@@ -33,7 +34,8 @@ class Deal extends Model
         'original_price' => 'decimal:2',
         'discounted_price' => 'decimal:2',
         'fixed_discount_amount' => 'decimal:2',
-        'discount_percentage' => 'integer'
+        'discount_percentage' => 'integer',
+        'currency' => 'string'
     ];
 
     public function property()
@@ -98,10 +100,11 @@ class Deal extends Model
 
     public function isAvailableOnDate($date)
     {
-        if ($this->dealDates()->count() === 0) {
+        // Use loaded collection instead of query to avoid N+1 problem
+        if ($this->dealDates->count() === 0) {
             return $date >= $this->start_date && $date <= $this->end_date;
         }
         
-        return $this->dealDates()->where('available_date', $date)->exists();
+        return $this->dealDates->where('available_date', $date)->isNotEmpty();
     }
 }

@@ -103,7 +103,10 @@ class BookingController extends Controller
                 $dealValidation['deal'],
                 $originalPrice,
                 $bookingDTO->check_in,
-                $bookingDTO->check_out
+                $bookingDTO->check_out,
+                $bookingDTO->adults,
+                $bookingDTO->children,
+                $property
             );
 
             $finalPrice = $dealPricing['final_price'];
