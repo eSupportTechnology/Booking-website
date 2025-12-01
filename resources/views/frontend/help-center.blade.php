@@ -71,7 +71,11 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
 
+
                 <!-- Left Section -->
+
+               
+
                 <!-- Left Section -->
                 <div class="border p-6 rounded-lg shadow-sm">
                     <h3 class="font-semibold mb-4">Sign in to get help with your bookings</h3>
@@ -103,6 +107,9 @@
                         Check my booking
                     </button>
                 </div>
+
+
+
 
                 <!-- Right Section -->
                 <div class="border p-6 rounded-lg shadow-sm">
@@ -250,6 +257,10 @@
         <!-- Alpine.js -->
         <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
+ 
+
+
+
 
     <!-- FOOTER -->
     <footer class="bg-[#003580] text-white py-10 mt-10">
@@ -309,6 +320,10 @@
         </div>
 
     </footer>
+
+
+
+
     <!-- Icons (FontAwesome) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/js/all.min.js"></script>
 
