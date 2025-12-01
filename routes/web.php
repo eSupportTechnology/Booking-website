@@ -40,6 +40,8 @@ use App\Http\Controllers\Customer\PropertyListingController;
 use App\Http\Controllers\CarReservations\CarBookingController;
 use app\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\CarReservations\ReservationController;
+use App\Http\Controllers\Customer\AirportTaxiBookingController;
+
 
 
 
@@ -1349,7 +1351,7 @@ Route::middleware(['auth:car_renter'])->prefix('taxi')->name('taxis.')->group(fu
     Route::post('/store-step3', [AirportTaxiController::class, 'storeStep3'])->name('storeStep3');
     Route::post('/store-step4', [AirportTaxiController::class, 'storeStep4'])->name('storeStep4');
     Route::post('/store-step5', [AirportTaxiController::class, 'storeStep5'])->name('storeStep5'); // ✅ Added
-        Route::get('/{taxi}/edit', [AirportTaxiController::class, 'edit'])->name('airport-taxis.edit');
+    Route::get('/{taxi}/edit', [AirportTaxiController::class, 'edit'])->name('airport-taxis.edit');
     Route::put('/{taxi}', [AirportTaxiController::class, 'update'])->name('airport-taxis.update');
 });
 
@@ -1470,9 +1472,6 @@ Route::get('car_rentals/carrenters_control_panel', function () {
 Route::get('/customer/car-rental/search', [CarSearchController::class, 'carsearch'])
     ->name('customer.carsearch');
 
-Route::get('/location-suggest', [CustomerSearchController::class, 'locationSuggest'])
-    ->name('customer.search.suggest');
-
 
 Route::get('/customer/car/{id}', [CarSearchController::class, 'show'])
      ->name('customer.car.show');
@@ -1512,4 +1511,41 @@ Route::prefix('customer')->middleware(['auth:customer'])->group(function () {
     Route::post('/reservations/{id}/cancel', [ReservationController::class, 'cancel'])
         ->name('customer.reservations.cancel');
 });
+
+
+// Airport taxi searching (UI + filtering)
+Route::prefix('customer')->group(function () {
+
+    // Main full search page (with sidebar + filters)
+    Route::get('/airport-taxi/search', [CustomerTaxiController::class, 'search'])
+        ->name('customer.airport-taxi.search');
+
+    // Filter counts (optional for future AJAX)
+    Route::get('/airport-taxi/filter-counts', [CustomerTaxiController::class, 'filterCounts'])
+        ->name('customer.airport-taxi.filter-counts');
+
+    // Single taxi page
+    Route::get('/airport-taxi/{id}', [CustomerTaxiController::class, 'show'])
+        ->name('customer.airport-taxi.show');
+});
+
+// GET: Show booking form
+Route::get('/taxi/book/{id}', [AirportTaxiBookingController::class, 'create'])
+    ->name('frontend.taxi.book.form');
+
+// POST: Submit booking
+Route::post('/taxi/book', [AirportTaxiBookingController::class, 'store'])
+    ->name('frontend.taxi.book');
+
+// Completed page
+Route::get('/taxi/booking/{id}/completed', [AirportTaxiBookingController::class, 'completed'])
+    ->name('frontend.taxi.booking.completed');
+
+// Cancel booking
+Route::get('/taxi/booking/cancel/{id}', [AirportTaxiBookingController::class, 'cancel'])
+    ->name('frontend.taxi.booking.cancel');
+
+// Invoice
+Route::get('/taxi/booking/invoice/{id}', [AirportTaxiBookingController::class, 'invoice'])
+    ->name('frontend.taxi.booking.invoice');
 

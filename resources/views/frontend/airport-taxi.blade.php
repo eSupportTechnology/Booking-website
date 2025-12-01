@@ -25,6 +25,7 @@
 
         <!-- Booking form -->
         <form method="GET"
+            action="{{ route('customer.airport-taxi.search') }}"
              class="bg-white rounded-xl px-3 py-2 md:py-1 shadow-lg border-4 border-yellow-400 
            w-full mx-auto text-sm">
 
@@ -32,26 +33,36 @@
                 
 
                 <!-- Pickup -->
-                <div x-data="{ openPickup: false, pickupLocation: '' }" 
-                     class="relative flex-1 min-w-0">
-                    <button @click="openPickup = !openPickup" type="button"
-                        class="flex items-center gap-2 w-full text-left border p-2 rounded">
-                        <span x-text="pickupLocation ? pickupLocation : 'Enter pick-up location'"
-                            class="text-gray-800 truncate text-base"></span>
-                    </button>
-                    <div x-show="openPickup" @click.away="openPickup = false"
-                        class="absolute z-10 bg-white shadow-lg rounded mt-1 w-full border">
-                        <ul class="max-h-48 overflow-y-auto">
-                            <li @click="pickupLocation = 'Colombo'; openPickup = false"
-                                class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Colombo</li>
-                            <li @click="pickupLocation = 'Negombo'; openPickup = false"
-                                class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Negombo</li>
-                            <li @click="pickupLocation = 'Kandy'; openPickup = false"
-                                class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Kandy</li>
-                        </ul>
-                    </div>
-                    <input type="hidden" name="pickup" :value="pickupLocation" />
-                </div>
+                <div class="relative flex-1 min-w-0" 
+                  x-data="locationSearchComponent()" 
+                  x-init="init()">
+
+                  <!-- PICKUP INPUT -->
+                  <input type="text"
+                        placeholder="Enter pickup location"
+                        class="border p-2 rounded w-full"
+                        x-model="pickup"
+                        @input.debounce.300ms="fetchSuggestions('suggestionsPickup', pickup)"
+                        autocomplete="off">
+
+                  <!-- AUTOCOMPLETE DROPDOWN -->
+                  <ul class="autocomplete-box" 
+                      x-show="suggestionsPickup.length > 0">
+                      
+                      <template x-for="item in suggestionsPickup">
+                          <li class="autocomplete-item"
+                              @click="selectPickup(item)">
+                              
+                              <span x-text="item.display_name"></span>
+                              
+                              <span x-show="item.isDb" class="autocomplete-db">(Recommended)</span>
+                          </li>
+                      </template>
+                  </ul>
+
+                  <input type="hidden" name="pickup" :value="pickup">
+              </div>
+
 
                 <!-- Arrow -->
                 <div class="hidden md:flex items-center justify-center w-auto">
@@ -59,26 +70,31 @@
                 </div>
 
                 <!-- Destination -->
-                <div x-data="{ openDestination: false, destinationLocation: '' }" 
-                     class="relative flex-1 min-w-0">
-                    <button @click="openDestination = !openDestination" type="button"
-                        class="flex items-center gap-2 w-full text-left border p-2 rounded">
-                        <span x-text="destinationLocation ? destinationLocation : 'Enter destination'"
-                            class="text-gray-800 truncate text-base"></span>
-                    </button>
-                    <div x-show="openDestination" @click.away="openDestination = false"
-                        class="absolute z-10 bg-white shadow-lg rounded mt-1 w-full border">
-                        <ul class="max-h-48 overflow-y-auto">
-                            <li @click="destinationLocation = 'Airport'; openDestination = false"
-                                class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Airport</li>
-                            <li @click="destinationLocation = 'Galle'; openDestination = false"
-                                class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Galle</li>
-                            <li @click="destinationLocation = 'Matara'; openDestination = false"
-                                class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Matara</li>
-                        </ul>
-                    </div>
-                    <input type="hidden" name="destination" :value="destinationLocation" />
-                </div>
+                <div class="relative flex-1 min-w-0" 
+                      x-data="locationSearchComponent()">
+
+                      <input type="text"
+                            placeholder="Enter destination"
+                            class="border p-2 rounded w-full"
+                            x-model="destination"
+                            @input.debounce.300ms="fetchSuggestions('suggestionsDestination', destination)"
+                            autocomplete="off">
+
+                      <ul class="autocomplete-box"
+                          x-show="suggestionsDestination.length > 0">
+
+                          <template x-for="item in suggestionsDestination">
+                              <li class="autocomplete-item" 
+                                  @click="selectDestination(item)">
+                                  
+                                  <span x-text="item.display_name"></span>
+                                  <span x-show="item.isDb" class="autocomplete-db">(Recommended)</span>
+                              </li>
+                          </template>
+                      </ul>
+
+                      <input type="hidden" name="destination" :value="destination">
+                  </div>
 
                 <!-- Date & Time -->
                 <div x-data="{ open: false, checkin: null }" class="relative flex-1 min-w-0">
@@ -156,7 +172,6 @@
         </form>
     </div>
 </section>
-
 
 
 <section class="bg-gray-100 py-8">
@@ -865,6 +880,173 @@ properties worldwide
     </p>
   </div>
 </section>
+
+<script>
+
+function locationSearch() {
+    return {
+        pickupLocation: "",
+        suggestions: [],
+
+        searchLocation(query) {
+            if (query.length < 2) {
+                this.suggestions = [];
+                return;
+            }
+
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}`)
+                .then(res => res.json())
+                .then(data => {
+                    this.suggestions = data;
+                });
+        },
+
+        selectSuggestion(item) {
+            this.pickupLocation = item.display_name;
+            this.suggestions = [];
+        }
+    }
+}
+
+
+
+// FREE IP API → Detect User City
+async function detectUserCity() {
+    try {
+        const res = await fetch("http://ip-api.com/json/");
+        const data = await res.json();
+        return data.city || "";
+    } catch (e) {
+        return "";
+    }
+}
+
+// AlpineJS autocomplete + map preview
+function locationSearchComponent() {
+    return {
+        pickup: "",
+        destination: "",
+        suggestionsPickup: [],
+        suggestionsDestination: [],
+        dbCities: @json(\App\Models\Taxi::select('nearest_city')->groupBy('nearest_city')->pluck('nearest_city')),
+
+        map: null,
+        marker: null,
+        mapVisible: false,
+
+        // ------------------------
+        // AUTOCOMPLETE FETCH
+        // ------------------------
+        async fetchSuggestions(type, query) {
+            if (query.length < 2) {
+                this[type] = [];
+                return;
+            }
+
+            // Give priority to DB cities
+            const matchedDB = this.dbCities
+                .filter(c => c.toLowerCase().includes(query.toLowerCase()))
+                .map(c => ({ display_name: c, isDb: true }));
+
+            // Free Nominatim API (Sri Lanka only)
+            const url = `https://nominatim.openstreetmap.org/search?format=json&countrycodes=lk&q=${query}`;
+
+            const response = await fetch(url);
+            const data = await response.json();
+
+            // Normal suggestions
+            const osm = data.map(item => ({
+                display_name: item.display_name,
+                lat: item.lat,
+                lon: item.lon,
+                isDb: false
+            }));
+
+            // Combine DB priority + API results
+            this[type] = [...matchedDB, ...osm];
+        },
+
+        // ------------------------
+        // PICKUP SELECT
+        // ------------------------
+        selectPickup(item) {
+            this.pickup = item.display_name;
+            this.suggestionsPickup = [];
+
+            if (item.lat && item.lon) {
+                this.showMap(item.lat, item.lon);
+            }
+        },
+
+        // ------------------------
+        // DESTINATION SELECT
+        // ------------------------
+        selectDestination(item) {
+            this.destination = item.display_name;
+            this.suggestionsDestination = [];
+
+            if (item.lat && item.lon) {
+                this.showMap(item.lat, item.lon);
+            }
+        },
+
+        // ------------------------
+        // MAP PREVIEW (Leaflet)
+        // ------------------------
+        showMap(lat, lon) {
+            lat = parseFloat(lat);
+            lon = parseFloat(lon);
+            this.mapVisible = true;
+
+            if (!this.map) {
+                this.map = L.map('locationMap').setView([lat, lon], 12);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 18,
+                }).addTo(this.map);
+
+                this.marker = L.marker([lat, lon]).addTo(this.map);
+            } else {
+                this.map.setView([lat, lon], 12);
+                this.marker.setLatLng([lat, lon]);
+            }
+        },
+
+        // ------------------------
+        // AUTO-DETECT CITY ON LOAD
+        // ------------------------
+        async init() {
+            const city = await detectUserCity();
+            if (city) {
+                this.pickup = city;
+            }
+        }
+    };
+}
+</script>
+
+<style>
+.autocomplete-box {
+    position: absolute;
+    z-index: 100;
+    width: 100%;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    max-height: 180px;
+    overflow-y: auto;
+}
+.autocomplete-item {
+    padding: 8px 12px;
+    cursor: pointer;
+}
+.autocomplete-item:hover {
+    background: #f2f2f2;
+}
+.autocomplete-db {
+    font-weight: bold;
+    color: #1F8FB2;
+}
+</style>
 
 
 

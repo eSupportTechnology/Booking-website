@@ -59,6 +59,7 @@ class AirportTaxiController extends Controller
             'color' => 'required|string',
             'passenger_capacity' => 'required|integer|min:1',
             'luggage_capacity' => 'nullable|integer|min:0',
+            'nearest_city' => 'required|string|max:255',
         ]);
 
         $taxi = Taxi::where('id', $validated['taxi_id'])
@@ -71,6 +72,7 @@ class AirportTaxiController extends Controller
             'color' => $validated['color'],
             'passenger_capacity' => $validated['passenger_capacity'],
             'luggage_capacity' => $validated['luggage_capacity'] ?? null,
+            'nearest_city' => $validated['nearest_city'] ?? null,
         ]);
 
         return response()->json([
@@ -216,6 +218,8 @@ class AirportTaxiController extends Controller
 
    public function update(Request $request, Taxi $taxi)
 {
+    \Log::info('Update request', $request->all());
+
     // authorization
     if ($taxi->car_renter_id !== Auth::guard('car_renter')->id()) {
         abort(403, 'Unauthorized action.');
@@ -235,10 +239,15 @@ class AirportTaxiController extends Controller
         'color' => 'required|string',
         'passenger_capacity' => 'required|integer|min:1',
         'luggage_capacity' => 'nullable|integer|min:0',
+        'nearest_city' => 'required|string|max:255',
+
     ]);
 
     // Update taxi basic info (we'll update images later)
     $taxi->update($validatedTaxi);
+    $taxi->nearest_city = $request->nearest_city;
+    $taxi->save();
+
 
     // 2) Validate driver fields
     // NOTE: Blade inputs use names like: driver_name, driver_contact, driver_email,

@@ -29,6 +29,13 @@
                     </select>
                 </div>
                 <div>
+                    <label class="block font-semibold mb-1">Brand & Model</label>
+                    <input type="text" name="brand_model"
+                            value="{{ old('brand_model', $taxi->brand_model) }}"
+                            class="w-full border rounded p-2">
+                </div>
+
+                <div>
                     <label class="block font-semibold mb-1">Number Plate</label>
                     <input type="text" name="number_plate" 
                            value="{{ old('number_plate', $taxi->number_plate) }}" 
@@ -54,6 +61,72 @@
                 </div>
             </div>
         </div>
+
+        {{-- Nearest City (Manual Location Update) --}}
+        <div class="bg-white p-6 rounded-xl shadow space-y-4">
+            <h2 class="text-xl font-bold border-b pb-2">Taxi Current Location</h2>
+
+            <div>
+                <label class="block font-semibold mb-2">Nearest City / Area</label>
+
+                <select name="nearest_city" class="w-full border rounded p-2" required>
+                    <option value="">-- Select Current City --</option>
+
+                    {{-- Airport --}}
+                    <option value="Bandaranaike International Airport (BIA)" 
+                        {{ $taxi->nearest_city == 'Bandaranaike International Airport (BIA)' ? 'selected' : '' }}>
+                        Bandaranaike International Airport (BIA)
+                    </option>
+
+                    {{-- Western Province --}}
+                    <option value="Colombo" {{ $taxi->nearest_city == 'Colombo' ? 'selected' : '' }}>Colombo</option>
+                    <option value="Dehiwala" {{ $taxi->nearest_city == 'Dehiwala' ? 'selected' : '' }}>Dehiwala</option>
+                    <option value="Mount Lavinia" {{ $taxi->nearest_city == 'Mount Lavinia' ? 'selected' : '' }}>Mount Lavinia</option>
+                    <option value="Moratuwa" {{ $taxi->nearest_city == 'Moratuwa' ? 'selected' : '' }}>Moratuwa</option>
+                    <option value="Negombo" {{ $taxi->nearest_city == 'Negombo' ? 'selected' : '' }}>Negombo</option>
+                    <option value="Gampaha" {{ $taxi->nearest_city == 'Gampaha' ? 'selected' : '' }}>Gampaha</option>
+                    <option value="Kalutara" {{ $taxi->nearest_city == 'Kalutara' ? 'selected' : '' }}>Kalutara</option>
+
+                    {{-- Central Province --}}
+                    <option value="Kandy" {{ $taxi->nearest_city == 'Kandy' ? 'selected' : '' }}>Kandy</option>
+                    <option value="Matale" {{ $taxi->nearest_city == 'Matale' ? 'selected' : '' }}>Matale</option>
+                    <option value="Nuwara Eliya" {{ $taxi->nearest_city == 'Nuwara Eliya' ? 'selected' : '' }}>Nuwara Eliya</option>
+
+                    {{-- Southern Province --}}
+                    <option value="Galle" {{ $taxi->nearest_city == 'Galle' ? 'selected' : '' }}>Galle</option>
+                    <option value="Matara" {{ $taxi->nearest_city == 'Matara' ? 'selected' : '' }}>Matara</option>
+                    <option value="Hambantota" {{ $taxi->nearest_city == 'Hambantota' ? 'selected' : '' }}>Hambantota</option>
+
+                    {{-- Eastern Province --}}
+                    <option value="Batticaloa" {{ $taxi->nearest_city == 'Batticaloa' ? 'selected' : '' }}>Batticaloa</option>
+                    <option value="Trincomalee" {{ $taxi->nearest_city == 'Trincomalee' ? 'selected' : '' }}>Trincomalee</option>
+                    <option value="Ampara" {{ $taxi->nearest_city == 'Ampara' ? 'selected' : '' }}>Ampara</option>
+
+                    {{-- Northern Province --}}
+                    <option value="Jaffna" {{ $taxi->nearest_city == 'Jaffna' ? 'selected' : '' }}>Jaffna</option>
+                    <option value="Kilinochchi" {{ $taxi->nearest_city == 'Kilinochchi' ? 'selected' : '' }}>Kilinochchi</option>
+                    <option value="Mannar" {{ $taxi->nearest_city == 'Mannar' ? 'selected' : '' }}>Mannar</option>
+
+                    {{-- North Western Province --}}
+                    <option value="Kurunegala" {{ $taxi->nearest_city == 'Kurunegala' ? 'selected' : '' }}>Kurunegala</option>
+                    <option value="Puttalam" {{ $taxi->nearest_city == 'Puttalam' ? 'selected' : '' }}>Puttalam</option>
+
+                    {{-- North Central Province --}}
+                    <option value="Anuradhapura" {{ $taxi->nearest_city == 'Anuradhapura' ? 'selected' : '' }}>Anuradhapura</option>
+                    <option value="Polonnaruwa" {{ $taxi->nearest_city == 'Polonnaruwa' ? 'selected' : '' }}>Polonnaruwa</option>
+
+                    {{-- Uva Province --}}
+                    <option value="Badulla" {{ $taxi->nearest_city == 'Badulla' ? 'selected' : '' }}>Badulla</option>
+                    <option value="Monaragala" {{ $taxi->nearest_city == 'Monaragala' ? 'selected' : '' }}>Monaragala</option>
+
+                    {{-- Sabaragamuwa Province --}}
+                    <option value="Ratnapura" {{ $taxi->nearest_city == 'Ratnapura' ? 'selected' : '' }}>Ratnapura</option>
+                    <option value="Kegalle" {{ $taxi->nearest_city == 'Kegalle' ? 'selected' : '' }}>Kegalle</option>
+
+                </select>
+            </div>
+        </div>
+
 
         {{-- Driver Info --}}
         <div class="bg-white p-6 rounded-xl shadow space-y-4">

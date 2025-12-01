@@ -40,9 +40,11 @@
 
   <!-- Right side: Book Now Button -->
   <div>
-    <button class="px-6 py-2 bg-[#3CC0E9]  text-white text-base font-semibold rounded-lg shadow hover:bg-blue-700">
-      Book Now
-    </button>
+      <a id="bookNowBtn"
+    class="px-6 py-2 bg-[#3CC0E9] text-white text-base font-semibold rounded-lg shadow hover:bg-blue-700 cursor-pointer">
+    Book Now
+</a>
+
   </div>
 </div>
 
@@ -96,6 +98,9 @@
     <!-- Right Column: Vehicle & Driver Details -->
     <div class="flex-1">
        <div class="bg-white p-6 rounded-lg shadow-md border border-gray-400 mb-6">
+        <input type="hidden" id="calculatedDistance">
+        <input type="hidden" id="calculatedFare">
+
         <h2 class="text-lg font-semibold mb-4">Pricing Details</h2>
        
            <div><strong class="text-sm text-gray-500">Price per day:</strong>{{ $taxi->taxiType->name ?? 'Taxi' }}</div>
@@ -103,7 +108,7 @@
             <div>
         <label class="block text-sm font-medium text-gray-700 mb-2">Pickup location</label>
         <div class="flex gap-2">
-          <input type="text" id="pickupInput" required class="flex-1 rounded-lg border-gray-200 shadow-sm p-2" placeholder="Choose on map or type manually" />
+          <input type="text" id="pickupInput" required class="flex-1 rounded-lg border-gray-200 shadow-sm p-2" placeholder="Choose on map or type manually"  value="{{ request('pickup') }}"/>
           <button type="button" onclick="openMap('pickup')" class="bg-indigo-600 text-white px-3 rounded-lg">
             <i class="fa-solid fa-map-pin"></i>
           </button>
@@ -113,7 +118,7 @@
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-2">Dropoff location</label>
         <div class="flex gap-2">
-          <input type="text" id="dropoffInput" required class="flex-1 rounded-lg border-gray-200 shadow-sm p-2" placeholder="Choose on map or type manually" />
+          <input type="text" id="dropoffInput" required class="flex-1 rounded-lg border-gray-200 shadow-sm p-2" placeholder="Choose on map or type manually" value="{{ request('destination') }}"/>
           <button type="button" onclick="openMap('dropoff')" class="bg-indigo-600 text-white px-3 rounded-lg">
             <i class="fa-solid fa-map-pin"></i>
           </button>
@@ -262,7 +267,7 @@
 </div>
 
 @endsection
-
+@push('scripts')
 <script>
   function openModal(src) {
     document.getElementById("imageModal").classList.remove("hidden");
@@ -320,9 +325,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 closeMap();
                 refreshDistance();
-            });
-        }
+            });            
+        }       
     }
+     document.getElementById("bookNowBtn").addEventListener("click", function () {
+                const pickup = encodeURIComponent(document.getElementById("pickupInput").value);
+                const dropoff = encodeURIComponent(document.getElementById("dropoffInput").value);
+                const distance = encodeURIComponent(document.getElementById("calculatedDistance").value);
+                const fare = encodeURIComponent(document.getElementById("calculatedFare").value);
+
+                window.location.href = `/taxi/book/{{ $taxi->id }}?pickup=${pickup}&dropoff=${dropoff}&distance=${distance}&fare=${fare}`;
+            });
 
     function closeMap() {
         document.getElementById('mapModal').classList.add('hidden');
@@ -364,6 +377,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const base = 200, perKm = 60;
         document.getElementById('fareText').textContent = `${Math.round(base + km * perKm)} LKR`;
+
+        document.getElementById('calculatedDistance').value = km;
+        document.getElementById('calculatedFare').value = Math.round(base + km * perKm);
+
     }
 
     document.getElementById('pickupInput').addEventListener('blur', refreshDistance);
@@ -373,3 +390,4 @@ document.addEventListener('DOMContentLoaded', function () {
     window.closeMap = closeMap;
 });
 </script>
+@endpush

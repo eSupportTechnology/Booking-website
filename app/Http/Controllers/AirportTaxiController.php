@@ -40,6 +40,7 @@ class AirportTaxiController extends Controller
 
         $taxi = Taxi::create([
             'taxi_type_id' => $map[$validated['taxi_type']],
+            'car_renter_id' => auth()->user()->car_renter_id,
             'number_plate' => null, // to be filled in later steps
         ]);
 
@@ -52,20 +53,26 @@ class AirportTaxiController extends Controller
 
     public function storeStep2(Request $request)
     {
-        $validated = $request->validate([
+            $validated = $request->validate([
             'taxi_id' => 'required|exists:taxis,id',
+            'brand_model' => 'required|string|max:255',
             'number_plate' => 'required|string|unique:taxis,number_plate,' . $request->taxi_id,
             'color' => 'required|string',
             'passenger_capacity' => 'required|integer|min:1|max:50',
             'luggage_capacity' => 'nullable|integer|min:0|max:20',
+            'nearest_city' => 'required|string|max:255',
+
         ]);
 
         $taxi = Taxi::findOrFail($validated['taxi_id']);
+        dd($validated, $taxi->getFillable());
         $taxi->update([
             'number_plate' => $validated['number_plate'],
+            'brand_model' => $validated['brand_model'],
             'color' => $validated['color'],
             'passenger_capacity' => $validated['passenger_capacity'],
             'luggage_capacity' => $validated['luggage_capacity'] ?? null,
+            'nearest_city' => $validated['nearest_city'] ?? null,
         ]);
 
         return response()->json([

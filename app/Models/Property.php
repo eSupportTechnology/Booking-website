@@ -92,9 +92,10 @@ class Property extends Model
     }
 
     public function pricing()
-    {
-        return $this->hasOne(\App\Models\PropertyPricing::class);
-    }
+{
+    return $this->hasMany(PropertyPricing::class, 'property_id');
+}
+
 
     public function addressType()
     {
@@ -131,10 +132,6 @@ class Property extends Model
         return $this->belongsTo(PropertyCategory::class, 'category_id');
     }
 
-    public function propertySubcategory()
-    {
-        return $this->belongsTo(PropertySubcategory::class, 'subcategory_id');
-    }
 
     public function user()
     {
@@ -163,4 +160,10 @@ class Property extends Model
     {
         return $this->hasMany(Deal::class);
     }
+
+    public function subtype()
+{
+    return $this->belongsTo(PropertySubtype::class, 'subtype_id');
+}
+
 }

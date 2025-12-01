@@ -121,6 +121,13 @@
                     <input type="text" placeholder="e.g., WP-AB 1234" class="w-full p-2 border rounded-md text-sm" x-model="number_plate">
                     <p class="text-gray-500 text-sm mt-1">Enter the taxi’s registration number plate.</p>
                 </div>
+                <div>
+                    <label class="block font-semibold text-sm mb-1">
+                        Nearest City <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" placeholder="e.g., Colombo, Kandy, Negombo" class="w-full p-2 border rounded-md text-sm" x-model="nearest_city">
+                    <p class="text-gray-500 text-sm mt-1">Enter the nearest city to the taxi.</p>
+                </div>
 
                 <div>
                     <label class="block font-semibold text-sm mb-1">
@@ -145,6 +152,8 @@
                     <input type="number" placeholder="Number of suitcases" class="w-full p-2 border rounded-md text-sm" min="0" max="20" x-model="luggage_capacity">
                     <p class="text-gray-500 text-sm mt-1">Enter the number of suitcases or luggage the taxi can hold.</p>
                 </div>
+
+                
             </div>
 
             <!-- Navigation Buttons -->
@@ -365,9 +374,11 @@ document.addEventListener("alpine:init", () => {
         // Step 2
         brand_model:'',
         number_plate: '',
+        nearest_city: '',
         color: '',
         passenger_capacity: '',
         luggage_capacity: '',
+        
 
         // Step 3
         driver_name: '',
@@ -446,7 +457,7 @@ tourism_license_back: null,
 
         // ================= Step 2 =================
         async saveStep2() {
-            if (!this.number_plate || !this.color || !this.passenger_capacity) {
+            if (!this.brand_model || !this.number_plate || !this.color || !this.passenger_capacity || !this.nearest_city) {
                 Swal.fire({
                     icon: "warning",
                     title: "Required",
@@ -460,48 +471,45 @@ tourism_license_back: null,
             }
 
             try {
-                const response = await fetch("{{ route('taxis.storeStep2') }}", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                    },
-                    body: JSON.stringify({
-                        taxi_id: this.taxi_id,
-                        brand_model: this.brand_model,
-                        number_plate: this.number_plate,
-                        color: this.color,
-                        passenger_capacity: this.passenger_capacity,
-                        luggage_capacity: this.luggage_capacity
-                    })
-                });
 
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    if (errorData.errors) {
-                        let errorMsg = Object.values(errorData.errors).flat().join("\n");
-                        Swal.fire({ icon: "error", title: "Validation Error", text: errorMsg });
-                    }
-                    return;
-                }
+        // Use FormData instead of JSON
+        const formData = new FormData();
+        formData.append("taxi_id", this.taxi_id);
+        formData.append("brand_model", this.brand_model);
+        formData.append("number_plate", this.number_plate);
+        formData.append("nearest_city", this.nearest_city);
+        formData.append("color", this.color);
+        formData.append("passenger_capacity", this.passenger_capacity);
+        formData.append("luggage_capacity", this.luggage_capacity ?? '');
 
-                const data = await response.json();
-                if (data.success) {
-                    this.step++;
-                    Swal.fire({
-                        icon: "success",
-                        title: "Saved",
-                        text: data.message || "Step 2 completed!",
-                        toast: true,
-                        position: "top-end",
-                        timer: 2000,
-                        showConfirmButton: false
-                    });
-                }
-            } catch (error) {
-                Swal.fire({ icon: "error", title: "Error", text: "Unexpected error occurred" });
-            }
-        },
+        const response = await fetch("{{ route('taxis.storeStep2') }}", {
+            method: "POST",
+            headers: {
+                "X-CSRF-TOKEN": "{{ csrf_token() }}"
+            },
+            body: formData
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            this.step++;
+            Swal.fire({
+                icon: "success",
+                title: "Saved",
+                text: data.message || "Step 2 completed!",
+                toast: true,
+                position: "top-end",
+                timer: 2000,
+                showConfirmButton: false
+            });
+        }
+
+    } catch (error) {
+        Swal.fire({ icon: "error", title: "Error", text: "Unexpected error occurred" });
+        console.error(error);
+    }
+},
 
      // ================= Step 3 =================
 async saveStep3() {

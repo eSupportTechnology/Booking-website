@@ -68,6 +68,7 @@
             <p><strong>Taxi Color:</strong> {{ $taxi->color ?? 'N/A' }}</p>
             <p><strong>Number of Passengers:</strong> {{ $taxi->passenger_capacity ?? 0 }}</p>
             <p><strong>Luggage Capacity:</strong> {{ $taxi->luggage_capacity ?? 0 }}</p>
+            <p><strong>Nearest City:</strong> {{ $taxi->nearest_city ?? 'N/A' }}</p>
         </div>
     </div>
 
@@ -142,19 +143,25 @@
     </div>
 <!-- Driver License & Tourism License Section -->
 @php
-    $driverLicenseFront = $driver->driver_license_front 
-        ? \App\Models\File::find($driver->driver_license_front) 
-        : null;
-    $driverLicenseBack = $driver->driver_license_back
-        ? \App\Models\File::find($driver->driver_license_back)
-        : null;
-    $tourismLicenseFront = $driver->tourism_license_front
-        ? \App\Models\File::find($driver->tourism_license_front)
-        : null;
-    $tourismLicenseBack = $driver->tourism_license_back
-        ? \App\Models\File::find($driver->tourism_license_back)
-        : null;
+$driverObj = $taxi->drivers->first();
+
+$driverLicenseFront = $driverObj?->driver_license_front
+    ? \App\Models\File::find($driverObj->driver_license_front) 
+    : null;
+
+$driverLicenseBack = $driverObj?->driver_license_back
+    ? \App\Models\File::find($driverObj->driver_license_back)
+    : null;
+
+$tourismLicenseFront = $driverObj?->tourism_license_front
+    ? \App\Models\File::find($driverObj->tourism_license_front)
+    : null;
+
+$tourismLicenseBack = $driverObj?->tourism_license_back
+    ? \App\Models\File::find($driverObj->tourism_license_back)
+    : null;
 @endphp
+
    <div class="bg-white p-6 rounded-2xl shadow-lg flex-1 mt-6">
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 border-b pb-6">
     <!-- Driver License -->
