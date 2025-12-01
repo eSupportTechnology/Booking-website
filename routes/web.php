@@ -1552,6 +1552,10 @@ use App\Http\Controllers\Customer\HomeController;
 Route::get('/customer/home', [HomeController::class, 'popularCities'])->name('customer.home');
 
 
+
+
+// routes/web.php
+
 Route::get('/help-center', function () {
     return view('frontend.help-center');
 })->name('help.center');
