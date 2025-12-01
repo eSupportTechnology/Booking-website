@@ -86,7 +86,7 @@
 
         <!-- Dropdown -->
         <div id="account-menu"
-     class="absolute mt-2 w-56 bg-white border border-gray-200 rounded-md shadow-lg hidden z-50
+            class="absolute mt-2 w-56 bg-white border border-gray-200 rounded-md shadow-lg hidden z-50
             left-0 sm:right-0">
             @auth('customer')
                 <a href="/profile" class="block px-4 py-2 text-gray-700 text-base hover:bg-gray-100 flex items-center gap-2">
