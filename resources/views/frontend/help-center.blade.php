@@ -170,92 +170,48 @@
                 <!-- RIGHT CONTENT -->
                 <div class="md:col-span-2">
 
-                    <!-- CANCELLATIONS -->
-                    <div x-show="activeTab === 'Cancellations'">
-                        @php
-                            $cancellations = [
-                                ["q" => "Can I cancel my booking?", "a" => "yes you can"],
-                                ["q" => "If I need to cancel my booking, will I pay a fee?", "a" => "card payment can you"],
-                                ["q" => "Can I cancel or change my dates for a non-refundable booking?", "a" => "hello booking"],
-                                ["q" => "How do I know if my booking was cancelled?", "a" => "Your booking status will update automatically."],
-                                ["q" => "Where can I find my cancellation policy?", "a" => "You can find it inside your confirmation email."]
-                            ];
-                        @endphp
+            <!-- CANCELLATIONS -->
+            <div x-show="activeTab === 'Cancellations'">
+                @php
+                    $cancellations = [
+                        ["q" => "Can I cancel my booking?", "a" => "Yes – any cancellation fees are determined by the property and listed in your cancellation policy. You'll pay any additional costs to the property."],
+                        ["q" => "If I need to cancel my booking, will I pay a fee?", "a" => "If you have a free cancellation booking, you won't pay a cancellation fee. If your booking isn't free to cancel anymore or is non-refundable, you may incur a cancellation fee. Any cancellation fees are determined by the property, and you'll pay any additional costs to the property."],
+                        ["q" => "Can I cancel or change my dates for a non-refundable booking?", "a" => "Canceling a Non-Refundable booking usually incurs a charge. However, you might have the option to request free cancellation when managing your booking. This sends a request to the property, who may decide to waive your cancellation fee. It's not possible to change dates for a Non-Refundable booking, though it's possible to re-book for your desired dates if your waive fees request is successful."],
+                        ["q" => "How do I know if my booking was cancelled?", "a" => "After you cancel a booking with us, you should get an email confirming the cancellation. Make sure to check your inbox and spam/junk mail folders. If you don’t receive an email within 24 hours, contact the property to confirm they got your cancellation."],
+                        ["q" => "Where can I find my cancellation policy?", "a" => "You can find this in your booking confirmation."]
+                    ];
+                @endphp
 
-                        @foreach($cancellations as $item)
-                            <details class="border-b px-5 py-4">
-                                <summary class="cursor-pointer font-medium text-sm flex justify-between items-center">
-                                    <span>{{ $item['q'] }}</span>
-                                    <span>⌄</span>
-                                </summary>
+                @foreach($cancellations as $item)
+                    <details class="border-b px-5 py-4">
+                        <summary class="cursor-pointer font-medium text-sm flex justify-between items-center">
+                            <span>{{ $item['q'] }}</span>
+                            <span>⌄</span>
+                        </summary>
 
-                                <p class="mt-3 text-gray-600 text-sm">
-                                    {{ $item['a'] }}
-                                </p>
-                            </details>
-                        @endforeach
-                    </div>
-
-
-                    <!-- PAYMENT -->
-                    <div x-show="activeTab === 'Payment'">
-                        @php
-                        $payments = [
-                            "Can I pay with a deposit, or prepayment?",
-                            "I was charged. Do I need to do anything?",
-                            "Where can I see the payment policy for my booking?",
-                            "Why do I need to provide my card details?",
-                            "Can I pay for my stay with a different credit card than the one used to book?",
-                            "How can I get an invoice?",
-                            "Why do I need to provide my credit card details?",
-                            "Who's going to charge my credit card and when?"
-                        ];
-                        @endphp
-
-                        @foreach($payments as $q)
-                            <details class="border-b px-5 py-4">
-                                <summary class="cursor-pointer font-medium text-sm flex justify-between items-center">
-                                    {{ $q }} <span>⌄</span>
-                                </summary>
-                            </details>
-                        @endforeach
-                    </div>
-
-                    <!-- BOOKING DETAILS -->
-                    <div x-show="activeTab === 'Booking Details'">
-                        @php
-                        $bookingDetails = [
-                            "How do I get more info about the room or property's facilities?",
-                            "Is it possible to get an extra bed or crib for a child?",
-                            "I can't find my confirmation email. What should I do?",
-                            "Will I pay the full price for my children?",
-                            "What's the difference between a double room and a twin room?",
-                            "I'll be arriving outside check-in hours. Can I still check in?",
-                            "Can I make changes to my booking (i.e. change dates)?"
-                        ];
-                        @endphp
-
-                        @foreach($bookingDetails as $q)
-                            <details class="border-b px-5 py-4">
-                                <summary class="cursor-pointer font-medium text-sm flex justify-between items-center">
-                                    {{ $q }} <span>⌄</span>
-                                </summary>
-                            </details>
-                        @endforeach
-                    </div>
-
-                    <!-- OTHER TABS PLACEHOLDER -->
-                    <div x-show="!['Cancellations','Payment','Booking Details'].includes(activeTab)" class="p-6 text-gray-500">
-                        Content for <span class="font-semibold" x-text="activeTab"></span> will be added soon.
-                    </div>
-
-                </div>
-
+                        <p class="mt-3 text-gray-600 text-sm">
+                            {{ $item['a'] }}
+                        </p>
+                    </details>
+                @endforeach
             </div>
         </section>
 
-        <!-- Alpine.js -->
-        <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
+            <!-- PAYMENT -->
+            <div x-show="activeTab === 'Payment'">
+                @php
+                $payments = [
+                    "Can I pay with a deposit, or prepayment?",
+                    "I was charged. Do I need to do anything?",
+                    "Where can I see the payment policy for my booking?",
+                    "Why do I need to provide my card details?",
+                    "Can I pay for my stay with a different credit card than the one used to book?",
+                    "How can I get an invoice?",
+                    "Why do I need to provide my credit card details?",
+                    "Who's going to charge my credit card and when?"
+                ];
+                @endphp
 
  
 
