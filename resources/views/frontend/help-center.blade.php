@@ -134,41 +134,42 @@
 
      
     <!-- FAQ SECTION -->
-        <section class="max-w-5xl mx-auto mt-14 mb-20">
+        <!-- FAQ SECTION -->
+<section class="max-w-5xl mx-auto mt-14 mb-20">
 
-            <h2 class="text-xl font-bold mb-6">Frequently Asked Questions</h2>
+    <h2 class="text-xl font-bold mb-6">Frequently Asked Questions</h2>
 
-            <div x-data="{ activeTab: 'Cancellations' }" class="bg-white shadow rounded-lg overflow-hidden grid md:grid-cols-3">
+    <div x-data="{ activeTab: 'Cancellations' }" class="bg-white shadow rounded-lg overflow-hidden grid md:grid-cols-3">
 
-                <!-- LEFT TABS -->
-                <div class="border-r">
-                    @php
-                    $tabs = [
-                        'Cancellations',
-                        'Payment',
-                        'Booking Details',
-                        'Communications',
-                        'Room Types',
-                        'Pricing',
-                        'Credit cards',
-                        'Property Policies',
-                        'Extra Facilities',
-                        'Security and awareness'
-                    ];
-                    @endphp
+        <!-- LEFT TABS -->
+        <div class="border-r">
+            @php
+            $tabs = [
+                'Cancellations',
+                'Payment',
+                'Booking Details',
+                'Communications',
+                'Room Types',
+                'Pricing',
+                'Credit cards',
+                'Property Policies',
+                'Extra Facilities',
+                'Security and awareness'
+            ];
+            @endphp
 
-                    @foreach($tabs as $tab)
-                        <button 
-                            @click="activeTab = '{{ $tab }}'"
-                            class="w-full text-left px-5 py-3 border-b hover:bg-gray-100 text-sm"
-                            :class="activeTab === '{{ $tab }}' ? 'font-semibold text-[#0071c2] border-l-4 border-[#0071c2] bg-gray-50' : ''">
-                            {{ $tab }}
-                        </button>
-                    @endforeach
-                </div>
+            @foreach($tabs as $tab)
+                <button 
+                    @click="activeTab = '{{ $tab }}'"
+                    class="w-full text-left px-5 py-3 border-b hover:bg-gray-100 text-sm"
+                    :class="activeTab === '{{ $tab }}' ? 'font-semibold text-[#0071c2] border-l-4 border-[#0071c2] bg-gray-50' : ''">
+                    {{ $tab }}
+                </button>
+            @endforeach
+        </div>
 
-                <!-- RIGHT CONTENT -->
-                <div class="md:col-span-2">
+        <!-- RIGHT CONTENT -->
+        <div class="md:col-span-2">
 
             <!-- CANCELLATIONS -->
             <div x-show="activeTab === 'Cancellations'">
@@ -195,7 +196,6 @@
                     </details>
                 @endforeach
             </div>
-        </section>
 
 
             <!-- PAYMENT -->
@@ -213,10 +213,50 @@
                 ];
                 @endphp
 
- 
+                @foreach($payments as $q)
+                    <details class="border-b px-5 py-4">
+                        <summary class="cursor-pointer font-medium text-sm flex justify-between items-center">
+                            {{ $q }} <span>⌄</span>
+                        </summary>
+                    </details>
+                @endforeach
+            </div>
 
+            <!-- BOOKING DETAILS -->
+            <div x-show="activeTab === 'Booking Details'">
+                @php
+                $bookingDetails = [
+                    "How do I get more info about the room or property's facilities?",
+                    "Is it possible to get an extra bed or crib for a child?",
+                    "I can't find my confirmation email. What should I do?",
+                    "Will I pay the full price for my children?",
+                    "What's the difference between a double room and a twin room?",
+                    "I'll be arriving outside check-in hours. Can I still check in?",
+                    "Can I make changes to my booking (i.e. change dates)?"
+                ];
+                @endphp
 
+                @foreach($bookingDetails as $q)
+                    <details class="border-b px-5 py-4">
+                        <summary class="cursor-pointer font-medium text-sm flex justify-between items-center">
+                            {{ $q }} <span>⌄</span>
+                        </summary>
+                    </details>
+                @endforeach
+            </div>
 
+            <!-- OTHER TABS PLACEHOLDER -->
+            <div x-show="!['Cancellations','Payment','Booking Details'].includes(activeTab)" class="p-6 text-gray-500">
+                Content for <span class="font-semibold" x-text="activeTab"></span> will be added soon.
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+<!-- Alpine.js -->
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
     <!-- FOOTER -->
     <footer class="bg-[#003580] text-white py-10 mt-10">
