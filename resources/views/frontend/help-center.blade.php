@@ -198,29 +198,66 @@
             </div>
 
 
+           
             <!-- PAYMENT -->
             <div x-show="activeTab === 'Payment'">
                 @php
-                $payments = [
-                    "Can I pay with a deposit, or prepayment?",
-                    "I was charged. Do I need to do anything?",
-                    "Where can I see the payment policy for my booking?",
-                    "Why do I need to provide my card details?",
-                    "Can I pay for my stay with a different credit card than the one used to book?",
-                    "How can I get an invoice?",
-                    "Why do I need to provide my credit card details?",
-                    "Who's going to charge my credit card and when?"
-                ];
+                    $payments = [
+                        [
+                            "q" => "Can I pay with a deposit, or prepayment?",
+                            "a" => "Some of our properties require a prepayment (i.e. a deposit) before you stay. This prepayment consist of the total cost of the booking or just part of it. The rest is paid when you stay at the property.
+                                    However, for some properties, there is no deposit required. You pay the amount in full when you stay at the property. Be sure to check the payment policies in your confirmation for more details."
+                        ],
+                        [
+                            "q" => "I was charged. Do I need to do anything?",
+                            "a" => "In most cases, no action is required from you. As outlined in the payment policy for your booking, this is likely just a prepayment for all or part of the total cost.
+                                    If there is no prepayment policy, then the property may have taken a test payment from your card. This is a temporary hold used to guarantee your booking and will be returned to you.
+                                    If you still believe the charge is unexpected, you can contact us for assistance. We can only contact the property on your behalf after you submit proof of charge."
+                        ],
+                        [
+                            "q" => "Where can I see the payment policy for my booking?",
+                            "a" => "You'll find the payment policy in your booking confirmation, in the pricing section. This section also includes a price breakdown and the accepted payment methods."
+                        ],
+                        [
+                            "q" => "Why do I need to provide my card details?",
+                            "a" => "Properties normally request this to guarantee your booking, and the card is often used to pay when you book. If you don’t need to make a prepayment, then they may hold an amount on your card to make sure it has sufficient funds. This test payment will be returned to you."
+                        ],
+                        [
+                            "q" => "Can I pay for my stay with a different credit card than the one used to book?",
+                            "a" => "It's very likely, yes. Properties usually accept payment for a stay with a different card or cash. To confirm that paying with a different credit card is okay, contact the property."
+                        ],
+                        [
+                            "q" => "How can I get an invoice?",
+                            "a" => "Only the property can provide an invoice for your completed stay. To receive it quickly, make your request at the property before check-out, or contact them directly."
+                        ],
+                        [
+                            "q" => "Why do I need to provide my credit card details?",
+                            "a" => "Properties request this to confirm your reservation. You may be pre-authorized* to ensure that your credit card is valid and has sufficient funds. In some cases, your details are used to pay for your stay when you book.
+                                    *A pre-authorization is a temporary hold on an amount to ensure your card is valid and has sufficient funds. The amount held will be returned to your account after a certain period of time, depending on the property and your card provider."
+                        ],
+                        [
+                            "q" => "Who's going to charge my credit card and when?",
+                            "a" => "Generally, the property is responsible for charging your card. If payment is instead handled by Booking.com, this will be stated clearly in your booking confirmation.
+                                    You usually can expect to pay during check-in or check-out at the property. However, there are some exceptions, like properties that require a prepayment for all or some of the total amount. Again, this will be stated clearly in your confirmation and payment policies.
+                                    If there's no prepayment policy, it’s also possible that the property might take a test payment from your card before you stay. This is a temporary hold, that’s used to validate your card and guarantee your booking. Unlike a real charge, this test payment will be returned to your card."
+                        ],
+                    ];
                 @endphp
 
-                @foreach($payments as $q)
+                @foreach($payments as $item)
                     <details class="border-b px-5 py-4">
                         <summary class="cursor-pointer font-medium text-sm flex justify-between items-center">
-                            {{ $q }} <span>⌄</span>
+                            <span>{{ $item['q'] }}</span>
+                            <span>⌄</span>
                         </summary>
+
+                        <p class="mt-3 text-gray-600 text-sm">
+                            {{ $item['a'] }}
+                        </p>
                     </details>
                 @endforeach
             </div>
+
 
             <!-- BOOKING DETAILS -->
             <div x-show="activeTab === 'Booking Details'">
