@@ -112,16 +112,22 @@ use Illuminate\Support\Facades\DB;
         </ul>
       </div>
 
-      {{-- Dates --}}
-      <div class="flex-1">
-        <div class="border rounded px-3 py-2 flex items-center gap-2">
-          <img src="{{ asset('assets/calender.svg') }}" class="w-5 h-5" />
-          <div class="w-full flex gap-2">
-            <input type="date" name="checkIn" x-model="checkIn" class="w-1/2 border rounded px-2 py-1 text-sm" />
-            <input type="date" name="checkOut" x-model="checkOut" class="w-1/2 border rounded px-2 py-1 text-sm" />
-          </div>
-        </div>
-      </div>
+      <!-- Dates Selector -->
+        <div x-data="{ open: false, activeTab: 'check', checkIn: '', checkOut: '', flexibleOption: '' }"
+             class="relative flex-1 border-b md:border-b-0 md:border-r border-gray-300 px-2 py-1">
+            <button @click="open = !open" type="button"
+                class="flex items-center gap-2 w-full text-left text-sm">
+                <img src="{{ asset('assets/calender.svg') }}" class="w-5 h-5" />
+                <span class="text-gray-800 truncate text-sm sm:text-base">
+                    <template x-if="activeTab === 'check'">
+                        <span><span x-text="checkIn || '{{ __('messages.Check-in') }}'"></span> —
+                            <span x-text="checkOut || '{{ __('messages.Check-out') }}'"></span></span>
+                    </template>
+                    <template x-if="activeTab === 'flexible'">
+                        <span x-text="flexibleOption || 'Flexible dates'"></span>
+                    </template>
+                </span>
+            </button>
 
       {{-- Guests --}}
       <div class="flex-1 relative">
