@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Help Center - Booking UI Replica</title>
+    <title>Help Center</title>
 
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -20,24 +20,143 @@
 
 <body class="bg-gray-50">
 
-    <!-- Top Blue Bar -->
-    <header class="bg-[#003580] text-white py-4 shadow-md">
-        <div class="max-w-7xl mx-auto px-4 flex justify-between items-center">
+   
+    <header class="text-white px-2 sm:px-4 py-2 sm:py-4" style="background-color:#1F8FB2;">
+        <section class="py-0">
+            <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
+                
+                <!-- Header Container -->
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center flex-wrap space-y-4 md:space-y-0">
 
-            <div class="text-2xl font-bold tracking-wide">
-                Booking.com
+                    <!-- Left Section -->
+                    <div class="w-full md:w-auto">
+                        <div class="flex flex-col items-start">
+
+                            @php
+                                $host = config('domains.app_name');
+                            @endphp
+
+                            <!-- Logo -->
+                            <a href="{{ url('/') }}" class="text-2xl font-bold flex items-center">
+                                @if ($host == 'BookinTour')
+                                    <h1>Bookintour.com</h1>
+                                @elseif ($host == 'Inselor')
+                                    <img src="{{ asset('images/inselor-logo.png') }}" alt="Inselor" class="h-12 w-auto align-middle" />
+                                @endif
+                            </a>
+
+                            @php
+                                $currentRoute = request()->route()->getName();
+                            @endphp
+
+                        </div>
+                    </div>
+
+                    <!-- Right Section -->
+                    <div class="flex items-center flex-wrap justify-end gap-2 sm:gap-3 md:gap-5 w-full md:w-auto order-2 px-2 sm:px-0 md:px-0">
+
+                        <!-- Currency + Help + List Property Row -->
+                        <div class="flex w-full md:w-auto justify-center md:justify-end gap-2 sm:gap-3 md:gap-5 mb-2 md:mb-0">
+
+                            <!-- Currency -->
+                            <div class="relative">
+                                <span id="current-currency"
+                                    class="font-semibold cursor-pointer select-none text-sm md:text-base"
+                                    title="Click to change currency">
+                                    {{ app(\App\Services\CurrencyManager::class)->getUserCurrency() }}
+                                </span>
+
+                                <!-- Currency Modal -->
+                                <div id="currency-modal"
+                                    class="fixed inset-0 hidden z-50 overflow-y-auto flex items-start justify-center px-4 py-8 bg-black bg-opacity-50">
+
+                                    <div class="relative w-full max-w-md p-6 bg-white rounded-lg shadow">
+
+                                        <!-- Modal Header -->
+                                        <div class="flex items-start justify-between">
+                                            <h3 class="text-xl font-semibold text-gray-900">Select Currency</h3>
+                                            <button type="button" id="currency-close-btn"
+                                                class="text-gray-400 hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center">
+                                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd"
+                                                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                                        clip-rule="evenodd"></path>
+                                                </svg>
+                                            </button>
+                                        </div>
+
+                                        <!-- Modal Body -->
+                                        <div class="mt-4 grid grid-cols-2 gap-4">
+                                            @foreach(app(\App\Services\CurrencyService::class)->getSupportedCurrencies() as $currency)
+                                                <button data-currency="{{ $currency }}"
+                                                    class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 text-gray-800">
+                                                    <span>{{ $currency }}</span>
+                                                </button>
+                                            @endforeach
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Help -->
+                            <a href="#" class="flex items-center">
+                                <img src="{{ asset('assets/question.svg') }}" alt="Help"
+                                    class="w-4 h-4 sm:w-5 sm:h-5 cursor-pointer" />
+                            </a>
+
+                            <!-- List Property -->
+                            <a href="/list-your-property" class="hover:underline">
+                                List your property
+                            </a>
+
+                        </div>
+
+                        <!-- Register / Sign in -->
+                        <div class="flex w-full md:w-auto justify-center md:justify-end gap-2 sm:gap-3 md:gap-5">
+
+                            @guest('customer')
+
+                                <div class="flex items-center gap-1 sm:gap-2">
+
+                                    <a href="/choose-option"
+                                    class="bg-white font-base px-2 py-1 sm:px-3 sm:py-1 
+                                            md:px-4 md:py-2 rounded hover:bg-blue-100 
+                                            text-xs sm:text-sm md:text-base"
+                                    style="font-family: 'Noto Sans', sans-serif; color:#3CC0E9;">
+                                        Register
+                                    </a>
+
+                                    <a href="/choose-option"
+                                    class="bg-white font-base px-2 py-1 sm:px-3 sm:py-1 
+                                            md:px-4 md:py-2 rounded hover:bg-blue-100 
+                                            text-xs sm:text-sm md:text-base"
+                                    style="font-family: 'Noto Sans', sans-serif; color:#3CC0E9;">
+                                        Sign in
+                                    </a>
+
+                                </div>
+
+                            @else
+                                <!-- Placeholder to keep layout stable -->
+                                <div class="flex items-center gap-1 sm:gap-2 invisible">
+                                    <span class="px-2 py-1 sm:px-3 sm:py-1 md:px-4 md:py-2">Hidden</span>
+                                    <span class="px-2 py-1 sm:px-3 sm:py-1 md:px-4 md:py-2">Hidden</span>
+                                </div>
+                            @endguest
+
+                        </div>
+
+                    </div>
+
+                </div>
+
             </div>
-
-            <div class="flex items-center gap-4 text-sm">
-                <span>LKR</span>
-                <img src="https://flagcdn.com/us.svg" class="w-5 h-5 rounded-sm">
-
-                <a href="#" class="px-3 py-1 bg-[#0071c2] rounded text-white">List your property</a>
-                <a href="#" class="px-3 py-1 bg-white text-[#003580] border rounded">Register</a>
-                <a href="#" class="px-3 py-1 bg-[#0071c2] rounded text-white">Sign in</a>
-            </div>
-        </div>
+        </section>
     </header>
+
+
+    <br>
 
     <!-- Blue Section -->
     <section class="bg-[#b8d4f5] py-16 text-center">
@@ -674,64 +793,111 @@
 <!-- Alpine.js -->
 <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
-    <!-- FOOTER -->
-    <footer class="bg-[#003580] text-white py-10 mt-10">
+    <!-- ================== TOP BLUE BAR ================== -->
+    <div class="w-full bg-[#003580] py-3 flex justify-center">
+        <a href="/list-your-property"
+        class="text-white border border-white px-4 py-1 rounded text-sm hover:bg-white hover:text-[#003580] transition">
+        List your property
+        </a>
+    </div>
 
-        <div class="text-center mb-6">
-            <button class="px-5 py-2 border border-white rounded">List your property</button>
-        </div>
+    <!-- ================== NAVIGATION BLUE STRIP ================== -->
+    <div class="w-full bg-[#003580] text-white text-sm">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-center gap-6">
 
-        <div class="max-w-6xl mx-auto grid md:grid-cols-5 gap-6 text-sm">
-
-            <div>
-                <a class="font-semibold block mb-2" href="#">Mobile version</a>
-                <a href="#" class="block">Countries</a>
-                <a href="#" class="block">Regions</a>
-                <a href="#" class="block">Cities</a>
-                <a href="#" class="block">Districts</a>
-                <a href="#" class="block">Airports</a>
-                <a href="#" class="block">Hotels</a>
-                <a href="#" class="block">Places of interest</a>
-            </div>
-
-            <div>
-                <a class="font-semibold block mb-2" href="#">Your account</a>
-                <a href="#" class="block">Homes</a>
-                <a href="#" class="block">Apartments</a>
-                <a href="#" class="block">Resorts</a>
-                <a href="#" class="block">Villas</a>
-                <a href="#" class="block">Hostels</a>
-                <a href="#" class="block">B&Bs</a>
-                <a href="#" class="block">Guest Houses</a>
-            </div>
-
-            <div>
-                <a class="font-semibold block mb-2" href="#">Make changes online to your booking</a>
-                <a href="#" class="block">Unique places to stay</a>
-                <a href="#" class="block">Reviews</a>
-                <a href="#" class="block">Discover stays</a>
-                <a href="#" class="block">Holiday deals</a>
-                <a href="#" class="block">Traveller Awards</a>
-            </div>
-
-            <div>
-                <a class="font-semibold block mb-2" href="#">Become an affiliate</a>
-                <a href="#" class="block">Travel Agents</a>
-                <a href="#" class="block">Business</a>
-            </div>
-
-            <div>
-                <a class="font-semibold block mb-2" href="#">About Booking.com</a>
-                <a href="#" class="block">Customer Service Help</a>
-                <a href="#" class="block">Partner help</a>
-                <a href="#" class="block">Careers</a>
-                <a href="#" class="block">Press Center</a>
-                <a href="#" class="block">Safety Resource Center</a>
-            </div>
+            <a href="#" class="hover:underline font-semibold">Mobile version</a>
+            <a href="#" class="hover:underline font-semibold">Your account</a>
+            <a href="#" class="hover:underline font-semibold">Make changes online to your booking</a>
+            <a href="#" class="hover:underline font-semibold">Become an affiliate</a>
+            <a href="#" class="hover:underline font-semibold">Booking.com for Business</a>
 
         </div>
+    </div>
 
+    <!-- ================== MULTI-COLUMN FOOTER ================== -->
+    <footer class="max-w-7xl mx-auto px-4 py-10 text-sm">
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6">
+
+            <!-- Column 1 -->
+            <div class="space-y-2">
+                <a href="#" class="text-[#0066CC] hover:underline block">Countries</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Regions</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Cities</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Districts</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Airports</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Hotels</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Places of interest</a>
+            </div>
+
+            <!-- Column 2 -->
+            <div class="space-y-2">
+                <a href="#" class="text-[#0066CC] hover:underline block">Homes</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Apartments</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Resorts</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Villas</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Hostels</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">B&Bs</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Guest Houses</a>
+            </div>
+
+            <!-- Column 3 -->
+            <div class="space-y-2">
+                <a href="#" class="text-[#0066CC] hover:underline block">Unique places to stay</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Reviews</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Discover monthly stays</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Seasonal and holiday deals</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Traveller Review Awards</a>
+            </div>
+
+            <!-- Column 4 -->
+            <div class="space-y-2">
+                <a href="#" class="text-[#0066CC] hover:underline block">Booking.com for Travel Agents</a>
+            </div>
+
+            <!-- Column 5 -->
+            <div class="space-y-2">
+                <a href="#" class="text-[#0066CC] hover:underline block">About Booking.com</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Customer Service Help</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Partner help</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Careers</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Sustainability</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Press Center</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Safety Resource Center</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Investor relations</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Terms of Service</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Partner dispute</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">How We Work</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Privacy Notice</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Modern Slavery Statement</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Human Rights Statement</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Corporate contact</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Content guidelines and reporting</a>
+            </div>
+        </div>
+
+        <!-- Extranet Login -->
+        <div class="text-center mt-10">
+            <a href="#" class="text-[#0066CC] hover:underline">Extranet Log-in</a>
+        </div>
+
+        <!-- Copyright -->
+        <div class="text-center mt-12 text-gray-600 text-xs">
+            Copyright © 1996–2025 Booking.com™. All rights reserved.
+        </div>
+
+        <!-- Partner Brands -->
+        <div class="text-center mt-6 flex items-center justify-center gap-6 flex-wrap opacity-90">
+
+            <img src="https://cf.bstatic.com/static/img/logos/BookingLogo/booking_logo.png" class="h-6" alt="">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Priceline.com_logo.svg/512px-Priceline.com_logo.svg.png" class="h-6" alt="">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Kayak_Logo.svg/512px-Kayak_Logo.svg.png" class="h-6" alt="">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Agoda_logo.svg/512px-Agoda_logo.svg.png" class="h-6" alt="">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/OpenTable_logo.svg/512px-OpenTable_logo.svg.png" class="h-6" alt="">
+
+        </div>
     </footer>
+
 
 
 
