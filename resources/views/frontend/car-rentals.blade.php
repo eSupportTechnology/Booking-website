@@ -218,9 +218,21 @@
     <div class="bg-white rounded-lg shadow-md overflow-hidden relative min-w-[250px] max-w-[250px] h-[350px]">
         
         <!-- Car Image -->
-        <img src="{{ $car->image ? asset('storage/' . $car->image) : asset('images/taxi.jpg') }}" 
-             alt="{{ $car->name }}" 
-             class="w-full h-48 object-cover">
+        @php
+            // Car relationship
+            $car = $car ?? null;
+
+            if ($car && $car->car_front) {
+                // Use the same working method
+                $photo = $car->mainPhoto();
+            } else {
+                $photo = asset('assets/default-property.jpg'); // fallback image
+            }
+        @endphp
+
+        <img src="{{ $photo }}"
+            alt="{{ $car->name ?? 'Car' }}"
+            class="w-full h-48 object-cover">
 
         <!-- Taxi Info -->
         <div class="p-3">
