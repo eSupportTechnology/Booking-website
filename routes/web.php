@@ -1562,3 +1562,7 @@ Route::get('/help-center', function () {
 
 
 
+Route::get('/about-booking', function () {
+    return view('frontend.about-booking');
+})->name('about.booking');
+
