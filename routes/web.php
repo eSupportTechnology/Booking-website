@@ -1566,3 +1566,8 @@ Route::get('/about-booking', function () {
     return view('frontend.about-booking');
 })->name('about.booking');
 
+Route::get('/safety-resource-center', function () {
+    return view('frontend.safety-resource-center');
+})->name('safety.resource.center');
+
+
