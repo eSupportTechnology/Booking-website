@@ -21,7 +21,7 @@
         <div>
           <h3 class="text-lg font-bold mb-3">Support</h3>
           <ul class="space-y-2">
-            <li><a href="#" class="text-gray-500 hover:text-gray-700">Manage your Trips</a></li>
+            <li><a href="{{ route('bookings.trips') }}" class="text-gray-500 hover:text-gray-700">Manage your Trips</a></li>
             <li><a href="#" class="text-gray-500 hover:text-gray-700">Contact Customer Service</a></li>
             <li><a href="#" class="text-gray-500 hover:text-gray-700">Safety Resource Center</a></li>
           </ul>

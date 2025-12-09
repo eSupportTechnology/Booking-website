@@ -28,7 +28,15 @@
 
 
 
-@include('frontend.footer')
+  <!-- Footers -->
+    @guest
+        @include('frontend.footer')   <!-- For guests (not logged in) -->
+    @endguest
+
+    @auth
+        @include('customer.footer')   <!-- For logged in users -->
+    @endauth
+
 </body>
 
 </html>
