@@ -1478,9 +1478,9 @@ Route::get('/partner/properties', [PartnerPropertyController::class, 'showCities
 
 
 // car_rentals routes
-Route::get('car_rentals/carrenters_control_panel', function () {
-    return view('car_rentals.carrenters_control_panel');
-})->name('car_rentals.carrenters_control_panel');
+// Route::get('car_rentals/carrenters_control_panel', function () {
+//     return view('car_rentals.carrenters_control_panel');
+// })->name('car_rentals.carrenters_control_panel');
 
 
 //car search and booking routes
@@ -1585,5 +1585,18 @@ Route::get('/about-booking', function () {
 Route::get('/safety-resource-center', function () {
     return view('frontend.safety-resource-center');
 })->name('safety.resource.center');
+
+Route::middleware('auth:car_renter')->get(
+    'car_rentals/carrenters_control_panel',
+    [CarRenterControlPanel::class, 'controlPanel']
+)->name('car_rentals.carrenters_control_panel');
+
+Route::get('/car_rentals/manage_bookings', 
+    [CarRenterControlPanel::class, 'manageBookings']
+)->name('car_rentals.manage_bookings')->middleware('auth:car_renter');
+
+Route::post('/car_rentals/update-booking-status/{id}', 
+    [CarRenterControlPanel::class, 'updateBookingStatus']
+)->name('booking.update_status');
 
 
