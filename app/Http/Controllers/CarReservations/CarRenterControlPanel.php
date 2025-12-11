@@ -137,26 +137,29 @@ class CarRenterControlPanel extends Controller
 
     /* ----------------------------- TAXI BOOKINGS ---------------------------- */
 
-    public function getTaxiBookings(): array
+    public function getTaxiBookings()
 {
     $partnerId = Auth::guard('car_renter')->id();
 
-    $taxiBookings = \App\Models\TaxiBooking::where('driver_id', $partnerId)
-        ->with(['taxi:id,brand_model'])
+    $bookings = TaxiBooking::whereHas('taxi', function ($q) use ($partnerId) {
+            $q->where('car_renter_id', $partnerId);
+        })
+        ->with(['taxi'])
         ->latest()
-        ->limit(10)
-        ->get();
+        ->get()
+        ->map(function ($booking) {
+            return [
+                'id' => $booking->id,
+                'guest_name' => $booking->name,
+                'vehicle' => $booking->taxi->brand_model ?? 'Unknown Model',
+                'start_date' => $booking->pickup_datetime,
+                'end_date' => $booking->return_datetime,
+                'total' => $booking->total_amount,
+                'status' => $booking->status,
+            ];
+        });
 
-    return $taxiBookings->map(function ($booking) {
-        return [
-            'id'        => $booking->id,
-            'guest'     => $booking->name,
-            'vehicle'   => $booking->taxi->brand_model ?? 'Taxi',
-            'pickup'    => $booking->pickup_datetime,
-            'status'    => ucfirst($booking->status),
-            'amount'    => $booking->total_amount,
-        ];
-    })->toArray();
+    return $bookings;
 }
 
 
@@ -178,23 +181,74 @@ class CarRenterControlPanel extends Controller
 {
     $partnerId = Auth::guard('car_renter')->id();
 
-    $bookings = Reservation::whereHas('car', function($q) use ($partnerId) {
+    /* ---------------- CAR BOOKINGS ---------------- */
+    $carBookings = Reservation::whereHas('car', function($q) use ($partnerId) {
             $q->where('car_renter_id', $partnerId);
         })
         ->with(['car.model', 'user'])
         ->latest()
-        ->get();
+        ->get()
+        ->map(function ($b) {
+            return [
+                'type' => 'car',
+                'id' => $b->id,
+                'guest' => $b->user->name ?? 'Guest',
+                'vehicle' => $b->car->model->model_name ?? 'Car',
+                'date_from' => $b->start_date,
+                'date_to' => $b->end_date,
+                'status' => $b->status,
+                'amount' => $b->total_price,
+            ];
+        });
+
+    /* ---------------- TAXI BOOKINGS ---------------- */
+    $taxiBookings = TaxiBooking::whereHas('taxi', function($q) use ($partnerId) {
+            $q->where('car_renter_id', $partnerId);
+        })
+        ->with(['taxi'])
+        ->latest()
+        ->get()
+        ->map(function ($t) {
+            return [
+                'type' => 'taxi',
+                'id' => $t->id,
+                'guest' => $t->name,
+                'vehicle' => $t->taxi->brand_model ?? 'Taxi',
+                'date_from' => $t->pickup_datetime,
+                'date_to' => $t->return_datetime,
+                'status' => $t->status,
+                'amount' => $t->total_amount,
+            ];
+        });
+
+    /* ---- MERGE BOTH INTO ONE LIST ---- */
+    $bookings = $carBookings
+        ->merge($taxiBookings)
+        ->sortByDesc('date_from')
+        ->values(); // re-index
 
     return view('car_rentals.manage_bookings', compact('bookings'));
 }
 
 public function updateBookingStatus(Request $request, $id)
 {
-    $booking = Reservation::findOrFail($id);
-    $booking->status = $request->status;
-    $booking->save();
+    $type = $request->type; // "car" or "taxi"
 
-    return back()->with('success', 'Booking status updated!');
+    if ($type === 'car') {
+        // Update Car Reservation
+        $booking = Reservation::findOrFail($id);
+        $booking->status = $request->status;
+        $booking->save();
+
+    } else {
+        // Update Taxi Booking
+        $booking = TaxiBooking::findOrFail($id);
+        $booking->status = $request->status;
+        $booking->save();
+    }
+
+    return back()->with('success', 'Booking status updated successfully!');
 }
+
 
 }

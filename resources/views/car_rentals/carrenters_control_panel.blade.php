@@ -177,29 +177,31 @@
             </thead>
 
             <tbody class="divide-y divide-gray-200">
-                @forelse($taxiBookings as $taxi)
-                <tr class="hover:bg-gray-50">
-                    <td class="px-4 py-4 text-sm font-medium">#TAXI{{ $taxi['id'] }}</td>
-                    <td class="px-4 py-4 text-sm">{{ $taxi['guest'] }}</td>
-                    <td class="px-4 py-4 text-sm">{{ $taxi['vehicle'] }}</td>
-                    <td class="px-4 py-4 text-sm">{{ $taxi['pickup'] }}</td>
+              @forelse ($taxiBookings as $booking)
+              <tr>
+                  <td class="px-4 py-4 text-sm font-medium">#TAXI{{ $booking['id'] }}</td>
+                  <td class="px-4 py-4 text-sm">{{ $booking['guest_name'] }}</td>
+                  <td class="px-4 py-4 text-sm">{{ $booking['vehicle'] }}</td>
 
-                    <td class="px-4 py-4">
-                        <span class="inline-flex px-3 py-1 text-xs rounded-full 
-                            @if($taxi['status']=='Confirmed') bg-green-100 text-green-700
-                            @elseif($taxi['status']=='Pending') bg-yellow-100 text-yellow-700
-                            @else bg-red-100 text-red-700 @endif">
-                            {{ $taxi['status'] }}
-                        </span>
-                    </td>
+                  <td class="px-4 py-4 text-sm">
+                      {{ $booking['start_date'] }} → {{ $booking['end_date'] }}
+                  </td>
+                  <td class="px-4 py-4 text-sm">
+                      <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs">
+                          {{ ucfirst($booking['status']) }}
+                      </span>
+                  </td>
 
-                    <td class="px-4 py-4 text-right text-sm font-bold">
-                        ${{ number_format($taxi['amount'], 2) }}
-                    </td>
-                </tr>
-                @empty
-                <tr><td colspan="6" class="p-4 text-center text-gray-500">No taxi bookings found.</td></tr>
-                @endforelse
+                  <td class="px-4 py-4 text-sm">{{ $booking['total'] }}</td>
+
+                  
+              </tr>
+              @empty
+              <tr>
+                  <td colspan="6" class="text-center py-4 text-gray-500">No taxi bookings found</td>
+              </tr>
+              @endforelse
+
             </tbody>
         </table>
     </div>
