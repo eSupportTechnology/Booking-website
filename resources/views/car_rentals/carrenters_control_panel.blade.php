@@ -23,11 +23,23 @@
     </div>
 
     <!-- Statistics Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6">
       <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wide">Total Properties</p>
+            <p class="text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wide">Total Taxies</p>
+            <p class="text-2xl sm:text-3xl font-bold text-gray-800 mt-1 sm:mt-2">30</p>
+          </div>
+          <div class="bg-[#1F8FB2] bg-opacity-10 p-2 sm:p-3 rounded-xl">
+            <i class="fas fa-building text-[#1F8FB2] text-xl sm:text-2xl"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wide">Total Cars</p>
             <p class="text-2xl sm:text-3xl font-bold text-gray-800 mt-1 sm:mt-2">30</p>
           </div>
           <div class="bg-[#1F8FB2] bg-opacity-10 p-2 sm:p-3 rounded-xl">
@@ -73,94 +85,126 @@
       </div>
     </div>
 
-    <!-- Recent Bookings Table -->
-  <div class="bg-white rounded-2xl shadow-lg border border-gray-100 w-full overflow-hidden">
-  <!-- Header -->
-  <div class="p-6 border-b border-gray-100">
-    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-      <h2 class="text-2xl font-bold text-gray-800">Recent Bookings</h2>
-      <a href="#" class="text-[#1F8FB2] hover:text-[#3CC0E9] font-medium">
-        View All <i class="fas fa-arrow-right ml-1"></i>
-      </a>
-    </div>
-  </div>
+<!-- Recent Bookings -->
+<div class="bg-white rounded-2xl shadow-lg border border-gray-100 w-full overflow-hidden">
 
-  <!-- === Desktop/Table (md and up) === -->
-  <div class="hidden md:block w-full overflow-x-auto">
-    <div class="w-full max-w-full">
-      <table class="w-full border-collapse">
-        <thead class="bg-gray-50">
-          <tr>
-            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Booking ID</th>
-            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Guest</th>
-            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Property</th>
-            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Check-in</th>
-            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Status</th>
-            <th class="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Earnings</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-200">
-          <tr class="hover:bg-gray-50">
-            <td class="px-4 py-4 text-sm font-medium text-gray-900">#B001</td>
-            <td class="px-4 py-4 text-sm text-gray-900">John Doe</td>
-            <td class="px-4 py-4 text-sm text-gray-900">Luxury Apartment</td>
-            <td class="px-4 py-4 text-sm text-gray-900">2025-06-06</td>
-            <td class="px-4 py-4">
-              <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Confirmed</span>
-            </td>
-            <td class="px-4 py-4 text-right text-sm font-bold text-green-600">$1200</td>
-          </tr>
-          <tr class="hover:bg-gray-50">
-            <td class="px-4 py-4 text-sm font-medium text-gray-900">#B002</td>
-            <td class="px-4 py-4 text-sm text-gray-900">Jane Smith</td>
-            <td class="px-4 py-4 text-sm text-gray-900">Cozy Studio</td>
-            <td class="px-4 py-4 text-sm text-gray-900">2025-06-10</td>
-            <td class="px-4 py-4">
-              <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span>
-            </td>
-            <td class="px-4 py-4 text-right text-sm font-bold text-green-600">$800</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
+    <!-- Header -->
+    <div class="p-6 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-center">
+        <h2 class="text-2xl font-bold text-gray-800">Recent Bookings</h2>
+        <a href="{{ route('car_rentals.manage_bookings') }}"
+       class="text-[#1F8FB2] font-semibold text-sm flex items-center hover:text-[#166986]">
+        View All →
+    </a>
 
-  <!-- === Mobile Cards (sm and below) === -->
-  <div class="block md:hidden p-4 space-y-3">
-    <!-- booking card 1 -->
-    <div class="bg-gray-50 rounded-lg p-4 flex items-start justify-between">
-      <div class="flex-1">
-        <div class="flex items-center justify-between">
-          <div class="text-sm font-medium text-gray-900">#B001</div>
-          <div class="text-sm font-bold text-green-600">$1200</div>
+        {{-- Toggle Buttons --}}
+        <div class="flex space-x-2 mt-3 sm:mt-0">
+            <button 
+                onclick="showBookings('cars')" 
+                id="btnCars"
+                class="px-4 py-2 rounded-lg text-sm font-semibold bg-[#1F8FB2] text-white">
+                Car Bookings
+            </button>
+
+            <button 
+                onclick="showBookings('taxis')" 
+                id="btnTaxis"
+                class="px-4 py-2 rounded-lg text-sm font-semibold bg-gray-200 text-gray-700">
+                Taxi Bookings
+            </button>
         </div>
-        <div class="mt-2 text-sm text-gray-700">John Doe — <span class="font-medium">Luxury Apartment</span></div>
-        <div class="mt-1 text-xs text-gray-500">Check-in: 2025-06-06</div>
-      </div>
-      <div class="ml-3 flex-shrink-0">
-        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Confirmed</span>
-      </div>
     </div>
 
-    <!-- booking card 2 -->
-    <div class="bg-gray-50 rounded-lg p-4 flex items-start justify-between">
-      <div class="flex-1">
-        <div class="flex items-center justify-between">
-          <div class="text-sm font-medium text-gray-900">#B002</div>
-          <div class="text-sm font-bold text-green-600">$800</div>
-        </div>
-        <div class="mt-2 text-sm text-gray-700">Jane Smith — <span class="font-medium">Cozy Studio</span></div>
-        <div class="mt-1 text-xs text-gray-500">Check-in: 2025-06-10</div>
-      </div>
-      <div class="ml-3 flex-shrink-0">
-        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span>
-      </div>
+
+    <!-- Car Bookings Table -->
+    <div id="carBookings" class="w-full overflow-x-auto">
+        <table class="w-full border-collapse">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">ID</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Guest</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Car</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Dates</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Status</th>
+                    <th class="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Total</th>
+                </tr>
+            </thead>
+
+            <tbody class="divide-y divide-gray-200">
+              @forelse($carBookings as $booking)
+              <tr class="hover:bg-gray-50">
+                  <td class="px-4 py-4 text-sm font-medium">#CAR{{ $booking['id'] }}</td>
+                  <td class="px-4 py-4 text-sm">{{ $booking['guest_name'] }}</td>
+                  <td class="px-4 py-4 text-sm">{{ $booking['vehicle'] }}</td>
+
+                  <td class="px-4 py-4 text-sm">
+                      {{ $booking['start_date'] }} → {{ $booking['end_date'] }}
+                  </td>
+
+                  <td class="px-4 py-4">
+                      <span class="inline-flex px-3 py-1 text-xs rounded-full 
+                          @if($booking['status']=='Confirmed') bg-green-100 text-green-700 
+                          @elseif($booking['status']=='Pending') bg-yellow-100 text-yellow-700 
+                          @else bg-red-100 text-red-700 @endif">
+                          {{ $booking['status'] }}
+                      </span>
+                  </td>
+
+                  <td class="px-4 py-4 text-right text-sm font-bold">
+                      ${{ number_format($booking['amount'], 2) }}
+                  </td>
+              </tr>
+              @empty
+              <tr><td colspan="6" class="p-4 text-center text-gray-500">No car bookings found.</td></tr>
+              @endforelse
+          </tbody>
+
+        </table>
     </div>
 
-    <!-- More cards... (generate from loop as needed) -->
-  </div>
-  </div>
 
+    <!-- Taxi Bookings Table -->
+    <div id="taxiBookings" class="hidden w-full overflow-x-auto">
+        <table class="w-full border-collapse">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">ID</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Guest</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Taxi</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Pick-up</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Status</th>
+                    <th class="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Total</th>
+                </tr>
+            </thead>
+
+            <tbody class="divide-y divide-gray-200">
+                @forelse($taxiBookings as $taxi)
+                <tr class="hover:bg-gray-50">
+                    <td class="px-4 py-4 text-sm font-medium">#TAXI{{ $taxi['id'] }}</td>
+                    <td class="px-4 py-4 text-sm">{{ $taxi['guest'] }}</td>
+                    <td class="px-4 py-4 text-sm">{{ $taxi['vehicle'] }}</td>
+                    <td class="px-4 py-4 text-sm">{{ $taxi['pickup'] }}</td>
+
+                    <td class="px-4 py-4">
+                        <span class="inline-flex px-3 py-1 text-xs rounded-full 
+                            @if($taxi['status']=='Confirmed') bg-green-100 text-green-700
+                            @elseif($taxi['status']=='Pending') bg-yellow-100 text-yellow-700
+                            @else bg-red-100 text-red-700 @endif">
+                            {{ $taxi['status'] }}
+                        </span>
+                    </td>
+
+                    <td class="px-4 py-4 text-right text-sm font-bold">
+                        ${{ number_format($taxi['amount'], 2) }}
+                    </td>
+                </tr>
+                @empty
+                <tr><td colspan="6" class="p-4 text-center text-gray-500">No taxi bookings found.</td></tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+
+</div>
 
 
     <!-- Chart Section -->
@@ -348,5 +392,28 @@
       location.reload();
     }, 300);
   });
+</script>
+<!-- Toggle JS -->
+<script>
+function showBookings(type) {
+    let car = document.getElementById('carBookings');
+    let taxi = document.getElementById('taxiBookings');
+    let btnCars = document.getElementById('btnCars');
+    let btnTaxis = document.getElementById('btnTaxis');
+
+    if(type === 'cars') {
+        car.classList.remove('hidden');
+        taxi.classList.add('hidden');
+        btnCars.classList.add('bg-[#1F8FB2]', 'text-white');
+        btnTaxis.classList.remove('bg-[#1F8FB2]', 'text-white');
+        btnTaxis.classList.add('bg-gray-200', 'text-gray-700');
+    } else {
+        taxi.classList.remove('hidden');
+        car.classList.add('hidden');
+        btnTaxis.classList.add('bg-[#1F8FB2]', 'text-white');
+        btnCars.classList.remove('bg-[#1F8FB2]', 'text-white');
+        btnCars.classList.add('bg-gray-200', 'text-gray-700');
+    }
+}
 </script>
 @endsection
