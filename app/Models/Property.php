@@ -153,7 +153,7 @@ class Property extends Model
 
     public function bookings()
     {
-        return $this->hasMany(Booking::class);
+        return $this->hasMany(Booking::class, 'property_id');
     }
 
     public function deals()
