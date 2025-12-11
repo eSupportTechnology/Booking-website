@@ -608,19 +608,40 @@
 
                 <div class="w-full lg:w-auto lg:max-w-xs">
                     <div class="bg-blue-100 rounded-lg py-4 px-4 space-y-4">
-                        @if ($property->pricing)
-                            <div>
-                                <h3 class="font-bold text-xs">Pricing Details</h3>
-                                <p class="text-xs">Price per Night: @currency($property->pricing->price_per_night ?? ($property->pricing->base_price ?? 0), $property->pricing->currency ?? 'USD')</p>
-                                @if ($property->pricing->discount_percent)
-                                    <p class="text-xs text-green-600">Discount:
-                                        {{ $property->pricing->discount_percent }}%</p>
-                                @endif
-                                @if ($property->pricing->currency)
-                                    <p class="text-xs">Currency: {{ strtoupper($property->pricing->currency) }}</p>
-                                @endif
-                            </div>
-                        @endif
+                       @php
+                        // Normalize pricing to a single model
+                        $pricing = $property->pricing;
+
+                        if ($pricing instanceof \Illuminate\Support\Collection) {
+                            $pricing = $pricing->first();
+                        }
+
+                        // Safely extract pricing values
+                        $pricePerNight = $pricing->price_per_night ?? $pricing->base_price ?? 0;
+                        $currency = $pricing->currency ?? 'USD';
+                        $discount = $pricing->discount_percent ?? null;
+                    @endphp
+
+                    @if ($pricing)
+                        <div>
+                            <h3 class="font-bold text-xs">Pricing Details</h3>
+
+                            <p class="text-xs">
+                                Price per Night:
+                                @currency($pricePerNight, $currency)
+                            </p>
+
+                            @if ($discount)
+                                <p class="text-xs text-green-600">
+                                    Discount: {{ $discount }}%
+                                </p>
+                            @endif
+
+                            <p class="text-xs">Currency: {{ strtoupper($currency) }}</p>
+                        </div>
+                    @endif
+
+
 
                         @if ($property->services)
                             <div>

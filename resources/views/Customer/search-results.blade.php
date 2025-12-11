@@ -248,17 +248,22 @@ use Illuminate\Support\Facades\DB;
               // price: support Collection | Model | fallback DB
               $price = null;
 
-              // If single pricing exists
-              if ($property->pricing && $property->pricing->price_per_night) {
+              // If pricing is a single model
+              if ($property->pricing && !($property->pricing instanceof \Illuminate\Support\Collection)) {
                   $price = $property->pricing->price_per_night;
               }
-              // If multiple rooms exist use lowest room price
+              // If pricing is a collection → take first() price
+              elseif ($property->pricing instanceof \Illuminate\Support\Collection && $property->pricing->count()) {
+                  $price = $property->pricing->first()->price_per_night;
+              }
+              // If rooms exist → minimum room price
               elseif ($property->rooms && $property->rooms->count()) {
                   $price = $property->rooms->min('price_per_night');
               }
 
-              // Final fallback
+              // final fallback
               $price = $price ?? 0;
+
 
               $short = Str::limit(strip_tags($property->description ?? ''), 140);
             @endphp

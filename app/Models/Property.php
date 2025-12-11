@@ -93,7 +93,7 @@ class Property extends Model
 
     public function pricing()
 {
-    return $this->hasMany(PropertyPricing::class, 'property_id');
+    return $this->hasOne(PropertyPricing::class, 'property_id');
 }
 
 
