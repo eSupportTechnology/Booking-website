@@ -108,7 +108,7 @@ class AirportTaxiBookingController extends Controller
             'payment_status'   => 'pending',
 
             // Status
-            'status'           => 'active',
+            'status'           => 'pending',
         ]);
 
         return redirect()

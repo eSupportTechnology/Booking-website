@@ -68,4 +68,10 @@ class TaxiBooking extends Model
     {
         return $this->belongsTo(Driver::class, 'driver_id');
     }
+
+    public function bookings()
+{
+    return $this->hasMany(TaxiBooking::class, 'taxi_id');
+}
+
 }

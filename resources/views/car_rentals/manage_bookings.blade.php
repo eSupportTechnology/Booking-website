@@ -46,58 +46,89 @@
         <table class="w-full border-collapse">
             <thead class="bg-gray-100">
                 <tr>
+                    <th class="p-3 text-left text-xs font-semibold">Type</th>
                     <th class="p-3 text-left text-xs font-semibold">Booking ID</th>
                     <th class="p-3 text-left text-xs font-semibold">Guest</th>
-                    <th class="p-3 text-left text-xs font-semibold">Property</th>
+                    <th class="p-3 text-left text-xs font-semibold">Vehicle</th>
                     <th class="p-3 text-left text-xs font-semibold">Dates</th>
-                    <th class="p-3 text-left text-xs font-semibold">Guests</th>
                     <th class="p-3 text-left text-xs font-semibold">Status</th>
-                    <th class="p-3 text-right text-xs font-semibold">Amount (USD)</th>
-                    <th class="p-3 text-right text-xs font-semibold">Actions</th>
+                    <th class="p-3 text-right text-xs font-semibold">Amount</th>
                 </tr>
             </thead>
 
             <tbody class="divide-y divide-gray-200">
-                @foreach($bookings as $booking)
-                <tr class="hover:bg-gray-50">
-                    <td class="p-3 text-sm font-medium">#{{ $booking->id }}</td>
+                @forelse($bookings as $b)
+                    <tr class="hover:bg-gray-50">
+                        
+                        <!-- Type -->
+                        <td class="p-3 text-sm font-bold">
+                            @if($b['type'] == 'car')
+                                <span class="text-blue-600">CAR</span>
+                            @else
+                                <span class="text-green-600">TAXI</span>
+                            @endif
+                        </td>
 
-                    <td class="p-3 text-sm">{{ $booking->user->name }}</td>
+                        <!-- Booking ID -->
+                        <td class="p-3 text-sm font-medium">
+                            @if($b['type'] == 'car')
+                                #CAR{{ $b['id'] }}
+                            @else
+                                #TAXI{{ $b['id'] }}
+                            @endif
+                        </td>
 
-                    <td class="p-3 text-sm">
-                        {{ $booking->car->model->model_name ?? 'Car' }}
-                    </td>
+                        <td class="p-3 text-sm">{{ $b['guest'] }}</td>
+                        <td class="p-3 text-sm">{{ $b['vehicle'] }}</td>
 
-                    <td class="p-3 text-sm">
-                        {{ $booking->start_date }} → {{ $booking->end_date }}
-                    </td>
+                        <!-- Dates -->
+                        <td class="p-3 text-sm">
+                            {{ $b['date_from'] }} → {{ $b['date_to'] }}
+                        </td>
 
-                    <td class="p-3 text-sm">{{ $booking->guests ?? 1 }}</td>
+                        <!-- Status -->
+                        <td class="p-3 text-sm">
+                            <span class="
+                                inline-flex px-3 py-1 text-xs font-semibold rounded-full
+                                @if($b['status']=='pending') bg-yellow-100 text-yellow-700
+                                @elseif($b['status']=='confirmed') bg-green-100 text-green-700
+                                @elseif($b['status']=='cancelled') bg-red-100 text-red-700
+                                @elseif($b['status']=='completed') bg-blue-100 text-blue-700
+                                @endif
+                            ">
+                                {{ ucfirst($b['status']) }}
+                            </span>
 
-                    <td class="p-3 text-sm">
-                        <form action="{{ route('booking.update_status', $booking->id) }}" method="POST">
-                            @csrf
-                            <select name="status"
-                                class="border rounded px-2 py-1 text-sm"
-                                onchange="this.form.submit()">
+                            <!-- Change Status Dropdown -->
+                            <form action="{{ route('booking.update_status', $b['id']) }}" method="POST" class="mt-1">
+                                @csrf
+                                <input type="hidden" name="type" value="{{ $b['type'] }}">
 
-                                <option value="pending" {{ $booking->status == 'pending' ? 'selected' : '' }}>Pending</option>
-                                <option value="confirmed" {{ $booking->status == 'confirmed' ? 'selected' : '' }}>Confirmed</option>
-                                <option value="cancelled" {{ $booking->status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
-                            </select>
-                        </form>
-                    </td>
+                                <select name="status" class="border rounded px-2 py-1 text-sm" onchange="this.form.submit()">
+                                    <option value="pending" {{ $b['status']=='pending' ? 'selected' : '' }}>Pending</option>
+                                    <option value="confirmed" {{ $b['status']=='confirmed' ? 'selected' : '' }}>Confirmed</option>
+                                    <option value="cancelled" {{ $b['status']=='cancelled' ? 'selected' : '' }}>Cancelled</option>
+                                    <option value="completed" {{ $b['status']=='completed' ? 'selected' : '' }}>Completed</option>
+                                </select>
+                            </form>
+                        </td>
 
-                    <td class="p-3 text-right font-bold">${{ number_format($booking->total_price, 2) }}</td>
 
-                    <td class="p-3 text-right">
-                        <button class="bg-blue-500 text-white px-3 py-1 rounded text-sm">Message</button>
-                    </td>
-                </tr>
-                @endforeach
+                        <!-- Amount -->
+                        <td class="p-3 text-right font-bold">
+                            ${{ number_format($b['amount'], 2) }}
+                        </td>
+
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="7" class="p-3 text-center text-gray-400">
+                            No bookings found.
+                        </td>
+                    </tr>
+                @endforelse
             </tbody>
         </table>
-
     </div>
 
 </div>
