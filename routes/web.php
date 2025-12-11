@@ -1025,22 +1025,20 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/rental/airport/{id}', \App\Http\Controllers\Admin\AirportTransferDetailController::class)->name('airport.details');
         
         Route::get('/rental/carrentals', 
-    [\App\Http\Controllers\Admin\CarRentalController::class, 'index']
-)->name('rental.carrentals');
+            [\App\Http\Controllers\Admin\CarRentalController::class, 'index']
+        )->name('rental.carrentals');
 
-Route::get('/rental/carrentals/{id}', 
-    [\App\Http\Controllers\Admin\CarRentalDetailController::class, 'show']
-)->name('rental.carrentals.details');
+        Route::get('/rental/carrentals/{id}', 
+            [\App\Http\Controllers\Admin\CarRentalDetailController::class, 'show']
+        )->name('rental.carrentals.details');
 
-Route::delete('/rental/carrentals/{id}/delete', 
-    [CarRentalController::class, 'destroy']
-)->name('rental.carrentals.delete');
+        Route::delete('/rental/carrentals/{id}/delete', 
+            [CarRentalController::class, 'destroy']
+        )->name('rental.carrentals.delete');
 
-Route::patch('/rental/carrentals/{id}/status', 
-    [\App\Http\Controllers\Admin\CarRentalController::class, 'updateStatus']
-)->name('rental.carrentals.status');
-
-
+        Route::patch('/rental/carrentals/{id}/status', 
+            [\App\Http\Controllers\Admin\CarRentalController::class, 'updateStatus']
+        )->name('rental.carrentals.status');
 
 
         //admin dashboard admin account management
