@@ -175,10 +175,13 @@
                     </button>
                     <div x-show="openRental" x-collapse class="ml-8 mt-2 space-y-1 border-l border-blue-300 pl-4">
                         @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('view_taxi'))
-                        <a href="{{ route('admin.rental.taxi') }}" class="block py-1 hover:text-blue-700 font-semibold">Car Rental</a>
+                        <a href="{{ route('admin.rental.taxi') }}" class="block py-1 hover:text-blue-700 font-semibold">Airport Taxi</a>
                         @endif
                         @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('view_airport'))
-                        <a href="{{ route('admin.rental.airport') }}" class="block py-1 hover:text-blue-700 font-semibold">Airport Taxi</a>
+                        <a href="{{ route('admin.rental.airport') }}" class="block py-1 hover:text-blue-700 font-semibold">Airport Transfers</a>
+                        @endif
+                        @if(Auth::guard('admin')->user()->isSuperAdmin() || Auth::guard('admin')->user()->can('view_airport'))
+                        <a href="{{ route('admin.rental.carrentals') }}" class="block py-1 hover:text-blue-700 font-semibold">Car Rentals</a>
                         @endif
                     </div>
                 </div>

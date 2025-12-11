@@ -63,23 +63,18 @@ class SearchController extends Controller
     $this->applyFiltersToQuery($resultsQuery, $request);
 
     // ---- IMPORTANT: CHECK-IN + CHECK-OUT FILTER (Date Availability) ----
+    // CHECK DATE AVAILABILITY AGAINST BOOKINGS TABLE
     if ($request->filled('checkIn') && $request->filled('checkOut')) {
+
         $checkIn  = Carbon::parse($request->checkIn)->format('Y-m-d');
         $checkOut = Carbon::parse($request->checkOut)->format('Y-m-d');
 
-        // EXAMPLE: property_rooms table has unavailable dates
-        // If your app uses a different table, tell me — I will adjust.
-        $resultsQuery->whereDoesntHave('reservations', function($r) use ($checkIn, $checkOut) {
-            $r->where(function ($q) use ($checkIn, $checkOut) {
-                $q->whereBetween('check_in', [$checkIn, $checkOut])
-                  ->orWhereBetween('check_out', [$checkIn, $checkOut])
-                  ->orWhere(function ($x) use ($checkIn, $checkOut) {
-                      $x->where('check_in', '<=', $checkIn)
-                        ->where('check_out', '>=', $checkOut);
-                  });
-            });
+        $resultsQuery->whereDoesntHave('bookings', function ($booking) use ($checkIn, $checkOut) {
+            $booking->where('check_in', '<', $checkOut)
+                    ->where('check_out', '>', $checkIn);
         });
     }
+
 
     // ---- GUESTS FILTER (if minimum capacity required) ----
     if ($request->filled('adults')) {

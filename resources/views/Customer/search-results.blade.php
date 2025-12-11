@@ -57,143 +57,79 @@ use Illuminate\Support\Facades\DB;
 
 <div class="container-max px-4 sm:px-6 lg:px-8 py-6">
 
-  {{-- Top Search (keeps GET params) --}}
-  <div class="relative z-10 -mt-8 px-2 sm:px-4">
-    @php $searchData = $currentFilters ?? (request()->all() ?? []); @endphp
-
-    <form id="top-search" method="GET" action="{{ route('customer.search') }}"
-          x-data="{
-            // initial values from server
-            query: '{{ addslashes($searchData['destination'] ?? request('destination','')) }}',
-            checkIn: '{{ $searchData['checkIn'] ?? request('checkIn','') }}',
-            checkOut: '{{ $searchData['checkOut'] ?? request('checkOut','') }}',
-            flexibleOption: '{{ $searchData['flexibleOption'] ?? request('flexibleOption','') }}',
-            adults: {{ (int)($searchData['adults'] ?? request('adults',2)) }},
-            children: {{ (int)($searchData['children'] ?? request('children',0)) }},
-            rooms: {{ (int)($searchData['rooms'] ?? request('rooms',1)) }},
-            pets: {{ !empty($searchData['pets'] ?? request('pets')) ? 'true' : 'false' }},
+  <!-- SEARCH BAR MATCHING HOME UI -->
+<div class="relative z-30 w-full flex justify-center px-4 -mt-10">
+    <form action="{{ route('customer.search') }}" method="GET"
+        x-data="{
+            query: '{{ request('destination') }}',
             results: [],
-            openSuggestions: false,
-            selectCity(city) {
-              this.query = city;
-              this.openSuggestions = false;
+            open: false,
+            fetchSuggestions() {
+                if (this.query.length < 2) { this.results = []; this.open = false; return; }
+                axios.get('{{ route('customer.search.suggest') }}', { params: { q: this.query } })
+                    .then(res => { this.results = res.data; this.open = true; });
             },
-            fetchSuggestions: _.debounce(function() {
-              if (!this.query || this.query.length < 2) { this.results = []; this.openSuggestions = false; return; }
-              axios.get('{{ route('customer.search.suggest') }}', { params: { q: this.query } })
-                .then(res => {
-                  this.results = Array.isArray(res.data) ? res.data : [];
-                  this.openSuggestions = this.results.length > 0;
-                })
-                .catch(() => { this.results = []; this.openSuggestions = false; });
-            }, 250)
-          }"
-          class="mb-6 bg-white p-3 rounded-lg shadow-sm flex flex-col sm:flex-row gap-3 items-stretch"
-    >
+            choose(city) { this.query = city; this.open = false; }
+        }"
+        class="bg-white shadow-xl border border-gray-200 rounded-2xl
+               flex flex-col md:flex-row items-center gap-3 md:gap-0
+               w-full max-w-6xl py-3 px-4 md:px-6 lg:px-8">
 
-      {{-- Destination w/ autocomplete --}}
-      <div class="flex-1 relative">
-        <div class="flex items-center gap-2 border rounded px-3 py-2">
-          <img src="{{ asset('assets/stay.svg') }}" alt="Stay" class="w-5 h-5" />
-          <input name="destination" x-model="query" @input="fetchSuggestions" @focus="fetchSuggestions"
-                 autocomplete="off" placeholder="Where are you going?"
-                 class="w-full bg-transparent focus:outline-none text-sm sm:text-base text-gray-800" />
+        <!-- DESTINATION -->
+        <div class="flex items-center gap-3 flex-1 px-2 md:border-r border-gray-200 relative">
+            <img src="{{ asset('assets/stay.svg') }}" class="w-6 h-6 opacity-70" />
+
+            <input type="text" name="destination" placeholder="Where are you going?"
+                x-model="query" @input="fetchSuggestions"
+                autocomplete="off"
+                class="w-full bg-transparent focus:outline-none text-gray-800 placeholder-gray-500" />
+
+            <!-- Suggestions Dropdown -->
+            <div x-show="open" @click.away="open = false"
+                 class="absolute z-50 left-0 right-0 bg-white border border-gray-200 rounded-xl shadow-lg mt-2 max-h-64 overflow-y-auto">
+                <template x-for="item in results" :key="item">
+                    <div @click="choose(item)"
+                         class="px-3 py-2 hover:bg-gray-100 cursor-pointer text-gray-700 text-sm"
+                         x-text="item"></div>
+                </template>
+            </div>
         </div>
 
-        <ul x-show="openSuggestions" x-cloak
-            @click.away="openSuggestions = false"
-            class="absolute left-0 right-0 mt-1 bg-white border rounded shadow max-h-60 overflow-auto z-50"
-            style="min-width:220px;">
-          <template x-for="city in results" :key="city">
-            <li @click="selectCity(city); $el.closest('form').dispatchEvent(new Event('input'))"
-                class="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm" x-text="city"></li>
-          </template>
-          <li x-show="results.length === 0" class="px-3 py-2 text-xs text-gray-500">No suggestions</li>
-        </ul>
-      </div>
-
-      <!-- Dates Selector -->
-        <div x-data="{ open: false, activeTab: 'check', checkIn: '', checkOut: '', flexibleOption: '' }"
-             class="relative flex-1 border-b md:border-b-0 md:border-r border-gray-300 px-2 py-1">
-            <button @click="open = !open" type="button"
-                class="flex items-center gap-2 w-full text-left text-sm">
-                <img src="{{ asset('assets/calender.svg') }}" class="w-5 h-5" />
-                <span class="text-gray-800 truncate text-sm sm:text-base">
-                    <template x-if="activeTab === 'check'">
-                        <span><span x-text="checkIn || '{{ __('messages.Check-in') }}'"></span> —
-                            <span x-text="checkOut || '{{ __('messages.Check-out') }}'"></span></span>
-                    </template>
-                    <template x-if="activeTab === 'flexible'">
-                        <span x-text="flexibleOption || 'Flexible dates'"></span>
-                    </template>
-                </span>
-            </button>
-
-      {{-- Guests --}}
-      <div class="flex-1 relative">
-        <div class="border rounded px-3 py-2 flex items-center gap-2">
-          <img src="{{ asset('assets/user.svg') }}" class="w-5 h-5" />
-          <button type="button" @click="$refs.guestsMenu.classList.toggle('hidden')" class="w-full text-left text-sm">
-            <span x-text="`${adults} adults · ${children} children · ${rooms} room${rooms>1?'s':''}`"></span>
-          </button>
+        <!-- DATES -->
+        <div class="flex items-center gap-3 flex-1 px-2 md:border-r border-gray-200 cursor-pointer"
+             @click="$dispatch('open-dates')">
+            <img src="{{ asset('assets/calender.svg') }}" class="w-6 h-6 opacity-70" />
+            <span class="text-gray-700">
+                {{ request('checkIn') ?: 'Check-in' }} — {{ request('checkOut') ?: 'Check-out' }}
+            </span>
         </div>
 
-        <div x-cloak x-ref="guestsMenu" class="hidden absolute right-0 mt-1 w-64 bg-white border rounded shadow p-3 z-40">
-          <div class="flex justify-between items-center mb-2"><span>Adults</span>
-            <div class="flex items-center gap-2">
-              <button type="button" @click="if(adults>1) adults--" class="px-2 bg-gray-100 rounded">−</button>
-              <span x-text="adults"></span>
-              <button type="button" @click="adults++" class="px-2 bg-gray-100 rounded">+</button>
-            </div>
-          </div>
-
-          <div class="flex justify-between items-center mb-2"><span>Children</span>
-            <div class="flex items-center gap-2">
-              <button type="button" @click="if(children>0) children--" class="px-2 bg-gray-100 rounded">−</button>
-              <span x-text="children"></span>
-              <button type="button" @click="children++" class="px-2 bg-gray-100 rounded">+</button>
-            </div>
-          </div>
-
-          <div class="flex justify-between items-center mb-3"><span>Rooms</span>
-            <div class="flex items-center gap-2">
-              <button type="button" @click="if(rooms>1) rooms--" class="px-2 bg-gray-100 rounded">−</button>
-              <span x-text="rooms"></span>
-              <button type="button" @click="rooms++" class="px-2 bg-gray-100 rounded">+</button>
-            </div>
-          </div>
-
-          <div class="flex items-center justify-between mb-3">
-            <span>Travelling with pets?</span>
-            <label class="inline-flex items-center cursor-pointer">
-              <input type="checkbox" x-model="pets" class="sr-only peer">
-              <div class="w-10 h-6 bg-gray-300 rounded-full peer-checked:bg-blue-600 relative transition-all">
-                <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-all peer-checked:translate-x-4"></div>
-              </div>
-            </label>
-          </div>
-
-          <div class="text-right">
-            <button type="button" @click="$refs.guestsMenu.classList.add('hidden')" class="px-3 py-1 bg-blue-600 text-white rounded text-sm">Done</button>
-          </div>
+        <!-- GUESTS -->
+        <div class="flex items-center gap-3 flex-1 px-2 md:border-r border-gray-200 cursor-pointer"
+             @click="$dispatch('open-guests')">
+            <img src="{{ asset('assets/user.svg') }}" class="w-6 h-6 opacity-70" />
+            <span class="truncate text-gray-700">
+                {{ request('adults', 2) }} adults · {{ request('children', 0) }} children · {{ request('rooms', 1) }} room
+            </span>
         </div>
-      </div>
 
-      {{-- Search button --}}
-      <div class="w-full md:w-auto">
-        <button type="submit" class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg">
-          Search
+        <!-- SEARCH BUTTON -->
+        <button type="submit"
+            class="bg-[#1F8FB2] hover:bg-[#0e7fa0] text-white font-semibold 
+                   px-6 py-3 rounded-xl text-base whitespace-nowrap">
+            Search
         </button>
-      </div>
 
-      {{-- Hidden inputs to make Alpine-managed values part of GET --}}
-      <input type="hidden" name="flexibleOption" x-bind:value="flexibleOption">
-      <input type="hidden" name="adults" x-bind:value="adults">
-      <input type="hidden" name="children" x-bind:value="children">
-      <input type="hidden" name="rooms" x-bind:value="rooms">
-      <input type="hidden" name="pets" x-bind:value="pets ? 1 : 0">
+        <!-- HIDDEN FIELDS -->
+        <input type="hidden" name="checkIn" value="{{ request('checkIn') }}">
+        <input type="hidden" name="checkOut" value="{{ request('checkOut') }}">
+        <input type="hidden" name="adults" value="{{ request('adults') }}">
+        <input type="hidden" name="children" value="{{ request('children') }}">
+        <input type="hidden" name="rooms" value="{{ request('rooms') }}">
+        <input type="hidden" name="pets" value="{{ request('pets') }}">
     </form>
-  </div>
+</div>
+
 
   <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
     {{-- Sidebar --}}
@@ -310,18 +246,19 @@ use Illuminate\Support\Facades\DB;
               }
 
               // price: support Collection | Model | fallback DB
-              $price = 0;
-              try {
-                  if (isset($property->pricing) && $property->pricing instanceof \Illuminate\Support\Collection) {
-                      $price = $property->pricing->min('price_per_night') ?? 0;
-                  } elseif (isset($property->pricing) && is_object($property->pricing)) {
-                      $price = $property->pricing->price_per_night ?? 0;
-                  } else {
-                      $price = DB::table('property_pricings')->where('property_id', $property->id)->min('price_per_night') ?? 0;
-                  }
-              } catch (\Throwable $e) {
-                  $price = 0;
+              $price = null;
+
+              // If single pricing exists
+              if ($property->pricing && $property->pricing->price_per_night) {
+                  $price = $property->pricing->price_per_night;
               }
+              // If multiple rooms exist use lowest room price
+              elseif ($property->rooms && $property->rooms->count()) {
+                  $price = $property->rooms->min('price_per_night');
+              }
+
+              // Final fallback
+              $price = $price ?? 0;
 
               $short = Str::limit(strip_tags($property->description ?? ''), 140);
             @endphp

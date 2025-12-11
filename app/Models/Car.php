@@ -46,6 +46,12 @@ class Car extends Model
         return $this->belongsTo(CarRenter::class, 'car_renter_id');
     }
 
+    public function carRenter()
+{
+    return $this->belongsTo(\App\Models\User::class, 'car_renter_id');
+}
+
+
     public function files()
     {
         return $this->hasMany(File::class, 'car_id');

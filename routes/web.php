@@ -25,7 +25,6 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Controllers\AccommodationController;
 use App\Http\Controllers\CarReservations\AirportTaxiController;
-use App\Http\Controllers\CarReservations\CarRentalController;
 use App\Http\Controllers\Admin\AdminAccountController;
 use App\Http\Controllers\Admin\CustomersController;
 use App\Http\Controllers\CarReservations\CarRenterAuthController;
@@ -41,7 +40,7 @@ use App\Http\Controllers\CarReservations\CarBookingController;
 use app\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\CarReservations\ReservationController;
 use App\Http\Controllers\Customer\AirportTaxiBookingController;
-
+use App\Http\Controllers\Admin\CarRentalController;
 
 
 
@@ -1024,6 +1023,25 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/rental/taxi/{id}', \App\Http\Controllers\Admin\TaxiDetailController::class)->name('taxi.details');
         Route::get('/rental/airport', \App\Http\Controllers\Admin\AirportTransferController::class)->name('rental.airport');
         Route::get('/rental/airport/{id}', \App\Http\Controllers\Admin\AirportTransferDetailController::class)->name('airport.details');
+        
+        Route::get('/rental/carrentals', 
+    [\App\Http\Controllers\Admin\CarRentalController::class, 'index']
+)->name('rental.carrentals');
+
+Route::get('/rental/carrentals/{id}', 
+    [\App\Http\Controllers\Admin\CarRentalDetailController::class, 'show']
+)->name('rental.carrentals.details');
+
+Route::delete('/rental/carrentals/{id}/delete', 
+    [CarRentalController::class, 'destroy']
+)->name('rental.carrentals.delete');
+
+Route::patch('/rental/carrentals/{id}/status', 
+    [\App\Http\Controllers\Admin\CarRentalController::class, 'updateStatus']
+)->name('rental.carrentals.status');
+
+
+
 
         //admin dashboard admin account management
         Route::get('/accounts', [AdminAccountController::class, 'index'])->name('accounts.index');

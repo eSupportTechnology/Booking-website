@@ -208,6 +208,11 @@
                 Search
             </button>
         </div>
+        <input type="hidden" name="adults" x-model="adults">
+        <input type="hidden" name="children" x-model="children">
+        <input type="hidden" name="rooms" x-model="rooms">
+        <input type="hidden" name="pets" x-model="pets">
+
     </form>
 </div>
 
