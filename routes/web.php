@@ -1586,6 +1586,7 @@ Route::get('/safety-resource-center', function () {
     return view('frontend.safety-resource-center');
 })->name('safety.resource.center');
 
+
 Route::middleware('auth:car_renter')->get(
     'car_rentals/carrenters_control_panel',
     [CarRenterControlPanel::class, 'controlPanel']
@@ -1598,5 +1599,11 @@ Route::get('/car_rentals/manage_bookings',
 Route::post('/car_rentals/update-booking-status/{id}', 
     [CarRenterControlPanel::class, 'updateBookingStatus']
 )->name('booking.update_status');
+
+Route::get('/how-we-work', function () {
+    return view('frontend.how-we-work');
+})->name('how.we.work');
+
+
 
 
