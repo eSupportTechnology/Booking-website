@@ -20,7 +20,7 @@
                     <ul class="list-none">
                         <li class="mb-1"><a href="{{ route('help.center') }}" class="text-gray-500 hover:text-gray-700">Manage your Trips</a></li>
                         <li class="mb-1"><a href="{{ route('help.center') }}" class="text-gray-500 hover:text-gray-700">Contact Customer Service</a></li>
-                        <li class="mb-1"><a href="#" class="text-gray-500 hover:text-gray-700">Safety Resource Center</a></li>
+                        <li class="mb-1"><a href="{{ route('safety.resource.center') }}" class="text-gray-500 hover:text-gray-700">Safety Resource Center</a></li>
                     </ul>
                 </div>
 
@@ -52,7 +52,7 @@
                     <h3 class="text-lg font-bold mb-2">About</h3>
                     <ul class="list-none">
                         <li class="mb-1"><a href="{{ route('about.booking') }}" class="text-gray-500 hover:text-gray-700">About {{ config('domains.domain') }}</a></li>
-                        <li class="mb-1"><a href="#" class="text-gray-500 hover:text-gray-700">How we work</a></li>
+                        <li class="mb-1"><a href="{{ route('how.we.work') }}" class="text-gray-500 hover:text-gray-700">How we work</a></li>
                         <li class="mb-1"><a href="#" class="text-gray-500 hover:text-gray-700">Sustainabilities</a></li>
                         <li class="mb-1"><a href="#" class="text-gray-500 hover:text-gray-700">Careers</a></li>
                         <li class="mb-1"><a href="#" class="text-gray-500 hover:text-gray-700">Investor relations</a></li>
