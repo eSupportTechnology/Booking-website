@@ -415,7 +415,24 @@
 
                 <h3 class="text-lg sm:text-sm font-semibold mb-2">Personalized recommendations</h3>
                 
-                
+                <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                    Some of our recommendation systems go beyond your search parameters and filters and make personalized recommendations based on how you have interacted with Booking.com systems such as destination postcards, nearby destinations, and our search results. If you’re based in the EEA, you can change your settings so our recommendation systems do not provide personalized recommendations. To do so:
+                </p>
+
+                <ul class="list-disc ml-6 text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2 space-y-1">
+                    <li>On our desktop or mobile site: Select “Manage personalized recommendations” in the footer.</li>
+                    <li>On our app: Select “Manage personalized recommendations” in the banner.</li>
+                    
+               
+                </ul>
+
+                <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                   Even if you do that, we may still retain some information about you so that we can provide you with our services and give you a more convenient experience, such as setting your language preference on our Platform based on where you are. This could be information that you provided (e.g. your phone number, email address) or that we gathered based on how you interact with our Platform. 
+                </p>
+
+                <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                    Your preference on personalized recommendations will apply to any device you have signed in to your Booking.com account. If you’re not signed in to your account, your preference will not apply to other devices, and it’ll be saved as part of your “cookies.” When that cookie expires, so will your preference.
+                </p>
 
                 <!-- Add additional paragraphs and bullet points as needed, all using text-sm sm:text-base, leading-5 sm:leading-6 -->
             </div>
@@ -431,11 +448,58 @@
                 </p>
 
                 <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
-                    In addition, guests can give separate “subscores” for specific Travel Experience aspects such as location, cleanliness, staff, comfort, facilities, value, and free Wifi. Guests submit their subscores and overall scores independently.
+                    In addition, guests can also give separate “subscores” for specific Travel Experience aspects such as: location, cleanliness, staff, comfort, facilities, value, and free Wifi. Guests submit their subscores and overall scores independently, so there’s no direct link between them.
                 </p>
 
-                <!-- Continue adding all content under 1F using the same classes -->
+                <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                    You can review an Accommodation that you booked through our Platform if you stayed there or arrived at the Accommodation but didn’t actually stay there. To edit a review you already submitted, contact our Customer Service team.
+                </p>
+
+                <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                    We have people and automated systems that specialize in detecting fake reviews submitted to our Platform. If we find any, we delete them and, if necessary, take action against whoever’s responsible.
+                </p>
+
+                <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                    Anyone who spots something problematic can always report it to our Customer Service team, and our Fraud team will investigate.
+                </p>
+
+                <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                    Ideally, we would publish every consumer review we receive, whether positive or negative, unless it breaches our 
+                    <span class="text-blue-600 underline">Content Standards and Guidelines</span>.
+                </p>
+
+                <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                    To make sure reviews are relevant, we may only accept reviews that are submitted within three months of checking out, and we may stop showing reviews once they’re 36 months old or if the Accommodation has a change of ownership.
+                </p>
+
+                <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                    An Accommodation may choose to reply to a review.
+                </p>
+
+                <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                    When you find multiple reviews, the most recent ones will be at the top, subject to a few other factors such as what language a review is in, whether it’s just a score or contains comments as well, etc. To make sure the most helpful reviews appear first, each factor can become more (or less) important, depending on how our Platform changes over time, for example.
+                </p>
+
+                <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                    If you would prefer us not to order reviews in our default way, you can sort them based on other factors, such as:
+                </p>
+
+                <ul class="list-disc ml-6 space-y-1 text-gray-700 text-sm sm:text-base leading-5 sm:leading-6 mt-2">
+                    <li>Newest first</li>
+                    <li>Oldest first</li>
+                    <li>Highest scores</li>
+                    <li>Lowest scores</li>
+                </ul>
+
+                <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                    We sometimes show external review scores from other well-known travel websites, and we make it clear when we’ve done this.
+                </p>
+
+                <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                    Reviews may contain translations powered by Google, not Booking.com. Google disclaims all warranties related to the translations, express or implied, including any warranties of accuracy, reliability, and any implied warranties of merchantability, fitness for a particular purpose, and non-infringement.
+                </p>
             </div>
+
 
             <!-- ============================= -->
             <!--        1G SECTION             -->
@@ -448,9 +512,18 @@
                 </p>
 
                 <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
-                    When you make a booking, you agree to pay the cost of the Travel Experience itself and any other taxes and fees that may apply.
+                    When you make a booking, you agree to pay the cost of the Travel Experience itself and any other taxes and fees that may apply (e.g. for any extras). Taxes and fees may vary for different reasons, such as the Service Provider’s location, the kind of room selected, and the number of guests. The price description indicates whether any taxes and fees are included or excluded.
+                </p>
+
+                <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                    You’ll be able to find more information about the price while you’re booking.
+                </p>
+
+                <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                    Our Platform provides descriptions of any equipment and facilities that Service Providers offer based on what they tell us. It also tells you how much extra they’ll cost, if anything.
                 </p>
             </div>
+
 
             <!-- ============================= -->
             <!--        1H SECTION             -->
@@ -464,10 +537,15 @@
 
                 <ul class="list-disc ml-6 text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2 space-y-1">
                     <li>The Service Provider charges you at the Accommodation.</li>
-                    <li>The Service Provider charges you in advance. We (or our affiliate) forward your Payment Method details to them.</li>
-                    <li>We organize your payment to the Service Provider in advance. We (or our affiliate) make sure the Service Provider is paid.</li>
+                    <li>The Service Provider charges you in advance. We (or our affiliate) will take your Payment Method details and forward them to the Service Provider.</li>
+                    <li>We organize your payment to the Service Provider in advance. We (or our affiliate) will take your Payment Method details and make sure the Service Provider is paid.</li>
                 </ul>
+
+                <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                    If you cancel a booking or don’t show up, any cancellation/no-show fee and any refund will depend on the Service Provider’s cancellation/no-show policy.
+                </p>
             </div>
+
 
             <!-- ============================= -->
             <!--        1I SECTION             -->
@@ -476,9 +554,18 @@
                 <h3 class="text-lg sm:text-xl font-semibold mb-2">1I. Host type</h3>
 
                 <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6">
-                    We ask Service Providers to tell us if they’re acting as a “private host” or “professional host,” as defined by EU law. This label has no tax relevance but is required under EU consumer law.
+                    We ask Service Providers, wherever they are in the world, to tell us if they’re acting as a “private host” or as a “professional host,” as defined by EU law.
+                </p>
+
+                <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                    EU consumer law says we have to tell you this. So if you’re in the European Economic Area (EEA), Switzerland, or the United Kingdom, you might find that some Accommodations in our search results have a “managed by a private host” label and a description of what that means. All other Accommodations, to the best of our knowledge, are managed by “professional hosts.”
+                </p>
+
+                <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                    This label has no relevance in terms of tax, including VAT and other “indirect taxes” that relate to added value, sales, or consumption.
                 </p>
             </div>
+
 
             <!-- ============================= -->
             <!--        1J SECTION             -->
@@ -487,9 +574,34 @@
                 <h3 class="text-lg sm:text-xl font-semibold mb-2">1J. Star ratings, review scores, and quality ratings</h3>
 
                 <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6">
-                    Star ratings look like 1–5 yellow stars, review scores are blue squares from 1–10, and quality ratings are yellow squares from 1–5. We don’t assign review scores ourselves; customers do.
+                    Star ratings look like 1–5 yellow stars next to the property’s name.
+                </p>
+
+                <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                    We don’t assign star ratings. Depending on local regulations, they’re assigned either by the Service Providers themselves or by independent third parties (e.g. organizations that rate hotels). Either way, star ratings show you how Accommodations measure up in terms of—among other things—value, facilities, and available services. We don’t impose our own standards for star ratings, and we don’t review these star ratings, but if we become aware that a star rating is inaccurate, we’ll ask the Service Provider to either prove they deserve it or adjust it.
+                </p>
+
+                <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                    Review scores look like a blue square with a white number from 1 to 10. We don’t assign review scores. Our customers do. Be sure to refer to “Reviews” (section 1F).
+                </p>
+
+                <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                    Quality ratings look like 1–5 yellow squares next to the property’s name. We assign quality ratings to certain Accommodations on our Platform. Each rating is based on 400+ features falling into five major categories:
+                </p>
+
+                <ul class="list-disc ml-6 text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2 space-y-1">
+                    <li>Facilities / amenities / services</li>
+                    <li>Property configuration (e.g. unit size, number of rooms, occupancy)</li>
+                    <li>Number and quality of photos uploaded by the Service Provider</li>
+                    <li>Average review score (and subscores that customers find particularly helpful, such as cleanliness)</li>
+                    <li>Overall historical booking data (e.g. to assess the Accommodation’s star ratings)</li>
+                </ul>
+
+                <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                    We use these features to identify statistical patterns and carry out machine learning analyses. This automatically calculates a quality rating between 1 and 5.
                 </p>
             </div>
+
 
             <!-- ============================= -->
             <!--        1K SECTION             -->
@@ -498,9 +610,44 @@
                 <h3 class="text-lg sm:text-xl font-semibold mb-2">1K. Help and advice – if the unexpected happens</h3>
 
                 <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6">
-                    Contact us via your booking, app, or Help Center. Provide your booking confirmation, a summary of the issue, and any supporting documents. We handle urgent complaints first.
+                    If you have any questions or something doesn’t go according to plan, be sure to contact us. You can do this by accessing your booking, our app, or our 
+                    <span class="text-blue-600 underline">Help Center</span>, where you’ll also find some useful FAQs. We handle complaints as soon as possible, treating the most urgent ones with the highest priority.
+                </p>
+
+                <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                    You can help us help you as quickly as possible by providing, if available:
+                </p>
+
+                <ul class="list-disc ml-6 text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2 space-y-1">
+                    <li>Your booking confirmation number and PIN, your contact details, and the email address you used when you booked your stay</li>
+                    <li>A summary of the situation you need assistance with, including how you’d like us to help you</li>
+                    <li>Any supporting documents, such as bank statements, photos, receipts, etc.</li>
+                </ul>
+
+                <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                    Whatever the issue, we’ll do what we can to help you.
+                </p>
+
+                <!-- Mispriced bookings -->
+                <h4 class="text-base sm:text-lg font-semibold mt-4 mb-1">What happens if a booking is mispriced?</h4>
+
+                <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6">
+                    Sometimes (very rarely), you might spot an obviously incorrect price on our Platform. If that happens, and if you make your booking before we correct the mistake, your booking may be canceled, and we’ll refund anything you’ve paid. We’ll remove any obvious pricing errors we find as soon as we become aware of them.
+                </p>
+
+                <!-- Removing service providers -->
+                <h4 class="text-base sm:text-lg font-semibold mt-4 mb-1">Do we ever remove Service Providers from our Platform altogether?</h4>
+
+                <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6">
+                    Absolutely. We can do so if, for example, we find out they breached their contractual obligations or provided an inaccurate description of their Accommodation and failed to correct it when we asked them.
+                </p>
+
+                <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                    For more information, check out “What if something goes wrong?” (A16) and “Applicable law and forum” (A20) in our 
+                    <span class="text-blue-600 underline">Terms of Service</span>.
                 </p>
             </div>
+
 
             <!-- ============================= -->
             <!--        1L SECTION             -->
@@ -509,19 +656,770 @@
                 <h3 class="text-lg sm:text-xl font-semibold mb-2">1L. Overbooking</h3>
 
                 <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6">
-                    If the Service Provider is overbooked, they must provide a solution. You may cancel at no cost or be offered a suitable alternative. Refunds are handled by us or the Service Provider depending on who organized the payment.
+                    Once your booking is confirmed, your Service Provider is required to honor it.
                 </p>
+
+                <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                    If the Service Provider is “overbooked,” they’re responsible for finding a solution as soon as possible. We provide them with guidelines as well as practical support.
+                </p>
+
+                <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                    If they can’t give you the option you booked, and can’t offer you a suitable alternative:
+                </p>
+
+                <ul class="list-disc ml-6 text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2 space-y-1">
+                    <li>You’ll be able to cancel your booking at no cost (with a full refund of anything you’ve paid)</li>
+                    <li>We can help you find an alternative Accommodation in a similar category and price on our Platform. If the alternative is more expensive, we’ll refund you the difference after your stay, once you send us the invoice from the alternative Service Provider.</li>
+                </ul>
+
+                <!-- Refund section -->
+                <h4 class="text-base sm:text-lg font-semibold mt-4 mb-1">When it comes to refunds:</h4>
+
+                <ul class="list-disc ml-6 text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2 space-y-1">
+                        <li>If your Service Provider organized your payment, we’ll try to make sure they refund you as soon as possible.
+                        <li>If we organized your payment, we’ll refund you ourselves. In 90% of cases, the money will be in your account within five business days, counting either from:    
+                            <ul class="list-disc ml-6 mt-1 space-y-1">
+                                <li>The cancellation of your original booking, or</li>
+                                <li>The verification of the invoice you sent us to show that you stayed somewhere else.</li>  
+                            </ul>
+                        </li>    
+                        </li>
+                    
+                </ul>
             </div>
+
 
             <!-- Back to top link -->
-            <div class="mt-6">
-                <a href="#accommodations" class="text-blue-600 underline text-sm sm:text-base">Back to top</a>
+            <div class="mt-6 flex justify-end">
+                <a href="#accommodations" class="text-blue-600 text-sm sm:text-base flex items-center space-x-1 hover:text-blue-800">
+                    <span>Back to top</span>
+                    <span>↑</span>
+                </a>
             </div>
 
 
+            <!-- 2. Attractions -->
+            <div id="attractions" class="mt-8">
+                <h2 class="text-2xl font-semibold mt-6 mb-4">2. Attractions</h2>
+
+                <ul class="list-disc ml-6 space-y-1 text-blue-600">
+                    <li><a href="#1A">2A. Definitions and who we are</a></li>
+                    <li><a href="#1B">2B. How does our service work?</a></li>
+                    <li><a href="#1C">2C. Who do we work with?</a></li>
+                    <li><a href="#1D">2D. How do we make money?</a></li>
+                    <li><a href="#1E">2E. Our recommendation systems</a></li>
+                    <li><a href="#1F">2F. Reviews</a></li>
+                    <li><a href="#1G">2G. Prices</a></li>
+                    <li><a href="#1H">2H. Payments</a></li>
+                    <li><a href="#1I">2I. Help and advice – if the unexpected happens</a></li>
+                </ul>
+
+                <!-- 2A. Definitions and who we are -->
+                <div id="2A" class="mt-8">
+                    <h3 class="text-lg sm:text-xl font-semibold mb-2">2A. Definitions and who we are</h3>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6">
+                        Some of the words here have specific meanings, so check out the “Booking.com dictionary” in our <span class="text-blue-600 underline">Terms of Service</span>.
+                    </p>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                        When you book an Attraction, <strong>Booking.com B.V.</strong> provides and is responsible for the Platform but not the Travel Experience itself (section 2B). Booking.com B.V. is a company incorporated under the laws of the Netherlands (registered address: Oosterdokskade 163, 1011 DL, Amsterdam, The Netherlands; Chamber of Commerce number: 31047344; VAT number: NL805734958B01).
+                    </p>
+                </div>
+
+                <!-- 2B. How does our service work? -->
+                <div id="2B" class="mt-8">
+                    <h3 class="text-lg sm:text-xl font-semibold mb-2">2B. How does our service work?</h3>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6">
+                        We provide a place for you to find and book Attraction services. When you make a booking on our Platform, you enter into a contract with the Service Provider or a Third-Party Aggregator.
+                    </p>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                        The information on our Platform is based on what Service Providers and/or Third-Party Aggregators tell us. We do our best to keep things up to date at all times.
+                    </p>
+                </div>
+
+                <!-- 2C. Who do we work with? -->
+                <div id="2C" class="mt-8">
+                    <h3 class="text-lg sm:text-xl font-semibold mb-2">2C. Who do we work with?</h3>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6">
+                        We have contractual relationships with various Service Providers and Third-Party Aggregators. Only Service Providers with a direct relationship with us or Third-Party Aggregators will be displayed on our Platform.
+                    </p>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                        In some cases, Third-Party Aggregators act as intermediaries for Service Providers, and in some cases, they buy Attraction services and resell them. Service Providers and Third-Party Aggregators may also offer Travel Experiences outside our Platform, so what’s offered on our Platform may not be exhaustive.
+                    </p>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                        Our Platform shows you the Attractions you can book through us worldwide, and our search results page tells you how many of them might be right for you, based on what you’ve told us.
+                    </p>
+                </div>
+
+                <!-- 2D. How do we make money? -->
+                <div id="2D" class="mt-8">
+                    <h3 class="text-lg sm:text-xl font-semibold mb-2">2D. How do we make money?</h3>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6">
+                        We don’t buy or (re)sell any products or services. When you make a booking, the Service Provider or Third-Party Aggregator just pays us a commission. We don’t charge any booking fees.
+                    </p>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                        If an Attraction in your search results has a badge that says “Ad,” it means that the Service Provider has paid for it to appear there.
+                    </p>
+                </div>
+
+                <!-- 2E. Our recommendation systems -->
+                <div id="2E" class="mt-8">
+                    <h3 class="text-lg sm:text-xl font-semibold mb-2">2E. Our recommendation systems</h3>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6">
+                        We use recommendation systems to select, display, and/or rank the information on our Platform to help you discover Travel Experiences we think you’ll like. This includes Nearby destinations, search results, and personalized recommendations.
+                    </p>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                        All recommendations are based on factors such as what you tell us in the search form, your previous interactions with our Platform, your current activity, and other relevant data.
+                    </p>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                        You can sort results by:
+                    </p>
+                    <ul class="list-disc ml-6 text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2 space-y-1">
+                        <li>Most popular</li>
+                        <li>Lowest price</li>
+                        <li>Distance from stay</li>
+                        <li>Best reviewed</li>
+                    </ul>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                        You can also filter by category, price, city, features, and other options. Personalized recommendations may be adjusted or turned off in your account settings.
+                    </p>
+                </div>
+
+                <!-- 2F. Reviews -->
+                <div id="2F" class="mt-8">
+                    <h3 class="text-lg sm:text-xl font-semibold mb-2">2F. Reviews</h3>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6">
+                        When you get multiple reviews, they’ll be ranked by “Most relevant” – ordered by date, with reviews that include comments prioritized, and taking the language of the review into account.
+                    </p>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                        You can also sort them by:
+                    </p>
+                    <ul class="list-disc ml-6 text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2 space-y-1">
+                        <li>Newest first</li>
+                        <li>Oldest first</li>
+                    </ul>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                        All reviews must comply with our <span class="text-blue-600 underline">Content Standards and Guidelines</span>.
+                    </p>
+                </div>
+
+                <!-- 2G. Prices -->
+                <div id="2G" class="mt-8">
+                    <h3 class="text-lg sm:text-xl font-semibold mb-2">2G. Prices</h3>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6">
+                        The rates displayed on our Platform are set by the Service Providers and/or Third-Party Aggregators. We may finance rewards or other benefits out of our own pocket.
+                    </p>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                        When you make a booking, you agree to pay the cost of the Travel Experience and any other charges that may apply (e.g. for extras, insurance, or taxes). The price description indicates whether any taxes and fees are included or excluded.
+                    </p>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                        Our Platform describes any equipment that Service Providers offer based on what they tell us, and how much it will cost. Any currency conversion is for information purposes only – actual rates may vary.
+                    </p>
+                </div>
+
+                <!-- 2H. Payments -->
+                <div id="2H" class="mt-8">
+                    <h3 class="text-lg sm:text-xl font-semibold mb-2">2H. Payments</h3>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6">
+                        When you make a booking on our Platform, Booking.com will organize your payment. For details, check out “Payment” (A8) in our <span class="text-blue-600 underline">Terms of Service</span>.
+                    </p>
+                </div>
+
+                <!-- 2I. Help and advice – if the unexpected happens -->
+                <div id="2I" class="mt-8">
+                    <h3 class="text-lg sm:text-xl font-semibold mb-2">2I. Help and advice – if the unexpected happens</h3>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6">
+                        If you have any questions or something doesn’t go according to plan, be sure to contact us. You can do this by accessing your booking, our app, or our <span class="text-blue-600">Help Center</span>, where you’ll also find some useful FAQs.
+                    </p>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                        You can help us help you as quickly as possible by providing, if available:
+                    </p>
+                    <ul class="list-disc ml-6 text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2 space-y-1">
+                        <li>Your booking confirmation number and PIN, your contact details, and the email address you used when you made your booking.</li>
+                        <li>A summary of the issue, including how you’d like us to help you.</li>
+                        <li>Any supporting documents, such as bank statements, photos, receipts, etc.</li>
+                    </ul>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                        Whatever the issue, we’ll do what we can to help you.
+                    </p>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                        For more information, check out “What if something goes wrong?” (A16) and “Applicable law and forum” (A20) in our <span class="text-blue-600 underline">Terms of Service</span>.
+                    </p>
+                </div>
+
+                <!-- Back to top button (right aligned with arrow) -->
+                <div class="mt-6 flex justify-end">
+                    <a href="#attractions" class="text-blue-600 text-sm sm:text-base flex items-center space-x-1 hover:text-blue-800">
+                        <span>Back to top</span>
+                        <span>↑</span>
+                    </a>
+                </div>
+            </div>
+
+
+            <!-- 3. Car Rentals -->
+            <div id="car-rentals" class="mt-8">
+                    <h2 class="text-2xl font-semibold mt-6 mb-4">3. Car Rentals</h2>
+                    <ul class="list-disc ml-6 space-y-1 text-blue-600">
+                    <li><a href="#1A">3A. Definitions and who we are</a></li>
+                    <li><a href="#1B">3B. How does our service work?</a></li>
+                    <li><a href="#1C">3C. Who do we work with?</a></li>
+                    <li><a href="#1D">3D. How do we make money?</a></li>
+                    <li><a href="#1E">3E. Our recommendation systems</a></li>
+                    <li><a href="#1F">3F. Reviews</a></li>
+                    <li><a href="#1G">3G. Prices</a></li>
+                    <li><a href="#1H">3H. Payments</a></li>
+                    <li><a href="#1I">3I. Help and advice – if the unexpected happens</a></li>
+                </ul>
+
+                    <!-- 3A. Definitions and who we are -->
+                    <div id="3A" class="mt-8">
+                        <h3 class="text-lg sm:text-xl font-semibold mb-2">3A. Definitions and who we are</h3>
+                        <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6">
+                            Some of the words here have specific meanings, so check out the “Booking.com dictionary” in our <span class="text-blue-600 underline">Terms of Service</span>.
+                        </p>
+                        <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                            When you book a Rental on Booking.com or Rentalcars.com, <strong>Booking.com Transport Limited</strong> provides and is responsible for the Platform – but not the Travel Experience itself (section 3B). Booking.com Transport Limited is a company registered in England and Wales (company number: 05179829; registered office: 6 Goods Yard Street, Manchester, M3 3BG, United Kingdom).
+                        </p>
+                    </div>
+
+                    <!-- 3B. How does our service work? -->
+                    <div id="3B" class="mt-8">
+                        <h3 class="text-lg sm:text-xl font-semibold mb-2">3B. How does our service work?</h3>
+                        <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6">
+                            We make it easy for you to compare bookings from many different car rental companies. The information on our Platform is based on what Service Providers tell us, and we do our best to keep things up to date at all times.
+                        </p>
+                        <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                            Our Platform shows you the Rentals you can book through us worldwide, and our search results page tells you how many of them might be right for you, based on what you’ve told us.
+                        </p>
+                        <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                            When you book your car, you enter into a contract with us, and we agree to arrange and manage* your Booking.
+                        </p>
+                        <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                            When you sign your Rental Agreement at the counter, you enter into a contract with the rental company, and they agree to provide the car. You’ll already have reviewed and accepted all the key terms while booking the car.
+                        </p>
+                        <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 italic mt-2">
+                            *We’re here to try to help you if you need to change or cancel your booking or if you have any questions before, during, or after your Rental.
+                        </p>
+                    </div>
+
+                    <!-- 3C. Who do we work with? -->
+                    <div id="3C" class="mt-8">
+                        <h3 class="text-lg sm:text-xl font-semibold mb-2">3C. Who do we work with?</h3>
+                        <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6">
+                            Every rental company on our Platform is a trusted partner who passed all our tests before we started working with them. Only Service Providers with a contractual relationship with us will be displayed on our Platform. They may also offer Travel Experiences outside our Platform, so what they offer on our Platform may not be exhaustive.
+                        </p>
+                        <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                            Our specialist team visits rental companies before they appear on our Platform, and all Service Providers on our Platform are professional traders.
+                        </p>
+                    </div>
+
+                    <!-- 3D. How do we make money? -->
+                    <div id="3D" class="mt-8">
+                        <h3 class="text-lg sm:text-xl font-semibold mb-2">3D. How do we make money?</h3>
+                        <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6">
+                            We make money when we find you a Rental. There are two ways we do this:
+                        </p>
+                        <ul class="list-disc ml-6 text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2 space-y-1">
+                            <li>We agree on a commission with the rental company for our services</li>
+                            <li>The rental company provides us with a net rate, and we apply our own markup</li>
+                        </ul>
+                        <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2">
+                            Either way, we aim to offer our customers multiple choices at competitive prices, all on a Platform that is free for you to use.
+                        </p>
+                        <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2">
+                            If a car in your search results has a badge that says “Ad,” it means that the Service Provider has paid for it to appear there.
+                        </p>
+                    </div>
+
+                    <!-- 3E. Our recommendation systems -->
+                    <div id="3E" class="mt-8">
+                        <h3 class="text-lg sm:text-xl font-semibold mb-2">3E. Our recommendation systems</h3>
+                        <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6">
+                            We use recommendation systems to select, display, and/or rank the information on our Platform to help you discover Travel Experiences we think you’ll like. This includes popular car rental brands and search results.
+                        </p>
+                        <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2">
+                            Recommendations are based on factors such as your search details, previous interactions with our Platform, your current browsing activity, and the performance of Service Providers.
+                        </p>
+                        <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2">
+                            You can sort results by:
+                        </p>
+                        <ul class="list-disc ml-6 text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2 space-y-1">
+                            <li>Recommended (default)</li>
+                            <li>Price</li>
+                            <li>Top Reviewed</li>
+                            <li>Genius</li>
+                            <li>Distance</li>
+                        </ul>
+                        <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2">
+                            Listings may also include labels like “Ad,” “Featured,” “Top pick,” “Ideal for families,” “Genius,” percentage tags, Hybrid/Electric labels, or Previously viewed.
+                        </p>
+                    </div>
+
+                    <!-- 3F. Reviews -->
+                    <div id="3F" class="mt-8">
+                        <h3 class="text-lg sm:text-xl font-semibold mb-2">3F. Reviews</h3>
+                        <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6">
+                            After your Rental, you’ll be invited to leave a review, which may be:
+                        </p>
+                        <ul class="list-disc ml-6 text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2 space-y-1">
+                            <li>Uploaded to our Platform to help other customers make an informed decision*</li>
+                            <li>Used for marketing purposes on our Platform, on social media, in newsletters, etc.*</li>
+                            <li>Shared with your rental company to help them (and us) provide an even better service**</li>
+                        </ul>
+                        <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 italic mt-2">
+                            *We would not use your full name or address.  
+                            **We may tell the rental company which Rental the review is about.
+                        </p>
+                        <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2">
+                            We publish every consumer review we receive, unless it breaches our <span class="text-blue-600 underline">Content Standards and Guidelines</span>.
+                        </p>
+                    </div>
+
+                    <!-- 3G. Prices -->
+                    <div id="3G" class="mt-8">
+                        <h3 class="text-lg sm:text-xl font-semibold mb-2">3G. Prices</h3>
+                        <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6">
+                            The rates displayed on our Platform are set by the Service Providers or by us. We may finance rewards or other benefits out of our own pocket.
+                        </p>
+                        <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2">
+                            When you make a booking, you agree to pay the cost of the Travel Experience itself and any applicable extras, insurance, or taxes. The price description tells you what taxes (if any) are included.
+                        </p>
+                        <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2">
+                            Any equipment offered by Service Providers will be described on our Platform with pricing information. Currency conversions are for information only; actual rates may vary.
+                        </p>
+                    </div>
+
+                    <!-- 3H. Payments -->
+                    <div id="3H" class="mt-8">
+                        <h3 class="text-lg sm:text-xl font-semibold mb-2">3H. Payments</h3>
+                        <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6">
+                            When you book a Rental on our Platform, Booking.com will organize your payment. For details, check out “Payment” (A8) in our <span class="text-blue-600 underline">Terms of Service</span>.
+                        </p>
+                    </div>
+
+                    <!-- 3I. Help and advice – if the unexpected happens -->
+                    <div id="3I" class="mt-8">
+                        <h3 class="text-lg sm:text-xl font-semibold mb-2">3I. Help and advice – if the unexpected happens</h3>
+                        <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6">
+                            If you have any questions or something doesn’t go according to plan, be sure to <span class="text-blue-600 underline">contact us</span>. To help us assist you quickly, provide:
+                        </p>
+                        <ul class="list-disc ml-6 text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2 space-y-1">
+                            <li>Your booking reference number and the email address you used when you booked your car</li>
+                            <li>A summary of the issue, including how you’d like us to help</li>
+                            <li>Details of any charges incurred</li>
+                            <li>Supporting documents such as rental agreements, invoices, photos, receipts, etc.</li>
+                        </ul>
+                        <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2">
+                            One of our agents will be in touch as soon as possible. They might ask for more details. Whatever the issue is, we will do what we can to help you.
+                        </p>
+                        <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2">
+                            For more information, check out “What if something goes wrong?” (A16) and “Applicable law and forum” (A20) in our <span class="text-blue-600 underline">Terms of Service</span>.
+                        </p>
+                    </div>
+
+                    <!-- Back to top button -->
+                    <div class="mt-6 flex justify-end">
+                        <a href="#car-rentals" class="text-blue-600 text-sm sm:text-base flex items-center space-x-1 hover:text-blue-800">
+                            <span>Back to top</span>
+                            <span>↑</span>
+                        </a>
+                    </div>
+            </div>
+
+
+            <!-- 4. Flights -->
+            <div id="flights" class="mt-8">
+                <h2 class="text-2xl font-semibold mt-6 mb-4">4. Flights</h2>
+                <ul class="list-disc ml-6 space-y-1 text-blue-600">
+                    <li><a href="#1A">4A. Definitions and who we are</a></li>
+                    <li><a href="#1B">4B. How does our service work?</a></li>
+                    <li><a href="#1C">4C. Who do we work with?</a></li>
+                    <li><a href="#1D">4D. How do we make money?</a></li>
+                    <li><a href="#1E">4E. Our recommendation systems</a></li>
+                    <li><a href="#1F">4F. Prices</a></li>
+                    <li><a href="#1G">4G. Payments</a></li>
+                    <li><a href="#1H">4H. Help and advice – if the unexpected happens</a></li>
+                </ul>
+
+                <!-- 4A. Definitions and who we are -->
+                <div id="4A" class="mt-8">
+                    <h3 class="text-lg sm:text-xl font-semibold mb-2">4A. Definitions and who we are</h3>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6">
+                        Some of the words here have specific meanings, so check out the “Booking.com dictionary” in our <span class="text-blue-600 underline">Terms of Service</span>.
+                    </p>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                        When you book a Flight, <strong>Booking.com B.V.</strong> provides and is responsible for the Platform but not the Travel Experience itself (section 4B). Booking.com B.V. is a company incorporated under the laws of the Netherlands (registered address: Oosterdokskade 163, 1011 DL, Amsterdam, The Netherlands; Chamber of Commerce number: 31047344; VAT number: NL805734958B01).
+                    </p>
+                </div>
+
+                <!-- 4B. How does our service work? -->
+                <div id="4B" class="mt-8">
+                    <h3 class="text-lg sm:text-xl font-semibold mb-2">4B. How does our service work?</h3>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6">
+                        We provide a place for you to find and book Flights. When you make a booking on our Platform, you enter into a contract with the Service Provider and the Third-Party Aggregator.
+                    </p>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2">
+                        The information on our Platform is based on what Service Providers and/or Third-Party Aggregators tell us. We do our best to keep things up to date at all times.
+                    </p>
+                </div>
+
+                <!-- 4C. Who do we work with? -->
+                <div id="4C" class="mt-8">
+                    <h3 class="text-lg sm:text-xl font-semibold mb-2">4C. Who do we work with?</h3>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6">
+                        We have contractual relationships with various Third-Party Aggregators, who act as intermediaries for Service Providers. Only Service Providers with a direct relationship with them will be displayed on our Platform.
+                    </p>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2">
+                        Service Providers and Third-Party Aggregators may also offer Travel Experiences outside our Platform, so what they offer on our Platform may not be exhaustive.
+                    </p>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2">
+                        Our Platform shows you the Flights you can book through us worldwide, and our search results page tells you how many of them might be right for you, based on what you’ve told us.
+                    </p>
+                </div>
+
+                <!-- 4D. How do we make money? -->
+                <div id="4D" class="mt-8">
+                    <h3 class="text-lg sm:text-xl font-semibold mb-2">4D. How do we make money?</h3>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6">
+                        We don’t buy or (re)sell any products or services. When people book Flights and extras on our Platform (e.g., baggage and seat selection), the Third-Party Aggregator pays us a commission.
+                    </p>
+                </div>
+
+                <!-- 4E. Our recommendation systems -->
+                <div id="4E" class="mt-8">
+                    <h3 class="text-lg sm:text-xl font-semibold mb-2">4E. Our recommendation systems</h3>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6">
+                        We use recommendation systems to select, display, and/or rank the information available on our Platform to help you discover destinations we think you’ll like. For example, trending cities may be suggested based on your location while browsing.
+                    </p>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2">
+                        Factors for recommendations include:
+                    </p>
+                    <ul class="list-disc ml-6 text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2 space-y-1">
+                        <li>Your search form inputs (destination, dates, etc.)</li>
+                        <li>Previous interactions with our Platform (past searches, existing reservations), unless you opted out</li>
+                        <li>Your current interaction with our Platform, including your country while browsing</li>
+                    </ul>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2">
+                        Our search results themselves are also a recommendation system. Services and products often used for similar trips may be labeled “Popular for trips like yours.”
+                    </p>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2">
+                        Default ranking and sorting options:
+                    </p>
+                    <ul class="list-disc ml-6 text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2 space-y-1">
+                        <li>Best (default): Factors include price, travel time, number of stops, baggage allowance, and Genius exclusives.</li>
+                        <li>Cheapest: Lower prices appear higher.</li>
+                        <li>Fastest: Shorter travel times appear higher.</li>
+                    </ul>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2">
+                        Filters can narrow results by stops, duration, and preferred airlines.
+                    </p>
+                </div>
+
+                <!-- 4F. Prices -->
+                <div id="4F" class="mt-8">
+                    <h3 class="text-lg sm:text-xl font-semibold mb-2">4F. Prices</h3>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6">
+                        The rates displayed are set by the Service Providers and/or Third-Party Aggregators. We may finance rewards or other benefits out of our own pocket.
+                    </p>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2">
+                        When you make a booking, you agree to pay the cost of the Travel Experience and any applicable extras, insurance, or taxes. The price description indicates whether fees are included or excluded.
+                    </p>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2">
+                        Equipment descriptions and costs are provided by the Service Providers. Currency conversion is for information only; actual rates may vary.
+                    </p>
+                </div>
+
+                <!-- 4G. Payments -->
+                <div id="4G" class="mt-8">
+                    <h3 class="text-lg sm:text-xl font-semibold mb-2">4G. Payments</h3>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6">
+                        When you make a booking on our Platform, your payment could be organized by us, or by a Third-Party Aggregator. For details, check out “Payment” (A8) in our <span class="text-blue-600 underline">Terms of Service</span>.
+                    </p>
+                </div>
+
+                <!-- 4H. Help and advice – if the unexpected happens -->
+                <div id="4H" class="mt-8">
+                    <h3 class="text-lg sm:text-xl font-semibold mb-2">4H. Help and advice – if the unexpected happens</h3>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6">
+                        Once you’ve made a booking, contact us if you have any questions or something doesn’t go according to plan. You can do this by accessing your booking, our app, or our <span class="text-blue-600 underline">Help Center</span>, where you’ll find FAQs.
+                    </p>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2">
+                        To help us assist you quickly, provide (if available):
+                    </p>
+                    <ul class="list-disc ml-6 text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2 space-y-1">
+                        <li>Your Customer Reference number and PIN, contact details, and the email you used when booking</li>
+                        <li>A summary of the issue, including how you’d like us to help</li>
+                        <li>Supporting documents such as bank statements, photos, receipts, etc.</li>
+                    </ul>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2">
+                        Whatever the issue, we’ll do what we can to help you. For more information, check out “What if something goes wrong?” (A16) and “Applicable law and forum” (A20) in our <span class="text-blue-600 underline">Terms of Service</span>.
+                    </p>
+                </div>
+
+                <!-- Back to top button -->
+                <div class="mt-6 flex justify-end">
+                    <a href="#flights" class="text-blue-600 text-sm sm:text-base flex items-center space-x-1 hover:text-blue-800">
+                        <span>Back to top</span>
+                        <span>↑</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 5. Private and public transportation -->
+            <div id="transportation" class="mt-8">
+                <h2 class="text-2xl font-semibold mt-6 mb-4">5. Private and public transportation</h2>
+                <ul class="list-disc ml-6 space-y-1 text-blue-600">
+                    <li><a href="#1A">5A. Definitions and who we are</a></li>
+                    <li><a href="#1B">5B. How does our service work?</a></li>
+                    <li><a href="#1C">5C. Who do we work with?</a></li>
+                    <li><a href="#1D">5D. How do we make money?</a></li>
+                    <li><a href="#1E">5E. Our recommendation systems</a></li>
+                    <li><a href="#1F">5F. Reviews</a></li>
+                    <li><a href="#1G">5G. Prices</a></li>
+                    <li><a href="#1H">5H. Payments</a></li>
+                    <li><a href="#1I">5I. Help and advice – if the unexpected happens</a></li>
+                </ul>
+
+                <!-- 5A. Definitions and who we are -->
+                <div id="5A" class="mt-8">
+                    <h3 class="text-lg sm:text-xl font-semibold mb-2">5A. Definitions and who we are</h3>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6">
+                        Some of the words here have specific meanings, so check out the “Booking.com dictionary” in our <span class="text-blue-600 underline">Terms of Service</span>.
+                    </p>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-3">
+                        When you book a transportation service, <strong>Booking.com Transport Limited</strong> provides and is responsible for the Platform but not the Travel Experience itself (section 5B). Booking.com Transport Limited is a company registered in England and Wales (company number: 05179829; registered office: 6 Goods Yard Street, Manchester, M3 3BG, United Kingdom).
+                    </p>
+                </div>
+
+                <!-- 5B. How does our service work? -->
+                <div id="5B" class="mt-8">
+                    <h3 class="text-lg sm:text-xl font-semibold mb-2">5B. How does our service work?</h3>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6">
+                        We make it easy for you to compare bookings from public and private ground transportation providers. When you do a search, we filter results to show the most suitable vehicle in each category based on what you’ve told us.
+                    </p>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2">
+                        Service Providers are independent companies. We don’t own or control the services you book. Information on our Platform is based on what Service Providers tell us, and we do our best to keep things up to date.
+                    </p>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2">
+                        We provide help and support before, during, or after your trip. See “Help and advice – if the unexpected happens” (section 5I) for details.
+                    </p>
+                </div>
+
+                <!-- 5C. Who do we work with? -->
+                <div id="5C" class="mt-8">
+                    <h3 class="text-lg sm:text-xl font-semibold mb-2">5C. Who do we work with?</h3>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6">
+                        Only Service Providers with a contractual relationship with us will be displayed on our Platform. They may also offer Travel Experiences outside our Platform, so what they offer may not be exhaustive.
+                    </p>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2">
+                        All Service Providers on our Platform are professional traders. We regularly check them to ensure they continue to meet necessary standards.
+                    </p>
+                </div>
+
+                <!-- 5D. How do we make money? -->
+                <div id="5D" class="mt-8">
+                    <h3 class="text-lg sm:text-xl font-semibold mb-2">5D. How do we make money?</h3>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6">
+                        We don’t buy or (re)sell any products or services. When you make a booking, we agree on a commission with the transportation providers for our services. We don’t charge any booking fees.
+                    </p>
+                </div>
+
+                <!-- 5E. Our recommendation systems -->
+                <div id="5E" class="mt-8">
+                    <h3 class="text-lg sm:text-xl font-semibold mb-2">5E. Our recommendation systems</h3>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6">
+                        We use recommendation systems to select, display, and/or rank the information on our Platform to help you discover transportation services we think you’ll like.
+                    </p>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2">
+                        Recommendation factors include:
+                    </p>
+                    <ul class="list-disc ml-6 text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2 space-y-1">
+                        <li>Search form inputs (destination, dates, number of passengers, etc.)</li>
+                        <li>Performance of different transportation providers</li>
+                    </ul>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2">
+                        For searches:
+                    </p>
+                    <ul class="list-disc ml-6 text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2 space-y-1">
+                        <li><strong>Private Transportation:</strong> Vehicles are selected based on price, provider performance, and party size. Larger vehicles appear higher for bigger parties.</li>
+                        <li><strong>Trains and Buses:</strong> We show the best result for the journey you want, ranked by price and convenience.</li>
+                    </ul>
+                </div>
+
+                <!-- 5F. Reviews -->
+                <div id="5F" class="mt-8">
+                    <h3 class="text-lg sm:text-xl font-semibold mb-2">5F. Reviews</h3>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6">
+                        After your Journey, you’ll be invited to leave a review, which may be:
+                    </p>
+                    <ul class="list-disc ml-6 text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2 space-y-1">
+                        <li>Uploaded to our Platform to help other customers make informed decisions*</li>
+                        <li>Used for marketing purposes on our Platform, social media, newsletters, etc.*</li>
+                        <li>Shared with your Service Provider to help them improve service**</li>
+                    </ul>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2">
+                        *We do not use your full name or address.<br>
+                        **We may indicate which Journey the review is about.
+                    </p>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2">
+                        Reviews that breach our <span class="text-blue-600 underline">Content Standards and Guidelines</span> are not published.
+                    </p>
+                </div>
+
+                <!-- 5G. Prices -->
+                <div id="5G" class="mt-8">
+                    <h3 class="text-lg sm:text-xl font-semibold mb-2">5G. Prices</h3>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6">
+                        The price of each booking comprises the base rate set by the Service Provider and our commission. We may also finance rewards or other benefits out of our own pocket.
+                    </p>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2">
+                        When you book, you agree to pay the cost of the Travel Experience and any applicable extras (e.g., tolls, waiting fees). Taxes and fees may vary. Prices include any applicable taxes.
+                    </p>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2">
+                        Currency conversion is for information only; actual rates may vary.
+                    </p>
+                </div>
+
+                <!-- 5H. Payments -->
+                <div id="5H" class="mt-8">
+                    <h3 class="text-lg sm:text-xl font-semibold mb-2">5H. Payments</h3>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6">
+                        When you book a bus, train, or private transportation on our Platform, Booking.com organizes your payment. For details, see “Payment” (A8) in our <span class="text-blue-600 underline">Terms of Service</span>.
+                    </p>
+                </div>
+
+                <!-- 5I. Help and advice – if the unexpected happens -->
+                <div id="5I" class="mt-8">
+                    <h3 class="text-lg sm:text-xl font-semibold mb-2">5I. Help and advice – if the unexpected happens</h3>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6">
+                        If you have questions or something doesn’t go according to plan, contact us. If it’s about something during your Journey, provide your booking reference (if available) and contact details.
+                    </p>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2">
+                        You can help us resolve issues quickly by providing any relevant documents or information when you first contact us. We resolve the vast majority of issues within 14 days.
+                    </p>
+                    <p class="text-sm sm:text-base text-gray-700 leading-5 sm:leading-6 mt-2">
+                        Whatever the issue, we’ll do what we can to help you. For more information, see “What if something goes wrong?” (A16) and “Applicable law and forum” (A20) in our <span class="text-blue-600 underline">Terms of Service</span>.
+                    </p>
+                </div>
+
+                <!-- Back to top button -->
+                <div class="mt-6 flex justify-end">
+                    <a href="#transportation" class="text-blue-600 text-sm sm:text-base flex items-center space-x-1 hover:text-blue-800">
+                        <span>Back to top</span>
+                        <span>↑</span>
+                    </a>
+                </div>
+            </div>
+
+                            
 
         </main>
     </div>
+
+    <!-- ================== TOP BLUE BAR ================== -->
+    <div class="w-full bg-[#003580] py-3 flex justify-center">
+        <a href="/list-your-property"
+        class="text-white border border-white px-4 py-1 rounded text-sm hover:bg-white hover:text-[#003580] transition">
+        List your property
+        </a>
+    </div>
+
+    <!-- ================== NAVIGATION BLUE STRIP ================== -->
+    <div class="w-full bg-[#003580] text-white text-sm">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-center gap-6">
+
+            <a href="#" class="hover:underline font-semibold">Mobile version</a>
+            <a href="#" class="hover:underline font-semibold">Your account</a>
+            <a href="#" class="hover:underline font-semibold">Make changes online to your booking</a>
+            <a href="#" class="hover:underline font-semibold">Become an affiliate</a>
+            <a href="#" class="hover:underline font-semibold">Booking.com for Business</a>
+
+        </div>
+    </div>
+
+    <!-- ================== MULTI-COLUMN FOOTER ================== -->
+    <footer class="max-w-7xl mx-auto px-4 py-10 text-sm">
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6">
+
+            <!-- Column 1 -->
+            <div class="space-y-2">
+                <a href="#" class="text-[#0066CC] hover:underline block">Countries</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Regions</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Cities</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Districts</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Airports</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Hotels</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Places of interest</a>
+            </div>
+
+            <!-- Column 2 -->
+            <div class="space-y-2">
+                <a href="#" class="text-[#0066CC] hover:underline block">Homes</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Apartments</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Resorts</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Villas</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Hostels</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">B&Bs</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Guest Houses</a>
+            </div>
+
+            <!-- Column 3 -->
+            <div class="space-y-2">
+                <a href="#" class="text-[#0066CC] hover:underline block">Unique places to stay</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Reviews</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Discover monthly stays</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Seasonal and holiday deals</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Traveller Review Awards</a>
+            </div>
+
+            <!-- Column 4 -->
+            <div class="space-y-2">
+                <a href="#" class="text-[#0066CC] hover:underline block">Booking.com for Travel Agents</a>
+            </div>
+
+            <!-- Column 5 -->
+            <div class="space-y-2">
+                <a href="#" class="text-[#0066CC] hover:underline block">About Booking.com</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Customer Service Help</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Partner help</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Careers</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Sustainability</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Press Center</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Safety Resource Center</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Investor relations</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Terms of Service</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Partner dispute</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">How We Work</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Privacy Notice</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Modern Slavery Statement</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Human Rights Statement</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Corporate contact</a>
+                <a href="#" class="text-[#0066CC] hover:underline block">Content guidelines and reporting</a>
+            </div>
+        </div>
+
+        <!-- Extranet Login -->
+        <div class="text-center mt-10">
+            <a href="#" class="text-[#0066CC] hover:underline">Extranet Log-in</a>
+        </div>
+
+        <!-- Copyright -->
+        <div class="text-center mt-12 text-gray-600 text-xs">
+            Copyright © 1996–2025 Booking.com™. All rights reserved.
+        </div>
+
+        <!-- Partner Brands -->
+        <div class="text-center mt-6 flex items-center justify-center gap-6 flex-wrap opacity-90">
+
+            <img src="https://cf.bstatic.com/static/img/logos/BookingLogo/booking_logo.png" class="h-6" alt="">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Priceline.com_logo.svg/512px-Priceline.com_logo.svg.png" class="h-6" alt="">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Kayak_Logo.svg/512px-Kayak_Logo.svg.png" class="h-6" alt="">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Agoda_logo.svg/512px-Agoda_logo.svg.png" class="h-6" alt="">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/OpenTable_logo.svg/512px-OpenTable_logo.svg.png" class="h-6" alt="">
+
+        </div>
+    </footer>
 
 </body>
 </html>

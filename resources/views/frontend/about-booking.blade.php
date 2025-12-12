@@ -146,7 +146,7 @@
     <!-- MSN Partnership Banner -->
     <section class="w-full bg-white py-8 text-center border-b">
         <p class="text-sm text-gray-600">In partnership with</p>
-        <img src="https://upload.wikimedia.org/wikipedia/commons/0/06/MSN_Logo_2015.svg"
+        <img src="{{ asset('assets/msn-logo.png') }}"
              class="mx-auto w-24 mt-2" alt="MSN logo">
     </section>
 
