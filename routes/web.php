@@ -1604,6 +1604,11 @@ Route::get('/how-we-work', function () {
     return view('frontend.how-we-work');
 })->name('how.we.work');
 
+Route::get('/sustainability', function () {
+    return view('frontend.sustainability');
+});
+
+
 
 
 
