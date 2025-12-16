@@ -16,7 +16,7 @@
 <header x-data="{ open: false }" class="bg-[#003580] text-white">
     <div class="max-w-7xl mx-auto px-4 py-8 flex items-center justify-between">
         <!-- Logo -->
-        <div class="text-2xl font-bold">
+        <div class="text-2xl font-bold pl-10 sm:pl-20 md:pl-28 lg:pl-36">
             Booking.com
         </div>
 
@@ -86,7 +86,196 @@
             </div>
         </div>
     </div>
+</section><br>
+
+<section class="w-full min-h-[50vh] md:min-h-[80vh] grid grid-cols-1 md:grid-cols-2">
+    
+    <!-- LEFT IMAGE -->
+    <div class="w-full h-[60vh] md:h-auto">
+        <img
+            src="{{ asset('assets/travelers.jpg') }}"
+            alt="Sustainable Operations"
+            class="w-full h-full object-cover"
+        >
+    </div>
+
+    <!-- RIGHT CONTENT -->
+    <div class="flex items-center justify-center bg-[#041C44] px-6 py-16">
+        <div class="text-center text-white max-w-md">
+            
+            <h2 class="text-3xl sm:text-4xl font-bold mb-4">
+                Sustainable Operations
+            </h2>
+
+            <p class="text-base sm:text-lg leading-relaxed mb-8">
+                Operating our business sustainably and building a<br>
+                culture of sustainability
+            </p>
+
+            <a
+                href="#"
+                class="inline-block bg-[#FDBA12] text-[#041C44] font-semibold px-10 py-3 rounded-sm hover:bg-yellow-400 transition"
+            >
+                Operations
+            </a>
+
+        </div>
+    </div>
+
 </section>
+
+<section class="w-full min-h-[50vh] md:min-h-[80vh] grid grid-cols-1 md:grid-cols-2">
+    
+    <!-- LEFT CONTENT -->
+    <div class="flex items-center justify-center bg-[#002F6C] px-6 py-16 order-2 md:order-1">
+        <div class="text-center text-white max-w-md">
+            
+            <h2 class="text-3xl sm:text-4xl font-bold mb-4">
+               More Sustainable Travel
+            </h2>
+
+            <p class="text-base sm:text-lg leading-relaxed mb-8">
+                Making it easier for travelers to make more sustainable travel choices
+            </p>
+
+            <a
+                href="#"
+                class="inline-block bg-[#FDBA12] text-[#041C44] font-semibold px-10 py-3 rounded-sm hover:bg-yellow-400 transition"
+            >
+                Travel Offerings
+            </a>
+
+        </div>
+    </div>
+
+    <!-- RIGHT IMAGE -->
+    <div class="w-full h-[60vh] md:h-auto order-1 md:order-2">
+        <img
+            src="{{ asset('assets/travelers.jpg') }}"
+            alt="Sustainable Operations"
+            class="w-full h-full object-cover"
+        >
+    </div>
+
+</section>
+
+<section class="w-full min-h-[50vh] md:min-h-[80vh] grid grid-cols-1 md:grid-cols-2">
+    
+    <!-- LEFT IMAGE -->
+    <div class="w-full h-[60vh] md:h-auto">
+        <img
+            src="{{ asset('assets/travelers.jpg') }}"
+            alt="Sustainable Operations"
+            class="w-full h-full object-cover"
+        >
+    </div>
+
+    <!-- RIGHT CONTENT -->
+    <div class="flex items-center justify-center bg-[#0057B8] px-6 py-16">
+        <div class="text-center text-white max-w-md">
+            
+            <h2 class="text-3xl sm:text-4xl font-bold mb-4">
+                Sustainable Operations
+            </h2>
+
+            <p class="text-base sm:text-lg leading-relaxed mb-8">
+                Operating our business sustainably and building a
+                culture of sustainability
+            </p>
+
+            <a
+                href="#"
+                class="inline-block bg-[#FDBA12] text-[#041C44] font-semibold px-10 py-3 rounded-sm hover:bg-yellow-400 transition"
+            >
+                Operations
+            </a>
+
+        </div>
+    </div>
+
+</section>
+
+<section class="w-full min-h-[50vh] md:min-h-[80vh] grid grid-cols-1 md:grid-cols-[3fr_2fr]">
+    
+    <!-- IMAGE (BIGGER) -->
+    <div class="w-full h-[65vh] md:h-auto">
+        <img
+            src="{{ asset('assets/travelers.jpg') }}"
+            alt="Sustainable Operations"
+            class="w-full h-full object-cover"
+        >
+    </div>
+
+    <!-- CONTENT (SMALLER) -->
+    <div class="flex items-center justify-center bg-[#041C44] px-6 py-12">
+        <div class="text-center text-white max-w-sm">
+            
+            <h2 class="text-2xl sm:text-3xl font-bold mb-3">
+               Annual
+               Sustainability 
+               Report
+            </h2>
+
+            <p class="text-base sm:text-lg leading-relaxed mb-8">
+                Learn more about all our efforts
+            </p>
+
+            <a
+                href="#"
+                class="inline-block bg-[#FDBA12] text-[#041C44] font-semibold px-8 py-2.5 text-sm rounded-sm hover:bg-yellow-400 transition"
+            >
+                Explore
+            </a>
+
+        </div>
+    </div>
+
+</section>
+
+<footer class="bg-[#003580] text-white">
+    <div class="max-w-7xl mx-auto px-6 py-10">
+        
+        <!-- TOP LINKS -->
+       <div class="flex flex-col sm:flex-row
+            items-center sm:items-start
+            sm:justify-start
+            sm:space-x-20
+            space-y-6 sm:space-y-0
+            text-sm
+            pl-0 sm:pl-16 md:pl-24">
+  
+            <!-- TERMS -->
+            <div class="text-center sm:text-left">
+                <p class="font-semibold uppercase mb-1">Terms of Use</p>
+                <a href="#" class="underline">Privacy</a>
+            </div>
+
+            <!-- MORE FROM BOOKING -->
+            <div class="text-center sm:text-left">
+                <p class="font-semibold uppercase mb-1">More from Booking</p>
+                <ul class="space-y-1">
+                    <li><a href="#" class="underline">Booking.com</a></li>
+                    <li><a href="#" class="underline">Careers</a></li>
+                </ul>
+            </div>
+
+        </div>
+
+        <!-- COPYRIGHT -->
+        <div class="mt-10 text-center text-xs leading-relaxed max-w-4xl mx-auto">
+            <p>
+                Copyright © 1996–2021 Booking.com. All rights reserved.
+                <a href="#" class="underline">About Booking.com</a> |
+                <a href="#" class="underline">Privacy and Cookies Statement</a>
+            </p>
+            <p class="mt-2">
+                All references to "Booking.com", including any mention of "us", "we" and "our"
+                refer to Booking.com BV, the company behind Booking.com™
+            </p>
+        </div>
+
+    </div>
+</footer>
 
 </body>
 </html>
