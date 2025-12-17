@@ -53,7 +53,7 @@
                     <ul class="list-none">
                         <li class="mb-1"><a href="{{ route('about.booking') }}" class="text-gray-500 hover:text-gray-700">About {{ config('domains.domain') }}</a></li>
                         <li class="mb-1"><a href="{{ route('how.we.work') }}" class="text-gray-500 hover:text-gray-700">How we work</a></li>
-                        <li class="mb-1"><a href="#" class="text-gray-500 hover:text-gray-700">Sustainabilities</a></li>
+                        <li class="mb-1"><a href="{{ route('sustainability') }}" class="text-gray-500 hover:text-gray-700">Sustainabilities</a></li>
                         <li class="mb-1"><a href="#" class="text-gray-500 hover:text-gray-700">Careers</a></li>
                         <li class="mb-1"><a href="#" class="text-gray-500 hover:text-gray-700">Investor relations</a></li>
                         <li class="mb-1"><a href="#" class="text-gray-500 hover:text-gray-700">Corporate Contact</a></li>
