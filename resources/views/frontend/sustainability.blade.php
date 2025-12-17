@@ -189,7 +189,7 @@
 
         <section class="w-full min-h-[50vh] md:min-h-[80vh] grid grid-cols-1 md:grid-cols-[3fr_2fr]">
             
-            <!-- IMAGE (BIGGER) -->
+            <!-- IMAGE (BIGGER)  -->
             <div class="w-full h-[65vh] md:h-auto">
                 <img
                     src="{{ asset('assets/travelers.jpg') }}"
