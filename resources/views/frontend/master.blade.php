@@ -56,7 +56,18 @@
 
 
 
-  @include('frontend.footer')
+
+  
+
+  <!-- Footers -->
+    @auth('customer')
+        @include('customer.footer')   {{-- Logged-in customer FIRST --}}
+    @else
+        @include('frontend.footer')   {{-- Guest --}}
+    @endauth
+
+
+
 </body>
 
 </html>
