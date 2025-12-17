@@ -292,7 +292,11 @@
                         {{ number_format($partner->partner->getEffectiveCommissionRate() * 100, 1) }}%
                     </div>
                     <p class="text-xs text-gray-500">
+<<<<<<< HEAD
                         {{ $partner->partner->settings?->commission_rate ? 'Individual rate' : 'Using global rate' }}
+=======
+                        {{ optional($partner->partner->settings)->commission_rate ? 'Individual rate' : 'Using global rate' }}
+>>>>>>> 35691a5 (super admin car rental provider dashboard update)
                     </p>
                 </div>
             </div>

@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\PropertyAvailabilitySetting;
+use App\Models\PropertySubcategory;
+
 
 class Property extends Model
 {
@@ -171,6 +173,7 @@ class Property extends Model
     return $this->belongsTo(PropertySubtype::class, 'subtype_id');
 }
 
+<<<<<<< HEAD
 
     public function seasonalPricings()
     {
@@ -229,4 +232,12 @@ class Property extends Model
     {
         return true;
     }
+=======
+public function propertySubcategory()
+{
+    return $this->belongsTo(PropertySubcategory::class, 'subcategory_id');
+}
+
+
+>>>>>>> 35691a5 (super admin car rental provider dashboard update)
 }
