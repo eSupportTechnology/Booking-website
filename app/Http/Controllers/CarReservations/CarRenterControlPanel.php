@@ -197,7 +197,7 @@ class CarRenterControlPanel extends Controller
                 'date_from' => $b->start_date,
                 'date_to' => $b->end_date,
                 'status' => $b->status,
-                'amount' => $b->total_price,
+                'amount' => $b->total_price ?? 0,
             ];
         });
 
@@ -217,17 +217,25 @@ class CarRenterControlPanel extends Controller
                 'date_from' => $t->pickup_datetime,
                 'date_to' => $t->return_datetime,
                 'status' => $t->status,
-                'amount' => $t->total_amount,
+                'amount' => $t->total_amount ?? 0,
             ];
         });
 
-    /* ---- MERGE BOTH INTO ONE LIST ---- */
+    /* ---- MERGE BOOKINGS ---- */
     $bookings = $carBookings
         ->merge($taxiBookings)
         ->sortByDesc('date_from')
-        ->values(); // re-index
+        ->values();
 
-    return view('car_rentals.manage_bookings', compact('bookings'));
+    /* ---------------- PENDING PAYOUT ---------------- */
+    $pendingPayout = $bookings
+        ->whereIn('status', ['pending', 'completed','confirmed'])
+        ->sum('amount');
+
+    return view('car_rentals.manage_bookings', compact(
+        'bookings',
+        'pendingPayout'
+    ));
 }
 
 public function updateBookingStatus(Request $request, $id)

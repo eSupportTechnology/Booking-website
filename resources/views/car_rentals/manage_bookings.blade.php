@@ -7,7 +7,16 @@
     <div class="bg-gradient-to-r from-[#3C4CE9] to-[#5865F2] rounded-2xl p-6 text-white">
         <div class="flex justify-between items-center">
             <h1 class="text-3xl font-bold">Bookings Management</h1>
-            <p class="text-lg font-semibold">Total Revenue: $0.00</p>
+            @php
+                $pendingPayout = $bookings
+                    ->whereNotIn('status', ['completed', 'cancelled'])
+                    ->sum('amount');
+            @endphp
+
+
+            <p class="text-lg font-semibold">
+                Revenue: ${{ number_format($pendingPayout, 2) }}
+            </p>
         </div>
     </div>
 

@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\VehicleTypeCommission;
+
 
 class CarRenter extends Authenticatable
 {
@@ -65,12 +67,32 @@ class CarRenter extends Authenticatable
         return $this->account_type === 'individual';
     }
     public function cars()
-{
-    return $this->hasMany(Car::class, 'car_renter_id');
-}
-    public function taxis()
-{
-    return $this->hasMany(Taxi::class, 'car_renter_id');
+    {
+        return $this->hasMany(Car::class, 'car_renter_id');
+    }
+        public function taxis()
+    {
+        return $this->hasMany(Taxi::class, 'car_renter_id');
 
-}
+    }
+
+    public function vehicleTypeCommissions()
+    {
+        return $this->hasMany(
+            VehicleTypeCommission::class,
+            'car_renter_id'
+        );
+    }
+
+    public function getCommissionRateForVehicleType($vehicleTypeId)
+    {
+        $custom = $this->vehicleTypeCommissions
+            ->firstWhere('vehicle_type_id', $vehicleTypeId);
+
+        return $custom && $custom->commission_rate !== null
+            ? $custom->commission_rate
+            : 15; // DEFAULT %
+    }
+
+
 }

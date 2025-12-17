@@ -45,7 +45,9 @@ use app\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\CarReservations\ReservationController;
 use App\Http\Controllers\Customer\AirportTaxiBookingController;
 use App\Http\Controllers\Admin\CarRentalController;
-
+use App\Http\Controllers\Admin\CarRenterCommissionController;
+use App\Http\Controllers\Admin\TaxiTypeCommissionController;
+use App\Http\Controllers\Admin\UsersController;
 
 
 
@@ -1708,7 +1710,20 @@ Route::get('/how-we-work', function () {
 Route::get('/sustainability', function () {
     return view('frontend.sustainability');
 })->name('sustainability');
+<<<<<<< HEAD
 
 // Explicit Admin Login Route to fix RouteNotFoundException
 Route::get('/admin/login', [\App\Http\Controllers\Admin\AuthController::class, 'showLogin'])->name('admin.auth.login');
 Route::post('/admin/login', [\App\Http\Controllers\Admin\AuthController::class, 'login'])->name('admin.auth.login.submit');
+=======
+
+Route::post(
+    '/car-renters/{carRenter}/vehicle-type-commissions',
+    [CarRenterCommissionController::class, 'update']
+)->name('admin.car-renters.vehicle-type-commission.update');
+
+Route::post(
+    '/admin/car-renters/{carRenter}/taxi-commissions',
+    [TaxiTypeCommissionController::class, 'update']
+)->name('admin.car-renters.taxi-commission.update');
+>>>>>>> 35691a5 (super admin car rental provider dashboard update)
