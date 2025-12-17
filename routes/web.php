@@ -1115,20 +1115,20 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/rental/taxi/{id}', \App\Http\Controllers\Admin\TaxiDetailController::class)->name('taxi.details');
         Route::get('/rental/airport', \App\Http\Controllers\Admin\AirportTransferController::class)->name('rental.airport');
         Route::get('/rental/airport/{id}', \App\Http\Controllers\Admin\AirportTransferDetailController::class)->name('airport.details');
-        
-        Route::get('/rental/carrentals', 
+
+        Route::get('/rental/carrentals',
             [\App\Http\Controllers\Admin\CarRentalController::class, 'index']
         )->name('rental.carrentals');
 
-        Route::get('/rental/carrentals/{id}', 
+        Route::get('/rental/carrentals/{id}',
             [\App\Http\Controllers\Admin\CarRentalDetailController::class, 'show']
         )->name('rental.carrentals.details');
 
-        Route::delete('/rental/carrentals/{id}/delete', 
+        Route::delete('/rental/carrentals/{id}/delete',
             [CarRentalController::class, 'destroy']
         )->name('rental.carrentals.delete');
 
-        Route::patch('/rental/carrentals/{id}/status', 
+        Route::patch('/rental/carrentals/{id}/status',
             [\App\Http\Controllers\Admin\CarRentalController::class, 'updateStatus']
         )->name('rental.carrentals.status');
 
@@ -1693,11 +1693,11 @@ Route::middleware('auth:car_renter')->get(
     [CarRenterControlPanel::class, 'controlPanel']
 )->name('car_rentals.carrenters_control_panel');
 
-Route::get('/car_rentals/manage_bookings', 
+Route::get('/car_rentals/manage_bookings',
     [CarRenterControlPanel::class, 'manageBookings']
 )->name('car_rentals.manage_bookings')->middleware('auth:car_renter');
 
-Route::post('/car_rentals/update-booking-status/{id}', 
+Route::post('/car_rentals/update-booking-status/{id}',
     [CarRenterControlPanel::class, 'updateBookingStatus']
 )->name('booking.update_status');
 

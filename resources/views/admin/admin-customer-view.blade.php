@@ -196,7 +196,7 @@
         <div class="md:hidden space-y-4">
             @forelse($customer->bookings()->orderBy('created_at', 'desc')->get() as $booking)
                 <div class="border rounded-lg p-4 shadow-sm">
-                    
+
                     {{-- Title + Image --}}
                     <div class="flex items-center gap-3 mb-3">
                         @if($booking->property && $booking->property->primaryImage)
@@ -218,7 +218,7 @@
                     {{-- Dates --}}
                     <div class="text-sm mb-2">
                         <div class="text-gray-900">
-                            {{ $booking->check_in->format('M d, Y') }} - 
+                            {{ $booking->check_in->format('M d, Y') }} -
                             {{ $booking->check_out->format('M d, Y') }}
                         </div>
                         <div class="text-xs text-gray-500">
@@ -229,13 +229,13 @@
                     {{-- Amount --}}
                     @php
                         $bookingAmountUsd = \App\Helpers\CurrencyHelper::convertPrice(
-                            $booking->total_price, 
-                            $booking->currency ?? 'USD', 
+                            $booking->total_price,
+                            $booking->currency ?? 'USD',
                             'USD'
                         );
                         $nights = max(1, $booking->check_in->diffInDays($booking->check_out));
                     @endphp
-                    
+
                     <div class="text-sm mb-2">
                         <div class="font-semibold text-gray-900">
                             ${{ number_format($bookingAmountUsd, 2) }} USD
