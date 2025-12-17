@@ -1606,7 +1606,7 @@ Route::get('/how-we-work', function () {
 
 Route::get('/sustainability', function () {
     return view('frontend.sustainability');
-});
+})->name('sustainability');
 
 
 
