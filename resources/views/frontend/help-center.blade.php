@@ -379,7 +379,7 @@
 
 
             
-            <!-- BOOKING DETAILS -->
+            <!-- BOOKING DETAILS  -->
             <div x-show="activeTab === 'Booking Details'">
                 @php
                     $bookingDetails = [
