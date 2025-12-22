@@ -48,7 +48,10 @@ use App\Http\Controllers\Admin\CarRentalController;
 use App\Http\Controllers\Admin\CarRenterCommissionController;
 use App\Http\Controllers\Admin\TaxiTypeCommissionController;
 use App\Http\Controllers\Admin\UsersController;
-
+use App\Http\Controllers\CarReservations\CarEarningsController;
+use App\Http\Controllers\CarReservations\CarReviewController;
+use App\Http\Controllers\CarReservations\CarMessageController;
+use App\Http\Controllers\CarReservations\CarRentalSettingsController;
 
 
 Route::post('/accommodation/save-verification/{propertyId}', [AccommodationController::class, 'saveVerification']);
@@ -1710,12 +1713,9 @@ Route::get('/how-we-work', function () {
 Route::get('/sustainability', function () {
     return view('frontend.sustainability');
 })->name('sustainability');
-<<<<<<< HEAD
 
-// Explicit Admin Login Route to fix RouteNotFoundException
-Route::get('/admin/login', [\App\Http\Controllers\Admin\AuthController::class, 'showLogin'])->name('admin.auth.login');
-Route::post('/admin/login', [\App\Http\Controllers\Admin\AuthController::class, 'login'])->name('admin.auth.login.submit');
-=======
+
+
 
 Route::post(
     '/car-renters/{carRenter}/vehicle-type-commissions',
@@ -1727,3 +1727,61 @@ Route::post(
     [TaxiTypeCommissionController::class, 'update']
 )->name('admin.car-renters.taxi-commission.update');
 >>>>>>> 35691a5 (super admin car rental provider dashboard update)
+
+Route::middleware(['auth:car_renter'])
+->prefix('car-rentals')
+->group(function () {
+    Route::get('/earnings', [CarEarningsController::class, 'index'])
+        ->name('car_rentals.earnings');
+
+    Route::get('/earnings/invoice', [CarEarningsController::class, 'invoice'])
+        ->name('car_rentals.invoice');
+});
+
+Route::prefix('car-rentals')
+    ->middleware(['auth:car_renter'])
+    ->name('car_rentals.')
+    ->group(function () {
+
+        Route::get('/dashboard', function () {
+            return view('car_rentals.dashboard');
+        })->name('dashboard');
+
+        // Reviews
+        Route::get('/reviews', [CarReviewController::class, 'index'])
+            ->name('reviews');
+
+        // Messages
+        Route::get('/messages', [CarMessageController::class, 'index'])
+            ->name('messages.index');
+
+        Route::get('/messages/{booking}', [CarMessageController::class, 'conversation'])
+            ->name('messages.show');
+
+        Route::post('/messages', [CarMessageController::class, 'store'])
+            ->name('messages.store');
+    });
+
+Route::prefix('car-rentals')
+    ->middleware(['auth:car_renter'])
+    ->name('car_rentals.')
+    ->group(function () {
+
+        Route::get('/settings', [CarRentalSettingsController::class, 'index'])
+            ->name('settings');
+
+        Route::post('/settings/profile', [CarRentalSettingsController::class, 'updateProfile'])
+            ->name('settings.profile.update');
+
+        Route::post('/settings/notifications', [CarRentalSettingsController::class, 'updateNotifications'])
+            ->name('settings.notifications.update');
+
+        Route::post('/settings/password', [CarRentalSettingsController::class, 'updatePassword'])
+            ->name('settings.password.update');
+
+        Route::post('/settings/payout', [CarRentalSettingsController::class, 'updatePayout'])
+            ->name('settings.payout.update');
+
+        Route::post('/settings/two-factor', [CarRentalSettingsController::class, 'toggleTwoFactor'])
+            ->name('settings.two-factor.toggle');
+    });
