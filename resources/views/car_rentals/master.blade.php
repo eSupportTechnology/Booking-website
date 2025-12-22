@@ -143,7 +143,7 @@
                             <span class="text-sm font-medium">Airport Taxi</span>
                         </a>
 
-                        <a href="#"
+                        <a href="{{ route('car_rentals.manage_bookings') }}"
                             class="flex items-center justify-between px-4 py-2 rounded-lg hover:bg-blue-50 text-gray-600 hover:text-[#1F8FB2] transition-colors duration-200">
                             <span class="text-sm font-medium">Bookings</span>
                             <i class="fas fa-calendar-check text-xs"></i>
@@ -152,50 +152,87 @@
                 </div>
 
                 <!-- EARNINGS -->
-                <a href="#"
-                    class="flex items-center px-4 py-3 rounded-xl hover:bg-gradient-to-r hover:from-yellow-500 hover:to-yellow-600 hover:text-white transition-all duration-200 group {{ request()->routeIs('partner.earnings') ? 'bg-gradient-to-r from-yellow-500 to-yellow-600 text-white shadow-lg' : 'text-gray-700' }}">
-                    <div
-                        class="bg-yellow-100 group-hover:bg-white/20 p-2 rounded-lg mr-3 {{ request()->routeIs('partner.earnings') ? 'bg-white/20' : '' }}">
-                        <i
-                            class="fas fa-chart-line text-yellow-600 group-hover:text-white {{ request()->routeIs('partner.earnings') ? 'text-white' : '' }}"></i>
+                <a href="{{ route('car_rentals.earnings') }}"
+                class="flex items-center px-4 py-3 rounded-xl
+                hover:bg-gradient-to-r hover:from-yellow-500 hover:to-yellow-600 hover:text-white
+                transition-all duration-200 group
+                {{ request()->routeIs('car_rentals.earnings') ? 'bg-gradient-to-r from-yellow-500 to-yellow-600 text-white shadow-lg' : 'text-gray-700' }}">
+
+                    <div class="bg-yellow-100 group-hover:bg-white/20 p-2 rounded-lg mr-3
+                        {{ request()->routeIs('car_rentals.earnings') ? 'bg-white/20' : '' }}">
+
+                        <i class="fas fa-chart-line text-yellow-600 group-hover:text-white
+                        {{ request()->routeIs('car_rentals.earnings') ? 'text-white' : '' }}">
+                        </i>
                     </div>
+
                     <span class="font-semibold">Earnings</span>
                 </a>
 
+
                 <!-- MESSAGES -->
-                <a href="#"
-                    class="flex items-center px-4 py-3 rounded-xl hover:bg-gradient-to-r hover:from-purple-500 hover:to-purple-600 hover:text-white transition-all duration-200 group {{ request()->routeIs('partner.messages') ? 'bg-gradient-to-r from-purple-500 to-purple-600 text-white shadow-lg' : 'text-gray-700' }}">
-                    <div
-                        class="bg-purple-100 group-hover:bg-white/20 p-2 rounded-lg mr-3 {{ request()->routeIs('partner.messages') ? 'bg-white/20' : '' }}">
-                        <i
-                            class="fas fa-envelope text-purple-600 group-hover:text-white {{ request()->routeIs('partner.messages') ? 'text-white' : '' }}"></i>
+                <a href="{{ route('car_rentals.messages.index') }}"
+                class="flex items-center px-4 py-3 rounded-xl
+                hover:bg-gradient-to-r hover:from-purple-500 hover:to-purple-600 hover:text-white
+                transition-all duration-200 group
+                {{ request()->routeIs('car_rentals.messages.*') ? 'bg-gradient-to-r from-purple-500 to-purple-600 text-white shadow-lg' : 'text-gray-700' }}">
+
+                    <div class="bg-purple-100 group-hover:bg-white/20 p-2 rounded-lg mr-3
+                        {{ request()->routeIs('car_rentals.messages.*') ? 'bg-white/20' : '' }}">
+
+                        <i class="fas fa-envelope text-purple-600 group-hover:text-white
+                        {{ request()->routeIs('car_rentals.messages.*') ? 'text-white' : '' }}">
+                        </i>
                     </div>
+
                     <span class="font-semibold">Messages</span>
-                    <span class="ml-auto bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">3</span>
+
+                    {{-- Optional: unread count --}}
+                    @if(($unreadCount ?? 0) > 0)
+                        <span class="ml-auto bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                            {{ $unreadCount }}
+                        </span>
+                    @endif
                 </a>
 
+
                 <!-- REVIEWS -->
-                <a href="#"
-                    class="flex items-center px-4 py-3 rounded-xl hover:bg-gradient-to-r hover:from-orange-500 hover:to-orange-600 hover:text-white transition-all duration-200 group {{ request()->routeIs('partner.reviews') ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg' : 'text-gray-700' }}">
-                    <div
-                        class="bg-orange-100 group-hover:bg-white/20 p-2 rounded-lg mr-3 {{ request()->routeIs('partner.reviews') ? 'bg-white/20' : '' }}">
-                        <i
-                            class="fas fa-star text-orange-600 group-hover:text-white {{ request()->routeIs('partner.reviews') ? 'text-white' : '' }}"></i>
+                <a href="{{ route('car_rentals.reviews') }}"
+                class="flex items-center px-4 py-3 rounded-xl
+                hover:bg-gradient-to-r hover:from-orange-500 hover:to-orange-600 hover:text-white
+                transition-all duration-200 group
+                {{ request()->routeIs('car_rentals.reviews') ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg' : 'text-gray-700' }}">
+
+                    <div class="bg-orange-100 group-hover:bg-white/20 p-2 rounded-lg mr-3
+                        {{ request()->routeIs('car_rentals.reviews') ? 'bg-white/20' : '' }}">
+
+                        <i class="fas fa-star text-orange-600 group-hover:text-white
+                        {{ request()->routeIs('car_rentals.reviews') ? 'text-white' : '' }}">
+                        </i>
                     </div>
+
                     <span class="font-semibold">Reviews</span>
                 </a>
 
+
                 <!-- SETTINGS -->
-                <a href="#"
-                    class="flex items-center px-4 py-3 rounded-xl hover:bg-gradient-to-r hover:from-gray-500 hover:to-gray-600 hover:text-white transition-all duration-200 group {{ request()->routeIs('partner.settings') ? 'bg-gradient-to-r from-gray-500 to-gray-600 text-white shadow-lg' : 'text-gray-700' }}">
-                    <div
-                        class="bg-gray-100 group-hover:bg-white/20 p-2 rounded-lg mr-3 {{ request()->routeIs('partner.settings') ? 'bg-white/20' : '' }}">
-                        <i
-                            class="fas fa-cog text-gray-600 group-hover:text-white {{ request()->routeIs('partner.settings') ? 'text-white' : '' }}"></i>
+                <a href="{{ route('car_rentals.settings') }}"
+                class="flex items-center px-4 py-3 rounded-xl
+                hover:bg-gradient-to-r hover:from-gray-500 hover:to-gray-600 hover:text-white
+                transition-all duration-200 group
+                {{ request()->routeIs('car_rentals.settings*') ? 'bg-gradient-to-r from-gray-500 to-gray-600 text-white shadow-lg' : 'text-gray-700' }}">
+
+                    <div class="bg-gray-100 group-hover:bg-white/20 p-2 rounded-lg mr-3
+                        {{ request()->routeIs('car_rentals.settings*') ? 'bg-white/20' : '' }}">
+
+                        <i class="fas fa-cog text-gray-600 group-hover:text-white
+                        {{ request()->routeIs('car_rentals.settings*') ? 'text-white' : '' }}">
+                        </i>
                     </div>
+
                     <span class="font-semibold">Settings</span>
                 </a>
-
+                
                 <!-- LOGOUT -->
                 <div class="pt-4 mt-4 border-t border-gray-200">
                     <form method="POST" action="{{ route('carrentals.logout') }}">
