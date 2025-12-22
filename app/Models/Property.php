@@ -173,8 +173,6 @@ class Property extends Model
     return $this->belongsTo(PropertySubtype::class, 'subtype_id');
 }
 
-<<<<<<< HEAD
-
     public function seasonalPricings()
     {
         return $this->hasMany(SeasonalPricing::class);
@@ -232,12 +230,9 @@ class Property extends Model
     {
         return true;
     }
-=======
 public function propertySubcategory()
 {
     return $this->belongsTo(PropertySubcategory::class, 'subcategory_id');
 }
 
-
->>>>>>> 35691a5 (super admin car rental provider dashboard update)
 }
