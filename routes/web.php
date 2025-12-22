@@ -1,9 +1,6 @@
 <?php
 
 use App\Http\Controllers\Partner\HomeEditController;
-
-use App\Http\Controllers\Partner\HomeEditController;
-
 use App\Http\Controllers\Auth\TravelerLoginController;
 use App\Http\Controllers\Customer\Auth\CustomerAuthController;
 use App\Http\Controllers\LanguageController;
@@ -52,6 +49,7 @@ use App\Http\Controllers\CarReservations\CarEarningsController;
 use App\Http\Controllers\CarReservations\CarReviewController;
 use App\Http\Controllers\CarReservations\CarMessageController;
 use App\Http\Controllers\CarReservations\CarRentalSettingsController;
+use App\Http\Controllers\Customer\HomeController;
 
 
 Route::post('/accommodation/save-verification/{propertyId}', [AccommodationController::class, 'saveVerification']);
@@ -752,7 +750,6 @@ Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddle
 
     // Specific Property Type Edit Routes - Redirect apartment edit to step2
     Route::get('/apartments/{property}/edit', function ($property) {
-    Route::get('/apartments/{property}/edit', function ($property) {
         return redirect()->route('partner.property.apartment.step2', ['propertyId' => $property]);
     })->name('partner.apartments.edit');
     Route::put('/apartments/{property}', [\App\Http\Controllers\Partner\ApartmentEditController::class, 'update'])->name('partner.apartments.update');
@@ -852,7 +849,7 @@ Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddle
     // Step 2: Show next form and save more details (dynamic for any category, static route name)
     Route::post('/property/{category}/step2/{property}', [PropertyController::class, 'storeStep2'])->name('partner.property.store.step2');
     Route::post('/property/step3/{property}', [PropertyController::class, 'storeStep2'])->name('partner.property.store.step3');
-    Route::post('/property/upload-photos', [PropertyController::class, 'uploadPhotos'])->name('partner.property.upload.photos');
+    // Route::post('/property/upload-photos', [PropertyController::class, 'uploadPhotos'])->name('partner.property.upload.photos');
     Route::post('/partner/property/upload-photos', [PropertyController::class, 'uploadPhotos'])->name('partner.property.upload.photos.alt');
 
     // Temporary debug route for file upload limits
@@ -977,7 +974,7 @@ Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddle
     Route::get('/properties/{property}/analytics', [\App\Http\Controllers\Partner\PropertyAnalyticsController::class, 'analytics'])->name('partner.properties.analytics');
     Route::get('/analytics/dashboard', [\App\Http\Controllers\Partner\PropertyAnalyticsController::class, 'dashboard'])->name('partner.analytics.dashboard');
 });
-
+});
 Route::post('/save-amenities/{propertyId}', [PropertyController::class, 'saveAmenities']);
 Route::post('/property/save-address-same', [PropertyController::class, 'saveAddressSame']);
 Route::post('/property/save-address-multiple', [PropertyController::class, 'saveAddressMultiple']);
@@ -1410,11 +1407,11 @@ Route::get('/carrentals/register/details', [CarRenterAuthController::class, 'car
 
 Route::post('/car-renter/register/company', [CarRenterAuthController::class, 'storeCompanyDetails'])
     ->name('car_renter.register.company.store');
-    ->name('car_renter.register.company.store');
+    
 
 Route::post('/car-renter/register/individual', [CarRenterAuthController::class, 'storeIndividualDetails'])
     ->name('car_renter.register.individual.store');
-    ->name('car_renter.register.individual.store');
+    
 
 Route::get('/carrentals/register/password', [CarRenterAuthController::class, 'createPassword'])
     ->name('carrentals.register.password');
@@ -1516,7 +1513,6 @@ Route::middleware(['auth:car_renter'])->group(function () {
 
 Route::middleware('auth:car_renter')->group(function () {
     Route::get('/my/taxi', [AirportTaxiControlPanel::class, 'myTaxi'])
-    Route::get('/my/taxi', [AirportTaxiControlPanel::class, 'myTaxi'])
         ->name('taxi.listing');
 });
 Route::get('/car-rental-listing', [\App\Http\Controllers\Customer\PropertyListingController::class, 'carRentalListing'])->name('car-rental-listing');
@@ -1606,7 +1602,6 @@ Route::get('/customer/car-rental/search', [CarSearchController::class, 'carsearc
 
 Route::get('/customer/car/{id}', [CarSearchController::class, 'show'])
     ->name('customer.car.show');
-    ->name('customer.car.show');
 
 Route::post('/car/{id}/book', [CarBookingController::class, 'store'])
     ->name('customer.car.book');
@@ -1678,7 +1673,7 @@ Route::get('/taxi/booking/cancel/{id}', [AirportTaxiBookingController::class, 'c
 // Invoice
 Route::get('/taxi/booking/invoice/{id}', [AirportTaxiBookingController::class, 'invoice'])
     ->name('frontend.taxi.booking.invoice');
-use App\Http\Controllers\Customer\HomeController;
+
 Route::get('/customer/home', [HomeController::class, 'popularCities'])->name('customer.home');
 
 Route::get('/help-center', function () {
@@ -1726,7 +1721,6 @@ Route::post(
     '/admin/car-renters/{carRenter}/taxi-commissions',
     [TaxiTypeCommissionController::class, 'update']
 )->name('admin.car-renters.taxi-commission.update');
->>>>>>> 35691a5 (super admin car rental provider dashboard update)
 
 Route::middleware(['auth:car_renter'])
 ->prefix('car-rentals')
