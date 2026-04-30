@@ -27,16 +27,96 @@ class PartnerRegistrationController extends Controller
     public function storeEmail(Request $request)
     {
         try {
-            $dto = PartnerEmailDTO::fromRequest($request);
-            
+            // Validate email format
+            $request->validate([
+                'email' => ['required', 'email'],
+            ]);
+
+            $email = $request->email;
+
+            // Check if user already exists
+            $existingUser = User::where('email', $email)->first();
+
+            // If user is already a partner, redirect to login
+            if ($existingUser && $existingUser->isPartner()) {
+                return redirect()->route('partner.login')
+                    ->with('info', 'You already have a partner account. Please sign in.')
+                    ->withInput(['email' => $email]);
+            }
+
             $registrationData = $request->session()->get('partner_registration', []);
-            $registrationData['email'] = $dto->email;
+            $registrationData['email'] = $email;
+
+            // If user exists as customer, prepare for upgrade
+            if ($existingUser) {
+                $registrationData['is_upgrade'] = true;
+                $registrationData['first_name'] = $existingUser->customerPersonalDetail?->first_name ?? explode(' ', $existingUser->name)[0] ?? '';
+                $registrationData['last_name'] = $existingUser->customerPersonalDetail?->last_name ?? explode(' ', $existingUser->name)[1] ?? '';
+            }
+
             $request->session()->put('partner_registration', $registrationData);
 
-            return redirect()->route('partner.register.contact-details')->with('success', 'Email saved successfully. Please continue with your contact details.');
+            $message = $existingUser
+                ? 'Welcome back! We found your existing account. Please continue to become a partner.'
+                : 'Email saved successfully. Please continue with your contact details.';
+
+            return redirect()->route('partner.register.contact-details')->with('success', $message);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return back()->withErrors($e->errors())->withInput();
         }
+    }
+
+    /**
+     * Register partner with email and password in one step.
+     */
+    public function registerDirect(Request $request, RegisterPartnerAction $action)
+    {
+        $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required', 'min:8', 'confirmed'],
+        ]);
+
+        $email = $request->email;
+
+        // Check if user already exists as partner
+        $existingUser = User::where('email', $email)->first();
+
+        if ($existingUser && $existingUser->isPartner()) {
+            return redirect()->route('partner.login')
+                ->with('info', 'You already have a partner account. Please sign in.')
+                ->withInput(['email' => $email]);
+        }
+
+        // Prepare registration data
+        $registrationData = [
+            'email' => $email,
+            'password' => $request->password,
+            'password_confirmation' => $request->password_confirmation,
+            'name' => $existingUser ? $existingUser->name : explode('@', $email)[0],
+            'first_name' => $existingUser ? (explode(' ', $existingUser->name)[0] ?? '') : '',
+            'last_name' => $existingUser ? (explode(' ', $existingUser->name)[1] ?? '') : '',
+        ];
+
+        // Create DTO and execute action
+        $dto = RegisterPartnerDTO::fromArray($registrationData);
+        $user = $action->execute($dto);
+
+        // If existing user is already verified, log them in
+        if ($existingUser && $user->hasVerifiedEmail()) {
+            auth()->login($user);
+            return redirect()->route('partner.dashboard')
+                ->with('success', 'Welcome! Your account has been upgraded to Partner.');
+        }
+
+        // For new users, trigger email verification
+        if (!$user->hasVerifiedEmail()) {
+            $user->sendEmailVerificationNotification();
+        }
+
+        // Store email in session for verification page
+        $request->session()->put('partner_registration.email', $email);
+
+        return redirect()->route('partner.register.verify');
     }
 
     /**
@@ -80,25 +160,38 @@ class PartnerRegistrationController extends Controller
     public function register(Request $request, RegisterPartnerAction $action)
     {
         $registrationData = $request->session()->get('partner_registration', []);
-        
+
         // Add password and name to the data
         $registrationData['password'] = $request->password;
         $registrationData['password_confirmation'] = $request->password_confirmation;
         $registrationData['name'] = ($registrationData['first_name'] ?? '') . ' ' . ($registrationData['last_name'] ?? '');
 
+        // Check if this is an existing user upgrading to partner
+        $existingUser = User::where('email', $registrationData['email'] ?? '')->first();
+        $isUpgrade = $existingUser !== null;
+
         // Create DTO from the complete data array for final validation
         $dto = RegisterPartnerDTO::fromArray($registrationData);
 
-        // Execute the action to create the user and partner
+        // Execute the action to create/upgrade the user and partner
         $user = $action->execute($dto);
-
-        // Trigger email verification
-        $user->sendEmailVerificationNotification();
 
         // Clear the session data
         $request->session()->forget('partner_registration');
 
-        // Redirect to Laravel's built-in verification notice page
+        // If existing user is already verified, log them in and redirect to dashboard
+        if ($isUpgrade && $user->hasVerifiedEmail()) {
+            auth()->login($user);
+            return redirect()->route('partner.dashboard')
+                ->with('success', 'Welcome! Your account has been upgraded to Partner. You can now list your properties.');
+        }
+
+        // For new users, trigger email verification
+        if (!$user->hasVerifiedEmail()) {
+            $user->sendEmailVerificationNotification();
+        }
+
+        // Redirect to verification notice page
         return redirect()->route('partner.register.verify');
     }
 

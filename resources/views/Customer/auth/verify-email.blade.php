@@ -1,185 +1,152 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('frontend.master')
 
-<head>
-    <meta charset="UTF-8">
-    <title>Email Verification</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+@section('title', 'Verify Email | ' . config('domains.app_name'))
 
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">
+@section('content')
 
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
+<!-- Hero Section -->
+<section class="text-white py-12 bg-[#1F8FB2] relative z-0">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-[32px] md:text-[40px] lg:text-[50px] font-bold mb-4">
+            {{ __('messages.Verify your email address') }}
+        </h1>
+        <p class="text-[18px] md:text-[20px] font-sans">
+            Enter the code sent to your email
+        </p>
+    </div>
+</section>
 
-<body class=" min-h-screen ">
+<!-- Form Section -->
+<section class="py-12 bg-white">
+    <div class="max-w-md mx-auto px-4 sm:px-6">
+        <div class="bg-white border border-gray-200 shadow-lg rounded-xl p-8">
 
-    <!-- HEADER START -->
-    <header class="text-white px-4 py-2 w-full" style="background-color:#1F8FB2;">
-        <section class="py-4">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div
-                    class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
-                    <div class="w-full md:w-auto md:ml-6">
-                        <!-- Logo -->
-                        @php
-                            $host = config('domains.app_name');
+            <form method="POST" action="{{ route('customer.verify.otp') }}" id="otp-form">
+                @csrf
 
-                        @endphp
-
-                        <a href="{{ url('/') }}" class="text-2xl font-bold flex items-center">
-                            @if($host == 'BookinTour')
-                                <h1>Bookintour.com</h1>
-                            @elseif ($host == 'Inselor')
-                                <img src="{{ asset('images/inselor-logo.png') }}" alt="Inselor" class="h-12 w-auto align-middle" />
-                            @endif
-                        </a>
+                @if (session('success'))
+                    <div class="mb-4 p-3 rounded bg-green-100 border border-green-400 text-green-700 text-sm" role="alert">
+                        {{ session('success') }}
                     </div>
+                @endif
 
-                    <div class="flex items-center space-x-4 text-sm font-medium md:ml-auto"
-                        style="font-family: 'Noto Sans', sans-serif;">
-                        <a href="/help" title="Help" class="ml-2">
-                            <img src="{{ asset('assets/question.svg') }}" alt="Help"
-                                class="w-6 h-6 md:w-7 md:h-7 cursor-pointer" />
-                        </a>
-
-                        <!-- Language Button -->
-                        
-
-                        <!-- Modal -->
-                        <div id="language-modal"
-                            class="fixed top-0 left-0 right-0 bottom-0 hidden z-50 overflow-y-auto flex items-start justify-center px-4 py-8 bg-black bg-opacity-50">
-                            <div class="relative w-full max-w-md p-6 bg-white rounded-lg shadow dark:bg-gray-800">
-                                <!-- Modal Header -->
-                                <div class="flex items-start justify-between">
-                                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                                        Select your language
-                                    </h3>
-                                    <button type="button"
-                                        class="close-btn text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white">
-                                        <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
-                                            xmlns="http://www.w3.org/2000/svg">
-                                            <path fill-rule="evenodd"
-                                                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                                clip-rule="evenodd"></path>
-                                        </svg>
-                                        <span class="sr-only">Close modal</span>
-                                    </button>
-                                </div>
-
-                                <!-- Modal Body -->
-                                <div class="mt-4">
-                                    <p class="mb-4 text-base text-gray-500 dark:text-gray-400">
-                                        Suggested for you
-                                    </p>
-                                    <div class="grid grid-cols-2 gap-4">
-                                        @foreach (config('languages') as $code => $lang)
-                                            <a href="{{ route('lang.change', ['lang' => $code]) }}">
-                                                <button
-                                                    class="flex items-center justify-between p-2 space-x-2 text-base font-normal text-gray-700 rounded-lg hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
-                                                    <img src="{{ $lang['flag'] }}" alt="{{ $lang['name'] }}"
-                                                        class="h-5 w-5" />
-                                                    <span>{{ $lang['name'] }}</span>
-                                                </button>
-                                            </a>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Modal End -->
+                @if ($errors->any())
+                    <div class="mb-4 p-3 rounded bg-red-100 border border-red-400 text-red-700 text-sm" role="alert">
+                        @foreach ($errors->all() as $error)
+                            <p>{{ $error }}</p>
+                        @endforeach
                     </div>
+                @endif
+
+                <h2 class="text-xl font-semibold mb-2" style="font-family: 'Noto Sans', sans-serif;">
+                    {{ __('messages.Verify your email address') }}
+                </h2>
+                <p class="text-sm text-gray-600 mb-6" style="font-family: 'Noto Sans', sans-serif;">
+                    {{ __("messages.We've sent a verification code to") }}<br>
+                    <span class="font-semibold text-gray-800">
+                        {{ session('customer_email', 'your email') }}
+                    </span>. {{ __('messages.Please enter this code to continue.') }}
+                </p>
+
+                <!-- Hidden input to collect the full OTP -->
+                <input type="hidden" name="otp" id="full-otp">
+
+                <!-- 6 OTP input boxes -->
+                <div class="flex justify-between gap-2 mb-4" id="code-container">
+                    @for ($i = 0; $i < 6; $i++)
+                        <input type="text" maxlength="1" name="otp_{{ $i }}"
+                            value="{{ old('otp_' . $i) }}"
+                            class="code-input w-12 h-14 text-center text-lg border rounded-lg focus:outline-none focus:ring-2
+                            {{ $errors->has('otp') ? 'border-red-500 ring-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-[#3CC0E9]' }}"
+                            oninput="handleInput(this, {{ $i }})">
+                    @endfor
+                </div>
+
+                @if ($errors->has('otp'))
+                    <p class="text-red-500 text-sm mb-4">{{ $errors->first('otp') }}</p>
+                @endif
+
+                <!-- Verify Button -->
+                <button id="verify-btn" disabled
+                    class="w-full bg-gray-300 text-white py-3 rounded-lg font-semibold cursor-not-allowed transition"
+                    style="font-family: 'Noto Sans', sans-serif;">
+                    {{ __('messages.Verify email') }}
+                </button>
+
+                <!-- Resend Timer -->
+                <p class="text-sm text-gray-600 mt-4 text-center" style="font-family: 'Noto Sans', sans-serif;">
+                    {{ __("messages.Didn't receive an email? Please check your spam folder or request another code in") }}
+                    <strong id="countdown">60 {{ __('messages.seconds') }}</strong>
+                </p>
+
+                <a href="{{ route('customer.login') }}" class="block mt-4 text-[#1F8FB2] hover:underline text-sm text-center"
+                    style="font-family: 'Noto Sans', sans-serif;">
+                    {{ __('messages.Back to sign in') }}
+                </a>
+            </form>
+
+            <p class="text-[11px] text-gray-500 text-center mt-6" style="font-family: 'Noto Sans', sans-serif;">
+                {{ __('messages.By signing in or creating an account, you agree with our') }}
+                <a href="#" class="text-[#1F8FB2] hover:underline">{{ __('messages.Terms & conditions') }}</a>
+                {{ __('messages.and') }}
+                <a href="#" class="text-[#1F8FB2] hover:underline">{{ __('messages.Privacy statement') }}</a>.
+            </p>
+
+            <p class="text-[11px] text-gray-400 text-center mt-2" style="font-family: 'Noto Sans', sans-serif;">
+                {{ config('domains.domain') }}
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- Info Section -->
+<section class="py-12 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row md:space-x-6 space-y-6 md:space-y-0">
+            <!-- Card 1 -->
+            <div class="bg-white shadow-md rounded-lg flex flex-row items-center p-4 w-full md:w-1/3 border border-gray-300">
+                <img src="{{ asset('images/cal.png') }}" alt="Calendar" class="w-16 h-16 object-cover rounded-md mr-4" onerror="this.style.display='none'">
+                <div class="flex flex-col justify-between">
+                    <h2 class="text-sm font-semibold text-gray-800 mb-1" style="font-family: 'Noto Sans', sans-serif;">
+                        {{ __('messages.Book now, pay at the property')}}
+                    </h2>
+                    <p class="text-sm text-gray-600" style="font-family: 'Noto Sans', sans-serif;">
+                        {{ __('messages.FREE cancellation on most rooms')}}
+                    </p>
                 </div>
             </div>
-        </section>
-    </header>
-    <!-- HEADER END -->
 
-    <!-- Main Content -->
-    <main class="min-h-screen flex items-start justify-center pt-10 px-4 sm:px-6">
-        <div class="bg-white rounded shadow-md w-full max-w-md p-6 sm:p-8 text-center mt-10">
-            <div class="text-left mb-6">
-                <form method="POST" action="{{ route('customer.verify.otp') }}" id="otp-form">
-                    @csrf
-                    @if (session('success'))
-                        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                            {{ session('success') }}
-                        </div>
-                    @endif
-
-                    @if ($errors->any())
-                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                            @foreach ($errors->all() as $error)
-                                <p>{{ $error }}</p>
-                            @endforeach
-                        </div>
-                    @endif
-                    <h1 class="text-2xl font-semibold" style="font-family: 'Noto Sans', sans-serif;">
-                        {{ __('messages.Verify your email address') }}</h1>
-                    <p class="text-sm text-gray-700 mt-2" style="font-family: 'Noto Sans', sans-serif;">
-                        {{ __("messages.We've sent a verification code to") }}<br>
-                        <span class="font-semibold" style="font-family: 'Noto Sans', sans-serif;">
-                            {{ session('customer_email', 'your email') }}
-                        </span>. {{ __('messages.Please enter this code to continue.') }}
+            <!-- Card 2 -->
+            <div class="bg-white shadow-md rounded-lg flex flex-row items-center p-4 w-full md:w-1/3 border border-gray-300">
+                <img src="{{ asset('images/world.png') }}" alt="World" class="w-16 h-16 object-cover rounded-md mr-4" onerror="this.style.display='none'">
+                <div class="flex flex-col justify-between">
+                    <h2 class="text-sm font-semibold text-gray-800 mb-1" style="font-family: 'Noto Sans', sans-serif;">
+                        {{ __('messages.2+ million properties worldwide')}}
+                    </h2>
+                    <p class="text-sm text-gray-600" style="font-family: 'Noto Sans', sans-serif;">
+                        {{ __('messages.Hotels, guest houses, apartments, and more...')}}
                     </p>
+                </div>
+            </div>
 
-                    <!-- Hidden input to collect the full OTP -->
-                    <input type="hidden" name="otp" id="full-otp">
-
-                    {{-- 6 OTP input boxes --}}
-                    <div class="flex justify-between gap-2 mb-2 mt-4" id="code-container">
-                        @for ($i = 0; $i < 6; $i++)
-                            <input type="text" maxlength="1" name="otp_{{ $i }}"
-                                value="{{ old('otp_' . $i) }}"
-                                class="code-input w-10 h-12 text-center text-lg border rounded focus:outline-none focus:ring-2
-                    {{ $errors->has('otp') ? 'border-red-500 ring-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500' }}"
-                                oninput="handleInput(this, {{ $i }})">
-                        @endfor
-                    </div>
-
-                    {{-- Single error under boxes (not per box) --}}
-                    @if ($errors->has('otp'))
-                        <p class="text-red-500 text-sm mt-1">{{ $errors->first('otp') }}</p>
-                    @endif
-
-                    <!-- Verify Button -->
-                    <button id="verify-btn" disabled
-                        class="w-full bg-gray-300 text-white font-semibold py-2 rounded cursor-not-allowed"
-                        style="font-family: 'Noto Sans', sans-serif;">
-                        {{ __('messages.Verify email') }}
-                    </button>
-                    <!-- Resend Timer -->
-                    <p class="text-sm text-gray-600 mt-4" style="font-family: 'Noto Sans', sans-serif;">
-                        {{ __("messages.Didn't receive an email? Please check your spam folder or request another code in") }}
-                        <strong id="countdown">60 {{ __('messages.seconds') }}</strong>
+            <!-- Card 3 -->
+            <div class="bg-white shadow-md rounded-lg flex flex-row items-center p-4 w-full md:w-1/3 border border-gray-300">
+                <img src="{{ asset('images/man.png') }}" alt="Support" class="w-16 h-16 object-cover rounded-md mr-4" onerror="this.style.display='none'">
+                <div class="flex flex-col justify-between">
+                    <h2 class="text-sm font-semibold text-gray-800 mb-1" style="font-family: 'Noto Sans', sans-serif;">
+                        {{ __('messages.Trusted customer service you can rely on, 24/7')}}
+                    </h2>
+                    <p class="text-sm text-gray-600" style="font-family: 'Noto Sans', sans-serif;">
+                        {{ __("messages.We're always here to help")}}
                     </p>
-                    <a href="{{ route('customer.login') }}" class="block mt-4 text-blue-600 hover:underline text-sm"
-                        style="font-family: 'Noto Sans', sans-serif;">{{ __('messages.Back to sign in') }}</a>
-
-                    <div class="mt-8 text-xs text-gray-500">
-                        <p style="font-family: 'Noto Sans', sans-serif;">
-                            {{ __('messages.By signing in or creating an account, you agree with our') }}
-                            <a href="#" class="text-blue-600 underline"
-                                style="font-family: 'Noto Sans', sans-serif;">{{ __('messages.Terms & Conditions') }}</a>
-                            {{ __('messages.and') }}
-                            <a href="#"
-                                class="text-blue-600 underline"style="font-family: 'Noto Sans', sans-serif;">{{ __('messages.Privacy Statement') }}</a>
-                        </p>
-                        <p class="mt-4 justify-center text-center "style="font-family: 'Noto Sans', sans-serif;">All
-                            rights reserved<br>Copyright
-                            (2025)
-                            – {{ config('domains.app_name') }}™
-                        </p>
-                    </div>
-                </form>
+                </div>
             </div>
         </div>
-    </main>
+    </div>
+</section>
 
-    @push('scripts')
-        <script src="{{ asset('assets/Customer/js/auth/verify-email.js') }}"></script>
-    @endpush
-    @stack('scripts')
-</body>
+@endsection
 
-</html>
+@push('scripts')
+    <script src="{{ asset('assets/Customer/js/auth/verify-email.js') }}"></script>
+@endpush

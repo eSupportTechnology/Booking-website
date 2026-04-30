@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir:*)",
+      "Bash(php artisan migrate:fresh:*)",
+      "Bash(php artisan migrate:status:*)",
+      "Bash(php artisan:*)",
+      "Bash(Get-Content -Tail 100 \"D:\\\\eSupportTechnologies\\\\Booking-website\\\\storage\\\\logs\\\\laravel.log\")",
+      "Bash(php -i:*)"
+    ]
+  }
+}

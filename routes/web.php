@@ -91,6 +91,7 @@ Route::prefix('customer')->group(function () {
 
 
     Route::get('/login', [CustomerAuthController::class, 'showLoginForm'])->name('customer.login');
+    Route::get('/register', [CustomerAuthController::class, 'showRegisterForm'])->name('customer.register');
     Route::post('/customer/request-otp', [CustomerAuthController::class, 'requestOtp'])->name('customer.request.otp');
     Route::post('/customer/verify-otp', [CustomerAuthController::class, 'verifyOtp'])->name('customer.verify.otp');
     Route::get('/email-verify', [CustomerAuthController::class, 'showEmailVerifyForm'])->name('customer.email.verify');
@@ -158,8 +159,9 @@ Route::prefix('customer')->group(function () {
         ->name('customer.account.destroy');
 
 
-    Route::get('/customer-details/create', [CustomerPersonalDetailsController::class, 'edit'])->name('customer.details.create');
-    Route::post('/customer-details', [CustomerPersonalDetailsController::class, 'update'])->name('customer.details.store');
+    Route::get('/customer-details/create', [CustomerPersonalDetailsController::class, 'edit'])->middleware('auth:customer')->name('customer.details.create');
+    Route::post('/customer-details', [CustomerPersonalDetailsController::class, 'update'])->middleware('auth:customer')->name('customer.details.store');
+    Route::post('/profile/image', [CustomerPersonalDetailsController::class, 'updateProfileImage'])->middleware('auth:customer')->name('customer.profile.image');
 
 
     // Email verification route
@@ -197,9 +199,7 @@ Route::get('/list-your-property', function () {
 });
 
 
-Route::get('/', function () {
-    return view('Customer.home');
-});
+Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/property', function () {
     return view('frontend.property');
 });
@@ -210,9 +210,7 @@ Route::get('/welcome', function () {
     return view('frontend.welcomebox');
 });
 
-Route::get('/stays', function () {
-    return view('Customer.home');
-})->name('stays');
+Route::get('/stays', [HomeController::class, 'index'])->name('stays');
 
 Route::get('/car-rentals', function () {
     return view('frontend.car-rentals');
@@ -645,6 +643,9 @@ Route::prefix('partner')->group(function () {
     // Handle email registration POST
     Route::post('/register/email', [PartnerRegistrationController::class, 'storeEmail'])->name('partner.register.email');
 
+    // Handle combined email + password registration
+    Route::post('/register', [PartnerRegistrationController::class, 'registerDirect'])->name('partner.register.store');
+
     // Show contact details form
     Route::get('/register/contact', [PartnerRegistrationController::class, 'createContact'])->name('partner.register.contact-details');
 
@@ -854,7 +855,6 @@ Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddle
 
     // Temporary debug route for file upload limits
     Route::get('/debug/upload-limits', function () {
-    Route::get('/debug/upload-limits', function () {
         return response()->json([
             'upload_max_filesize' => ini_get('upload_max_filesize'),
             'post_max_size' => ini_get('post_max_size'),
@@ -974,7 +974,7 @@ Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddle
     Route::get('/properties/{property}/analytics', [\App\Http\Controllers\Partner\PropertyAnalyticsController::class, 'analytics'])->name('partner.properties.analytics');
     Route::get('/analytics/dashboard', [\App\Http\Controllers\Partner\PropertyAnalyticsController::class, 'dashboard'])->name('partner.analytics.dashboard');
 });
-});
+
 Route::post('/save-amenities/{propertyId}', [PropertyController::class, 'saveAmenities']);
 Route::post('/property/save-address-same', [PropertyController::class, 'saveAddressSame']);
 Route::post('/property/save-address-multiple', [PropertyController::class, 'saveAddressMultiple']);
@@ -1230,9 +1230,12 @@ Route::get('/customer-myAccount', function () {
 })->name('account.myAccount');
 
 
-Route::get('/rewards-wallet', function () {
-    return view('frontend.rewards-wallet');
-})->name('rewards.wallet');
+Route::get('/rewards-wallet', [\App\Http\Controllers\Customer\RewardsWalletController::class, 'index'])
+    ->middleware('auth:customer')
+    ->name('rewards.wallet');
+Route::post('/rewards-wallet/coupon', [\App\Http\Controllers\Customer\RewardsWalletController::class, 'addCoupon'])
+    ->middleware('auth:customer')
+    ->name('customer.rewards.coupon');
 
 Route::get('/my-next-trip', function () {
     return view('frontend.my-next-trip');
@@ -1242,9 +1245,9 @@ Route::get('/bookings-trips', function () {
     return view('frontend.bookings-trips');
 })->name('bookings.trips');
 
-Route::get('/my-reviews', function () {
-    return view('frontend.reviews');
-})->name('reviews');
+Route::get('/my-reviews', [\App\Http\Controllers\Customer\ReviewController::class, 'index'])
+    ->middleware('auth:customer')
+    ->name('reviews');
 
 
 Route::get('/single-hotel', function () {

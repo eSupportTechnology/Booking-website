@@ -1,151 +1,158 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Choose Mode — Page 1</title>
-  <style>
-    :root{
-      --bg-1:#1F8FB2; 
-      --bg-2:#3CC0E9; 
-      --card:#ffffff; 
-      --accent:#1F8FB2; 
-      --accent-2:#3CC0E9; 
-      --muted:#6b7280;
+@extends('frontend.master')
+
+@section('title', 'Choose Option')
+
+@push('styles')
+<style>
+    .option-card {
+        transition: all 0.3s ease;
+        cursor: pointer;
     }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0; 
-      font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      background:linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 100%);
-      color:#0f172a; 
-      display:flex; 
-      align-items:center; 
-      justify-content:center; 
-      padding:24px;
+    .option-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
     }
-
-    .card{
-      width:100%; 
-      max-width:1100px; /* bigger card */
-      background:rgba(255,255,255,0.95); 
-      border-radius:24px; 
-      box-shadow:0 16px 50px rgba(0,0,0,0.25);
-      padding:48px; /* more padding */
-      display:flex; 
-      flex-direction:column; 
-      gap:32px; 
-      align-items:center;
-      backdrop-filter: blur(10px);
-      animation:fadeIn 0.6s ease;
+    .option-card.selected {
+        border-color: #1F8FB2;
+        background: linear-gradient(135deg, rgba(31,143,178,0.1) 0%, rgba(60,192,233,0.1) 100%);
     }
+</style>
+@endpush
 
-    @keyframes fadeIn {
-      from {opacity:0; transform:translateY(20px);}
-      to {opacity:1; transform:translateY(0);}
-    }
+@section('content')
 
-    h1{margin:0; font-size:2rem; color:#0f172a;}
-    p.lead{margin:0; color:var(--muted); font-size:1.2rem}
+<!-- Hero Section -->
+<section class="text-white py-12 bg-[#1F8FB2] relative z-0">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-[32px] md:text-[40px] lg:text-[50px] font-bold mb-4">
+            How would you like to continue?
+        </h1>
+        <p class="text-[18px] md:text-[20px] font-sans">
+            Choose your role to get started
+        </p>
+    </div>
+</section>
 
-    .buttons{
-      width:100%; display:flex; gap:24px; margin-top:20px; 
-      align-items:center; justify-content:center;
-      flex-direction:column;
-    }
+<!-- Options Section -->
+<section class="py-16 bg-white">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
 
-    .btn{
-      border:0; 
-      cursor:pointer; 
-      border-radius:18px; 
-      padding:22px 28px; /* bigger padding */
-      font-size:1.3rem; /* bigger text */
-      font-weight:600;
-      display:inline-flex; 
-      gap:14px; 
-      align-items:center; 
-      justify-content:center; 
-      min-width:260px; /* bigger button width */
-      transition:all .2s ease;
-      box-shadow:0 8px 24px rgba(15,23,42,0.1);
-      background:rgba(31,143,178,0.08);
-      color:var(--accent);
-    }
+            <!-- Guest Option -->
+            <a href="/customer/login" class="option-card bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-8 flex flex-col items-center text-center hover:border-[#1F8FB2]">
+                <div class="w-20 h-20 bg-[#1F8FB2] rounded-full flex items-center justify-center mb-6">
+                    <svg class="w-10 h-10 text-white" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 12a4 4 0 100-8 4 4 0 000 8zM3 20a9 9 0 0118 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-3">Guest</h3>
+                <p class="text-gray-600 text-sm" style="font-family: 'Noto Sans', sans-serif;">
+                    Book hotels, homes, and experiences as a traveler
+                </p>
+                <div class="mt-6">
+                    <span class="inline-flex items-center text-[#1F8FB2] font-semibold">
+                        Continue
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </span>
+                </div>
+            </a>
 
-    .btn:hover{
-      background:rgba(60,192,233,0.18);
-      transform:translateY(-3px);
-      box-shadow:0 10px 28px rgba(0,0,0,0.18);
-    }
+            <!-- Partner Option -->
+            <a href="/partner/login" class="option-card bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-8 flex flex-col items-center text-center hover:border-[#1F8FB2]">
+                <div class="w-20 h-20 bg-[#3CC0E9] rounded-full flex items-center justify-center mb-6">
+                    <svg class="w-10 h-10 text-white" viewBox="0 0 24 24" fill="none">
+                        <path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2m-16 0H3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M9 7h1m4 0h1M9 11h1m4 0h1M9 15h1m4 0h1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-3">Partner</h3>
+                <p class="text-gray-600 text-sm" style="font-family: 'Noto Sans', sans-serif;">
+                    List your property and manage bookings as a host
+                </p>
+                <div class="mt-6">
+                    <span class="inline-flex items-center text-[#1F8FB2] font-semibold">
+                        Continue
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </span>
+                </div>
+            </a>
 
-    .btn:active{transform:translateY(0)}
+            <!-- Car & Taxi Rental Option -->
+            <a href="/car-renter/login/email" class="option-card bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-8 flex flex-col items-center text-center hover:border-[#1F8FB2]">
+                <div class="w-20 h-20 bg-[#1F8FB2] rounded-full flex items-center justify-center mb-6">
+                    <svg class="w-10 h-10 text-white" viewBox="0 0 24 24" fill="none">
+                        <path d="M3 13l1-4h16l1 4v4a1 1 0 01-1 1h-1a1 1 0 01-1-1v-1H6v1a1 1 0 01-1 1H4a1 1 0 01-1-1v-4z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="7.5" cy="16.5" r="1.5" fill="currentColor"/>
+                        <circle cx="16.5" cy="16.5" r="1.5" fill="currentColor"/>
+                        <path d="M5 9l1-4h12l1 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-3">Car & Taxi Rental</h3>
+                <p class="text-gray-600 text-sm" style="font-family: 'Noto Sans', sans-serif;">
+                    Rent cars or offer taxi services to travelers
+                </p>
+                <div class="mt-6">
+                    <span class="inline-flex items-center text-[#1F8FB2] font-semibold">
+                        Continue
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </span>
+                </div>
+            </a>
 
-    .btn[aria-pressed="true"] {
-      background:linear-gradient(90deg,var(--accent),var(--accent-2));
-      color:white;
-      box-shadow:0 10px 28px rgba(31,143,178,0.45);
-    }
+        </div>
+    </div>
+</section>
 
-    .btn svg{width:28px;height:28px;flex:0 0 28px}
+<!-- Info Section (like home page) -->
+<section class="py-12 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row md:space-x-6 space-y-6 md:space-y-0">
+            <!-- Card 1 -->
+            <div class="bg-white shadow-md rounded-lg flex flex-row items-center p-4 w-full md:w-1/3 border border-gray-300">
+                <img src="{{ asset('images/cal.png') }}" alt="Calendar" class="w-16 h-16 object-cover rounded-md mr-4" onerror="this.style.display='none'">
+                <div class="flex flex-col justify-between">
+                    <h2 class="text-sm font-semibold text-gray-800 mb-1" style="font-family: 'Noto Sans', sans-serif;">
+                        Book now, pay at the property
+                    </h2>
+                    <p class="text-sm text-gray-600 mb-3" style="font-family: 'Noto Sans', sans-serif;">
+                        FREE cancellation on most rooms
+                    </p>
+                </div>
+            </div>
 
-    @media (min-width:640px){
-      .buttons{flex-direction:row}
-      .btn{min-width:220px}
-    }
+            <!-- Card 2 -->
+            <div class="bg-white shadow-md rounded-lg flex flex-row items-center p-4 w-full md:w-1/3 border border-gray-300">
+                <img src="{{ asset('images/world.png') }}" alt="World" class="w-16 h-16 object-cover rounded-md mr-4" onerror="this.style.display='none'">
+                <div class="flex flex-col justify-between">
+                    <h2 class="text-sm font-semibold text-gray-800 mb-1" style="font-family: 'Noto Sans', sans-serif;">
+                        2+ million properties worldwide
+                    </h2>
+                    <p class="text-sm text-gray-600 mb-3" style="font-family: 'Noto Sans', sans-serif;">
+                        Hotels, guest houses, apartments, and more...
+                    </p>
+                </div>
+            </div>
 
-    @media (max-width:420px){
-      .btn{padding:20px; font-size:1.2rem; border-radius:20px}
-    }
+            <!-- Card 3 -->
+            <div class="bg-white shadow-md rounded-lg flex flex-row items-center p-4 w-full md:w-1/3 border border-gray-300">
+                <img src="{{ asset('images/man.png') }}" alt="Support" class="w-16 h-16 object-cover rounded-md mr-4" onerror="this.style.display='none'">
+                <div class="flex flex-col justify-between">
+                    <h2 class="text-sm font-semibold text-gray-800 mb-1" style="font-family: 'Noto Sans', sans-serif;">
+                        Trusted customer service 24/7
+                    </h2>
+                    <p class="text-sm text-gray-600 mb-3" style="font-family: 'Noto Sans', sans-serif;">
+                        We're always here to help
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
-    .meta{
-      display:flex; gap:12px; align-items:center; 
-      color:#64748b; font-size:1.05rem;
-    }
-  </style>
-</head>
-<body>
-  <main class="card" role="main">
-    <header style="text-align:center">
-      <h1>How would you like to continue? (Sign in)</h1>
-    </header>
-
-    <nav class="buttons" aria-label="Primary actions">
-      <button class="btn btn--guest" id="btnGuest" aria-pressed="false">
-        <svg viewBox="0 0 24 24" fill="none"><path d="M12 12a4 4 0 100-8 4 4 0 000 8zM3 20a9 9 0 0118 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Guest
-      </button>
-
-      <button class="btn btn--partner" id="btnPartner" aria-pressed="false">
-        <svg viewBox="0 0 24 24" fill="none"><path d="M3 12l6 6 12-12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Partner
-      </button>
-
-      <button class="btn btn--rental" id="btnRental" aria-pressed="false">
-        <svg viewBox="0 0 24 24" fill="none"><path d="M3 13l1-4h16l1 4v4a1 1 0 01-1 1h-1a1 1 0 01-1-1v-1H6v1a1 1 0 01-1 1H4a1 1 0 01-1-1v-4z" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="7.5" cy="16.5" r="1.5"/><circle cx="17.5" cy="16.5" r="1.5"/></svg>
-        Car & Taxi Rental
-      </button>
-    </nav>
-
-    <div class="meta" id="status" aria-live="polite">No selection yet.</div>
-  </main>
-
-  <script>
-    const status = document.getElementById('status');
-    const actions = {
-      btnGuest: ()=>{ status.textContent = 'Continuing as guest...'; location.href = '/customer/login'; },
-      btnPartner: ()=>{ status.textContent = 'Partner portal — redirecting...'; location.href = '/partner/login'; },
-      btnRental: ()=>{ status.textContent = 'Showing car & taxi rental options...'; location.href = '/car-renter/login/email';  }
-    };
-
-    Object.keys(actions).forEach(id=>{
-      const el = document.getElementById(id);
-      el.addEventListener('click', ()=>{
-        document.querySelectorAll('.btn').forEach(b=>b.setAttribute('aria-pressed','false'));
-        el.setAttribute('aria-pressed','true');
-        actions[id]();
-      });
-    });
-  </script>
-</body>
-</html>
+@endsection

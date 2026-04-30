@@ -22,6 +22,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'email',
         'password',
         'email_verified_at',
+        'is_partner',
+        'is_car_renter',
     ];
 
     protected $hidden = [
@@ -48,6 +50,30 @@ class User extends Authenticatable implements MustVerifyEmail
     public function isGoogleUser(): bool
     {
         return !empty($this->google_id);
+    }
+
+    // Check if user is a partner
+    public function isPartner(): bool
+    {
+        return (bool) $this->is_partner;
+    }
+
+    // Check if user is a car renter
+    public function isCarRenter(): bool
+    {
+        return (bool) $this->is_car_renter;
+    }
+
+    // Make user a partner
+    public function makePartner(): void
+    {
+        $this->update(['is_partner' => true]);
+    }
+
+    // Make user a car renter
+    public function makeCarRenter(): void
+    {
+        $this->update(['is_car_renter' => true]);
     }
 
     //partners relationship

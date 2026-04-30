@@ -86,57 +86,75 @@
                     <!-- List property -->
                     <a href="/list-your-property" class="hover:underline">List your property</a>
 
-                    <!-- Auth -->
-                    @auth('customer')
-                        <!-- My Bookings -->
-                        <a href="{{ route('customer.bookings.index') }}" class="flex items-center space-x-1 hover:underline">
-                            <img src="{{ asset('assets/booking.svg') }}" alt="Bookings" class="w-4 h-4" />
-                            <span class="text-sm" style="font-family: 'Noto Sans', sans-serif;">My Bookings</span>
+                    <!-- Partner Dashboard Link -->
+                    @auth
+                        @if(Auth::user()->hasRole('partner'))
+                        <a href="{{ route('partner.dashboard') }}" class="flex items-center space-x-1 hover:underline">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+                            </svg>
+                            <span class="text-sm" style="font-family: 'Noto Sans', sans-serif;">Partner Dashboard</span>
                         </a>
-                        
-                        <!-- Messages -->
-                        <a href="{{ route('customer.messages.index') }}" class="flex items-center space-x-1 hover:underline">
-                            <i class="fas fa-comments w-4 h-4"></i>
-                            <span class="text-sm" style="font-family: 'Noto Sans', sans-serif;">Messages</span>
-                        </a>
-                        
-                        <!-- Reviews -->
-                        <a href="{{ route('customer.reviews.index') }}" class="flex items-center space-x-1 hover:underline">
-                            <i class="fas fa-star w-4 h-4"></i>
-                            <span class="text-sm" style="font-family: 'Noto Sans', sans-serif;">My Reviews</span>
-                        </a>
-                        
-                        <!-- Profile dropdown -->
-                        <div class="relative" x-data="{ open: false }">
-                            <button @click="open = !open" class="flex items-center space-x-1 hover:underline">
-                                <img src="{{ asset('assets/user.svg') }}" alt="Profile" class="w-4 h-4" />
-                                <span class="text-sm" style="font-family: 'Noto Sans', sans-serif;">Account</span>
-                            </button>
-                            <div x-show="open" @click.away="open = false" 
-                                 class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
-                                <a href="{{ route('customer.bookings.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Bookings</a>
-                                <a href="{{ route('customer.messages.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Messages</a>
-                                <a href="{{ route('customer.reviews.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Reviews</a>
-                                <form method="POST" action="{{ route('customer.logout') }}">
-                                    @csrf
-                                    <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sign Out</button>
-                                </form>
-                            </div>
-                        </div>
-                    @else
-                        <div class="flex items-center gap-1 sm:gap-2">
-                            <a href="{{ route('customer.login') }}"
-                               class="bg-white font-base px-2 py-1 sm:px-3 sm:py-1 md:px-4 md:py-2 rounded hover:bg-blue-100 text-xs sm:text-sm md:text-base"
-                               style="font-family: 'Noto Sans', sans-serif; color:#3CC0E9;">
-                                Register
-                            </a>
-                            <a href="{{ route('customer.login') }}"
-                               class="bg-white font-base px-2 py-1 sm:px-3 sm:py-1 md:px-4 md:py-2 rounded hover:bg-blue-100 text-xs sm:text-sm md:text-base"
-                               style="font-family: 'Noto Sans', sans-serif; color:#3CC0E9;">
-                                Sign in
-                            </a>
-                        </div>
+                        @endif
                     @endauth
+
+                    <!-- Auth (hide for partners) -->
+                    @php
+                        $isPartner = Auth::check() && Auth::user()->hasRole('partner');
+                    @endphp
+
+                    @if(!$isPartner)
+                        @auth('customer')
+                            <!-- My Bookings -->
+                            <a href="{{ route('customer.bookings.index') }}" class="flex items-center space-x-1 hover:underline">
+                                <img src="{{ asset('assets/booking.svg') }}" alt="Bookings" class="w-4 h-4" />
+                                <span class="text-sm" style="font-family: 'Noto Sans', sans-serif;">My Bookings</span>
+                            </a>
+
+                            <!-- Messages -->
+                            <a href="{{ route('customer.messages.index') }}" class="flex items-center space-x-1 hover:underline">
+                                <i class="fas fa-comments w-4 h-4"></i>
+                                <span class="text-sm" style="font-family: 'Noto Sans', sans-serif;">Messages</span>
+                            </a>
+
+                            <!-- Reviews -->
+                            <a href="{{ route('customer.reviews.index') }}" class="flex items-center space-x-1 hover:underline">
+                                <i class="fas fa-star w-4 h-4"></i>
+                                <span class="text-sm" style="font-family: 'Noto Sans', sans-serif;">My Reviews</span>
+                            </a>
+
+                            <!-- Profile dropdown -->
+                            <div class="relative" x-data="{ open: false }">
+                                <button @click="open = !open" class="flex items-center space-x-1 hover:underline">
+                                    <img src="{{ asset('assets/user.svg') }}" alt="Profile" class="w-4 h-4" />
+                                    <span class="text-sm" style="font-family: 'Noto Sans', sans-serif;">Account</span>
+                                </button>
+                                <div x-show="open" @click.away="open = false"
+                                     class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                                    <a href="{{ route('customer.bookings.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Bookings</a>
+                                    <a href="{{ route('customer.messages.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Messages</a>
+                                    <a href="{{ route('customer.reviews.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Reviews</a>
+                                    <form method="POST" action="{{ route('customer.logout') }}">
+                                        @csrf
+                                        <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sign Out</button>
+                                    </form>
+                                </div>
+                            </div>
+                        @else
+                            <div class="flex items-center gap-1 sm:gap-2">
+                                <a href="{{ route('customer.login') }}"
+                                   class="bg-white font-base px-2 py-1 sm:px-3 sm:py-1 md:px-4 md:py-2 rounded hover:bg-blue-100 text-xs sm:text-sm md:text-base"
+                                   style="font-family: 'Noto Sans', sans-serif; color:#3CC0E9;">
+                                    Register
+                                </a>
+                                <a href="{{ route('customer.login') }}"
+                                   class="bg-white font-base px-2 py-1 sm:px-3 sm:py-1 md:px-4 md:py-2 rounded hover:bg-blue-100 text-xs sm:text-sm md:text-base"
+                                   style="font-family: 'Noto Sans', sans-serif; color:#3CC0E9;">
+                                    Sign in
+                                </a>
+                            </div>
+                        @endauth
+                    @endif
 
                 </div>     
 

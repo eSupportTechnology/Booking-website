@@ -9,9 +9,9 @@ class RegisterPartnerDTO extends ValidatedDTO
     public string $name;
     public string $email;
     public string $password;
-    public string $first_name;
-    public string $last_name;
-    public string $contact_number;
+    public ?string $first_name;
+    public ?string $last_name;
+    public ?string $contact_number;
 
     protected function rules(): array
     {
@@ -19,15 +19,19 @@ class RegisterPartnerDTO extends ValidatedDTO
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'first_name' => ['required', 'string', 'max:255'],
-            'last_name' => ['required', 'string', 'max:255'],
-            'contact_number' => ['required', 'string', 'max:20'],
+            'first_name' => ['nullable', 'string', 'max:255'],
+            'last_name' => ['nullable', 'string', 'max:255'],
+            'contact_number' => ['nullable', 'string', 'max:20'],
         ];
     }
 
     protected function defaults(): array
     {
-        return [];
+        return [
+            'first_name' => '',
+            'last_name' => '',
+            'contact_number' => '',
+        ];
     }
 
     protected function casts(): array

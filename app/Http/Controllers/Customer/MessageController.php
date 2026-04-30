@@ -18,7 +18,7 @@ class MessageController extends Controller
         return view('Customer.messages.index', compact('conversations', 'unreadCount'));
     }
 
-    public function conversation($bookingId)
+    public function conversation(Request $request, $bookingId)
     {
         $booking = Booking::with(['property', 'property.user'])
             ->where('user_id', Auth::guard('customer')->id())
@@ -33,7 +33,16 @@ class MessageController extends Controller
             ->where('receiver_id', Auth::guard('customer')->id())
             ->update(['is_read' => true]);
 
-        return view('Customer.messages.conversation', compact('booking', 'messages'));
+        // Return partial for AJAX requests
+        if ($request->ajax() || $request->wantsJson()) {
+            return view('Customer.messages.conversation', compact('booking', 'messages'));
+        }
+
+        // Full page - return index with active conversation
+        $conversations = $this->getConversations();
+        $unreadCount = $this->getUnreadCount();
+
+        return view('Customer.messages.index', compact('conversations', 'unreadCount', 'booking', 'messages'));
     }
 
     public function store(Request $request)

@@ -13,4 +13,8 @@ class PropertyCategory extends Model
     public function subcategories() {
         return $this->hasMany(PropertySubcategory::class, 'category_id');
     }
+
+    public function properties() {
+        return $this->hasMany(Property::class, 'category_id');
+    }
 }

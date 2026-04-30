@@ -8,9 +8,73 @@ use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class CustomerPersonalDetailsController extends Controller
 {
+    /**
+     * Update profile image using base64 data
+     */
+    public function updateProfileImage(Request $request)
+    {
+        try {
+            $user = Auth::guard('customer')->user();
+
+            if (!$user) {
+                return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+            }
+
+            $imageData = $request->input('image');
+            $filename = $request->input('filename', 'profile.jpg');
+
+            if (!$imageData) {
+                return response()->json(['success' => false, 'message' => 'No image data provided'], 400);
+            }
+
+            // Extract base64 data
+            if (preg_match('/^data:image\/(\w+);base64,/', $imageData, $matches)) {
+                $extension = $matches[1];
+                $imageData = substr($imageData, strpos($imageData, ',') + 1);
+            } else {
+                $extension = pathinfo($filename, PATHINFO_EXTENSION) ?: 'jpg';
+            }
+
+            // Decode base64
+            $decodedImage = base64_decode($imageData);
+
+            if ($decodedImage === false) {
+                return response()->json(['success' => false, 'message' => 'Invalid image data'], 400);
+            }
+
+            // Generate unique filename
+            $newFilename = 'customer_profiles/' . $user->id . '_' . time() . '.' . $extension;
+
+            // Store the image
+            Storage::disk('public')->put($newFilename, $decodedImage);
+
+            // Update customer details
+            $user->customerPersonalDetail()->updateOrCreate(
+                ['user_id' => $user->id],
+                ['profile_image' => $newFilename]
+            );
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Profile image updated successfully.',
+                'image_url' => asset('storage/' . $newFilename)
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Profile image upload error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to upload image'
+            ], 500);
+        }
+    }
+
     public function edit()
     {
         $user = Auth::guard('customer')->user();
@@ -65,118 +129,135 @@ class CustomerPersonalDetailsController extends Controller
 
     public function update(Request $request, StoreOrUpdateCustomerPersonalDetailAction $action)
     {
-        $user = Auth::guard('customer')->user();
+        try {
+            $user = Auth::guard('customer')->user();
 
-        if (!$user) {
-            abort(403, 'Unauthorized action.');
-        }
-
-        // Update user's name if provided
-        if ($request->has(['first_name', 'last_name'])) {
-            $user->name = trim($request->input('first_name') . ' ' . $request->input('last_name'));
-        }
-
-        // Handle email verification status
-        $emailVerified = false;
-        $emailToSave = $user->email; // Keep current email by default
-
-        // Check if email was verified through the verification process
-        if ($request->filled('email_verified') && $request->boolean('email_verified')) {
-            $emailToSave = $request->input('email');
-            $emailVerified = true;
-        } elseif ($request->filled('email') && $request->input('email') === $user->email && $user->email_verified_at) {
-            // Email hasn't changed and was already verified
-            $emailVerified = true;
-        }
-
-        // Only update email if it's been verified or if it's the same as current verified email
-        if ($emailVerified || ($request->filled('email') && $request->input('email') === $user->email)) {
-            $user->email = $emailToSave;
-            if ($emailVerified && !$user->email_verified_at) {
-                $user->email_verified_at = now();
+            if (!$user) {
+                if ($request->expectsJson() || $request->ajax()) {
+                    return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+                }
+                abort(403, 'Unauthorized action.');
             }
-        }
 
-        $user->save();
+            // Handle profile image upload FIRST (simple case)
+            if ($request->hasFile('profile_image')) {
+                $file = $request->file('profile_image');
 
-        $existingDetail = $user->customerPersonalDetail;
+                if ($file->isValid()) {
+                    $imagePath = $file->store('customer_profiles', 'public');
 
-        // Preserve display_name if not present in request
-        if (!$request->has('display_name') && $existingDetail) {
-            $request->merge([
-                'display_name' => $existingDetail->display_name,
-            ]);
-        }
+                    // Update or create customer details with just the image
+                    $user->customerPersonalDetail()->updateOrCreate(
+                        ['user_id' => $user->id],
+                        ['profile_image' => $imagePath]
+                    );
 
-        // Handle phone number - only save if verified
-        $phoneNumber = null;
-        $phoneVerified = false;
+                    // If this is ONLY a profile image upload (AJAX), return JSON
+                    if ($request->expectsJson() || $request->ajax()) {
+                        return response()->json([
+                            'success' => true,
+                            'message' => 'Profile image updated successfully.',
+                            'image_url' => asset('storage/' . $imagePath)
+                        ]);
+                    }
 
-        if ($request->filled('phone_number') && $request->boolean('phone_verified')) {
-            $phoneNumber = $request->input('phone_number');
-            $phoneVerified = true;
-        } elseif ($existingDetail && $existingDetail->phone_verified) {
-            // Keep existing verified phone number
-            $phoneNumber = $existingDetail->phone_number;
-            $phoneVerified = true;
-        }
-
-        // Combine passport name
-        $passportFirstName = $request->input('passportFirstName');
-        $passportLastName = $request->input('passportLastName');
-
-        if ($passportFirstName || $passportLastName) {
-            $passportName = trim("{$passportFirstName} {$passportLastName}");
-            $request->merge(['passport_name' => $passportName]);
-        } elseif ($existingDetail) {
-            $request->merge(['passport_name' => $existingDetail->passport_name]);
-        }
-
-        // Combine passport expiry date
-        $day = $request->input('passportExpiryDay');
-        $month = $request->input('passportExpiryMonth');
-        $year = $request->input('passportExpiryYear');
-
-        if ($day && $month && $year) {
-            $passportExpiryDate = "{$year}-{$month}-{$day}";
-            if (strtotime($passportExpiryDate)) {
-                $request->merge(['passport_expiry_date' => $passportExpiryDate]);
+                    // If there are no other fields, just redirect
+                    if (!$request->filled('first_name') && !$request->filled('display_name')) {
+                        return redirect()->route('customer.profile')->with('success', 'Profile image updated successfully.');
+                    }
+                }
             }
+
+            // Handle other form fields
+            $existingDetail = $user->customerPersonalDetail;
+
+            // Update user's name if provided
+            if ($request->filled('first_name') || $request->filled('last_name')) {
+                $firstName = $request->input('first_name', '');
+                $lastName = $request->input('last_name', '');
+                $user->name = trim($firstName . ' ' . $lastName);
+                $user->save();
+            }
+
+            // Handle phone number
+            $phoneNumber = $existingDetail?->phone_number;
+            $phoneVerified = $existingDetail?->phone_verified ?? false;
+
+            if ($request->filled('phone_number')) {
+                $phoneNumber = $request->input('phone_number');
+                if ($existingDetail && $existingDetail->phone_number === $phoneNumber) {
+                    $phoneVerified = $existingDetail->phone_verified;
+                } else {
+                    $phoneVerified = false;
+                }
+            }
+
+            // Combine passport name
+            $passportFirstName = $request->input('passportFirstName');
+            $passportLastName = $request->input('passportLastName');
+
+            if ($passportFirstName || $passportLastName) {
+                $passportName = trim("{$passportFirstName} {$passportLastName}");
+                $request->merge(['passport_name' => $passportName]);
+            } elseif ($existingDetail) {
+                $request->merge(['passport_name' => $existingDetail->passport_name]);
+            }
+
+            // Combine passport expiry date
+            $day = $request->input('passportExpiryDay');
+            $month = $request->input('passportExpiryMonth');
+            $year = $request->input('passportExpiryYear');
+
+            if ($day && $month && $year) {
+                $passportExpiryDate = "{$year}-{$month}-{$day}";
+                if (strtotime($passportExpiryDate)) {
+                    $request->merge(['passport_expiry_date' => $passportExpiryDate]);
+                }
+            }
+
+            // Preserve display_name if not present in request
+            if (!$request->has('display_name') && $existingDetail) {
+                $request->merge(['display_name' => $existingDetail->display_name]);
+            }
+
+            // Merge all data
+            $requestData = array_merge(
+                $request->all(),
+                [
+                    'user_id' => $user->id,
+                    'phone_number' => $phoneNumber,
+                    'phone_verified' => $phoneVerified,
+                ]
+            );
+
+            // Remove profile_image from DTO data (already handled above)
+            unset($requestData['profile_image']);
+
+            // Pass data to DTO and action
+            $dto = new CustomerPersonalDetailDTO($requestData);
+            $action->execute($dto);
+
+            // Return JSON response for AJAX requests
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Details saved successfully.',
+                ]);
+            }
+
+            return redirect()->route('customer.profile')->with('success', 'Details saved successfully.');
+
+        } catch (\Exception $e) {
+            Log::error('Profile update error: ' . $e->getMessage() . ' | ' . $e->getTraceAsString());
+
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'An error occurred: ' . $e->getMessage()
+                ], 500);
+            }
+
+            return redirect()->back()->with('error', 'An error occurred while saving your details.');
         }
-
-        // Merge user_id, phone number, and verification status
-        $requestData = array_merge(
-            $request->all(),
-            [
-                'user_id' => $user->id,
-                'phone_number' => $phoneNumber,
-                'phone_verified' => $phoneVerified,
-                'email_verified' => $emailVerified
-            ]
-        );
-
-        if ($request->hasFile('profile_image')) {
-            $requestData['profile_image'] = $request->file('profile_image');
-        }
-
-        // Pass data to DTO and action
-        $dto = new CustomerPersonalDetailDTO($requestData);
-        $action->execute($dto);
-
-        // Return JSON response for AJAX requests
-        if ($request->expectsJson()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Details saved successfully.',
-                'phone_verified' => $phoneVerified,
-                'phone_number' => $phoneNumber,
-                'email_verified' => $emailVerified,
-                'email' => $user->email
-            ]);
-        }
-
-        return redirect()
-            ->route('customer.details.create')
-            ->with('success', 'Details saved successfully.');
     }
 }

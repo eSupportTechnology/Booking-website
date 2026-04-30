@@ -45,7 +45,7 @@ class SettingsService
         
         return [
             'two_factor_enabled' => $settings->two_factor_enabled ?? false,
-            'last_password_change' => $settings->last_password_change?->format('Y-m-d') ?? 'Never',
+            'last_password_change' => $settings?->last_password_change?->format('Y-m-d') ?? 'Never',
             'active_sessions' => [
                 [
                     'device' => 'Windows PC - Chrome',

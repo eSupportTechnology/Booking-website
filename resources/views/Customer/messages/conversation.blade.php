@@ -1,63 +1,90 @@
 <!-- Chat Header -->
-<div class="p-6 border-b border-gray-100 flex-shrink-0">
-    <div class="flex items-center space-x-4">
-        <div class="h-12 w-12 bg-blue-500 rounded-full flex items-center justify-center">
-            <span class="text-white font-bold">{{ substr($booking->property->user->name ?? 'H', 0, 2) }}</span>
+<div class="p-4 border-b border-gray-200 bg-gray-50 flex-shrink-0">
+    <div class="flex items-center gap-4">
+        <div class="w-12 h-12 bg-[#0071C2] rounded-full flex items-center justify-center">
+            <span class="text-white font-bold">{{ strtoupper(substr($booking->property->user->name ?? 'H', 0, 2)) }}</span>
         </div>
-        <div>
-            <h3 class="text-xl font-bold text-gray-900">{{ $booking->property->user->name ?? 'Host' }}</h3>
-            <p class="text-sm text-gray-600">{{ $booking->property->title ?? 'Property' }} - Booking #{{ $booking->id }}</p>
-            <p class="text-xs text-green-600 flex items-center mt-1">
-                <div class="h-2 w-2 bg-green-500 rounded-full mr-2"></div>
-                {{ $booking->status }}
-            </p>
+        <div class="flex-1">
+            <h3 class="font-semibold text-gray-900">{{ $booking->property->user->name ?? 'Host' }}</h3>
+            <p class="text-sm text-[#0071C2]">{{ $booking->property->title ?? 'Property' }}</p>
+            <div class="flex items-center gap-2 mt-1">
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium
+                    {{ $booking->status === 'confirmed' ? 'bg-green-100 text-green-800' :
+                       ($booking->status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                       ($booking->status === 'cancelled' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800')) }}">
+                    {{ ucfirst($booking->status) }}
+                </span>
+                <span class="text-xs text-gray-500">Booking #{{ $booking->id }}</span>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- Messages -->
-<div class="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50" id="messages-container">
-    @foreach($messages as $message)
-        @if($message->sender_id == Auth::guard('customer')->id())
-            <!-- Customer Message -->
-            <div class="flex justify-end">
-                <div class="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-4 rounded-2xl rounded-tr-lg shadow-sm max-w-xs">
-                    <p class="text-sm">{{ $message->content }}</p>
-                    <span class="text-xs text-blue-200 mt-2 block">{{ $message->created_at->diffForHumans() }}</span>
+<!-- Messages Container -->
+<div class="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50" id="messages-container" style="max-height: calc(100vh - 380px);">
+    @if($messages->count() > 0)
+        @foreach($messages as $message)
+            @if($message->sender_id == Auth::guard('customer')->id())
+                <!-- Sent Message -->
+                <div class="flex justify-end">
+                    <div class="max-w-xs lg:max-w-md">
+                        <div class="bg-[#0071C2] text-white p-3 rounded-2xl rounded-br-md shadow-sm">
+                            <p class="text-sm">{{ $message->content }}</p>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1 text-right">{{ $message->created_at->format('M d, h:i A') }}</p>
+                    </div>
                 </div>
+            @else
+                <!-- Received Message -->
+                <div class="flex justify-start">
+                    <div class="flex items-end gap-2 max-w-xs lg:max-w-md">
+                        <div class="w-8 h-8 bg-[#0071C2] rounded-full flex items-center justify-center flex-shrink-0">
+                            <span class="text-white font-semibold text-xs">{{ strtoupper(substr($message->sender->name ?? 'H', 0, 2)) }}</span>
+                        </div>
+                        <div>
+                            <div class="bg-white p-3 rounded-2xl rounded-bl-md shadow-sm border border-gray-200">
+                                <p class="text-sm text-gray-800">{{ $message->content }}</p>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">{{ $message->created_at->format('M d, h:i A') }}</p>
+                        </div>
+                    </div>
+                </div>
+            @endif
+        @endforeach
+    @else
+        <div class="flex items-center justify-center h-full">
+            <div class="text-center">
+                <p class="text-gray-500">No messages yet</p>
+                <p class="text-sm text-gray-400 mt-1">Start the conversation!</p>
             </div>
-        @else
-            <!-- Host Message -->
-            <div class="flex items-start space-x-3">
-                <div class="h-8 w-8 bg-blue-500 rounded-full flex items-center justify-center">
-                    <span class="text-white font-semibold text-xs">{{ substr($message->sender->name ?? 'H', 0, 2) }}</span>
-                </div>
-                <div class="bg-white p-4 rounded-2xl rounded-tl-lg shadow-sm max-w-xs">
-                    <p class="text-sm text-gray-800">{{ $message->content }}</p>
-                    <span class="text-xs text-gray-500 mt-2 block">{{ $message->created_at->diffForHumans() }}</span>
-                </div>
-            </div>
-        @endif
-    @endforeach
+        </div>
+    @endif
 </div>
 
 <!-- Message Input -->
-<div class="p-6 border-t border-gray-100 flex-shrink-0">
-    <form id="message-form" class="flex items-center space-x-4">
+<div class="p-4 border-t border-gray-200 bg-white flex-shrink-0">
+    <form id="message-form" class="flex items-center gap-3">
         @csrf
         <input type="hidden" name="booking_id" value="{{ $booking->id }}">
-        <div class="flex-1 relative">
-            <input type="text" name="content" placeholder="Type your message..."
-                   class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+        <div class="flex-1">
+            <input type="text"
+                   name="content"
+                   placeholder="Type your message..."
+                   class="w-full border border-gray-300 rounded-full px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#0071C2] focus:border-transparent"
+                   autocomplete="off"
+                   required>
         </div>
-        <button type="submit" class="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-3 rounded-xl hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-lg">
-            <i class="fas fa-paper-plane"></i>
+        <button type="submit"
+                class="w-12 h-12 bg-[#0071C2] text-white rounded-full flex items-center justify-center hover:bg-[#005B9E] transition shadow-lg">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+            </svg>
         </button>
     </form>
 </div>
 
 <script>
-setTimeout(function() {
+(function() {
     const messageForm = document.getElementById('message-form');
     if (messageForm) {
         messageForm.addEventListener('submit', function(e) {
@@ -65,6 +92,13 @@ setTimeout(function() {
 
             const formData = new FormData(this);
             const messageInput = this.querySelector('input[name="content"]');
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const content = messageInput.value.trim();
+
+            if (!content) return;
+
+            // Disable button while sending
+            submitBtn.disabled = true;
 
             fetch('/customer/messages', {
                 method: 'POST',
@@ -78,11 +112,17 @@ setTimeout(function() {
             .then(data => {
                 if (data.success) {
                     const messagesContainer = document.getElementById('messages-container');
+                    const now = new Date();
+                    const timeStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ', ' +
+                                   now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+
                     const messageHtml = `
                         <div class="flex justify-end">
-                            <div class="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-4 rounded-2xl rounded-tr-lg shadow-sm max-w-xs">
-                                <p class="text-sm">${data.message.content}</p>
-                                <span class="text-xs text-blue-200 mt-2 block">Just now</span>
+                            <div class="max-w-xs lg:max-w-md">
+                                <div class="bg-[#0071C2] text-white p-3 rounded-2xl rounded-br-md shadow-sm">
+                                    <p class="text-sm">${data.message.content}</p>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1 text-right">${timeStr}</p>
                             </div>
                         </div>
                     `;
@@ -91,8 +131,21 @@ setTimeout(function() {
                     messageInput.value = '';
                 }
             })
-            .catch(error => console.error('Error:', error));
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to send message. Please try again.');
+            })
+            .finally(() => {
+                submitBtn.disabled = false;
+                messageInput.focus();
+            });
         });
     }
-}, 100);
+
+    // Scroll to bottom on load
+    const messagesContainer = document.getElementById('messages-container');
+    if (messagesContainer) {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+})();
 </script>

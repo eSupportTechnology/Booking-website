@@ -34,6 +34,11 @@ class CustomerAuthController extends Controller
         return view('Customer.auth.login');
     }
 
+    public function showRegisterForm()
+    {
+        return view('Customer.auth.register');
+    }
+
     public function requestOtp(Request $request)
 {
     Log::info('Received email input: ' . $request->email);

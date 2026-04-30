@@ -1,1539 +1,573 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('frontend.master')
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Profile Settings</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+@section('title', 'Profile Settings - ' . config('app.name'))
+
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('assets/Customer/css/customerpersonaldetails.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet" />
-    {{-- Tailwind CSS via Vite --}}
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @push('styles')
-        <link rel="stylesheet" href="{{ asset('assets/Customer/css/customerpersonaldetails.css') }}">
-    @endpush
-    @stack('styles')
-</head>
+@endpush
 
-<body class="bg-white text-gray-800">
-    <!-- HEADER -->
-    <header class="text-white px-4 py-2" style="background-color:#1F8FB2;">
-        <section class="py-4">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                
-                <!-- Main Header Wrapper -->
-                <div class="flex flex-col md:flex-row justify-between md:items-center items-start gap-6">
+@section('content')
+<!-- Profile Settings Container -->
+<div class="bg-gray-50 min-h-screen py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-                    <!-- Left: Logo + Promo -->
-                    <div class="w-full md:w-auto">
-                        <div class="flex flex-col items-start space-y-2 w-full">
+        <!-- Page Header -->
+        <div class="mb-6">
+            <h1 class="text-3xl font-bold text-gray-900">Account Settings</h1>
+            <p class="text-gray-600 mt-1">Manage your personal information and preferences</p>
+        </div>
 
-                            <!-- Logo -->
-                            <a href="/" class="text-2xl font-bold"
-                                style="font-family: 'Poppins', sans-serif;">
-                                {{ config('domains.domain') }}
-                            </a>
+        @if(session('success'))
+            <div class="mb-6 p-4 bg-green-100 border border-green-300 text-green-700 rounded-lg">
+                {{ session('success') }}
+            </div>
+        @endif
 
-                            <!-- Promo Box -->
-                            <div id="promo-box"
-                                class="bg-green-500 text-white px-4 py-2 rounded flex items-start justify-between w-full sm:max-w-sm">
-                                <span class="text-sm leading-tight">We offer special discounts this season!</span>
-                                <button onclick="document.getElementById('promo-box').classList.add('hidden')"
-                                    class="ml-4 text-white hover:text-gray-200 font-bold">
-                                    &times;
-                                </button>
-                            </div>
+        @if($errors->any())
+            <div class="mb-6 p-4 bg-red-100 border border-red-300 text-red-700 rounded-lg">
+                <ul class="list-disc list-inside">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
-                        </div>
-                    </div>
-
-                    <!-- Right Section -->
-                    <div class="flex items-center space-x-3 flex-wrap justify-end w-full md:w-auto">
-
-                        <!-- Language Button -->
-                        
-
-                        <!-- Language Modal -->
-                        <div id="language-modal"
-                            class="fixed inset-0 hidden z-50 overflow-y-auto flex items-start justify-center px-4 py-8 bg-black bg-opacity-50">
-                            <div class="relative w-full max-w-md p-6 bg-white rounded-lg shadow dark:bg-gray-800">
-
-                                <div class="flex items-start justify-between">
-                                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                                        Select your language
-                                    </h3>
-
-                                    <button type="button"
-                                        class="close-btn text-gray-400 hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto dark:hover:bg-gray-600 dark:hover:text-white">
-                                        <svg aria-hidden="true" class="w-5 h-5" fill="currentColor"
-                                            viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd"
-                                                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                                clip-rule="evenodd"></path>
-                                        </svg>
-                                        <span class="sr-only">Close modal</span>
-                                    </button>
-                                </div>
-
-                                <div class="mt-4">
-                                    <p class="mb-4 text-base text-gray-500 dark:text-gray-400">
-                                        Suggested for you
-                                    </p>
-
-                                    <div class="grid grid-cols-2 gap-4">
-                                        <button
-                                            class="flex items-center justify-between p-2 space-x-2 text-base font-normal text-gray-700 rounded-lg hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
-                                            <img src="https://upload.wikimedia.org/wikipedia/en/a/ae/Flag_of_the_United_Kingdom_%281-2%29.svg"
-                                                alt="English (UK)" class="h-5 w-5" />
-                                            <span>English (UK)</span>
-                                        </button>
-
-                                        <button
-                                            class="flex items-center justify-between p-2 space-x-2 text-base font-normal text-gray-700 rounded-lg hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
-                                            <img src="https://upload.wikimedia.org/wikipedia/commons/4/48/Flag_of_Germany.svg"
-                                                alt="Deutsch" class="h-5 w-5" />
-                                            <span>Deutsch</span>
-                                        </button>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Links -->
-                        <a href="#" class="hover:underline font-sans text-sm sm:text-base">Already a partner?</a>
-
-                        <a href="#"
-                            class="bg-[#1F8FB2] px-4 py-2 rounded hover:bg-[#29ACD5] text-white font-sans border border-white text-sm sm:text-base">
-                            Sign in
-                        </a>
-
-                        <a href="#"
-                            class="bg-[#3CC0E9] px-4 py-2 rounded hover:bg-[#29ACD5] text-white font-sans text-sm sm:text-base">
-                            Help
-                        </a>
-                    </div>
-
+        <div class="flex flex-col lg:flex-row gap-6">
+            <!-- Sidebar -->
+            <aside class="w-full lg:w-72 bg-white rounded-xl shadow-sm border border-gray-200 p-4 h-fit">
+                <!-- Personal (Active) -->
+                <div class="flex items-center w-full px-4 py-3 text-sm font-medium rounded-lg mb-1 bg-[#1F8FB2] text-white">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                    <span>Personal details</span>
                 </div>
 
-            </div>
-        </section>
-    </header>
+                <!-- Bookings & Trips -->
+                <a href="{{ route('customer.reservations.index') }}"
+                    class="flex items-center w-full px-4 py-3 text-sm font-medium rounded-lg mb-1 transition-all duration-200 text-gray-700 hover:bg-gray-100">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    <span>Bookings & Trips</span>
+                </a>
 
-    <!-- BODY -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6" x-data="{ tab: 'personal' }">
+                <!-- Messages -->
+                <a href="{{ route('customer.messages.index') }}"
+                    class="flex items-center w-full px-4 py-3 text-sm font-medium rounded-lg mb-1 transition-all duration-200 text-gray-700 hover:bg-gray-100">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                    </svg>
+                    <span>Messages</span>
+                </a>
 
-    <div class="flex flex-col md:flex-row gap-6">
+                <!-- Rewards & Wallet -->
+                <a href="{{ route('rewards.wallet') }}"
+                    class="flex items-center w-full px-4 py-3 text-sm font-medium rounded-lg mb-1 transition-all duration-200 text-gray-700 hover:bg-gray-100">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span>Rewards & Wallet</span>
+                </a>
 
-        <!-- Sidebar -->
-        <aside class="w-full md:w-64 lg:w-72 bg-white rounded-lg border border-gray-200 p-3 space-y-1">
+                <!-- Reviews -->
+                <a href="{{ route('reviews') }}"
+                    class="flex items-center w-full px-4 py-3 text-sm font-medium rounded-lg mb-1 transition-all duration-200 text-gray-700 hover:bg-gray-100">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                    </svg>
+                    <span>Reviews</span>
+                </a>
 
-            <!-- Personal -->
-            <button @click="tab = 'personal'"
-                class="flex items-center w-full px-4 py-3 text-sm font-medium bg-white border-b 
-                       border-gray-200 rounded-t-lg hover:bg-gray-100 transition"
-                :class="{ 'text-blue-600 font-semibold': tab === 'personal' }">
-
-                <img :src="tab === 'personal' ? '{{ asset('assets/blue-B.svg') }}' :
-                    '{{ asset('assets/circum_user (2).svg') }}'"
-                    alt="Personal" class="w-6 h-6 mr-3" />
-
-                <span class="whitespace-normal text-left">Personal details</span>
-            </button>
-
-            <!-- Security -->
-            <button @click="tab = 'security'"
-                class="flex items-center w-full px-4 py-3 text-sm font-medium bg-white border-b 
-                       border-gray-200 hover:bg-gray-100 transition"
-                :class="{ 'text-blue-600 font-semibold': tab === 'security' }">
-
-                <img :src="tab === 'security' ? '{{ asset('assets/lock-blue-B.svg') }}' : '{{ asset('assets/lock-B.svg') }}'"
-                    alt="Security" class="w-6 h-6 mr-3" />
-
-                <span class="whitespace-normal text-left">Security settings</span>
-            </button>
-
-            <!-- Travellers -->
-            <button @click="tab = 'travellers'"
-                class="flex items-center w-full px-4 py-3 text-sm font-medium bg-white border-b 
-                       border-gray-200 hover:bg-gray-100 transition"
-                :class="{ 'text-blue-600 font-semibold': tab === 'travellers' }">
-
-                <img :src="tab === 'travellers' ? '{{ asset('assets/blue-E.svg') }}' :
-                    '{{ asset('assets/ph_users-three-light (3).svg') }}'"
-                    alt="Travellers" class="w-6 h-6 mr-3" />
-
-                <span class="whitespace-normal text-left">Other travellers</span>
-            </button>
-
-            <!-- Customisation -->
-            <button @click="tab = 'customisation'"
-                class="flex items-center w-full px-4 py-3 text-sm font-medium bg-white border-b 
-                       border-gray-200 hover:bg-gray-100 transition"
-                :class="{ 'text-blue-600 font-semibold': tab === 'customisation' }">
-
-                <img :src="tab === 'customisation' ? '{{ asset('assets/blue-D.svg') }}' :
-                    '{{ asset('assets/codicon_settings (1).svg') }}'"
-                    alt="Customisation" class="w-6 h-6 mr-3" />
-
-                <span class="whitespace-normal text-left">Customisation preferences</span>
-            </button>
-
-            <!-- Payment -->
-            <button @click="tab = 'payment'"
-                class="flex items-center w-full px-4 py-3 text-sm font-medium bg-white border-b 
-                       border-gray-200 hover:bg-gray-100 transition"
-                :class="{ 'text-blue-600 font-semibold': tab === 'payment' }">
-
-                <img :src="tab === 'payment' ? '{{ asset('assets/blue-C.svg') }}' :
-                    '{{ asset('assets/stash_credit-card-light (1).svg') }}'"
-                    alt="Payment" class="w-6 h-6 mr-3" />
-
-                <span class="whitespace-normal text-left">Payment methods</span>
-            </button>
-
-            <!-- Privacy -->
-            <button @click="tab = 'privacy'"
-                class="flex items-center w-full px-4 py-3 text-sm font-medium bg-white 
-                       rounded-b-lg hover:bg-gray-100 transition"
-                :class="{ 'text-blue-600 font-semibold': tab === 'privacy' }">
-
-                <img :src="tab === 'privacy' ? '{{ asset('assets/blue-A.svg') }}' :
-                    '{{ asset('assets/material-symbols-light_privacy-tip-outline (1).svg') }}'"
-                    alt="Privacy" class="w-6 h-6 mr-3" />
-
-                <span class="whitespace-normal text-left">Privacy and data management</span>
-            </button>
-
-        </aside>
+                <!-- Logout -->
+                <form method="POST" action="{{ route('customer.logout') }}" class="mt-4 pt-4 border-t border-gray-200">
+                    @csrf
+                    <button type="submit"
+                        class="flex items-center w-full px-4 py-3 text-sm font-medium rounded-lg text-red-600 hover:bg-red-50 transition-all duration-200">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                        </svg>
+                        <span>Logout</span>
+                    </button>
+                </form>
+            </aside>
 
             <!-- Main Content -->
-            <main class="flex-1 bg-white py-2 px-6 space-y-8 mb-6">
-                <section x-data="{
-                    editing: null,
-                    phoneFlag: 'https://flagcdn.com/w40/lk.png',
-                    completed: {
-                        name: '{{ isset($firstName) && isset($lastName) ? $firstName . ' ' . $lastName : '' }}',
-                        displayName: '{{ $details->display_name ?? '' }}',
-                        emailAddress: '{{ $email ?? '' }}',
-                        phone: '{{ $details->phone_number ?? '' }}',
-                        dob: '{{ optional($details?->date_of_birth)->format('Y-m-d') }}',
-                        nationality: '{{ $details->nationality ?? '' }}',
-                        gender: '{{ $details->gender ?? '' }}',
-                        address: '{{ isset($details)? collect([$details->country, $details->street, $details->city, $details->postcode])->filter()->join(', '): '' }}',
-                        passport: '{{ isset($passportFirstName) && isset($passportLastName)? collect([$passportFirstName, $passportLastName, $details->issuingCountry ?? '', $details->passportNumber ?? '', isset($passportExpiryDay) && isset($passportExpiryMonth) && isset($passportExpiryYear) ? 'Expires: ' . $passportExpiryDay . '/' . $passportExpiryMonth . '/' . $passportExpiryYear : ''])->filter()->join(' | '): '' }}'
-                    }
-                }" x-show="tab === 'personal'" x-cloak>
-                    <div class="flex items-center justify-between mb-6">
-                        <!-- Left: Title and description -->
-                        <div>
-                            <h2 class="text-2xl font-bold">Personal details</h2>
-                            <p class="text-gray-600 mt-1" style="font-family: 'Noto Sans', sans-serif;">
-                                Update your information and find out how it's used
-                            </p>
-                        </div>
-
-                        <!-- Right: Profile Picture + Camera Upload Button -->
-                        <form id="auto-profile-upload" action="{{ route('customer.details.store') }}" method="POST"
-                            enctype="multipart/form-data">
-                            @csrf
-                            <div class="relative w-16 h-16">
-                                <img id="profile-preview"
-                                    src="{{ $details?->profile_image ? asset('storage/' . $details->profile_image) : 'https://via.placeholder.com/100' }}"
-                                    alt="Profile" class="w-full h-full rounded-full object-cover border" />
-
-                                <label for="profile-upload"
-                                    class="absolute bottom-0 right-0 bg-white border rounded-full p-1 shadow cursor-pointer hover:bg-gray-100">
-                                    <img src="{{ asset('assets/mdi_camera-outline.svg') }}" alt="Upload"
-                                        class="w-3 h-3" />
-                                    <input type="file" name="profile_image" id="profile-upload" class="hidden" />
-                                </label>
-                            </div>
-                        </form>
-
-
+            <main class="flex-1 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <div class="flex items-center justify-between mb-8">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900">Personal details</h2>
+                        <p class="text-gray-600 mt-1">Update your information and find out how it's used</p>
                     </div>
 
-                    <template x-for="(section, index) in Object.keys(completed)" :key="section">
-                        <div class="border-t pt-4 min-h-[100px] flex flex-col justify-center">
-                            <div class="flex justify-between items-start md:items-center">
-                                <div>
-                                    <h3 class="text-sm font-bold text-gray-700"
-                                        x-text="{
-                                            name: 'Name',
-                                            displayName: 'Display Name',
-                                            emailAddress: 'Email Address',
-                                            phone: 'Phone Number',
-                                            dob: 'Date of Birth',
-                                            nationality: 'Nationality',
-                                            gender: 'Gender',
-                                            address: 'Address',
-                                            passport: 'Passport Details'
-                                        }[section]">
-                                    </h3>
-
-                                    <!-- EMAIL -->
-                                    <template x-if="section === 'emailAddress' && editing !== 'emailAddress'">
-                                        <div class="mt-1 space-y-1">
-                                            <div class="flex items-center space-x-2">
-                                                <span class="text-sm text-blue-600"
-                                                    x-text="completed.emailAddress || 'someone@example.com'"></span>
-                                                <span
-                                                    class="bg-green-500 text-white text-xs px-2 py-0.5 rounded">Verified</span>
-                                            </div>
-                                            <p class="text-sm text-gray-500">This is the email address you use to sign
-                                                in. It’s also where we send your booking confirmations.</p>
-                                        </div>
-                                    </template>
-
-                                    <!-- PHONE -->
-                                    <template x-if="section === 'phone' && editing !== 'phone'">
-                                        <div class="mt-1 space-y-1">
-                                            <div class="flex items-center space-x-2">
-                                                <span class="text-sm text-blue-600"
-                                                    x-text="completed.phone || '+94XXXXXXX'"></span>
-                                                    <span
-                                                    class="bg-green-500 text-white text-xs px-2 py-0.5 rounded">Verified</span>
-                                                <template x-if="phoneVerified">
-                                                    <span
-                                                        class="bg-green-500 text-white text-xs px-2 py-0.5 rounded">Verified</span>
-                                                </template>
-                                            </div>
-                                        </div>
-                                    </template>
-
-                                    <!-- GENERAL DISPLAY OR HINT TEXT -->
-                                    <template
-                                        x-if="section !== 'emailAddress' && section !== 'phone' && editing !== section">
-                                        <p class="text-sm mt-1"
-                                            :class="completed[section] ? 'text-gray-900 font-medium' : 'text-gray-500'"
-                                            x-text="
-                                            completed[section]
-                                                ? completed[section]
-                                                : {
-                                                    name: completed.name ? completed.first_name : 'Enter your full legal name.',
-                                                    displayName: completed.display_name ? completed.display_name : 'This name is shown when you leave reviews or messages.',
-                                                    dob: 'Enter your date of birth.',
-                                                    nationality: 'Select the country/region you\'re from.',
-                                                    gender: 'Select your gender.',
-                                                    address: 'Add your address.',
-                                                    passport: 'Add your passport details.'
-                                                }[section]
-                                            ">
-                                        </p>
-                                    </template>
-                                </div>
-
-                                <button class="text-blue-600 hover:underline text-sm"
-                                    @click="editing = section">Edit</button>
-                            </div>
-
-                            <form method="POST" action="{{ route('customer.details.store') }}"
-                                enctype="multipart/form-data">
-                                @csrf
-                                <!-- Input Form Fields -->
-                                <input type="hidden" name="user_id" value="{{ auth()->id() }}">
-
-                                <div x-show="editing === section" class="mt-1 mb-4 space-y-2">
-                                    <template x-if="section === 'name'">
-
-                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <input type="text" name="first_name" id="first_name"
-                                                placeholder="First name(s)"
-                                                class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm"
-                                                value="{{ old('first_name', $firstName ?? '') }}" x-ref="input1" />
-                                            <input type="text" name="last_name" id="last_name"
-                                                placeholder="Last name(s)"
-                                                class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm"
-                                                value="{{ old('last_name', $lastName ?? '') }}" x-ref="input2" />
-                                        </div>
-
-
-                                    </template>
-
-                                    <template x-if="section === 'displayName'">
-                                        <input type="text" name="display_name" id="display_name"
-                                            placeholder="Choose a display name"
-                                            class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm"
-                                            value="{{ old('display_name', $details ?? '') }}" />
-                                    </template>
-
-                                    <template x-if="section === 'emailAddress'">
-                                        <div class="space-y-2" x-data="{
-                                            verifyMode: false,
-                                            code: ['', '', '', '', '', ''],
-                                            loading: false,
-                                            error: '',
-                                            success: '',
-                                            canResend: true,
-                                            resendCountdown: 0,
-                                            completed: {
-                                                emailAddress: '{{ old('email', $email ?? '') }}',
-                                                phone: ''
-                                            },
-
-                                            async sendOtp() {
-                                                if (!this.completed.emailAddress) {
-                                                    this.error = 'Please enter an email address';
-                                                    return;
-                                                }
-
-                                                this.loading = true;
-                                                this.error = '';
-                                                this.success = '';
-
-                                                try {
-                                                    const response = await fetch('/customer/email/send-otp', {
-                                                        method: 'POST',
-                                                        headers: {
-                                                            'Content-Type': 'application/json',
-                                                            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
-                                                        },
-                                                        body: JSON.stringify({
-                                                            email: this.completed.emailAddress
-                                                        })
-                                                    });
-
-                                                    const data = await response.json();
-
-                                                    if (data.success) {
-                                                        this.verifyMode = true;
-                                                        this.success = data.message;
-                                                        this.startResendCountdown();
-                                                        // Focus on first OTP input
-                                                        this.$nextTick(() => {
-                                                            this.$refs.input0?.focus();
-                                                        });
-                                                    } else {
-                                                        this.error = data.message || 'Failed to send verification code';
-                                                    }
-                                                } catch (error) {
-                                                    this.error = 'Network error. Please try again.';
-                                                } finally {
-                                                    this.loading = false;
-                                                }
-                                            },
-
-                                            async verifyOtp() {
-                                                const otpCode = this.code.join('');
-
-                                                if (otpCode.length !== 6) {
-                                                    this.error = 'Please enter the complete 6-digit code';
-                                                    return;
-                                                }
-
-                                                this.loading = true;
-                                                this.error = '';
-                                                this.success = '';
-
-                                                try {
-                                                    const response = await fetch('/customer/email/verify-otp', {
-                                                        method: 'POST',
-                                                        headers: {
-                                                            'Content-Type': 'application/json',
-                                                            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
-                                                        },
-                                                        body: JSON.stringify({
-                                                            email: this.completed.emailAddress,
-                                                            otp: otpCode
-                                                        })
-                                                    });
-
-                                                    const data = await response.json();
-
-                                                    if (data.success) {
-                                                        this.success = data.message;
-                                                        this.completed.phone = 'EMAIL_VERIFIED: ' + this.completed.emailAddress;
-
-                                                        // Reset states after successful verification
-                                                        setTimeout(() => {
-                                                            this.verifyMode = false;
-                                                            this.code = ['', '', '', '', '', ''];
-                                                            this.error = '';
-                                                            this.success = '';
-                                                            editing = null; // Close the editing section
-                                                        }, 2000);
-                                                    } else {
-                                                        this.error = data.message || 'Invalid verification code';
-                                                    }
-                                                } catch (error) {
-                                                    this.error = 'Network error. Please try again.';
-                                                } finally {
-                                                    this.loading = false;
-                                                }
-                                            },
-
-                                            async resendOtp() {
-                                                if (!this.canResend) return;
-
-                                                this.loading = true;
-                                                this.error = '';
-                                                this.success = '';
-
-                                                try {
-                                                    const response = await fetch('/customer/email/resend-otp', {
-                                                        method: 'POST',
-                                                        headers: {
-                                                            'Content-Type': 'application/json',
-                                                            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
-                                                        },
-                                                        body: JSON.stringify({
-                                                            email: this.completed.emailAddress
-                                                        })
-                                                    });
-
-                                                    const data = await response.json();
-
-                                                    if (data.success) {
-                                                        this.success = data.message;
-                                                        this.startResendCountdown();
-                                                    } else {
-                                                        this.error = data.message || 'Failed to resend code';
-                                                    }
-                                                } catch (error) {
-                                                    this.error = 'Network error. Please try again.';
-                                                } finally {
-                                                    this.loading = false;
-                                                }
-                                            },
-
-                                            startResendCountdown() {
-                                                this.canResend = false;
-                                                this.resendCountdown = 60;
-
-                                                const interval = setInterval(() => {
-                                                    this.resendCountdown--;
-                                                    if (this.resendCountdown <= 0) {
-                                                        this.canResend = true;
-                                                        clearInterval(interval);
-                                                    }
-                                                }, 1000);
-                                            },
-
-                                            handleOtpInput(index, event) {
-                                                const value = event.target.value;
-                                                if (value.length === 1 && index < 5) {
-                                                    this.$refs['input' + (index + 1)]?.focus();
-                                                }
-                                            },
-
-                                            handleOtpBackspace(index, event) {
-                                                if (event.target.value === '' && index > 0) {
-                                                    this.$refs['input' + (index - 1)]?.focus();
-                                                }
-                                            }
-                                        }">
-
-                                            <!-- Error Message -->
-                                            <div x-show="error" x-text="error"
-                                                class="text-red-600 text-sm bg-red-50 border border-red-200 rounded-md p-2">
-                                            </div>
-
-                                            <!-- Success Message -->
-                                            <div x-show="success" x-text="success"
-                                                class="text-green-600 text-sm bg-green-50 border border-green-200 rounded-md p-2">
-                                            </div>
-
-                                            <!-- Email Input (hidden during OTP) -->
-                                            <template x-if="!verifyMode">
-                                                <div class="space-y-2">
-                                                    <input type="email" placeholder="Enter your email address"
-                                                        name="email" id="email"
-                                                        x-model="completed.emailAddress" x-ref="emailInput"
-                                                        :disabled="loading"
-                                                        class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
-                                                        @keydown.enter="sendOtp()" />
-                                                </div>
-                                            </template>
-
-                                            <!-- OTP Input Section -->
-                                            <template x-if="verifyMode">
-                                                <div class="space-y-4">
-                                                    <div class="text-center">
-                                                        <p class="text-sm text-gray-600 mb-2">
-                                                            We've sent a 6-digit verification code to:
-                                                        </p>
-                                                        <p class="text-sm font-medium text-gray-900"
-                                                            x-text="completed.emailAddress"></p>
-                                                    </div>
-
-                                                    <div class="flex justify-center gap-2">
-                                                        <template x-for="(digit, index) in code"
-                                                            :key="index">
-                                                            <input type="text" maxlength="1"
-                                                                :disabled="loading"
-                                                                class="w-12 h-12 border border-gray-300 rounded-md text-center text-lg font-medium tracking-wider focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                                                                x-model="code[index]" :ref="'input' + index"
-                                                                @input="handleOtpInput(index, $event)"
-                                                                @keydown.backspace="handleOtpBackspace(index, $event)" />
-                                                        </template>
-                                                    </div>
-
-                                                    <div class="text-center">
-                                                        <button type="button" @click="resendOtp()"
-                                                            :disabled="!canResend || loading"
-                                                            class="text-sm text-blue-600 hover:text-blue-800 disabled:text-gray-400 disabled:cursor-not-allowed">
-                                                            <span x-show="canResend && !loading">Resend Code</span>
-                                                            <span x-show="!canResend">Resend in <span
-                                                                    x-text="resendCountdown"></span>s</span>
-                                                            <span x-show="loading">Sending...</span>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </template>
-
-                                            <!-- Action Buttons -->
-                                            <div class="flex justify-end space-x-4 mt-4">
-                                                <!-- Cancel Button -->
-                                                <button type="button"
-                                                    @click="editing = null; verifyMode = false; code = ['', '', '', '', '', '']; error = ''; success = ''"
-                                                    :disabled="loading"
-                                                    class="text-blue-600 hover:text-blue-800 text-sm disabled:text-gray-400 disabled:cursor-not-allowed">
-                                                    Cancel
-                                                </button>
-
-                                                <!-- Send OTP Button (only if not in OTP mode) -->
-                                                <template x-if="!verifyMode">
-                                                    <button type="button" @click="sendOtp()"
-                                                        :disabled="loading || !completed.emailAddress"
-                                                        class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm font-medium disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center gap-2">
-                                                        <span x-show="loading">
-                                                            <svg class="animate-spin h-4 w-4" fill="none"
-                                                                viewBox="0 0 24 24">
-                                                                <circle class="opacity-25" cx="12"
-                                                                    cy="12" r="10" stroke="currentColor"
-                                                                    stroke-width="4"></circle>
-                                                                <path class="opacity-75" fill="currentColor"
-                                                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                                                                </path>
-                                                            </svg>
-                                                        </span>
-                                                        <span x-text="loading ? 'Sending...' : 'Send Code'"></span>
-                                                    </button>
-                                                </template>
-
-                                                <!-- Verify OTP Button (only if in OTP mode) -->
-                                                <template x-if="verifyMode">
-                                                    <button type="button" @click="verifyOtp()"
-                                                        :disabled="loading || code.join('').length !== 6"
-                                                        class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm font-medium disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center gap-2">
-                                                        <span x-show="loading">
-                                                            <svg class="animate-spin h-4 w-4" fill="none"
-                                                                viewBox="0 0 24 24">
-                                                                <circle class="opacity-25" cx="12"
-                                                                    cy="12" r="10" stroke="currentColor"
-                                                                    stroke-width="4"></circle>
-                                                                <path class="opacity-75" fill="currentColor"
-                                                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                                                                </path>
-                                                            </svg>
-                                                        </span>
-                                                        <span
-                                                            x-text="loading ? 'Verifying...' : 'Verify Email'"></span>
-                                                    </button>
-                                                </template>
-                                            </div>
-
-                                        </div>
-                                    </template>
-
-                                    <!-- Fixed Phone Verification Section -->
-                                    <div x-data="{
-                                        verifyMode: false,
-                                        phoneFlag: 'https://flagcdn.com/w40/lk.png',
-                                        code: ['', '', '', '', '', ''],
-                                        storedPhoneNumber: '{{ old('phone_number', $details->phone_number ?? '') }}',
-                                        phoneVerified: {{ $details && $details->phone_verified ? 'true' : 'false' }},
-
-                                        sendOTP() {
-                                            const phoneNumber = this.$refs.countryCode.value + this.$refs.phoneInput.value;
-                                            if (!phoneNumber || phoneNumber.length < 6) {
-                                                alert('Please enter a valid phone number.');
-                                                return;
-                                            }
-                                            this.storedPhoneNumber = phoneNumber;
-
-                                            fetch('/api/send-sms', {
-                                                    method: 'POST',
-                                                    headers: {
-                                                        'Content-Type': 'application/json',
-                                                        'Accept': 'application/json',
-                                                        'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
-                                                    },
-                                                    body: JSON.stringify({ phone_number: phoneNumber })
-                                                })
-                                                .then(res => res.json())
-                                                .then(data => {
-                                                    if (data.success) {
-                                                        alert('OTP sent successfully.');
-                                                        this.verifyMode = true;
-                                                    } else {
-                                                        alert('Failed to send OTP: ' + data.message);
-                                                    }
-                                                })
-                                                .catch(err => {
-                                                    console.error('Send OTP error:', err);
-                                                    alert('Something went wrong.');
-                                                });
-                                        },
-
-                                        verifyOTP() {
-                                            const otpCode = this.code.join('');
-                                            if (otpCode.length !== 6) {
-                                                alert('Please enter the 6-digit OTP.');
-                                                return;
-                                            }
-
-                                            fetch('/api/verify-otp', {
-                                                    method: 'POST',
-                                                    headers: {
-                                                        'Content-Type': 'application/json',
-                                                        'Accept': 'application/json',
-                                                        'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
-                                                    },
-                                                    body: JSON.stringify({ phone_number: this.storedPhoneNumber, otp: otpCode })
-                                                })
-                                                .then(res => res.json())
-                                                .then(data => {
-                                                    if (data.success) {
-                                                        alert('OTP verified successfully.');
-                                                        this.phoneVerified = true;
-                                                        this.verifyMode = false;
-                                                        this.code = ['', '', '', '', '', ''];
-                                                        this.autoSavePhone();
-                                                    } else {
-                                                        alert('Invalid OTP. Please try again.');
-                                                    }
-                                                })
-                                                .catch(err => {
-                                                    console.error('Verify OTP error:', err);
-                                                    alert('Something went wrong with the verification.');
-                                                });
-                                        },
-
-                                        autoSavePhone() {
-                                            const form = document.querySelector('form[method=POST]');
-                                            if (form) {
-                                                const formData = new FormData(form);
-                                                formData.set('phone_number', this.storedPhoneNumber);
-                                                formData.set('phone_verified', '1');
-
-                                                fetch('{{ route('customer.details.store') }}', {
-                                                        method: 'POST',
-                                                        body: formData,
-                                                        headers: {
-                                                            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
-                                                        }
-                                                    })
-                                                    .then(response => response.json())
-                                                    .then(data => {
-                                                        console.log('Server response:', data);
-                                                        if (data.success) {
-                                                            console.log('Phone number saved successfully');
-                                                            this.editing = null;
-                                                            alert('Phone number verified and saved successfully!');
-                                                        } else {
-                                                            alert('Phone number verified but failed to save. Please try again.');
-                                                        }
-                                                    })
-                                                    .catch(error => {
-                                                        console.error('Error saving phone number:', error);
-                                                        alert('Phone number verified but failed to save. Please try again.');
-                                                    });
-                                            }
-                                        },
-
-                                        cancelVerification() {
-                                            this.editing = null;
-                                            this.verifyMode = false;
-                                            this.code = ['', '', '', '', '', ''];
-                                        }
-                                    }">
-                                        <!-- Hidden inputs to submit verified phone number -->
-                                        <input type="hidden" name="phone_number" :value="storedPhoneNumber">
-                                        <input type="hidden" name="phone_verified" :value="phoneVerified ? 1 : 0">
-
-                                        <template x-if="section === 'phone'">
-                                            <div class="space-y-2">
-                                                <!-- Phone Input View -->
-                                                <template x-if="!verifyMode">
-                                                    <div>
-                                                        <div
-                                                            class="flex items-center border border-gray-300 rounded-md px-3 py-2 space-x-2">
-                                                            <!-- Flag -->
-                                                            <img :src="phoneFlag" alt="Flag"
-                                                                class="w-6 h-4 rounded" />
-
-                                                            <!-- Country Code Dropdown -->
-                                                            <select x-ref="countryCode"
-                                                                @change="phoneFlag = $event.target.options[$event.target.selectedIndex].dataset.flag"
-                                                                class="bg-white border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm">
-                                                                <option value="+94"
-                                                                    data-flag="https://flagcdn.com/w40/lk.png"
-                                                                    selected>+94</option>
-                                                                <option value="+44"
-                                                                    data-flag="https://flagcdn.com/w40/gb.png">+44
-                                                                </option>
-                                                                <option value="+49"
-                                                                    data-flag="https://flagcdn.com/w40/de.png">+49
-                                                                </option>
-                                                                <option value="+1"
-                                                                    data-flag="https://flagcdn.com/w40/us.png">+1
-                                                                </option>
-                                                            </select>
-
-                                                            <!-- Phone Number Input -->
-                                                            <input type="tel" placeholder="Enter phone number"
-                                                                class="flex-1 outline-none border-none focus:ring-0 text-gray-900 text-sm"
-                                                                x-ref="phoneInput"
-                                                                :value="storedPhoneNumber.includes('+') ? storedPhoneNumber
-                                                                    .substring(3) : storedPhoneNumber">
-                                                        </div>
-                                                    </div>
-                                                </template>
-
-                                                <!-- OTP Input View -->
-                                                <template x-if="verifyMode">
-                                                    <div class="space-y-2">
-                                                        <label class="block text-sm font-medium text-gray-700">Enter
-                                                            the 6-digit OTP code</label>
-                                                        <div class="flex justify-center gap-2 mb-4">
-                                                            <template x-for="(digit, index) in code"
-                                                                :key="index">
-                                                                <input type="text" maxlength="1"
-                                                                    class="w-12 h-12 border rounded text-center text-lg tracking-wider focus:outline-none focus:ring focus:ring-blue-200"
-                                                                    x-model="code[index]" :ref="'input' + index"
-                                                                    @input="
-                                    if ($event.target.value.length === 1 && index < 5) {
-                                        $refs['input' + (index + 1)]?.focus();
-                                    }
-                                "
-                                                                    @keydown.backspace="
-                                    if ($event.target.value === '' && index > 0) {
-                                        $refs['input' + (index - 1)]?.focus();
-                                    }
-                                " />
-                                                            </template>
-                                                        </div>
-                                                    </div>
-                                                </template>
-
-                                                <!-- Action Buttons -->
-                                                <div class="flex flex-col items-end mt-2 space-y-2">
-                                                    <!-- Verified Message -->
-                                                    <div x-show="phoneVerified"
-                                                        class="text-green-600 font-medium text-sm">
-                                                        ✅ Phone number verified
-                                                    </div>
-
-                                                    <div class="flex justify-end space-x-4 w-full">
-                                                        <!-- Cancel -->
-                                                        <button type="button" @click="cancelVerification()"
-                                                            class="text-blue-600 hover:underline text-sm">
-                                                            Cancel
-                                                        </button>
-
-                                                        <!-- Send OTP -->
-                                                        <template x-if="!verifyMode">
-                                                            <button type="button" @click="sendOTP()"
-                                                                class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm font-medium">
-                                                                Verify
-                                                            </button>
-                                                        </template>
-
-                                                        <!-- Confirm OTP -->
-                                                        <template x-if="verifyMode">
-                                                            <button type="button" @click="verifyOTP()"
-                                                                class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm font-medium">
-                                                                Confirm OTP
-                                                            </button>
-                                                        </template>
-
-
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </template>
-                                    </div>
-
-
-
-
-                                    <!-- Script to Update Flag Image Dynamically -->
-                                    <script>
-                                        document.addEventListener("DOMContentLoaded", function() {
-                                            const select = document.getElementById("country-select");
-                                            const flagImg = document.getElementById("selected-flag");
-
-                                            if (select && flagImg) {
-                                                select.addEventListener("change", function() {
-                                                    const selectedOption = this.options[this.selectedIndex];
-                                                    const flagUrl = selectedOption.getAttribute("data-flag");
-                                                    flagImg.src = flagUrl;
-                                                });
-                                            }
-                                        });
-                                    </script>
-                                    <!-- DOB -->
-                                    <template x-if="section === 'dob'">
-                                        <input type="date" name="date_of_birth" id="date_of_birth"
-                                            class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm"
-                                            value="{{ old('date_of_birth', optional($details?->date_of_birth)->format('Y-m-d')) }}"
-                                            x-ref="dobInput" />
-                                    </template>
-
-                                    <!-- Nationality -->
-                                    <template x-if="section === 'nationality'">
-                                        <select class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm"
-                                            name="nationality" id="nationality" x-ref="nationalityInput">
-                                            <option value="">Select your nationality</option>
-                                            <option value="Sri Lankan"
-                                                {{ old('nationality', $details?->nationality) === 'Sri Lankan' ? 'selected' : '' }}>
-                                                Sri Lankan</option>
-                                            <option value="American"
-                                                {{ old('nationality', $details?->nationality) === 'American' ? 'selected' : '' }}>
-                                                American</option>
-                                            <option value="British"
-                                                {{ old('nationality', $details?->nationality) === 'British' ? 'selected' : '' }}>
-                                                British</option>
-                                        </select>
-                                    </template>
-
-
-                                    <template x-if="section === 'gender'">
-                                        <select class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm"
-                                            name="gender" id="gender" x-ref="input1">
-                                            <option value="">Select your gender</option>
-                                            <option value="female"
-                                                {{ old('gender', strtolower($details?->gender)) === 'female' ? 'selected' : '' }}>
-                                                Female
-                                            </option>
-                                            <option value="male"
-                                                {{ old('gender', strtolower($details?->gender)) === 'male' ? 'selected' : '' }}>
-                                                Male
-                                            </option>
-                                            <option value="other"
-                                                {{ old('gender', strtolower($details?->gender)) === 'other' ? 'selected' : '' }}>
-                                                Other
-                                            </option>
-                                        </select>
-                                    </template>
-
-
-                                    <template x-if="section === 'address'">
-                                        <div class="space-y-3">
-                                            <!-- Country / Region -->
-                                            <div>
-                                                <label for="country"
-                                                    class="block text-sm font-medium text-gray-700 mb-1">Country/region</label>
-                                                <select id="country" name="country"
-                                                    class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
-                                                    x-ref="country">
-                                                    <option value="">Select the country/region you live in
-                                                    </option>
-                                                    <option value="Sri Lanka"
-                                                        {{ old('country', $details?->country) === 'Sri Lanka' ? 'selected' : '' }}>
-                                                        Sri Lanka</option>
-                                                    <option value="United States"
-                                                        {{ old('country', $details?->country) === 'United States' ? 'selected' : '' }}>
-                                                        United States</option>
-                                                    <option value="United Kingdom"
-                                                        {{ old('country', $details?->country) === 'United Kingdom' ? 'selected' : '' }}>
-                                                        United Kingdom</option>
-                                                </select>
-                                            </div>
-
-                                            <!-- Street -->
-                                            <div>
-                                                <label for="street"
-                                                    class="block text-sm font-medium text-gray-700 mb-1">Address</label>
-                                                <input id="street" name="street" type="text"
-                                                    placeholder="Street name"
-                                                    class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
-                                                    value="{{ old('street', $details ?? '') }}" value=""
-                                                    x-ref="street" />
-                                            </div>
-
-                                            <!-- City & Postcode -->
-                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                <div>
-                                                    <label for="city"
-                                                        class="block text-sm font-medium text-gray-700 mb-1">Town/City</label>
-                                                    <input id="city" name="city" type="text"
-                                                        placeholder="City"
-                                                        class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
-                                                        value="{{ old('city', $details ?? '') }}" x-ref="city" />
-                                                </div>
-                                                <div>
-                                                    <label for="postcode"
-                                                        class="block text-sm font-medium text-gray-700 mb-1">Postcode</label>
-                                                    <input id="postcode" name="postcode" type="text"
-                                                        placeholder="Postcode"
-                                                        class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
-                                                        value="{{ old('postcode', $details ?? '') }}"
-                                                        x-ref="postcode" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </template>
-
-                                    <template x-if="section === 'passport'">
-                                        <div class="space-y-4">
-                                            <!-- Names -->
-                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                <div>
-                                                    <label class="block text-sm font-medium text-gray-700 mb-1">First
-                                                        name(s) <span class="text-red-500">*</span></label>
-                                                    <input type="text" name="passportFirstName"
-                                                        id="passportFirstName" placeholder="First name(s)"
-                                                        class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
-                                                        value="{{ old('passportFirstName', $passportFirstName ?? '') }}"
-                                                        x-ref="passportFirstName" />
-                                                </div>
-                                                <div>
-                                                    <label class="block text-sm font-medium text-gray-700 mb-1">Last
-                                                        name(s) <span class="text-red-500">*</span></label>
-                                                    <input type="text" name="passportLastName"
-                                                        id="passportLastName" placeholder="Last name(s)"
-                                                        class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
-                                                        value="{{ old('passportLastName', $passportLastName ?? '') }}"
-                                                        x-ref="passportLastName" />
-                                                </div>
-                                            </div>
-                                            <p class="text-xs text-gray-500">Please enter the name exactly as written
-                                                on
-                                                the passport or other official travel document.</p>
-
-                                            <!-- Issuing Country and Passport Number -->
-                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                <div>
-                                                    <label class="block text-sm font-medium text-gray-700 mb-1">Issuing
-                                                        country <span class="text-red-500">*</span></label>
-                                                    <select
-                                                        class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
-                                                        name="issuingCountry" id="issuingCountry"
-                                                        x-ref="passportIssuingCountry">
-                                                        <option value="">Select issuing country</option>
-                                                        <option value="Sri Lanka"
-                                                            {{ old('issuingCountry', $details?->issuingCountry) === 'Sri Lanka' ? 'selected' : '' }}>
-                                                            Sri Lanka</option>
-                                                        <option value="United States"
-                                                            {{ old('issuingCountry', $details?->issuingCountry) === 'United States' ? 'selected' : '' }}>
-                                                            United States</option>
-                                                        <option value="United Kingdom"
-                                                            {{ old('issuingCountry', $details?->issuingCountry) === 'United Kingdom' ? 'selected' : '' }}>
-                                                            United Kingdom</option>
-                                                    </select>
-                                                </div>
-                                                <div>
-                                                    <label
-                                                        class="block text-sm font-medium text-gray-700 mb-1">Passport
-                                                        number <span class="text-red-500">*</span></label>
-                                                    <input type="text" name="passportNumber" id="passportNumber"
-                                                        placeholder="Enter document number"
-                                                        class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
-                                                        value="{{ old('passportNumber', $details ?? '') }}"
-                                                        x-ref="passportNumber" />
-                                                </div>
-                                            </div>
-
-                                            <!-- Expiry Date -->
-                                            <div>
-                                                <label class="block text-sm font-medium text-gray-700 mb-1">Expiry date
-                                                    <span class="text-red-500">*</span></label>
-                                                <div class="grid grid-cols-3 gap-2">
-                                                    <input type="text" name="passportExpiryDay"
-                                                        id="passportExpiryDay" placeholder="DD" maxlength="2"
-                                                        class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
-                                                        value="{{ old('passportExpiryDay', $passportExpiryDay ?? '') }}"
-                                                        x-ref="passportExpiryDay" />
-                                                    <input type="text" name="passportExpiryMonth"
-                                                        id="passportExpiryMonth" placeholder="MM" maxlength="2"
-                                                        class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
-                                                        value="{{ old('passportExpiryMonth', $passportExpiryMonth ?? '') }}"
-                                                        x-ref="passportExpiryMonth" />
-                                                    <input type="text" name="passportExpiryYear"
-                                                        id="passportExpiryYear" placeholder="YYYY" maxlength="4"
-                                                        class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
-                                                        value="{{ old('passportExpiryYear', $passportExpiryYear ?? '') }}"
-                                                        x-ref="passportExpiryYear" />
-                                                </div>
-                                                <p class="text-xs text-gray-500 mt-1">
-                                                    We'll safely store this data and remove it after two years of
-                                                    inactivity.
-                                                </p>
-                                            </div>
-
-                                            <!-- Consent Checkbox -->
-                                            <div class="flex items-start space-x-2">
-                                                <input type="checkbox" id="consent"
-                                                    class="mt-1 border-gray-300 rounded" x-ref="passportConsent" />
-                                                <label for="consent" class="text-sm text-gray-700">
-                                                    I consent to {{ config('domains.domain') }} storing my passport information in
-                                                    accordance
-                                                    with the
-                                                    <a href="#" class="text-blue-600 hover:underline">privacy
-                                                        statement</a>
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </template>
-
-                                    <!-- Save & Cancel -->
-                                    <div class="flex justify-end space-x-4 mt-2"
-                                        x-show="section !== 'phone' && section !== 'emailAddress'">
-                                        <button @click="editing = null"
-                                            class="text-blue-600 hover:underline text-sm">Cancel</button>
-                                        <button
-                                            @click="
-  if (section === 'name') {
-    const first = $refs.input1?.value || '';
-    const last = $refs.input2?.value || '';
-    completed.name = first + (first && last ? ' ' : '') + last;
-  } else if (section === 'displayName') {
-    completed.displayName = $refs.input1?.value || '';
-  } else if (section === 'address') {
-    completed.address =
-      [$refs.country?.value, $refs.street?.value, $refs.city?.value, $refs.postcode?.value]
-      .filter(Boolean).join(', ');
-  } else if (section === 'passport') {
-    completed.passport =
-      [
-        $refs.passportFirstName?.value,
-        $refs.passportLastName?.value,
-        $refs.passportIssuingCountry?.value,
-        $refs.passportNumber?.value,
-        ($refs.passportExpiryDay?.value && $refs.passportExpiryMonth?.value && $refs.passportExpiryYear?.value)
-          ? `Expires: ${$refs.passportExpiryDay.value}/${$refs.passportExpiryMonth.value}/${$refs.passportExpiryYear.value}`
-          : ''
-      ].filter(Boolean).join(' | ');
-  } else if (section === 'phone') {
-    completed.phone = ($refs.countryCode?.value || '') + ' ' + ($refs.phoneInput?.value || '');
-  } else if (section === 'dob') {
-    completed.dob = $refs.dobInput?.value || '';
-  } else if (section === 'nationality') {
-    completed.nationality = $refs.nationalityInput?.value || '';
-  } else if (section === 'gender') {
-    completed.gender = $refs.genderInput?.value || '';
-  } else {
-    completed[section] = $refs.input1?.value || '';
-  }
-  editing = null;
-"
-                                            class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm font-medium">
-                                            Save
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </template>
-                </section>
-
-
-                <!-- Script to Update Flag Image Dynamically -->
-                @push('scripts')
-                    <script src="{{ asset('assets/Customer/js/customerpersonaldetails.js') }}"></script>
-                @endpush
-                @stack('scripts')
-
-                <section x-data="{ showModal: false, showVerifyModal: false }" x-show="tab === 'security'" x-cloak>
-                    <h2 class="text-xl font-bold">Security settings</h2>
-
-                    <p class="text-sm text-gray-600 mb-4">
-                        Change your security settings, set up secure authentication or delete your account.
-                    </p>
-                    <hr class="border-t border-gray-200 mb-6" />
-
-                    <div class="divide-y text-sm">
-                        <!-- Passkeys -->
-                        <div class="flex justify-between py-4">
-                            <div>
-                                <p class="font-base font-semibold text-gray-800">Passkeys</p>
-                                <p class="text-gray-600">
-                                    Easily and securely access your account without the need to remember old passwords.
-                                </p>
-                            </div>
-                            <button @click="showModal = true" class="text-blue-600 hover:underline font-medium">Set
-                                up</button>
-                        </div>
-
-                        <!-- Two-factor authentication -->
-                        <div class="flex justify-between py-4">
-                            <div>
-                                <p class="font-base font-semibold text-gray-800">Two-factor authentication</p>
-                                <p class="text-gray-600">
-                                    Increase the security of your account by setting up two-factor authentication.
-                                </p>
-                            </div>
-                            <button class="text-blue-600 hover:underline font-medium">Set up</button>
-                        </div>
-
-                        <!-- Active sessions -->
-                        <form method="POST" action="{{ route('customer.logout') }}">
-                            @csrf
-                            <div class="flex justify-between py-4">
-                                <div>
-                                    <p class="font-base font-semibold text-gray-800">Active sessions</p>
-                                    <p class="text-gray-600">
-                                        Selecting ‘Sign out’ will sign you out from all devices except this one.
-                                        <br>The process can take up to 10 minutes.
-                                    </p>
-                                </div>
-                                <button type="submit" class="text-blue-600 hover:underline font-medium">
-                                    Sign out
-                                </button>
-                            </div>
-                        </form>
-                        <!-- Delete account -->
-                        <form action="{{ route('customer.account.request-deletion') }}" method="POST"
-                            onsubmit="return confirm('Are you sure you want to delete your account? A confirmation email will be sent to your email address.');">
-                            @csrf
-                            @method('DELETE')
-                            <div class="flex justify-between py-4">
-                                <div>
-                                    <p class="font-base font-semibold text-gray-800">Delete account</p>
-                                    <p class="text-gray-600">Permanently delete your account. A confirmation email will
-                                        be sent.</p>
-                                </div>
-                                <button type="submit" class="text-red-600 hover:underline font-medium">
-                                    Delete account
-                                </button>
-                            </div>
-                        </form>
-
-                    </div>
-
-                    <!-- 🔐 Passkey Modal -->
-                    <div x-show="showModal" x-cloak
-                        class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                        <div @click.away="showModal = false"
-                            class="bg-white w-full max-w-xl p-6 rounded-lg shadow-lg">
-                            <!-- ⬅️ increased width with max-w-xl -->
-
-                            <!-- Header -->
-                            <div class="flex justify-between items-start mb-2">
-                                <h2 class="text-lg font-semibold text-gray-800">Easily sign in with biometrics</h2>
-                                <button @click="showModal = false" class="text-gray-500 hover:text-gray-800">
-                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                </button>
-                            </div>
-
-                            <!-- Description -->
-                            <p class="text-sm text-gray-600 mb-4">
-                                Enjoy password-less access to your account using Passkeys. Instantly sign in using
-                                biometrics to save time and keep your account secure.
-                            </p>
-
-                            <!-- Feature List -->
-                            <div class="space-y-4 text-sm text-gray-700">
-                                <!-- Feature 1 -->
-                                <div class="flex items-center gap-4"> <!-- ⬅️ aligned horizontally -->
-                                    <img src="{{ asset('assets/mdi_folder-lock-outline.svg') }}" alt="Lock"
-                                        class="w-5 h-5" />
-                                    <div>
-                                        <p class="font-semibold text-sm">Fast, hassle-free sign-in</p>
-                                        <p class=" text-xs">Use your face, fingerprint or a simple PIN to sign in
-                                            within seconds.</p>
-                                    </div>
-                                </div>
-
-                                <!-- Feature 2 -->
-                                <div class="flex items-center gap-4">
-                                    <img src="{{ asset('assets/lets-icons_mobile.svg') }}" alt="Devices"
-                                        class="w-5 h-5" />
-                                    <div>
-                                        <p class="font-semibold text-sm">Works across your devices</p>
-                                        <p class="text-xs">Use synced Apple, Google, or Microsoft devices.</p>
-                                    </div>
-                                </div>
-
-                                <!-- Feature 3 -->
-                                <div class="flex items-center gap-4">
-                                    <img src="{{ asset('assets/ic_outline-lock.svg') }}" alt="Security"
-                                        class="w-5 h-5" />
-                                    <div>
-                                        <p class="font-semibold text-sm">Enhanced security</p>
-                                        <p class="text-xs">Biometrics reduce security risks significantly.</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Action Buttons -->
-                            <div class="mt-6 flex justify-between">
-                                <button @click="showModal = false"
-                                    class="px-4 py-2 border border-[#3CC0E9] text-[#3CC0E9] rounded  hover:bg-gray-100 font-semibold">Cancel</button>
-                                <button @click="showModal = false; showVerifyModal = true"
-                                    class="px-4 py-2 bg-[#3CC0E9] text-white font-semibold rounded hover:bg-[#29ACD5]">
-                                    Set up Passkeys
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <!-- ✉️ Verification Code Modal -->
-                    <div x-show="showVerifyModal" x-cloak x-data="{ code: ['', '', '', '', '', ''] }"
-                        class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                        <div @click.away="showVerifyModal = false"
-                            class="bg-white w-full max-w-md p-6 rounded-lg shadow-lg">
-
-                            <!-- Header -->
-                            <div class="flex justify-between items-center mb-4">
-                                <h2 class="text-lg font-semibold text-gray-800">Enter verification code</h2>
-                                <button @click="showVerifyModal = false" class="text-gray-500 hover:text-gray-800">
-                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                </button>
-                            </div>
-
-                            <!-- Description -->
-                            <p class="text-sm text-gray-600 mb-4">We’ve sent a code to
-                                buddhiniweerathunga188@gmail.com<br>Please enter the code to continue enrolling a new
-                                passkey.</p>
-
-                            <!-- Code Inputs -->
-                            <div class="flex justify-center gap-2 mb-4">
-                                <template x-for="(digit, index) in code" :key="index">
-                                    <input type="text" maxlength="1"
-                                        class="w-12 h-12 border rounded text-center text-lg tracking-wider focus:outline-none focus:ring focus:ring-blue-200"
-                                        x-model="code[index]" @input="$refs['input' + (index + 1)]?.focus()"
-                                        :ref="'input' + index"
-                                        @keydown.backspace="$event.target.value === '' && $refs['input' + (index - 1)]?.focus()" />
-                                </template>
-                            </div>
-
-                            <!-- Description -->
-                            <p class="text-sm text-gray-600 mb-4">Didn't receive an email? Please check your spam
-                                folder ot tap 'Cancel' to try again.</p>
-
-                            <!-- Buttons -->
-                            <div class="mt-6 flex justify-between">
-                                <button @click="showVerifyModal = false"
-                                    class="px-4 py-2 border border-[#3CC0E9] text-[#3CC0E9] rounded  hover:bg-gray-100 font-semibold">
-                                    Cancel
-                                </button>
-
-                                <button :disabled="code.join('').length < 6"
-                                    class="px-4 py-2 bg-[#3CC0E9] text-white font-semibold rounded hover:bg-[#29ACD5] disabled:opacity-50 disabled:cursor-not-allowed">
-                                    Verify
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                </section>
-                <section x-show="tab === 'travellers'" x-cloak x-data="{
-                    showTravellerForm: false,
-                    travellers: [],
-                    form: {
-                        firstName: '',
-                        lastName: '',
-                        dob: '',
-                        gender: '',
-                        termsAccepted: false,
-                    },
-                    saveTraveller() {
-                        if (this.form.firstName && this.form.lastName && this.form.dob && this.form.gender && this.form.termsAccepted) {
-                            this.travellers.push({ ...this.form });
-                            this.showTravellerForm = false;
-                            this.form = {
-                                firstName: '',
-                                lastName: '',
-                                dob: '',
-                                gender: '',
-                                termsAccepted: false,
-                            };
-                        } else {
-                            alert('Please complete all fields and accept the terms.');
-                        }
-                    },
-                    removeTraveller(index) {
-                        this.travellers.splice(index, 1);
-                    }
-                }">
-                    <h2 class="text-xl font-bold">Other travellers</h2>
-                    <p class="text-sm text-gray-600 mb-4">
-                        Add or edit information about the people you’re travelling with.
-                    </p>
-
-                    <hr class="border-t border-gray-200 mb-6" />
-
-                    <!-- Add Traveller Button (Aligned Right) -->
-                    <div x-show="!showTravellerForm" class="mb-4 flex justify-end">
-                        <button @click="showTravellerForm = true"
-                            class="px-6 py-2 bg-[#3CC0E9] text-white font-semibold rounded hover:bg-[#29ACD5] transition duration-300">
-                            + Add Traveller
+                    <!-- Profile Picture Display -->
+                    <div class="relative w-20 h-20">
+                        <img id="profile-preview"
+                            src="{{ $details?->profile_image ? asset('storage/' . $details->profile_image) : 'https://ui-avatars.com/api/?name=' . urlencode($firstName ?? 'User') . '&background=1F8FB2&color=fff&size=80' }}"
+                            alt="Profile" class="w-full h-full rounded-full object-cover border-4 border-[#1F8FB2] shadow-lg" />
+                        <button type="button" onclick="document.getElementById('profile-modal').classList.remove('hidden')"
+                            class="absolute bottom-0 right-0 bg-[#1F8FB2] border-2 border-white rounded-full p-2 shadow cursor-pointer hover:bg-[#29ACD5] transition-colors">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
                         </button>
                     </div>
 
-                    <!-- Traveller Form -->
-                    <div x-show="showTravellerForm" x-transition
-                        class="bg-gray-100 p-6 rounded-md max-w-2xl mx-auto mb-6">
-                        <form @submit.prevent="saveTraveller" class="space-y-4">
-                            <div class="space-y-4">
-                                <!-- Names -->
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">First name(s) <span
-                                                class="text-red-500">*</span></label>
-                                        <input type="text" placeholder="First name(s)"
-                                            class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
-                                            x-ref="passportFirstName" x-model="form.firstName" />
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Last name(s) <span
-                                                class="text-red-500">*</span></label>
-                                        <input type="text" placeholder="Last name(s)"
-                                            class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
-                                            x-ref="passportLastName" x-model="form.lastName" />
-                                    </div>
-                                </div>
-                                <p class="text-xs text-gray-500">Please enter this person’s name exactly as written on
-                                    their passport or other official travel document.</p>
-
-                                <!-- Date of Birth -->
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">
-                                        Date of birth <span class="text-red-500">*</span>
-                                    </label>
-
-                                    <!-- Replace this with a single date input -->
-                                    <input type="date"
-                                        class="w-full border border-gray-300 rounded-md px-3 py-3 text-sm"
-                                        x-ref="dobInput" x-model="form.dob" />
-
-                                    <p class="text-xs text-gray-500 mt-1">
-                                        It’s important to enter a correct date of birth, as these details can be used
-                                        for booking or ticketing purposes.
-                                    </p>
-                                </div>
-
-
-
-                                <!-- Gender -->
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div class="w-[80%]">
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">
-                                            Gender <span class="text-red-500">*</span>
-                                        </label>
-                                        <select class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
-                                            x-ref="passportIssuingCountry" x-model="form.gender">
-                                            <option value="">Select gender</option>
-                                            <option value="Male">Male</option>
-                                            <option value="Female">Female</option>
-                                            <option value="Other">Other</option>
-                                        </select>
-                                        <p class="text-xs text-gray-500 mt-1 whitespace-nowrap">
-                                            Please select the gender written on this person's passport or other official
-                                            travel document.
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <!-- Consent Checkbox -->
-                                <div class="flex items-start space-x-2">
-                                    <input type="checkbox" id="consent" class="mt-1 border-gray-300 rounded"
-                                        x-ref="passportConsent" x-model="form.termsAccepted" />
-                                    <label for="consent" class="text-sm text-gray-700">
-                                        I confirm that I’m authorised to provide the personal data of any co-traveller
-                                        (including children) to {{ config('domains.subdomain') }} for this service. In addition, I confirm
-                                        that I’ve informed the other travellers that I’m providing their personal data
-                                        to {{ config('domains.subdomain') }}.
-                                    </label>
-                                </div>
-
-                                <!-- Save and Cancel Buttons -->
-                                <div class="flex justify-end space-x-4 pt-4">
-                                    <button type="button" @click="showTravellerForm = false"
-                                        class="px-4 py-2 border border-gray-400 text-gray-700 rounded hover:bg-gray-100 transition">
-                                        Cancel
-                                    </button>
-                                    <button type="submit"
-                                        class="px-6 py-2 bg-[#3CC0E9] text-white font-semibold rounded hover:bg-[#29ACD5] transition duration-300">
-                                        Save
-                                    </button>
-                                </div>
-
+                    <!-- Profile Image Upload Modal -->
+                    <div id="profile-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+                        <div class="bg-white rounded-xl p-6 max-w-md w-full mx-4">
+                            <h3 class="text-lg font-semibold mb-4">Update Profile Picture</h3>
+                            <div id="image-preview-container" class="mb-4 text-center">
+                                <img id="modal-preview" src="{{ $details?->profile_image ? asset('storage/' . $details->profile_image) : 'https://ui-avatars.com/api/?name=' . urlencode($firstName ?? 'User') . '&background=1F8FB2&color=fff&size=150' }}"
+                                    class="w-32 h-32 rounded-full mx-auto object-cover border-4 border-[#1F8FB2]" />
                             </div>
-                        </form>
-                    </div>
-
-
-
-                    <!-- Travellers List -->
-                    <template x-if="travellers.length > 0">
-                        <div class="space-y-4 max-w-2xl mx-auto">
-                            <template x-for="(traveller, index) in travellers" :key="index">
-                                <div class="bg-white border border-gray-300 rounded-md p-4 relative">
-                                    <h3 class="text-lg font-semibold mb-2 flex items-center space-x-2">
-                                        <img src="{{ asset('assets/mynaui_user.svg') }}" alt="User Icon"
-                                            class="w-8 h-8" />
-                                        <span x-text="traveller.firstName + ' ' + traveller.lastName"></span>
-                                        </span>
-                                    </h3>
-                                    <p class="text-sm">
-                                        <strong>Name:</strong>
-                                        <span class="ml-2"
-                                            x-text="traveller.firstName + ' ' + traveller.lastName"></span>
-                                    </p>
-                                    <p class="text-sm">
-                                        <strong>Date of Birth:</strong>
-                                        <span class="ml-2" x-text="traveller.dob"></span>
-                                    </p>
-                                    <p class="text-sm">
-                                        <strong>Gender:</strong>
-                                        <span class="ml-2" x-text="traveller.gender"></span>
-                                    </p>
-
-                                    <button @click="removeTraveller(index)"
-                                        class="absolute top-2 right-2 text-sm text-blue-600 hover:underline">
-                                        Remove
-                                    </button>
-                                </div>
-                            </template>
+                            <input type="file" id="modal-file-input" accept="image/*" class="w-full border rounded-lg p-2 mb-4" />
+                            <div id="upload-status" class="text-center mb-4 text-sm"></div>
+                            <div class="flex gap-3">
+                                <button type="button" onclick="document.getElementById('profile-modal').classList.add('hidden')"
+                                    class="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700">Cancel</button>
+                                <button type="button" onclick="uploadProfileImage()"
+                                    class="flex-1 px-4 py-2 bg-[#1F8FB2] text-white rounded-lg hover:bg-[#29ACD5]">Upload</button>
+                            </div>
                         </div>
-                    </template>
-                </section>
+                    </div>
+                </div>
 
-                <section x-show="tab === 'customisation'" x-cloak>
-                    <h2 class="text-xl font-bold">Customisation preferences</h2>
-                </section>
-                <section x-show="tab === 'payment'" x-cloak>
-                    <h2 class="text-xl font-bold">Payment methods</h2>
-                </section>
-                <section x-show="tab === 'privacy'" x-cloak>
-                    <h2 class="text-xl font-bold">Privacy and data management</h2>
-                </section>
+                <!-- Name Section -->
+                <div class="border-t border-gray-200 py-5">
+                    <form method="POST" action="{{ route('customer.details.store') }}">
+                        @csrf
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-sm font-semibold text-gray-900">Full Name</h3>
+                                <p class="mt-1 text-gray-700">{{ $firstName }} {{ $lastName }}</p>
+                            </div>
+                            <button type="button" onclick="toggleSection('name')" class="text-[#1F8FB2] hover:text-[#29ACD5] font-medium text-sm">Edit</button>
+                        </div>
+                        <div id="name-section" class="hidden space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">First name</label>
+                                    <input type="text" name="first_name" value="{{ old('first_name', $firstName ?? '') }}"
+                                        class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1F8FB2] focus:border-transparent" />
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Last name</label>
+                                    <input type="text" name="last_name" value="{{ old('last_name', $lastName ?? '') }}"
+                                        class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1F8FB2] focus:border-transparent" />
+                                </div>
+                            </div>
+                            <div class="flex justify-end gap-3">
+                                <button type="button" onclick="toggleSection('name')" class="px-4 py-2 text-gray-700 text-sm font-medium">Cancel</button>
+                                <button type="submit" class="px-6 py-2 bg-[#1F8FB2] text-white rounded-lg hover:bg-[#29ACD5] text-sm font-medium">Save</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Display Name Section -->
+                <div class="border-t border-gray-200 py-5">
+                    <form method="POST" action="{{ route('customer.details.store') }}">
+                        @csrf
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-sm font-semibold text-gray-900">Display Name</h3>
+                                <p class="mt-1 {{ $details->display_name ?? false ? 'text-gray-700' : 'text-gray-400 italic' }}">
+                                    {{ $details->display_name ?? 'Choose a display name for reviews' }}
+                                </p>
+                            </div>
+                            <button type="button" onclick="toggleSection('displayName')" class="text-[#1F8FB2] hover:text-[#29ACD5] font-medium text-sm">Edit</button>
+                        </div>
+                        <div id="displayName-section" class="hidden space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Display name</label>
+                                <input type="text" name="display_name" value="{{ old('display_name', $details->display_name ?? '') }}"
+                                    class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1F8FB2] focus:border-transparent" />
+                                <p class="text-xs text-gray-500 mt-1">This name will be shown when you leave reviews or messages.</p>
+                            </div>
+                            <div class="flex justify-end gap-3">
+                                <button type="button" onclick="toggleSection('displayName')" class="px-4 py-2 text-gray-700 text-sm font-medium">Cancel</button>
+                                <button type="submit" class="px-6 py-2 bg-[#1F8FB2] text-white rounded-lg hover:bg-[#29ACD5] text-sm font-medium">Save</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Email Section -->
+                <div class="border-t border-gray-200 py-5">
+                    <form method="POST" action="{{ route('customer.details.store') }}">
+                        @csrf
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-sm font-semibold text-gray-900">Email Address</h3>
+                                <div class="mt-1 flex items-center gap-2">
+                                    <span class="text-gray-700">{{ $email }}</span>
+                                    @if($emailVerified)
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                            <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            Verified
+                                        </span>
+                                    @endif
+                                </div>
+                                <p class="text-sm text-gray-500 mt-1">This is the email address you use to sign in.</p>
+                            </div>
+                            <button type="button" onclick="toggleSection('email')" class="text-[#1F8FB2] hover:text-[#29ACD5] font-medium text-sm">Edit</button>
+                        </div>
+                        <div id="email-section" class="hidden space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Email address</label>
+                                <input type="email" name="email" value="{{ old('email', $email ?? '') }}"
+                                    class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1F8FB2] focus:border-transparent" />
+                            </div>
+                            <div class="flex justify-end gap-3">
+                                <button type="button" onclick="toggleSection('email')" class="px-4 py-2 text-gray-700 text-sm font-medium">Cancel</button>
+                                <button type="submit" class="px-6 py-2 bg-[#1F8FB2] text-white rounded-lg hover:bg-[#29ACD5] text-sm font-medium">Save</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Phone Section -->
+                <div class="border-t border-gray-200 py-5">
+                    <form method="POST" action="{{ route('customer.details.store') }}">
+                        @csrf
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-sm font-semibold text-gray-900">Phone Number</h3>
+                                <div class="mt-1 flex items-center gap-2">
+                                    <span class="{{ $details->phone_number ?? false ? 'text-gray-700' : 'text-gray-400 italic' }}">
+                                        {{ $details->phone_number ?? 'Add your phone number' }}
+                                    </span>
+                                    @if($details?->phone_verified)
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                            <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            Verified
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+                            <button type="button" onclick="toggleSection('phone')" class="text-[#1F8FB2] hover:text-[#29ACD5] font-medium text-sm">Edit</button>
+                        </div>
+                        <div id="phone-section" class="hidden space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Phone number</label>
+                                <input type="tel" name="phone_number" value="{{ old('phone_number', $details->phone_number ?? '') }}"
+                                    placeholder="+49 123 456 7890"
+                                    class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1F8FB2] focus:border-transparent" />
+                            </div>
+                            <div class="flex justify-end gap-3">
+                                <button type="button" onclick="toggleSection('phone')" class="px-4 py-2 text-gray-700 text-sm font-medium">Cancel</button>
+                                <button type="submit" class="px-6 py-2 bg-[#1F8FB2] text-white rounded-lg hover:bg-[#29ACD5] text-sm font-medium">Save</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Date of Birth Section -->
+                <div class="border-t border-gray-200 py-5">
+                    <form method="POST" action="{{ route('customer.details.store') }}">
+                        @csrf
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-sm font-semibold text-gray-900">Date of Birth</h3>
+                                <p class="mt-1 {{ $details?->date_of_birth ? 'text-gray-700' : 'text-gray-400 italic' }}">
+                                    {{ $details?->date_of_birth ? $details->date_of_birth->format('d M Y') : 'Add your date of birth' }}
+                                </p>
+                            </div>
+                            <button type="button" onclick="toggleSection('dob')" class="text-[#1F8FB2] hover:text-[#29ACD5] font-medium text-sm">Edit</button>
+                        </div>
+                        <div id="dob-section" class="hidden space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Date of birth</label>
+                                <input type="date" name="date_of_birth" value="{{ old('date_of_birth', optional($details?->date_of_birth)->format('Y-m-d')) }}"
+                                    class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1F8FB2]" />
+                            </div>
+                            <div class="flex justify-end gap-3">
+                                <button type="button" onclick="toggleSection('dob')" class="px-4 py-2 text-gray-700 text-sm font-medium">Cancel</button>
+                                <button type="submit" class="px-6 py-2 bg-[#1F8FB2] text-white rounded-lg hover:bg-[#29ACD5] text-sm font-medium">Save</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Nationality Section -->
+                <div class="border-t border-gray-200 py-5">
+                    <form method="POST" action="{{ route('customer.details.store') }}">
+                        @csrf
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-sm font-semibold text-gray-900">Nationality</h3>
+                                <p class="mt-1 {{ $details?->nationality ? 'text-gray-700' : 'text-gray-400 italic' }}">
+                                    {{ $details?->nationality ?? 'Select your nationality' }}
+                                </p>
+                            </div>
+                            <button type="button" onclick="toggleSection('nationality')" class="text-[#1F8FB2] hover:text-[#29ACD5] font-medium text-sm">Edit</button>
+                        </div>
+                        <div id="nationality-section" class="hidden space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Nationality</label>
+                                <select name="nationality" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1F8FB2]">
+                                    <option value="">Select your nationality</option>
+                                    <option value="German" {{ old('nationality', $details?->nationality) === 'German' ? 'selected' : '' }}>German</option>
+                                    <option value="Sri Lankan" {{ old('nationality', $details?->nationality) === 'Sri Lankan' ? 'selected' : '' }}>Sri Lankan</option>
+                                    <option value="British" {{ old('nationality', $details?->nationality) === 'British' ? 'selected' : '' }}>British</option>
+                                    <option value="American" {{ old('nationality', $details?->nationality) === 'American' ? 'selected' : '' }}>American</option>
+                                </select>
+                            </div>
+                            <div class="flex justify-end gap-3">
+                                <button type="button" onclick="toggleSection('nationality')" class="px-4 py-2 text-gray-700 text-sm font-medium">Cancel</button>
+                                <button type="submit" class="px-6 py-2 bg-[#1F8FB2] text-white rounded-lg hover:bg-[#29ACD5] text-sm font-medium">Save</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Gender Section -->
+                <div class="border-t border-gray-200 py-5">
+                    <form method="POST" action="{{ route('customer.details.store') }}">
+                        @csrf
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-sm font-semibold text-gray-900">Gender</h3>
+                                <p class="mt-1 {{ $details?->gender ? 'text-gray-700' : 'text-gray-400 italic' }}">
+                                    {{ $details?->gender ? ucfirst($details->gender) : 'Select your gender' }}
+                                </p>
+                            </div>
+                            <button type="button" onclick="toggleSection('gender')" class="text-[#1F8FB2] hover:text-[#29ACD5] font-medium text-sm">Edit</button>
+                        </div>
+                        <div id="gender-section" class="hidden space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Gender</label>
+                                <select name="gender" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1F8FB2]">
+                                    <option value="">Select your gender</option>
+                                    <option value="female" {{ old('gender', strtolower($details?->gender)) === 'female' ? 'selected' : '' }}>Female</option>
+                                    <option value="male" {{ old('gender', strtolower($details?->gender)) === 'male' ? 'selected' : '' }}>Male</option>
+                                    <option value="other" {{ old('gender', strtolower($details?->gender)) === 'other' ? 'selected' : '' }}>Other</option>
+                                </select>
+                            </div>
+                            <div class="flex justify-end gap-3">
+                                <button type="button" onclick="toggleSection('gender')" class="px-4 py-2 text-gray-700 text-sm font-medium">Cancel</button>
+                                <button type="submit" class="px-6 py-2 bg-[#1F8FB2] text-white rounded-lg hover:bg-[#29ACD5] text-sm font-medium">Save</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Address Section -->
+                <div class="border-t border-gray-200 py-5">
+                    <form method="POST" action="{{ route('customer.details.store') }}">
+                        @csrf
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-sm font-semibold text-gray-900">Address</h3>
+                                @php
+                                    $addressParts = collect([$details?->street, $details?->city, $details?->postcode, $details?->country])->filter()->join(', ');
+                                @endphp
+                                <p class="mt-1 {{ $addressParts ? 'text-gray-700' : 'text-gray-400 italic' }}">
+                                    {{ $addressParts ?: 'Add your address' }}
+                                </p>
+                            </div>
+                            <button type="button" onclick="toggleSection('address')" class="text-[#1F8FB2] hover:text-[#29ACD5] font-medium text-sm">Edit</button>
+                        </div>
+                        <div id="address-section" class="hidden space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Country/Region</label>
+                                <select name="country" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1F8FB2]">
+                                    <option value="">Select country</option>
+                                    <option value="Germany" {{ old('country', $details?->country) === 'Germany' ? 'selected' : '' }}>Germany</option>
+                                    <option value="Sri Lanka" {{ old('country', $details?->country) === 'Sri Lanka' ? 'selected' : '' }}>Sri Lanka</option>
+                                    <option value="United Kingdom" {{ old('country', $details?->country) === 'United Kingdom' ? 'selected' : '' }}>United Kingdom</option>
+                                    <option value="United States" {{ old('country', $details?->country) === 'United States' ? 'selected' : '' }}>United States</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Street Address</label>
+                                <input type="text" name="street" value="{{ old('street', $details->street ?? '') }}"
+                                    class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1F8FB2]" />
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">City</label>
+                                    <input type="text" name="city" value="{{ old('city', $details->city ?? '') }}"
+                                        class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1F8FB2]" />
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Postcode</label>
+                                    <input type="text" name="postcode" value="{{ old('postcode', $details->postcode ?? '') }}"
+                                        class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1F8FB2]" />
+                                </div>
+                            </div>
+                            <div class="flex justify-end gap-3">
+                                <button type="button" onclick="toggleSection('address')" class="px-4 py-2 text-gray-700 text-sm font-medium">Cancel</button>
+                                <button type="submit" class="px-6 py-2 bg-[#1F8FB2] text-white rounded-lg hover:bg-[#29ACD5] text-sm font-medium">Save</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Passport Section -->
+                <div class="border-t border-gray-200 py-5">
+                    <form method="POST" action="{{ route('customer.details.store') }}">
+                        @csrf
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-sm font-semibold text-gray-900">Passport Details</h3>
+                                @php
+                                    $passportInfo = collect([$passportFirstName, $passportLastName])->filter()->join(' ');
+                                    if ($details?->passportNumber) $passportInfo .= ' | ' . $details->passportNumber;
+                                @endphp
+                                <p class="mt-1 {{ $passportInfo ? 'text-gray-700' : 'text-gray-400 italic' }}">
+                                    {{ $passportInfo ?: 'Add passport details' }}
+                                </p>
+                            </div>
+                            <button type="button" onclick="toggleSection('passport')" class="text-[#1F8FB2] hover:text-[#29ACD5] font-medium text-sm">Edit</button>
+                        </div>
+                        <div id="passport-section" class="hidden space-y-4">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">First name(s)</label>
+                                    <input type="text" name="passportFirstName" value="{{ old('passportFirstName', $passportFirstName ?? '') }}"
+                                        class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1F8FB2]" />
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Last name(s)</label>
+                                    <input type="text" name="passportLastName" value="{{ old('passportLastName', $passportLastName ?? '') }}"
+                                        class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1F8FB2]" />
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-500">Enter the name exactly as written on your passport.</p>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Issuing country</label>
+                                    <select name="issuingCountry" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1F8FB2]">
+                                        <option value="">Select country</option>
+                                        <option value="Germany" {{ old('issuingCountry', $details?->issuingCountry) === 'Germany' ? 'selected' : '' }}>Germany</option>
+                                        <option value="Sri Lanka" {{ old('issuingCountry', $details?->issuingCountry) === 'Sri Lanka' ? 'selected' : '' }}>Sri Lanka</option>
+                                        <option value="United Kingdom" {{ old('issuingCountry', $details?->issuingCountry) === 'United Kingdom' ? 'selected' : '' }}>United Kingdom</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Passport number</label>
+                                    <input type="text" name="passportNumber" value="{{ old('passportNumber', $details->passportNumber ?? '') }}"
+                                        class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1F8FB2]" />
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Expiry date</label>
+                                <div class="grid grid-cols-3 gap-2">
+                                    <input type="text" name="passportExpiryDay" placeholder="DD" maxlength="2" value="{{ old('passportExpiryDay', $passportExpiryDay ?? '') }}"
+                                        class="border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-center focus:ring-2 focus:ring-[#1F8FB2]" />
+                                    <input type="text" name="passportExpiryMonth" placeholder="MM" maxlength="2" value="{{ old('passportExpiryMonth', $passportExpiryMonth ?? '') }}"
+                                        class="border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-center focus:ring-2 focus:ring-[#1F8FB2]" />
+                                    <input type="text" name="passportExpiryYear" placeholder="YYYY" maxlength="4" value="{{ old('passportExpiryYear', $passportExpiryYear ?? '') }}"
+                                        class="border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-center focus:ring-2 focus:ring-[#1F8FB2]" />
+                                </div>
+                            </div>
+                            <div class="flex justify-end gap-3">
+                                <button type="button" onclick="toggleSection('passport')" class="px-4 py-2 text-gray-700 text-sm font-medium">Cancel</button>
+                                <button type="submit" class="px-6 py-2 bg-[#1F8FB2] text-white rounded-lg hover:bg-[#29ACD5] text-sm font-medium">Save</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
             </main>
         </div>
     </div>
-    <!-- FOOTER -->
-    <footer class="bg-gray-100 mt-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-sm text-gray-600">
-            <div class="space-x-3 mb-2">
-                <a href="#" class="hover:underline">About {{ config('domains.subdomain') }}</a>
-                <span class="text-gray-400">·</span>
-                <a href="#" class="hover:underline">Terms & Conditions</a>
-                <span class="text-gray-400">·</span>
-                <a href="#" class="hover:underline">How we work</a>
-                <span class="text-gray-400">·</span>
-                <a href="#" class="hover:underline">Privacy & Cookie Statement</a>
-                <span class="text-gray-400">·</span>
-                <a href="#" class="hover:underline">Help Centre</a>
-            </div>
-            <p class="text-xs text-gray-500">&copy; 1996–2025 {{ config('domains.domain') }}™. All rights reserved.</p>
-        </div>
-    </footer>
+</div>
 
-</body>
+<script>
+function toggleSection(sectionId) {
+    const section = document.getElementById(sectionId + '-section');
+    if (section) {
+        section.classList.toggle('hidden');
+    }
+}
 
-</html>
+// Profile image preview
+document.addEventListener('DOMContentLoaded', function() {
+    const modalFileInput = document.getElementById('modal-file-input');
+    const modalPreview = document.getElementById('modal-preview');
+
+    if (modalFileInput) {
+        modalFileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    modalPreview.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+});
+
+function uploadProfileImage() {
+    const fileInput = document.getElementById('modal-file-input');
+    const uploadStatus = document.getElementById('upload-status');
+    const file = fileInput.files[0];
+
+    if (!file) {
+        uploadStatus.innerHTML = '<span class="text-red-600">Please select an image</span>';
+        return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+        uploadStatus.innerHTML = '<span class="text-red-600">Invalid file type</span>';
+        return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+        uploadStatus.innerHTML = '<span class="text-red-600">File too large (max 2MB)</span>';
+        return;
+    }
+
+    uploadStatus.innerHTML = '<span class="text-blue-600">Uploading...</span>';
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const base64Data = e.target.result;
+
+        fetch('/api/profile/image', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({
+                image: base64Data,
+                filename: file.name
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                uploadStatus.innerHTML = '<span class="text-green-600">Saved!</span>';
+                document.getElementById('profile-preview').src = data.image_url;
+                document.getElementById('modal-preview').src = data.image_url;
+                setTimeout(() => {
+                    document.getElementById('profile-modal').classList.add('hidden');
+                    uploadStatus.innerHTML = '';
+                }, 1500);
+            } else {
+                uploadStatus.innerHTML = '<span class="text-red-600">' + (data.message || 'Failed') + '</span>';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            uploadStatus.innerHTML = '<span class="text-red-600">Upload failed</span>';
+        });
+    };
+    reader.readAsDataURL(file);
+}
+</script>
+@endsection

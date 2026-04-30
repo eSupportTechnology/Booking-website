@@ -89,6 +89,7 @@ class CurrencyService
         try {
             // Use the configured HTTP client with proper SSL certificate
             $response = Http::exchangeApi()
+                ->timeout(15)
                 ->get("https://api.exchangerate-api.com/v4/latest/{$baseCurrency}");
 
             if (!$response->successful()) {
@@ -129,9 +130,44 @@ class CurrencyService
             // Clear related caches
             $this->clearRateCache($baseCurrency);
         } catch (Exception $e) {
-            Log::error('Currency API error: ' . $e->getMessage());
-            throw $e;
+            Log::warning('Currency API error, using fallback rates: ' . $e->getMessage());
+            $this->useFallbackRates($baseCurrency);
         }
+    }
+
+    private function useFallbackRates(string $baseCurrency): void
+    {
+        if (!isset($this->fallbackRates[$baseCurrency])) {
+            return;
+        }
+
+        $timestamp = now();
+        $rates = $this->fallbackRates[$baseCurrency];
+
+        DB::transaction(function () use ($baseCurrency, $rates, $timestamp) {
+            // Self rate
+            ExchangeRate::updateOrCreate(
+                ['from_currency' => $baseCurrency, 'to_currency' => $baseCurrency],
+                ['rate' => 1.0, 'cached_at' => $timestamp]
+            );
+
+            foreach ($rates as $toCurrency => $rate) {
+                ExchangeRate::updateOrCreate(
+                    ['from_currency' => $baseCurrency, 'to_currency' => $toCurrency],
+                    ['rate' => $rate, 'cached_at' => $timestamp]
+                );
+
+                // Also create inverse rate
+                if ($rate > 0) {
+                    ExchangeRate::updateOrCreate(
+                        ['from_currency' => $toCurrency, 'to_currency' => $baseCurrency],
+                        ['rate' => 1 / $rate, 'cached_at' => $timestamp]
+                    );
+                }
+            }
+        });
+
+        $this->clearRateCache($baseCurrency);
     }
 
     private function clearRateCache(string $currency): void

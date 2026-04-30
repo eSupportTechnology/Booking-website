@@ -1,238 +1,131 @@
 @extends('partner.master')
-@section('title', 'Reviews & Ratings')
+@section('title', 'Reviews')
 @section('content')
-<div class="space-y-8">
+<div class="space-y-6">
     <!-- Header -->
-    <div class="bg-gradient-to-r from-orange-500 to-orange-600 rounded-2xl p-8 text-white">
-        <div class="flex justify-between items-center">
+    <div class="bg-white rounded-lg p-5 border border-gray-200 shadow-sm">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
             <div>
-                <h1 class="text-4xl font-bold mb-2">Reviews & Ratings</h1>
-                <p class="text-orange-100 text-lg">Manage guest feedback and maintain your reputation</p>
+                <h1 class="text-xl font-semibold text-gray-800">Reviews</h1>
+                <p class="text-gray-500 text-sm">Manage guest feedback</p>
             </div>
-            <div class="text-right">
-                <div class="bg-white/20 px-6 py-3 rounded-xl">
-                    <p class="text-orange-100 text-sm">Average Rating</p>
-                    <p class="text-3xl font-bold">4.8 ⭐</p>
+            <div class="flex items-center gap-2">
+                <span class="text-2xl font-semibold text-gray-800">{{ $stats->averageRating }}</span>
+                <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                </svg>
+                <span class="text-sm text-gray-500">avg rating</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+            <p class="text-xs text-gray-500 uppercase">Total Reviews</p>
+            <p class="text-xl font-semibold text-gray-800 mt-1">{{ $stats->totalReviews }}</p>
+        </div>
+        <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+            <p class="text-xs text-gray-500 uppercase">This Month</p>
+            <p class="text-xl font-semibold text-gray-800 mt-1">{{ $stats->monthlyReviews }}</p>
+        </div>
+        <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+            <p class="text-xs text-gray-500 uppercase">Response Rate</p>
+            <p class="text-xl font-semibold text-gray-800 mt-1">{{ $stats->responseRate }}%</p>
+        </div>
+        <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+            <p class="text-xs text-gray-500 uppercase">5-Star Reviews</p>
+            <p class="text-xl font-semibold text-gray-800 mt-1">75%</p>
+        </div>
+    </div>
+
+    <!-- Rating Distribution -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div class="bg-white rounded-lg border border-gray-200 shadow-sm">
+            <div class="px-4 py-3 border-b border-gray-200">
+                <h2 class="text-sm font-semibold text-gray-800">Rating Distribution</h2>
+            </div>
+            <div class="p-4 space-y-2">
+                @foreach([5 => 75, 4 => 20, 3 => 4, 2 => 1, 1 => 0] as $stars => $percent)
+                <div class="flex items-center gap-2 text-sm">
+                    <span class="w-4 text-gray-600">{{ $stars }}</span>
+                    <svg class="w-3 h-3 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                    </svg>
+                    <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                        <div class="h-full bg-[#1F8FB2] rounded-full" style="width: {{ $percent }}%"></div>
+                    </div>
+                    <span class="w-8 text-gray-500 text-right">{{ $percent }}%</span>
+                </div>
+                @endforeach
+            </div>
+        </div>
+
+        <div class="lg:col-span-2 bg-white rounded-lg border border-gray-200 shadow-sm">
+            <div class="px-4 py-3 border-b border-gray-200">
+                <h2 class="text-sm font-semibold text-gray-800">Insights</h2>
+            </div>
+            <div class="p-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div class="p-3 bg-green-50 rounded-lg">
+                    <p class="text-xs text-gray-600">Most Praised</p>
+                    <p class="text-sm font-medium text-gray-800">Cleanliness</p>
+                </div>
+                <div class="p-3 bg-blue-50 rounded-lg">
+                    <p class="text-xs text-gray-600">Avg Response</p>
+                    <p class="text-sm font-medium text-gray-800">2.5 hours</p>
+                </div>
+                <div class="p-3 bg-purple-50 rounded-lg">
+                    <p class="text-xs text-gray-600">Would Recommend</p>
+                    <p class="text-sm font-medium text-gray-800">98%</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Statistics Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Overall Rating</p>
-                    <p class="text-3xl font-bold text-gray-800 mt-2">{{ $stats->averageRating }} ⭐</p>
-                    <p class="text-sm text-green-600 mt-1">
-                        <i class="fas fa-arrow-up mr-1"></i>+0.2 from last month
-                    </p>
-                </div>
-                <div class="bg-yellow-100 p-3 rounded-xl">
-                    <i class="fas fa-star text-yellow-600 text-2xl"></i>
-                </div>
-            </div>
+    <!-- Reviews List -->
+    <div class="bg-white rounded-lg border border-gray-200 shadow-sm">
+        <div class="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
+            <h2 class="text-sm font-semibold text-gray-800">Recent Reviews</h2>
+            <button class="text-[#1F8FB2] text-sm hover:underline">Export</button>
         </div>
-        <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Total Reviews</p>
-                    <p class="text-3xl font-bold text-gray-800 mt-2">{{ $stats->totalReviews }}</p>
-                    <p class="text-sm text-blue-600 mt-1">
-                        <i class="fas fa-plus mr-1"></i>8 new this month
-                    </p>
-                </div>
-                <div class="bg-green-100 p-3 rounded-xl">
-                    <i class="fas fa-comments text-green-600 text-2xl"></i>
-                </div>
-            </div>
-        </div>
-        <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">This Month</p>
-                    <p class="text-3xl font-bold text-gray-800 mt-2">{{ $stats->monthlyReviews }}</p>
-                    <p class="text-sm text-purple-600 mt-1">
-                        <i class="fas fa-calendar mr-1"></i>January 2025
-                    </p>
-                </div>
-                <div class="bg-purple-100 p-3 rounded-xl">
-                    <i class="fas fa-calendar-alt text-purple-600 text-2xl"></i>
-                </div>
-            </div>
-        </div>
-        <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Response Rate</p>
-                    <p class="text-3xl font-bold text-gray-800 mt-2">{{ $stats->responseRate }}%</p>
-                    <p class="text-sm text-green-600 mt-1">
-                        <i class="fas fa-check mr-1"></i>Excellent
-                    </p>
-                </div>
-                <div class="bg-blue-100 p-3 rounded-xl">
-                    <i class="fas fa-reply text-blue-600 text-2xl"></i>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Rating Breakdown -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <!-- Rating Distribution -->
-        <div class="bg-white rounded-2xl shadow-lg border border-gray-100">
-            <div class="p-6 border-b border-gray-100">
-                <h2 class="text-2xl font-bold text-gray-800">Rating Distribution</h2>
-                <p class="text-gray-600 mt-1">Breakdown of all ratings received</p>
-            </div>
-            <div class="p-6">
-                <div class="space-y-4">
-                    <div class="flex items-center space-x-4">
-                        <span class="text-sm font-medium text-gray-700 w-8">5 ⭐</span>
-                        <div class="flex-1 bg-gray-200 rounded-full h-3">
-                            <div class="bg-green-500 h-3 rounded-full" style="width: 75%"></div>
+        <div class="divide-y divide-gray-100">
+            @forelse($reviews as $review)
+            <div class="p-4">
+                <div class="flex items-start justify-between mb-2">
+                    <div class="flex items-start gap-3">
+                        <div class="w-8 h-8 bg-[#1F8FB2] rounded-full flex items-center justify-center text-white text-xs font-medium flex-shrink-0">
+                            {{ substr($review['guest_name'], 0, 2) }}
                         </div>
-                        <span class="text-sm text-gray-600 w-12">95 (75%)</span>
-                    </div>
-                    <div class="flex items-center space-x-4">
-                        <span class="text-sm font-medium text-gray-700 w-8">4 ⭐</span>
-                        <div class="flex-1 bg-gray-200 rounded-full h-3">
-                            <div class="bg-blue-500 h-3 rounded-full" style="width: 20%"></div>
-                        </div>
-                        <span class="text-sm text-gray-600 w-12">25 (20%)</span>
-                    </div>
-                    <div class="flex items-center space-x-4">
-                        <span class="text-sm font-medium text-gray-700 w-8">3 ⭐</span>
-                        <div class="flex-1 bg-gray-200 rounded-full h-3">
-                            <div class="bg-yellow-500 h-3 rounded-full" style="width: 4%"></div>
-                        </div>
-                        <span class="text-sm text-gray-600 w-12">5 (4%)</span>
-                    </div>
-                    <div class="flex items-center space-x-4">
-                        <span class="text-sm font-medium text-gray-700 w-8">2 ⭐</span>
-                        <div class="flex-1 bg-gray-200 rounded-full h-3">
-                            <div class="bg-orange-500 h-3 rounded-full" style="width: 1%"></div>
-                        </div>
-                        <span class="text-sm text-gray-600 w-12">1 (1%)</span>
-                    </div>
-                    <div class="flex items-center space-x-4">
-                        <span class="text-sm font-medium text-gray-700 w-8">1 ⭐</span>
-                        <div class="flex-1 bg-gray-200 rounded-full h-3">
-                            <div class="bg-red-500 h-3 rounded-full" style="width: 0%"></div>
-                        </div>
-                        <span class="text-sm text-gray-600 w-12">1 (0%)</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Quick Stats -->
-        <div class="bg-white rounded-2xl shadow-lg border border-gray-100">
-            <div class="p-6 border-b border-gray-100">
-                <h2 class="text-2xl font-bold text-gray-800">Review Insights</h2>
-                <p class="text-gray-600 mt-1">Key metrics and trends</p>
-            </div>
-            <div class="p-6">
-                <div class="space-y-6">
-                    <div class="flex items-center justify-between p-4 bg-green-50 rounded-xl">
-                        <div class="flex items-center">
-                            <div class="bg-green-100 p-2 rounded-lg mr-3">
-                                <i class="fas fa-thumbs-up text-green-600"></i>
-                            </div>
-                            <div>
-                                <p class="font-semibold text-gray-800">Most Praised</p>
-                                <p class="text-sm text-gray-600">Cleanliness & Location</p>
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-900">{{ $review['guest_name'] }}</h3>
+                            <p class="text-xs text-gray-500">{{ $review['property_name'] }}</p>
+                            <div class="flex items-center gap-1 mt-1">
+                                @for($i = 0; $i < $review['rating']; $i++)
+                                <svg class="w-3 h-3 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                </svg>
+                                @endfor
+                                <span class="text-xs text-gray-400 ml-1">{{ $review['date'] }}</span>
                             </div>
                         </div>
                     </div>
-                    <div class="flex items-center justify-between p-4 bg-blue-50 rounded-xl">
-                        <div class="flex items-center">
-                            <div class="bg-blue-100 p-2 rounded-lg mr-3">
-                                <i class="fas fa-clock text-blue-600"></i>
-                            </div>
-                            <div>
-                                <p class="font-semibold text-gray-800">Avg Response Time</p>
-                                <p class="text-sm text-gray-600">2.5 hours</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex items-center justify-between p-4 bg-purple-50 rounded-xl">
-                        <div class="flex items-center">
-                            <div class="bg-purple-100 p-2 rounded-lg mr-3">
-                                <i class="fas fa-heart text-purple-600"></i>
-                            </div>
-                            <div>
-                                <p class="font-semibold text-gray-800">Guest Satisfaction</p>
-                                <p class="text-sm text-gray-600">98% would recommend</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Recent Reviews -->
-    <div class="bg-white rounded-2xl shadow-lg border border-gray-100">
-        <div class="p-6 border-b border-gray-100">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h2 class="text-2xl font-bold text-gray-800">Recent Reviews</h2>
-                    <p class="text-gray-600 mt-1">Latest feedback from your guests</p>
-                </div>
-                <div class="flex space-x-3">
-                    <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg transition-colors duration-200">
-                        <i class="fas fa-filter mr-2"></i>Filter
-                    </button>
-                    <button class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors duration-200">
-                        <i class="fas fa-download mr-2"></i>Export
-                    </button>
-                </div>
-            </div>
-        </div>
-        <div class="p-6">
-            <div class="space-y-6">
-                @forelse($reviews as $review)
-                <div class="border border-gray-200 rounded-xl p-6 hover:shadow-md transition-shadow duration-200">
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="flex items-start space-x-4">
-                            <div class="h-12 w-12 bg-purple-500 rounded-full flex items-center justify-center">
-                                <span class="text-white font-bold">{{ substr($review['guest_name'], 0, 2) }}</span>
-                            </div>
-                            <div>
-                                <h3 class="font-bold text-gray-900">{{ $review['guest_name'] }}</h3>
-                                <p class="text-sm text-gray-600">{{ $review['property_name'] }}</p>
-                                <div class="flex items-center mt-1">
-                                    <div class="text-yellow-500 mr-2">{{ str_repeat('⭐', $review['rating']) }}</div>
-                                    <span class="text-xs text-gray-500">{{ $review['rating'] }}.0 • {{ $review['date'] }}</span>
-                                </div>
-                            </div>
-                        </div>
-                        @if($review['reply'])
-                        <span class="bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 rounded-full">Replied</span>
-                        @else
-                        <button class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm transition-colors duration-200">
-                            <i class="fas fa-reply mr-1"></i>Reply
-                        </button>
-                        @endif
-                    </div>
-                    <p class="text-gray-700 mb-4">"{{ $review['comment'] }}"</p>
-                    @if($review['reply'])
-                    <div class="bg-gray-50 p-4 rounded-lg">
-                        <p class="text-sm text-gray-600"><strong class="text-gray-800">Your reply:</strong> {{ $review['reply'] }}</p>
-                        <span class="text-xs text-gray-500 mt-2 block">Replied {{ $review['date'] }}</span>
-                    </div>
+                    @if(!$review['reply'])
+                    <button class="text-sm text-[#1F8FB2] hover:underline">Reply</button>
+                    @else
+                    <span class="text-xs text-green-600 bg-green-50 px-2 py-0.5 rounded">Replied</span>
                     @endif
                 </div>
-                @empty
-                <div class="text-center py-12">
-                    <i class="fas fa-star text-gray-300 text-6xl mb-4"></i>
-                    <h3 class="text-xl font-semibold text-gray-600 mb-2">No Reviews Yet</h3>
-                    <p class="text-gray-500">Reviews from your guests will appear here</p>
+                <p class="text-sm text-gray-700 ml-11">"{{ $review['comment'] }}"</p>
+                @if($review['reply'])
+                <div class="ml-11 mt-2 p-2 bg-gray-50 rounded text-sm">
+                    <span class="font-medium text-gray-700">Your reply:</span>
+                    <span class="text-gray-600">{{ $review['reply'] }}</span>
                 </div>
-                @endforelse
+                @endif
             </div>
+            @empty
+            <div class="p-8 text-center text-gray-400 text-sm">No reviews yet</div>
+            @endforelse
         </div>
     </div>
 </div>

@@ -5,16 +5,18 @@ namespace App\Http\Controllers\CarReservations;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Reservation;
+use App\Models\Booking;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
 class ReservationController extends Controller
 {
     /**
-     * Show all reservations for logged user
+     * Show all reservations (car rentals + hotel bookings) for logged user
      */
     public function index()
     {
+        // Get car reservations
         $reservations = Reservation::with([
                 'car',
                 'car.brand',
@@ -26,9 +28,20 @@ class ReservationController extends Controller
             ])
             ->where('user_id', Auth::id())
             ->orderBy('created_at', 'desc')
-            ->paginate(10);
+            ->get();
 
-        return view('car_rentals.bookings', compact('reservations'));
+        // Get hotel bookings
+        $hotelBookings = Booking::with([
+                'property',
+                'property.photos',
+                'property.category',
+                'room'
+            ])
+            ->where('user_id', Auth::guard('customer')->id())
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('car_rentals.bookings', compact('reservations', 'hotelBookings'));
     }
 
     /**

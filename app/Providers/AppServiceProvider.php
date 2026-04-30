@@ -13,6 +13,7 @@ use Illuminate\Translation\FileLoader;
 use Illuminate\Translation\Translator;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Schema;
 use App\Models\Property;
 use App\Policies\PropertyPolicy;
 use App\Models\Booking;
@@ -53,6 +54,8 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        Schema::defaultStringLength(191);
+
         Gate::policy(Property::class, PropertyPolicy::class);
         Booking::observe(BookingObserver::class);
         

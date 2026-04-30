@@ -1,5 +1,4 @@
-
-@extends('partner.partner-layout')
+@extends('frontend.master')
 
 @section('title', 'List Your Property | ' . config('domains.app_name'))
 
@@ -20,7 +19,6 @@
 </div>
 
 <script>
-    // Auto-hide the toast after 5 seconds
     setTimeout(() => {
         const toast = document.getElementById('success-toast');
         if (toast) {
@@ -30,72 +28,69 @@
 </script>
 @endif
 
-<!-- MAIN SECTION -->
-<section class="bg-[#1F8FB2] text-white py-12 px-4 md:px-12 relative z-0">
-    <div class="container px-4 md:px-8 max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
-        <!-- Left Text Column -->
-        <div class="w-full md:w-1/2">
-            <h1 class="text-3xl md:text-5xl font-bold -mt-12"
-                style="font-family: 'Poppins', sans-serif; line-height: 1.4;">
-                @lang('messages.list_your') <br>
-                <span class="text-[#3CC0E9] font-semibold">@lang('messages.holiday_rental')</span><br>
-                @lang('messages.on') {{ config('domains.domain') }}
-            </h1>
-            <p class="text-white text-xl mt-4 max-w-4xl font-light leading-snug"
-                style="font-family: 'Noto Sans', sans-serif;">
-                @lang('messages.description')
-            </p>
+<!-- Hero Section -->
+<section class="text-white py-12 bg-[#1F8FB2] relative z-0">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-8">
+            <!-- Left Text Column -->
+            <div class="w-full md:w-1/2">
+                <h1 class="text-3xl md:text-5xl font-bold" style="font-family: 'Poppins', sans-serif; line-height: 1.4;">
+                    @lang('messages.list_your') <br>
+                    <span class="text-[#3CC0E9] font-semibold">@lang('messages.holiday_rental')</span><br>
+                    @lang('messages.on') {{ config('domains.domain') }}
+                </h1>
+                <p class="text-white text-xl mt-4 max-w-4xl font-light leading-snug" style="font-family: 'Noto Sans', sans-serif;">
+                    @lang('messages.description')
+                </p>
 
-            @if (Auth::check())
-            <h2>Welcome, {{ Auth::user()->name }}!</h2>
-            @endif
+                @if (Auth::check())
+                <h2 class="mt-4">Welcome, {{ Auth::user()->name }}!</h2>
+                @endif
+            </div>
 
-        </div>
+            <!-- Right Box -->
+            <div class="w-full md:w-1/2 bg-white text-black p-6 rounded-lg border-4 border-yellow-400 shadow-md max-w-md">
+                <h2 class="text-xl font-bold mb-4" style="font-family: 'Poppins', sans-serif;">
+                    @lang('messages.register_free')
+                </h2>
 
-        <!-- Right Box -->
-        <div class="w-full md:w-1/2 bg-white text-black p-6 rounded-lg border-4 border-yellow-400 shadow-md max-w-md">
-            <h2 class="text-xl font-bold mb-4" style="font-family: 'Poppins', sans-serif;">
-                @lang('messages.register_free')
-            </h2>
+                <ul class="list-none space-y-2 mb-6">
+                    <li class="flex items-start">
+                        <span class="text-green-500 mr-2">✔</span>
+                        <p>@lang('messages.booking_within_week')</p>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-green-500 mr-2">✔</span>
+                        <p>@lang('messages.choose_booking_option')</p>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-green-500 mr-2">✔</span>
+                        <p>@lang('messages.payment_facilitation')</p>
+                    </li>
+                </ul>
 
-            <ul class="list-none space-y-2 mb-6">
-                <li class="flex items-start">
-                    <span class="text-green-500 mr-2">✔</span>
-                    <p>@lang('messages.booking_within_week')</p>
-                </li>
-                <li class="flex items-start">
-                    <span class="text-green-500 mr-2">✔</span>
-                    <p>@lang('messages.choose_booking_option')</p>
-                </li>
-                <li class="flex items-start">
-                    <span class="text-green-500 mr-2">✔</span>
-                    <p>@lang('messages.payment_facilitation')</p>
-                </li>
-            </ul>
-
-            @if (Auth::check())
-            <a href="{{ route('partner.property.category') }}"
-                class="w-full bg-[#3CC0E9] text-white font-semibold py-2 rounded hover:bg-[#2bb3db] transition duration-200 text-center block">
-                @lang('messages.get_started_now') →
-            </a>
-            @else
-            <button
-                class="w-full bg-[#3CC0E9] text-white font-semibold py-2 rounded hover:bg-[#2bb3db] transition duration-200">
+                @if (Auth::check())
+                <a href="{{ route('partner.property.category') }}"
+                    class="w-full bg-[#3CC0E9] text-white font-semibold py-2 rounded hover:bg-[#2bb3db] transition duration-200 text-center block">
+                    @lang('messages.get_started_now') →
+                </a>
+                @else
                 <a href="/choose-option-2"
-                    class="block w-full h-full text-white">@lang('messages.get_started_now') →</a>
-            </button>
-            @endif
+                    class="w-full bg-[#3CC0E9] text-white font-semibold py-2 rounded hover:bg-[#2bb3db] transition duration-200 text-center block">
+                    @lang('messages.get_started_now') →
+                </a>
+                @endif
 
-            <p class="mt-4 text-sm">
-                <span class="font-bold text-black">@lang('messages.already_registered')</span><br>
-                <a href="#" class="text-[#3CC0E9] hover:underline">@lang('messages.continue_registration')</a>
-            </p>
+                <p class="mt-4 text-sm">
+                    <span class="font-bold text-black">@lang('messages.already_registered')</span><br>
+                    <a href="#" class="text-[#3CC0E9] hover:underline">@lang('messages.continue_registration')</a>
+                </p>
+            </div>
         </div>
-
     </div>
 </section>
 
-
+<!-- Host Worry Free Section -->
 <section class="py-12 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 class="text-3xl font-semibold text-gray-800 mb-8" style="font-family: 'Poppins', sans-serif;">
@@ -116,12 +111,9 @@
                             <a href="#" class="underline text-base text-blue-500">@lang('messages.request_to_book')</a>.
                         </span>
                     </li>
-
                     <li class="flex items-start gap-2">
                         <img src="{{ asset('assets/black-tick.svg') }}" alt="Check" class="w-5 h-5 mt-1" />
-                        <span class="text-base">
-                            @lang('messages.set_house_rules')
-                        </span>
+                        <span class="text-base">@lang('messages.set_house_rules')</span>
                     </li>
                 </ul>
 
@@ -142,16 +134,11 @@
                 <ul class="text-gray-700 space-y-2" style="font-family: 'Noto Sans', sans-serif;">
                     <li class="flex items-start gap-2">
                         <img src="{{ asset('assets/black-tick.svg') }}" alt="Check" class="w-5 h-5 mt-1" />
-                        <span class="text-base">
-                            @lang('messages.chat_before_accepting')
-                        </span>
+                        <span class="text-base">@lang('messages.chat_before_accepting')</span>
                     </li>
-
                     <li class="flex items-start gap-2">
                         <img src="{{ asset('assets/black-tick.svg') }}" alt="Check" class="w-5 h-5 mt-1" />
-                        <span class="text-base">
-                            @lang('messages.access_guest_history')
-                        </span>
+                        <span class="text-base">@lang('messages.access_guest_history')</span>
                     </li>
                 </ul>
             </div>
@@ -164,16 +151,11 @@
                 <ul class="text-gray-700 space-y-2" style="font-family: 'Noto Sans', sans-serif;">
                     <li class="flex items-start gap-2">
                         <img src="{{ asset('assets/black-tick.svg') }}" alt="Check" class="w-5 h-5 mt-1" />
-                        <span class="text-base">
-                            @lang('messages.liability_protection')
-                        </span>
+                        <span class="text-base">@lang('messages.liability_protection')</span>
                     </li>
-
                     <li class="flex items-start gap-2">
                         <img src="{{ asset('assets/black-tick.svg') }}" alt="Check" class="w-5 h-5 mt-1" />
-                        <span class="text-base">
-                            @lang('messages.access_guest_history')
-                        </span>
+                        <span class="text-base">@lang('messages.access_guest_history')</span>
                     </li>
                 </ul>
             </div>
@@ -181,7 +163,7 @@
     </div>
 </section>
 
-
+<!-- Take Control of Finances Section -->
 <section class="py-12 bg-[#F5F5F5]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 class="text-3xl font-semibold text-gray-800 mb-8" style="font-family: 'Poppins', sans-serif;">
@@ -194,55 +176,46 @@
                 <li class="flex items-start space-x-2" style="font-family: 'Noto Sans', sans-serif;">
                     <img src="{{ asset('assets/black-tick.svg') }}" alt="Check" class="w-5 h-5 mt-1" />
                     <div>
-                        <span class="font-bold font-base" style="font-family: 'Noto Sans', sans-serif;">Payments made
-                            easy</span><br />
-                        <span class="font-sm"> We facilitate the payment process for you, freeing up your time to grow
-                            your business.</span>
+                        <span class="font-bold font-base">Payments made easy</span><br />
+                        <span class="font-sm">We facilitate the payment process for you, freeing up your time to grow your business.</span>
                     </div>
                 </li>
                 <li class="flex items-start space-x-2" style="font-family: 'Noto Sans', sans-serif;">
                     <img src="{{ asset('assets/black-tick.svg') }}" alt="Check" class="w-5 h-5 mt-1" />
                     <div>
-                        <span class="font-bold" style="font-family: 'Noto Sans', sans-serif;">Greater revenue
-                            security</span><br />
-                        Whenever guests complete prepaid reservations at your property and pay online, you are
-                        guaranteed payment.
+                        <span class="font-bold">Greater revenue security</span><br />
+                        Whenever guests complete prepaid reservations at your property and pay online, you are guaranteed payment.
                     </div>
                 </li>
                 <li class="flex items-start space-x-2" style="font-family: 'Noto Sans', sans-serif;">
                     <img src="{{ asset('assets/black-tick.svg') }}" alt="Check" class="w-5 h-5 mt-1" />
                     <div>
-                        <span class="font-bold" style="font-family: 'Noto Sans', sans-serif;">More control over your
-                            cash flow</span><br />
+                        <span class="font-bold">More control over your cash flow</span><br />
                         Choose your payout method and timing based on regional availability.
                     </div>
                 </li>
             </ul>
-
 
             <!-- Right Column -->
             <ul class="pl-0 space-y-4">
                 <li class="flex items-start space-x-2" style="font-family: 'Noto Sans', sans-serif;">
                     <img src="{{ asset('assets/black-tick.svg') }}" alt="Check" class="w-5 h-5 mt-1" />
                     <div>
-                        <span class="font-bold" style="font-family: 'Noto Sans', sans-serif;">Daily payouts in select
-                            markets</span><br />
+                        <span class="font-bold">Daily payouts in select markets</span><br />
                         Get payouts faster! We'll send your payouts 24 hours after guest checkout.
                     </div>
                 </li>
                 <li class="flex items-start space-x-2" style="font-family: 'Noto Sans', sans-serif;">
                     <img src="{{ asset('assets/black-tick.svg') }}" alt="Check" class="w-5 h-5 mt-1" />
                     <div>
-                        <span class="font-bold" style="font-family: 'Noto Sans', sans-serif;">One-stop solution for
-                            multiple listings</span><br />
+                        <span class="font-bold">One-stop solution for multiple listings</span><br />
                         Save time managing finances with group invoicing and reconciliation.
                     </div>
                 </li>
                 <li class="flex items-start space-x-2" style="font-family: 'Noto Sans', sans-serif;">
                     <img src="{{ asset('assets/black-tick.svg') }}" alt="Check" class="w-5 h-5 mt-1" />
                     <div>
-                        <span class="font-bold" style="font-family: 'Noto Sans', sans-serif;">More control over your
-                            cash flow</span><br />
+                        <span class="font-bold">Stay compliant and secure</span><br />
                         We help you stay compliant with regulatory changes and reduce the risk of fraud and chargebacks.
                     </div>
                 </li>
@@ -258,109 +231,88 @@
     </div>
 </section>
 
-
+<!-- Simple to Begin Section -->
 <section class="py-12 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 class="text-3xl font-semibold text-gray-800 mb-8" style="font-family: 'Poppins', sans-serif;">
             @lang('messages.simple_to_begin_and_stay_ahead')
         </h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <!-- Card 1: Import your property details -->
             <!-- Card 1 -->
             <div class="flex flex-col items-center text-center">
                 <img src="{{ asset('images/post.png') }}" alt="Import Icon" class="w-[100px] h-[100px] mb-4" />
-
-                <!-- Content container to align left -->
                 <div class="text-left">
                     <h3 class="text-lg font-bold mb-2" style="font-family: 'Noto Sans', sans-serif;">
                         Import your property details
                     </h3>
                     <p class="text-base" style="font-family: 'Noto Sans', sans-serif;">
-                        Seamlessly import your property information from other travel websites and avoid overbooking
-                        with calendar sync.
+                        Seamlessly import your property information from other travel websites and avoid overbooking with calendar sync.
                     </p>
                 </div>
             </div>
 
-            <!-- Repeat the same structure for Card 2 and Card 3 -->
-
-
-            <!-- Card 2: Start fast with review scores -->
+            <!-- Card 2 -->
             <div class="flex flex-col items-center text-center">
                 <img src="{{ asset('images/puzzels.png') }}" alt="Review Icon" class="w-[100px] h-[100px] mb-4" />
-
                 <div class="text-left">
                     <h3 class="text-lg font-bold mb-2" style="font-family: 'Noto Sans', sans-serif;">
                         Start fast with review scores
                     </h3>
                     <p class="text-base" style="font-family: 'Noto Sans', sans-serif;">
-                        Your review scores on other travel websites are converted and displayed on your property page
-                        before your first eSupport.com guests leave their reviews.
+                        Your review scores on other travel websites are converted and displayed on your property page before your first guests leave their reviews.
                     </p>
                 </div>
             </div>
 
-
-            <!-- Card 3: Stand out in the market -->
+            <!-- Card 3 -->
             <div class="flex flex-col items-center text-center">
                 <img src="{{ asset('images/search.png') }}" alt="Stand Out Icon" class="w-[90px] h-[100px] mb-4" />
-
                 <div class="text-left">
                     <h3 class="text-lg font-bold mb-2" style="font-family: 'Noto Sans', sans-serif;">
                         Stand out in the market
                     </h3>
                     <p class="text-base" style="font-family: 'Noto Sans', sans-serif;">
-                        The "New to HorizonStay.com" label helps you stand out in our search results.
+                        The "New to {{ config('domains.domain') }}" label helps you stand out in our search results.
                     </p>
                 </div>
             </div>
-
-            <div class="text-left mt-2">
-                <button class="bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded mt-2"
-                    style="font-family: 'Noto Sans', sans-serif;">
-                    Get started today
-                </button>
-            </div>
         </div>
+
+        <div class="text-left mt-2">
+            <button class="bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded mt-2"
+                style="font-family: 'Noto Sans', sans-serif;">
+                Get started today
+            </button>
+        </div>
+    </div>
 </section>
-<!-- Section: Reach a unique global customer base -->
+
+<!-- Global Customer Base Section -->
 <section class="py-32 bg-white relative overflow-hidden">
-    <!-- Background map slightly enlarged and centered -->
     <div class="absolute inset-0 flex items-center justify-center z-0">
-        <img src="{{ asset('images/map.png') }}" alt="World Map"
-            class="w-[900px] h-auto object-contain opacity-30" />
+        <img src="{{ asset('images/map.png') }}" alt="World Map" class="w-[900px] h-auto object-contain opacity-30" />
     </div>
 
-    <!-- Foreground content -->
     <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center">
-            <h2 class="text-4xl font-bold text-black mb-16 text-left -mt-12"
-                style="font-family: 'Poppins', sans-serif;">
+            <h2 class="text-4xl font-bold text-black mb-16 text-left -mt-12" style="font-family: 'Poppins', sans-serif;">
                 @lang('messages.reach_a_unique_global_customer_base')
             </h2>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-center mb-12">
                 <div>
-                    <p class="text-4xl font-bold text-black" style="font-family: 'Poppins', sans-serif;">1.8+ billion
-                    </p>
-                    <p class="text-gray-700 text-xl" style="font-family: 'Noto Sans', sans-serif;">holiday rental
-                        guests since 2010.</p>
+                    <p class="text-4xl font-bold text-black" style="font-family: 'Poppins', sans-serif;">1.8+ billion</p>
+                    <p class="text-gray-700 text-xl" style="font-family: 'Noto Sans', sans-serif;">holiday rental guests since 2010.</p>
                 </div>
                 <div>
-                    <p class="text-4xl font-bold text-black" style="font-family: 'Poppins', sans-serif;">1 in every 3
-                    </p>
-                    <p class="text-gray-700 text-xl" style="font-family: 'Noto Sans', sans-serif;">room nights booked
-                        in 2024 was a holiday rental.</p>
+                    <p class="text-4xl font-bold text-black" style="font-family: 'Poppins', sans-serif;">1 in every 3</p>
+                    <p class="text-gray-700 text-xl" style="font-family: 'Noto Sans', sans-serif;">room nights booked in 2024 was a holiday rental.</p>
                 </div>
                 <div>
-                    <p class="text-4xl font-bold text-black " style="font-family: 'Poppins', sans-serif;">48% of
-                        nights</p>
-                    <p class="text-gray-700 text-xl" style="font-family: 'Noto Sans', sans-serif;">booked were for
-                        international stays at the end of 2023.</p>
+                    <p class="text-4xl font-bold text-black" style="font-family: 'Poppins', sans-serif;">48% of nights</p>
+                    <p class="text-gray-700 text-xl" style="font-family: 'Noto Sans', sans-serif;">booked were for international stays at the end of 2023.</p>
                 </div>
             </div>
-
-
         </div>
         <button class="bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded mt-2"
             style="font-family: 'Noto Sans', sans-serif;">
@@ -369,154 +321,115 @@
     </div>
 </section>
 
-
-<!-- Section: What hosts like you say -->
+<!-- Testimonials Section -->
 <section class="py-16 bg-gray-100">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Title -->
-        <h2 class="text-4xl font-bold text-black  mb-8" style="font-family: 'Poppins', sans-serif;">What hosts like
-            you say</h2>
+        <h2 class="text-4xl font-bold text-black mb-8" style="font-family: 'Poppins', sans-serif;">What hosts like you say</h2>
 
-        <!-- Testimonials Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
-            <!-- Testimonial Card -->
+            <!-- Testimonial Cards -->
             <div class="border border-yellow-400 p-6 rounded-md bg-white shadow-sm">
                 <p class="text-sm italic mb-4" style="font-family: 'Noto Sans', sans-serif;">
                     "I was able to list within 15 minutes, and no more than two hours later, I had my first booking!"
                 </p>
                 <div class="flex items-center gap-3 mt-4">
-                    <img src="{{ asset('images/x.jpg') }}" alt="Parley Rose"
-                        class="w-12 h-12 rounded-full object-cover border-2 border-gray-300" />
+                    <img src="{{ asset('images/x.jpg') }}" alt="Parley Rose" class="w-12 h-12 rounded-full object-cover border-2 border-gray-300" />
                     <div>
-                        <div class="text-sm font-semibold" style="font-family: 'Noto Sans', sans-serif;">Parley Rose
-                        </div>
-                        <div class="text-xs text-gray-500" style="font-family: 'Noto Sans', sans-serif;">UK-based host
-                        </div>
+                        <div class="text-sm font-semibold" style="font-family: 'Noto Sans', sans-serif;">Parley Rose</div>
+                        <div class="text-xs text-gray-500" style="font-family: 'Noto Sans', sans-serif;">UK-based host</div>
                     </div>
                 </div>
             </div>
 
             <div class="border border-blue-400 p-6 rounded-md bg-white shadow-sm">
                 <p class="text-sm italic mb-4" style="font-family: 'Noto Sans', sans-serif;">
-                    "eSupport.com is the most straightforward [OTA] to work with. Everything is clear. It's easy. And it
-                    frees us up to focus on the aspects that we can really add value to, like the guest experience."
+                    "{{ config('domains.domain') }} is the most straightforward platform to work with. Everything is clear. It's easy. And it frees us up to focus on the guest experience."
                 </p>
                 <div class="flex items-center gap-3 mt-4">
-                    <img src="{{ asset('images/y.jpg') }}" alt="Martin Friedman"
-                        class="w-12 h-12 rounded-full object-cover border-2 border-gray-300" />
+                    <img src="{{ asset('images/y.jpg') }}" alt="Martin Friedman" class="w-12 h-12 rounded-full object-cover border-2 border-gray-300" />
                     <div>
-                        <div class="text-sm font-semibold" style="font-family: 'Noto Sans', sans-serif;">Martin
-                            Friedman</div>
-                        <div class="text-xs text-gray-500" style="font-family: 'Noto Sans', sans-serif;">Managing
-                            Director, Abodebed</div>
+                        <div class="text-sm font-semibold" style="font-family: 'Noto Sans', sans-serif;">Martin Friedman</div>
+                        <div class="text-xs text-gray-500" style="font-family: 'Noto Sans', sans-serif;">Managing Director, Abodebed</div>
                     </div>
                 </div>
             </div>
 
             <div class="border border-yellow-400 p-6 rounded-md bg-white shadow-sm">
                 <p class="text-sm italic mb-4" style="font-family: 'Noto Sans', sans-serif;">
-                    "eSupport.com accounts for our largest share of guests and has helped get us where we are today."
+                    "{{ config('domains.domain') }} accounts for our largest share of guests and has helped get us where we are today."
                 </p>
                 <div class="flex items-center gap-3 mt-4">
-                    <img src="{{ asset('images/z.jpg') }}" alt="Michel and Aja"
-                        class="w-12 h-12 rounded-full object-cover border-2 border-gray-300" />
+                    <img src="{{ asset('images/z.jpg') }}" alt="Michel and Aja" class="w-12 h-12 rounded-full object-cover border-2 border-gray-300" />
                     <div>
-                        <div class="text-sm font-semibold" style="font-family: 'Noto Sans', sans-serif;">Michel and
-                            Aja</div>
-                        <div class="text-xs text-gray-500" style="font-family: 'Noto Sans', sans-serif;">Owners of La
-                            Maison de Souhey</div>
+                        <div class="text-sm font-semibold" style="font-family: 'Noto Sans', sans-serif;">Michel and Aja</div>
+                        <div class="text-xs text-gray-500" style="font-family: 'Noto Sans', sans-serif;">Owners of La Maison de Souhey</div>
                     </div>
                 </div>
             </div>
 
             <div class="border border-blue-400 p-6 rounded-md bg-white shadow-sm">
                 <p class="text-sm italic mb-4" style="font-family: 'Noto Sans', sans-serif;">
-                    "Travellers come to Charming Lofts from all over the world. eSupport.com really helps with that.
-                    Unlike some other platforms, it's multinational and caters to a much larger audience. For me, that
-                    was a real game-changer."
+                    "Travellers come from all over the world. {{ config('domains.domain') }} really helps with that. It's multinational and caters to a much larger audience."
                 </p>
                 <div class="flex items-center gap-3 mt-4">
-                    <img src="{{ asset('images/t.jpg') }}" alt="Parley Rose"
-                        class="w-12 h-12 rounded-full object-cover border-2 border-gray-300" />
+                    <img src="{{ asset('images/t.jpg') }}" alt="Parley Rose" class="w-12 h-12 rounded-full object-cover border-2 border-gray-300" />
                     <div>
-                        <div class="text-sm font-semibold" style="font-family: 'Noto Sans', sans-serif;">Parley Rose
-                        </div>
-                        <div class="text-xs text-gray-500" style="font-family: 'Noto Sans', sans-serif;">UK-based host
-                        </div>
+                        <div class="text-sm font-semibold" style="font-family: 'Noto Sans', sans-serif;">Parley Rose</div>
+                        <div class="text-xs text-gray-500" style="font-family: 'Noto Sans', sans-serif;">UK-based host</div>
                     </div>
                 </div>
             </div>
 
             <div class="border border-yellow-400 p-6 rounded-md bg-white shadow-sm">
                 <p class="text-sm italic mb-4" style="font-family: 'Noto Sans', sans-serif;">
-                    "After joining eSupport.com and setting up the listing, my occupancy went up significantly and
-                    bookings were coming in five to six months in advance."
+                    "After joining and setting up the listing, my occupancy went up significantly and bookings were coming in five to six months in advance."
                 </p>
                 <div class="flex items-center gap-3 mt-4">
-                    <img src="{{ asset('images/t.jpg') }}" alt="Martin Friedman"
-                        class="w-12 h-12 rounded-full object-cover border-2 border-gray-300" />
+                    <img src="{{ asset('images/t.jpg') }}" alt="Martin Friedman" class="w-12 h-12 rounded-full object-cover border-2 border-gray-300" />
                     <div>
-                        <div class="text-sm font-semibold" style="font-family: 'Noto Sans', sans-serif;">Martin
-                            Friedman</div>
-                        <div class="text-xs text-gray-500" style="font-family: 'Noto Sans', sans-serif;">Managing
-                            Director, Abodebed</div>
+                        <div class="text-sm font-semibold" style="font-family: 'Noto Sans', sans-serif;">Martin Friedman</div>
+                        <div class="text-xs text-gray-500" style="font-family: 'Noto Sans', sans-serif;">Managing Director, Abodebed</div>
                     </div>
                 </div>
             </div>
 
             <div class="border border-blue-400 p-6 rounded-md bg-white shadow-sm">
-                <p class="text-sm italic mb-4">
-                    "Getting started with eSupport.com was super simple and took no time at all."
+                <p class="text-sm italic mb-4" style="font-family: 'Noto Sans', sans-serif;">
+                    "Getting started was super simple and took no time at all."
                 </p>
                 <div class="flex items-center gap-3 mt-4">
-                    <img src="{{ asset('images/v.jpg') }}" alt="Michel and Aja"
-                        class="w-12 h-12 rounded-full object-cover border-2 border-gray-300" />
+                    <img src="{{ asset('images/v.jpg') }}" alt="Michel and Aja" class="w-12 h-12 rounded-full object-cover border-2 border-gray-300" />
                     <div>
-                        <div class="text-sm font-semibold" style="font-family: 'Noto Sans', sans-serif;">Michel and
-                            Aja</div>
-                        <div class="text-xs text-gray-500" style="font-family: 'Noto Sans', sans-serif;">Owners of La
-                            Maison de Souhey</div>
+                        <div class="text-sm font-semibold" style="font-family: 'Noto Sans', sans-serif;">Michel and Aja</div>
+                        <div class="text-xs text-gray-500" style="font-family: 'Noto Sans', sans-serif;">Owners of La Maison de Souhey</div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Join Button -->
-        <div class="text-center mt-10">
-
-        </div>
-        <button class="bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded mt-2"
+        <button class="bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded mt-8"
             style="font-family: 'Noto Sans', sans-serif;">
             Reach new guests today
         </button>
     </div>
 </section>
 
-
+<!-- FAQ Section -->
 <section class="py-12 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="mb-6">
             <h2 class="text-2xl font-semibold text-gray-800 mb-2">Your questions answered</h2>
-
         </div>
 
-
-
-
-
-        <!-- Two column layout -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Left Column -->
             <div class="space-y-4">
                 <div class="border border-gray-200 rounded-lg p-4">
-                    <button
-                        class="w-full flex justify-between items-center text-left font-medium text-gray-800 toggle-answer focus:outline-none"
+                    <button class="w-full flex justify-between items-center text-left font-medium text-gray-800 toggle-answer focus:outline-none"
                         style="font-family: 'Noto Sans', sans-serif;">
                         What is your refund policy?
-                        <svg class="w-5 h-5 transform transition-transform" xmlns="http://www.w3.org/2000/svg"
-                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M19 9l-7 7-7-7" />
+                        <svg class="w-5 h-5 transform transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
                     <p class="mt-2 text-gray-600 hidden answer" style="font-family: 'Noto Sans', sans-serif;">
@@ -524,18 +437,15 @@
                     </p>
                 </div>
                 <div class="border border-gray-200 rounded-lg p-4">
-                    <button
-                        class="w-full flex justify-between items-center text-left font-medium text-gray-800 toggle-answer focus:outline-none"
+                    <button class="w-full flex justify-between items-center text-left font-medium text-gray-800 toggle-answer focus:outline-none"
                         style="font-family: 'Noto Sans', sans-serif;">
-                        What is your refund policy?
-                        <svg class="w-5 h-5 transform transition-transform" xmlns="http://www.w3.org/2000/svg"
-                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M19 9l-7 7-7-7" />
+                        How do I list my property?
+                        <svg class="w-5 h-5 transform transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
                     <p class="mt-2 text-gray-600 hidden answer" style="font-family: 'Noto Sans', sans-serif;">
-                        We offer a full refund within the first 14 days of your purchase.
+                        Simply click "Get Started Now" and follow the registration steps. It takes less than 15 minutes.
                     </p>
                 </div>
             </div>
@@ -543,14 +453,11 @@
             <!-- Right Column -->
             <div class="space-y-4">
                 <div class="border border-gray-200 rounded-lg p-4">
-                    <button
-                        class="w-full flex justify-between items-center text-left font-medium text-gray-800 toggle-answer focus:outline-none"
+                    <button class="w-full flex justify-between items-center text-left font-medium text-gray-800 toggle-answer focus:outline-none"
                         style="font-family: 'Noto Sans', sans-serif;">
                         Is there a free trial available?
-                        <svg class="w-5 h-5 transform transition-transform" xmlns="http://www.w3.org/2000/svg"
-                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M19 9l-7 7-7-7" />
+                        <svg class="w-5 h-5 transform transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
                     <p class="mt-2 text-gray-600 hidden answer" style="font-family: 'Noto Sans', sans-serif;">
@@ -558,27 +465,23 @@
                     </p>
                 </div>
                 <div class="border border-gray-200 rounded-lg p-4">
-                    <button
-                        class="w-full text-base text-bold flex justify-between items-center text-left  text-gray-800 toggle-answer focus:outline-none"
+                    <button class="w-full flex justify-between items-center text-left font-medium text-gray-800 toggle-answer focus:outline-none"
                         style="font-family: 'Noto Sans', sans-serif;">
-                        Is there a free trial available?
-                        <svg class="w-5 h-5 transform transition-transform" xmlns="http://www.w3.org/2000/svg"
-                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M19 9l-7 7-7-7" />
+                        What are the commission rates?
+                        <svg class="w-5 h-5 transform transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
                     <p class="mt-2 text-gray-600 hidden answer" style="font-family: 'Noto Sans', sans-serif;">
-                        Yes, we offer a 7-day free trial with access to all features.
+                        We offer competitive rates starting from 15%. Contact us for more details.
                     </p>
                 </div>
-
-
             </div>
         </div>
+
         <p class="mt-4 text-gray-600" style="font-family: 'Noto Sans', sans-serif;">
             Still have questions? Find answers to all your questions on our
-            <a href="/help" class="text-sky-500  hover:text-sky-600"> FAQ</a>
+            <a href="/help" class="text-sky-500 hover:text-sky-600">FAQ</a>
         </p>
         <button class="bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded mt-8"
             style="font-family: 'Noto Sans', sans-serif;">
@@ -587,52 +490,9 @@
     </div>
 </section>
 
-<!-- Toggle Script -->
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const toggles = document.querySelectorAll('.toggle-answer');
-        toggles.forEach(toggle => {
-            toggle.addEventListener('click', () => {
-                const answer = toggle.nextElementSibling;
-                const icon = toggle.querySelector('svg');
-                answer.classList.toggle('hidden');
-                icon.classList.toggle('rotate-180');
-            });
-        });
-    });
-</script>
-
-
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        // Language modal logic
-        const languageButton = document.getElementById("language-button");
-        const languageModal = document.getElementById("language-modal");
-        const closeBtn = languageModal ? languageModal.querySelector(".close-btn") : null;
-
-        if (languageButton && languageModal && closeBtn) {
-            // Open the language modal
-            languageButton.addEventListener("click", () => {
-                languageModal.classList.remove("hidden");
-            });
-
-            // Close language modal on close button click
-            closeBtn.addEventListener("click", () => {
-                languageModal.classList.add("hidden");
-            });
-
-            // Close language modal on clicking outside the modal content
-            window.addEventListener("click", (event) => {
-                if (event.target === languageModal) {
-                    languageModal.classList.add("hidden");
-                }
-            });
-        }
-    });
-</script>
-<footer class="bg-[#1A93B6] text-white py-12 px-4">
+<!-- CTA Footer Section -->
+<section class="bg-[#1A93B6] text-white py-12 px-4">
     <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 relative">
-
         <!-- Left Text -->
         <div class="md:col-span-2 flex flex-col justify-center">
             <h2 class="text-4xl md:text-5xl font-bold mb-4" style="font-family: 'Poppins', sans-serif;">
@@ -642,8 +502,7 @@
         </div>
 
         <!-- CTA Box -->
-        <div
-            class="bg-white text-black p-6 rounded-lg border-4 border-yellow-400 shadow-md w-full max-w-sm mx-auto md:mx-0">
+        <div class="bg-white text-black p-6 rounded-lg border-4 border-yellow-400 shadow-md w-full max-w-sm mx-auto md:mx-0">
             <h3 class="text-lg font-semibold mb-4" style="font-family: 'Poppins', sans-serif;">Register for free</h3>
             <ul class="list-none space-y-2 mb-6">
                 <li class="flex items-start">
@@ -671,31 +530,23 @@
         <div>
             <h4 class="font-semibold mb-2 text-2xl" style="font-family: 'Poppins', sans-serif;">Discover</h4>
             <ul>
-                <li><a href="#" class="underline text-base" style="font-family: 'Poppins', sans-serif;">Trust
-                        and Safety</a></li>
+                <li><a href="#" class="underline text-base" style="font-family: 'Poppins', sans-serif;">Trust and Safety</a></li>
             </ul>
         </div>
         <div>
             <h4 class="font-semibold mb-2 text-2xl" style="font-family: 'Poppins', sans-serif;">Useful links</h4>
             <ul>
-                <li><a href="#" class="underline text-base"
-                        style="font-family: 'Poppins', sans-serif;">Extranet</a></li>
-                <li><a href="#" class="underline text-base" style="font-family: 'Poppins', sans-serif;">Pulse
-                        for Android</a></li>
-                <li><a href="#" class="underline text-base" style="font-family: 'Poppins', sans-serif;">Pulse
-                        for iOS</a></li>
+                <li><a href="#" class="underline text-base" style="font-family: 'Poppins', sans-serif;">Extranet</a></li>
+                <li><a href="#" class="underline text-base" style="font-family: 'Poppins', sans-serif;">Pulse for Android</a></li>
+                <li><a href="#" class="underline text-base" style="font-family: 'Poppins', sans-serif;">Pulse for iOS</a></li>
             </ul>
         </div>
         <div>
-            <h4 class="font-semibold mb-2 text-2xl" style="font-family: 'Poppins', sans-serif;">Help and communities
-            </h4>
+            <h4 class="font-semibold mb-2 text-2xl" style="font-family: 'Poppins', sans-serif;">Help and communities</h4>
             <ul>
-                <li><a href="#" class="underline text-base" style="font-family: 'Poppins', sans-serif;">Partner
-                        Help</a></li>
-                <li><a href="#" class="underline text-base" style="font-family: 'Poppins', sans-serif;">Partner
-                        Community</a></li>
-                <li><a href="#" class="underline text-base" style="font-family: 'Poppins', sans-serif;">How-to
-                        videos</a></li>
+                <li><a href="#" class="underline text-base" style="font-family: 'Poppins', sans-serif;">Partner Help</a></li>
+                <li><a href="#" class="underline text-base" style="font-family: 'Poppins', sans-serif;">Partner Community</a></li>
+                <li><a href="#" class="underline text-base" style="font-family: 'Poppins', sans-serif;">How-to videos</a></li>
             </ul>
         </div>
     </div>
@@ -706,12 +557,28 @@
             <div class="space-x-2">
                 <a href="#" class="underline" style="font-family: 'Poppins', sans-serif;">About Us</a>
                 <span class="text-white">|</span>
-                <a href="#" class="underline" style="font-family: 'Poppins', sans-serif;">Privacy and Cookie
-                    Statement</a>
+                <a href="#" class="underline" style="font-family: 'Poppins', sans-serif;">Privacy and Cookie Statement</a>
             </div>
-            <p class="mt-2 md:mt-0" style="font-family: 'Poppins', sans-serif;">© Copyright <a href="#"
-                    class="underline" style="font-family: 'Poppins', sans-serif;">{{ config('domains.domain') }}</a> 2025</p>
+            <p class="mt-2 md:mt-0" style="font-family: 'Poppins', sans-serif;">
+                © Copyright <a href="#" class="underline">{{ config('domains.domain') }}</a> 2025
+            </p>
         </div>
     </div>
-</footer>
+</section>
+
+<!-- Toggle Script -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggles = document.querySelectorAll('.toggle-answer');
+        toggles.forEach(toggle => {
+            toggle.addEventListener('click', () => {
+                const answer = toggle.nextElementSibling;
+                const icon = toggle.querySelector('svg');
+                answer.classList.toggle('hidden');
+                icon.classList.toggle('rotate-180');
+            });
+        });
+    });
+</script>
+
 @endsection

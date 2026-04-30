@@ -125,12 +125,12 @@
                                         </template>
 
                                         <div class="flex items-center space-x-4">
-                                            <img src="{{ asset('images/accomm_single_home@2x (1).png') }}" alt="Icon"
-                                                class="w-10 h-10" />
+                                            <img :src="subcategory.image ? '/storage/' + subcategory.image : '{{ asset('images/accomm_single_home@2x (1).png') }}'" alt="Icon"
+                                                class="w-10 h-10" onerror="this.src='{{ asset('images/accomm_single_home@2x (1).png') }}'"/>
                                             <div>
                                                 <span class="text-lg text-gray-800 font-semibold"
                                                     x-text="subcategory.name"></span>
-                                                <p class="text-sm text-gray-600" x-text="subcategory.desc"></p>
+                                                <p class="text-sm text-gray-600" x-text="subcategory.description || ''"></p>
                                             </div>
                                         </div>
                                         <input type="hidden" name="category_id" value="{{ $categoryId }}">

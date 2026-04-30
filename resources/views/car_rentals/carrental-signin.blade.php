@@ -1,63 +1,152 @@
-@extends('frontend.carrental-layout')
+@extends('frontend.master')
 
-@section('title', 'Car Renter Sign In | ' . config('app.name'))
+@section('title', 'Car Renter Sign In | ' . config('domains.app_name'))
 
 @section('content')
-<section class="max-h-screen flex items-start justify-center pt-10 px-4 sm:px-6">
-    <div class="w-full max-w-md space-y-6">
-        <div class="bg-white border border-gray-200 shadow-md rounded-md p-6 mt-8">
-            <h2 class="text-xl font-semibold mb-2">Sign in to your car renter account</h2>
+
+<!-- Hero Section -->
+<section class="text-white py-12 bg-[#1F8FB2] relative z-0">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-[32px] md:text-[40px] lg:text-[50px] font-bold mb-4">
+            Car & Taxi Rental Sign In
+        </h1>
+        <p class="text-[18px] md:text-[20px] font-sans">
+            Manage your vehicles and bookings
+        </p>
+    </div>
+</section>
+
+<!-- Form Section -->
+<section class="py-12 bg-white">
+    <div class="max-w-md mx-auto px-4 sm:px-6">
+        <div class="bg-white border border-gray-200 shadow-lg rounded-xl p-8">
+
+            <h2 class="text-xl font-semibold mb-4 text-center" style="font-family: 'Noto Sans', sans-serif;">
+                Sign in to your car renter account
+            </h2>
 
             @if(session('error'))
-                <p class="text-red-600 text-sm mb-4">{{ session('error') }}</p>
+                <div class="mb-4 p-3 rounded bg-red-100 border border-red-400 text-red-700 text-sm">
+                    {{ session('error') }}
+                </div>
+            @endif
+
+            @if(session('success'))
+                <div class="mb-4 p-3 rounded bg-green-100 border border-green-400 text-green-700 text-sm">
+                    {{ session('success') }}
+                </div>
             @endif
 
             <form method="POST" action="{{ route('carrentals.login.email.store') }}">
                 @csrf
-                <label for="email" class="block text-sm font-medium text-gray-700 mt-6 mb-2">Email</label>
+                <label for="email" class="block text-sm font-medium text-gray-700 mt-4 mb-2" style="font-family: 'Noto Sans', sans-serif;">
+                    Email Address
+                </label>
                 <input type="email" id="email" name="email" required
-                       class="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
-                       value="{{ old('email') }}"/>
+                       class="w-full border border-gray-300 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3CC0E9] focus:border-transparent mb-4"
+                       value="{{ old('email') }}"
+                       placeholder="Enter your email"/>
 
                 @error('email')
-                    <p class="text-red-600 text-sm">{{ $message }}</p>
+                    <p class="text-red-600 text-sm mb-4">{{ $message }}</p>
                 @enderror
 
-                <button type="submit" class="w-full text-white py-2 rounded hover:bg-blue-700 mb-4"
-                        style="background-color:#3CC0E9;">
-                    Next
+                <button type="submit" class="w-full text-white py-3 rounded-lg font-semibold hover:opacity-90 transition mb-4"
+                        style="background-color:#1F8FB2; font-family: 'Noto Sans', sans-serif;">
+                    Continue
                 </button>
-          
 
-      <button type="submit"
-    class="w-full text-blue-600 font-semibold text-sm py-2 rounded mt-4 bg-white hover:bg-blue-100 transition-colors duration-200"
-    style="font-family: 'Noto Sans', sans-serif;">
-    Having trouble signing in?
-</button>
+                <button type="button"
+                    class="w-full text-[#1F8FB2] font-semibold text-sm py-2 rounded hover:bg-gray-100 transition"
+                    style="font-family: 'Noto Sans', sans-serif;">
+                    Having trouble signing in?
+                </button>
             </form>
+
             <div class="border-t border-gray-200 my-6"></div>
 
-      <p class="text-xs text-gray-600 text-center" style="font-family: 'Noto Sans', sans-serif;">
-        Do you have questions about your property or the extranet?
-        <a href="#" class="text-blue-600 hover:underline" style="font-family: 'Noto Sans', sans-serif;">Partner Help</a> or
-         ask another question on the <a href="#" class="text-blue-600 hover:underline" style="font-family: 'Noto Sans', sans-serif;">Partner Community</a>
-      </p>
+            <p class="text-sm text-gray-600 text-center" style="font-family: 'Noto Sans', sans-serif;">
+                Do you have questions about your vehicles?
+                <a href="#" class="text-[#1F8FB2] hover:underline">Partner Help</a>
+            </p>
 
-      <div class="mt-4">
-        <a href="{{ url('carrentals/register/details') }}" class="block text-center border border-blue-600 text-blue-600 hover:bg-blue-50 rounded py-2 text-sm font-semibold" style="font-family: 'Noto Sans', sans-serif;">
-          Create your  account
-        </a>
-      </div>
+            <div class="mt-6">
+                <a href="{{ url('carrentals/register/details') }}"
+                   class="block text-center border-2 border-[#1F8FB2] text-[#1F8FB2] hover:bg-[#1F8FB2] hover:text-white rounded-lg py-3 text-sm font-semibold transition"
+                   style="font-family: 'Noto Sans', sans-serif;">
+                    Create your account
+                </a>
+            </div>
 
-      <p class="text-[11px] text-gray-500 text-center mt-6" style="font-family: 'Noto Sans', sans-serif;">
-        By signing in or creating an account, you agree with our
-        <a href="#" class="text-blue-600 hover:underline" style="font-family: 'Noto Sans', sans-serif;">Terms & conditions</a> and
-        <a href="#" class="text-blue-600 hover:underline" style="font-family: 'Noto Sans', sans-serif;">Privacy statement</a>.
-      </p>
+            <p class="text-[11px] text-gray-500 text-center mt-6" style="font-family: 'Noto Sans', sans-serif;">
+                By signing in or creating an account, you agree with our
+                <a href="#" class="text-[#1F8FB2] hover:underline">Terms & conditions</a> and
+                <a href="#" class="text-[#1F8FB2] hover:underline">Privacy statement</a>.
+            </p>
 
-      <p class="text-[11px] text-gray-400 text-center mt-1" style="font-family: 'Noto Sans', sans-serif;">© 2006 – 2025 {{ config('domains.domain') }}™</p>
-    </div>
+            <p class="text-[11px] text-gray-400 text-center mt-2" style="font-family: 'Noto Sans', sans-serif;">
+                {{ config('domains.domain') }}
+            </p>
         </div>
     </div>
 </section>
+
+<!-- Info Section -->
+<section class="py-12 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row md:space-x-6 space-y-6 md:space-y-0">
+            <!-- Card 1 -->
+            <div class="bg-white shadow-md rounded-lg flex flex-row items-center p-4 w-full md:w-1/3 border border-gray-300">
+                <div class="w-16 h-16 bg-[#1F8FB2] rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+                    </svg>
+                </div>
+                <div class="flex flex-col justify-between">
+                    <h2 class="text-sm font-semibold text-gray-800 mb-1" style="font-family: 'Noto Sans', sans-serif;">
+                        List your vehicles
+                    </h2>
+                    <p class="text-sm text-gray-600" style="font-family: 'Noto Sans', sans-serif;">
+                        Reach travelers looking for rentals
+                    </p>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="bg-white shadow-md rounded-lg flex flex-row items-center p-4 w-full md:w-1/3 border border-gray-300">
+                <div class="w-16 h-16 bg-[#3CC0E9] rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <div class="flex flex-col justify-between">
+                    <h2 class="text-sm font-semibold text-gray-800 mb-1" style="font-family: 'Noto Sans', sans-serif;">
+                        Earn more revenue
+                    </h2>
+                    <p class="text-sm text-gray-600" style="font-family: 'Noto Sans', sans-serif;">
+                        Competitive rates and low commission
+                    </p>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="bg-white shadow-md rounded-lg flex flex-row items-center p-4 w-full md:w-1/3 border border-gray-300">
+                <div class="w-16 h-16 bg-[#1F8FB2] rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <div class="flex flex-col justify-between">
+                    <h2 class="text-sm font-semibold text-gray-800 mb-1" style="font-family: 'Noto Sans', sans-serif;">
+                        24/7 Support
+                    </h2>
+                    <p class="text-sm text-gray-600" style="font-family: 'Noto Sans', sans-serif;">
+                        We're always here to help you succeed
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 @endsection

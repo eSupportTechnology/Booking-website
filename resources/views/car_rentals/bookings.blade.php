@@ -5,8 +5,7 @@
     use Carbon\Carbon;
 
     /**
-     * Expecting $reservations (LengthAwarePaginator or Collection) provided by controller:
-     * $reservations = Reservation::where('user_id', auth()->id())->with(['car','car.files','car.brand','car.model'])->latest()->paginate(...)
+     * Expecting $reservations (car rentals) and $hotelBookings (hotel bookings) from controller
      */
     function fmtDT($dt) {
         return $dt ? Carbon::parse($dt)->format('D, d M Y • h:i A') : '—';
@@ -42,6 +41,8 @@
 
   .payment-paid { background: #EEF9F6; color:#0f9d58; border:1px solid rgba(15,157,88,0.08); padding:6px 8px; border-radius:8px; font-weight:600; font-size:12px; }
   .payment-pending { background:#FFF8F0;color:#D97706;border:1px solid rgba(217,119,6,0.08); padding:6px 8px;border-radius:8px;font-weight:600;font-size:12px; }
+  .payment-completed { background: #EEF9F6; color:#0f9d58; border:1px solid rgba(15,157,88,0.08); padding:6px 8px; border-radius:8px; font-weight:600; font-size:12px; }
+  .payment-expired { background:#FEECEF;color:#D32F2F;border:1px solid rgba(211,47,47,0.08); padding:6px 8px;border-radius:8px;font-weight:600;font-size:12px; }
 
   /* image */
   .booking-img { width: 100%; height: 160px; object-fit: cover; border-radius: 8px; border: 2px solid #E6F4FA;}
@@ -60,6 +61,17 @@
 
   /* small meta */
   .muted { color: #6b7280; font-size: 13px; }
+
+  /* tabs */
+  .tab-btn { padding: 12px 24px; font-weight: 600; border-bottom: 3px solid transparent; transition: .15s ease; }
+  .tab-btn:hover { background: #f3f4f6; }
+  .tab-btn.active { border-bottom-color: #0071C2; color: #0071C2; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* type badge */
+  .type-hotel { background: #E0F2FE; color: #0369A1; }
+  .type-car { background: #FEF3C7; color: #D97706; }
 </style>
 
 
@@ -69,7 +81,7 @@
   <!-- Header -->
   <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6">
     <div>
-      <h1 class="text-2xl font-bold text-gray-900">My Car Rental bookings</h1>
+      <h1 class="text-2xl font-bold text-gray-900">My Bookings & Trips</h1>
       <p class="text-sm text-gray-600 mt-1">View, edit or cancel your reservations</p>
     </div>
 
@@ -84,197 +96,486 @@
     </div>
   </div>
 
+  <!-- Tabs -->
+  <div class="bg-white rounded-lg shadow-sm mb-6">
+    <div class="flex border-b">
+      <button class="tab-btn active" data-tab="all">All Bookings</button>
+      <button class="tab-btn" data-tab="hotels">Hotels ({{ isset($hotelBookings) ? $hotelBookings->count() : 0 }})</button>
+      <button class="tab-btn" data-tab="cars">Car Rentals ({{ $reservations->count() }})</button>
+    </div>
+  </div>
+
   <!-- Results -->
   <div class="flex flex-col lg:flex-row gap-6">
 
     <!-- Left: results -->
     <main class="flex-1">
-      @if($reservations->count())
-        <div id="results" class="results-grid cols-2">
-          @foreach($reservations as $res)
-            @php
-              // Car relationship (if exists)
-              $car = $res->car ?? null;
-              $photo = null;
-              if ($car && $car->car_front) {
-                $photo = $car->mainPhoto();
-            } else {
-                $photo = asset('assets/default-property.jpg');
-            }
 
-              $status = $res->status ?? 'pending';
-              $statusClass = match($status) {
-                'confirmed' => 'status-confirmed',
-                'pending' => 'status-pending',
-                'cancelled' => 'status-cancelled',
-                'completed' => 'status-completed',
-                default => 'status-pending'
-              };
-              $payment = $res->payment_status ?? ' pending';
-            @endphp
+      <!-- All Bookings Tab -->
+      <div id="tab-all" class="tab-content active">
+        @if(($reservations->count() + (isset($hotelBookings) ? $hotelBookings->count() : 0)) > 0)
+          <div id="results" class="results-grid cols-2">
 
-            <article id="res-card-{{ $res->id }}" class="bk-card p-4">
-              <div class="flex flex-col md:flex-row gap-4">
-                <!-- image -->
-                <div class="md:w-44 w-full flex-shrink-0">
-                  <img src="{{ $photo }}" alt="Car image" class="booking-img w-full" />
-                </div>
+            {{-- Hotel Bookings --}}
+            @if(isset($hotelBookings) && $hotelBookings->count())
+              @foreach($hotelBookings as $booking)
+                @php
+                  $property = $booking->property ?? null;
+                  $photo = $property && $property->photos && $property->photos->count() > 0
+                    ? asset('storage/' . $property->photos->first()->path)
+                    : asset('assets/default-property.jpg');
 
-                <!-- body -->
-                <div class="flex-1 flex flex-col justify-between">
-                  <div>
-                    <div class="flex justify-between items-start gap-3">
-                      <div>
-                        <h2 class="text-lg font-semibold text-[#0B7DB6]">
-                          {{ $car ? ($car->brand->brand_name ?? '') . ' ' . ($car->model->model_name ?? '') : 'Vehicle' }}
-                        </h2>
-                        <p class="muted mt-1">{{ $car->carType->name ?? ($car->category ?? '') ?? '—' }}</p>
-                      </div>
+                  $status = $booking->status ?? 'pending';
+                  $statusClass = match($status) {
+                    'confirmed' => 'status-confirmed',
+                    'pending' => 'status-pending',
+                    'cancelled' => 'status-cancelled',
+                    'completed' => 'status-completed',
+                    default => 'status-pending'
+                  };
+                  $payment = $booking->payment_status ?? 'pending';
+                  $paymentClass = match($payment) {
+                    'paid', 'completed' => 'payment-completed',
+                    'expired' => 'payment-expired',
+                    default => 'payment-pending'
+                  };
+                @endphp
 
-                      <div class="text-right">
-                        <div class="inline-flex items-center gap-2">
-                          <span class="bk-badge {{ $statusClass }}">Status {{ ucfirst($status) }}</span>
-                        </div>
-                        <div class="mt-2">
-                          <span class="{{ $payment === 'paid' ? 'payment-paid' : 'payment-pending' }}">Payment {{ strtoupper($payment) }}</span>
-                        </div>
-                      </div>
+                <article id="hotel-card-{{ $booking->id }}" class="bk-card p-4">
+                  <div class="flex flex-col md:flex-row gap-4">
+                    <!-- image -->
+                    <div class="md:w-44 w-full flex-shrink-0 relative">
+                      <img src="{{ $photo }}" alt="Property image" class="booking-img w-full" />
+                      <span class="absolute top-2 left-2 bk-badge type-hotel">Hotel</span>
                     </div>
 
-                    <!-- booking meta -->
-                    <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+                    <!-- body -->
+                    <div class="flex-1 flex flex-col justify-between">
                       <div>
-                        <div class="text-xs text-gray-500">Pick-up</div>
-                        <div class="font-semibold">{{ $res->pickup_location ?: '—' }}</div>
-                        <div class="muted">{{ fmtDT($res->pickup_datetime) }}</div>
-                      </div>
-                      <div>
-                        <div class="text-xs text-gray-500">Drop-off</div>
-                        <div class="font-semibold">{{ $res->dropoff_location ?: '—' }}</div>
-                        <div class="muted">{{ fmtDT($res->dropoff_datetime) }}</div>
-                      </div>
-                    </div>
+                        <div class="flex justify-between items-start gap-3">
+                          <div>
+                            <h2 class="text-lg font-semibold text-[#0B7DB6]">
+                              {{ $property->title ?? 'Property' }}
+                            </h2>
+                            <p class="muted mt-1">{{ $property->address ?? '—' }}</p>
+                          </div>
 
-                    <!-- dates & notes -->
-                    <div class="mt-3 text-sm text-gray-700">
-                      <div class="flex items-center justify-between">
-                        <div class="muted">Reservation dates</div>
-                        <div class="font-semibold">{{ Carbon::parse($res->start_date)->format('d M Y') }} — {{ Carbon::parse($res->end_date)->format('d M Y') }}</div>
+                          <div class="text-right">
+                            <div class="inline-flex items-center gap-2">
+                              <span class="bk-badge {{ $statusClass }}">{{ ucfirst($status) }}</span>
+                            </div>
+                            <div class="mt-2">
+                              <span class="{{ $paymentClass }}">Payment {{ strtoupper($payment) }}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- booking meta -->
+                        <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+                          <div>
+                            <div class="text-xs text-gray-500">Check-in</div>
+                            <div class="font-semibold">{{ $booking->check_in ? Carbon::parse($booking->check_in)->format('D, d M Y') : '—' }}</div>
+                          </div>
+                          <div>
+                            <div class="text-xs text-gray-500">Check-out</div>
+                            <div class="font-semibold">{{ $booking->check_out ? Carbon::parse($booking->check_out)->format('D, d M Y') : '—' }}</div>
+                          </div>
+                        </div>
+
+                        <!-- guests & room -->
+                        <div class="mt-3 text-sm text-gray-700">
+                          <div class="flex items-center gap-4">
+                            <span class="muted">Guests: {{ $booking->guest_count ?? ($booking->adults + $booking->children) }}</span>
+                            @if($booking->room)
+                              <span class="muted">Room: {{ $booking->room->name }}</span>
+                            @endif
+                          </div>
+                        </div>
                       </div>
 
-                      @if($res->notes)
-                        <div class="mt-2 text-sm text-gray-600">Notes: {{ Str::limit($res->notes, 120) }}</div>
-                      @endif
+                      <!-- bottom actions -->
+                      <div class="mt-4 flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-2">
+                          <div class="text-sm muted">Total</div>
+                          <div class="text-lg font-bold text-[#0071C2]">@currency($booking->total_price ?? 0, $booking->currency ?? 'USD')</div>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                          @if($booking->payment_status === 'pending' && $booking->status !== 'cancelled')
+                            <a href="{{ route('customer.payment.show', $booking) }}" class="px-4 py-2 rounded text-sm font-medium text-white bg-green-500 hover:bg-green-600 transition">Pay Now</a>
+                          @endif
+
+                          @if($booking->status !== 'cancelled')
+                            <form method="POST" action="{{ route('customer.bookings.cancel', $booking) }}" onsubmit="return confirm('Cancel this booking?')">
+                              @csrf
+                              @method('PATCH')
+                              <button type="submit" class="px-3 py-2 rounded text-sm text-red-600 border border-red-100 bg-red-50">Cancel</button>
+                            </form>
+                          @endif
+                        </div>
+                      </div>
                     </div>
                   </div>
+                </article>
+              @endforeach
+            @endif
 
-                  <!-- bottom actions -->
-                  <div class="mt-4 flex items-center justify-between gap-3">
-                    <div class="flex items-center gap-2">
-                      <div class="text-sm muted">Total</div>
-                      <div class="text-lg font-bold text-[#0071C2]">{{ CurrencyHelper::formatPrice($res->total_price ?? 0, 'USD') }}</div>
+            {{-- Car Reservations --}}
+            @foreach($reservations as $res)
+              @php
+                $car = $res->car ?? null;
+                $photo = null;
+                if ($car && $car->car_front) {
+                  $photo = $car->mainPhoto();
+                } else {
+                  $photo = asset('assets/default-property.jpg');
+                }
+
+                $status = $res->status ?? 'pending';
+                $statusClass = match($status) {
+                  'confirmed' => 'status-confirmed',
+                  'pending' => 'status-pending',
+                  'cancelled' => 'status-cancelled',
+                  'completed' => 'status-completed',
+                  default => 'status-pending'
+                };
+                $payment = $res->payment_status ?? 'pending';
+              @endphp
+
+              <article id="res-card-{{ $res->id }}" class="bk-card p-4">
+                <div class="flex flex-col md:flex-row gap-4">
+                  <!-- image -->
+                  <div class="md:w-44 w-full flex-shrink-0 relative">
+                    <img src="{{ $photo }}" alt="Car image" class="booking-img w-full" />
+                    <span class="absolute top-2 left-2 bk-badge type-car">Car</span>
+                  </div>
+
+                  <!-- body -->
+                  <div class="flex-1 flex flex-col justify-between">
+                    <div>
+                      <div class="flex justify-between items-start gap-3">
+                        <div>
+                          <h2 class="text-lg font-semibold text-[#0B7DB6]">
+                            {{ $car ? ($car->brand->brand_name ?? '') . ' ' . ($car->model->model_name ?? '') : 'Vehicle' }}
+                          </h2>
+                          <p class="muted mt-1">{{ $car->carType->name ?? ($car->category ?? '') ?? '—' }}</p>
+                        </div>
+
+                        <div class="text-right">
+                          <div class="inline-flex items-center gap-2">
+                            <span class="bk-badge {{ $statusClass }}">{{ ucfirst($status) }}</span>
+                          </div>
+                          <div class="mt-2">
+                            <span class="{{ $payment === 'paid' ? 'payment-paid' : 'payment-pending' }}">Payment {{ strtoupper($payment) }}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- booking meta -->
+                      <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+                        <div>
+                          <div class="text-xs text-gray-500">Pick-up</div>
+                          <div class="font-semibold">{{ $res->pickup_location ?: '—' }}</div>
+                          <div class="muted">{{ fmtDT($res->pickup_datetime) }}</div>
+                        </div>
+                        <div>
+                          <div class="text-xs text-gray-500">Drop-off</div>
+                          <div class="font-semibold">{{ $res->dropoff_location ?: '—' }}</div>
+                          <div class="muted">{{ fmtDT($res->dropoff_datetime) }}</div>
+                        </div>
+                      </div>
+
+                      <!-- dates & notes -->
+                      <div class="mt-3 text-sm text-gray-700">
+                        <div class="flex items-center justify-between">
+                          <div class="muted">Reservation dates</div>
+                          <div class="font-semibold">{{ Carbon::parse($res->start_date)->format('d M Y') }} — {{ Carbon::parse($res->end_date)->format('d M Y') }}</div>
+                        </div>
+
+                        @if($res->notes)
+                          <div class="mt-2 text-sm text-gray-600">Notes: {{ Str::limit($res->notes, 120) }}</div>
+                        @endif
+                      </div>
                     </div>
 
-                    <div class="flex items-center gap-2">
-                      <a href="{{ route('customer.reservations.show', $res->id) }}" class="px-4 py-2 rounded text-sm font-medium text-white bg-[#0071C2] hover:bg-[#005B9E] transition">View</a>
+                    <!-- bottom actions -->
+                    <div class="mt-4 flex items-center justify-between gap-3">
+                      <div class="flex items-center gap-2">
+                        <div class="text-sm muted">Total</div>
+                        <div class="text-lg font-bold text-[#0071C2]">{{ CurrencyHelper::formatPrice($res->total_price ?? 0, 'USD') }}</div>
+                      </div>
 
-                      <!-- Cancel form (confirm before submit) -->
-                      <<form method="POST"
-                            action="{{ route('customer.reservations.cancel', $res->id) }}"
-                            onsubmit="return confirmCancel(event, '{{ $car->brand->brand_name ?? '' }} {{ $car->model->model_name ?? '' }}', '{{ $res->id }}')">
-                            @csrf
-                            <button type="submit"
-                                    class="px-3 py-2 rounded text-sm text-red-600 border border-red-100 bg-red-50">
-                                Cancel
-                            </button>
+                      <div class="flex items-center gap-2">
+                        <a href="{{ route('customer.reservations.show', $res->id) }}" class="px-4 py-2 rounded text-sm font-medium text-white bg-[#0071C2] hover:bg-[#005B9E] transition">View</a>
+
+                        <form method="POST"
+                              action="{{ route('customer.reservations.cancel', $res->id) }}"
+                              onsubmit="return confirmCancel(event, '{{ $car->brand->brand_name ?? '' }} {{ $car->model->model_name ?? '' }}', '{{ $res->id }}')">
+                          @csrf
+                          <button type="submit" class="px-3 py-2 rounded text-sm text-red-600 border border-red-100 bg-red-50">Cancel</button>
                         </form>
-
-
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </article>
-          @endforeach
-        </div>
-
-        <!-- Pagination (if provided) -->
-        <div class="mt-6">
-          @if(method_exists($reservations, 'links'))
-            <div class="bg-white p-4 rounded-md shadow-sm">
-              {{ $reservations->links() }}
-            </div>
-          @endif
-        </div>
-
-      @else
-        <div class="bk-card p-8 text-center">
-          <h3 class="text-lg font-semibold">You have no bookings yet</h3>
-          <p class="muted mt-2">Search cars and make your first reservation — it will appear here.</p>
-          <div class="mt-4">
-            <a href="{{ route('customer.carsearch') }}" class="inline-block bg-[#3CC0E9] text-white px-4 py-2 rounded font-semibold">Start searching</a>
+              </article>
+            @endforeach
           </div>
-        </div>
-      @endif
+        @else
+          <div class="bk-card p-8 text-center">
+            <h3 class="text-lg font-semibold">You have no bookings yet</h3>
+            <p class="muted mt-2">Search properties or cars and make your first reservation.</p>
+            <div class="mt-4 flex justify-center gap-3">
+              <a href="{{ route('home-listing') }}" class="inline-block bg-[#3CC0E9] text-white px-4 py-2 rounded font-semibold">Browse Hotels</a>
+              <a href="{{ route('customer.carsearch') }}" class="inline-block bg-[#0071C2] text-white px-4 py-2 rounded font-semibold">Browse Cars</a>
+            </div>
+          </div>
+        @endif
+      </div>
+
+      <!-- Hotels Only Tab -->
+      <div id="tab-hotels" class="tab-content">
+        @if(isset($hotelBookings) && $hotelBookings->count())
+          <div class="results-grid cols-2">
+            @foreach($hotelBookings as $booking)
+              @php
+                $property = $booking->property ?? null;
+                $photo = $property && $property->photos && $property->photos->count() > 0
+                  ? asset('storage/' . $property->photos->first()->path)
+                  : asset('assets/default-property.jpg');
+
+                $status = $booking->status ?? 'pending';
+                $statusClass = match($status) {
+                  'confirmed' => 'status-confirmed',
+                  'pending' => 'status-pending',
+                  'cancelled' => 'status-cancelled',
+                  'completed' => 'status-completed',
+                  default => 'status-pending'
+                };
+                $payment = $booking->payment_status ?? 'pending';
+                $paymentClass = match($payment) {
+                  'paid', 'completed' => 'payment-completed',
+                  'expired' => 'payment-expired',
+                  default => 'payment-pending'
+                };
+              @endphp
+
+              <article class="bk-card p-4">
+                <div class="flex flex-col md:flex-row gap-4">
+                  <div class="md:w-44 w-full flex-shrink-0">
+                    <img src="{{ $photo }}" alt="Property image" class="booking-img w-full" />
+                  </div>
+                  <div class="flex-1 flex flex-col justify-between">
+                    <div>
+                      <div class="flex justify-between items-start gap-3">
+                        <div>
+                          <h2 class="text-lg font-semibold text-[#0B7DB6]">{{ $property->title ?? 'Property' }}</h2>
+                          <p class="muted mt-1">{{ $property->address ?? '—' }}</p>
+                        </div>
+                        <div class="text-right">
+                          <span class="bk-badge {{ $statusClass }}">{{ ucfirst($status) }}</span>
+                          <div class="mt-2">
+                            <span class="{{ $paymentClass }}">Payment {{ strtoupper($payment) }}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="mt-4 grid grid-cols-2 gap-2 text-sm">
+                        <div>
+                          <div class="text-xs text-gray-500">Check-in</div>
+                          <div class="font-semibold">{{ $booking->check_in ? Carbon::parse($booking->check_in)->format('D, d M Y') : '—' }}</div>
+                        </div>
+                        <div>
+                          <div class="text-xs text-gray-500">Check-out</div>
+                          <div class="font-semibold">{{ $booking->check_out ? Carbon::parse($booking->check_out)->format('D, d M Y') : '—' }}</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="mt-4 flex items-center justify-between gap-3">
+                      <div class="text-lg font-bold text-[#0071C2]">@currency($booking->total_price ?? 0, $booking->currency ?? 'USD')</div>
+                      <div class="flex items-center gap-2">
+                        @if($booking->payment_status === 'pending' && $booking->status !== 'cancelled')
+                          <a href="{{ route('customer.payment.show', $booking) }}" class="px-4 py-2 rounded text-sm font-medium text-white bg-green-500 hover:bg-green-600 transition">Pay Now</a>
+                        @endif
+                        @if($booking->status !== 'cancelled')
+                          <form method="POST" action="{{ route('customer.bookings.cancel', $booking) }}" onsubmit="return confirm('Cancel this booking?')">
+                            @csrf
+                            @method('PATCH')
+                            <button type="submit" class="px-3 py-2 rounded text-sm text-red-600 border border-red-100 bg-red-50">Cancel</button>
+                          </form>
+                        @endif
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            @endforeach
+          </div>
+        @else
+          <div class="bk-card p-8 text-center">
+            <h3 class="text-lg font-semibold">No hotel bookings yet</h3>
+            <p class="muted mt-2">Find your perfect stay and book now!</p>
+            <div class="mt-4">
+              <a href="{{ route('home-listing') }}" class="inline-block bg-[#3CC0E9] text-white px-4 py-2 rounded font-semibold">Browse Hotels</a>
+            </div>
+          </div>
+        @endif
+      </div>
+
+      <!-- Cars Only Tab -->
+      <div id="tab-cars" class="tab-content">
+        @if($reservations->count())
+          <div class="results-grid cols-2">
+            @foreach($reservations as $res)
+              @php
+                $car = $res->car ?? null;
+                $photo = null;
+                if ($car && $car->car_front) {
+                  $photo = $car->mainPhoto();
+                } else {
+                  $photo = asset('assets/default-property.jpg');
+                }
+
+                $status = $res->status ?? 'pending';
+                $statusClass = match($status) {
+                  'confirmed' => 'status-confirmed',
+                  'pending' => 'status-pending',
+                  'cancelled' => 'status-cancelled',
+                  'completed' => 'status-completed',
+                  default => 'status-pending'
+                };
+                $payment = $res->payment_status ?? 'pending';
+              @endphp
+
+              <article class="bk-card p-4">
+                <div class="flex flex-col md:flex-row gap-4">
+                  <div class="md:w-44 w-full flex-shrink-0">
+                    <img src="{{ $photo }}" alt="Car image" class="booking-img w-full" />
+                  </div>
+                  <div class="flex-1 flex flex-col justify-between">
+                    <div>
+                      <div class="flex justify-between items-start gap-3">
+                        <div>
+                          <h2 class="text-lg font-semibold text-[#0B7DB6]">
+                            {{ $car ? ($car->brand->brand_name ?? '') . ' ' . ($car->model->model_name ?? '') : 'Vehicle' }}
+                          </h2>
+                          <p class="muted mt-1">{{ $car->carType->name ?? ($car->category ?? '') ?? '—' }}</p>
+                        </div>
+                        <div class="text-right">
+                          <span class="bk-badge {{ $statusClass }}">{{ ucfirst($status) }}</span>
+                          <div class="mt-2">
+                            <span class="{{ $payment === 'paid' ? 'payment-paid' : 'payment-pending' }}">Payment {{ strtoupper($payment) }}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="mt-4 grid grid-cols-2 gap-2 text-sm">
+                        <div>
+                          <div class="text-xs text-gray-500">Pick-up</div>
+                          <div class="font-semibold">{{ $res->pickup_location ?: '—' }}</div>
+                          <div class="muted">{{ fmtDT($res->pickup_datetime) }}</div>
+                        </div>
+                        <div>
+                          <div class="text-xs text-gray-500">Drop-off</div>
+                          <div class="font-semibold">{{ $res->dropoff_location ?: '—' }}</div>
+                          <div class="muted">{{ fmtDT($res->dropoff_datetime) }}</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="mt-4 flex items-center justify-between gap-3">
+                      <div class="text-lg font-bold text-[#0071C2]">{{ CurrencyHelper::formatPrice($res->total_price ?? 0, 'USD') }}</div>
+                      <div class="flex items-center gap-2">
+                        <a href="{{ route('customer.reservations.show', $res->id) }}" class="px-4 py-2 rounded text-sm font-medium text-white bg-[#0071C2] hover:bg-[#005B9E] transition">View</a>
+                        <form method="POST" action="{{ route('customer.reservations.cancel', $res->id) }}" onsubmit="return confirmCancel(event, '{{ $car->brand->brand_name ?? '' }} {{ $car->model->model_name ?? '' }}', '{{ $res->id }}')">
+                          @csrf
+                          <button type="submit" class="px-3 py-2 rounded text-sm text-red-600 border border-red-100 bg-red-50">Cancel</button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            @endforeach
+          </div>
+        @else
+          <div class="bk-card p-8 text-center">
+            <h3 class="text-lg font-semibold">No car rentals yet</h3>
+            <p class="muted mt-2">Find your perfect ride and book now!</p>
+            <div class="mt-4">
+              <a href="{{ route('customer.carsearch') }}" class="inline-block bg-[#0071C2] text-white px-4 py-2 rounded font-semibold">Browse Cars</a>
+            </div>
+          </div>
+        @endif
+      </div>
+
     </main>
-
-    <!-- Right: summary / tips -->
-
 
   </div>
 
 </div>
 
 <script>
-  // grid/list toggle + confirm cancel
   document.addEventListener('DOMContentLoaded', function () {
     const results = document.getElementById('results');
     const gridBtn = document.getElementById('grid-view-btn');
     const listBtn = document.getElementById('list-view-btn');
 
+    // Grid/List toggle
     function setGrid() {
-        results.classList.remove('results-list');
-        results.classList.add('results-grid', 'cols-2');
-
+        document.querySelectorAll('.results-grid').forEach(el => {
+            el.classList.remove('results-list');
+            el.classList.add('results-grid', 'cols-2');
+        });
         gridBtn.classList.add('ring-2', 'ring-offset-1', 'ring-gray-200');
         listBtn.classList.remove('ring-2', 'ring-offset-1', 'ring-gray-200');
     }
 
     function setList() {
-        results.classList.remove('results-grid', 'cols-2');
-        results.classList.add('results-list');
-
+        document.querySelectorAll('.results-grid').forEach(el => {
+            el.classList.remove('results-grid', 'cols-2');
+            el.classList.add('results-list');
+        });
         listBtn.classList.add('ring-2', 'ring-offset-1', 'ring-gray-200');
         gridBtn.classList.remove('ring-2', 'ring-offset-1', 'ring-gray-200');
     }
 
-    // Auto-set view based on screen size
     if (window.innerWidth < 640) setList();
     else setGrid();
 
     gridBtn.addEventListener('click', setGrid);
     listBtn.addEventListener('click', setList);
-});
 
-  // Cancel confirmation: user-friendly confirm dialog
+    // Tab switching
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
 
- function confirmCancel(e, carName, id) {
-    const form = e.target.closest("form");
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const tabId = this.dataset.tab;
 
-    if (!confirm('Cancel reservation #' + id +
-        ' — ' + (carName || 'this vehicle') +
-        '?\nThis action cannot be undone.')) {
+            // Update button states
+            tabBtns.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
 
+            // Show/hide tab content
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+                if (content.id === 'tab-' + tabId) {
+                    content.classList.add('active');
+                }
+            });
+        });
+    });
+  });
+
+  // Cancel confirmation
+  function confirmCancel(e, carName, id) {
+    if (!confirm('Cancel reservation #' + id + ' — ' + (carName || 'this vehicle') + '?\nThis action cannot be undone.')) {
         e.preventDefault();
         return false;
     }
-
-    // allow the form to submit normally
     return true;
-}
+  }
 
-
- function cancelReservation(id) {
+  function cancelReservation(id) {
     if (!confirm("Are you sure you want to cancel this booking?")) return;
 
     fetch(`/customer/reservations/${id}/cancel`, {
@@ -296,7 +597,6 @@
         }
     })
     .catch(err => console.error(err));
-}
-
+  }
 </script>
 @endsection
