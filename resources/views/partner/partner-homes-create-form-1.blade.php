@@ -1,47 +1,42 @@
-@extends('partner.partner-layout')
+@extends('frontend.master')
 
-@section('title', ' Homes Create | ' . config('domains.app_name'))
+@section('title', 'List Your Property | ' . config('domains.app_name'))
+
+@push('styles')
+@include('partner.partials.wizard-styles')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+    #propertyMap { z-index: 1 !important; min-height: 400px; }
+    .leaflet-container { height: 100%; width: 100%; border-radius: 0.5rem; }
+</style>
+@endpush
 
 @section('content')
+<div class="wiz-shell" x-data="{ step: 1, selectedBox: null, subtypes: [], propertyId: null }">
 
+    {{-- Sticky progress bar (sits under the site header) --}}
+    <div class="sticky top-0 z-30 bg-white border-b border-gray-200" x-data="{ totalSteps: 16 }">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 py-3 flex items-center gap-4">
+            <span class="text-xs sm:text-sm font-medium text-gray-700 whitespace-nowrap">
+                Step <span x-text="step" class="font-bold text-gray-900"></span> of <span x-text="totalSteps"></span>
+            </span>
+            <div class="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                <div class="h-1.5 bg-[#0071c2] rounded-full transition-all duration-300"
+                     :style="`width: ${Math.min(100, (step / totalSteps) * 100)}%`"></div>
+            </div>
+            <span class="hidden sm:inline text-xs text-gray-500" x-text="Math.round((step / totalSteps) * 100) + '%'"></span>
+        </div>
+    </div>
 
-<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-<!-- Google Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet" />
-<link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet" />
-<style>
-    body {
-        font-family: 'Noto Sans', sans-serif;
-    }
-</style>
-<meta name="csrf-token" content="{{ csrf_token() }}">
-
-</head>
-
-<body class="bg-gray-100 text-gray-800" x-data="{ step: 1, selectedBox: null,subtypes: [] }">
-
-
-
-    <div x-data="{ step: 1, selectedBox: null }">
-        <!-- Start Form -->
-        <div class="max-w-6xl p-4 mx-auto sm:ml-14" x-data="{ propertyId: null, selected: '',  propertyName: '',description: '',availableLanguages: {{ Js::from($languages) }}, currency: 'LKR', adultPrice: '', childPrice: '' }">
-
-            <!-- Step 1: Main Form Step -->
-            <form class="p-6 rounded-lg space-y-6" @submit.prevent>
-                <div class="flex justify-between mb-6 text-sm font-medium hidden">
-                    <template x-for="n in 10" :key="n">
-                        <div :class="step === n ? 'text-blue-600 font-bold' : 'text-gray-400'" class="flex-1 text-center">
-                            Step <span x-text="n"></span>
-                        </div>
-                    </template>
-                </div>
+    <div x-data="{ selected: '', propertyName: '', description: '', availableLanguages: {{ Js::from($languages) }}, currency: 'LKR', adultPrice: '', childPrice: '' }">
+        <form class="wiz-page" @submit.prevent>
 
 
                 <!-- Main Step 1 Content -->
-                <div x-show="step === 1" x-cloak x-data="{
-
+                <div x-show="step === 1" x-data="{
+                selected: '',
                 subcategories: {{ Js::from($subcategories) }},
                 async submitStep1() {
                     if (this.selected === '') return;
@@ -70,8 +65,9 @@
                         }
 
                         const data = await response.json();
-                        this.propertyId = data.property_id;
-                        this.step = 2;
+                        propertyId = data.property_id;
+                        window.currentPropertyId = data.property_id; // Make it globally accessible
+                        step = 2;
                         await this.fetchSubtypes(this.selected);
                         Swal.fire({
                         icon: 'success',
@@ -102,58 +98,62 @@
                             const response = await fetch(`/partner/property_subtype/${subcategoryId}`);
                             const data = await response.json();
                             console.log('Fetched subtypes:', data);
-                            this.subtypes = data;
+                            subtypes = data;
                         } catch (err) {
                             console.error('Failed to fetch subtypes:', err);
                         }
                     }
 
                 }">
-                    <div class="bg-white max-w-2xl w-full p-6 rounded-lg shadow">
-                        <div class="max-w-xl mx-auto p-4 space-y-6">
-                            <h2 class="text-2xl font-bold text-center">@lang('messages.what_can_guests_book')</h2>
+                    <div class="space-y-6">
+                        <div>
+                            <p class="wiz-eyebrow">Step 1</p>
+                            <h1 class="wiz-h1">@lang('messages.what_can_guests_book')</h1>
+                            <p class="wiz-help mt-2">Choose how guests can book your property.</p>
+                        </div>
 
-                            <div class="space-y-4">
-                                <template x-for="subcategory in subcategories" :key="subcategory.id">
-                                    <label
-                                        :class="selected === subcategory.id ? 'border-blue-600 border-2' : 'border border-gray-300'"
-                                        class="block rounded p-4 cursor-pointer transition bg-white relative"
-                                        @click="selected = subcategory.id">
-
-                                        <template x-if="selected === subcategory.id">
-                                            <div class="absolute top-2 right-2 text-blue-600 text-xl font-bold">✔</div>
-                                        </template>
-
-                                        <div class="flex items-center space-x-4">
-                                            <img :src="subcategory.image ? '/storage/' + subcategory.image : '{{ asset('images/accomm_single_home@2x (1).png') }}'" alt="Icon"
-                                                class="w-10 h-10" onerror="this.src='{{ asset('images/accomm_single_home@2x (1).png') }}'"/>
-                                            <div>
-                                                <span class="text-lg text-gray-800 font-semibold"
-                                                    x-text="subcategory.name"></span>
-                                                <p class="text-sm text-gray-600" x-text="subcategory.description || ''"></p>
-                                            </div>
+                        <div class="space-y-3">
+                            <input type="hidden" name="category_id" value="{{ $categoryId }}">
+                            @foreach($subcategories as $subcategory)
+                                <label class="wiz-card"
+                                       :class="selected === {{ $subcategory->id }} ? 'wiz-card-selected' : ''"
+                                       @click="selected = {{ $subcategory->id }}">
+                                    <template x-if="selected === {{ $subcategory->id }}">
+                                        <div class="wiz-card-check">
+                                            <i class="fas fa-check"></i>
                                         </div>
-                                        <input type="hidden" name="category_id" value="{{ $categoryId }}">
+                                    </template>
 
-                                        <input type="radio" name="subcategory_id" :value="subcategory.id"
-                                            x-model="selected" class="hidden" />
-                                    </label>
-                                </template>
+                                    <div class="flex items-center gap-4">
+                                        <img src="{{ $subcategory->image ? '/storage/' . $subcategory->image : asset('images/accomm_single_home@2x (1).png') }}"
+                                             alt="{{ $subcategory->name }}"
+                                             class="w-12 h-12 flex-shrink-0"
+                                             onerror="this.src='{{ asset('images/accomm_single_home@2x (1).png') }}'"/>
+                                        <div class="flex-1 pr-8">
+                                            <h2 class="wiz-h2">{{ $subcategory->name }}</h2>
+                                            @if (!empty($subcategory->description))
+                                                <p class="wiz-help mt-1">{{ $subcategory->description }}</p>
+                                            @endif
+                                        </div>
+                                    </div>
 
-                                <div class="flex items-center justify-between pt-4">
-                                    <button type="button"
-                                        @click="window.location.href = '{{ route('partner.property.category') }}'"
-                                        class="border border-[#3CC0E9] text-blue-600 hover:bg-sky-50 font-semibold py-2 px-4 rounded">
-                                        ←
-                                    </button>
-                                    <button type="button" @click="submitStep1()"
-                                        class="font-semibold py-3 px-8 rounded bg-[#3CC0E9] hover:bg-[#29ACD5] text-white"
-                                        :disabled="selected === ''"
-                                        :class="selected === '' ? 'opacity-50 cursor-not-allowed' : ''">
-                                        @lang('messages.continue')
-                                    </button>
-                                </div>
-                            </div>
+                                    <input type="radio" name="subcategory_id" value="{{ $subcategory->id }}"
+                                           x-model="selected" class="hidden" />
+                                </label>
+                            @endforeach
+                        </div>
+
+                        <div class="wiz-actions">
+                            <button type="button"
+                                    @click="window.location.href = '{{ route('partner.property.category') }}'"
+                                    class="wiz-btn-secondary">
+                                <i class="fas fa-arrow-left mr-2"></i> Back
+                            </button>
+                            <button type="button" @click="submitStep1()"
+                                    class="wiz-btn-primary"
+                                    :disabled="selected === ''">
+                                @lang('messages.continue') <i class="fas fa-arrow-right ml-2"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -162,16 +162,20 @@
 
 
                 <!-- Step 2: Selection Container -->
-                <div id="selection-container" x-show="step === 2" x-cloak class="container mx-auto px-4 py-8 max-w-6xl"
+                <div id="selection-container" x-show="step === 2" x-cloak class="space-y-6"
                     x-data="{
                     async submitStep2() {
-                        if (!this.selectedBox || !this.propertyId) return;
-                        if (this.selectedBox > 6) {
-                            window.location.href = `/partner-homes-form2/${propertyId}/${this.selectedBox}`
+                        console.log('submitStep2 called - selectedBox:', selectedBox, 'propertyId:', propertyId);
+                        if (!selectedBox || !propertyId) {
+                            console.log('submitStep2 returning early - selectedBox:', selectedBox, 'propertyId:', propertyId);
+                            return;
+                        }
+                        if (selectedBox > 6) {
+                            window.location.href = `/partner-homes-form2/${propertyId}/${selectedBox}`
 
 
                         }
-                        const response = await fetch(`/partner/property/${this.selectedBox}/step2/${this.propertyId}`, {
+                        const response = await fetch(`/partner/property/${selectedBox}/step2/${propertyId}`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -179,15 +183,15 @@
                                 'Accept': 'application/json',
                             },
                             body: JSON.stringify({
-                                subtype_id: this.selectedBox,
-                                property_id: this.propertyId
+                                subtype_id: selectedBox,
+                                property_id: propertyId
                             })
                         });
 
                         if (response.ok) {
                             const data = await response.json();
-                            this.step = 3;
-                            console.log('Step 2 selectedBox:', this.selectedBox);
+                            step = 3;
+                            console.log('Step 2 selectedBox:', selectedBox);
 
                             Swal.fire({
                                 icon: 'success',
@@ -212,58 +216,39 @@
                         }
                     }
                 }">
-                    <h2 class="text-2xl font-bold mb-8 text-left">
-                        @lang('messages.which_property_category_similar')
-                    </h2>
+                    <div>
+                        <p class="wiz-eyebrow">Step 2</p>
+                        <h1 class="wiz-h1">@lang('messages.which_property_category_similar')</h1>
+                        <p class="wiz-help mt-2">Pick the option that best describes your property.</p>
+                    </div>
 
-                    <div class="bg-white p-6 rounded-lg shadow">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                            <!-- Cards -->
-                            <template x-for="(property, index) in subtypes" :key="property.id">
-                                <div @click="selectedBox = property.id"
-                                    :class="selectedBox === property.id ? 'border-blue-500 bg-gray-100' : 'border border-gray-300'"
-                                    class="relative rounded p-4 cursor-pointer transition-all duration-200">
-
-                                    <h3 class="text-base font-bold text-gray-800 mb-4" x-text="property.title"></h3>
-                                    <p class="text-sm text-gray-800" x-text="property.desc"></p>
-
-                                    <div class="tick-box absolute top-2 right-2" x-show="selectedBox === property.id">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500"
-                                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M5 13l4 4L19 7" />
-                                        </svg>
-                                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <template x-for="(property, index) in subtypes" :key="property.id">
+                            <div class="wiz-card"
+                                 :class="selectedBox === property.id ? 'wiz-card-selected' : ''"
+                                 @click="selectedBox = property.id">
+                                <h3 class="wiz-h2 pr-8" x-text="property.title"></h3>
+                                <p class="wiz-help mt-2" x-text="property.desc"></p>
+                                <div class="wiz-card-check" x-show="selectedBox === property.id">
+                                    <i class="fas fa-check"></i>
                                 </div>
-                            </template>
-
-                        </div>
+                            </div>
+                        </template>
                     </div>
 
-                    <!-- Help Link -->
-                    <div class="mt-8 text-left">
-                        <a href="#" class="flex items-center space-x-2 text-sm text-blue-500 hover:underline">
-                            <img src="{{ asset('assets/iconoir_question-mark-circle.svg') }}" class="w-5 h-5" />
-                            <span class="text-base">@lang('messages.i_dont_see_my_property_type')</span>
-                        </a>
-
-                    </div>
+                    <a href="#" class="wiz-btn-link inline-flex items-center text-sm gap-2">
+                        <i class="far fa-circle-question"></i>
+                        @lang('messages.i_dont_see_my_property_type')
+                    </a>
 
                     <template x-if="step === 2">
-                        <div class="flex items-center justify-between pt-4">
-                            <button type="button" @click="step = 1"
-                                class="border border-[#3CC0E9] text-blue-600 hover:bg-sky-50 font-semibold py-2 px-4 rounded">
-                                ←
+                        <div class="wiz-actions">
+                            <button type="button" @click="step = 1" class="wiz-btn-secondary">
+                                <i class="fas fa-arrow-left mr-2"></i> Back
                             </button>
-
-                            <button id="continueBtn" @click="submitStep2()" :disabled="!selectedBox"
-                                :class="!selectedBox ? 'bg-blue-300 cursor-not-allowed' :
-                                'bg-[#3CC0E9] hover:bg-blue-600 cursor-pointer'"
-                                class="py-3 px-8 rounded transition-all duration-200 bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold"
-                                type="button">
-                                @lang('messages.continue')
+                            <button id="continueBtn" @click="submitStep2()" :disabled="!selectedBox" class="wiz-btn-primary" type="button">
+                                @lang('messages.continue') <i class="fas fa-arrow-right ml-2"></i>
                             </button>
-
                         </div>
                     </template>
 
@@ -285,92 +270,69 @@
                             <form class="p-6 rounded-lg" enctype="multipart/form-data" @submit.prevent>
                                 <!-- Step 1: Choose one or multiple -->
                                 <template x-if="step === 1">
-                                    <div class="bg-white max-w-2xl w-full p-6 rounded-lg shadow space-y-6 ">
-                                        <h2 class="text-xl font-bold text-left" x-text="headingLabel"></h2>
+                                    <div class="space-y-6">
+                                        <div>
+                                            <p class="wiz-eyebrow">Step 3</p>
+                                            <h1 class="wiz-h1" x-text="headingLabel"></h1>
+                                        </div>
 
-                                        <div class="space-y-4">
-                                            <label
-                                                :class="selected === 'one' ? 'border-blue-600 border-2' :
-                                                'border border-gray-300'"
-                                                class="block rounded p-4 cursor-pointer bg-white"
-                                                @click="selectOption('one')">
-                                                <div class="flex items-center justify-between">
-                                                    <div class="flex items-center space-x-4">
-                                                        <img src="{{ asset('images/aprt-b.png') }}" class="w-14 h-10" />
-                                                        <span class="text-lg" x-text="singleLabel"></span>
-                                                    </div>
-                                                    <template x-if="selected === 'one'">
-                                                        <div class="text-blue-600 text-xl font-bold">✔</div>
-                                                    </template>
+                                        <div class="space-y-3">
+                                            <label class="wiz-card"
+                                                   :class="selected === 'one' ? 'wiz-card-selected' : ''"
+                                                   @click="selectOption('one')">
+                                                <div class="flex items-center gap-4 pr-8">
+                                                    <img src="{{ asset('images/aprt-b.png') }}" class="w-14 h-10 flex-shrink-0" />
+                                                    <span class="wiz-h2" x-text="singleLabel"></span>
                                                 </div>
+                                                <div class="wiz-card-check" x-show="selected === 'one'"><i class="fas fa-check"></i></div>
                                             </label>
 
-                                            <label
-                                                :class="selected === 'multiple' ? 'border-blue-600 border-2' :
-                                                'border border-gray-300'"
-                                                class="block rounded p-4 cursor-pointer bg-white"
-                                                @click="selectOption('multiple')">
-                                                <div class="flex items-center justify-between">
-                                                    <div class="flex items-center space-x-4">
-                                                        <img src="{{ asset('images/aprt-a.png') }}" class="w-14 h-10" />
-                                                        <span class="text-lg" x-text="multipleLabel"></span>
-                                                    </div>
-                                                    <template x-if="selected === 'multiple'">
-                                                        <div class="text-blue-600 text-xl font-bold">✔</div>
-                                                    </template>
+                                            <label class="wiz-card"
+                                                   :class="selected === 'multiple' ? 'wiz-card-selected' : ''"
+                                                   @click="selectOption('multiple')">
+                                                <div class="flex items-center gap-4 pr-8">
+                                                    <img src="{{ asset('images/aprt-a.png') }}" class="w-14 h-10 flex-shrink-0" />
+                                                    <span class="wiz-h2" x-text="multipleLabel"></span>
                                                 </div>
+                                                <div class="wiz-card-check" x-show="selected === 'multiple'"><i class="fas fa-check"></i></div>
                                             </label>
                                         </div>
 
-                                        <div x-show="selected === 'multiple'" x-cloak
-                                            class="mt-6 space-y-4 bg-gray-50 p-4 rounded">
-                                            <h3 class="text-lg font-semibold">Are these properties in the same address?
-                                            </h3>
+                                        <div x-show="selected === 'multiple'" x-cloak class="space-y-4 bg-gray-50 border border-gray-200 rounded-xl p-5">
+                                            <h2 class="wiz-h2">Are these properties at the same address?</h2>
 
-                                            <label
-                                                :class="sameAddress === 'yes' ? 'border-blue-600 border-2' :
-                                                'border border-gray-300'"
-                                                class="block rounded p-4 cursor-pointer bg-white"
-                                                @click="sameAddress = 'yes'">
-                                                <div class="flex items-center space-x-4">
-                                                    <img src="{{ asset('images/accomm_single_address@2x.png') }}"
-                                                        class="w-10 h-10" />
-                                                    <span>Yes, same address or building</span>
+                                            <label class="wiz-card"
+                                                   :class="sameAddress === 'yes' ? 'wiz-card-selected' : ''"
+                                                   @click="sameAddress = 'yes'">
+                                                <div class="flex items-center gap-4 pr-8">
+                                                    <img src="{{ asset('images/accomm_single_address@2x.png') }}" class="w-10 h-10 flex-shrink-0" />
+                                                    <span class="text-base text-gray-800">Yes, same address or building</span>
                                                 </div>
+                                                <div class="wiz-card-check" x-show="sameAddress === 'yes'"><i class="fas fa-check"></i></div>
                                             </label>
 
-                                            <label
-                                                :class="sameAddress === 'no' ? 'border-blue-600 border-2' :
-                                                'border border-gray-300'"
-                                                class="block rounded p-4 cursor-pointer bg-white"
-                                                @click="sameAddress = 'no'">
-                                                <div class="flex items-center space-x-4">
-                                                    <img src="{{ asset('images/accomm_multiple_address@2x.png') }}"
-                                                        class="w-14 h-10" />
-                                                    <span>No, different addresses or buildings</span>
+                                            <label class="wiz-card"
+                                                   :class="sameAddress === 'no' ? 'wiz-card-selected' : ''"
+                                                   @click="sameAddress = 'no'">
+                                                <div class="flex items-center gap-4 pr-8">
+                                                    <img src="{{ asset('images/accomm_multiple_address@2x.png') }}" class="w-14 h-10 flex-shrink-0" />
+                                                    <span class="text-base text-gray-800">No, different addresses or buildings</span>
                                                 </div>
+                                                <div class="wiz-card-check" x-show="sameAddress === 'no'"><i class="fas fa-check"></i></div>
                                             </label>
 
                                             <div>
-                                                <label class="block font-medium mb-1">Number of properties</label>
-                                                <input type="number" min="2" x-model.number="propertyCount"
-                                                    class="border rounded w-24 p-2" />
+                                                <label class="wiz-label">Number of properties</label>
+                                                <input type="number" min="2" x-model.number="propertyCount" class="wiz-input w-32" />
                                             </div>
                                         </div>
 
-                                        <div class="flex items-center justify-between pt-4">
-                                            <button type="button"
-                                                @click="$dispatch('step-change', 2)"
-                                                class="border border-[#3CC0E9] text-blue-600 hover:bg-sky-50  font-semibold py-2 px-4 rounded">
-                                                ←
+                                        <div class="wiz-actions">
+                                            <button type="button" @click="$dispatch('step-change', 2)" class="wiz-btn-secondary">
+                                                <i class="fas fa-arrow-left mr-2"></i> Back
                                             </button>
-
-                                            <button type="button"
-                                                @click="nextStep"
-                                                :disabled="selected === ''"
-                                                :class="selected === '' ? 'opacity-50 cursor-not-allowed' : ''"
-                                                class="bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-3 px-8 rounded">
-                                                Continue
+                                            <button type="button" @click="nextStep" :disabled="selected === ''" class="wiz-btn-primary">
+                                                Continue <i class="fas fa-arrow-right ml-2"></i>
                                             </button>
                                         </div>
                                     </div>
@@ -392,13 +354,15 @@
                                                         <!-- Icon -->
                                                         <div class="flex justify-center mb-8">
                                                             <img src="{{ asset('images/accomm_one_apt_main@2x.png') }}"
-                                                                alt="Multiple Apartments" class="w-16 h-16" />
+                                                                :alt="selected === 'multiple' ? multipleLabel : singleLabel"
+                                                                class="w-16 h-16" />
                                                         </div>
 
                                                         <!-- Heading -->
-                                                        <h2 class="text-lg md:text-xl font-bold text-gray-800 mb-8">
-                                                            Multiple apartments in the same location where guests can book
-                                                            an entire apartment
+                                                        <h2 class="text-lg md:text-xl font-bold text-gray-800 mb-8"
+                                                            x-text="selected === 'multiple'
+                                                                ? multipleLabel + ' in the same location where guests can book the entire place'
+                                                                : singleLabel + ' where guests can book the entire place'">
                                                         </h2>
 
                                                         <!-- Description -->
@@ -409,11 +373,11 @@
                                                         <template x-if="step === 2">
                                                             <div class="space-y-2">
                                                                 <button type="button" @click="nextStep"
-                                                                    class="w-full bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded">
+                                                                    class="wiz-btn-primary w-full">
                                                                     Continue
                                                                 </button>
                                                                 <button type="button" @click="prevStep"
-                                                                    class="w-full border border-[#3CC0E9] text-[#3CC0E9] hover:bg-[#29ACD5]font-semibold py-2 px-4 rounded mb-6">
+                                                                    class="wiz-btn-secondary w-full mb-6">
                                                                     No, I need to make a change
                                                                 </button>
                                                             </div>
@@ -440,7 +404,7 @@
                                                         <!-- Info -->
                                                         <p class="text-sm text-gray-700">
                                                             If your property is listed on Airbnb or Vrbo, you can speed up
-                                                            registration by importing it directly to Booking.com.
+                                                            registration by importing it directly to {{ config('app.name', 'Inselor') }}.
                                                         </p>
 
                                                         <!-- Checkboxes -->
@@ -515,7 +479,7 @@
                                                         <template x-if="step === 3">
                                                             <div class="flex items-center justify-between pt-4">
                                                                 <button type="button" @click="prevStep"
-                                                                    class="border border-[#3CC0E9] text-blue-600 hover:bg-sky-50 font-semibold py-2 px-4 rounded  ">
+                                                                    class="wiz-btn-secondary">
                                                                     ←
                                                                 </button>
                                                                 <button type="button" @click="nextStep"
@@ -542,9 +506,11 @@
                                                         <div class="relative rounded-md shadow-sm">
                                                             <input
                                                                 id="propertyName"
+                                                                name="title"
                                                                 type="text"
                                                                 x-model="propertyName"
                                                                 placeholder="e.g., Ocean View Apartment"
+                                                                required
                                                                 class="pl-4 pr-4 py-2 border border-gray-300 rounded-md w-full focus:ring-blue-500 focus:border-blue-500" />
 
                                                         </div>
@@ -570,7 +536,7 @@
                                                         <button
                                                             type="button"
                                                             @click="nextStep"
-                                                            class="bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold px-6 py-2 rounded shadow">
+                                                            class="wiz-btn-primary">
                                                             Continue →
                                                         </button>
                                                     </div>
@@ -588,7 +554,10 @@
                                                             <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6 items-start">
                                                                 <!-- 📸 Upload Area -->
                                                                 <div class="border rounded-lg p-6 bg-white shadow-sm">
-                                                                    <p class="font-semibold text-gray-800 mb-2">Upload at least one photo of your property.</p>
+                                                                    <p class="font-semibold text-gray-800 mb-2">Upload at least 3 photos of your property.</p>
+                                                                    <p class="text-sm text-red-500 mb-2" x-show="previewFiles.length < 3" x-cloak>
+                                                                        <span x-text="3 - previewFiles.length"></span> more photo(s) required
+                                                                    </p>
                                                                     <p class="text-sm text-gray-600 mb-4">
                                                                         The more you upload, the more likely you are to get bookings. You can add more later.
                                                                     </p>
@@ -614,7 +583,7 @@
                                                                             <span>Upload photos</span>
                                                                         </label>
 
-                                                                        <input id="photoInput" type="file" multiple accept="image/*"
+                                                                        <input id="photoInput" name="photos[]" type="file" multiple accept="image/*"
                                                                             class="hidden" x-ref="photoInput" @change="handlePreview" />
 
                                                                         <p class="text-xs text-gray-500 mt-2">
@@ -649,7 +618,7 @@
                                                                     <div class="mt-6 flex justify-between">
                                                                         <button type="button"
                                                                             @click="prevStep"
-                                                                            class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
+                                                                            class="wiz-btn-secondary">
                                                                             ←
                                                                         </button>
 
@@ -693,127 +662,178 @@
 
 
                                             <template x-if="step === 6 && selected === 'one'">
-                                                <div>
-                                                    <div
-                                                        class="relative w-[1400px] h-auto overflow-hidden rounded-lg shadow mx-auto -mt-14 -ml-16">
+                                                <div x-data="{
+                                                    map: null,
+                                                    marker: null,
+                                                    lat: 7.8731,
+                                                    lng: 80.7718,
+                                                    addressForm: {
+                                                        address: '',
+                                                        apartment: '',
+                                                        city: '',
+                                                        zipcode: '',
+                                                        country: 'Sri Lanka'
+                                                    },
+                                                    updateAddressOnMove: true,
+                                                    initMap() {
+                                                        this.$nextTick(() => {
+                                                            if (this.map) return;
 
-                                                        <!-- Google Maps iframe full background -->
-                                                        <iframe class="absolute inset-0 w-full h-full" loading="lazy"
-                                                            src="https://www.google.com/maps?q=La+Grande+Villa+Nuwara+Eliya&output=embed"
-                                                            allowfullscreen>
-                                                        </iframe>
+                                                            this.map = L.map('propertyMap').setView([this.lat, this.lng], 8);
 
-                                                        <!-- Optional overlay for readability -->
-                                                        <div class="absolute inset-0"></div>
+                                                            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                                                                attribution: '© OpenStreetMap contributors'
+                                                            }).addTo(this.map);
 
-                                                        <!-- Form content centered on map -->
-                                                        <div class="relative z-10 flex items-center justify-start h-auto p-4 mt-[110px]">
-                                                            <div class="bg-white bg-opacity-95 rounded-lg shadow-lg w-full max-w-md p-6 md:p-8 h-auto mb-4">
-                                                                <h2 class="text-2xl font-semibold mb-4 text-gray-800">Where is your property?</h2>
-                                                                <form x-data="{
-                                                                            addressForm: {
-                                                                                address: '',
-                                                                                apartment: '',
-                                                                                city: '',
-                                                                                zipcode: '',
-                                                                                country: 'Sri Lanka'
-                                                                            }
-                                                                            }">
-                                                                    <div class="mb-4">
-                                                                        <label for="address"
-                                                                            class="block text-sm font-medium text-gray-700">Find
-                                                                            your address</label>
+                                                            this.marker = L.marker([this.lat, this.lng], {
+                                                                draggable: true
+                                                            }).addTo(this.map);
+
+                                                            // Update coordinates when marker is dragged
+                                                            this.marker.on('dragend', (e) => {
+                                                                const pos = e.target.getLatLng();
+                                                                this.lat = pos.lat;
+                                                                this.lng = pos.lng;
+                                                                if (this.updateAddressOnMove) {
+                                                                    this.reverseGeocode(pos.lat, pos.lng);
+                                                                }
+                                                            });
+
+                                                            // Click on map to move marker
+                                                            this.map.on('click', (e) => {
+                                                                this.lat = e.latlng.lat;
+                                                                this.lng = e.latlng.lng;
+                                                                this.marker.setLatLng(e.latlng);
+                                                                if (this.updateAddressOnMove) {
+                                                                    this.reverseGeocode(e.latlng.lat, e.latlng.lng);
+                                                                }
+                                                            });
+                                                        });
+                                                    },
+                                                    async reverseGeocode(lat, lng) {
+                                                        try {
+                                                            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+                                                            const data = await response.json();
+                                                            if (data.address) {
+                                                                this.addressForm.address = data.display_name?.split(',').slice(0, 3).join(',') || '';
+                                                                this.addressForm.city = data.address.city || data.address.town || data.address.village || '';
+                                                                this.addressForm.zipcode = data.address.postcode || '';
+                                                                this.addressForm.country = data.address.country || 'Sri Lanka';
+                                                            }
+                                                        } catch (e) {
+                                                            console.error('Reverse geocoding failed:', e);
+                                                        }
+                                                    },
+                                                    async searchAddress() {
+                                                        if (!this.addressForm.address) return;
+                                                        try {
+                                                            const query = encodeURIComponent(this.addressForm.address + ', ' + this.addressForm.country);
+                                                            const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}&limit=1`);
+                                                            const data = await response.json();
+                                                            if (data.length > 0) {
+                                                                this.lat = parseFloat(data[0].lat);
+                                                                this.lng = parseFloat(data[0].lon);
+                                                                this.marker.setLatLng([this.lat, this.lng]);
+                                                                this.map.setView([this.lat, this.lng], 15);
+                                                            }
+                                                        } catch (e) {
+                                                            console.error('Geocoding failed:', e);
+                                                        }
+                                                    }
+                                                }" x-init="initMap()">
+                                                    <div class="wiz-page-wide space-y-6">
+                                                        <div>
+                                                            <p class="wiz-eyebrow">Address</p>
+                                                            <h1 class="wiz-h1">Where is your property?</h1>
+                                                            <p class="wiz-help mt-2">Search for the address or drop the pin on the map. Guests use this to find you.</p>
+                                                        </div>
+
+                                                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                                                            {{-- Left: form --}}
+                                                            <div class="lg:col-span-5 space-y-4">
+                                                                <div>
+                                                                    <label for="address" class="wiz-label">Find your address</label>
+                                                                    <div class="flex gap-2">
                                                                         <input type="text" id="address"
-                                                                            x-model="addressForm.address" name="address"
-                                                                            value="Sri Lanka"
-                                                                            class="mt-1 p-2 w-full border border-gray-300 rounded">
-                                                                    </div>
-                                                                    <div class="mb-4">
-                                                                        <label for="apartment"
-                                                                            class="block text-sm font-medium text-gray-700">Apartment
-                                                                            or floor number (optional)</label>
-                                                                        <input type="text" id="apartment"
-                                                                            x-model="addressForm.apartment"
-                                                                            name="apartment" value="aaa"
-                                                                            class="mt-1 p-2 w-full border border-gray-300 rounded">
-                                                                    </div>
-                                                                    <div class="mb-4">
-                                                                        <label for="country" class="block text-sm font-medium text-gray-700">Country/region</label>
-                                                                        <select id="country" x-model="addressForm.country" name="country" class="mt-1 p-2 w-full border border-gray-300 rounded">
-                                                                            <option value="Sri Lanka" selected>Sri Lanka</option>
-                                                                        </select>
-
-                                                                    </div>
-                                                                    <div class="flex flex-col md:flex-row gap-4">
-                                                                        <div class="flex-1">
-                                                                            <label for="city"
-                                                                                class="block text-sm font-medium text-gray-700">City</label>
-                                                                            <input type="text" id="city"
-                                                                                x-model="addressForm.city" name="city"
-                                                                                value="a"
-                                                                                class="mt-1 p-2 w-full border border-gray-300 rounded">
-                                                                        </div>
-                                                                        <div class="flex-1">
-                                                                            <label for="zipcode"
-                                                                                class="block text-sm font-medium text-gray-700">Post
-                                                                                code / Zip code</label>
-                                                                            <input type="text" id="zipcode"
-                                                                                x-model="addressForm.zipcode"
-                                                                                name="zipcode" value="80400"
-                                                                                class="mt-1 p-2 w-full border border-gray-300 rounded">
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="flex items-center mt-4">
-                                                                        <input id="update_address" type="checkbox"
-                                                                            name="update_address" checked class="mr-2">
-                                                                        <label for="update_address"
-                                                                            x-model="addressForm.update_address"
-                                                                            class="text-sm text-gray-700">Update the
-                                                                            address when moving the pin on the map.</label>
-                                                                    </div>
-
-                                                                    <!-- Dismissible message box -->
-                                                                    <div x-data="{ showMessage: true }" x-show="showMessage"
-                                                                        class="mt-4 bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded relative"
-                                                                        role="alert">
-                                                                        <strong class="font-bold">Note:</strong>
-                                                                        <span class="block sm:inline">Make sure the pin
-                                                                            location is accurate before continuing.</span>
-                                                                        <span @click="showMessage = false"
-                                                                            class="absolute top-0 bottom-0 right-0 px-4 py-3 cursor-pointer">
-                                                                            <svg class="fill-current h-6 w-6 text-yellow-800"
-                                                                                role="button"
-                                                                                xmlns="http://www.w3.org/2000/svg"
-                                                                                viewBox="0 0 20 20">
-                                                                                <title>Close</title>
-                                                                                <path
-                                                                                    d="M14.348 5.652a1 1 0 00-1.414 0L10 8.586 7.066 5.652a1 1 0 10-1.414 1.414L8.586 10l-2.934 2.934a1 1 0 101.414 1.414L10 11.414l2.934 2.934a1 1 0 001.414-1.414L11.414 10l2.934-2.934a1 1 0 000-1.414z" />
-                                                                            </svg>
-                                                                        </span>
-                                                                    </div>
-
-                                                                    <p class="text-sm text-gray-600 mt-2">
-                                                                        Is the red pin location incorrect? Uncheck the
-                                                                        option above and click or press on the map to move
-                                                                        the pin.
-                                                                    </p>
-
-                                                                    <!-- Buttons -->
-                                                                    <div
-                                                                        class="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6">
-                                                                        <button type="button" @click="prevStep"
-                                                                            class="w-full sm:w-auto border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
-                                                                            ←
-                                                                        </button>
-                                                                        <button type="button" @click="nextStep"
-                                                                            class="w-full sm:w-auto px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
-                                                                            Continue
+                                                                               x-model="addressForm.address" name="address"
+                                                                               placeholder="Enter street, neighbourhood or city"
+                                                                               @keyup.enter="searchAddress()"
+                                                                               class="wiz-input">
+                                                                        <button type="button" @click="searchAddress()"
+                                                                                class="wiz-btn-primary px-4"
+                                                                                aria-label="Search">
+                                                                            <i class="fas fa-magnifying-glass"></i>
                                                                         </button>
                                                                     </div>
+                                                                </div>
 
+                                                                <div>
+                                                                    <label for="apartment" class="wiz-label">Apartment / floor <span class="text-gray-400 font-normal">(optional)</span></label>
+                                                                    <input type="text" id="apartment"
+                                                                           x-model="addressForm.apartment"
+                                                                           name="apartment"
+                                                                           placeholder="e.g. Apt 4B"
+                                                                           class="wiz-input">
+                                                                </div>
 
-                                                                </form>
+                                                                <div>
+                                                                    <label for="country" class="wiz-label">Country / region</label>
+                                                                    <select id="country" x-model="addressForm.country" name="country" class="wiz-select">
+                                                                        <option value="Sri Lanka" selected>Sri Lanka</option>
+                                                                    </select>
+                                                                </div>
+
+                                                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                                    <div>
+                                                                        <label for="city" class="wiz-label">City</label>
+                                                                        <input type="text" id="city"
+                                                                               x-model="addressForm.city" name="city"
+                                                                               placeholder="City"
+                                                                               class="wiz-input">
+                                                                    </div>
+                                                                    <div>
+                                                                        <label for="zipcode" class="wiz-label">Postal / Zip code</label>
+                                                                        <input type="text" id="zipcode"
+                                                                               x-model="addressForm.zipcode"
+                                                                               name="zipcode"
+                                                                               placeholder="00000"
+                                                                               class="wiz-input">
+                                                                    </div>
+                                                                </div>
+
+                                                                <label for="update_address" class="flex items-start gap-2 cursor-pointer">
+                                                                    <input id="update_address" type="checkbox"
+                                                                           x-model="updateAddressOnMove"
+                                                                           name="update_address"
+                                                                           class="mt-1 w-4 h-4 text-[#0071c2] border-gray-300 rounded focus:ring-[#0071c2]">
+                                                                    <span class="text-sm text-gray-700">Update the address fields automatically when I move the map pin.</span>
+                                                                </label>
+
+                                                                <div x-data="{ showMessage: true }" x-show="showMessage" class="wiz-tip flex items-start gap-3" role="alert">
+                                                                    <i class="fas fa-circle-info text-[#0071c2] mt-0.5"></i>
+                                                                    <div class="flex-1">
+                                                                        <p class="wiz-tip-title">Tip</p>
+                                                                        Drag the red pin on the map to fine-tune the exact location before continuing.
+                                                                    </div>
+                                                                    <button type="button" @click="showMessage = false" class="text-gray-400 hover:text-gray-600" aria-label="Dismiss">
+                                                                        <i class="fas fa-xmark"></i>
+                                                                    </button>
+                                                                </div>
                                                             </div>
+
+                                                            {{-- Right: map --}}
+                                                            <div class="lg:col-span-7">
+                                                                <div id="propertyMap" class="w-full h-[420px] lg:h-[520px] rounded-xl border border-gray-200 shadow-sm"></div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="wiz-actions">
+                                                            <button type="button" @click="prevStep" class="wiz-btn-secondary">
+                                                                <i class="fas fa-arrow-left mr-2"></i> Back
+                                                            </button>
+                                                            <button type="button" @click="nextStep" class="wiz-btn-primary">
+                                                                Continue <i class="fas fa-arrow-right ml-2"></i>
+                                                            </button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -836,7 +856,7 @@
                                                                 A channel manager is a third-party tool that lets
                                                                 you manage rates and availability across different
                                                                 sites you might list your place on, including
-                                                                Booking.com. If you're already using a channel
+                                                                {{ config('app.name', 'Inselor') }}. If you're already using a channel
                                                                 manager, you can select 'Yes' to connect it to your
                                                                 listing.
                                                             </p>
@@ -892,7 +912,7 @@
                                                             <!-- Buttons -->
                                                             <div class="flex justify-between mt-6">
                                                                 <button type="button" @click="prevStep"
-                                                                    class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
+                                                                    class="wiz-btn-secondary">
                                                                     ←
                                                                 </button>
                                                                 <button type="button" @click="nextStep"
@@ -924,23 +944,23 @@
                                                                     <!-- 9 Checkboxes Section -->
 
                                                                     <div class="mt-2">
-                                                                        <h3
-                                                                            class="text-gray-700 font-semibold mb-2">
-                                                                            Select property type(s)</h3>
-                                                                        <div
-                                                                            class="grid grid-cols-1 sm:grid-cols-1 gap-2 text-sm text-gray-700">
-                                                                            @foreach ($amenities as $amenity)
-                                                                            <label class="flex items-center space-x-2">
-                                                                                <input type="checkbox"
-                                                                                    name="amenities[]"
-                                                                                    value="{{ $amenity['id'] }}"
-                                                                                    class="text-blue-500" />
-                                                                                <span>{{ $amenity['name'] }}</span>
-                                                                            </label>
-                                                                            @endforeach
-
-
-                                                                        </div>
+                                                                        <h3 class="text-gray-700 font-semibold mb-2">
+                                                                            Select amenities</h3>
+                                                                        @if (!empty($amenities) && count($amenities) > 0)
+                                                                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-gray-700">
+                                                                                @foreach ($amenities as $amenity)
+                                                                                    <label class="flex items-center space-x-2 hover:bg-gray-50 rounded p-1 cursor-pointer">
+                                                                                        <input type="checkbox"
+                                                                                            name="amenities[]"
+                                                                                            value="{{ $amenity['id'] }}"
+                                                                                            class="text-blue-500" />
+                                                                                        <span>{{ $amenity['name'] }}</span>
+                                                                                    </label>
+                                                                                @endforeach
+                                                                            </div>
+                                                                        @else
+                                                                            <p class="text-sm text-gray-500 italic">No amenities have been configured yet. You can skip and add them later.</p>
+                                                                        @endif
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -995,7 +1015,7 @@
                                                         <!-- Buttons Row aligned with Checkbox Section -->
                                                         <div class="flex  mt-6">
                                                             <button type="button" @click="prevStep"
-                                                                class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
+                                                                class="wiz-btn-secondary">
                                                                 ←
                                                             </button>
                                                             <button type="button" @click="nextStep"
@@ -1166,7 +1186,7 @@
                                                         <!-- Navigation Buttons -->
                                                         <div class="mt-8 flex justify-between max-w-xl ml-6">
                                                             <button type="button" @click="prevStep"
-                                                                class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                                                                class="wiz-btn-secondary">
                                                                 ←
                                                             </button>
                                                             <button type="button" @click="nextStep"
@@ -1199,8 +1219,9 @@
                                                                 @foreach ($initialLanguages as $lang)
                                                                 <label class="flex items-center cursor-pointer">
                                                                     <input type="checkbox"
-                                                                        class="mr-2"
-                                                                        :value="'{{ $lang['id'] }}'" />
+                                                                        name="languages[]"
+                                                                        class="mr-2 language-checkbox"
+                                                                        value="{{ $lang['id'] }}" />
                                                                     <span>{{ $lang['name'] }}</span>
                                                                 </label>
                                                                 @endforeach
@@ -1260,7 +1281,7 @@
                                                         <div class="mt-8 flex justify-between">
                                                             <!-- Back Button on the left -->
                                                             <button type="button" @click="prevStep"
-                                                                class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                                                                class="wiz-btn-secondary">
                                                                 ←
                                                             </button>
 
@@ -1461,13 +1482,13 @@
                                                                         <div class="w-full">
                                                                             <label
                                                                                 class="block text-sm font-medium mb-1">From</label>
-                                                                            <input type="time" id="check_in_from" value="15:00"
+                                                                            <input type="time" id="check_in_from" name="check_in_from" value="15:00"
                                                                                 class="w-full border rounded p-2" />
                                                                         </div>
                                                                         <div class="w-full">
                                                                             <label
                                                                                 class="block text-sm font-medium mb-1">Until</label>
-                                                                            <input type="time" id="check_in_until" value="18:00"
+                                                                            <input type="time" id="check_in_until" name="check_in_until" value="18:00"
                                                                                 class="w-full border rounded p-2" />
                                                                         </div>
                                                                     </div>
@@ -1481,13 +1502,13 @@
                                                                         <div class="w-full">
                                                                             <label
                                                                                 class="block text-sm font-medium mb-1">From</label>
-                                                                            <input type="time" value="08:00" id="check_out_from"
+                                                                            <input type="time" value="08:00" id="check_out_from" name="check_out_from"
                                                                                 class="w-full border rounded p-2" />
                                                                         </div>
                                                                         <div class="w-full">
                                                                             <label
                                                                                 class="block text-sm font-medium mb-1">Until</label>
-                                                                            <input type="time" value="11:00" id="check_out_until"
+                                                                            <input type="time" value="11:00" id="check_out_until" name="check_out_until"
                                                                                 class="w-full border rounded p-2" />
                                                                         </div>
                                                                     </div>
@@ -1529,7 +1550,7 @@
                                                         <!-- Navigation Buttons -->
                                                         <div class="mt-8 flex ">
                                                             <button type="button" @click="prevStep"
-                                                                class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                                                                class="wiz-btn-secondary">
                                                                 ←
                                                             </button>
                                                             <button type="button" @click="nextStep"
@@ -1637,7 +1658,7 @@
                                                     <div class="mt-12 flex justify-between">
                                                         <button type="button"
                                                             @click="prevStep"
-                                                            class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                                                            class="wiz-btn-secondary">
                                                             ←
                                                         </button>
                                                         <button type="button"
@@ -1657,7 +1678,7 @@
 
 
                                                 <div class="max-w-xl mx-auto space-y-8 lg:ml-32 px-4 py-6">
-                                                    <h2 class="text-2xl font-bold text-gray-900 mt-8">What can guests use at your place?</h2>
+                                                    <h2 class="text-2xl font-bold text-gray-900 mt-8">Set up rooms and sleeping arrangements</h2>
 
                                                     <!-- Room Selector -->
                                                     <div class="bg-white p-4 rounded-lg shadow space-y-4">
@@ -1794,7 +1815,7 @@
                                                             type="button"
                                                             @click="propertyWizardStep--"
                                                             :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-                                                            class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                                                            class="wiz-btn-secondary">
                                                             ←
                                                         </button>
                                                         <button
@@ -1891,7 +1912,7 @@
                                                                 <label class="block text-sm text-gray-700 mb-1">Adult price</label>
                                                                 <div class="relative">
                                                                     <!-- Currency Dropdown (absolute positioned) -->
-                                                                    <select x-model="currency"
+                                                                    <select x-model="currency" name="currency"
                                                                         class="absolute left-3 top-1/2 transform -translate-y-1/2 bg-transparent text-gray-700 text-sm pr-1 focus:outline-none border border-gray-300 rounded-md">
                                                                         <option value="LKR">Rs</option>
                                                                         <option value="USD">US$</option>
@@ -1900,7 +1921,7 @@
                                                                     </select>
 
                                                                     <!-- Price Input -->
-                                                                    <input type="number" x-model.number="adultPrice" step="0.01"
+                                                                    <input type="number" x-model.number="adultPrice" name="adult_price" step="0.01" min="0"
                                                                         class="w-full border border-gray-400 rounded-md p-2 pl-20 text-gray-700 font-semibold focus:ring-2 focus:ring-blue-300 focus:outline-none"
                                                                         placeholder="0.00" />
                                                                 </div>
@@ -1911,7 +1932,7 @@
                                                                 <label class="block text-sm text-gray-700 mb-1">Child price (optional)</label>
                                                                 <div class="relative">
                                                                     <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-700 font-medium" x-text="getCurrencySymbol()"></span>
-                                                                    <input type="number" x-model.number="childPrice" step="0.01"
+                                                                    <input type="number" x-model.number="childPrice" name="child_price" step="0.01" min="0"
                                                                         class="w-full border border-gray-400 rounded-md p-2 pl-16 text-gray-700 font-semibold focus:ring-2 focus:ring-blue-300 focus:outline-none"
                                                                         placeholder="0.00" />
                                                                 </div>
@@ -1954,7 +1975,7 @@
                                                     <!-- Navigation Buttons -->
                                                     <div class="flex justify-between mt-8">
                                                         <button type="button" @click="step--"
-                                                            class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                                                            class="wiz-btn-secondary">
                                                             ←
                                                         </button>
                                                         <button type="button" @click="nextStep"
@@ -2062,7 +2083,7 @@
                                                         <div class="mt-8 flex justify-between">
                                                             <!-- Back Button on the left -->
                                                             <button type="button" @click="prevStep"
-                                                                class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                                                                class="wiz-btn-secondary">
                                                                 ←
                                                             </button>
 
@@ -2177,11 +2198,11 @@
                                                             <!-- Buttons -->
                                                             <div class="space-y-2">
                                                                 <button type="button" @click="nextStep"
-                                                                    class="w-full bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded">
+                                                                    class="wiz-btn-primary w-full">
                                                                     Continue
                                                                 </button>
                                                                 <button type="button" @click="prevStep"
-                                                                    class="w-full border border-[#3CC0E9] text-[#3CC0E9] font-semibold py-2 px-4 rounded mb-6">
+                                                                    class="wiz-btn-secondary w-full mb-6">
                                                                     No, I need to make a change
                                                                 </button>
                                                             </div>
@@ -2211,11 +2232,11 @@
                                                                 <!-- Navigation Buttons -->
                                                                 <div class="mt-6 flex justify-between">
                                                                     <button type="button" @click="prevStep"
-                                                                        class="border border-[#3CC0E9] text-blue-600 hover:bg-[#29ACD5] font-semibold py-2 px-4 rounded">
+                                                                        class="wiz-btn-secondary">
                                                                         ←
                                                                     </button>
                                                                     <button type="button" @click="nextStep"
-                                                                        class="font-semibold py-3 px-8 rounded bg-[#3CC0E9] hover:bg-[#29ACD5] text-white">
+                                                                        class="wiz-btn-primary">
                                                                         Continue
                                                                     </button>
                                                                 </div>
@@ -2270,7 +2291,7 @@
                                                                     <!-- Navigation buttons -->
                                                                     <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6">
                                                                         <button type="button" @click="prevStep"
-                                                                            class="w-full sm:w-auto border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
+                                                                            class="wiz-btn-secondary w-full sm:w-auto">
                                                                             ←
                                                                         </button>
                                                                         <button type="button" @click="nextStep"
@@ -2302,7 +2323,7 @@
                                                                         A channel manager is a third-party tool that lets
                                                                         you manage rates and availability across different
                                                                         sites you might list your place on, including
-                                                                        Booking.com. If you're already using a channel
+                                                                        {{ config('app.name', 'Inselor') }}. If you're already using a channel
                                                                         manager, you can select 'Yes' to connect it to your
                                                                         listing.
                                                                     </p>
@@ -2358,7 +2379,7 @@
                                                                     <!-- Buttons -->
                                                                     <div class="flex justify-between mt-6">
                                                                         <button type="button" @click="prevStep"
-                                                                            class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
+                                                                            class="wiz-btn-secondary">
                                                                             ←
                                                                         </button>
                                                                         <button type="button" @click="nextStep"
@@ -2462,7 +2483,7 @@
                                                                 <!-- Buttons Row aligned with Checkbox Section -->
                                                                 <div class="flex  mt-6">
                                                                     <button type="button" @click="prevStep"
-                                                                        class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
+                                                                        class="wiz-btn-secondary">
                                                                         ←
                                                                     </button>
                                                                     <button type="button" @click="nextStep"
@@ -2548,7 +2569,7 @@
                                                                 <!-- Navigation Buttons below sections -->
                                                                 <div class="mt-8 flex justify-between max-w-xl ml-6">
                                                                     <button type="button" @click="prevStep"
-                                                                        class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                                                                        class="wiz-btn-secondary">
                                                                         ←
                                                                     </button>
                                                                     <button type="button" @click="nextStep"
@@ -2652,7 +2673,7 @@
                                                                 <div class="mt-8 flex justify-between">
                                                                     <!-- Back Button on the left -->
                                                                     <button type="button" @click="prevStep"
-                                                                        class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                                                                        class="wiz-btn-secondary">
                                                                         ←
                                                                     </button>
 
@@ -2925,7 +2946,7 @@
                                                                 <!-- Navigation Buttons -->
                                                                 <div class="mt-8 flex ">
                                                                     <button type="button" @click="prevStep"
-                                                                        class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                                                                        class="wiz-btn-secondary">
                                                                         ←
                                                                     </button>
                                                                     <button type="button" @click="nextStep"
@@ -2983,7 +3004,7 @@
                                                                 <!-- Navigation Buttons -->
                                                                 <div class="mt-8 flex justify-between">
                                                                     <button type="button" @click="prevStep"
-                                                                        class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                                                                        class="wiz-btn-secondary">
                                                                         ←
                                                                     </button>
 
@@ -3098,7 +3119,7 @@
                                                                     <div class="flex justify-between mt-6">
                                                                         <!-- Back Button -->
                                                                         <button type="button" @click="prevStep"
-                                                                            class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                                                                            class="wiz-btn-secondary">
                                                                             ←
                                                                         </button>
 
@@ -3168,7 +3189,7 @@
                                                                 <button
                                                                     type="button"
                                                                     @click="nextStep"
-                                                                    class="bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold px-6 py-2 rounded shadow">
+                                                                    class="wiz-btn-primary">
                                                                     Continue →
                                                                 </button>
                                                             </div>
@@ -3288,7 +3309,7 @@
                                                                 <div class="mt-8 flex justify-between">
                                                                     <!-- Back Button on the left -->
                                                                     <button type="button" @click="prevStep"
-                                                                        class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                                                                        class="wiz-btn-secondary">
                                                                         ←
                                                                     </button>
 
@@ -3387,7 +3408,7 @@
                                                                 <!-- Navigation Buttons -->
                                                                 <div class="mt-8 flex justify-between">
                                                                     <button type="button" @click="prevStep"
-                                                                        class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                                                                        class="wiz-btn-secondary">
                                                                         ←
                                                                     </button>
                                                                     <button type="button" @click="addRoom"
@@ -3507,7 +3528,7 @@
                                                                 <div class="mt-8 flex justify-between">
                                                                     <!-- Back Button on the left -->
                                                                     <button type="button" @click="prevStep"
-                                                                        class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                                                                        class="wiz-btn-secondary">
                                                                         ←
                                                                     </button>
 
@@ -3531,7 +3552,7 @@
 
                                                             <div class="flex justify-between mt-8">
                                                                 <button type="button" @click="prevStep"
-                                                                    class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                                                                    class="wiz-btn-secondary">
                                                                     ←
                                                                 </button>
                                                                 <button type="button" @click="nextStep"
@@ -3709,9 +3730,34 @@
                                                 .join(', ');
                                         },
                                         deleteRoom(key) {
-                                            if (confirm('Are you sure you want to delete this room?')) {
-                                                delete this.rooms[key];
-                                            }
+                                            Swal.fire({
+                                                title: 'Delete Room?',
+                                                text: 'Are you sure you want to delete this room?',
+                                                icon: 'warning',
+                                                showCancelButton: true,
+                                                confirmButtonColor: '#d33',
+                                                cancelButtonColor: '#3085d6',
+                                                confirmButtonText: 'Yes, delete it!'
+                                            }).then((result) => {
+                                                if (result.isConfirmed) {
+                                                    // Create a new object without the deleted key for reactivity
+                                                    const newRooms = {};
+                                                    Object.keys(this.rooms).forEach(k => {
+                                                        if (k !== key) {
+                                                            newRooms[k] = this.rooms[k];
+                                                        }
+                                                    });
+                                                    this.rooms = newRooms;
+                                                    Swal.fire({
+                                                        icon: 'success',
+                                                        title: 'Room deleted!',
+                                                        toast: true,
+                                                        position: 'top-end',
+                                                        showConfirmButton: false,
+                                                        timer: 2000
+                                                    });
+                                                }
+                                            });
                                         },
                                         addRoom() {
 
@@ -3757,7 +3803,7 @@
                                                 btn.className = 'px-6 py-2 text-white rounded bg-gray-400 cursor-not-allowed';
                                             } else {
                                                 btn.disabled = false;
-                                                btn.className = 'px-6 py-2 text-white rounded bg-[#3CC0E9] hover:bg-blue-700';
+                                                btn.className = 'px-6 py-2 text-white rounded bg-[#1F8FB2] hover:bg-[#1a7a99]';
                                             }
                                         },
                                         selectOption(option) {
@@ -3769,9 +3815,11 @@
                                         get headingLabel() {
                                             switch (this.selectedBox) {
                                                 case 1:
-                                                    return 'How many chalets are you listing?';
-                                                case 2:
                                                     return 'How many villas are you listing?';
+                                                case 2:
+                                                    return 'How many chalets are you listing?';
+                                                case 3:
+                                                    return 'How many apartments are you listing?';
                                                 case 4:
                                                     return 'How many holiday homes are you listing?';
                                                 case 5:
@@ -3783,12 +3831,13 @@
 
 
                                         get singleLabel() {
-                                            console.log('Selected Box:', this.selectedBox);
                                             switch (this.selectedBox) {
                                                 case 1:
                                                     return 'One Villa';
                                                 case 2:
                                                     return 'One Chalet';
+                                                case 3:
+                                                    return 'One Apartment';
                                                 case 4:
                                                     return 'One Holiday home';
                                                 case 5:
@@ -3799,12 +3848,13 @@
                                         },
 
                                         get multipleLabel() {
-                                            console.log('Selected Box:', this.selectedBox);
                                             switch (this.selectedBox) {
                                                 case 1:
                                                     return 'Multiple Villas';
                                                 case 2:
                                                     return 'Multiple Chalets';
+                                                case 3:
+                                                    return 'Multiple Apartments';
                                                 case 4:
                                                     return 'Multiple Holiday homes';
                                                 case 5:
@@ -3817,11 +3867,110 @@
 
 
                                         async nextStep() {
-                                            if ((this.step === 1 && this.selected === 'one')) {
-                                                try {
+                                            // Single source of truth — branches that need it shadow with `const propertyId = ...`,
+                                            // but this fallback prevents ReferenceError in branches that forgot to redeclare.
+                                            var propertyId = window.currentPropertyId;
+                                            // Handle Multiple selection at step 1
+                                            if (this.step === 1 && this.selected === 'multiple') {
+                                                const propertyId = window.currentPropertyId;
+                                                if (!propertyId) {
+                                                    Swal.fire({
+                                                        icon: 'error',
+                                                        title: 'Error',
+                                                        text: 'Property ID not found. Please go back and try again.',
+                                                        confirmButtonColor: '#1F8FB2'
+                                                    });
+                                                    return;
+                                                }
 
-                                                    console.log('Addtress type:', this.step);
-                                                    const response = await fetch(`/partner/property/step3/${this.propertyId}`, {
+                                                // Validate sameAddress selection
+                                                if (!this.sameAddress) {
+                                                    Swal.fire({
+                                                        icon: 'warning',
+                                                        title: 'Please select an option',
+                                                        text: 'Please specify if the properties are in the same address or different addresses.',
+                                                        confirmButtonColor: '#1F8FB2'
+                                                    });
+                                                    return;
+                                                }
+
+                                                // Validate property count
+                                                if (!this.propertyCount || this.propertyCount < 2) {
+                                                    Swal.fire({
+                                                        icon: 'warning',
+                                                        title: 'Invalid property count',
+                                                        text: 'Please enter at least 2 properties.',
+                                                        confirmButtonColor: '#1F8FB2'
+                                                    });
+                                                    return;
+                                                }
+
+                                                try {
+                                                    console.log('Saving multiple property selection:', {
+                                                        selected: this.selected,
+                                                        sameAddress: this.sameAddress,
+                                                        propertyCount: this.propertyCount,
+                                                        propertyId: propertyId
+                                                    });
+
+                                                    const response = await fetch(`/partner/property/step3/${propertyId}`, {
+                                                        method: 'POST',
+                                                        headers: {
+                                                            'Content-Type': 'application/json',
+                                                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                        },
+                                                        body: JSON.stringify({
+                                                            address_type_id: 2, // Multiple
+                                                            same_address: this.sameAddress === 'yes',
+                                                            property_count: this.propertyCount,
+                                                            propertyId: propertyId
+                                                        })
+                                                    });
+
+                                                    const result = await response.json();
+                                                    if (result.success) {
+                                                        console.log('Multiple property selection saved:', result);
+                                                        Swal.fire({
+                                                            icon: 'success',
+                                                            title: 'Selection saved successfully',
+                                                            toast: true,
+                                                            position: 'top-end',
+                                                            showConfirmButton: false,
+                                                            timer: 3000
+                                                        });
+                                                        this.step++;
+                                                    } else {
+                                                        Swal.fire({
+                                                            icon: 'error',
+                                                            title: 'Failed to save selection',
+                                                            text: result.message || 'Please try again.',
+                                                            confirmButtonColor: '#1F8FB2'
+                                                        });
+                                                    }
+                                                } catch (e) {
+                                                    console.error('Error saving multiple selection:', e);
+                                                    Swal.fire({
+                                                        icon: 'error',
+                                                        title: 'Error',
+                                                        text: 'Something went wrong. Please try again.',
+                                                        confirmButtonColor: '#1F8FB2'
+                                                    });
+                                                }
+                                            } else if ((this.step === 1 && this.selected === 'one')) {
+                                                try {
+                                                    const propertyId = window.currentPropertyId;
+                                                    if (!propertyId) {
+                                                        Swal.fire({
+                                                            icon: 'error',
+                                                            title: 'Error',
+                                                            text: 'Property ID not found. Please go back and try again.',
+                                                            confirmButtonColor: '#1F8FB2'
+                                                        });
+                                                        return;
+                                                    }
+
+                                                    console.log('Address type:', this.step, 'Property ID:', propertyId);
+                                                    const response = await fetch(`/partner/property/step3/${propertyId}`, {
                                                         method: 'POST',
                                                         headers: {
                                                             'Content-Type': 'application/json',
@@ -3829,8 +3978,8 @@
                                                                 .getAttribute('content')
                                                         },
                                                         body: JSON.stringify({
-                                                            address_type_id: this.selected === 'one' ? 1 : 2, // ✅ correct value: "one" or "multiple"
-                                                            propertyId: this.propertyId
+                                                            address_type_id: 1, // Single property
+                                                            propertyId: propertyId
                                                         })
 
                                                     });
@@ -3860,7 +4009,8 @@
                                                     console.error('Error saving step 2:', e);
                                                 }
                                             } else if (this.step === 4 && this.selected === 'one') {
-                                                console.log(`Submitting property name ${this.propertyName} and description ${this.description} for property ID:`, this.propertyId);
+                                                const propertyId = window.currentPropertyId;
+                                                console.log(`Submitting property name ${this.propertyName} and description ${this.description} for property ID:`, propertyId);
 
                                                 if (!this.propertyName || this.propertyName.trim() === '') {
                                                     Swal.fire({
@@ -3871,7 +4021,7 @@
                                                     return;
                                                 }
 
-                                                fetch(`/partner/property/step3/${this.propertyId}`, {
+                                                fetch(`/partner/property/step3/${propertyId}`, {
                                                         method: 'POST',
                                                         headers: {
                                                             'Content-Type': 'application/json',
@@ -3880,7 +4030,7 @@
                                                         body: JSON.stringify({
                                                             title: this.propertyName,
                                                             description: this.description,
-                                                            property_id: this.propertyId
+                                                            property_id: propertyId
                                                         })
                                                     })
                                                     .then(response => response.json())
@@ -3919,7 +4069,8 @@
                                                         })
                                                     });
                                             } else if (this.step === 5 && this.selected === 'one') {
-                                                console.log('Submitting photos for property ID:', this.propertyId);
+                                                const propertyId = window.currentPropertyId;
+                                                console.log('Submitting photos for property ID:', propertyId);
                                                 const files = this.$refs.photoInput.files;
                                                 if (!files.length) {
                                                     Swal.fire({
@@ -3934,20 +4085,40 @@
                                                 }
 
                                                 const formData = new FormData();
-                                                formData.append('property_id', this.propertyId);
+                                                formData.append('property_id', propertyId);
 
                                                 for (let i = 0; i < files.length; i++) {
                                                     formData.append('photos[]', files[i]);
                                                 }
 
+                                                // Validate minimum 3 photos
+                                                if (files.length < 3) {
+                                                    Swal.fire({
+                                                        icon: 'warning',
+                                                        title: 'Minimum 3 photos required',
+                                                        text: `You selected ${files.length} photo(s). Please select at least 3 photos.`,
+                                                        confirmButtonColor: '#1F8FB2'
+                                                    });
+                                                    return;
+                                                }
+
                                                 fetch('/partner/property/upload-photos', {
                                                         method: 'POST',
                                                         headers: {
-                                                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                                                            'Accept': 'application/json'
                                                         },
                                                         body: formData
                                                     })
-                                                    .then(response => response.json())
+                                                    .then(async response => {
+                                                        const text = await response.text();
+                                                        try {
+                                                            return JSON.parse(text);
+                                                        } catch (e) {
+                                                            console.error('Server response:', text);
+                                                            throw new Error('Server returned invalid response');
+                                                        }
+                                                    })
                                                     .then(result => {
                                                         if (result.success) {
                                                             console.log('Photos uploaded');
@@ -3963,11 +4134,9 @@
                                                         } else {
                                                             Swal.fire({
                                                                 icon: 'error',
-                                                                title: 'Failed to upload photos: ' + result.message,
-                                                                toast: true,
-                                                                position: 'top-end',
-                                                                showConfirmButton: false,
-                                                                timer: 3000
+                                                                title: 'Upload Failed',
+                                                                text: result.message || 'Failed to upload photos',
+                                                                confirmButtonColor: '#1F8FB2'
                                                             });
                                                         }
                                                     })
@@ -3975,25 +4144,24 @@
                                                         console.error('Upload error:', error);
                                                         Swal.fire({
                                                             icon: 'error',
-                                                            title: 'Something went wrong while uploading photos.',
-                                                            toast: true,
-                                                            position: 'top-end',
-                                                            showConfirmButton: false,
-                                                            timer: 3000
-                                                        })
+                                                            title: 'Upload Error',
+                                                            text: error.message || 'Something went wrong while uploading photos.',
+                                                            confirmButtonColor: '#1F8FB2'
+                                                        });
                                                     });
                                             } else if (this.step === 6 && this.selected === 'one') {
                                                 try {
+                                                    const propertyId = window.currentPropertyId;
                                                     console.log('Submitting form:', this.addressForm);
 
-                                                    const response = await fetch(`/partner/property/step3/${this.propertyId}`, {
+                                                    const response = await fetch(`/partner/property/step3/${propertyId}`, {
                                                         method: 'POST',
                                                         headers: {
                                                             'Content-Type': 'application/json',
                                                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
                                                                 .getAttribute('content')
                                                         },
-                                                        body: JSON.stringify(this.addressForm, this.propertyId)
+                                                        body: JSON.stringify(this.addressForm, propertyId)
                                                     });
                                                     const result = await response.json();
                                                     if (result.success) {
@@ -4023,20 +4191,27 @@
                                                 }
                                             } else if (this.step === 8 && this.selected === 'one') {
                                                 try {
+                                                    const propertyId = window.currentPropertyId;
                                                     // Get all checked amenity IDs
                                                     const selectedAmenities = Array.from(document.querySelectorAll('input[name="amenities[]"]:checked'))
                                                         .map(input => parseInt(input.value));
                                                     console.log('Selected amenities:', selectedAmenities);
 
-                                                    const response = await fetch(`/partner/property/save-amenities/${this.propertyId}`, {
+                                                    // Allow empty amenities but show info message
+                                                    if (selectedAmenities.length === 0) {
+                                                        console.log('No amenities selected, proceeding with empty array');
+                                                    }
+
+                                                    const response = await fetch(`/partner/property/save-amenities/${propertyId}`, {
                                                         method: 'POST',
                                                         headers: {
                                                             'Content-Type': 'application/json',
-                                                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                                                            'Accept': 'application/json'
                                                         },
                                                         body: JSON.stringify({
                                                             amenities: selectedAmenities,
-                                                            property_id: this.propertyId
+                                                            property_id: propertyId
                                                         })
                                                     });
 
@@ -4068,7 +4243,7 @@
                                                     console.error('Error saving amenities:', e);
                                                 }
                                             } else if (this.step === 9 && this.selected === 'one') {
-                                                const propertyId = this.propertyId;
+                                                const propertyId = window.currentPropertyId;
                                                 const payload = {
                                                     property_id: parseInt(propertyId),
                                                     serve_breakfast: this.servesBreakfast === 'yes',
@@ -4129,21 +4304,23 @@
                                                 }
                                             } else if (this.step === 10 && this.selected === 'one') {
                                                 try {
-                                                    // Get all selected languages (checked checkboxes)
-                                                    const selectedLanguages = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
-                                                        .map(input => input.value);
+                                                    const propertyId = window.currentPropertyId;
+                                                    // Get all selected languages (checked checkboxes with specific name)
+                                                    const selectedLanguages = Array.from(document.querySelectorAll('input[name="languages[]"]:checked'))
+                                                        .map(input => parseInt(input.value));
 
                                                     console.log('Selected languages:', selectedLanguages);
 
-                                                    const response = await fetch(`/partner/save-languages/${this.propertyId}`, {
+                                                    const response = await fetch(`/partner/save-languages/${propertyId}`, {
                                                         method: 'POST',
                                                         headers: {
                                                             'Content-Type': 'application/json',
-                                                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                                                            'Accept': 'application/json'
                                                         },
                                                         body: JSON.stringify({
                                                             languages: selectedLanguages,
-                                                            property_id: this.propertyId
+                                                            property_id: propertyId
                                                         })
                                                     });
 
@@ -4156,7 +4333,9 @@
                                                             position: 'top-end',
                                                             icon: 'success',
                                                             title: 'Languages saved successfully!',
-                                                            showConfirmButton: false
+                                                            showConfirmButton: false,
+                                                            timer: 3000,
+                                                            timerProgressBar: true
                                                         });
                                                         this.step++; // go to next step
                                                     } else {
@@ -4165,7 +4344,9 @@
                                                             position: 'top-end',
                                                             icon: 'error',
                                                             title: result.message || 'Failed to save languages',
-                                                            showConfirmButton: false
+                                                            showConfirmButton: false,
+                                                            timer: 3000,
+                                                            timerProgressBar: true
                                                         });
                                                     }
                                                 } catch (e) {
@@ -4173,6 +4354,7 @@
                                                 }
                                             } else if (this.step === 11 && this.selected === 'one') {
                                                 try {
+                                                    const propertyId = window.currentPropertyId;
                                                     const smokingAllowed = document.querySelector('#smoking_allowed').checked;
                                                     const petsValue = document.querySelector('input[name="pets_allowed"]:checked')?.value || 'no';
                                                     const partiesAllowed = document.querySelector('#parties_allowed').checked;
@@ -4183,7 +4365,7 @@
                                                     const checkOutFromTime = document.querySelector('#check_out_from').value;
                                                     const checkOutUntilTime = document.querySelector('#check_out_until').value;
 
-                                                    const response = await fetch(`/partner/property/save-policy/${this.propertyId}`, {
+                                                    const response = await fetch(`/partner/property/save-policy/${propertyId}`, {
                                                         method: 'POST',
                                                         headers: {
                                                             'Content-Type': 'application/json',
@@ -4199,7 +4381,7 @@
                                                             check_out_from: checkOutFromTime,
                                                             check_out_until: checkOutUntilTime,
                                                             cancellation_policy: 'flexible',
-                                                            property_id: this.propertyId
+                                                            property_id: propertyId
                                                         }),
                                                     });
 
@@ -4212,7 +4394,9 @@
                                                             position: 'top-end',
                                                             icon: 'success',
                                                             title: 'Policy saved successfully!',
-                                                            showConfirmButton: false
+                                                            showConfirmButton: false,
+                                                            timer: 3000,
+                                                            timerProgressBar: true
                                                         });
                                                         this.step++;
                                                     } else {
@@ -4221,17 +4405,19 @@
                                                             position: 'top-end',
                                                             icon: 'error',
                                                             title: result.message || 'Failed to save policy',
-                                                            showConfirmButton: false
+                                                            showConfirmButton: false,
+                                                            timer: 3000,
+                                                            timerProgressBar: true
                                                         });
                                                     }
                                                 } catch (e) {
                                                     console.error('Error saving policy:', e);
                                                 }
                                             } else if (this.step === 12 && this.selected === 'one') {
-
+                                                const propertyId = window.currentPropertyId;
 
                                                 const payload = {
-                                                    property_id: this.propertyId,
+                                                    property_id: propertyId,
                                                     show_property: this.showProperty,
                                                     show_host: this.showHost,
                                                     show_neighborhood: this.showNeighborhood,
@@ -4261,7 +4447,9 @@
                                                             position: 'top-end',
                                                             icon: 'success',
                                                             title: 'Host profile saved successfully!',
-                                                            showConfirmButton: false
+                                                            showConfirmButton: false,
+                                                            timer: 3000,
+                                                            timerProgressBar: true
                                                         });
                                                         this.step++;
                                                     } else {
@@ -4271,19 +4459,35 @@
                                                             position: 'top-end',
                                                             icon: 'error',
                                                             title: 'Failed to save host profile' + result.message,
-                                                            showConfirmButton: false
+                                                            showConfirmButton: false,
+                                                            timer: 3000,
+                                                            timerProgressBar: true
                                                         })
                                                     }
                                                 } catch (error) {
                                                     console.error('❌ Error submitting host profile:', error);
                                                 }
                                             } else if (this.step === 13 && this.selected === 'one') {
-                                                console.log('Saving room details for property ID:', this.propertyId);
+                                                const propertyId = window.currentPropertyId;
+                                                console.log('Saving room details for property ID:', propertyId);
 
-                                                const roomKeys = Object.keys(this.rooms);
+                                                if (!propertyId) {
+                                                    Swal.fire({
+                                                        icon: 'error',
+                                                        title: 'Property ID not found',
+                                                        text: 'Please go back and start again.'
+                                                    });
+                                                    return;
+                                                }
+
+                                                const roomKeys = Object.keys(this.rooms || {});
 
                                                 if (roomKeys.length === 0) {
-                                                    alert('Please add at least one room before continuing.');
+                                                    Swal.fire({
+                                                        icon: 'warning',
+                                                        title: 'No rooms added',
+                                                        text: 'Please add at least one room before continuing.'
+                                                    });
                                                     return;
                                                 }
 
@@ -4291,7 +4495,7 @@
                                                     const room = this.rooms[key];
                                                     return {
                                                         key: key,
-                                                        room_type_id: room.room_type_id ?? '', // Ensure this field exists
+                                                        room_type_id: room.room_type_id ?? '',
                                                         name: room.name,
                                                         beds: room.beds,
                                                         max_guests: this.guests,
@@ -4301,25 +4505,23 @@
                                                     };
                                                 });
 
-                                                // Optional validation
+                                                // Optional validation - skip if room_type_id not required
                                                 const invalidRoom = roomArray.find(r => !r.room_type_id);
                                                 if (invalidRoom) {
-                                                    alert(`Please select a Room Type for ${invalidRoom.key}`);
-                                                    return;
+                                                    console.log('Room without type:', invalidRoom.key, '- continuing anyway');
                                                 }
 
-                                                console.log('Saving room details:', {
-                                                    rooms: roomArray
-                                                });
+                                                console.log('Saving room details:', { rooms: roomArray });
 
-                                                fetch(`/partner/save-rooms/${this.propertyId}`, {
+                                                fetch(`/partner/save-rooms/${propertyId}`, {
                                                         method: 'POST',
                                                         headers: {
                                                             'Content-Type': 'application/json',
-                                                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                                                            'Accept': 'application/json'
                                                         },
                                                         body: JSON.stringify({
-                                                            property_id: this.propertyId,
+                                                            property_id: propertyId,
                                                             rooms: roomArray
                                                         })
                                                     })
@@ -4332,7 +4534,9 @@
                                                                 position: 'top-end',
                                                                 icon: 'success',
                                                                 title: 'Room saved successfully!',
-                                                                showConfirmButton: false
+                                                                showConfirmButton: false,
+                                                                timer: 3000,
+                                                                timerProgressBar: true
                                                             });
                                                             this.step++;
                                                         } else {
@@ -4342,6 +4546,8 @@
                                                                 icon: 'error',
                                                                 showConfirmButton: false,
                                                                 title: 'Failed to save room' + result.message,
+                                                                timer: 3000,
+                                                                timerProgressBar: true
                                                             });
                                                         }
                                                     })
@@ -4350,6 +4556,17 @@
                                                         alert('Something went wrong while saving the room.');
                                                     });
                                             } else if (this.step === 14 && this.selected === 'one') { // Pricing step
+                                                const propertyId = window.currentPropertyId;
+                                                if (!propertyId) {
+                                                    Swal.fire({
+                                                        icon: 'error',
+                                                        title: 'Error',
+                                                        text: 'Property ID not found. Please go back and try again.',
+                                                        confirmButtonColor: '#1F8FB2'
+                                                    });
+                                                    return;
+                                                }
+
                                                 // Validate pricing inputs
                                                 if (!this.adultPrice || parseFloat(this.adultPrice) <= 0) {
                                                     Swal.fire({
@@ -4364,16 +4581,16 @@
                                                     return;
                                                 }
 
-                                                console.log('Saving pricing for property ID:', this.propertyId);
+                                                console.log('Saving pricing for property ID:', propertyId);
 
-                                                fetch(`/partner/save-pricing/${this.propertyId}`, {
+                                                fetch(`/partner/save-pricing/${propertyId}`, {
                                                         method: 'POST',
                                                         headers: {
                                                             'Content-Type': 'application/json',
                                                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                                                         },
                                                         body: JSON.stringify({
-                                                            property_id: this.propertyId,
+                                                            property_id: propertyId,
                                                             adult_price: this.adultPrice,
                                                             child_price: this.childPrice || 0,
                                                             currency: this.currency
@@ -4411,7 +4628,17 @@
 
 
                                             } else if (this.step === 15 && this.selected === 'one') { // This is now the partner verification step
-                                                console.log('Submitting partner verification details for property ID:', this.propertyId);
+                                                const propertyId = window.currentPropertyId;
+                                                if (!propertyId) {
+                                                    Swal.fire({
+                                                        icon: 'error',
+                                                        title: 'Error',
+                                                        text: 'Property ID not found. Please go back and try again.',
+                                                        confirmButtonColor: '#1F8FB2'
+                                                    });
+                                                    return;
+                                                }
+                                                console.log('Submitting partner verification details for property ID:', propertyId);
                                                 if (this.type === 'individual') {
                                                     if (!this.individual.national_id) {
                                                         Swal.fire({
@@ -4437,7 +4664,7 @@
                                                 }
 
                                                 const payload = {
-                                                    property_id: this.propertyId,
+                                                    property_id: propertyId,
                                                     type: this.type,
                                                     full_name: this.type === 'individual' ? this.individual.full_name : null,
                                                     national_id: this.type === 'individual' ? this.individual.national_id : null,
@@ -4456,7 +4683,7 @@
                                                     .then(response => response.json())
                                                     .then(data => {
                                                         console.log(data);
-                                                        window.location.href = `/partner-homes-complete-registration/${this.propertyId}`;
+                                                        window.location.href = `/partner-homes-complete-registration/${propertyId}`;
                                                         Swal.fire({
                                                             toast: true,
                                                             position: 'top-end',
@@ -4478,7 +4705,7 @@
                                                     });
                                             } else if (this.step === 4 && this.selected === 'multiple') {
                                                 if (this.sameAddress === 'yes') {
-                                                    console.log('Saving same address for all properties with ID:', this.propertyId);
+                                                    console.log('Saving same address for all properties with ID:', propertyId);
                                                     fetch('/property/save-address-same', {
                                                             method: 'POST',
                                                             headers: {
@@ -4486,7 +4713,7 @@
                                                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                                                             },
                                                             body: JSON.stringify({
-                                                                property_id: this.propertyId,
+                                                                property_id: propertyId,
                                                                 count: this.propertyCount,
                                                                 address: this.address
                                                             })
@@ -4498,7 +4725,7 @@
                                                         });
                                                 } else {
                                                     // Different address for each property
-                                                    console.log('Saving multiple addresses for properties with ID:', this.propertyId);
+                                                    console.log('Saving multiple addresses for properties with ID:', propertyId);
                                                     const allAddresses = Array.from({
                                                         length: this.propertyCount
                                                     }, (_, i) => {
@@ -4513,7 +4740,7 @@
                                                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                                                             },
                                                             body: JSON.stringify({
-                                                                first_property_id: this.propertyId,
+                                                                first_property_id: propertyId,
                                                                 addresses: allAddresses
                                                             })
                                                         })
@@ -4525,11 +4752,11 @@
                                                         });
                                                 }
                                             } else if (this.step === 6 && this.selected === 'multiple') {
-                                                console.log('Saving amenities for property ID:', this.propertyId);
+                                                console.log('Saving amenities for property ID:', propertyId);
                                                 console.log('currentUnit:', this.currentUnit);
                                                 console.log('propertyCount:', this.propertyCount);
                                                 if (this.currentUnit < this.propertyCount) {
-                                                    const currentPropertyId = this.propertyId + this.currentUnit - 1;
+                                                    const currentPropertyId = propertyId + this.currentUnit - 1;
 
                                                     console.log('Saving amenities for unit:', this.currentUnit);
 
@@ -4562,7 +4789,7 @@
                                                     // Repeat for next unit
                                                 } else {
                                                     console.log('Saving amenities for last unit:', this.currentUnit);
-                                                    const currentPropertyId = this.propertyId + 1;
+                                                    const currentPropertyId = propertyId + 1;
                                                     fetch(`/save-amenities/${currentPropertyId}`, {
                                                             method: 'POST',
                                                             headers: {
@@ -4570,7 +4797,7 @@
                                                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                                                             },
                                                             body: JSON.stringify({
-                                                                property_id: this.propertyId,
+                                                                property_id: propertyId,
                                                                 amenities: this.selectedAmenities
                                                             })
                                                         })
@@ -4590,7 +4817,7 @@
                                                         });
                                                 }
                                             } else if (this.step === 8 && this.selected === 'multiple') {
-                                                const currentPropertyId = this.propertyId + this.currentUnit - 1;
+                                                const currentPropertyId = propertyId + this.currentUnit - 1;
                                                 const selectedLanguages = this.unitServices[this.currentUnit - 1].languages || [];
 
                                                 // Replace language names with corresponding language IDs
@@ -4629,11 +4856,11 @@
                                                         console.error('Fetch error:', error);
                                                     });
                                             } else if (this.step === 9 && this.selected === 'multiple') {
-                                                console.log('Saving policy for property ID:', this.propertyId);
+                                                console.log('Saving policy for property ID:', propertyId);
                                                 console.log('currentUnit:', this.currentUnit);
                                                 console.log('propertyCount:', this.propertyCount);
 
-                                                const currentPropertyId = this.propertyId + this.currentUnit - 1;
+                                                const currentPropertyId = propertyId + this.currentUnit - 1;
                                                 const houseRules = this.unitServices[this.currentUnit - 1].houseRules;
 
                                                 fetch(`/partner/property/save-policy/${currentPropertyId}`, {
@@ -4676,7 +4903,7 @@
                                                         console.error("Fetch error:", error);
                                                     });
                                             } else if (this.step === 10 && this.selected === 'multiple') {
-                                                const currentPropertyId = this.propertyId + this.currentUnit - 1;
+                                                const currentPropertyId = propertyId + this.currentUnit - 1;
                                                 const hostProfile = this.unitServices[this.currentUnit - 1].hostProfile;
 
                                                 // Prepare default boolean values based on selected option
@@ -4734,7 +4961,7 @@
                                                         console.error("Fetch error:", error);
                                                     });
                                             } else if (this.step === 11 && this.selected === 'multiple') {
-                                                const currentPropertyId = this.propertyId + this.currentUnit - 1;
+                                                const currentPropertyId = propertyId + this.currentUnit - 1;
                                                 const title = this.formData.propertyName;
 
                                                 fetch(`/property/${currentPropertyId}/update-title`, {
@@ -4768,7 +4995,7 @@
                                                         console.error('Fetch error:', error);
                                                     });
                                             } else if (this.step === 12 && this.selected === 'multiple') {
-                                                const currentPropertyId = this.propertyId + this.currentUnit - 1;
+                                                const currentPropertyId = propertyId + this.currentUnit - 1;
                                                 const files = this.$refs.unitPhotoInput.files;
                                                 if (files.length > 0) {
                                                     const formData = new FormData();
@@ -4783,7 +5010,8 @@
                                                         method: 'POST',
                                                         body: formData,
                                                         headers: {
-                                                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                                                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                                                            'Accept': 'application/json'
                                                         }
                                                     });
                                                 }
@@ -4795,7 +5023,7 @@
                                                     this.currentUnit = 1;
                                                 }
                                             } else if (this.step === 13 && this.selected === 'multiple') {
-                                                const currentPropertyId = this.propertyId + this.currentUnit - 1;
+                                                const currentPropertyId = propertyId + this.currentUnit - 1;
 
                                                 if (this.rooms.length === 0) {
                                                     alert('Please add at least one room before continuing.');
@@ -4841,7 +5069,7 @@
                                                 // Reset room data for next unit
                                                 this.rooms = [];
                                             } else if (this.step === 14 && this.selected === 'multiple') {
-                                                const currentPropertyId = this.propertyId + this.currentUnit - 1;
+                                                const currentPropertyId = propertyId + this.currentUnit - 1;
 
                                                 const formData = new FormData();
                                                 formData.append('property_id', currentPropertyId);
@@ -4888,7 +5116,7 @@
 
                                                 if (this.step < this.totalSteps) {
                                                     this.step++;
-                                                    propertyId = this.propertyId;
+                                                    propertyId = propertyId;
                                                     console.log('Property ID:', propertyId);
                                                 }
                                             }
@@ -4940,7 +5168,7 @@
 
                     //     if (response.ok) {
                     //         const data = await response.json();
-                    //         this.propertyId = data.property_id;
+                    //         propertyId = data.property_id;
                     //         this.step = 2;
 
                     //         // Fetch subtypes based on subcategory
@@ -4956,16 +5184,16 @@
                             const response = await fetch(`/partner/property_subtype/${subcategoryId}`);
                             const data = await response.json();
                             console.log('Fetched subtypes:', data);
-                            this.subtypes = data;
+                            subtypes = data;
                         } catch (err) {
                             console.error('Failed to fetch subtypes:', err);
                         }
                     },
 
                     //     async submitStep2() {
-                    //         if (!this.selectedBox || !this.propertyId) return;
+                    //         if (!this.selectedBox || !propertyId) return;
 
-                    //         const response = await fetch(`/property-apartment/step2/${this.propertyId}`, {
+                    //         const response = await fetch(`/property-apartment/step2/${propertyId}`, {
                     //             method: 'POST',
                     //             headers: {
                     //                 'Content-Type': 'application/json',
@@ -4974,7 +5202,7 @@
                     //             },
                     //             body: JSON.stringify({
                     //                 category_id: this.selectedBox,
-                    //                 property_id: this.propertyId
+                    //                 property_id: propertyId
                     //             })
                     //         });
 
@@ -4993,5 +5221,5 @@
         </script>
 
     </div>
-
-    @endsection
+</div>
+@endsection

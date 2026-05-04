@@ -12,7 +12,7 @@ class SaveLanguagesDTO extends ValidatedDTO
     public function rules(): array
     {
         return [
-            'languages' => ['required', 'array'],
+            'languages' => ['nullable', 'array'],
             'languages.*' => ['exists:languages,id'],
         ];
     }

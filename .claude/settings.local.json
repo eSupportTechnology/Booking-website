@@ -6,7 +6,13 @@
       "Bash(php artisan migrate:status:*)",
       "Bash(php artisan:*)",
       "Bash(Get-Content -Tail 100 \"D:\\\\eSupportTechnologies\\\\Booking-website\\\\storage\\\\logs\\\\laravel.log\")",
-      "Bash(php -i:*)"
+      "Bash(php -i:*)",
+      "Bash(git checkout:*)",
+      "Bash(php -r:*)",
+      "PowerShell(php D:\\\\eSupportTechnologies\\\\Booking-website\\\\artisan route:list --name=\"partner.properties\" --columns=method,uri,name,action 2>&1)",
+      "PowerShell(php D:\\\\eSupportTechnologies\\\\Booking-website\\\\artisan route:list --name=\"partner.properties\" 2>&1)",
+      "PowerShell(php D:\\\\eSupportTechnologies\\\\Booking-website\\\\artisan tinker --execute=\"echo \\\\App\\\\Models\\\\Amenity::count\\(\\);\" 2>&1)",
+      "PowerShell(php D:\\\\eSupportTechnologies\\\\Booking-website\\\\artisan view:clear 2>&1 | Out-String)"
     ]
   }
 }

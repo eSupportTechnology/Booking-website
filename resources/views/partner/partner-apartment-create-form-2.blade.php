@@ -1,6 +1,10 @@
 @extends('partner.partner-layout')
 
-@section('title', 'Apartment Create Step 2 | ' . config('domains.app_name'))
+@section('title', 'Apartment details | ' . config('domains.app_name'))
+
+@push('styles')
+@include('partner.partials.wizard-styles')
+@endpush
 
 @section('content')
 <body class="bg-gray-50 text-gray-800">
@@ -280,7 +284,7 @@
                       <button
                         type="button"
                         @click="step--"
-                        class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded"
+                        class="wiz-btn-secondary"
                       >
                         ←
                       </button>
@@ -292,7 +296,7 @@
                           @click="saveName"
                           :disabled="isLoading"
                           :class="isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'"
-                          class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded focus:outline-none focus:ring focus:ring-blue-300"
+                          class="wiz-btn-primary"
                         >
                           <span x-show="!isLoading">Continue</span>
                           <span x-show="isLoading">Saving...</span>
@@ -433,7 +437,7 @@
                         <button
                           type="button"
                           @click="wizardStep--"
-                          class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded transition"
+                          class="wiz-btn-secondary"
                         >
                           ←
                         </button>
@@ -443,7 +447,7 @@
                           @click="saveLocation"
                           :disabled="isLoading"
                           :class="isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#29ACD5]'"
-                          class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded focus:outline-none focus:ring focus:ring-blue-300 transition"
+                          class="wiz-btn-primary"
                         >
                           <span x-show="!isLoading">Continue</span>
                           <span x-show="isLoading">Saving...</span>
@@ -523,7 +527,7 @@
                         <button
                           type="button"
                           @click="wizardStep--"
-                          class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded"
+                          class="wiz-btn-secondary"
                         >
                           ←
                         </button>
@@ -533,7 +537,7 @@
                           @click="saveChannelManager"
                           :disabled="isLoading"
                           :class="isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'"
-                          class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded focus:outline-none focus:ring focus:ring-blue-300"
+                          class="wiz-btn-primary"
                         >
                           <span x-show="!isLoading">Continue</span>
                           <span x-show="isLoading">Saving...</span>
@@ -773,14 +777,14 @@
         <button
           type="button" @click="propertyWizardStep--"
           :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-          class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+          class="wiz-btn-secondary">
           ←
         </button>
         <!-- Continue Button on the right -->
         <button
           type="button"
           @click="savePropertyDetails"
-          class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300"
+          class="wiz-btn-primary"
         >
           Continue
         </button>
@@ -824,7 +828,7 @@
           <button
             type="button"
             @click="propertyWizardStep--"
-            class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded mb-16">
+            class="wiz-btn-secondary mb-16">
             ←
           </button>
           <!-- Continue Button -->
@@ -832,7 +836,7 @@
             <button
               type="button"
               @click="savePropertyDetails"
-              class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 mb-16">
+              class="wiz-btn-primary mb-16">
               Continue
             </button>
           </div>
@@ -988,7 +992,7 @@
           <button
             type="button"
             @click="propertyWizardStep--"
-            class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded mb-16">
+            class="wiz-btn-secondary mb-16">
             ←
           </button>
           <!-- Continue Button -->
@@ -996,7 +1000,7 @@
             <button
               type="button"
               @click="saveAdditionalDetails"
-              class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 mb-16">
+              class="wiz-btn-primary mb-16">
               Continue
             </button>
           </div>
@@ -1119,7 +1123,7 @@
           type="button"
           @click="propertyWizardStep--"
           :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-          class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded"
+          class="wiz-btn-secondary"
         >
           ←
         </button>
@@ -1128,7 +1132,7 @@
         <button
           type="button"
           @click="saveAdditionalDetails"
-          class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300"
+          class="wiz-btn-primary"
         >
           Continue
         </button>
@@ -1241,14 +1245,14 @@
    type="button" @click="propertyWizardStep--"
         :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
 
-      class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+      class="wiz-btn-secondary">
       ←
   </button>
 
   <!-- Continue Button on the right -->
   <button
    type="button"  @click="saveHouseRules"
-     class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 "
+     class="wiz-btn-primary"
   >
     Continue
   </button>
@@ -1355,14 +1359,14 @@
    type="button" @click="propertyWizardStep--"
         :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
 
-      class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+      class="wiz-btn-secondary">
       ←
   </button>
 
   <!-- Continue Button on the right -->
   <button
    type="button"  @click="saveHostProfile"
-     class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 "
+     class="wiz-btn-primary"
   >
     Continue
   </button>
@@ -1596,7 +1600,7 @@
                 <div class="mt-6 flex justify-between">
                   <button
                     @click="step--"
-                    class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded"
+                    class="wiz-btn-secondary"
                     :disabled="isUploading"
                     >
                     ←
@@ -1697,9 +1701,9 @@
 
     <!-- Continue Button -->
     <div class="flex justify-between items-center">
-      <button  @click="pricingWizardStep--"      class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
+      <button  @click="pricingWizardStep--"      class="wiz-btn-secondary">
           ←</button>
-      <button  @click="pricingWizardStep++" class="  px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-sky-500">Continue</button>
+      <button  @click="pricingWizardStep++" class="wiz-btn-primary">Continue</button>
     </div>
   </div>
 </template>
@@ -1831,12 +1835,12 @@
       <div class="mt-12 flex justify-between">
         <button type="button"
                 @click="pricingWizardStep--"
-                class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                class="wiz-btn-secondary">
           ←
         </button>
         <button type="button"
                 @click="pricingWizardStep++"
-                class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ">
+                class="wiz-btn-primary">
           Continue
         </button>
       </div>
@@ -2001,13 +2005,13 @@
   <button type="button"
           @click="step > 1 ? step-- : step"
           :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-          class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
+          class="wiz-btn-secondary">
     ←
   </button>
 
   <!-- Continue Button -->
 
-  <button       @click="pricingWizardStep++" class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ">
+  <button       @click="pricingWizardStep++" class="wiz-btn-primary">
     Continue
   </button>
 
@@ -2292,13 +2296,13 @@ function calendarComponent() {
   <button type="button"
           @click="pricingWizardStep--"
           :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-          class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
+          class="wiz-btn-secondary">
     ←
   </button>
 
   <!-- Continue Button -->
 
-  <button       @click="savePricing()" class="px-4 py-3 bg-[#3CC0E9] font-semibold text-white rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 ">
+  <button       @click="savePricing()" class="wiz-btn-primary">
     Continue
   </button>
 

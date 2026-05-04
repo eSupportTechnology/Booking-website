@@ -14,8 +14,14 @@ class PropertySubcategorySeeder extends Seeder
     public function run(): void
     {
         $subcategories = [
+            // Homes (category 1)
             ['category_id' => 1, 'name' => 'Entire Place'],
             ['category_id' => 1, 'name' => 'Private Room'],
+            // Alternative places (category 4)
+            ['category_id' => 4, 'name' => 'Boat'],
+            ['category_id' => 4, 'name' => 'Campsite'],
+            ['category_id' => 4, 'name' => 'Luxury Tent'],
+            ['category_id' => 4, 'name' => 'Treehouse'],
         ];
 
         foreach ($subcategories as $subcategory) {

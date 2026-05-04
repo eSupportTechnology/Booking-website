@@ -1,7 +1,11 @@
 
 @extends('partner.partner-layout')
 
-@section('title', 'Apartment Create | ' . config('domains.app_name'))
+@section('title', 'List your apartment | ' . config('domains.app_name'))
+
+@push('styles')
+@include('partner.partials.wizard-styles')
+@endpush
 
 @section('content')
 <body class="bg-gray-100 text-gray-800">
@@ -304,7 +308,7 @@
                         <template x-if="step === 1">
                             <div class="flex items-center justify-between pt-4">
                                 <button type="button" @click="step--"
-                                    class="border border-[#3CC0E9]  text-blue-600 hover:bg-[#29ACD5] font-semibold py-2 px-4 rounded">
+                                    class="wiz-btn-secondary">
                                     ←
                                 </button>
                                 <button type="button"
@@ -315,7 +319,7 @@
                                             step = 3;
                                         }
                                     "
-                                    class=" font-semibold py-3 px-8 rounded  bg-[#3CC0E9] hover:bg-[#29ACD5] text-white"
+                                    class="wiz-btn-primary"
                                     :class="!selected ? 'opacity-50 cursor-not-allowed' : ''">
                                     Continue
                                 </button>
@@ -348,11 +352,11 @@
                     <!-- Buttons -->
                     <div class="space-y-2">
                         <button type="button" @click="step = 4"
-                            class="w-full bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded">
+                            class="wiz-btn-primary w-full">
                             Continue
                         </button>
                         <button type="button" @click="step = 1"
-                            class="w-full border border-[#3CC0E9] text-[#3CC0E9] hover:bg-[#29ACD5] font-semibold py-2 px-4 rounded mb-6">
+                            class="wiz-btn-secondary w-full mb-6">
                             No, I need to make a change
                         </button>
                     </div>
@@ -382,16 +386,16 @@
                     <!-- Buttons -->
                     <div class="space-y-2">
                         <button type="submit" x-show="sameAddress === 'yes'"
-                            class="w-full bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded">
+                            class="wiz-btn-primary w-full">
                             Continue
                         </button>
                         <button type="button" x-show="sameAddress === 'no'"
                             @click="step = 4"
-                            class="w-full bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded">
+                            class="wiz-btn-primary w-full">
                             Continue
                         </button>
                         <button type="button" @click="step = 1"
-                            class="w-full border border-[#3CC0E9] text-[#3CC0E9] hover:bg-[#29ACD5] font-semibold py-2 px-4 rounded mb-6">
+                            class="wiz-btn-secondary w-full mb-6">
                             No, I need to make a change
                         </button>
                     </div>
@@ -475,7 +479,7 @@
                     <!-- Navigation Buttons -->
                     <div class="flex items-center justify-between pt-4">
                         <button type="button" @click="selected === 'Multiple' && sameAddress === 'no' ? step = 3 : step = 2"
-                            class="border border-[#3CC0E9] text-blue-600 hover:bg-[#29ACD5] font-semibold py-2 px-4 rounded">
+                            class="wiz-btn-secondary">
                             ←
                         </button>
                         <button type="submit" :disabled="selectedChannels.length === 0"

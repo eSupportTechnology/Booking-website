@@ -49,38 +49,36 @@ class ViewPropertyAction
 
         $totalReviews = Review::where('property_id', $id)->count();
         
-        // Calculate overall rating and category ratings
-        $overallRating = Review::where('property_id', $id)->avg('rating') ?? 0;
-        
-        // Use fallback values if no specific ratings exist
-        $staffRating = $totalReviews > 0 ? (Review::where('property_id', $id)->avg('staff_rating') ?? $overallRating) : 9.2;
-        $facilitiesRating = $totalReviews > 0 ? (Review::where('property_id', $id)->avg('facilities_rating') ?? $overallRating) : 9.7;
-        $cleanlinessRating = $totalReviews > 0 ? (Review::where('property_id', $id)->avg('cleanliness_rating') ?? $overallRating) : 9.4;
-        $comfortRating = $totalReviews > 0 ? (Review::where('property_id', $id)->avg('comfort_rating') ?? $overallRating) : 9.4;
-        $valueRating = $totalReviews > 0 ? (Review::where('property_id', $id)->avg('value_rating') ?? $overallRating) : 8.9;
-        $locationRating = $totalReviews > 0 ? (Review::where('property_id', $id)->avg('location_rating') ?? $overallRating) : 9.1;
-        $wifiRating = $totalReviews > 0 ? (Review::where('property_id', $id)->avg('wifi_rating') ?? $overallRating) : 9.0;
-        
-        // Get rating text based on overall rating
-        $ratingText = $this->getRatingText($overallRating);
-        
-        // Get host average rating
-        $hostAvgRating = HostReview::where('property_id', $id)->avg('rating') ?? 9.5;
+        $overallRating = $totalReviews > 0 ? (float) Review::where('property_id', $id)->avg('rating') : null;
+        $staffRating = $totalReviews > 0 ? (float) (Review::where('property_id', $id)->avg('staff_rating') ?? $overallRating) : null;
+        $facilitiesRating = $totalReviews > 0 ? (float) (Review::where('property_id', $id)->avg('facilities_rating') ?? $overallRating) : null;
+        $cleanlinessRating = $totalReviews > 0 ? (float) (Review::where('property_id', $id)->avg('cleanliness_rating') ?? $overallRating) : null;
+        $comfortRating = $totalReviews > 0 ? (float) (Review::where('property_id', $id)->avg('comfort_rating') ?? $overallRating) : null;
+        $valueRating = $totalReviews > 0 ? (float) (Review::where('property_id', $id)->avg('value_rating') ?? $overallRating) : null;
+        $locationRating = $totalReviews > 0 ? (float) (Review::where('property_id', $id)->avg('location_rating') ?? $overallRating) : null;
+        $wifiRating = $totalReviews > 0 ? (float) (Review::where('property_id', $id)->avg('wifi_rating') ?? $overallRating) : null;
+
+        $ratingText = $totalReviews > 0 ? $this->getRatingText($overallRating) : null;
+
+        $totalHostReviews = HostReview::where('property_id', $id)->count();
+        $hostAvgRating = $totalHostReviews > 0 ? (float) HostReview::where('property_id', $id)->avg('rating') : null;
+
+        $format = fn ($v) => $v === null ? null : number_format($v, 1);
 
         return [
             'property' => $property,
             'reviews' => $reviews,
             'totalReviews' => $totalReviews,
-            'overallRating' => number_format($overallRating, 1),
+            'overallRating' => $format($overallRating),
             'ratingText' => $ratingText,
-            'staffRating' => number_format($staffRating, 1),
-            'facilitiesRating' => number_format($facilitiesRating, 1),
-            'cleanlinessRating' => number_format($cleanlinessRating, 1),
-            'comfortRating' => number_format($comfortRating, 1),
-            'valueRating' => number_format($valueRating, 1),
-            'locationRating' => number_format($locationRating, 1),
-            'wifiRating' => number_format($wifiRating, 1),
-            'hostAvgRating' => number_format($hostAvgRating, 1)
+            'staffRating' => $format($staffRating),
+            'facilitiesRating' => $format($facilitiesRating),
+            'cleanlinessRating' => $format($cleanlinessRating),
+            'comfortRating' => $format($comfortRating),
+            'valueRating' => $format($valueRating),
+            'locationRating' => $format($locationRating),
+            'wifiRating' => $format($wifiRating),
+            'hostAvgRating' => $format($hostAvgRating),
         ];
     }
     

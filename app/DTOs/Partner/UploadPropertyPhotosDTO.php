@@ -17,7 +17,7 @@ class UploadPropertyPhotosDTO extends ValidatedDTO
         return [
             'property_id' => ['required', 'exists:properties,id'],
             'photos' => ['required', 'array'],
-            'photos.*' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+            'photos.*' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:51200'], // 50MB max per file
         ];
     }
 

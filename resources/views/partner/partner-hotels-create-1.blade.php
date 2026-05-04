@@ -1,7 +1,11 @@
 @extends('partner.partner-layout')
 
-@section('title', ' Hotels Create | ' . config('domains.app_name'))
+@section('title', 'List your hotel | ' . config('domains.app_name'))
 
+@push('styles')
+@include('partner.partials.wizard-styles')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+@endpush
 
 @section('content')
 <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -9,16 +13,23 @@
 <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
 
-<div x-data="stepForm()" x-init="init()">
+<div class="wiz-shell" x-data="stepForm()" x-init="init()">
 
-
-    <!-- Progress Bar -->
-    <div class="w-full bg-gray-200 h-2">
-        <div class="bg-[#3CC0E9] h-2 transition-all duration-500" :style="'width:' + (step * 100 / 8) + '%'"></div>
+    {{-- Sticky progress strip --}}
+    <div class="sticky top-0 z-30 bg-white border-b border-gray-200">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 py-3 flex items-center gap-4">
+            <span class="text-xs sm:text-sm font-medium text-gray-700 whitespace-nowrap">
+                Step <span x-text="step" class="font-bold text-gray-900"></span> of 8
+            </span>
+            <div class="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                <div class="h-1.5 bg-[#0071c2] rounded-full transition-all duration-300" :style="'width:' + (step * 100 / 8) + '%'"></div>
+            </div>
+            <span class="hidden sm:inline text-xs text-gray-500" x-text="Math.round(step * 100 / 8) + '%'"></span>
+        </div>
     </div>
 
-    <div class="max-w-6xl p-4 mx-auto sm:ml-14">
-        <form class="p-6 rounded-lg space-y-6" @submit.prevent>
+    <div>
+        <form class="space-y-6" @submit.prevent>
             <!-- STEP 1 -->
             <div x-show="step === 1" x-cloak class="container mx-auto px-4 py-8 max-w-6xl">
                 <h2 class="text-2xl font-bold mb-6 mt-8">
@@ -59,7 +70,7 @@
 
                 <div class="flex items-center justify-between pt-4">
                     <button type="button" @click="window.location.href='{{ route('partner.property.category') }}'"
-                        class="border border-[#3CC0E9] text-blue-600 font-semibold py-2 px-4 rounded">
+                        class="wiz-btn-secondary">
                         ←
                     </button>
 
@@ -114,7 +125,7 @@
 
                     <div class="flex justify-between mt-6">
                         <button @click="step = 1"
-                            class="border border-[#3CC0E9] text-[#3CC0E9] px-4 py-2 rounded font-semibold">←</button>
+                            class="wiz-btn-secondary">←</button>
                         <button @click="submitStep2()" :disabled="!unitType"
                             :class="!unitType ? 'bg-blue-300 cursor-not-allowed' : 'bg-[#3CC0E9] hover:bg-[#29ACD5]'"
                             class="text-white px-6 py-2 rounded font-semibold">Continue</button>
@@ -137,11 +148,11 @@
                         <p class="text-gray-700 mb-8">Does this sound like your property?</p>
                         <div class="space-y-2">
                             <button type="button" @click="submitStep3()"
-                                class="w-full bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded">
+                                class="wiz-btn-primary w-full">
                                 Continue
                             </button>
                             <button type="button" @click="step = 2"
-                                class="w-full border border-[#3CC0E9] text-[#3CC0E9] font-semibold py-2 px-4 rounded mb-6">
+                                class="wiz-btn-secondary w-full mb-6">
                                 No, I need to make a change
                             </button>
                         </div>
@@ -161,11 +172,11 @@
                         <p class="text-gray-700 mb-8">Does this sound like your property?</p>
                         <div class="space-y-2">
                             <button type="button" @click="submitStep3()"
-                                class="w-full bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded">
+                                class="wiz-btn-primary w-full">
                                 Continue
                             </button>
                             <button type="button" @click="step = 2"
-                                class="w-full border border-[#3CC0E9] text-[#3CC0E9] font-semibold py-2 px-4 rounded mb-6">
+                                class="wiz-btn-secondary w-full mb-6">
                                 No, I need to make a change
                             </button>
                         </div>
@@ -210,7 +221,7 @@
 
                             <button
                                 type="submit"
-                                class="bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold px-6 py-2 rounded shadow">
+                                class="wiz-btn-primary">
                                 Continue →
                             </button>
                         </div>
@@ -308,13 +319,13 @@
                         <!-- Back Button -->
                         <button type="button" @click="step > 2 ? step -= 2 : step = 1"
                             :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-                            class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
+                            class="wiz-btn-secondary">
                             ←
                         </button>
 
                         <!-- Continue Button -->
                         <button type="submit"
-                            class="bg-[#3CC0E9] hover:bg-[#29ACD5] font-semibold text-white py-2 px-4 rounded">
+                            class="wiz-btn-primary">
                             Continue
                         </button>
                     </div>
@@ -390,13 +401,13 @@
 
                                     <button type="button" @click="step > 1 ? step-- : step"
                                         :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-                                        class="border border-[#3CC0E9]  text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded">
+                                        class="wiz-btn-secondary">
                                         ←
                                     </button>
 
 
                                     <!-- Continue Button (Right) -->
-                                    <button type="submit" class="bg-[#3CC0E9] hover:bg-[#29ACD5] font-semibold text-white py-2 px-4 rounded">
+                                    <button type="submit" class="wiz-btn-primary">
                                         Continue
                                     </button>
                                 </div>
@@ -484,8 +495,8 @@
                             <!-- Navigation -->
                             <div class="flex justify-between items-center mt-8">
                                 <button type="submit" @click="step < 9 ? step-- : step"
-                                    class="border border-[#3CC0E9]  text-blue-600  hover:bg-blue-50 font-semibold py-2 px-4 rounded">←</button>
-                                <button type="submit" class="bg-[#3CC0E9] hover:bg-[#29ACD5] font-semibold text-white py-2 px-4 rounded">
+                                    class="wiz-btn-secondary">←</button>
+                                <button type="submit" class="wiz-btn-primary">
                                     Continue
                                 </button>
                             </div>
@@ -525,10 +536,10 @@
                                          <div class="flex justify-between items-center mt-8">
                                 <button type="button" @click="step > 1 ? step-- : step"
                                     :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-                                    class="border border-[#3CC0E9] text-blue-600  hover:bg-blue-50 font-semibold py-2 px-4 rounded">
+                                    class="wiz-btn-secondary">
                                     ←
                                 </button>
-                                <button type="submit" class="bg-[#3CC0E9] hover:bg-[#29ACD5] font-semibold text-white py-2 px-4 rounded">
+                                <button type="submit" class="wiz-btn-primary">
                                     Continue
                                 </button>
                             </div>
@@ -803,10 +814,10 @@
                                 <div class="mt-8 flex justify-between max-w-xl ml-6">
                                     <button type="button" @click="step > 1 ? step-- : step"
                                         :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-                                        class="border border-[#3CC0E9] text-blue-600  hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                                        class="wiz-btn-secondary">
                                         ←
                                     </button>
-                                    <button type="submit" class="bg-[#3CC0E9] hover:bg-[#29ACD5] font-semibold text-white py-2 px-4 rounded">
+                                    <button type="submit" class="wiz-btn-primary">
                                         Continue
                                     </button>
                                 </div>
@@ -900,12 +911,12 @@
                                 <!-- Back Button on the left -->
                                 <button type="button" @click="step > 1 ? step-- : step"
                                     :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'"
-                                    class="border border-[#3CC0E9] text-blue-600  hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                                    class="wiz-btn-secondary">
                                     ←
                                 </button>
 
                                 <!-- Continue Button on the right -->
-                                <button type="submit" class="bg-[#3CC0E9] hover:bg-[#29ACD5] text-white font-semibold py-2 px-4 rounded">
+                                <button type="submit" class="wiz-btn-primary">
                                     Continue
                                 </button>
                             </div>
@@ -1171,12 +1182,12 @@
                             <div class="mt-8 flex flex-col sm:flex-row justify-between gap-4">
                                 <button type="button" @click="step > 1 ? step-- : step"
                                     :class="step === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-100'"
-                                    class="border border-[#3CC0E9] text-blue-600 hover:bg-blue-50 font-semibold px-4 h-12 flex items-center justify-center rounded">
+                                    class="wiz-btn-secondary">
                                     ←
                                 </button>
 
                                 <button type="button" @click="submitStep11()"
-                                    class="bg-[#3CC0E9] hover:bg-[#29ACD5] font-semibold text-white py-2 px-4 rounded">
+                                    class="wiz-btn-primary">
                                     Continue
                                 </button>
                             </div>

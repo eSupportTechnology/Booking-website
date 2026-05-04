@@ -17,7 +17,7 @@ class SaveAmenitiesDTO extends ValidatedDTO
     public function rules(): array
     {
         return [
-            'amenities' => ['required', 'array'],
+            'amenities' => ['nullable', 'array'],
             'amenities.*' => ['exists:amenities,id'],
         ];
     }

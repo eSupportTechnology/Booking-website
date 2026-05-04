@@ -13,7 +13,7 @@ class SaveRoomsDTO extends ValidatedDTO
         return [
             'property_id' => ['required', 'exists:properties,id'],
             'rooms' => ['required', 'array', 'min:1'],
-            'rooms.*.room_type_id' => ['required', 'exists:room_types,id'],
+            'rooms.*.room_type_id' => ['nullable', 'integer'],
             'rooms.*.name' => ['nullable', 'string'],
             'rooms.*.price_per_night' => ['nullable', 'numeric'],
             'rooms.*.max_guests' => ['nullable', 'integer'],

@@ -850,8 +850,7 @@ Route::prefix('partner')->middleware(['auth', \App\Http\Middleware\PartnerMiddle
     // Step 2: Show next form and save more details (dynamic for any category, static route name)
     Route::post('/property/{category}/step2/{property}', [PropertyController::class, 'storeStep2'])->name('partner.property.store.step2');
     Route::post('/property/step3/{property}', [PropertyController::class, 'storeStep2'])->name('partner.property.store.step3');
-    // Route::post('/property/upload-photos', [PropertyController::class, 'uploadPhotos'])->name('partner.property.upload.photos');
-    Route::post('/partner/property/upload-photos', [PropertyController::class, 'uploadPhotos'])->name('partner.property.upload.photos.alt');
+    Route::post('/property/upload-photos', [PropertyController::class, 'uploadPhotos'])->name('partner.property.upload.photos');
 
     // Temporary debug route for file upload limits
     Route::get('/debug/upload-limits', function () {

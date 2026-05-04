@@ -114,6 +114,12 @@ class PropertyController extends Controller
                     'category' => 'hotel',
                 ]);
 
+            case 4:  // Alternative places
+                if ($subcategories->isEmpty()) {
+                    return redirect()->back()->withErrors(['error' => 'No subcategories found for this category.']);
+                }
+                return view('partner.partner-homes-create-form-1', compact('subcategories', 'categoryId', 'amenities', 'roomTypes', 'bedTypes', 'languages'));
+
             default:
                 abort(404);
         }
@@ -457,28 +463,33 @@ class PropertyController extends Controller
 
 
     public function uploadPhotos(
-        UploadPropertyPhotosDTO $dto,
+        Request $request,
         FileUploadService $fileUploadService,
         PropertyAction $propertyAction
     ) {
         try {
-            // Validate the request data
-            if (!$dto->property_id) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Property ID is required'
-                ], 400);
-            }
+            Log::info('uploadPhotos method started', [
+                'property_id' => $request->input('property_id'),
+                'photos_count' => $request->hasFile('photos') ? count($request->file('photos')) : 0,
+                'all_input' => $request->except('photos')
+            ]);
 
-            if (empty($dto->photos) || count($dto->photos) < 3) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'At least 3 photos are required'
-                ], 400);
-            }
+            // Manual validation instead of DTO to get better error messages
+            $validated = $request->validate([
+                'property_id' => ['required', 'exists:properties,id'],
+                'photos' => ['required', 'array', 'min:3'],
+                'photos.*' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:51200'],
+            ]);
+
+            $dto = new UploadPropertyPhotosDTO([
+                'property_id' => $validated['property_id'],
+                'photos' => $validated['photos']
+            ]);
 
             // Call the action to upload photos
             $propertyAction->uploadPhotos($dto, $fileUploadService);
+
+            Log::info('Photos uploaded successfully', ['property_id' => $dto->property_id]);
 
             return response()->json([
                 'success' => true,
@@ -486,9 +497,13 @@ class PropertyController extends Controller
             ]);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::warning('Photo upload validation failed', [
+                'errors' => $e->errors(),
+                'property_id' => $request->input('property_id')
+            ]);
             return response()->json([
                 'success' => false,
-                'message' => 'Validation failed',
+                'message' => 'Validation failed: ' . collect($e->errors())->flatten()->first(),
                 'errors' => $e->errors()
             ], 422);
 
@@ -496,12 +511,12 @@ class PropertyController extends Controller
             Log::error('Error uploading photos', [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
-                'property_id' => $dto->property_id ?? 'unknown'
+                'property_id' => $request->input('property_id') ?? 'unknown'
             ]);
 
             return response()->json([
                 'success' => false,
-                'message' => 'An error occurred while uploading photos. Please try again.'
+                'message' => 'Error: ' . $e->getMessage()
             ], 500);
         }
     }

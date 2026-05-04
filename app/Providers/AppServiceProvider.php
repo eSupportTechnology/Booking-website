@@ -54,6 +54,13 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        if (PHP_OS_FAMILY === 'Windows') {
+            \Illuminate\Foundation\Console\ServeCommand::$passthroughVariables = array_merge(
+                \Illuminate\Foundation\Console\ServeCommand::$passthroughVariables,
+                ['Path', 'SystemRoot', 'ComSpec', 'WINDIR', 'TEMP', 'TMP']
+            );
+        }
+
         Schema::defaultStringLength(191);
 
         Gate::policy(Property::class, PropertyPolicy::class);
